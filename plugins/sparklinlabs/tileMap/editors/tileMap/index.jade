@@ -1,0 +1,78 @@
+doctype html
+html
+  head
+    link(rel="stylesheet",href="/client/styles/reset.css")
+    link(rel="stylesheet",href="/client/styles/treeView.css")
+    link(rel="stylesheet",href="index.css")
+
+  body
+    .main
+      canvas(tabindex='0').map
+
+    .sidebar
+      table
+        tr
+          th Tile set
+          td
+            input.property-tileSetId
+
+          th Width
+          td
+            label.property-width
+
+        tr
+          th Pixels(/unit)
+          td
+            input.property-pixelsPerUnit
+
+          th Height
+          td
+            label.property-height
+
+        tr
+          th Depth offset
+          td
+            input.property-layerDepthOffset
+          td
+            button.resize Resize
+          td
+            button.move Move
+
+        tr
+          th Grid
+          td
+            input(type='checkbox' checked).grid-checkbox
+
+          th Highlight
+          td
+            input(type='checkbox').highlight-checkbox
+
+        tr
+          th
+          td
+          td(colspan=2)
+            input(type='range', value=40, min=0, max=100).highlight-slider
+
+      .buttons
+        input(type='radio' name='Tool' id='Brush' checked)
+        label(for='Brush') Brush
+        input(type='radio' name='Tool' id='Selection')
+        label(for='Selection') Selection
+        input(type='radio' name='Tool' id='Eraser')
+        label(for='Eraser') Eraser
+
+      canvas(tabindex='0').tileSet
+
+      .layers-buttons
+        button.new-layer New layer
+        button.rename-layer Rename
+        button.delete-layer Delete
+
+      .layers-tree-view
+
+    script(src="/core/SupCore.js")
+    script(src="../../api.js")
+    script(src="/system/SupEngine.js")
+    script(src="../../components.js")
+    script(src="/client/SupClient.js")
+    script(src="index.js")

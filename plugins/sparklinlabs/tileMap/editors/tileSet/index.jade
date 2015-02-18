@@ -1,0 +1,40 @@
+doctype html
+html
+  head
+    link(rel="stylesheet",href="/client/styles/reset.css")
+    link(rel="stylesheet",href="/client/styles/treeView.css")
+    link(rel="stylesheet",href="index.css")
+
+  body
+    .main
+      canvas
+
+    .sidebar
+      table
+        tr
+          th Tile Set
+          td
+            button.upload Upload
+            form(style="display: none")
+              input.file-select(type="file")
+
+            button.download Download
+
+        tr
+          th Grid (pixels)
+          td
+            input(type='number').grid-size
+
+      .properties-buttons
+        button.new-property New
+        button(disabled).rename-property Rename
+        button(disabled).delete-property Delete
+
+      .properties-tree-view
+
+    script(src="/core/SupCore.js")
+    script(src="../../api.js")
+    script(src="/system/SupEngine.js")
+    script(src="../../components.js")
+    script(src="/client/SupClient.js")
+    script(src="index.js")

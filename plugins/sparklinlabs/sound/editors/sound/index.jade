@@ -1,0 +1,34 @@
+doctype html
+html
+  head
+    link(rel="stylesheet",href="/client/styles/reset.css")
+    link(rel="stylesheet",href="index.css")
+
+  body
+    .main
+      audio(controls)
+
+    .sidebar
+      table
+        tr
+          th Sound
+          td
+            button.upload Upload
+            form(style="display: none")
+              input.file-select(type="file")
+
+            button.download Download
+
+        tr
+          th Streaming
+          td
+            select.property-streaming
+              option(value="false") Disabled
+              option(value="true") Enabled
+
+    script(src="/core/SupCore.js")
+    script(src="../../api.js")
+    script(src="/system/SupEngine.js")
+    script(src="../../components.js")
+    script(src="/client/SupClient.js")
+    script(src="index.js")

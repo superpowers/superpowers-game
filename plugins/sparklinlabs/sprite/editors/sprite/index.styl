@@ -1,0 +1,91 @@
+body
+  display flex
+
+.main
+  flex 1
+  display flex
+  flex-direction column
+
+  .spritesheet-container
+    flex 1
+    border-bottom 1px solid #aaa
+    display flex
+
+    .spritesheet-canvas
+      flex 1
+
+  .animation-container
+    flex 1
+    display flex
+    flex-direction column
+
+    .animation-canvas
+      flex 1
+
+    .animation-control
+      margin auto
+      padding 10px
+
+      .animation-play
+        padding 10px
+        margin 10px
+
+      .animation-slider
+        width 300px
+
+
+.sidebar
+  display flex
+  flex-direction column
+  width 250px
+  border-left 1px solid #aaa
+
+  table
+    padding 10px
+
+    tr
+      padding-bottom 10px
+
+    th
+      width 150px
+      text-align left
+
+    td
+      display inline-flex
+
+    input
+      width 100px
+
+    .nested
+      padding-left 25px
+
+    .property-grid-width, .property-grid-height
+      width 60px
+      margin-right 10px
+
+  // Animations tab
+  .animations-buttons
+    display flex
+
+    button
+      flex 1
+      font-size smaller
+      white-space nowrap
+
+  .animations-tree-view
+    border-top 1px solid #aaa
+    flex 1
+    position relative
+    background #fff
+    overflow-y auto
+
+    .tree
+      position absolute
+
+    .name
+      white-space pre
+      width 150px
+
+    input
+      width 50px
+      margin-right 5px

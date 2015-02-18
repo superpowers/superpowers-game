@@ -1,0 +1,79 @@
+body
+  display flex
+
+.sidebar
+  width 250px
+  border-right 1px solid #aaa
+
+  display flex
+  flex-flow column
+
+.nodes-buttons
+  display flex
+
+  button
+    flex 1
+    font-size smaller
+    white-space nowrap
+
+.nodes-tree-view
+  height 300px
+  position relative
+  background #fff
+  border-bottom 1px solid #aaa
+  overflow-y auto
+
+  .tree
+    position absolute
+
+.inspector
+
+  flex 1
+  .transform
+    padding 0.25em
+
+    .label
+      padding 0.25em
+
+    .values
+      display flex
+
+      > input
+        flex 1
+        margin 0.25em
+
+  &.noSelection
+    visibility hidden
+
+.components-buttons
+  display flex
+
+  button
+    flex 1
+
+.components
+  .header
+    display flex
+    background #ccc
+
+    .type
+      flex 1
+      padding 0.5em
+
+  .settings
+    td, th
+      padding 0.25em
+
+    th
+      text-align left
+
+    td
+      input, select
+        width 100%
+
+.main
+  flex 1
+  display flex
+
+  canvas
+    flex 1

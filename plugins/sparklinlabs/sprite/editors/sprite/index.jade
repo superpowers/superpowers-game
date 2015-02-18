@@ -1,0 +1,90 @@
+doctype html
+html
+  head
+    link(rel="stylesheet",href="/client/styles/reset.css")
+    link(rel="stylesheet",href="/client/styles/treeView.css")
+    link(rel="stylesheet",href="index.css")
+
+  body
+    .main
+      .spritesheet-container
+        canvas.spritesheet-canvas
+
+      .animation-container
+        canvas.animation-canvas
+
+        .animation-control
+          span.animation-name
+          button(disabled).animation-play Pause
+          input(disabled, type='range', value=0).animation-slider
+
+    .sidebar
+      table
+        tr
+          th Image
+          td
+            button.upload Upload
+            form(style="display: none")
+              input.file-select(type="file")
+
+            button.download Download
+
+        tr
+          th Rendering
+          td
+            select.property-filtering
+              option(value='pixelated') Pixelated
+              option(value='smooth') Smooth
+
+        tr
+          th Pixels (/unit)
+          td
+            input.property-pixelsPerUnit
+
+        tr
+          th Frames (/second)
+          td
+            input.property-framesPerSecond
+
+        tr
+          th Alpha test
+          td
+            input.property-alphaTest
+
+        tr
+          th Grid
+        tr
+          th.nested Width
+          td
+            input.property-grid-width(type='number')
+            button.set-grid-width Set
+        tr
+          th.nested Height
+          td
+            input.property-grid-height(type='number')
+            button.set-grid-height Set
+
+        tr
+          th Origin
+        tr
+          th.nested X
+          td
+            input.property-origin-x(type='number')
+        tr
+          th.nested Y
+          td
+            input.property-origin-y(type='number')
+
+      .animations-buttons
+        button.new-animation New
+        button(disabled).rename-animation Rename
+        button(disabled).delete-animation Delete
+
+      .animations-tree-view
+
+    script(src="/core/SupCore.js")
+    script(src="../../api.js")
+    script(src="/system/SupEngine.js")
+    script(src="../../components.js")
+    script(src="/client/SupClient.js")
+    script(src="index.js")
