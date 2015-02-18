@@ -1,0 +1,55 @@
+@import 'nib'
+
+html, body
+  height 100%
+
+body
+  margin 0
+  display flex
+  background #000
+  user-select none
+
+#loading
+  flex 1
+  display flex
+  flex-flow column
+  align-items center
+  justify-content center
+  background #eee
+
+  &.end a
+    opacity 0
+
+  &.start a
+    opacity 1
+
+  a
+    opacity 0
+    transition opacity 0.3s ease-out
+    position relative
+    text-decoration none
+    color inherit
+
+  img
+    width 320px
+    height 160px
+
+  progress
+    background #c4c8b7
+    border none
+    width 280px
+    height 5px
+    position absolute
+    top 91px
+    right 10px
+
+    &::-webkit-progress-bar
+      background #c4c8b7
+    &::-webkit-progress-value
+      background #676c53
+    &::-moz-progress-bar
+      background #676c53
+
+canvas
+  flex 1
+  outline none

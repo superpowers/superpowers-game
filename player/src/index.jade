@@ -1,0 +1,16 @@
+doctype html
+html
+  head
+    link(rel="stylesheet",href="index.css")
+  body
+    #loading
+      a(href="http://blog.sparklinlabs.com/superpowers",target="_blank")
+        img(src="images/superpowers-splash.svg",draggable="false")
+        progress(max="100",value="0")
+
+    canvas(tabindex="-1",style="display: none")
+
+    script(src="../core/SupCore.js")
+    script(src="../system/SupEngine.js")
+    script(src="../system/SupRuntime.js")
+    script(src="index.js")
