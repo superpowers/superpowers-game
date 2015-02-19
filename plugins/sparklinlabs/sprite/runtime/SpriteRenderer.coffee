@@ -1,5 +1,27 @@
 SpriteRenderer = require '../components/SpriteRenderer'
 
+exports.typescript = """
+module Sup {
+  export class SpriteRenderer extends Sup.ActorComponent {
+    __inner: any
+    constructor(actor, asset) {
+      super(actor);
+      var spriteRenderer = new SupEngine.componentPlugins.SpriteRenderer(this.actor.__inner, asset)
+      this.__inner = spriteRenderer
+      spriteRenderer.__outer = this
+    }
+  }
+}
+"""
+
+exports.typescriptDefs = """
+declare module Sup {
+  class SpriteRenderer extends ActorComponent {
+    constructor(actor: Actor, asset: Asset)
+  }
+}
+"""
+
 exports.script =
   """
   namespace Sup

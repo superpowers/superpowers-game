@@ -1,0 +1,9 @@
+{
+  "name": "superpowers-sparklinlabs-script-plugin",
+  "version": "1.0.0",
+  "dependencies": {
+    "codemirror": "^4.12.0",
+    "operational-transform": "^0.1.1",
+    "typescript": "^1.4.1"
+  }
+}
