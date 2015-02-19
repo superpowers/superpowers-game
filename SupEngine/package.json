@@ -1,0 +1,7 @@
+{
+  "name": "superpowers-engine",
+  "version": "1.0.0",
+  "dependencies": {
+    "three": "^0.69.0"
+  }
+}
