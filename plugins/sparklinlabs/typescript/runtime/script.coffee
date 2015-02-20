@@ -12,7 +12,7 @@ scriptNames = []
 scripts = {}
 
 exports.init = (player, callback) ->
-  player.createActor = (name, parentActor) -> new player.scriptRoot.Sup.Actor name, parentActor
+  player.createActor = (name, parentActor) -> new player.Sup.Actor name, parentActor
   player.createComponent = (type, actor, config) ->
     if type == 'Behavior'
       # TODO: Set provided behavior properties
@@ -22,7 +22,7 @@ exports.init = (player, callback) ->
       behaviorClass = behaviorClass[part] for part in config.behaviorName.split('.')
       new behaviorClass actor
     else
-      new player.scriptRoot.Sup[type] actor
+      new player.Sup[type] actor
 
   for name, plugin of SupRuntime.plugins
     if plugin.typescript?
@@ -35,7 +35,7 @@ exports.init = (player, callback) ->
   return
 
 exports.start = (player, callback) ->
-  jsGlobals = TsCompiler globalNames, globals, "#{tsSource}\ndeclare var console, window, localStorage, player, SupEngine;"
+  jsGlobals = TsCompiler globalNames, globals, "#{tsSource}\ndeclare var console, window, localStorage, player, SupEngine, SupRuntime;"
   if jsGlobals.errors.length > 0
     console.log error for error in jsGlobals.errors
 

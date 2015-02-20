@@ -324,4 +324,5 @@ module Sup {
     export function clear() { localStorage.clear(); }
   }
 }
+player.Sup = Sup;
 """
