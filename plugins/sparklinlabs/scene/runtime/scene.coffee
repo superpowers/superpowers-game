@@ -29,7 +29,7 @@ module Sup {
       return actor
     }
     function awakeActor(actor) {
-      actor.__inner.awake()
+      actor.__inner.awake();
       actor.getChildren().forEach( (child) => { awakeActor(child); } )
     }
 

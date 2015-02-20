@@ -88,19 +88,27 @@ declare module Sup {
 
     getLocalScale(): Math.Vector3;
     setLocalScale(scale: Math.Vector3);
+
+    getBehavior<T extends Behavior>(type: new(actor: Actor, properties?: { [key: string]: any; }, skipAwake?: boolean) => T): T;
   }
 
   class ActorComponent {
+    actor: Actor;
     constructor(actor: Actor);
   }
 
   class Camera extends ActorComponent {
-    constructor(actor: Actor)
+    constructor(actor: Actor);
     setOrthographicMode(enabled: boolean): Camera;
     getOrthographicMode(): boolean;
     setOrthographicScale(scale: number): Camera;
     getOrthographicScale(): number;
   }
+
+  class Behavior extends ActorComponent {
+    constructor(actor: Actor, properties?: { [key: string]: any; }, skipAwake?: boolean);
+  }
+  function registerBehavior(behavior: any): void;
 
   module Input {
     function getScreenSize(): { x: number; y: number; };

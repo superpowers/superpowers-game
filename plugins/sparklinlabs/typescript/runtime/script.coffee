@@ -12,15 +12,12 @@ scriptNames = []
 scripts = {}
 
 exports.init = (player, callback) ->
+  player.behaviorClasses = {}
   player.createActor = (name, parentActor) -> new player.Sup.Actor name, parentActor
   player.createComponent = (type, actor, config) ->
     if type == 'Behavior'
-      # TODO: Set provided behavior properties
-      # behavior[propertyName] = value for propertyName, value of config.properties?
-
-      behaviorClass = player.scriptRoot
-      behaviorClass = behaviorClass[part] for part in config.behaviorName.split('.')
-      new behaviorClass actor
+      behaviorClass = player.behaviorClasses[config.behaviorName]
+      new behaviorClass actor, config.properties, true
     else
       new player.Sup[type] actor
 

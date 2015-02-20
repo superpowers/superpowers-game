@@ -139,12 +139,14 @@ module Sup {
   export class Actor {
     name: string;
     __inner: any;
+    __behaviors: { [key: string]: any; };
 
     constructor(name, parent) {
       this.name = name;
       var innerParent = (parent) ? parent.__inner : null
       var actor = new SupEngine.Actor(player.gameInstance, name, innerParent)
       this.__inner = actor
+      this.__behaviors = {};
       actor.__outer = this
     }
 
@@ -256,6 +258,10 @@ module Sup {
       this.__inner.setLocalScale( tmpVector3.set(scale.x, scale.y, scale.z) );
       return this
     }
+
+    getBehavior(type) {
+      return this.__behaviors[type["name"]]
+    }
   }
 
   export class ActorComponent {
@@ -286,6 +292,32 @@ module Sup {
     }
     getOrthographicScale() {return this.__inner.orthographicScale }
   }
+
+  export class Behavior extends ActorComponent {
+    __inner: any;
+    awake: Function;
+    start: Function;
+    update: Function;
+
+    constructor(actor, properties, skipAwake) {
+      super(actor);
+
+      var funcs = {};
+      funcs["awake"]  = (this.awake)  ? this.awake.bind(this) : null;
+      funcs["start"]  = (this.start)  ? this.start.bind(this) : null;
+      funcs["update"] = (this.update) ? this.update.bind(this) : null;
+      this.__inner = new SupEngine.componentPlugins.Behavior(actor.__inner, funcs);
+
+      this.__inner.__outer = this;
+      this.actor.__behaviors[this.constructor["name"]] = this;
+
+      if (properties) { for (var propertyName in properties) { this[propertyName] = properties[propertyName]; } }
+
+      skipAwake = (skipAwake) ? skipAwake : false
+      if ( ! skipAwake && this.awake ) { this.__inner.awake(); }
+    }
+  }
+  export function registerBehavior(behavior) { player.behaviorClasses[behavior["name"]] = behavior; }
 
   export module Input {
     export function getScreenSize() { return { "x": player.canvas.clientWidth, "y": player.canvas.clientHeight } }
