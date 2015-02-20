@@ -1,6 +1,7 @@
 {
   "name": "superpowers-engine",
   "version": "1.0.0",
+  "main": "SupEngine.coffee",
   "dependencies": {
     "three": "^0.69.0"
   }
