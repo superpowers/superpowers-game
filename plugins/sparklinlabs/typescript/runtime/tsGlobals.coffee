@@ -118,12 +118,17 @@ module Sup {
     type: string;
     children: Array<string>;
     constructor() {
-      console.error("An asset can't be created at runtime");
+      throw new Error("An asset can't be created at runtime");
     }
   }
   export function get(path) {
     var entry = player.entriesByPath[path];
-    var outerAsset = (entry) ? player.getOuterAsset(entry.id) : null;
+    if (entry) {
+      var outerAsset = player.getOuterAsset(entry.id);
+    }
+    else {
+      throw new Error("Invalid asset path")
+    }
     return outerAsset
   }
   export function getActor(name) {
