@@ -1,3 +1,6 @@
+serverRequire = require
+if ! window? then SupEngine = serverRequire '../../../../system/SupEngine'
+
 path = require 'path'
 fs = require 'fs'
 _ = require 'lodash'
