@@ -56,6 +56,7 @@ declare module Sup {
   class Actor {
     // INSERT_COMPONENT_ACCESSORS
     constructor(name: string, parent?: Actor);
+    destroy(): void;
 
     getName(): string;
     setName(name: string): Actor;
@@ -96,6 +97,7 @@ declare module Sup {
   class ActorComponent {
     actor: Actor;
     constructor(actor: Actor);
+    destroy(): void;
   }
 
   class Camera extends ActorComponent {
@@ -107,7 +109,6 @@ declare module Sup {
   }
 
   class Behavior extends ActorComponent {
-    actor: Actor;
     constructor(actor: Actor, properties?: { [key: string]: any; }, skipAwake?: boolean);
   }
   function registerBehavior(behavior: any): void;

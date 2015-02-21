@@ -156,6 +156,11 @@ module Sup {
       this.__behaviors = {};
       actor.__outer = this;
     }
+    destroy() {
+      player.gameInstance.destroyActor(this.__inner);
+      this.__inner.__outer = null;
+      this.__inner = null;
+    }
 
     getName() { return this.__inner.name }
     setName(name) { this.__inner.name = name; return this }
@@ -271,15 +276,17 @@ module Sup {
 
   export class ActorComponent {
     actor: Actor;
+    __inner: any;
 
     constructor(actor) {
       this.actor = actor;
     }
+    destroy() {
+      player.gameInstance.destroyComponent(this.__inner);
+    }
   }
 
   export class Camera extends ActorComponent {
-    __inner: any;
-
     constructor(actor) {
       super(actor);
       this.__inner = new SupEngine.componentPlugins.Camera(this.actor.__inner);
@@ -298,15 +305,13 @@ module Sup {
     getOrthographicScale() {return this.__inner.orthographicScale }
   }
 
-  export class Behavior {
-    actor: Actor;
-    __inner: any;
+  export class Behavior extends ActorComponent {
     awake: Function;
     start: Function;
     update: Function;
 
     constructor(actor, properties, skipAwake) {
-      this.actor = actor;
+      super(actor);
 
       var funcs = {};
       funcs["awake"]  = (this.awake)  ? this.awake.bind(this) : null;

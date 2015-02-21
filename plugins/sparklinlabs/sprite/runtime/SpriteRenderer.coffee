@@ -3,16 +3,16 @@ SpriteRenderer = require '../components/SpriteRenderer'
 exports.typescript = """
 module Sup {
   export class SpriteRenderer extends Sup.ActorComponent {
-    __inner: any
     constructor(actor, asset) {
       super(actor);
-      this.__inner = new SupEngine.componentPlugins.SpriteRenderer(this.actor.__inner, asset.__inner);
+      this.__inner = new SupEngine.componentPlugins.SpriteRenderer(this.actor.__inner);
+      if (asset) { this.setSprite(asset); }
       this.__inner.__outer = this;
       this.actor.spriteRenderer = this;
     }
 
     getSprite() { return this.__inner }
-    setSprite(asset) { this.__inner.setSprite(asset); return this }
+    setSprite(asset) { this.__inner.setSprite(asset.__inner); return this }
     setOpacity(opacity) { this.__inner.opacity = opacity; this.__inner.threeMesh.material.opacity = opacity; return this }
     setColor(r, g, b) {
       this.__inner.color.r = r; this.__inner.color.g = g; this.__inner.color.b = b;
@@ -116,7 +116,7 @@ exports.js = (player) ->
 
 exports.setupComponent = (player, component, config) ->
   if config.spriteAssetId?
-    sprite = player.getOuterAsset config.spriteAssetId
+    sprite = player.getOuterAsset(config.spriteAssetId).__inner
     component.setSprite sprite
 
     if config.animationId?
