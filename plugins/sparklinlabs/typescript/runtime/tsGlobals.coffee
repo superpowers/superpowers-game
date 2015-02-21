@@ -143,7 +143,6 @@ module Sup {
 
   export class Actor {
     __inner: any;
-    __components: { [key: string]: any; };
     __behaviors: { [key: string]: any; };
     // INSERT_COMPONENT_ACCESSORS
 
@@ -151,7 +150,6 @@ module Sup {
       var innerParent = (parent) ? parent.__inner : null;
       var actor = new SupEngine.Actor(player.gameInstance, name, innerParent);
       this.__inner = actor;
-      this.__components = {};
       this.__behaviors = {};
       actor.__outer = this;
     }
@@ -265,7 +263,6 @@ module Sup {
       return this
     }
 
-    getComponent(type) { return this.__components[type["name"]] }
     getBehavior(type) { return this.__behaviors[type["name"]] }
   }
 
@@ -274,7 +271,6 @@ module Sup {
 
     constructor(actor) {
       this.actor = actor;
-      this.actor.__components[this.constructor["name"]] = this;
     }
   }
 
@@ -283,9 +279,9 @@ module Sup {
 
     constructor(actor) {
       super(actor);
-      var camera = new SupEngine.componentPlugins.Camera(this.actor.__inner)
-      this.__inner = camera
-      camera.__outer = this
+      this.__inner = new SupEngine.componentPlugins.Camera(this.actor.__inner);
+      this.__inner.__outer = this;
+      this.actor.camera = this;
     }
     setOrthographicMode(enabled) {
       this.__inner.setOrthographicMode(enabled);

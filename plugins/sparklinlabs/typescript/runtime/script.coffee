@@ -32,6 +32,14 @@ exports.init = (player, callback) ->
   return
 
 exports.start = (player, callback) ->
+  actorComponentAccessors = ""
+  for componentName, component of SupEngine.componentPlugins
+    continue if componentName == "Behavior"
+    actorComponentAccessors += "#{componentName.charAt(0).toLowerCase() + componentName.slice(1)}: #{componentName}; "
+
+  globals["globals.ts"] = globals["globals.ts"].replace "// INSERT_COMPONENT_ACCESSORS", actorComponentAccessors
+  tsDefinition = tsDefinition.replace "// INSERT_COMPONENT_ACCESSORS", actorComponentAccessors
+
   jsGlobals = TsCompiler globalNames, globals, "#{tsSource}\ndeclare var console, window, localStorage, player, SupEngine, SupRuntime;"
   if jsGlobals.errors.length > 0
     console.log error for error in jsGlobals.errors

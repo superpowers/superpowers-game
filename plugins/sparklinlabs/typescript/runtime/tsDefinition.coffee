@@ -54,6 +54,7 @@ declare module Sup {
   function destroyAllActors(): void;
 
   class Actor {
+    // INSERT_COMPONENT_ACCESSORS
     constructor(name: string, parent?: Actor);
 
     getName(): string;
@@ -89,7 +90,6 @@ declare module Sup {
     getLocalScale(): Math.Vector3;
     setLocalScale(scale: Math.Vector3);
 
-    getComponent<T extends ActorComponent>(type: new(actor: Actor) => T): T;
     getBehavior<T extends Behavior>(type: new(actor: Actor, properties?: { [key: string]: any; }, skipAwake?: boolean) => T): T;
   }
 

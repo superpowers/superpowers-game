@@ -1,5 +1,27 @@
 TileMapRenderer = SupEngine.componentPlugins.TileMapRenderer
 
+exports.typescript = """
+module Sup {
+  export class TileMapRenderer extends Sup.ActorComponent {
+    __inner: any
+    constructor(actor, asset) {
+      super(actor);
+      this.__inner = new SupEngine.componentPlugins.TileMapRenderer(this.actor.__inner, asset);
+      this.__inner.__outer = this;
+      this.actor.tileMapRenderer = this;
+    }
+  }
+}
+"""
+
+exports.typescriptDefs = """
+declare module Sup {
+  class TileMapRenderer extends ActorComponent {
+    constructor(actor: Actor, asset?: Asset);
+  }
+}
+"""
+
 exports.script =
   """
   namespace Sup

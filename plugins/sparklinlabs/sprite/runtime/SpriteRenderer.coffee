@@ -8,6 +8,7 @@ module Sup {
       super(actor);
       this.__inner = new SupEngine.componentPlugins.SpriteRenderer(this.actor.__inner, asset);
       this.__inner.__outer = this;
+      this.actor.spriteRenderer = this;
     }
 
     getSprite() { return this.__inner }
