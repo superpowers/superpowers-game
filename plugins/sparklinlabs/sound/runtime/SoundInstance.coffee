@@ -9,7 +9,7 @@ module Sup {
       constructor(asset) {
         var audioCtx = player.gameInstance.audio.getContext();
         var audioMasterGain = player.gameInstance.audio.masterGain;
-        this.__inner = new SupEngine.SoundInstance(audioCtx, audioMasterGain, asset.buffer);
+        this.__inner = new SupEngine.SoundInstance(audioCtx, audioMasterGain, asset.__inner.buffer);
         return
       }
       play() { this.__inner.play(); return this }
@@ -29,9 +29,6 @@ module Sup {
 }
 """
 
-
-
-
 exports.typescriptDefs = """
 declare module Sup {
   module Audio {
@@ -39,7 +36,7 @@ declare module Sup {
     function setMasterVolume(volume: number): void;
 
     class SoundInstance {
-      constructor(asset: Asset);
+      constructor(asset: Sound);
       play(): SoundInstance;
       stop(): SoundInstance;
       pause(): SoundInstance;

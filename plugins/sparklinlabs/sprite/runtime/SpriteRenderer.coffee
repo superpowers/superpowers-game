@@ -6,7 +6,7 @@ module Sup {
     __inner: any
     constructor(actor, asset) {
       super(actor);
-      this.__inner = new SupEngine.componentPlugins.SpriteRenderer(this.actor.__inner, asset);
+      this.__inner = new SupEngine.componentPlugins.SpriteRenderer(this.actor.__inner, asset.__inner);
       this.__inner.__outer = this;
       this.actor.spriteRenderer = this;
     }
@@ -37,10 +37,10 @@ module Sup {
 exports.typescriptDefs = """
 declare module Sup {
   class SpriteRenderer extends ActorComponent {
-    constructor(actor: Actor, asset?: Asset);
+    constructor(actor: Actor, asset?: Sprite);
 
-    getSprite(): Asset;
-    setSprite(asset?: Asset): SpriteRenderer;
+    getSprite(): Sprite;
+    setSprite(asset?: Sprite): SpriteRenderer;
     setOpacity(opacity: number): SpriteRenderer;
     setColor(r: number, g: number, b: number): SpriteRenderer;
 

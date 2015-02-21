@@ -29,11 +29,11 @@ module Sup {
 exports.typescriptDefs = """
 declare module Sup {
   class TileMapRenderer extends ActorComponent {
-    constructor(actor: Actor, asset?: Asset);
+    constructor(actor: Actor, asset?: TileMap);
     getTileMap(): TileMap;
-    setTileMap(tileMap: Asset, replaceTileSet?: boolean); TileMapRenderer;
+    setTileMap(tileMap: TileMap, replaceTileSet?: boolean); TileMapRenderer;
     getTileSet(): TileSet;
-    setTileSet(tileSet: Asset): TileMapRenderer;
+    setTileSet(tileSet: TileSet): TileMapRenderer;
     getLayerOpacity(layer: number): number
     setLayerOpacity(layer: number, opacity: number): TileMapRenderer;
   }

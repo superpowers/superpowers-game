@@ -48,7 +48,7 @@ declare module Sup {
     children: Array<string>;
     constructor(inner: {[key:string]: any;});
   }
-  function get(path: string): Asset;
+  function get<T extends Asset>(path: string, type: new(inner: {[key:string]: any;}) => T): T;
 
   function getActor(name: string): Actor;
   function destroyAllActors(): void;

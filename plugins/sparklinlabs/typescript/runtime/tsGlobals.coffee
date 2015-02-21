@@ -123,14 +123,15 @@ module Sup {
       this.__inner.__outer = this;
     }
   }
-  export function get(path) {
+  export function get(path, type) {
     var entry = player.entriesByPath[path];
-    if (entry) {
-      var outerAsset = player.getOuterAsset(entry.id);
-    }
-    else {
-      throw new Error("Invalid asset path")
-    }
+
+    if (entry) { var outerAsset = player.getOuterAsset(entry.id); }
+    else { throw new Error("Invalid asset path") }
+
+    var typeName = type.name.charAt(0).toLowerCase() + type.name.slice(1);
+    if (typeName != outerAsset.type) { throw new Error("Invalid asset type") }
+
     return outerAsset
   }
   export function getActor(name) {

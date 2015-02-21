@@ -34,18 +34,24 @@ module Sup {
     }
 
     var actors = [];
-    sceneAsset.nodes.forEach( (node) => { actors.push( walk(node, null) ); } )
+    sceneAsset.__inner.nodes.forEach( (node) => { actors.push( walk(node, null) ); } )
     actors.forEach( (actor) => { awakeActor(actor); })
 
     return actors
   }
+
+  export class Scene extends Asset {}
 }
 """
 
 exports.typescriptDefs = """
 declare module Sup {
-  function loadScene(sceneAsset: Asset): void;
-  function appendScene(sceneAsset: Asset): Array<Asset>
+  function loadScene(sceneAsset: Scene): void;
+  function appendScene(sceneAsset: Scene): Array<Actor>
+
+  class Scene extends Asset {
+    dummySceneMember;
+  }
 }
 """
 
@@ -92,3 +98,6 @@ exports.js = (player) ->
       appendScene sceneAsset; return
 
     'appendScene': appendScene
+
+exports.createOuterAsset = (player, asset) ->
+  return new player.Sup.Scene asset
