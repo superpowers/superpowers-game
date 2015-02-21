@@ -9,6 +9,26 @@ module Sup {
       this.__inner = new SupEngine.componentPlugins.SpriteRenderer(this.actor.__inner, asset);
       this.__inner.__outer = this;
     }
+
+    getSprite() { return this.__inner }
+    setSprite(asset) { this.__inner.setSprite(asset); return this }
+    setOpacity(opacity) { this.__inner.opacity = opacity; this.__inner.threeMesh.material.opacity = opacity; return this }
+    setColor(r, g, b) {
+      this.__inner.color.r = r; this.__inner.color.g = g; this.__inner.color.b = b;
+      this.__inner.threeMesh.material.color.setRGB(r, g, b);
+      return this
+    }
+
+    setAnimation(animationName, looping) { this.__inner.setAnimation(animationName, looping); return this }
+    getAnimation() { return this.__inner.getAnimation() }
+    setAnimationTime(time) { this.__inner.setAnimationTime(time); return this }
+    getAnimationTime() { return this.__inner.getAnimationTime() }
+    getAnimationDuration() { return this.__inner.getAnimationDuration() }
+
+    isAnimationPlaying() { return this.__inner.isAnimationPlaying }
+    playAnimation(looping) { this.__inner.playAnimation(looping); return this }
+    pauseAnimation() { this.__inner.pauseAnimation(); return this }
+    stopAnimation() { this.__inner.stopAnimation(); return this }
   }
 }
 """
@@ -16,7 +36,23 @@ module Sup {
 exports.typescriptDefs = """
 declare module Sup {
   class SpriteRenderer extends ActorComponent {
-    constructor(actor: Actor, asset?: Asset)
+    constructor(actor: Actor, asset?: Asset);
+
+    getSprite(): Asset;
+    setSprite(asset?: Asset): SpriteRenderer;
+    setOpacity(opacity: number): SpriteRenderer;
+    setColor(r: number, g: number, b: number): SpriteRenderer;
+
+    getAnimation(): string;
+    setAnimation(animationName: string, looping?: boolean): SpriteRenderer;
+    setAnimationTime(time: number): SpriteRenderer;
+    getAnimationTime(): number
+    getAnimationDuration(): number
+
+    isAnimationPlaying(): boolean
+    playAnimation(looping?: boolean): SpriteRenderer;
+    pauseAnimation(): SpriteRenderer;
+    stopAnimation(): SpriteRenderer;
   }
 }
 """

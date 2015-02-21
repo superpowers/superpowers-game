@@ -99,7 +99,7 @@ module.exports = class SpriteRenderer extends SupEngine.ActorComponent
 
     return 0
 
-  playAnimation: (@animationLooping) -> @isAnimationPlaying = true; return
+  playAnimation: (@animationLooping=true) -> @isAnimationPlaying = true; return
   pauseAnimation: -> @isAnimationPlaying = false; return
 
   stopAnimation: ->
