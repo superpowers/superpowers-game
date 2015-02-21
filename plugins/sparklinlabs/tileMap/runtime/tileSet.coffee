@@ -1,6 +1,31 @@
 THREE = SupEngine.THREE
 TileSet = require '../components/TileSet'
 
+exports.typescript = """
+module Sup {
+  export class TileSet extends Asset {
+    getTileProperties(tile) {
+      var tilesPerRow = this.__inner.data.texture.image.width / this.__inner.data.gridSize;
+
+      var x = tile % tilesPerRow;
+      var y = jsMath.floor(tile / tilesPerRow);
+      var properties = this.__inner.data.tileProperties[x + "_" + y];
+      properties = (properties) ? properties : {}
+      return properties
+    }
+  }
+}
+"""
+
+
+exports.typescriptDefs = """
+declare module Sup {
+  class TileSet extends Asset {
+    getTileProperties(tile: number): {[key:string]: any;}
+  }
+}
+"""
+
 exports.script =
   """
   namespace Sup
@@ -46,4 +71,4 @@ exports.loadAsset = (player, entry, callback) ->
   return
 
 exports.createOuterAsset = (player, asset) ->
-  return new player.scriptRoot.Sup.TileSet asset
+  return new player.Sup.TileSet asset

@@ -46,7 +46,7 @@ declare module Sup {
   class Asset {
     type: string;
     children: Array<string>;
-    constructor();
+    constructor(inner: {[key:string]: any;});
   }
   function get(path: string): Asset;
 

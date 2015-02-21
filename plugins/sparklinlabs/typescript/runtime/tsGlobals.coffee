@@ -117,8 +117,10 @@ module Sup {
   export class Asset {
     type: string;
     children: Array<string>;
-    constructor() {
-      throw new Error("An asset can't be created at runtime");
+    __inner: any;
+    constructor(inner) {
+      this.__inner = inner;
+      this.__inner.__outer = this;
     }
   }
   export function get(path) {
