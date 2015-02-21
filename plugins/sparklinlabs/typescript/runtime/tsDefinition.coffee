@@ -48,6 +48,10 @@ declare module Sup {
     children: Array<string>;
     constructor(inner: {[key:string]: any;});
   }
+  class Folder extends Asset {
+    dummyFolderMember;
+  }
+  function get(path: string): Asset;
   function get<T extends Asset>(path: string, type: new(inner: {[key:string]: any;}) => T): T;
 
   function getActor(name: string): Actor;
