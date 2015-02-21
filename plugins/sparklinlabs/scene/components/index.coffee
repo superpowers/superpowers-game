@@ -1,1 +1,1 @@
-SupEngine.addComponentPlugin 'CameraMarker', require './CameraMarker'
+SupEngine.addEditorComponent 'CameraMarker', require './CameraMarker'

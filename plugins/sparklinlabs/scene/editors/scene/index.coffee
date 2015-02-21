@@ -46,7 +46,7 @@ start = ->
   ui.cameraActor = new SupEngine.Actor ui.gameInstance, "Camera"
   ui.cameraActor.setLocalPosition new THREE.Vector3 0, 0, 10
   cameraComponent = new SupEngine.componentPlugins.Camera ui.cameraActor
-  new SupEngine.componentPlugins.Camera3DControls ui.cameraActor, cameraComponent
+  new SupEngine.editorComponents.Camera3DControls ui.cameraActor, cameraComponent
 
   ui.bySceneNodeId = {}
 
@@ -424,7 +424,7 @@ createNodeActor = (node) ->
   nodeActor
 
 createNodeActorComponent = (sceneNode, sceneComponent, nodeActor) ->
-  componentClass = SupEngine.componentPlugins["#{sceneComponent.type}Marker"] ? SupEngine.componentPlugins[sceneComponent.type]
+  componentClass = SupEngine.editorComponents["#{sceneComponent.type}Marker"] ? SupEngine.componentPlugins[sceneComponent.type]
   actorComponent = new componentClass nodeActor
 
   ui.bySceneNodeId[sceneNode.id].bySceneComponentId[sceneComponent.id] =

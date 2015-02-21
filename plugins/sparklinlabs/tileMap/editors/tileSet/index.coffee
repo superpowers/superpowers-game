@@ -1,6 +1,6 @@
 TileSetAsset = SupCore.api.assetPlugins.tileSet
 TileSet = require '../../components/TileSet'
-TileSetRenderer = SupEngine.componentPlugins.TileSetRenderer
+TileSetRenderer = SupEngine.editorComponents.TileSetRenderer
 
 TreeView = require 'dnd-tree-view'
 
@@ -27,7 +27,7 @@ start = ->
   cameraActor.setLocalPosition new SupEngine.THREE.Vector3 0, 0, 10
   ui.cameraComponent = new SupEngine.componentPlugins.Camera cameraActor
   ui.cameraComponent.setOrthographicMode true
-  ui.cameraControls = new SupEngine.componentPlugins.Camera2DControls cameraActor, ui.cameraComponent, {
+  ui.cameraControls = new SupEngine.editorComponents.Camera2DControls cameraActor, ui.cameraComponent, {
     zoomOffset: 2
     zoomMin: 1
     zoomMax: 50
@@ -38,11 +38,11 @@ start = ->
 
   ui.gridActor = new SupEngine.Actor ui.gameInstance, "Grid"
   ui.gridActor.setLocalPosition new SupEngine.THREE.Vector3 0, 0, 1
-  ui.gridRenderer = new SupEngine.componentPlugins.GridRenderer ui.gridActor
+  ui.gridRenderer = new SupEngine.editorComponents.GridRenderer ui.gridActor
 
   ui.selectedTileActor = new SupEngine.Actor ui.gameInstance, "Selection"
   ui.selectedTileActor.setLocalPosition new SupEngine.THREE.Vector3 0, -1, 2
-  ui.selectedTileRenderer = new SupEngine.componentPlugins.FlatColorRenderer ui.selectedTileActor
+  ui.selectedTileRenderer = new SupEngine.editorComponents.FlatColorRenderer ui.selectedTileActor
   ui.selectedTileRenderer.setup "#900090", 1, 1
 
   requestAnimationFrame draw

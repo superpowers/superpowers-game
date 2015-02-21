@@ -32,7 +32,7 @@ start = ->
   ui.animationArea.cameraComponent = new SupEngine.componentPlugins.Camera cameraActor
   ui.animationArea.cameraComponent.setOrthographicMode true
   ui.animationArea.cameraComponent.setOrthographicScale 5
-  new SupEngine.componentPlugins.Camera2DControls cameraActor, ui.animationArea.cameraComponent, { zoomOffset: 0.5, zoomMin: 1, zoomMax: 50 }
+  new SupEngine.editorComponents.Camera2DControls cameraActor, ui.animationArea.cameraComponent, { zoomOffset: 0.5, zoomMin: 1, zoomMax: 50 }
 
   ui.animationArea.spriteActor = new SupEngine.Actor ui.animationArea.gameInstance, "Sprite"
 
