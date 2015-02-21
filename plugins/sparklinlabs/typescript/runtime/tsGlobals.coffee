@@ -142,13 +142,12 @@ module Sup {
   }
 
   export class Actor {
-    name: string;
     __inner: any;
     __components: { [key: string]: any; };
     __behaviors: { [key: string]: any; };
+    // INSERT_COMPONENT_ACCESSORS
 
     constructor(name, parent) {
-      this.name = name;
       var innerParent = (parent) ? parent.__inner : null;
       var actor = new SupEngine.Actor(player.gameInstance, name, innerParent);
       this.__inner = actor;
@@ -157,11 +156,11 @@ module Sup {
       actor.__outer = this;
     }
 
-    getName() { return this.name }
-    setName(name) { this.name = name; return this }
+    getName() { return this.__inner.name }
+    setName(name) { this.__inner.name = name; return this }
     getVisible() { return this.__inner.threeObject.visible; return this }
     setVisible(visible: boolean) { this.__inner.threeObject.visible = visible }
-    getParent() { return (this. __inner.parent) ? this. __inner.parent.__outer : null; }
+    getParent() { return (this.__inner.parent) ? this. __inner.parent.__outer : null; }
     setParent(parent) { var innerParent = (parent) ? parent.__inner : null; this.__inner.setParent(innerParent); return this }
 
     getChild(name) {
