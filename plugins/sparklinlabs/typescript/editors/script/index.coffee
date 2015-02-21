@@ -3,8 +3,9 @@ ScriptAsset = SupCore.api.assetPlugins.script
 CodeMirror = require 'codemirror'
 require 'codemirror/addon/search/search'
 require 'codemirror/addon/search/searchcursor'
+require 'codemirror/addon/edit/closebrackets'
 require 'codemirror/keymap/sublime'
-require 'codemirror/mode/coffeescript/coffeescript'
+require 'codemirror/mode/javascript/javascript'
 OT = require 'operational-transform'
 
 qs = require('querystring').parse window.location.search.slice(1)
@@ -34,11 +35,11 @@ start = ->
 
   textArea = document.querySelector('.code-editor')
   ui.editor = CodeMirror.fromTextArea textArea,
-    lineNumbers: true, matchBrackets: true, styleActiveLine: true
+    lineNumbers: true, matchBrackets: true, styleActiveLine: true, autoCloseBrackets: true
     tabSize: 2, keyMap: 'sublime' # , theme: 'monokai'
     extraKeys: extraKeys
     viewportMargin: Infinity
-    mode: 'coffeescript'
+    mode: 'text/typescript'
 
   ui.tmpDoc = new CodeMirror.Doc ""
   ui.texts = []
