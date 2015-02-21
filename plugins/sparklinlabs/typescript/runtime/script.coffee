@@ -32,6 +32,8 @@ exports.init = (player, callback) ->
   return
 
 exports.start = (player, callback) ->
+  console.log "Compiling scripts..."
+
   actorComponentAccessors = ""
   for componentName, component of SupEngine.componentPlugins
     continue if componentName == "Behavior"
@@ -50,6 +52,7 @@ exports.start = (player, callback) ->
       console.log error for error in results.errors
 
     else
+      console.log "Compilation successful!"
       code = jsGlobals.script + results.script
       scriptFunction = new Function 'player', code
       scriptFunction player
