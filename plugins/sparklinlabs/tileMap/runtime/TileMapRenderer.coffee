@@ -6,15 +6,16 @@ module Sup {
     __inner: any
     constructor(actor, asset) {
       super(actor);
-      this.__inner = new SupEngine.componentPlugins.TileMapRenderer(this.actor.__inner, asset);
+      this.__inner = new SupEngine.componentPlugins.TileMapRenderer(this.actor.__inner);
+      if (asset) { this.setTileMap(asset, true); }
       this.__inner.__outer = this;
       this.actor.tileMapRenderer = this;
     }
     getTileMap() { return this.__inner.tileMap.__outer }
     setTileMap(tileMap, replaceTileSet) {
       this.__inner.setTileMap(tileMap.__inner);
-      replaceTileSet = (replaceTileSet) ? replaceTileSet : false;
-      if (replaceTileSet) { this.__inner.setTileSet( player.getOuterAsset(tileMap.__inner.data.tileSetId) ); }
+      replaceTileSet = (replaceTileSet) ? replaceTileSet : true;
+      if (replaceTileSet) { this.__inner.setTileSet( player.getOuterAsset(tileMap.__inner.data.tileSetId).__inner ); }
       return this
     }
     getTileSet() { return this.__inner.tileSet.__outer }
