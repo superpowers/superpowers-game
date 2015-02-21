@@ -144,15 +144,17 @@ module Sup {
   export class Actor {
     name: string;
     __inner: any;
+    __components: { [key: string]: any; };
     __behaviors: { [key: string]: any; };
 
     constructor(name, parent) {
       this.name = name;
-      var innerParent = (parent) ? parent.__inner : null
-      var actor = new SupEngine.Actor(player.gameInstance, name, innerParent)
-      this.__inner = actor
+      var innerParent = (parent) ? parent.__inner : null;
+      var actor = new SupEngine.Actor(player.gameInstance, name, innerParent);
+      this.__inner = actor;
+      this.__components = {};
       this.__behaviors = {};
-      actor.__outer = this
+      actor.__outer = this;
     }
 
     getName() { return this.name }
@@ -264,9 +266,8 @@ module Sup {
       return this
     }
 
-    getBehavior(type) {
-      return this.__behaviors[type["name"]]
-    }
+    getComponent(type) { return this.__components[type["name"]] }
+    getBehavior(type) { return this.__behaviors[type["name"]] }
   }
 
   export class ActorComponent {
@@ -274,6 +275,7 @@ module Sup {
 
     constructor(actor) {
       this.actor = actor;
+      this.actor.__components[this.constructor["name"]] = this;
     }
   }
 
@@ -298,14 +300,15 @@ module Sup {
     getOrthographicScale() {return this.__inner.orthographicScale }
   }
 
-  export class Behavior extends ActorComponent {
+  export class Behavior {
+    actor: Actor;
     __inner: any;
     awake: Function;
     start: Function;
     update: Function;
 
     constructor(actor, properties, skipAwake) {
-      super(actor);
+      this.actor = actor;
 
       var funcs = {};
       funcs["awake"]  = (this.awake)  ? this.awake.bind(this) : null;
