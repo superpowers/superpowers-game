@@ -11,13 +11,23 @@ exports.GameInstance = require './GameInstance'
 exports.Actor = require './Actor'
 exports.ActorComponent = require './ActorComponent'
 
-exports.componentPlugins =
-  # Built-ins
-  Camera: require './components/Camera'
+exports.editorComponents =
   Camera2DControls: require './components/Camera2DControls'
   Camera3DControls: require './components/Camera3DControls'
   FlatColorRenderer: require './components/FlatColorRenderer'
   GridRenderer: require './components/GridRenderer'
+
+exports.addEditorComponent = (name, component) ->
+  if exports.editorComponents[name]?
+    console.log "SupEngine.addEditorComponent: Tried to load two or more components named \"#{name}\""
+    return
+
+  exports.editorComponents[name] = component
+  return
+
+exports.componentPlugins =
+  # Built-ins
+  Camera: require './components/Camera'
 
 exports.addComponentPlugin = (name, plugin) ->
   if exports.componentPlugins[name]?
