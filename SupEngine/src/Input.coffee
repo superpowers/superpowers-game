@@ -97,7 +97,8 @@ module.exports = class Input
   _onMouseMove: (event) =>
     event.preventDefault()
 
-    @newMousePosition = x: event.offsetX or event.layerX, y: event.offsetY or event.layerY
+    rect = event.target.getBoundingClientRect()
+    @newMousePosition = x: event.clientX - rect.left, y: event.clientY - rect.top
     return
 
   _onMouseDown: (event) =>
@@ -117,20 +118,22 @@ module.exports = class Input
 
   _onMouseWheel: (event) =>
     event.preventDefault()
-    @newScrollDelta += event.wheelDelta || -event.detail
+    @newScrollDelta = if (event.wheelDelta > 0 || event.detail < 0) then 1 else -1
     false
 
   _onTouchStart: (event) =>
     event.preventDefault()
 
+    rect = event.target.getBoundingClientRect()
+
     for touch in event.changedTouches
-      @touches[touch.identifier].position.x = touch.clientX
-      @touches[touch.identifier].position.y = touch.clientY
+      @touches[touch.identifier].position.x = touch.clientX - rect.left
+      @touches[touch.identifier].position.y = touch.clientY - rect.top
 
       @touchesDown[touch.identifier] = true
 
       if touch.identifier == 0
-        @newMousePosition = x: touch.clientX, y: touch.clientY
+        @newMousePosition = x: touch.clientX - rect.left, y: touch.clientY - rect.top
         @mouseButtonsDown[0] = true
     return
 
@@ -146,11 +149,14 @@ module.exports = class Input
   _onTouchMove: (event) =>
     event.preventDefault()
 
-    for touch in event.changedTouches
-      @touches[touch.identifier].position.x = touch.clientX
-      @touches[touch.identifier].position.y = touch.clientY
+    rect = event.target.getBoundingClientRect()
 
-      @newMousePosition = x: touch.clientX, y: touch.clientY if touch.identifier == 0
+    for touch in event.changedTouches
+      @touches[touch.identifier].position.x = touch.clientX - rect.left
+      @touches[touch.identifier].position.y = touch.clientY - rect.top
+
+      if touch.identifier == 0
+        @newMousePosition = x: touch.clientX - rect.left, y: touch.clientY - rect.top
     return
 
   # TODO: stop using keyCode when KeyboardEvent.code is supported more widely
@@ -166,9 +172,9 @@ module.exports = class Input
     return
 
   update: ->
-    @mouseButtonsDown[5] = @newScrollDelta >= 120
-    @mouseButtonsDown[6] = @newScrollDelta <= -120
-    @newScrollDelta = 0 if Math.abs(@newScrollDelta) >= 120
+    @mouseButtonsDown[5] = @newScrollDelta > 0
+    @mouseButtonsDown[6] = @newScrollDelta < 0
+    @newScrollDelta = 0 if @newScrollDelta != 0
 
     if @newMousePosition?
       @mouseDelta.x = @newMousePosition.x - @mousePosition.x
