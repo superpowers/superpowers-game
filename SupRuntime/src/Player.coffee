@@ -141,7 +141,7 @@ module.exports = class Player
     if ! outerAsset? and asset?
       entry = @entriesById[assetId]
       if ! entry.type?
-        outerAsset = { type: null, children: entry.children }
+        outerAsset = { type: "folder", children: entry.children }
 
       else
         plugin = SupRuntime.plugins[@entriesById[assetId].type]
