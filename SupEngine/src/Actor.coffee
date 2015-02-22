@@ -166,16 +166,17 @@ module.exports = class Actor
     return
 
   _destroy: ->
+    @components[0]._destroy() while @components.length > 0
+    @components = null
+
     if @parent?
       @parent.threeObject.remove @threeObject
       @parent.children.splice @parent.children.indexOf(@), 1
       @parent = null
     else
       @gameInstance.tree.root.splice @gameInstance.tree.root.indexOf(@), 1
-      @gameInstance.threeScene.remove
-
-    @components[0]._destroy() while @components.length > 0
-    @components = null
+      @gameInstance.threeScene.remove @threeObject
+    @threeObject = null
 
     @gameInstance = null
     return
