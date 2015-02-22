@@ -139,7 +139,7 @@ module Sup {
   }
   export function getActor(name) {
     var foundActor = null;
-    player.gameInstance.tree.walkTopDown( (actor) => { if ( actor.name == name ) { foundActor = (foundActor) ? foundActor: actor.__outer; } } )
+    player.gameInstance.tree.walkTopDown( (actor) => { if ( actor.name == name && ! actor.pendingForDestruction ) { foundActor = (foundActor) ? foundActor: actor.__outer; } } )
     return foundActor
   }
   export function destroyAllActors() {
