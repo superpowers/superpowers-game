@@ -1,4 +1,6 @@
 async = require 'async'
+convert = require 'convert-source-map'
+combine = require 'combine-source-map'
 
 TsCompiler = require './tsCompiler'
 tsSource = require './tsSource'
@@ -42,18 +44,36 @@ exports.start = (player, callback) ->
   globals["globals.ts"] = globals["globals.ts"].replace "// INSERT_COMPONENT_ACCESSORS", actorComponentAccessors
   tsDefinition = tsDefinition.replace "// INSERT_COMPONENT_ACCESSORS", actorComponentAccessors
 
-  jsGlobals = TsCompiler globalNames, globals, "#{tsSource}\ndeclare var console, window, localStorage, player, SupEngine, SupRuntime;"
+  jsGlobals = TsCompiler globalNames, globals, "#{tsSource}\ndeclare var console, window, localStorage, player, SupEngine, SupRuntime;", sourceMap: false
   if jsGlobals.errors.length > 0
     console.log error for error in jsGlobals.errors
 
   else
-    results = TsCompiler scriptNames, scripts, "#{tsSource}#{tsDefinition}"
+    results = TsCompiler scriptNames, scripts, "#{tsSource}#{tsDefinition}", sourceMap: true
     if results.errors.length > 0
       console.log error for error in results.errors
 
     else
       console.log "Compilation successful!"
-      code = jsGlobals.script + results.script
+
+      getLineCounts = (string) =>
+        count = 1; index = -2
+        loop
+          index = string.indexOf("\n",index+1)
+          break if index == -1
+          count += 1
+        return count
+
+      line = getLineCounts( jsGlobals.script ) + 2
+      combinedSourceMap = combine.create('bundle.js')
+      for file in results.files
+        comment = convert.fromObject( results.sourceMaps[file.name] ).toComment();
+        combinedSourceMap.addFile( { sourceFile: file.name, source: file.text + "\n#{comment}" }, {line} )
+        line += ( getLineCounts( file.text ) )
+
+      convertedSourceMap = convert.fromBase64(combinedSourceMap.base64()).toObject();
+      url = URL.createObjectURL(new Blob([ JSON.stringify(convertedSourceMap) ]));
+      code = jsGlobals.script + results.script + "//# sourceMappingURL=#{url}"
       scriptFunction = new Function 'player', code
       scriptFunction player
 
@@ -61,10 +81,9 @@ exports.start = (player, callback) ->
   return
 
 exports.loadAsset = (player, entry, callback) ->
+  scriptNames.push entry.name
   player.getAssetData "assets/#{entry.id}/script.txt", 'text', (err, script) ->
-    scriptNames.push entry.name
-    scripts["#{entry.name}.ts"] = "#{script}\n"
-
+    scripts["#{entry.name}.ts"] = "#{script}"
     callback null, script
     return
   return
