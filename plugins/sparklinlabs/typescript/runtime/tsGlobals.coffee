@@ -325,10 +325,10 @@ module Sup {
       this.__inner.__outer = this;
       this.actor.__behaviors[this.constructor["name"]] = this;
 
-      if (properties) { for (var propertyName in properties) { this[propertyName] = properties[propertyName]; } }
-
       skipAwake = (skipAwake) ? skipAwake : false
       if ( ! skipAwake && this.awake ) { this.__inner.awake(); }
+
+      if (properties) { for (var propertyName in properties) { this[propertyName] = properties[propertyName]; } }
     }
   }
   export function registerBehavior(behavior) { player.behaviorClasses[behavior["name"]] = behavior; }
