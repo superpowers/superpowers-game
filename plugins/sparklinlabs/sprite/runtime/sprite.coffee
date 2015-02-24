@@ -1,5 +1,3 @@
-THREE = SupEngine.THREE
-
 exports.typescript = """
 module Sup {
   export class Sprite extends Asset {}
@@ -20,12 +18,12 @@ exports.loadAsset = (player, entry, callback) ->
     img = new Image
 
     img.onload = ->
-      data.texture = new THREE.Texture img
+      data.texture = new SupEngine.THREE.Texture img
       data.texture.needsUpdate = true
 
       if data.filtering == 'pixelated'
-        data.texture.magFilter = THREE.NearestFilter
-        data.texture.minFilter = THREE.NearestFilter
+        data.texture.magFilter = SupEngine.THREE.NearestFilter
+        data.texture.minFilter = SupEngine.THREE.NearestFilter
 
       callback null, data; return
 

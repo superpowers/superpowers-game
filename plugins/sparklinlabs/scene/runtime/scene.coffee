@@ -1,5 +1,4 @@
-tmpVector3 = new SupEngine.THREE.Vector3()
-tmpQuaternion = new SupEngine.THREE.Quaternion()
+
 
 exports.loadAsset = (player, entry, callback) ->
   player.getAssetData "assets/#{entry.id}/asset.json", 'json', callback
@@ -62,6 +61,8 @@ exports.script =
     transcendental machine appendScene(blackbox sceneAsset): List
   """
 
+#tmpVector3 = new SupEngine.THREE.Vector3()
+#tmpQuaternion = new SupEngine.THREE.Quaternion()
 exports.js = (player) ->
   appendScene = (sceneAsset) ->
     walk = (node, parentActor) ->

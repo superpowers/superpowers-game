@@ -1,5 +1,3 @@
-SpriteRenderer = require '../components/SpriteRenderer'
-
 exports.typescript = """
 module Sup {
   export class SpriteRenderer extends Sup.ActorComponent {
@@ -82,6 +80,7 @@ exports.script =
       transcendental action stopAnimation()
   """
 
+#SpriteRenderer = require '../components/SpriteRenderer'
 exports.js = (player) ->
   'Sup':
     'SpriteRenderer':

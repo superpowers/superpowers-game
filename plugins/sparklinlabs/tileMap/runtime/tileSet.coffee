@@ -1,6 +1,3 @@
-THREE = SupEngine.THREE
-TileSet = require '../components/TileSet'
-
 exports.typescript = """
 module Sup {
   export class TileSet extends Asset {
@@ -51,15 +48,16 @@ exports.js = (player) ->
           y = Math.floor(tile / tilesPerRow)
           return @__inner.data.tileProperties["#{x}_#{y}"] ? {}
 
+TileSet = require '../components/TileSet'
 exports.loadAsset = (player, entry, callback) ->
   player.getAssetData "assets/#{entry.id}/asset.json", 'json', (err, data) =>
     img = new Image()
 
     img.onload = ->
-      data.texture = new THREE.Texture img
+      data.texture = new SupEngine.THREE.Texture img
       data.texture.needsUpdate = true
-      data.texture.magFilter = THREE.NearestFilter
-      data.texture.minFilter = THREE.NearestFilter
+      data.texture.magFilter = SupEngine.THREE.NearestFilter
+      data.texture.minFilter = SupEngine.THREE.NearestFilter
 
       callback null, new TileSet data
       return

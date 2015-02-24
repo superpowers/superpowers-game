@@ -1,5 +1,3 @@
-TileMap = require '../components/TileMap'
-
 exports.typescript = """
 module Sup {
   export class TileMap extends Asset {
@@ -66,6 +64,7 @@ exports.script =
       transcendental action getTileTransformAt(number layer, number x, number y): Dictionary
   """
 
+
 exports.js = (player) ->
   'Sup':
     'TileMap':
@@ -102,6 +101,7 @@ exports.js = (player) ->
           [tileX, tileY, flipX, flipY, angle] = @__inner.getTileAt layer, x, y
           return { flipX, flipY, angle }
 
+TileMap = require '../components/TileMap'
 exports.loadAsset = (player, entry, callback) ->
   player.getAssetData "assets/#{entry.id}/asset.json", 'json', (err, data) ->
     callback null, new TileMap data

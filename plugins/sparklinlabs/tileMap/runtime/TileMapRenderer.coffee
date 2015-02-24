@@ -1,5 +1,3 @@
-TileMapRenderer = SupEngine.componentPlugins.TileMapRenderer
-
 exports.typescript = """
 module Sup {
   export class TileMapRenderer extends Sup.ActorComponent {
@@ -52,6 +50,7 @@ exports.script =
       transcendental action getLayerOpacity(number layer): number
   """
 
+#TileMapRenderer = SupEngine.componentPlugins.TileMapRenderer
 exports.js = (player) ->
   'Sup':
     'TileMapRenderer':
