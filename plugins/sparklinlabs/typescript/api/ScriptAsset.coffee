@@ -2,6 +2,32 @@ OT = require 'operational-transform'
 fs = require 'fs'
 path = require 'path'
 
+
+if ! window?
+  serverRequire = require
+  TsCompiler = serverRequire '../runtime/tsCompiler'
+  tsSource = serverRequire '../runtime/tsSource'
+  tsDefinition = serverRequire '../runtime/tsDefinition'
+
+  global.SupRuntime =
+    addPlugin: (name, plugin) ->
+      tsDefinition += plugin.typescriptDefs if plugin.typescriptDefs?
+      return
+
+  shouldIgnorePlugin = (pluginName) -> pluginName.indexOf('.') != -1 or pluginName == 'node_modules'
+  pluginsPath = "#{__dirname}/../../.."
+  for pluginAuthor in fs.readdirSync pluginsPath
+    pluginAuthorPath = "#{pluginsPath}/#{pluginAuthor}"
+
+    for pluginName in fs.readdirSync pluginAuthorPath
+      continue if shouldIgnorePlugin pluginName
+      pluginPath = "#{pluginAuthorPath}/#{pluginName}"
+
+      runtimeModulePath = "#{pluginPath}/runtime"
+      require runtimeModulePath if fs.existsSync runtimeModulePath
+
+  delete global.SupRuntime
+
 module.exports = class ScriptAsset extends SupCore.api.base.Asset
 
   @schema:
@@ -92,13 +118,46 @@ module.exports = class ScriptAsset extends SupCore.api.base.Asset
   server_saveText: (client, callback) ->
     @pub.text = @pub.draft
 
-    callback()
+    scriptNames = []
+    scripts = {}
+    ownName = ""
 
-    if @hasDraft
-      @hasDraft = false
-      @emit 'clearDiagnostic', 'draft'
+    compile = =>
+      results = TsCompiler scriptNames, scripts, "#{tsSource}#{tsDefinition}", sourceMap: false
+      ownErrors = []
+      for error in results.errors
+        continue if error.file != ownName
+        ownErrors.push error
 
-    @emit 'change'
+      callback null, ownErrors
+      if @hasDraft
+        @hasDraft = false
+        @emit 'clearDiagnostic', 'draft'
+
+      @emit 'change'
+      return
+
+    remainingAssetsToLoad = Object.keys( @serverAPI.entries.byId ).length
+    assetsLoading = 0
+    @serverAPI.entries.walk (entry) =>
+      remainingAssetsToLoad -= 1
+      if entry.type != "script"
+        compile() if remainingAssetsToLoad == 0 and assetsLoading == 0
+        return
+
+      scriptNames.push entry.name
+      assetsLoading += 1
+      @serverAPI.assets.acquire entry.id, (err, asset) =>
+        assetsLoading -= 1
+        @serverAPI.assets.release entry.id
+
+        name = "#{entry.name}.ts"
+        scripts[name] = "#{asset.pub.text}"
+        ownName = name if asset == @
+
+        compile() if remainingAssetsToLoad == 0 and assetsLoading == 0
+        return
+      return
     return
 
   client_saveText: ->

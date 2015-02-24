@@ -47,7 +47,7 @@ module.exports = (sourceFileNames, sourceFiles, libSource, compilerOptions={}) -
     checker.emitFiles()
 
   return {
-    errors: errors.map (e) => "#{e.file.filename}(#{e.file.getLineAndCharacterFromPosition(e.start).line}): #{e.messageText}"
+    errors: errors.map (e) => { file: e.file.filename, position: e.file.getLineAndCharacterFromPosition(e.start), length: e.length, message: e.messageText}
     script
     sourceMaps
     files

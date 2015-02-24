@@ -43,15 +43,16 @@ exports.start = (player, callback) ->
 
   globals["globals.ts"] = globals["globals.ts"].replace "// INSERT_COMPONENT_ACCESSORS", actorComponentAccessors
   tsDefinition = tsDefinition.replace "// INSERT_COMPONENT_ACCESSORS", actorComponentAccessors
-
   jsGlobals = TsCompiler globalNames, globals, "#{tsSource}\ndeclare var console, window, localStorage, player, SupEngine, SupRuntime;", sourceMap: false
   if jsGlobals.errors.length > 0
-    console.log error for error in jsGlobals.errors
+    for error in jsGlobals.errors
+      console.log "#{error.file}(#{error.position.line}): #{error.message}"
 
   else
     results = TsCompiler scriptNames, scripts, "#{tsSource}#{tsDefinition}", sourceMap: true
     if results.errors.length > 0
-      console.log error for error in results.errors
+      for error in results.errors
+        console.log "#{error.file}(#{error.position.line}): #{error.message}"
 
     else
       console.log "Compilation successful!"

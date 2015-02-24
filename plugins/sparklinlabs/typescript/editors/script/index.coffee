@@ -36,6 +36,7 @@ start = ->
   textArea = document.querySelector('.code-editor')
   ui.editor = CodeMirror.fromTextArea textArea,
     lineNumbers: true, matchBrackets: true, styleActiveLine: true, autoCloseBrackets: true
+    gutters: ["line-error-gutter", "CodeMirror-linenumbers"]
     tabSize: 2, keyMap: 'sublime' # , theme: 'monokai'
     extraKeys: extraKeys
     viewportMargin: Infinity
@@ -137,6 +138,29 @@ onAssetCommands.editText = (operationData) ->
     if ui.pendingOperation?
       [ui.pendingOperation, operationPrime2] = ui.pendingOperation.transform operationPrime
 
+  return
+
+onAssetCommands.saveText = (errors) ->
+  # Remove all previous erros
+  for textMarker in ui.editor.getAllMarks()
+    continue if textMarker.className != "line-error"
+    textMarker.clear()
+
+  for line in [0...ui.editor.lineCount()]
+    ui.editor.setGutterMarker line, "line-error-gutter", null
+
+  # Display new ones
+  for error in errors
+    line = error.position.line - 1
+    textMarker = ui.editor.markText(
+      { line , ch: error.position.character-1 },
+      { line, ch: error.position.character-1 + error.length },
+      { className: 'line-error' } )
+
+    gutter = document.createElement("div")
+    gutter.className = "line-error-gutter"
+    gutter.innerHTML = "●"
+    ui.editor.setGutterMarker line, "line-error-gutter", gutter
   return
 
 # User interface
