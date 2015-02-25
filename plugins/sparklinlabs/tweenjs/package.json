@@ -1,0 +1,7 @@
+{
+  "name": "superpowers-sparklinlabs-tweenjs-plugin",
+  "version": "1.0.0",
+  "dependencies": {
+    "tween.js": "^0.14.0"
+  }
+}
