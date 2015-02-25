@@ -124,18 +124,26 @@ module Sup {
     }
   }
   export class Folder extends Asset {}
-  export function get(path, type) {
+  export function get(path, arg1, arg2) {
+    var type = arg1;
+    var options = (arg2 !== undefined) ? arg2 : { ignoreMissing: false };
+
+    if (arg1 != null && Object.getPrototypeOf(arg1) == Object.prototype) {
+      type = null;
+      options = arg1;
+    }
+
     var entry = player.entriesByPath[path];
 
     if (entry) { var outerAsset = player.getOuterAsset(entry.id); }
-    else { throw new Error("Invalid asset path") }
+    else if(!options.ignoreMissing) { throw new Error("Invalid asset path") }
 
-    if (type != null) {
+    if (type != null && outerAsset !=null) {
       var typeName = type.name.charAt(0).toLowerCase() + type.name.slice(1);
       if (typeName != outerAsset.type) { throw new Error("Invalid asset type") }
     }
 
-    return outerAsset
+    return (outerAsset) ? outerAsset : null
   }
   export function getActor(name) {
     var foundActor = null;
