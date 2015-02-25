@@ -145,13 +145,13 @@ module.exports = class ScriptAsset extends SupCore.api.base.Asset
         compile() if remainingAssetsToLoad == 0 and assetsLoading == 0
         return
 
-      scriptNames.push entry.name
+      name = "#{@serverAPI.entries.getPathFromId(entry.id)}.ts"
+      scriptNames.push name
       assetsLoading += 1
       @serverAPI.assets.acquire entry.id, (err, asset) =>
         assetsLoading -= 1
         @serverAPI.assets.release entry.id
 
-        name = "#{entry.name}.ts"
         scripts[name] = "#{asset.pub.text}"
         ownName = name if asset == @
 

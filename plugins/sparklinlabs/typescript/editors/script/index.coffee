@@ -151,6 +151,8 @@ onAssetCommands.saveText = (errors) ->
 
   # Display new ones
   for error in errors
+    console.log "#{error.file}(#{error.position.line}): #{error.message}"
+
     line = error.position.line - 1
     textMarker = ui.editor.markText(
       { line , ch: error.position.character-1 },
