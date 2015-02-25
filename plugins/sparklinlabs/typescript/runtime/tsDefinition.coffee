@@ -95,7 +95,8 @@ declare module Sup {
     getLocalScale(): Math.Vector3;
     setLocalScale(scale: Math.Vector3);
 
-    getBehavior<T extends Behavior>(type: new(actor: Actor, properties?: { [key: string]: any; }, skipAwake?: boolean) => T): T;
+    addBehavior<T extends Behavior>(behaviorType: new(actor: Actor, properties?: { [key: string]: any; }) => T, properties?: { [key: string]: any; }): T;
+    getBehavior<T extends Behavior>(type: new(actor: Actor, properties?: { [key: string]: any; }) => T): T;
   }
 
   class ActorComponent {
@@ -113,7 +114,7 @@ declare module Sup {
   }
 
   class Behavior extends ActorComponent {
-    constructor(actor: Actor, properties?: { [key: string]: any; }, skipAwake?: boolean);
+    constructor(actor: any, properties?: { [key: string]: any; });
   }
   function registerBehavior(behavior: any): void;
 

@@ -8,6 +8,7 @@ module.exports = class Behavior extends SupEngine.ActorComponent
   update: -> @funcs.update?(); return
 
   _destroy: ->
+    @funcs.destroy?()
     @funcs = null
     super()
     return

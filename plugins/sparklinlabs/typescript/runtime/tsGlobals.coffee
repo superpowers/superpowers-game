@@ -282,6 +282,12 @@ module Sup {
       return this
     }
 
+    addBehavior(behaviorType, properties) {
+      var behavior = new behaviorType(this.__inner);
+      if (properties != null) { for (var propertyName in properties) { behavior[propertyName] = properties[propertyName]; } }
+      behavior.__inner.awake();
+      return behavior
+    }
     getBehavior(type) { return this.__behaviors[type["name"]] }
   }
 
@@ -320,23 +326,22 @@ module Sup {
     awake: Function;
     start: Function;
     update: Function;
+    onDestroy: Function;
 
-    constructor(actor, properties, skipAwake) {
-      super(actor);
+    constructor(actor) {
+      if (actor.__outer == null) { throw new Error("Use actor.addBehavior to create a behavior"); }
+
+      super(actor.__outer);
 
       var funcs = {};
       funcs["awake"]  = (this.awake)  ? this.awake.bind(this) : null;
       funcs["start"]  = (this.start)  ? this.start.bind(this) : null;
       funcs["update"] = (this.update) ? this.update.bind(this) : null;
-      this.__inner = new SupEngine.componentPlugins.Behavior(actor.__inner, funcs);
+      funcs["destroy"] = (this.onDestroy) ? this.onDestroy.bind(this) : null;
+      this.__inner = new SupEngine.componentPlugins.Behavior(actor, funcs);
 
       this.__inner.__outer = this;
       this.actor.__behaviors[this.constructor["name"]] = this;
-
-      skipAwake = (skipAwake) ? skipAwake : false
-      if ( ! skipAwake && this.awake ) { this.__inner.awake(); }
-
-      if (properties) { for (var propertyName in properties) { this[propertyName] = properties[propertyName]; } }
     }
   }
   export function registerBehavior(behavior) { player.behaviorClasses[behavior["name"]] = behavior; }

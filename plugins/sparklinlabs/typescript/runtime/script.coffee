@@ -19,7 +19,7 @@ exports.init = (player, callback) ->
   player.createComponent = (type, actor, config) ->
     if type == 'Behavior'
       behaviorClass = player.behaviorClasses[config.behaviorName]
-      new behaviorClass actor, config.properties, true
+      new behaviorClass actor.__inner, config.properties
     else
       new player.Sup[type] actor
 
