@@ -1,18 +1,3 @@
-exports.typescript = """
-module Sup {
-  export class Sprite extends Asset {}
-}
-"""
-
-
-exports.typescriptDefs = """
-declare module Sup {
-  class Sprite extends Asset {
-    dummySpriteMember;
-  }
-}
-"""
-
 exports.loadAsset = (player, entry, callback) ->
   player.getAssetData "assets/#{entry.id}/asset.json", 'json', (err, data) =>
     img = new Image
@@ -35,3 +20,18 @@ exports.loadAsset = (player, entry, callback) ->
 
 exports.createOuterAsset = (player, asset) ->
   return new player.Sup.Sprite asset
+
+exports.typescript = """
+module Sup {
+  export class Sprite extends Asset {}
+}
+"""
+
+exports.typescriptDefs = """
+declare module Sup {
+  class Sprite extends Asset {
+    dummySpriteMember;
+  }
+}
+"""
+

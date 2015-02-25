@@ -58,7 +58,8 @@ declare module Sup {
   function destroyAllActors(): void;
 
   class Actor {
-    // INSERT_COMPONENT_ACCESSORS
+    spriteRenderer: Sup.SpriteRenderer; camera: Sup.Camera; tileMapRenderer: Sup.TileMapRenderer;
+    // INSERT__disabled_COMPONENT_ACCESSORS
     constructor(name: string, parent?: Actor);
     destroy(): void;
 

@@ -1,18 +1,3 @@
-exports.typescript = """
-module Sup {
-  export class Sound extends Asset {}
-}
-"""
-
-
-exports.typescriptDefs = """
-declare module Sup {
-  class Sound extends Asset {
-    dummySoundMember;
-  }
-}
-"""
-
 exports.loadAsset = (player, entry, callback) ->
   sound = { buffer: null }
 
@@ -38,3 +23,18 @@ exports.loadAsset = (player, entry, callback) ->
 
 exports.createOuterAsset = (player, asset) ->
   return new player.Sup.Sound asset
+
+exports.typescript = """
+module Sup {
+  export class Sound extends Asset {}
+}
+"""
+
+
+exports.typescriptDefs = """
+declare module Sup {
+  class Sound extends Asset {
+    dummySoundMember;
+  }
+}
+"""
