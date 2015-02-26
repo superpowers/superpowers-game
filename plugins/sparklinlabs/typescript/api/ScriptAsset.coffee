@@ -6,12 +6,12 @@ path = require 'path'
 if ! window?
   serverRequire = require
   TsCompiler = serverRequire '../runtime/tsCompiler'
-  tsSource = serverRequire '../runtime/tsSource'
-  tsDefinition = serverRequire '../runtime/tsDefinition'
+  tsLibDefs = fs.readFileSync(__dirname + '/../runtime/lib.d.ts', encoding: 'utf8')
+  tsSupDefs = fs.readFileSync(__dirname + '/../runtime/Sup.d.ts', encoding: 'utf8')
 
   global.SupRuntime =
     addPlugin: (name, plugin) ->
-      tsDefinition += plugin.typescriptDefs if plugin.typescriptDefs?
+      tsSupDefs += plugin.typescriptDefs if plugin.typescriptDefs?
       return
 
   shouldIgnorePlugin = (pluginName) -> pluginName.indexOf('.') != -1 or pluginName == 'node_modules'
@@ -123,7 +123,7 @@ module.exports = class ScriptAsset extends SupCore.api.base.Asset
     ownName = ""
 
     compile = =>
-      results = TsCompiler scriptNames, scripts, "#{tsSource}#{tsDefinition}", sourceMap: false
+      results = TsCompiler scriptNames, scripts, "#{tsLibDefs}#{tsSupDefs}", sourceMap: false
       ownErrors = []
       for error in results.errors
         continue if error.file != ownName

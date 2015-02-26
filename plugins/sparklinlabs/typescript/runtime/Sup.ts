@@ -1,4 +1,3 @@
-module.exports = """
 var jsMath = Math;
 var tmpVector3 = new SupEngine.THREE.Vector3()
 var tmpQuaternion = new SupEngine.THREE.Quaternion();
@@ -384,4 +383,3 @@ module Sup {
   }
 }
 player.Sup = Sup;
-"""

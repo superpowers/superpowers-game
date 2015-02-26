@@ -202,7 +202,6 @@ onAssetCommands.removeComponent = (nodeId, componentId) ->
   delete ui.bySceneNodeId[nodeId].bySceneComponentId[componentId]
   return
 
-
 # User interface
 createNodeElement = (node) ->
   liElt = document.createElement('li')
@@ -446,8 +445,7 @@ pluginsXHR.open 'GET', '/plugins.json', false # Synchronous, could be made async
 pluginsXHR.send null
 
 if pluginsXHR.status != 200
-  console.error "Could not get plugins list"
-  return
+  throw new Error "Could not get plugins list"
 
 pluginPaths = JSON.parse(pluginsXHR.responseText)
 

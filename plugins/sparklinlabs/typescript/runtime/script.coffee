@@ -3,12 +3,14 @@ convert = require 'convert-source-map'
 combine = require 'combine-source-map'
 
 TsCompiler = require './tsCompiler'
-tsSource = require './tsSource'
-tsGlobals = require './tsGlobals'
-tsDefinition = require './tsDefinition'
+
+fs = require 'fs'
+tsLib = fs.readFileSync(__dirname + '/lib.d.ts', encoding: 'utf8')
+tsSup = fs.readFileSync(__dirname + '/Sup.ts', encoding: 'utf8')
+tsSupDefs = fs.readFileSync(__dirname + '/Sup.d.ts', encoding: 'utf8')
 
 globalNames = ["globals"]
-globals = {"globals.ts": tsGlobals}
+globals = { "globals.ts": tsSup }
 
 scriptNames = []
 scripts = {}
@@ -28,7 +30,7 @@ exports.init = (player, callback) ->
       globalNames.push name
       globals["#{name}.ts"] = plugin.typescript
 
-    tsDefinition += plugin.typescriptDefs if plugin.typescriptDefs?
+    tsSupDefs += plugin.typescriptDefs if plugin.typescriptDefs?
 
   callback()
   return
@@ -42,14 +44,14 @@ exports.start = (player, callback) ->
     actorComponentAccessors += "#{componentName.charAt(0).toLowerCase() + componentName.slice(1)}: #{componentName}; "
 
   globals["globals.ts"] = globals["globals.ts"].replace "// INSERT_COMPONENT_ACCESSORS", actorComponentAccessors
-  tsDefinition = tsDefinition.replace "// INSERT_COMPONENT_ACCESSORS", actorComponentAccessors
-  jsGlobals = TsCompiler globalNames, globals, "#{tsSource}\ndeclare var console, window, localStorage, player, SupEngine, SupRuntime;", sourceMap: false
+  tsSupDefs = tsSupDefs.replace "// INSERT_COMPONENT_ACCESSORS", actorComponentAccessors
+  jsGlobals = TsCompiler globalNames, globals, "#{tsLib}\ndeclare var console, window, localStorage, player, SupEngine, SupRuntime;", sourceMap: false
   if jsGlobals.errors.length > 0
     for error in jsGlobals.errors
       console.log "#{error.file}(#{error.position.line}): #{error.message}"
 
   else
-    results = TsCompiler scriptNames, scripts, "#{tsSource}#{tsDefinition}", sourceMap: true
+    results = TsCompiler scriptNames, scripts, "#{tsLib}#{tsSupDefs}", sourceMap: true
     if results.errors.length > 0
       for error in results.errors
         console.log "#{error.file}(#{error.position.line}): #{error.message}"

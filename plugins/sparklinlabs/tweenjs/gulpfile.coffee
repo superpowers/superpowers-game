@@ -4,11 +4,11 @@ tasks = []
 # Browserify
 browserify = require 'browserify'
 vinylSourceStream = require 'vinyl-source-stream'
-coffeeify = require 'coffeeify'
 makeBrowserify = (source, destination, output) ->
   gulp.task "#{output}-browserify", ->
     bundler = browserify source, extensions: ['.coffee']
-    bundler.transform coffeeify
+    bundler.transform 'coffeeify'
+    bundler.transform 'brfs'
     bundle = -> bundler.bundle().pipe(vinylSourceStream("#{output}.js")).pipe gulp.dest(destination)
     bundle()
 

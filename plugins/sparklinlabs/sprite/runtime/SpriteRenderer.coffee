@@ -11,61 +11,6 @@ exports.setupComponent = (player, component, config) ->
           break
   return
 
-exports.typescript = """
-module Sup {
-  export class SpriteRenderer extends Sup.ActorComponent {
-    constructor(actor, asset) {
-      super(actor);
-      this.__inner = new SupEngine.componentPlugins.SpriteRenderer(this.actor.__inner);
-      if (asset) { this.setSprite(asset); }
-      this.__inner.__outer = this;
-      this.actor.spriteRenderer = this;
-    }
-
-    getSprite() { return this.__inner }
-    setSprite(asset) { this.__inner.setSprite(asset.__inner); return this }
-    setOpacity(opacity) { this.__inner.opacity = opacity; this.__inner.threeMesh.material.opacity = opacity; return this }
-    setColor(r, g, b) {
-      this.__inner.color.r = r; this.__inner.color.g = g; this.__inner.color.b = b;
-      this.__inner.threeMesh.material.color.setRGB(r, g, b);
-      return this
-    }
-
-    setAnimation(animationName, looping) { this.__inner.setAnimation(animationName, looping); return this }
-    getAnimation() { return this.__inner.getAnimation() }
-    setAnimationTime(time) { this.__inner.setAnimationTime(time); return this }
-    getAnimationTime() { return this.__inner.getAnimationTime() }
-    getAnimationDuration() { return this.__inner.getAnimationDuration() }
-
-    isAnimationPlaying() { return this.__inner.isAnimationPlaying }
-    playAnimation(looping) { this.__inner.playAnimation(looping); return this }
-    pauseAnimation() { this.__inner.pauseAnimation(); return this }
-    stopAnimation() { this.__inner.stopAnimation(); return this }
-  }
-}
-"""
-
-exports.typescriptDefs = """
-declare module Sup {
-  class SpriteRenderer extends ActorComponent {
-    constructor(actor: Actor, asset?: Sprite);
-
-    getSprite(): Sprite;
-    setSprite(asset?: Sprite): SpriteRenderer;
-    setOpacity(opacity: number): SpriteRenderer;
-    setColor(r: number, g: number, b: number): SpriteRenderer;
-
-    getAnimation(): string;
-    setAnimation(animationName: string, looping?: boolean): SpriteRenderer;
-    setAnimationTime(time: number): SpriteRenderer;
-    getAnimationTime(): number
-    getAnimationDuration(): number
-
-    isAnimationPlaying(): boolean
-    playAnimation(looping?: boolean): SpriteRenderer;
-    pauseAnimation(): SpriteRenderer;
-    stopAnimation(): SpriteRenderer;
-  }
-}
-"""
-
+fs = require 'fs'
+exports.typescript = fs.readFileSync(__dirname + '/SpriteRenderer.ts', encoding: 'utf8')
+exports.typescriptDefs = fs.readFileSync(__dirname + '/SpriteRenderer.d.ts', encoding: 'utf8')

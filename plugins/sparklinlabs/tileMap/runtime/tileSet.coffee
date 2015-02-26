@@ -21,27 +21,6 @@ exports.loadAsset = (player, entry, callback) ->
 exports.createOuterAsset = (player, asset) ->
   return new player.Sup.TileSet asset
 
-exports.typescript = """
-module Sup {
-  export class TileSet extends Asset {
-    getTileProperties(tile) {
-      var tilesPerRow = this.__inner.data.texture.image.width / this.__inner.data.gridSize;
-
-      var x = tile % tilesPerRow;
-      var y = jsMath.floor(tile / tilesPerRow);
-      var properties = this.__inner.data.tileProperties[x + "_" + y];
-      properties = (properties) ? properties : {}
-      return properties
-    }
-  }
-}
-"""
-
-
-exports.typescriptDefs = """
-declare module Sup {
-  class TileSet extends Asset {
-    getTileProperties(tile: number): {[key:string]: string;}
-  }
-}
-"""
+fs = require 'fs'
+exports.typescript = fs.readFileSync __dirname + '/tileSet.ts', { encoding: 'utf8' }
+exports.typescriptDefs = fs.readFileSync __dirname + '/tileSet.d.ts', { encoding: 'utf8' }
