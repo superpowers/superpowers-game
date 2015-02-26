@@ -24,6 +24,7 @@ async.each pluginPaths.all, (pluginName, pluginCallback) ->
       componentsScript = document.createElement('script')
       componentsScript.src = "../plugins/#{pluginName}/components.js"
       componentsScript.addEventListener 'load', -> cb()
+      componentsScript.addEventListener 'error', -> cb()
       document.body.appendChild componentsScript
 
     (cb) ->
