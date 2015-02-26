@@ -1,8 +1,5 @@
 declare module Sup {
   module Audio {
-    function getMasterVolume(): number;
-    function setMasterVolume(volume: number): void;
-
     class SoundInstance {
       constructor(asset: Sound);
       play(): SoundInstance;

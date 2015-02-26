@@ -7,7 +7,3 @@ exports.setupComponent = (player, component, config) ->
   tileSet = player.getOuterAsset tileSetId
   component.setTileSet tileSet.__inner
   return
-
-fs = require 'fs'
-exports.typescript = fs.readFileSync __dirname + '/TileMapRenderer.ts', { encoding: 'utf8' }
-exports.typescriptDefs = fs.readFileSync __dirname + '/TileMapRenderer.d.ts', { encoding: 'utf8' }

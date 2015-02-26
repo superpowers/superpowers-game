@@ -10,7 +10,3 @@ exports.setupComponent = (player, component, config) ->
           component.setAnimation animation.name
           break
   return
-
-fs = require 'fs'
-exports.typescript = fs.readFileSync(__dirname + '/SpriteRenderer.ts', encoding: 'utf8')
-exports.typescriptDefs = fs.readFileSync(__dirname + '/SpriteRenderer.d.ts', encoding: 'utf8')

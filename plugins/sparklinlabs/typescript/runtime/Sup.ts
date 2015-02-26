@@ -1,7 +1,7 @@
 var jsMath = Math;
-var tmpVector3 = new SupEngine.THREE.Vector3()
+var tmpVector3 = new SupEngine.THREE.Vector3();
 var tmpQuaternion = new SupEngine.THREE.Quaternion();
-var tmpEuler = new SupEngine.THREE.Euler()
+var tmpEuler = new SupEngine.THREE.Euler();
 var degToRad = jsMath.PI / 180;
 var radToDeg = 180 / jsMath.PI;
 
@@ -300,25 +300,6 @@ module Sup {
     destroy() {
       player.gameInstance.destroyComponent(this.__inner);
     }
-  }
-
-  export class Camera extends ActorComponent {
-    constructor(actor) {
-      super(actor);
-      this.__inner = new SupEngine.componentPlugins.Camera(this.actor.__inner);
-      this.__inner.__outer = this;
-      this.actor.camera = this;
-    }
-    setOrthographicMode(enabled) {
-      this.__inner.setOrthographicMode(enabled);
-      return this;
-    }
-    getOrthographicMode() { return this.__inner.isOrthographic }
-    setOrthographicScale(scale) {
-      this.__inner.setOrthographicScale(scale)
-      return this
-    }
-    getOrthographicScale() {return this.__inner.orthographicScale }
   }
 
   export class Behavior extends ActorComponent {

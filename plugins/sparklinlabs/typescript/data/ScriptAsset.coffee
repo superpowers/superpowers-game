@@ -2,31 +2,19 @@ OT = require 'operational-transform'
 fs = require 'fs'
 path = require 'path'
 
-
 if ! window?
   serverRequire = require
   TsCompiler = serverRequire '../runtime/tsCompiler'
   tsLibDefs = fs.readFileSync(__dirname + '/../runtime/lib.d.ts', encoding: 'utf8')
   tsSupDefs = fs.readFileSync(__dirname + '/../runtime/Sup.d.ts', encoding: 'utf8')
 
-  global.SupRuntime =
-    addPlugin: (name, plugin) ->
-      tsSupDefs += plugin.typescriptDefs if plugin.typescriptDefs?
-      return
+  actorComponentAccessors = ""
+  for pluginName, plugin of SupAPI.contexts["typescript"].plugins
+    tsSupDefs += plugin.defs if plugin.defs?
+    if plugin.exposeAsActorComponent
+      actorComponentAccessors += "#{pluginName.charAt(0).toLowerCase() + pluginName.slice(1)}: #{pluginName}; "
 
-  shouldIgnorePlugin = (pluginName) -> pluginName.indexOf('.') != -1 or pluginName == 'node_modules'
-  pluginsPath = "#{__dirname}/../../.."
-  for pluginAuthor in fs.readdirSync pluginsPath
-    pluginAuthorPath = "#{pluginsPath}/#{pluginAuthor}"
-
-    for pluginName in fs.readdirSync pluginAuthorPath
-      continue if shouldIgnorePlugin pluginName
-      pluginPath = "#{pluginAuthorPath}/#{pluginName}"
-
-      runtimeModulePath = "#{pluginPath}/runtime"
-      require runtimeModulePath if fs.existsSync runtimeModulePath
-
-  delete global.SupRuntime
+  tsSupDefs = tsSupDefs.replace "// INSERT_COMPONENT_ACCESSORS", actorComponentAccessors
 
 module.exports = class ScriptAsset extends SupCore.data.base.Asset
 

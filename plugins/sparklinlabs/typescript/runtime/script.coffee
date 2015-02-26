@@ -9,11 +9,13 @@ tsLibDefs = fs.readFileSync(__dirname + '/lib.d.ts', encoding: 'utf8')
 tsSup = fs.readFileSync(__dirname + '/Sup.ts', encoding: 'utf8')
 tsSupDefs = fs.readFileSync(__dirname + '/Sup.d.ts', encoding: 'utf8')
 
-globalNames = ["globals"]
-globals = { "globals.ts": tsSup }
+globalNames = ["Sup.ts"]
+globals = { "Sup.ts": tsSup }
 
 scriptNames = []
 scripts = {}
+
+actorComponentAccessors = ""
 
 exports.init = (player, callback) ->
   player.behaviorClasses = {}
@@ -25,12 +27,15 @@ exports.init = (player, callback) ->
     else
       new player.Sup[type] actor
 
-  for name, plugin of SupRuntime.plugins
-    if plugin.typescript?
-      globalNames.push name
-      globals["#{name}.ts"] = plugin.typescript
+  for pluginName, plugin of SupAPI.contexts["typescript"].plugins
+    if plugin.code?
+      globalNames.push "#{pluginName}.ts"
+      globals["#{pluginName}.ts"] = plugin.code
 
-    tsSupDefs += plugin.typescriptDefs if plugin.typescriptDefs?
+    tsSupDefs += plugin.defs if plugin.defs?
+
+    if plugin.exposeAsActorComponent
+      actorComponentAccessors += "#{pluginName.charAt(0).toLowerCase() + pluginName.slice(1)}: #{pluginName}; "
 
   callback()
   return
@@ -38,12 +43,7 @@ exports.init = (player, callback) ->
 exports.start = (player, callback) ->
   console.log "Compiling scripts..."
 
-  actorComponentAccessors = ""
-  for componentName, component of SupEngine.componentPlugins
-    continue if componentName == "Behavior"
-    actorComponentAccessors += "#{componentName.charAt(0).toLowerCase() + componentName.slice(1)}: #{componentName}; "
-
-  globals["globals.ts"] = globals["globals.ts"].replace "// INSERT_COMPONENT_ACCESSORS", actorComponentAccessors
+  globals["Sup.ts"] = globals["Sup.ts"].replace "// INSERT_COMPONENT_ACCESSORS", actorComponentAccessors
   tsSupDefs = tsSupDefs.replace "// INSERT_COMPONENT_ACCESSORS", actorComponentAccessors
   jsGlobals = TsCompiler globalNames, globals, "#{tsLibDefs}\ndeclare var console, window, localStorage, player, SupEngine, SupRuntime;", sourceMap: false
   if jsGlobals.errors.length > 0

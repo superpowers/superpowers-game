@@ -57,8 +57,7 @@ declare module Sup {
   function destroyAllActors(): void;
 
   class Actor {
-    spriteRenderer: Sup.SpriteRenderer; camera: Sup.Camera; tileMapRenderer: Sup.TileMapRenderer;
-    // INSERT__disabled_COMPONENT_ACCESSORS
+    // INSERT_COMPONENT_ACCESSORS
     constructor(name: string, parent?: Actor);
     destroy(): void;
 
@@ -103,14 +102,6 @@ declare module Sup {
     actor: Actor;
     constructor(actor: Actor);
     destroy(): void;
-  }
-
-  class Camera extends ActorComponent {
-    constructor(actor: Actor);
-    setOrthographicMode(enabled: boolean): Camera;
-    getOrthographicMode(): boolean;
-    setOrthographicScale(scale: number): Camera;
-    getOrthographicScale(): number;
   }
 
   class Behavior extends ActorComponent {

@@ -20,7 +20,3 @@ exports.loadAsset = (player, entry, callback) ->
 
 exports.createOuterAsset = (player, asset) ->
   return new player.Sup.TileSet asset
-
-fs = require 'fs'
-exports.typescript = fs.readFileSync __dirname + '/tileSet.ts', { encoding: 'utf8' }
-exports.typescriptDefs = fs.readFileSync __dirname + '/tileSet.d.ts', { encoding: 'utf8' }

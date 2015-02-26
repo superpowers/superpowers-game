@@ -27,6 +27,7 @@ makeBrowserify "./data/index.coffee", "./public", "data"
 makeBrowserify "./components/index.coffee", "./public", "components"
 makeBrowserify "./componentEditors/index.coffee", "./public", "componentEditors"
 makeBrowserify "./runtime/index.coffee", "./public", "runtime"
+makeBrowserify "./api/index.coffee", "./public", "api"
 makeBrowserify "./editors/#{editor}/index.coffee", "./public/editors", "#{editor}/index" for editor in require('fs').readdirSync './editors'
 
 # All
