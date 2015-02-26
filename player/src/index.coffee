@@ -21,6 +21,13 @@ pluginPaths = JSON.parse(pluginsXHR.responseText)
 async.each pluginPaths.all, (pluginName, pluginCallback) ->
   async.series [
     (cb) ->
+      apiScript = document.createElement('script')
+      apiScript.src = "../plugins/#{pluginName}/api.js"
+      apiScript.addEventListener 'load', -> cb()
+      apiScript.addEventListener 'error', -> cb()
+      document.body.appendChild apiScript
+
+    (cb) ->
       componentsScript = document.createElement('script')
       componentsScript.src = "../plugins/#{pluginName}/components.js"
       componentsScript.addEventListener 'load', -> cb()
