@@ -5,7 +5,7 @@ combine = require 'combine-source-map'
 TsCompiler = require './tsCompiler'
 
 fs = require 'fs'
-tsLib = fs.readFileSync(__dirname + '/lib.d.ts', encoding: 'utf8')
+tsLibDefs = fs.readFileSync(__dirname + '/lib.d.ts', encoding: 'utf8')
 tsSup = fs.readFileSync(__dirname + '/Sup.ts', encoding: 'utf8')
 tsSupDefs = fs.readFileSync(__dirname + '/Sup.d.ts', encoding: 'utf8')
 
@@ -45,13 +45,13 @@ exports.start = (player, callback) ->
 
   globals["globals.ts"] = globals["globals.ts"].replace "// INSERT_COMPONENT_ACCESSORS", actorComponentAccessors
   tsSupDefs = tsSupDefs.replace "// INSERT_COMPONENT_ACCESSORS", actorComponentAccessors
-  jsGlobals = TsCompiler globalNames, globals, "#{tsLib}\ndeclare var console, window, localStorage, player, SupEngine, SupRuntime;", sourceMap: false
+  jsGlobals = TsCompiler globalNames, globals, "#{tsLibDefs}\ndeclare var console, window, localStorage, player, SupEngine, SupRuntime;", sourceMap: false
   if jsGlobals.errors.length > 0
     for error in jsGlobals.errors
       console.log "#{error.file}(#{error.position.line}): #{error.message}"
 
   else
-    results = TsCompiler scriptNames, scripts, "#{tsLib}#{tsSupDefs}", sourceMap: true
+    results = TsCompiler scriptNames, scripts, "#{tsLibDefs}#{tsSupDefs}", sourceMap: true
     if results.errors.length > 0
       for error in results.errors
         console.log "#{error.file}(#{error.position.line}): #{error.message}"
