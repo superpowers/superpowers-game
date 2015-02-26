@@ -19,7 +19,7 @@ exports.editorComponents =
 
 exports.addEditorComponent = (name, component) ->
   if exports.editorComponents[name]?
-    console.log "SupEngine.addEditorComponent: Tried to load two or more components named \"#{name}\""
+    console.error "SupEngine.addEditorComponent: Tried to load two or more components named \"#{name}\""
     return
 
   exports.editorComponents[name] = component
@@ -31,7 +31,7 @@ exports.componentPlugins =
 
 exports.addComponentPlugin = (name, plugin) ->
   if exports.componentPlugins[name]?
-    console.log "SupEngine.addComponentPlugin: Tried to load two or more plugins named \"#{name}\""
+    console.error "SupEngine.addComponentPlugin: Tried to load two or more plugins named \"#{name}\""
     return
 
   exports.componentPlugins[name] = plugin
@@ -41,7 +41,7 @@ exports.componentEditorPlugins = {}
 
 exports.addComponentEditorPlugin = (name, plugin) ->
   if exports.componentEditorPlugins[name]?
-    console.log "SupEngine.addComponentEditorPlugin: Tried to load two or more plugins named \"#{name}\""
+    console.error "SupEngine.addComponentEditorPlugin: Tried to load two or more plugins named \"#{name}\""
     return
 
   exports.componentEditorPlugins[name] = plugin
