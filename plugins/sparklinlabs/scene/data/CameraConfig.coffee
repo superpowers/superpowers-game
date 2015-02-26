@@ -1,4 +1,4 @@
-module.exports = class CameraConfig extends SupCore.api.base.ComponentConfig
+module.exports = class CameraConfig extends SupCore.data.base.ComponentConfig
 
   @schema =
     mode: { type: 'enum', items: [ 'perspective', 'orthographic' ], mutable: true }

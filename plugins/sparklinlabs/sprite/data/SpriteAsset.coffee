@@ -3,7 +3,7 @@ fs = require 'fs'
 
 SpriteAnimations = require './SpriteAnimations'
 
-module.exports = class SpriteAsset extends SupCore.api.base.Asset
+module.exports = class SpriteAsset extends SupCore.data.base.Asset
 
   @schema:
     image: { type: 'buffer' }
@@ -26,8 +26,8 @@ module.exports = class SpriteAsset extends SupCore.api.base.Asset
 
     animations: { type: 'listById' }
 
-  constructor: (pub, serverAPI) ->
-    super pub, @constructor.schema, serverAPI
+  constructor: (pub, serverData) ->
+    super pub, @constructor.schema, serverData
 
   setup: ->
     @animations = new SpriteAnimations @pub.animations
@@ -88,7 +88,7 @@ module.exports = class SpriteAsset extends SupCore.api.base.Asset
     @animations.add animation, null, (err, actualIndex) =>
       if err? then callback? err; return
 
-      animation.name = SupCore.api.ensureUniqueName animation.id, animation.name, @animations.pub
+      animation.name = SupCore.data.ensureUniqueName animation.id, animation.name, @animations.pub
 
       callback null, animation, actualIndex
       @emit 'change'
@@ -130,7 +130,7 @@ module.exports = class SpriteAsset extends SupCore.api.base.Asset
       if typeof(value) != 'string' then callback "Invalid value"; return
       value = value.trim()
 
-      if SupCore.api.hasDuplicateName id, value, @animations.pub
+      if SupCore.data.hasDuplicateName id, value, @animations.pub
         callback "There's already an animation with this name"; return
 
     @animations.setProperty id, key, value, (err, actualValue) =>

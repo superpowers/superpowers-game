@@ -1,8 +1,8 @@
-TileMapAsset = SupCore.api.assetPlugins.tileMap
+TileMapAsset = SupCore.data.assetPlugins.tileMap
 TileMap = require '../../components/TileMap'
 TileMapRenderer = SupEngine.componentPlugins.TileMapRenderer
 
-TileSetAsset = SupCore.api.assetPlugins.tileSet
+TileSetAsset = SupCore.data.assetPlugins.tileSet
 TileSet = require '../../components/TileSet'
 TileSetRenderer = SupEngine.editorComponents.TileSetRenderer
 
@@ -229,7 +229,7 @@ onAssetCommands.moveLayer = (id, newIndex) ->
 
 # Entries network callbacks
 onEntriesReceived = (err, entries) ->
-  data.entries = new SupCore.api.Entries entries
+  data.entries = new SupCore.data.Entries entries
 
   onAssetCommands.changeTileSet()
 

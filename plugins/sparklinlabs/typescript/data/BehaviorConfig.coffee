@@ -1,4 +1,4 @@
-module.exports = class BehaviorConfig extends SupCore.api.base.ComponentConfig
+module.exports = class BehaviorConfig extends SupCore.data.base.ComponentConfig
 
   @schema =
     behaviorName: { type: 'string', mutable: true }

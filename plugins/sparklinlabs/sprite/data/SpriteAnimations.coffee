@@ -1,4 +1,4 @@
-module.exports = class SpriteAnimations extends SupCore.api.base.ListById
+module.exports = class SpriteAnimations extends SupCore.data.base.ListById
 
   @schema =
     name: { type: 'string', minLength: 1, maxLength: 80, mutable: true }

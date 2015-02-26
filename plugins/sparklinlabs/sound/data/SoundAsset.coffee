@@ -1,14 +1,14 @@
 path = require 'path'
 fs = require 'fs'
 
-module.exports = class SoundAsset extends SupCore.api.base.Asset
+module.exports = class SoundAsset extends SupCore.data.base.Asset
 
   @schema:
     sound: { type: 'buffer' }
     streaming: { type: 'boolean', mutable: true }
 
-  constructor: (pub, serverAPI) ->
-    super pub, @constructor.schema, serverAPI
+  constructor: (pub, serverData) ->
+    super pub, @constructor.schema, serverData
 
   init: ->
     @pub =  sound: new Buffer(0), streaming: false

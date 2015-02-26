@@ -23,7 +23,7 @@ makeBrowserify = (source, destination, output) ->
 
   tasks.push "#{output}-browserify"
 
-makeBrowserify "./api/index.coffee", "./public", "api"
+makeBrowserify "./data/index.coffee", "./public", "data"
 makeBrowserify "./components/index.coffee", "./public", "components"
 makeBrowserify "./runtime/index.coffee", "./public", "runtime"
 makeBrowserify "./editors/#{editor}/index.coffee", "./public/editors", "#{editor}/index" for editor in require('fs').readdirSync './editors'

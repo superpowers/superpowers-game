@@ -7,7 +7,7 @@ _ = require 'lodash'
 
 SceneNodes = require './SceneNodes'
 
-module.exports = class SceneAsset extends SupCore.api.base.Asset
+module.exports = class SceneAsset extends SupCore.data.base.Asset
 
   @schema =
     nodes: { type: 'treeById' }
@@ -204,7 +204,7 @@ module.exports = class SceneAsset extends SupCore.api.base.Asset
     return
 
   server_addComponent: (client, nodeId, componentType, index, callback) ->
-    componentConfigClass = SupCore.api.componentConfigPlugins[componentType]
+    componentConfigClass = SupCore.data.componentConfigPlugins[componentType]
     if ! componentConfigClass? then callback "Invalid component type"; return
 
     component =

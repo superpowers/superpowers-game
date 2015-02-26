@@ -1,4 +1,4 @@
-SceneAsset = SupCore.api.assetPlugins.scene
+SceneAsset = SupCore.data.assetPlugins.scene
 TreeView = require 'dnd-tree-view'
 async = require 'async'
 THREE = SupEngine.THREE
@@ -455,11 +455,11 @@ async.each pluginPaths.all, (pluginName, pluginCallback) ->
   async.series [
 
     (cb) ->
-      apiScript = document.createElement('script')
-      apiScript.src = "/plugins/#{pluginName}/api.js"
-      apiScript.addEventListener 'load', -> cb()
-      apiScript.addEventListener 'error', -> cb()
-      document.body.appendChild apiScript
+      dataScript = document.createElement('script')
+      dataScript.src = "/plugins/#{pluginName}/data.js"
+      dataScript.addEventListener 'load', -> cb()
+      dataScript.addEventListener 'error', -> cb()
+      document.body.appendChild dataScript
 
     (cb) ->
       componentsScript = document.createElement('script')

@@ -1,4 +1,4 @@
-TileSetAsset = SupCore.api.assetPlugins.tileSet
+TileSetAsset = SupCore.data.assetPlugins.tileSet
 TileSet = require '../../components/TileSet'
 TileSetRenderer = SupEngine.editorComponents.TileSetRenderer
 

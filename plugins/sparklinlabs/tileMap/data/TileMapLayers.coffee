@@ -1,4 +1,4 @@
-module.exports = class TileMapLayers extends SupCore.api.base.ListById
+module.exports = class TileMapLayers extends SupCore.data.base.ListById
 
   constructor: (pub) ->
     super pub, {

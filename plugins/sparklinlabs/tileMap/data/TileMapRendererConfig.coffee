@@ -1,4 +1,4 @@
-module.exports = class TileMapRendererConfig extends SupCore.api.base.ComponentConfig
+module.exports = class TileMapRendererConfig extends SupCore.data.base.ComponentConfig
 
   @schema =
     tileMapAssetId: { type: 'integer?', min: 0, mutable: true }

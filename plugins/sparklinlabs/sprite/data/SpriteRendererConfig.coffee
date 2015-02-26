@@ -1,4 +1,4 @@
-module.exports = class SpriteRendererConfig extends SupCore.api.base.ComponentConfig
+module.exports = class SpriteRendererConfig extends SupCore.data.base.ComponentConfig
 
   @schema =
     spriteAssetId: { type: 'integer?', min: 0, mutable: true }

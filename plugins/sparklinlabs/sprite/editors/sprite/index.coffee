@@ -1,4 +1,4 @@
-SpriteAsset = SupCore.api.assetPlugins.sprite
+SpriteAsset = SupCore.data.assetPlugins.sprite
 SpriteRenderer = SupEngine.componentPlugins.SpriteRenderer
 
 TreeView = require 'dnd-tree-view'

@@ -1,6 +1,6 @@
 SceneComponents = require './SceneComponents'
 
-module.exports = class SceneNodes extends SupCore.api.base.TreeById
+module.exports = class SceneNodes extends SupCore.data.base.TreeById
 
   @schema =
     name: { type: 'string', minLength: 1, maxLength: 80, mutable: true }

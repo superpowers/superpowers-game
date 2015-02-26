@@ -1,7 +1,7 @@
 path = require 'path'
 fs = require 'fs'
 
-module.exports = class TileSetAsset extends SupCore.api.base.Asset
+module.exports = class TileSetAsset extends SupCore.data.base.Asset
 
   @schema:
     image: { type: 'buffer' }
@@ -13,8 +13,8 @@ module.exports = class TileSetAsset extends SupCore.api.base.Asset
         keys: { minLength: 1, maxLength: 80 }
         values: { type: 'string', minLength: 0, maxLength: 80 }
 
-  constructor: (pub, serverAPI) ->
-    super pub, @constructor.schema, serverAPI
+  constructor: (pub, serverData) ->
+    super pub, @constructor.schema, serverData
 
   init: ->
     @pub =
@@ -71,8 +71,8 @@ module.exports = class TileSetAsset extends SupCore.api.base.Asset
 
     property = []
     property[name] = ""
-    violation = SupCore.api.base.getRuleViolation property, @constructor.schema.tileProperties.values, true
-    if violation? then callback "Invalid property: #{SupCore.api.base.formatRuleViolation(violation)}"; return
+    violation = SupCore.data.base.getRuleViolation property, @constructor.schema.tileProperties.values, true
+    if violation? then callback "Invalid property: #{SupCore.data.base.formatRuleViolation(violation)}"; return
 
     if @pub.tileProperties["#{tile.x}_#{tile.y}"]?[name]? then callback "Property #{name} already exists"; return
 
@@ -101,8 +101,8 @@ module.exports = class TileSetAsset extends SupCore.api.base.Asset
 
     property = []
     property[newName] = ""
-    violation = SupCore.api.base.getRuleViolation property, @constructor.schema.tileProperties.values, true
-    if violation? then callback "Invalid property: #{SupCore.api.base.formatRuleViolation(violation)}"; return
+    violation = SupCore.data.base.getRuleViolation property, @constructor.schema.tileProperties.values, true
+    if violation? then callback "Invalid property: #{SupCore.data.base.formatRuleViolation(violation)}"; return
 
     if ! @pub.tileProperties["#{tile.x}_#{tile.y}"]?[name]? then callback "Property #{name} doesn't exists"; return
     if @pub.tileProperties["#{tile.x}_#{tile.y}"]?[newName]? then callback "Property #{newName} already exists"; return
@@ -160,8 +160,8 @@ module.exports = class TileSetAsset extends SupCore.api.base.Asset
 
     property = []
     property[name] = value
-    violation = SupCore.api.base.getRuleViolation property, @constructor.schema.tileProperties.values, true
-    if violation? then callback "Invalid property: #{SupCore.api.base.formatRuleViolation(violation)}"; return
+    violation = SupCore.data.base.getRuleViolation property, @constructor.schema.tileProperties.values, true
+    if violation? then callback "Invalid property: #{SupCore.data.base.formatRuleViolation(violation)}"; return
 
     @pub.tileProperties["#{tile.x}_#{tile.y}"][name] = value
     callback null, tile, name, value

@@ -4,7 +4,7 @@ path = require 'path'
 fs = require 'fs'
 _ = require 'lodash'
 
-module.exports = class TileMapAsset extends SupCore.api.base.Asset
+module.exports = class TileMapAsset extends SupCore.data.base.Asset
 
   @schema:
     tileSetId: { type: 'integer', min: 0 }
@@ -20,8 +20,8 @@ module.exports = class TileMapAsset extends SupCore.api.base.Asset
   #             x,  y, flipX, flipY, angle
   @emptyTile: [-1, -1, false, false, 0]
 
-  constructor: (pub, serverAPI) ->
-    super pub, @constructor.schema, serverAPI
+  constructor: (pub, serverData) ->
+    super pub, @constructor.schema, serverData
 
   init: ->
     @pub =
@@ -48,7 +48,7 @@ module.exports = class TileMapAsset extends SupCore.api.base.Asset
     if tileSetId?
       if typeof(tileSetId) != 'number' then callback 'Id must be an integer or null'; return
 
-      entry = @serverAPI.entries.byId[tileSetId]
+      entry = @serverData.entries.byId[tileSetId]
       if ! entry? then callback 'Invalid tileSetId'; return
       if entry.type != 'tileSet' then callback 'Invalid asset type'; return
 

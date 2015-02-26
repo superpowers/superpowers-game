@@ -28,16 +28,16 @@ if ! window?
 
   delete global.SupRuntime
 
-module.exports = class ScriptAsset extends SupCore.api.base.Asset
+module.exports = class ScriptAsset extends SupCore.data.base.Asset
 
   @schema:
     text: { type: 'string' }
     draft: { type: 'string' }
     revisionId: { type: 'integer' }
 
-  constructor: (pub, serverAPI) ->
+  constructor: (pub, serverData) ->
     @document = new OT.Document
-    super pub, @constructor.schema, serverAPI
+    super pub, @constructor.schema, serverData
 
   init: ->
     @pub = text: "", draft: "", revisionId: 0
@@ -137,20 +137,20 @@ module.exports = class ScriptAsset extends SupCore.api.base.Asset
       @emit 'change'
       return
 
-    remainingAssetsToLoad = Object.keys( @serverAPI.entries.byId ).length
+    remainingAssetsToLoad = Object.keys( @serverData.entries.byId ).length
     assetsLoading = 0
-    @serverAPI.entries.walk (entry) =>
+    @serverData.entries.walk (entry) =>
       remainingAssetsToLoad -= 1
       if entry.type != "script"
         compile() if remainingAssetsToLoad == 0 and assetsLoading == 0
         return
 
-      name = "#{@serverAPI.entries.getPathFromId(entry.id)}.ts"
+      name = "#{@serverData.entries.getPathFromId(entry.id)}.ts"
       scriptNames.push name
       assetsLoading += 1
-      @serverAPI.assets.acquire entry.id, (err, asset) =>
+      @serverData.assets.acquire entry.id, (err, asset) =>
         assetsLoading -= 1
-        @serverAPI.assets.release entry.id
+        @serverData.assets.release entry.id
 
         scripts[name] = "#{asset.pub.text}"
         ownName = name if asset == @

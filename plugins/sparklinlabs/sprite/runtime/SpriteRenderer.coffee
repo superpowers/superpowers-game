@@ -4,7 +4,7 @@ exports.setupComponent = (player, component, config) ->
     component.setSprite sprite
 
     if config.animationId?
-      # FIXME: should we load sprite with SupAPI?
+      # FIXME: should we load sprite with SupCore.data?
       for animation in sprite.animations
         if animation.id == config.animationId
           component.setAnimation animation.name

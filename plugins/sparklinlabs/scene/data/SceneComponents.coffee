@@ -1,4 +1,4 @@
-module.exports = class SceneComponents extends SupCore.api.base.ListById
+module.exports = class SceneComponents extends SupCore.data.base.ListById
 
   @schema =
     type: { type: 'string' }
@@ -10,14 +10,14 @@ module.exports = class SceneComponents extends SupCore.api.base.ListById
     @configsById = {}
 
     for item in @pub
-      componentConfigClass = SupCore.api.componentConfigPlugins[item.type]
+      componentConfigClass = SupCore.data.componentConfigPlugins[item.type]
       @configsById[item.id] = new componentConfigClass item.config
 
   add: (component, index, callback) ->
     super component, index, (err, actualIndex) =>
       if err? then callback err; return
 
-      componentConfigClass = SupCore.api.componentConfigPlugins[component.type]
+      componentConfigClass = SupCore.data.componentConfigPlugins[component.type]
       @configsById[component.id] = new componentConfigClass component.config
 
       callback null, actualIndex
@@ -27,7 +27,7 @@ module.exports = class SceneComponents extends SupCore.api.base.ListById
   client_add: (component, index) ->
     super component, index
 
-    componentConfigClass = SupCore.api.componentConfigPlugins[component.type]
+    componentConfigClass = SupCore.data.componentConfigPlugins[component.type]
     @configsById[component.id] = new componentConfigClass component.config
     return
 
