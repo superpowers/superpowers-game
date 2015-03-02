@@ -170,9 +170,9 @@ onFileSelectChange = (event) ->
   return
 
 onDownloadSpritesheet = (event) ->
-  SupClient.dialogs.prompt "Enter the name of the image", null, "Image", "OK", (name) =>
+  SupClient.dialogs.prompt "Enter a name for the image.", null, "Image", "Download", (name) =>
     return if ! name?
-    
+
     a = document.createElement "a"
     document.body.appendChild a
     a.style = "display: none"
@@ -186,32 +186,32 @@ onDownloadSpritesheet = (event) ->
 
 onSetGridWidth = (event) =>
   return if ui.image.src == ''
-  
-  SupClient.dialogs.prompt "How many frames per row?", null, 1, "OK", (framesPerRow) =>
+
+  SupClient.dialogs.prompt "How many frames per row?", null, 1, "Set grid width", (framesPerRow) =>
     return if ! framesPerRow?
-  
+
     framesPerRow = parseInt framesPerRow
     return if isNaN framesPerRow
-  
+
     socket.emit 'edit:assets', info.assetId, 'setProperty', 'grid.width', Math.floor(ui.image.width / framesPerRow), (err) -> if err? then alert err; return
     return
   return
 
 onSetGridHeight = (event) =>
   return if ui.image.src == ''
-  
-  SupClient.dialogs.prompt "How many frames per column?", null, 1, "OK", (framesPerColumn) =>
+
+  SupClient.dialogs.prompt "How many frames per column?", null, 1, "Set grid height", (framesPerColumn) =>
     return if ! framesPerColumn?
-  
+
     framesPerColumn = parseInt framesPerColumn
     return if isNaN framesPerColumn
-  
+
     socket.emit 'edit:assets', info.assetId, 'setProperty', 'grid.height', Math.floor(ui.image.height / framesPerColumn), (err) -> if err? then alert err; return
     return
   return
 
 onNewAnimationClick = ->
-  SupClient.dialogs.prompt "Enter the name of the animation", null, "Animation", "OK", (name) =>
+  SupClient.dialogs.prompt "Enter a name for the animation.", null, "Animation", "Create", (name) =>
     return if ! name?
 
     socket.emit 'edit:assets', info.assetId, 'newAnimation', name, (err, animationId) ->
@@ -230,7 +230,7 @@ onRenameAnimationClick = ->
   selectedNode = ui.animationsTreeView.selectedNodes[0]
   animation = data.asset.animations.byId[parseInt(selectedNode.dataset.id)]
 
-  SupClient.dialogs.prompt "Enter the new name of the animation", null, animation.name, "OK", (newName) =>
+  SupClient.dialogs.prompt "Enter a new name for the animation.", null, animation.name, "Rename", (newName) =>
     return if ! newName?
 
     socket.emit 'edit:assets', info.assetId, 'setAnimationProperty', animation.id, 'name', newName, (err) ->
@@ -241,7 +241,7 @@ onRenameAnimationClick = ->
 
 onDeleteAnimationClick = ->
   return if ui.animationsTreeView.selectedNodes.length == 0
-  SupClient.dialogs.confirm "Are you sure you want to delete the selected animations?", "Yes", (confirm) =>
+  SupClient.dialogs.confirm "Are you sure you want to delete the selected animations?", "Delete", (confirm) =>
     return if ! confirm
 
     for selectedNode in ui.animationsTreeView.selectedNodes

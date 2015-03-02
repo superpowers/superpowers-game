@@ -214,14 +214,14 @@ onFileSelectChange = (event) ->
   return
 
 onDownloadTileset = (event) ->
-  SupClient.dialogs.prompt "Enter the new name of the tileset", null, "Tileset", "OK", (name) =>
+  SupClient.dialogs.prompt "Enter a name for the image.", null, "Tile set", "Download", (name) =>
     return if ! name?
-    
+
     a = document.createElement "a"
     document.body.appendChild a
     a.style = "display: none"
     a.href = imageObjectURL
-    
+
     a.download = name + '.png'
     a.click()
     document.body.removeChild a
@@ -244,7 +244,7 @@ onPropertySelect = =>
   return
 
 onNewPropertyClick = ->
-  SupClient.dialogs.prompt "Enter the name of the property", null, "property", "OK", (name) =>
+  SupClient.dialogs.prompt "Enter a name for the property.", null, "property", "Create", (name) =>
     return if ! name?
 
     socket.emit 'edit:assets', info.assetId, 'addTileProperty', data.selectedTile, name, (err) -> if err? then alert err; return
@@ -254,7 +254,7 @@ onNewPropertyClick = ->
 onRenamePropertyClick = ->
   return if ui.propertiesTreeView.selectedNodes.length != 1
 
-  SupClient.dialogs.prompt "Enter the new name of the property", null, ui.selectedProperty, "OK", (newName) =>
+  SupClient.dialogs.prompt "Enter a new name for the property.", null, ui.selectedProperty, "Rename", (newName) =>
     return if ! newName?
 
     socket.emit 'edit:assets', info.assetId, 'renameTileProperty', data.selectedTile, ui.selectedProperty, newName, (err) -> if err? then alert err; return
@@ -263,7 +263,7 @@ onRenamePropertyClick = ->
 
 onDeletePropertyClick = ->
   return if ! ui.selectedProperty?
-  SupClient.dialogs.confirm "Are you sure you want to delete the selected property?", "Yes", (confirm) =>
+  SupClient.dialogs.confirm "Are you sure you want to delete the selected property?", "Delete", (confirm) =>
     return if ! confirm
 
     socket.emit 'edit:assets', info.assetId, 'deleteTileProperty', data.selectedTile, ui.selectedProperty, (err) -> if err? then alert err; return

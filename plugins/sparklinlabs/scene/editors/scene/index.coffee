@@ -280,7 +280,7 @@ setInspectorScale = (scale) ->
   return
 
 onNewNodeClick = ->
-  SupClient.dialogs.prompt "Enter the name of the actor", null, "Actor", "OK", (name) =>
+  SupClient.dialogs.prompt "Enter a name for the actor.", null, "Actor", "Create", (name) =>
     return if ! name?
 
     options = SupClient.getTreeViewInsertionPoint ui.nodesTreeView
@@ -305,7 +305,7 @@ onRenameNodeClick = ->
   selectedNode = ui.nodesTreeView.selectedNodes[0]
   node = data.asset.nodes.byId[parseInt(selectedNode.dataset.id)]
 
-  SupClient.dialogs.prompt "Enter the new name of the actor", null, node.name, "OK", (newName) =>
+  SupClient.dialogs.prompt "Enter a new name for the actor.", null, node.name, "Rename", (newName) =>
     return if ! newName?
 
     socket.emit 'edit:assets', info.assetId, 'setNodeProperty', node.id, 'name', newName, (err) ->
@@ -332,7 +332,7 @@ onDuplicateNodeClick = ->
 
 onDeleteNodeClick = ->
   return if ui.nodesTreeView.selectedNodes.length == 0
-  SupClient.dialogs.confirm "Are you sure you want to delete the selected actors?", "Yes", (confirm) =>
+  SupClient.dialogs.confirm "Are you sure you want to delete the selected actors?", "Delete", (confirm) =>
     return if ! confirm
 
     for selectedNode in ui.nodesTreeView.selectedNodes
@@ -387,7 +387,7 @@ createComponentElement = (nodeId, component) ->
   componentElt
 
 onNewComponentClick = ->
-  SupClient.dialogs.select "Select the type of the component", Object.keys(SupEngine.componentEditorPlugins), "OK", (type) =>
+  SupClient.dialogs.select "Select the type of component to create.", Object.keys(SupEngine.componentEditorPlugins), "Create", (type) =>
     return if ! type?
 
     nodeId = parseInt(ui.nodesTreeView.selectedNodes[0].dataset.id)
@@ -399,7 +399,7 @@ onNewComponentClick = ->
   return
 
 onDeleteComponentClick = (event) ->
-  SupClient.dialogs.confirm "Are you sure you want to delete this component?", "Yes", (confirm) =>
+  SupClient.dialogs.confirm "Are you sure you want to delete this component?", "Delete", (confirm) =>
     return if ! confirm
 
     nodeId = parseInt(ui.nodesTreeView.selectedNodes[0].dataset.id)

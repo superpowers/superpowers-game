@@ -425,18 +425,18 @@ onTileSetChange = (event) ->
   return
 
 onResizeMapClick = ->
-  SupClient.dialogs.prompt "Enter the new width of the map", null, data.asset.pub.width, "OK", (newWidth) =>
+  SupClient.dialogs.prompt "Enter a new width for the map.", null, data.asset.pub.width, "Resize", (newWidth) =>
     return if ! newWidth?
     newWidth = parseInt(newWidth)
     return if isNaN newWidth
-    
-    SupClient.dialogs.prompt "Enter the new height of the map", null, data.asset.pub.height, "OK", (newHeight) =>
+
+    SupClient.dialogs.prompt "Enter a new height for the map.", null, data.asset.pub.height, "Resize", (newHeight) =>
       return if ! newHeight?
       newHeight = parseInt(newHeight)
       return if isNaN newHeight
-      
+
       return if newWidth == data.asset.pub.width and newHeight == data.asset.pub.height
-      
+
       socket.emit 'edit:assets', info.assetId, 'resizeMap', newWidth, height, (err) ->
         if err? then alert err
         return
@@ -445,16 +445,16 @@ onResizeMapClick = ->
   return
 
 onMoveMapClick = ->
-  SupClient.dialogs.prompt "Enter the horizontal offset", null, 0, "OK", (horizontalOffset) =>
+  SupClient.dialogs.prompt "Enter the horizontal offset.", null, 0, "Apply offset", (horizontalOffset) =>
     return if ! horizontalOffset?
     horizontalOffset = parseInt(horizontalOffset)
     return if isNaN horizontalOffset
-    
-    SupClient.dialogs.prompt "Enter the vertical offset", null, 0, "OK", (verticalOffset) =>
+
+    SupClient.dialogs.prompt "Enter the vertical offset.", null, 0, "Apply offset", (verticalOffset) =>
       return if ! verticalOffset?
       verticalOffset = parseInt(verticalOffset)
       return if isNaN verticalOffset
-      
+
       return if horizontalOffset == 0 and verticalOffset == 0
 
       socket.emit 'edit:assets', info.assetId, 'moveMap', horizontalOffset, verticalOffset, (err) ->
@@ -465,7 +465,7 @@ onMoveMapClick = ->
   return
 
 onNewLayerClick = ->
-  SupClient.dialogs.prompt "Enter the name of the layer", null, "Layer", "OK", (name) =>
+  SupClient.dialogs.prompt "Enter a name for the layer.", null, "Layer", "Create", (name) =>
     return if ! name?
 
     socket.emit 'edit:assets', info.assetId, 'newLayer', name, SupClient.getTreeViewInsertionPoint(ui.layersTreeView).index , (err, layerId) ->
@@ -483,8 +483,8 @@ onRenameLayerClick = ->
 
   selectedNode = ui.layersTreeView.selectedNodes[0]
   layer = data.asset.layers.byId[parseInt(selectedNode.dataset.id)]
-  
-  SupClient.dialogs.prompt "Enter the new name of the layer", null, layer.name, "OK", (newName) =>
+
+  SupClient.dialogs.prompt "Enter a new name for the layer.", null, layer.name, "Rename", (newName) =>
     return if ! newName?
 
     socket.emit 'edit:assets', info.assetId, 'renameLayer', layer.id, newName, (err) ->
@@ -495,7 +495,7 @@ onRenameLayerClick = ->
 
 onDeleteLayerClick = ->
   return if ui.layersTreeView.selectedNodes.length != 1
-  SupClient.dialogs.confirm "Are you sure you want to delete the selected layer?", "Yes", (confirm) =>
+  SupClient.dialogs.confirm "Are you sure you want to delete the selected layer?", "Delete", (confirm) =>
     return if ! confirm
 
     selectedNode = ui.layersTreeView.selectedNodes[0]
