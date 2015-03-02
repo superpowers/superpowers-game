@@ -214,18 +214,17 @@ onFileSelectChange = (event) ->
   return
 
 onDownloadTileset = (event) ->
-  a = document.createElement "a"
-  document.body.appendChild a
-  a.style = "display: none"
-  a.href = imageObjectURL
-
-  tilesetName = prompt "Enter the name", "Tileset"
-
-  tilesetName = 'Tileset' if tilesetName == ''
-  a.download = tilesetName + '.png'
-
-  a.click()
-  document.body.removeChild a
+  SupClient.dialogs.prompt "Enter the new name of the tileset", null, "Tileset", "OK", (name) =>
+    return if ! name?
+    
+    a = document.createElement "a"
+    document.body.appendChild a
+    a.style = "display: none"
+    a.href = imageObjectURL
+    
+    a.download = name + '.png'
+    a.click()
+    document.body.removeChild a
   return
 
 onPropertySelect = =>
@@ -245,26 +244,30 @@ onPropertySelect = =>
   return
 
 onNewPropertyClick = ->
-  name = prompt "Property name", "property"
-  return if ! name?
+  SupClient.dialogs.prompt "Enter the name of the property", null, "property", "OK", (name) =>
+    return if ! name?
 
-  socket.emit 'edit:assets', info.assetId, 'addTileProperty', data.selectedTile, name, (err) -> if err? then alert err; return
+    socket.emit 'edit:assets', info.assetId, 'addTileProperty', data.selectedTile, name, (err) -> if err? then alert err; return
+    return
   return
 
 onRenamePropertyClick = ->
   return if ui.propertiesTreeView.selectedNodes.length != 1
 
-  newName = prompt "New property name", ui.selectedProperty
-  return if ! newName?
+  SupClient.dialogs.prompt "Enter the new name of the property", null, ui.selectedProperty, "OK", (newName) =>
+    return if ! newName?
 
-  socket.emit 'edit:assets', info.assetId, 'renameTileProperty', data.selectedTile, ui.selectedProperty, newName, (err) -> if err? then alert err; return
+    socket.emit 'edit:assets', info.assetId, 'renameTileProperty', data.selectedTile, ui.selectedProperty, newName, (err) -> if err? then alert err; return
+    return
   return
 
 onDeletePropertyClick = ->
   return if ! ui.selectedProperty?
-  return if ! confirm "Are you sure you want to delete the selected property?"
+  SupClient.dialogs.confirm "Are you sure you want to delete the selected property?", "Yes", (confirm) =>
+    return if ! confirm
 
-  socket.emit 'edit:assets', info.assetId, 'deleteTileProperty', data.selectedTile, ui.selectedProperty, (err) -> if err? then alert err; return
+    socket.emit 'edit:assets', info.assetId, 'deleteTileProperty', data.selectedTile, ui.selectedProperty, (err) -> if err? then alert err; return
+    return
   return
 
 # Drawing

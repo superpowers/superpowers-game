@@ -170,46 +170,57 @@ onFileSelectChange = (event) ->
   return
 
 onDownloadSpritesheet = (event) ->
-  a = document.createElement "a"
-  document.body.appendChild a
-  a.style = "display: none"
-  a.href = imageObjectURL
+  SupClient.dialogs.prompt "Enter the name of the image", null, "Image", "OK", (name) =>
+    return if ! name?
+    
+    a = document.createElement "a"
+    document.body.appendChild a
+    a.style = "display: none"
+    a.href = imageObjectURL
 
-  imageName = prompt "Enter the name", "Image"
-
-  imageName = 'Image' if imageName == ''
-  a.download = imageName + '.png'
-
-  a.click()
-  document.body.removeChild a
+    a.download = name + '.png'
+    a.click()
+    document.body.removeChild a
+    return
   return
 
 onSetGridWidth = (event) =>
-  framesPerRow = parseInt( prompt "How many frames per row?", 1 )
-  return if isNaN framesPerRow
   return if ui.image.src == ''
-
-  socket.emit 'edit:assets', info.assetId, 'setProperty', 'grid.width', Math.floor(ui.image.width / framesPerRow), (err) -> if err? then alert err; return
+  
+  SupClient.dialogs.prompt "How many frames per row?", null, 1, "OK", (framesPerRow) =>
+    return if ! framesPerRow?
+  
+    framesPerRow = parseInt framesPerRow
+    return if isNaN framesPerRow
+  
+    socket.emit 'edit:assets', info.assetId, 'setProperty', 'grid.width', Math.floor(ui.image.width / framesPerRow), (err) -> if err? then alert err; return
+    return
   return
 
 onSetGridHeight = (event) =>
-  framesPerColumn = parseInt( prompt "How many frames per column?", 1 )
-  return if isNaN framesPerColumn
   return if ui.image.src == ''
-
-  socket.emit 'edit:assets', info.assetId, 'setProperty', 'grid.height', Math.floor(ui.image.height / framesPerColumn), (err) -> if err? then alert err; return
+  
+  SupClient.dialogs.prompt "How many frames per column?", null, 1, "OK", (framesPerColumn) =>
+    return if ! framesPerColumn?
+  
+    framesPerColumn = parseInt framesPerColumn
+    return if isNaN framesPerColumn
+  
+    socket.emit 'edit:assets', info.assetId, 'setProperty', 'grid.height', Math.floor(ui.image.height / framesPerColumn), (err) -> if err? then alert err; return
+    return
   return
 
 onNewAnimationClick = ->
-  name = prompt "Animation name", "Animation"
-  return if ! name?
+  SupClient.dialogs.prompt "Enter the name of the animation", null, "Animation", "OK", (name) =>
+    return if ! name?
 
-  socket.emit 'edit:assets', info.assetId, 'newAnimation', name, (err, animationId) ->
-    if err? then alert err; return
+    socket.emit 'edit:assets', info.assetId, 'newAnimation', name, (err, animationId) ->
+      if err? then alert err; return
 
-    ui.animationsTreeView.clearSelection()
-    ui.animationsTreeView.addToSelection ui.animationsTreeView.treeRoot.querySelector("li[data-id='#{animationId}']")
-    updateSelectedAnimation()
+      ui.animationsTreeView.clearSelection()
+      ui.animationsTreeView.addToSelection ui.animationsTreeView.treeRoot.querySelector("li[data-id='#{animationId}']")
+      updateSelectedAnimation()
+      return
     return
   return
 
@@ -219,21 +230,24 @@ onRenameAnimationClick = ->
   selectedNode = ui.animationsTreeView.selectedNodes[0]
   animation = data.asset.animations.byId[parseInt(selectedNode.dataset.id)]
 
-  newName = prompt "New name", animation.name
-  return if ! newName?
+  SupClient.dialogs.prompt "Enter the new name of the animation", null, animation.name, "OK", (newName) =>
+    return if ! newName?
 
-  socket.emit 'edit:assets', info.assetId, 'setAnimationProperty', animation.id, 'name', newName, (err) ->
-    alert err if err?; return
+    socket.emit 'edit:assets', info.assetId, 'setAnimationProperty', animation.id, 'name', newName, (err) ->
+      alert err if err?
+      return
+    return
   return
 
 onDeleteAnimationClick = ->
   return if ui.animationsTreeView.selectedNodes.length == 0
-  return if ! confirm "Are you sure you want to delete the selected animations?"
+  SupClient.dialogs.confirm "Are you sure you want to delete the selected animations?", "Yes", (confirm) =>
+    return if ! confirm
 
-  for selectedNode in ui.animationsTreeView.selectedNodes
-    socket.emit 'edit:assets', info.assetId, 'deleteAnimation', parseInt(selectedNode.dataset.id), (err) ->
-      alert err if err?; return
-
+    for selectedNode in ui.animationsTreeView.selectedNodes
+      socket.emit 'edit:assets', info.assetId, 'deleteAnimation', parseInt(selectedNode.dataset.id), (err) ->
+        alert err if err?; return
+    return
   return
 
 onAnimationDrop = (dropInfo, orderedNodes) =>

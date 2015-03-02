@@ -280,22 +280,24 @@ setInspectorScale = (scale) ->
   return
 
 onNewNodeClick = ->
-  name = prompt "Actor name", "Actor"
-  return if ! name?
+  SupClient.dialogs.prompt "Enter the name of the actor", null, "Actor", "OK", (name) =>
+    return if ! name?
 
-  options = SupClient.getTreeViewInsertionPoint ui.nodesTreeView
+    options = SupClient.getTreeViewInsertionPoint ui.nodesTreeView
 
-  offset = new THREE.Vector3(0, 0, -5).applyQuaternion ui.cameraActor.getGlobalOrientation()
-  position = ui.cameraActor.getGlobalPosition().add offset
-  options.transform = { position }
+    offset = new THREE.Vector3(0, 0, -5).applyQuaternion ui.cameraActor.getGlobalOrientation()
+    position = ui.cameraActor.getGlobalPosition().add offset
+    options.transform = { position }
 
-  socket.emit 'edit:assets', info.assetId, 'addNode', name, options, (err, nodeId) ->
-    if err? then alert err; return
+    socket.emit 'edit:assets', info.assetId, 'addNode', name, options, (err, nodeId) ->
+      if err? then alert err; return
 
-    ui.nodesTreeView.clearSelection()
-    ui.nodesTreeView.addToSelection ui.nodesTreeView.treeRoot.querySelector("li[data-id='#{nodeId}']")
-    onNodeSelect()
+      ui.nodesTreeView.clearSelection()
+      ui.nodesTreeView.addToSelection ui.nodesTreeView.treeRoot.querySelector("li[data-id='#{nodeId}']")
+      onNodeSelect()
+      return
     return
+  return
 
 onRenameNodeClick = ->
   return if ui.nodesTreeView.selectedNodes.length != 1
@@ -303,11 +305,13 @@ onRenameNodeClick = ->
   selectedNode = ui.nodesTreeView.selectedNodes[0]
   node = data.asset.nodes.byId[parseInt(selectedNode.dataset.id)]
 
-  newName = prompt "New name", node.name
-  return if ! newName?
+  SupClient.dialogs.prompt "Enter the new name of the actor", null, node.name, "OK", (newName) =>
+    return if ! newName?
 
-  socket.emit 'edit:assets', info.assetId, 'setNodeProperty', node.id, 'name', newName, (err) ->
-    alert err if err?; return
+    socket.emit 'edit:assets', info.assetId, 'setNodeProperty', node.id, 'name', newName, (err) ->
+      alert err if err?; return
+    return
+  return
 
 onDuplicateNodeClick = ->
   return if ui.nodesTreeView.selectedNodes.length != 1
@@ -328,12 +332,13 @@ onDuplicateNodeClick = ->
 
 onDeleteNodeClick = ->
   return if ui.nodesTreeView.selectedNodes.length == 0
-  return if ! confirm "Are you sure you want to delete the selected actors?"
+  SupClient.dialogs.confirm "Are you sure you want to delete the selected actors?", "Yes", (confirm) =>
+    return if ! confirm
 
-  for selectedNode in ui.nodesTreeView.selectedNodes
-    socket.emit 'edit:assets', info.assetId, 'removeNode', parseInt(selectedNode.dataset.id), (err) ->
-      alert err if err?; return
-
+    for selectedNode in ui.nodesTreeView.selectedNodes
+      socket.emit 'edit:assets', info.assetId, 'removeNode', parseInt(selectedNode.dataset.id), (err) ->
+        alert err if err?; return
+    return
   return
 
 onTransformInputChange = (event) ->
@@ -382,24 +387,27 @@ createComponentElement = (nodeId, component) ->
   componentElt
 
 onNewComponentClick = ->
-  componentType = prompt "Component type", ""
-  return if ! componentType?
+  SupClient.dialogs.select "Select the type of the component", Object.keys(SupEngine.componentEditorPlugins), "OK", (type) =>
+    return if ! type?
 
-  nodeId = parseInt(ui.nodesTreeView.selectedNodes[0].dataset.id)
+    nodeId = parseInt(ui.nodesTreeView.selectedNodes[0].dataset.id)
 
-  socket.emit 'edit:assets', info.assetId, 'addComponent', nodeId, componentType, null, (err, componentId) ->
-    if err? then alert err; return
+    socket.emit 'edit:assets', info.assetId, 'addComponent', nodeId, type, null, (err, componentId) ->
+      if err? then alert err; return
+      return
     return
   return
 
 onDeleteComponentClick = (event) ->
-  return if ! confirm "Are you sure you want to delete this component?"
+  SupClient.dialogs.confirm "Are you sure you want to delete this component?", "Yes", (confirm) =>
+    return if ! confirm
 
-  nodeId = parseInt(ui.nodesTreeView.selectedNodes[0].dataset.id)
-  componentId = parseInt(event.target.parentElement.parentElement.dataset.componentId)
+    nodeId = parseInt(ui.nodesTreeView.selectedNodes[0].dataset.id)
+    componentId = parseInt(event.target.parentElement.parentElement.dataset.componentId)
 
-  socket.emit 'edit:assets', info.assetId, 'removeComponent', nodeId, componentId, (err) ->
-    if err? then alert err; return
+    socket.emit 'edit:assets', info.assetId, 'removeComponent', nodeId, componentId, (err) ->
+      if err? then alert err; return
+      return
     return
   return
 
