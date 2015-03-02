@@ -17,6 +17,7 @@ start = ->
   fileSelect = document.querySelector('input.file-select')
   fileSelect.addEventListener 'change', onFileSelectChange
   document.querySelector('button.upload').addEventListener 'click', => fileSelect.click(); return
+  document.querySelector('button.download').addEventListener 'click', onDownloadSound
 
   # Sidebar
   ui.streamingSelect = document.querySelector('.property-streaming')
@@ -56,6 +57,21 @@ onFileSelectChange = (event) ->
 
   reader.readAsArrayBuffer event.target.files[0]
   event.target.parentElement.reset()
+  return
+
+onDownloadSound = ->
+  SupClient.dialogs.prompt "Enter the name of the sound", null, "Sound.wav", "OK", (name) =>
+    return if ! name?
+    
+    a = document.createElement "a"
+    document.body.appendChild a
+    a.style = "display: none"
+    a.href = objectURL
+
+    a.download = name
+    a.click()
+    document.body.removeChild a
+    return
   return
 
 objectURL = null
