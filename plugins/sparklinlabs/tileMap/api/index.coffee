@@ -13,5 +13,5 @@ SupAPI.addPlugin 'typescript', 'tileSet', {
 SupAPI.addPlugin 'typescript', 'TileMapRenderer', {
   code: fs.readFileSync __dirname + '/TileMapRenderer.ts', { encoding: 'utf8' }
   defs: fs.readFileSync __dirname + '/TileMapRenderer.d.ts', { encoding: 'utf8' }
-  exposeAsActorComponent: true
+  exposeActorComponent: "tileMapRenderer: TileMapRenderer"
 }

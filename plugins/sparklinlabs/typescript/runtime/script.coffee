@@ -34,8 +34,8 @@ exports.init = (player, callback) ->
 
     tsSupDefs += plugin.defs if plugin.defs?
 
-    if plugin.exposeAsActorComponent
-      actorComponentAccessors += "#{pluginName.charAt(0).toLowerCase() + pluginName.slice(1)}: #{pluginName}; "
+    if plugin.exposeActorComponent?
+      actorComponentAccessors += "#{plugin.exposeActorComponent}; "
 
   callback()
   return
