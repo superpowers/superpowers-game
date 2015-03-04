@@ -36,6 +36,7 @@ module.exports = class GameInstance extends EventEmitter
 
   update: ->
     @input.update()
+    earlyUpdate() for pluginName, earlyUpdate of SupEngine.earlyUpdatePlugins
 
     # Build cached actors list
     @cachedActors.length = 0

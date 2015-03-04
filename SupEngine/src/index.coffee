@@ -46,3 +46,13 @@ exports.addComponentEditorPlugin = (name, plugin) ->
 
   exports.componentEditorPlugins[name] = plugin
   return
+
+exports.earlyUpdatePlugins = {}
+
+exports.addEarlyUpdatePlugin = (name, callback) ->
+  if exports.earlyUpdatePlugins[name]?
+    console.error "SupEngine.addEarlyUpdatePlugin: Tried to load two or more plugins named \"#{name}\""
+    return
+
+  exports.earlyUpdatePlugins[name] = callback
+  return
