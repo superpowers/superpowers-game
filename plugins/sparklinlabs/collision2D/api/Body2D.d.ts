@@ -8,6 +8,12 @@ declare module Sup {
       getSize(): { width: number; height: number; };
       setVelocity( velocity: Sup.Math.Vector3 ): Body;
       getVelocity(): Sup.Math.Vector3;
+      setVelocityMin( velocityMin: Sup.Math.Vector3 ): Body;
+      getVelocityMin(): Sup.Math.Vector3;
+      setVelocityMax( velocityMax: Sup.Math.Vector3 ): Body;
+      getVelocityMax(): Sup.Math.Vector3;
+      setVelocityMultiplier( velocityMultiplier: Sup.Math.Vector3 ): Body;
+      getVelocityMultiplier(): Sup.Math.Vector3;
       getTouches(): { top: boolean; bottom: boolean; right: boolean; left: boolean };
     }
   }

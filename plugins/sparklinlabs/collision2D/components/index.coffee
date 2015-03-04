@@ -1,12 +1,12 @@
 SupEngine.Collision2D =
   allBodies: []
-  gravity: new SupEngine.THREE.Vector3( 0, 0.1, 0 );
+  gravity: new SupEngine.THREE.Vector3( 0, -0.1, 0 );
 
   intersects: ( body1, body2 ) ->
-    return false if body1.right() <= body2.left()
-    return false if body1.bottom() >= body2.top()
-    return false if body1.left() >= body2.right()
-    return false if body1.top() <= body2.bottom()
+    return false if body1.right() < body2.left()
+    return false if body1.bottom() > body2.top()
+    return false if body1.left() > body2.right()
+    return false if body1.top() < body2.bottom()
 
     return true
 
@@ -16,11 +16,12 @@ SupEngine.Collision2D =
     body1.touches.right = false
     body1.touches.left = false
 
-    console.log bodies
+    gotCollision = false
     for otherBody in bodies
       continue if otherBody == body1
-
       if SupEngine.Collision2D.intersects( body1, otherBody )
+        gotCollision = true
+
         insideX = body1.position.x - otherBody.position.x
         if insideX >= 0 then insideX -= ( body1.width + otherBody.width ) / 2
         else insideX += ( body1.width + otherBody.width ) / 2
@@ -46,10 +47,10 @@ SupEngine.Collision2D =
             else body1.touches.left = true
 
         body1.actor.setGlobalPosition( body1.position )
-    return
+    return gotCollision
 
 SupEngine.addEarlyUpdatePlugin "Collision2D", (player) =>
-  body.__inner.update() for body in SupEngine.Collision2D.allBodies
+  body.__inner.earlyUpdate() for body in SupEngine.Collision2D.allBodies
   return
 
 SupEngine.addComponentPlugin 'Body2D', require './Body2D'

@@ -27,6 +27,40 @@ module Sup {
         return this
       }
       getVelocity() { return new Sup.Math.Vector3( this.__inner.velocity.x, this.__inner.velocity.y, 0 ) }
+
+      setVelocityMin( velocityMin ) {
+        this.__inner.velocityMin.x = velocityMin.x;
+        this.__inner.velocityMin.y = velocityMin.y;
+        return this
+      }
+      getVelocityMin() { return new Sup.Math.Vector3( this.__inner.velocityMin.x, this.__inner.velocityMin.y, 0 ) }
+
+      setVelocityMax( velocityMax ) {
+        this.__inner.velocityMax.x = velocityMax.x;
+        this.__inner.velocityMax.y = velocityMax.y;
+        return this
+      }
+      getVelocityMax() { return new Sup.Math.Vector3( this.__inner.velocityMax.x, this.__inner.velocityMax.y, 0 ) }
+
+      setVelocityMultiplier( velocityMultiplier ) {
+        this.__inner.velocityMultiplier.x = velocityMultiplier.x;
+        this.__inner.velocityMultiplier.y = velocityMultiplier.y;
+        return this
+      }
+      getVelocityMultiplier() { return new Sup.Math.Vector3( this.__inner.velocityMultiplier.x, this.__inner.velocityMultiplier.y, 1 ) }
+
+      setAngularVelocity( angularVelocity ) {
+        this.__inner.angularVelocity = angularVelocity;
+        return this
+      }
+      getAngularVelocity() { return this.__inner.angularVelocity }
+
+      setAngularVelocityMultiplier( angularVelocityMultiplier ) {
+        this.__inner.angularVelocityMultiplier = angularVelocityMultiplier
+        return this
+      }
+      getAngularVelocityMultiplier() { return this.__inner.angularVelocityMultiplier }
+
       getTouches() { return this.__inner.touches }
     }
   }

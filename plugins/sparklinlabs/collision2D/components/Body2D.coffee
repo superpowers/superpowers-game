@@ -12,22 +12,26 @@ module.exports = class Body2D extends SupEngine.ActorComponent
     @position = @actor.getGlobalPosition()
     @previousPosition = @position.clone()
     @velocity = new SupEngine.THREE.Vector3 0, 0, 0
-    @minVelocity = new SupEngine.THREE.Vector3 -0.5, -0.5, 0
-    @maxVelocity = new SupEngine.THREE.Vector3 0.5, 0.5, 0
+    @velocityMin = new SupEngine.THREE.Vector3 -0.5, -0.5, 0
+    @velocityMax = new SupEngine.THREE.Vector3 0.5, 0.5, 0
+    @velocityMultiplier = new SupEngine.THREE.Vector3 0, 0, 0
 
     @touches = { top: false, bottom: false, right: false, left: false }
 
-  update: ->
+  earlyUpdate: ->
     return if not @movable
 
     @previousPosition.copy @position
 
-    @velocity.sub SupEngine.Collision2D.gravity.clone().multiplyScalar( 1 / SupEngine.GameInstance.framesPerSecond )
-    @velocity.x = Math.min( Math.max( @velocity.x, @minVelocity.x ), @maxVelocity.x )
-    @velocity.y = Math.min( Math.max( @velocity.y, @minVelocity.y ), @maxVelocity.y )
+    @velocity.add SupEngine.Collision2D.gravity.clone().multiplyScalar( 1 / SupEngine.GameInstance.framesPerSecond )
+    @velocity.x *= 1 + @velocityMultiplier.x / 100;
+    @velocity.y *= 1 + @velocityMultiplier.y / 100;
+    if @velocity.length() != 0
+      @velocity.x = Math.min( Math.max( @velocity.x, @velocityMin.x ), @velocityMax.x )
+      @velocity.y = Math.min( Math.max( @velocity.y, @velocityMin.y ), @velocityMax.y )
 
-    @position.add @velocity
-    @actor.setGlobalPosition @position
+      @position.add @velocity
+      @actor.setGlobalPosition @position
     return
 
   _destroy: ->

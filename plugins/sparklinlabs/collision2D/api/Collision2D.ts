@@ -19,7 +19,7 @@ module Sup {
       else {
         bodies.push( body2.__inner );
       }
-      SupEngine.Collision2D.collides( body1.__inner, bodies);
+      return SupEngine.Collision2D.collides( body1.__inner, bodies);
     }
   }
 }
