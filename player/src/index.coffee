@@ -38,6 +38,7 @@ async.each pluginPaths.all, (pluginName, pluginCallback) ->
       runtimeScript = document.createElement('script')
       runtimeScript.src = "../plugins/#{pluginName}/runtime.js"
       runtimeScript.addEventListener 'load', -> cb()
+      runtimeScript.addEventListener 'error', -> cb()
       document.body.appendChild runtimeScript
   ], pluginCallback
 , (err) ->
