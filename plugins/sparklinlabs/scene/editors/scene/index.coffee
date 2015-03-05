@@ -381,6 +381,16 @@ createComponentElement = (nodeId, component) ->
   componentEditorPlugin = SupEngine.componentEditorPlugins[component.type]
   ui.componentEditors[component.id] = new componentEditorPlugin SupClient, tbody, component.config, data.projectClient, setProperty
 
+  shrinkButton = clone.querySelector('.shrink-component')
+  shrinkButton.addEventListener 'click', =>
+    if tbody.style.display == "none"
+      tbody.style.display = ""
+      shrinkButton.innerHTML = "-"
+    else
+      tbody.style.display = "none"
+      shrinkButton.innerHTML = "+"
+    return
+
   clone.querySelector('.delete-component').addEventListener 'click', onDeleteComponentClick
 
   componentElt.appendChild clone
