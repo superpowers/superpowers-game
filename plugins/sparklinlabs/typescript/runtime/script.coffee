@@ -25,7 +25,10 @@ exports.init = (player, callback) ->
       behaviorClass = player.behaviorClasses[config.behaviorName]
       new behaviorClass actor.__inner, config.properties
     else
-      new player.Sup[type] actor
+      if type == "Body2D"
+        new player.Sup.Collision2D.Body actor
+      else
+        new player.Sup[type] actor
 
   for pluginName, plugin of SupAPI.contexts["typescript"].plugins
     if plugin.code?
