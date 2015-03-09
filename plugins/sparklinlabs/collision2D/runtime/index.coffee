@@ -1,0 +1,1 @@
+SupRuntime.addPlugin 'Body2D', require './Body2D'
