@@ -1,13 +1,13 @@
 var jsMath = Math;
 
 module Sup {
-  export module Collision2D {
-    export function getAllBodies() { return SupEngine.Collision2D.allBodies }
+  export module ArcadePhysics2D {
+    export function getAllBodies() { return SupEngine.ArcadePhysics2D.allBodies }
     export function setGravity( gravity ) {
-      SupEngine.Collision2D.gravity.set( gravity.x, gravity.y, 0 );
+      SupEngine.ArcadePhysics2D.gravity.set( gravity.x, gravity.y, 0 );
     }
     export function intersects( body1, body2 ) {
-      return SupEngine.Collision2D.intersects( body1.__inner, body2.__inner );
+      return SupEngine.ArcadePhysics2D.intersects( body1.__inner, body2.__inner );
     }
     export function collides( body1, body2 ) {
       var bodies = [];
@@ -19,7 +19,7 @@ module Sup {
       else {
         bodies.push( body2.__inner );
       }
-      return SupEngine.Collision2D.collides( body1.__inner, bodies);
+      return SupEngine.ArcadePhysics2D.collides( body1.__inner, bodies);
     }
   }
 }

@@ -1,8 +1,8 @@
-module.exports = class Body2D extends SupEngine.ActorComponent
-  @Updater: require './Body2DUpdater'
+module.exports = class ArcadeBody2D extends SupEngine.ActorComponent
+  @Updater: require './ArcadeBody2DUpdater'
 
   constructor: (actor, options) ->
-    super actor, 'Body2D'
+    super actor, 'ArcadeBody2D'
 
     options ?= {}
     @movable = options.movable ? true
@@ -25,7 +25,7 @@ module.exports = class Body2D extends SupEngine.ActorComponent
 
     @previousPosition.copy @position
 
-    @velocity.add SupEngine.Collision2D.gravity.clone().multiplyScalar( 1 / SupEngine.GameInstance.framesPerSecond )
+    @velocity.add SupEngine.ArcadePhysics2D.gravity.clone().multiplyScalar( 1 / SupEngine.GameInstance.framesPerSecond )
     @velocity.x *= 1 + @velocityMultiplier.x / 100;
     @velocity.y *= 1 + @velocityMultiplier.y / 100;
     if @velocity.length() != 0
@@ -37,7 +37,7 @@ module.exports = class Body2D extends SupEngine.ActorComponent
     return
 
   _destroy: ->
-    SupEngine.Collision2D.allBodies.splice( SupEngine.all2DBodies.indexOf( @.__outer ), 1 );
+    SupEngine.ArcadePhysics2D.allBodies.splice( SupEngine.ArcadePhysics2D.indexOf( @.__outer ), 1 );
     return
 
   right: -> @position.x + @width / 2

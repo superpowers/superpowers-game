@@ -1,12 +1,12 @@
 module Sup {
-  export module Collision2D {
+  export module ArcadePhysics2D {
     export class Body extends ActorComponent {
       constructor( actor, options ) {
         super( actor );
-        this.__inner = new SupEngine.componentPlugins.Body2D( actor.__inner, options );
+        this.__inner = new SupEngine.componentPlugins.ArcadeBody2D( actor.__inner, options );
         this.__inner.__outer = this;
-        SupEngine.Collision2D.allBodies.push( this );
-        this.actor.body2D = this;
+        SupEngine.ArcadePhysics2D.allBodies.push( this );
+        this.actor.arcadeBody2D = this;
       }
       setMovable( movable ) {
         this.__inner.movable = movable;

@@ -1,1 +1,0 @@
-SupCore.data.addComponentConfigPlugin 'Body2D', require './Body2DConfig'

@@ -1,4 +1,4 @@
-SupEngine.Collision2D =
+SupEngine.ArcadePhysics2D =
   allBodies: []
   gravity: new SupEngine.THREE.Vector3( 0, -0.1, 0 );
 
@@ -19,7 +19,7 @@ SupEngine.Collision2D =
     gotCollision = false
     for otherBody in bodies
       continue if otherBody == body1
-      if SupEngine.Collision2D.intersects( body1, otherBody )
+      if SupEngine.ArcadePhysics2D.intersects( body1, otherBody )
         gotCollision = true
 
         insideX = body1.position.x - otherBody.position.x
@@ -49,8 +49,8 @@ SupEngine.Collision2D =
         body1.actor.setGlobalPosition( body1.position )
     return gotCollision
 
-SupEngine.addEarlyUpdatePlugin "Collision2D", (player) =>
-  body.__inner.earlyUpdate() for body in SupEngine.Collision2D.allBodies
+SupEngine.addEarlyUpdatePlugin "ArcadePhysics2D", (player) =>
+  body.__inner.earlyUpdate() for body in SupEngine.ArcadePhysics2D.allBodies
   return
 
-SupEngine.addComponentPlugin 'Body2D', require './Body2D'
+SupEngine.addComponentPlugin 'ArcadeBody2D', require './ArcadeBody2D'

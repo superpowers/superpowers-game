@@ -1,5 +1,5 @@
 declare module Sup {
-  module Collision2D {
+  module ArcadePhysics2D {
     function getAllBodies(): Array<Body>;
     function setGravity( gravity: Sup.Math.Vector3 );
     function intersects( body1: Body, body2: Body ): boolean;

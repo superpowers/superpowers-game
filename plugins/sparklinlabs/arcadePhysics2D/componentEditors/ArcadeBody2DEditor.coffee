@@ -1,4 +1,4 @@
-module.exports = class SpriteRendererEditor
+module.exports = class ArcadeBody2DEditor
 
   constructor: (@SupUI, tbody, config, @projectClient, @setProperty) ->
     @fields = {}

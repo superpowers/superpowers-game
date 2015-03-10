@@ -1,4 +1,4 @@
-module.exports = class Body2DConfig extends SupCore.data.base.ComponentConfig
+module.exports = class ArcadeBody2DConfig extends SupCore.data.base.ComponentConfig
 
   @schema =
     width: { type: 'number', mutable: true }

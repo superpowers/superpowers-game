@@ -1,5 +1,5 @@
 declare module Sup {
-  module Collision2D {
+  module ArcadePhysics2D {
     class Body {
       constructor( actor: Sup.Actor, options?: {movable?: boolean; width?: number; height?: number; bounceX?: number; bounceY?: number} );
       setMovable( movable: boolean ): Body;
