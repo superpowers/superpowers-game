@@ -22,4 +22,4 @@ exports.loadAsset = (player, entry, callback) ->
     return
 
 exports.createOuterAsset = (player, asset) ->
-  return new player.Sup.Sound asset
+  return new window.Sup.Sound asset

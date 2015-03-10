@@ -3,4 +3,4 @@ exports.loadAsset = (player, entry, callback) ->
   return
 
 exports.createOuterAsset = (player, asset) ->
-  return new player.Sup.Scene asset
+  return new window.Sup.Scene asset

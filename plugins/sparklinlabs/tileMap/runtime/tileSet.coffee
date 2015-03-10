@@ -19,4 +19,4 @@ exports.loadAsset = (player, entry, callback) ->
   return
 
 exports.createOuterAsset = (player, asset) ->
-  return new player.Sup.TileSet asset
+  return new window.Sup.TileSet asset

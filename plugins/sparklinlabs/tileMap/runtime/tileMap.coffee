@@ -6,4 +6,4 @@ exports.loadAsset = (player, entry, callback) ->
   return
 
 exports.createOuterAsset = (player, asset) ->
-  return new player.Sup.TileMap asset
+  return new window.Sup.TileMap asset

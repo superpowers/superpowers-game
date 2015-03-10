@@ -15,20 +15,22 @@ globals = { "Sup.ts": tsSup }
 scriptNames = []
 scripts = {}
 
+actorComponentTypesByName = {}
 actorComponentAccessors = ""
 
 exports.init = (player, callback) ->
   player.behaviorClasses = {}
-  player.createActor = (name, parentActor) -> new player.Sup.Actor name, parentActor
+  player.createActor = (name, parentActor) -> new window.Sup.Actor name, parentActor
   player.createComponent = (type, actor, config) ->
     if type == 'Behavior'
       behaviorClass = player.behaviorClasses[config.behaviorName]
       new behaviorClass actor.__inner, config.properties
     else
-      if type == "Body2D"
-        new player.Sup.Collision2D.Body actor
-      else
-        new player.Sup[type] actor
+      if ! actorComponentTypesByName[type]?
+        actorComponentTypesByName[type] = window
+        parts = SupAPI.contexts["typescript"].plugins[type].exposeActorComponent.className.split "."
+        actorComponentTypesByName[type] = actorComponentTypesByName[type][part] for part in parts
+      new actorComponentTypesByName[type] actor
 
   for pluginName, plugin of SupAPI.contexts["typescript"].plugins
     if plugin.code?
@@ -38,7 +40,7 @@ exports.init = (player, callback) ->
     tsSupDefs += plugin.defs if plugin.defs?
 
     if plugin.exposeActorComponent?
-      actorComponentAccessors += "#{plugin.exposeActorComponent}; "
+      actorComponentAccessors += "#{plugin.exposeActorComponent.propertyName}: #{plugin.exposeActorComponent.className}; "
 
   callback()
   return

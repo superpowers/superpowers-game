@@ -12,7 +12,7 @@ if ! window?
   for pluginName, plugin of SupAPI.contexts["typescript"].plugins
     tsSupDefs += plugin.defs if plugin.defs?
     if plugin.exposeActorComponent?
-      actorComponentAccessors += "#{plugin.exposeActorComponent}; "
+      actorComponentAccessors += "#{plugin.exposeActorComponent.propertyName}: #{plugin.exposeActorComponent.className}; "
 
   tsSupDefs = tsSupDefs.replace "// INSERT_COMPONENT_ACCESSORS", actorComponentAccessors
 
