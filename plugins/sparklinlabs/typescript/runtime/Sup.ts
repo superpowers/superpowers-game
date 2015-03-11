@@ -75,6 +75,10 @@ module Sup {
         this.z = (z) ? z : 0;
         this.w = (w) ? w : 1;
       }
+      set(x, y, z, w) {
+        this.x = x; this.y = y; this.z = z; this.w = w;
+        return this
+      }
       setFromYawPitchRoll(yaw, pitch, roll) {
         var c1 = jsMath.cos(pitch / 2);
         var c2 = jsMath.cos(yaw / 2);
