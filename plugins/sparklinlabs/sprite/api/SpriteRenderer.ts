@@ -8,7 +8,7 @@ module Sup {
       this.actor.spriteRenderer = this;
     }
 
-    getSprite() { return this.__inner }
+    getSprite() { return this.__inner.asset.__outer }
     setSprite(asset) { this.__inner.setSprite(asset.__inner); return this }
     setOpacity(opacity) { this.__inner.opacity = opacity; this.__inner.threeMesh.material.opacity = opacity; return this }
     setColor(r, g, b) {
