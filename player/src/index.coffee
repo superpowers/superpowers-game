@@ -7,6 +7,10 @@ canvas = document.querySelector('canvas')
 qs = require('querystring').parse window.location.search.slice(1)
 player = null
 
+if qs.debug? and window.nwDispatcher?
+  gui = window.nwDispatcher.requireNwGui()
+  gui.Window.get().showDevTools()
+
 # Load plugins
 pluginsXHR = new XMLHttpRequest
 pluginsXHR.open 'GET', '../plugins.json', false # Synchronous
