@@ -1,0 +1,7 @@
+{
+  "name": "superpowers-sparklinlabs-cannonjs-plugin",
+  "version": "1.0.0",
+  "dependencies": {
+    "cannon": "^0.6.1"
+  }
+}
