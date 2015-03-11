@@ -1,0 +1,56 @@
+body
+  display flex
+
+.main
+  flex 1
+  display flex
+
+  canvas
+    flex 1
+
+.sidebar
+  width 250px
+  border-left 1px solid #aaa
+
+  display flex
+  flex-flow column
+
+  table
+    padding 10px
+
+    tr
+      padding-bottom 10px
+
+    th
+      width 150px
+      text-align left
+
+    td
+      display inline-flex
+
+  // Animations tab
+  .animations-buttons
+    display flex
+
+    button
+      flex 1
+      font-size smaller
+      white-space nowrap
+
+  .animations-tree-view
+    border-top 1px solid #aaa
+    flex 1
+    position relative
+    background #fff
+    overflow-y auto
+
+    .tree
+      position absolute
+
+    .name
+      white-space pre
+      width 150px
+
+    input
+      width 50px
+      margin-right 5px

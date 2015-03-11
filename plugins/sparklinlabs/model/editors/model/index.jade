@@ -1,0 +1,44 @@
+doctype html
+html
+  head
+    link(rel="stylesheet",href="/client/styles/reset.css")
+    link(rel="stylesheet",href="/client/styles/treeView.css")
+    link(rel="stylesheet",href="/client/styles/dialogs.css")
+    link(rel="stylesheet",href="index.css")
+
+  body
+    .main
+      canvas(tabindex="0")
+
+    .sidebar
+      table
+        tr.model
+          th Model
+          td
+            button.upload Upload
+            form(style="display: none")
+              input.file-select(type="file",multiple)
+
+        tr.diffuse-map
+          th Diffuse map
+          td
+            button.upload Upload
+            form(style="display: none")
+              input.file-select(type="file")
+
+      .animations-buttons
+        button.new-animation New
+        form(style="display: none")
+          input.file-select.upload-animation(type="file",multiple)
+        button(disabled).upload-animation Upload
+        button(disabled).rename-animation Rename
+        button(disabled).delete-animation Delete
+
+      .animations-tree-view
+
+    script(src="/core/SupCore.js")
+    script(src="../../data.js")
+    script(src="/system/SupEngine.js")
+    script(src="../../components.js")
+    script(src="/client/SupClient.js")
+    script(src="index.js")
