@@ -26,8 +26,8 @@ module.exports = class TileMapAsset extends SupCore.data.base.Asset
   init: ->
     @pub =
       tileSetId: null
-      pixelsPerUnit: 40
-      width: 20, height: 15
+      pixelsPerUnit: 100
+      width: 30, height: 20
       layerDepthOffset: 1
       layers: []
 
