@@ -9,6 +9,7 @@ module.exports = class ModelRenderer extends SupEngine.ActorComponent
   constructor: (actor, modelAsset) ->
     super actor, 'ModelRenderer'
 
+    @color = { r: 1, g: 1, b: 1}
     @setModel modelAsset if modelAsset?
 
   _clearMesh: ->
@@ -64,6 +65,7 @@ module.exports = class ModelRenderer extends SupEngine.ActorComponent
       geometry.addAttribute 'skinWeight', new THREE.BufferAttribute buffer, 4
 
     material = new THREE.MeshBasicMaterial side: THREE.DoubleSide, alphaTest: 0.1
+    material.color.setRGB @color.r, @color.g, @color.b
 
     if @asset.textures.diffuse?
       material.map = @asset.textures.diffuse
