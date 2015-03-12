@@ -46,7 +46,7 @@ SupEngine.ArcadePhysics2D =
             if body1.position.x > otherBody.position.x then body1.touches.right = true
             else body1.touches.left = true
 
-        body1.actor.setGlobalPosition( body1.position )
+        body1.actor.setLocalPosition( body1.position )
     return gotCollision
 
 SupEngine.addEarlyUpdatePlugin "ArcadePhysics2D", (player) =>

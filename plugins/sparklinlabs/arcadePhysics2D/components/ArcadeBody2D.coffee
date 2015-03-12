@@ -11,7 +11,7 @@ module.exports = class ArcadeBody2D extends SupEngine.ActorComponent
     @bounceX = options.bounceX ? 0
     @bounceY = options.bounceY ? 0
 
-    @position = @actor.getGlobalPosition()
+    @position = @actor.getLocalPosition()
     @previousPosition = @position.clone()
     @velocity = new SupEngine.THREE.Vector3 0, 0, 0
     @velocityMin = new SupEngine.THREE.Vector3 -0.5, -0.5, 0
@@ -25,19 +25,21 @@ module.exports = class ArcadeBody2D extends SupEngine.ActorComponent
 
     @previousPosition.copy @position
 
-    @velocity.add SupEngine.ArcadePhysics2D.gravity.clone().multiplyScalar( 1 / SupEngine.GameInstance.framesPerSecond )
+    @velocity.x += SupEngine.ArcadePhysics2D.gravity.x * 1 / SupEngine.GameInstance.framesPerSecond
     @velocity.x *= 1 + @velocityMultiplier.x / 100;
+
+    @velocity.y += SupEngine.ArcadePhysics2D.gravity.y * 1 / SupEngine.GameInstance.framesPerSecond
     @velocity.y *= 1 + @velocityMultiplier.y / 100;
     if @velocity.length() != 0
       @velocity.x = Math.min( Math.max( @velocity.x, @velocityMin.x ), @velocityMax.x )
       @velocity.y = Math.min( Math.max( @velocity.y, @velocityMin.y ), @velocityMax.y )
-
       @position.add @velocity
-      @actor.setGlobalPosition @position
+      @actor.setLocalPosition @position
     return
 
   _destroy: ->
-    SupEngine.ArcadePhysics2D.allBodies.splice( SupEngine.ArcadePhysics2D.indexOf( @.__outer ), 1 );
+    SupEngine.ArcadePhysics2D.allBodies.splice( SupEngine.ArcadePhysics2D.allBodies.indexOf( @.__outer ), 1 );
+    super()
     return
 
   right: -> @position.x + @width / 2
