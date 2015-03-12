@@ -7,6 +7,10 @@ module Sup {
       this.__inner.__outer = this;
       this.actor.modelRenderer = this;
     }
+    destroy() {
+      this.actor.modelRenderer = null;
+      super.destroy();
+    }
 
     getModel() { return this.__inner.asset.__outer }
     setModel(asset) { this.__inner.setModel(asset.__inner); return this }

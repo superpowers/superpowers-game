@@ -8,6 +8,11 @@ module Sup {
         SupEngine.ArcadePhysics2D.allBodies.push( this );
         this.actor.arcadeBody2D = this;
       }
+      destroy() {
+        this.actor.arcadeBody2D = null;
+        super.destroy();
+      }
+
       setMovable( movable ) {
         this.__inner.movable = movable;
         return this

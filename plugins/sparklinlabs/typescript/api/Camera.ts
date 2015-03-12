@@ -6,6 +6,11 @@ module Sup {
       this.__inner.__outer = this;
       this.actor.camera = this;
     }
+    destroy() {
+      this.actor.camera = null;
+      super.destroy();
+    }
+
     setOrthographicMode(enabled) {
       this.__inner.setOrthographicMode(enabled);
       return this;

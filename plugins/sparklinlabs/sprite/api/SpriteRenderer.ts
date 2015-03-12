@@ -7,6 +7,10 @@ module Sup {
       this.__inner.__outer = this;
       this.actor.spriteRenderer = this;
     }
+    destroy() {
+      this.actor.spriteRenderer = null;
+      super.destroy();
+    }
 
     getSprite() { return this.__inner.asset.__outer }
     setSprite(asset) { this.__inner.setSprite(asset.__inner); return this }

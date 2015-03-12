@@ -7,6 +7,11 @@ module Sup {
       this.__inner.__outer = this;
       this.actor.tileMapRenderer = this;
     }
+    destroy() {
+      this.actor.tileMapRenderer = null;
+      super.destroy();
+    }
+
     getTileMap() { return this.__inner.tileMap.__outer }
     setTileMap(tileMap, replaceTileSet) {
       this.__inner.setTileMap(tileMap.__inner);
