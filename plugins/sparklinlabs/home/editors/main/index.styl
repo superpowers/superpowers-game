@@ -1,0 +1,93 @@
+@import 'nib'
+
+body
+  display flex
+
+.main
+  flex 1
+  display flex
+  flex-flow column
+
+  .project-info
+    .project-name
+      font-size 2em
+
+  .chat
+    flex 1
+    overflow-y scroll
+    padding 0.5em
+    word-wrap break-word
+
+    ol
+      list-style none
+      margin 0
+      padding 0
+      white-space pre
+      user-select initial
+
+      li
+        margin-bottom 0.25em
+
+        &.day-separator
+          text-align center
+          text-transform uppercase
+          position relative
+          color #666
+
+          > hr
+            height 1px
+            margin 0.5em 0
+            border none
+            background #ccc
+
+          > div
+            position absolute
+            top -0.5em
+            background #fff
+            padding 0 1em
+            display inline-block
+
+    .timestamp
+      color #888
+      font-size smaller
+      padding-right 0.5em
+
+    .author
+      font-weight bold
+
+  .chat-input
+    border-top 1px solid #888
+    font-size 0
+
+  .chat-input textarea
+    width 100%
+    resize none
+    border none
+    padding 0.5em
+    font inherit
+    font-size 14px
+
+.sidebar
+  width 250px
+  border-left 1px solid #aaa
+  display flex
+  flex-flow column
+
+  .header
+    background #ccc
+    text-transform uppercase
+    padding 0.5em
+    font-weight bold
+
+  .content
+    padding 0.5em
+
+.links
+  ul
+    list-style none
+    margin 0
+    padding 0
+
+  li
+    margin 0.5em 0
+
