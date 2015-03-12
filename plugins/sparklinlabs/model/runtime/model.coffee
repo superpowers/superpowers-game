@@ -19,6 +19,9 @@ exports.loadAsset = (player, entry, callback) ->
         image.onload = ->
           texture = data.textures[key] = new SupEngine.THREE.Texture image
           texture.needsUpdate = true
+
+          texture.magFilter = SupEngine.THREE.NearestFilter
+          texture.minFilter = SupEngine.THREE.NearestFilter
           cb(); return
 
         image.onerror = cb

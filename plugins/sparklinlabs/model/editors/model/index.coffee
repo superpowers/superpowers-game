@@ -271,6 +271,8 @@ prepareMaps = (callback) ->
     if ! image?
       image = new Image
       texture = data.asset.pub.textures[key] = new THREE.Texture image
+      texture.magFilter = SupEngine.THREE.NearestFilter
+      texture.minFilter = SupEngine.THREE.NearestFilter
 
       typedArray = new Uint8Array buffer
       blob = new Blob [ typedArray ], type: 'image/*'

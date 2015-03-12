@@ -8,7 +8,7 @@ module Sup {
       this.actor.modelRenderer = this;
     }
 
-    getModel() { return this.__inner }
+    getModel() { return this.__inner.asset.__outer }
     setModel(asset) { this.__inner.setModel(asset.__inner); return this }
     setOpacity(opacity) { this.__inner.opacity = opacity; this.__inner.threeMesh.material.opacity = opacity; return this }
     setColor(r, g, b) {

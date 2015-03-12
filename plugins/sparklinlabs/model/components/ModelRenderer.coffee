@@ -63,7 +63,7 @@ module.exports = class ModelRenderer extends SupEngine.ActorComponent
       buffer = new Float32Array(@asset.attributes.skinWeight)
       geometry.addAttribute 'skinWeight', new THREE.BufferAttribute buffer, 4
 
-    material = new THREE.MeshBasicMaterial side: THREE.DoubleSide
+    material = new THREE.MeshBasicMaterial side: THREE.DoubleSide, alphaTest: 0.1
 
     if @asset.textures.diffuse?
       material.map = @asset.textures.diffuse
