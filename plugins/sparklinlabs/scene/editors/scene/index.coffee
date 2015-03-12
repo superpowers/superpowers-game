@@ -75,7 +75,8 @@ sceneSubscriber.onAssetReceived = (assetId, asset) ->
 
     createNodeActor node
 
-    if node.children?
+    if node.children? and node.children.length > 0
+      liElt.classList.add "collapsed"
       walk child, node, liElt for child in node.children
 
     return
