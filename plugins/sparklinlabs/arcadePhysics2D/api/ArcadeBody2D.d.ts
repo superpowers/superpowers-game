@@ -1,6 +1,6 @@
 declare module Sup {
   module ArcadePhysics2D {
-    class Body {
+    class Body extends ActorComponent {
       constructor( actor: Sup.Actor, options?: {movable?: boolean; width?: number; height?: number; bounceX?: number; bounceY?: number} );
       setMovable( movable: boolean ): Body;
       getMovable(): boolean;
