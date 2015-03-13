@@ -5,6 +5,7 @@ module.exports = class ModelRendererUpdater
 
   constructor: (@client, @modelRenderer, config) ->
     @modelAssetId = config.modelAssetId
+    @animationId = config.animationId
     @modelAsset = null
 
     @modelSubscriber =
@@ -41,8 +42,18 @@ module.exports = class ModelRendererUpdater
       else
         cb(); return
       return
-    , => @modelRenderer.setModel asset.pub; return
+    , =>
+      @modelRenderer.setModel asset.pub
+      @_playAnimation() if @animationId?
+      return
 
+    return
+
+  _playAnimation: ->
+    animation = @modelAsset.animations.byId[@animationId]
+    return if ! animation?
+
+    @modelRenderer.setAnimation animation.name
     return
 
   _onModelAssetEdited: =>
@@ -64,5 +75,12 @@ module.exports = class ModelRendererUpdater
 
         if @modelAssetId?
           @client.sub @modelAssetId, 'model', @modelSubscriber
+
+      when 'animationId'
+        @animationId = value
+
+        if @modelAsset?
+          if @animationId? then @_playAnimation()
+          else @modelRenderer.setAnimation(null)
 
     return
