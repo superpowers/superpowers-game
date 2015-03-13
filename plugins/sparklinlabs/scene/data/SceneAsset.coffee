@@ -122,7 +122,7 @@ module.exports = class SceneAsset extends SupCore.data.base.Asset
     @nodes.client_move id, parentId, index
     return
   
-  server_duplicateNode: (client, id, index, callback) ->
+  server_duplicateNode: (client, newName, id, index, callback) ->
     referenceNode = @nodes.byId[id]
     if ! referenceNode? then callback "Invalid node id: #{id}"; return
     if referenceNode.children.length != 0 then callback "Can't duplicate a node with children"; return
@@ -130,7 +130,7 @@ module.exports = class SceneAsset extends SupCore.data.base.Asset
     parentNode = @nodes.parentNodesById[id]
     
     newNode =
-      name: referenceNode.name, children: []
+      name: newName, children: []
       components: _.cloneDeep referenceNode.components
       position: _.cloneDeep referenceNode.position
       orientation: _.cloneDeep referenceNode.orientation

@@ -320,14 +320,17 @@ onDuplicateNodeClick = ->
   selectedNode = ui.nodesTreeView.selectedNodes[0]
   node = data.asset.nodes.byId[parseInt(selectedNode.dataset.id)]
 
-  options = SupClient.getTreeViewInsertionPoint ui.nodesTreeView
+  SupClient.dialogs.prompt "Enter a name for the new actor.", null, node.name, "Duplicate", (newName) =>
+    return if ! newName?
+    options = SupClient.getTreeViewInsertionPoint ui.nodesTreeView
 
-  socket.emit 'edit:assets', info.assetId, 'duplicateNode', node.id, options.index, (err) ->
-    if err? then alert err; return
+    socket.emit 'edit:assets', info.assetId, 'duplicateNode', newName, node.id, options.index, (err, nodeId) ->
+      if err? then alert err; return
 
-    ui.nodesTreeView.clearSelection()
-    ui.nodesTreeView.addToSelection ui.nodesTreeView.treeRoot.querySelector("li[data-id='#{node.id}']")
-    onNodeSelect()
+      ui.nodesTreeView.clearSelection()
+      ui.nodesTreeView.addToSelection ui.nodesTreeView.treeRoot.querySelector("li[data-id='#{nodeId}']")
+      onNodeSelect()
+      return
     return
   return
 
