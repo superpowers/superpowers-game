@@ -77,6 +77,6 @@ module.exports = class SpriteRendererUpdater
 
         if @spriteAsset?
           if @animationId? then @_playAnimation()
-          else @spriteRenderer.stopAnimation()
+          else @spriteRenderer.setAnimation(null)
 
     return
