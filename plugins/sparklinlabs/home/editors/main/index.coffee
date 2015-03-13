@@ -1,3 +1,5 @@
+require './links'
+
 qs = require('querystring').parse window.location.search.slice(1)
 info = { projectId: qs.project }
 data = null
