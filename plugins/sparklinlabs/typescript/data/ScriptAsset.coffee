@@ -136,7 +136,7 @@ module.exports = class ScriptAsset extends SupCore.data.base.Asset
       name = "#{@serverData.entries.getPathFromId(entry.id)}.ts"
       scriptNames.push name
       assetsLoading += 1
-      @serverData.assets.acquire entry.id, (err, asset) =>
+      @serverData.assets.acquire entry.id, null, (err, asset) =>
         assetsLoading -= 1
         @serverData.assets.release entry.id
 

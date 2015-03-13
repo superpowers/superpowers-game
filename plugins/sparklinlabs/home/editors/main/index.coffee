@@ -16,6 +16,9 @@ start = ->
   ui.chatHistoryContainer = document.querySelector('.chat')
   ui.chatHistory = document.querySelector('.chat ol')
 
+  ui.roomUsers = document.querySelector('.members ul')
+  return
+
 onConnected = ->
   data = {}
   # TODO: Subscribe to home chat and get latest messages
@@ -23,6 +26,8 @@ onConnected = ->
 
 onRoomReceived = (err, room) ->
   data.room = new SupCore.data.Room room
+
+  appendRoomUser roomUser for roomUser in data.room.pub.users
 
   appendHistoryEntry entry for entry in data.room.pub.history
   scrollToBottom()
@@ -84,6 +89,22 @@ appendHistoryEntry = (entry) ->
 onRoomCommands.appendMessage = (entry) ->
   appendHistoryEntry entry
   scrollToBottom(); return
+
+appendRoomUser = (roomUser) ->
+  roomUserElt = document.createElement('li')
+  roomUserElt.dataset.userId = roomUser.id
+  roomUserElt.textContent = roomUser.id
+  ui.roomUsers.appendChild roomUserElt
+  return
+
+onRoomCommands.join = (roomUser) ->
+  appendRoomUser roomUser
+  return
+
+onRoomCommands.leave = (roomUserId) ->
+  roomUserElt = ui.roomUsers.querySelector("li[data-user-id=#{roomUserId}]")
+  roomUserElt.parentElement.removeChild roomUserElt
+  return
 
 onChatInputKeyDown = (event) ->
   return if event.keyCode != 13 or event.shiftKey
