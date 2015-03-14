@@ -37,6 +37,7 @@ declare module Sup {
 
       constructor(x?: number, y?: number, z?: number, w?: number);
       set(x: number, y: number, z: number, w: number);
+      setFromAxisAngle(axis: Vector3, angle: number);
       setFromYawPitchRoll(yaw: number, pitch: number, roll: number): Quaternion;
       multiplyQuaternions(a: Quaternion, b: Quaternion): Quaternion;
       multiply(q: Quaternion): Quaternion;

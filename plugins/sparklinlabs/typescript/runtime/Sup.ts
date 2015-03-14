@@ -95,6 +95,15 @@ module Sup {
         this.x = x; this.y = y; this.z = z; this.w = w;
         return this
       }
+      setFromAxisAngle(axis, angle) {
+        var s = jsMath.sin(angle / 2);
+
+    		this.x = axis.x * s;
+    		this.y = axis.y * s;
+    		this.z = axis.z * s;
+    		this.w = jsMath.cos(angle / 2);
+        return this
+      }
       setFromYawPitchRoll(yaw, pitch, roll) {
         var c1 = jsMath.cos(pitch / 2);
         var c2 = jsMath.cos(yaw / 2);
@@ -107,7 +116,6 @@ module Sup {
         this.y = c1 * s2 * c3 - s1 * c2 * s3
         this.z = c1 * c2 * s3 - s1 * s2 * c3
         this.w = c1 * c2 * c3 + s1 * s2 * s3
-
         return this
       }
       multiplyQuaternions(a, b) {
