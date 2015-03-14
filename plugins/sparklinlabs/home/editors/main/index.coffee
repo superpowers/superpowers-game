@@ -100,12 +100,13 @@ appendRoomUser = (roomUser) ->
   return
 
 onRoomCommands.join = (roomUser) ->
-  appendRoomUser roomUser
+  if roomUser.connectionCount == 1 then appendRoomUser roomUser
   return
 
 onRoomCommands.leave = (roomUserId) ->
-  roomUserElt = ui.roomUsers.querySelector("li[data-user-id=#{roomUserId}]")
-  roomUserElt.parentElement.removeChild roomUserElt
+  if ! data.room.users.byId[roomUserId]?
+    roomUserElt = ui.roomUsers.querySelector("li[data-user-id=#{roomUserId}]")
+    roomUserElt.parentElement.removeChild roomUserElt
   return
 
 onChatInputKeyDown = (event) ->
