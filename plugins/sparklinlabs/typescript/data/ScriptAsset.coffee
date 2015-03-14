@@ -28,7 +28,20 @@ module.exports = class ScriptAsset extends SupCore.data.base.Asset
     super pub, @constructor.schema, serverData
 
   init: ->
-    @pub = text: "", draft: "", revisionId: 0
+    @pub = text: """
+class MyBehavior extends Sup.Behavior {
+  awake() {
+    
+  }
+  update() {
+    
+  }
+}
+Sup.registerBehavior(MyBehavior);
+
+"""
+    @pub.draft = @pub.text
+    @pub.revisionId = 0
     super(); return
 
   setup: ->
