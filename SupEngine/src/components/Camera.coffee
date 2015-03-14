@@ -10,8 +10,7 @@ module.exports = class Camera extends SupEngine.ActorComponent
     @orthographicScale = 10
     @halfPixelTranslationMatrix = new THREE.Matrix4()
 
-    @viewportPosition = new THREE.Vector2 0, 0
-    @viewportSize = new THREE.Vector2 1, 1
+    @viewport = { x: 0, y: 0, width: 1, height: 1 }
 
     @setOrthographicMode false
 
@@ -31,7 +30,7 @@ module.exports = class Camera extends SupEngine.ActorComponent
 
   _computeAspectRatio: =>
     canvas = @actor.gameInstance.threeRenderer.domElement
-    @cachedRatio = (canvas.width * @viewportSize.x) / (canvas.height * @viewportSize.y)
+    @cachedRatio = (canvas.width * @viewport.width) / (canvas.height * @viewport.height)
     @projectionNeedsUpdate = true
     return
 
@@ -54,15 +53,11 @@ module.exports = class Camera extends SupEngine.ActorComponent
     if @isOrthographic then @projectionNeedsUpdate = true
     return
 
-  setViewportPosition: (x, y) ->
-    @viewportPosition.x = x
-    @viewportPosition.y = y
-    @projectionNeedsUpdate = true
-    return
-
-  setViewportSize: (x, y) ->
-    @viewportSize.x = x
-    @viewportSize.y = y
+  setViewport: (x, y, width, height) ->
+    @viewport.x = x
+    @viewport.y = y
+    @viewport.width = width
+    @viewport.height = height
     @projectionNeedsUpdate = true
     return
 
@@ -96,6 +91,6 @@ module.exports = class Camera extends SupEngine.ActorComponent
         @threeCamera.updateProjectionMatrix()
 
     canvas = @actor.gameInstance.threeRenderer.domElement
-    @actor.gameInstance.threeRenderer.setViewport @viewportPosition.x * canvas.width, ( 1 - @viewportPosition.y - @viewportSize.y ) * canvas.height, @viewportSize.x * canvas.width, @viewportSize.y * canvas.height
+    @actor.gameInstance.threeRenderer.setViewport @viewport.x * canvas.width, ( 1 - @viewport.y - @viewport.height ) * canvas.height, @viewport.width * canvas.width, @viewport.height * canvas.height
     @actor.gameInstance.threeRenderer.render @actor.gameInstance.threeScene, @threeCamera
     return
