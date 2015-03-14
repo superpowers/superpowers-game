@@ -360,6 +360,12 @@ module Sup {
 
   export module Input {
     export function getScreenSize() { return { "x": player.canvas.clientWidth, "y": player.canvas.clientHeight } }
+    export function getMouseVisible() { return player.canvas.style.cursor != "none" }
+    export function setMouseVisible(visible) {
+      if (visible) { player.canvas.style.cursor = "auto"; }
+      else         { player.canvas.style.cursor = "none"; }
+    }
+
     export function getMousePosition() {
       var mousePos = player.gameInstance.input.mousePosition;
       return { x: mousePos.x / player.canvas.clientWidth * 2 - 1, y: (mousePos.y / player.canvas.clientHeight * 2 - 1) * -1 };

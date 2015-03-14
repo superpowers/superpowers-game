@@ -114,6 +114,8 @@ declare module Sup {
 
   module Input {
     function getScreenSize(): { x: number; y: number; };
+    function getMouseVisible(): boolean;
+    function setMouseVisible(visible: boolean);
 
     function getMousePosition(): { x: number; y: number; };
     function getMouseDelta(): { x: number; y: number; };
