@@ -309,8 +309,12 @@ module Sup {
       return this
     }
 
-    addBehavior(behaviorType, properties) {
-      var behavior = new behaviorType(this.__inner);
+    addBehavior(behaviorClass, properties) {
+      if (behaviorClass == null) {
+        throw new Error("The behavior class passed to Actor.addBehavior was null. Make sure the class is declared before Actor.addBehavior is called.");
+      }
+
+      var behavior = new behaviorClass(this.__inner);
       if (properties != null) { for (var propertyName in properties) { behavior[propertyName] = properties[propertyName]; } }
       behavior.__inner.awake();
       return behavior

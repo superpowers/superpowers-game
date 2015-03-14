@@ -97,7 +97,7 @@ declare module Sup {
     getLocalScale(): Math.Vector3;
     setLocalScale(scale: Math.Vector3);
 
-    addBehavior<T extends Behavior>(behaviorType: new(actor: Actor, properties?: { [key: string]: any; }) => T, properties?: { [key: string]: any; }): T;
+    addBehavior<T extends Behavior>(behaviorClass: new(actor: Actor, properties?: { [key: string]: any; }) => T, properties?: { [key: string]: any; }): T;
     getBehavior<T extends Behavior>(type: new(actor: Actor, properties?: { [key: string]: any; }) => T): T;
   }
 
