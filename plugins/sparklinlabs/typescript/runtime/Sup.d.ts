@@ -9,6 +9,9 @@ declare module Sup {
       function integer(min: number, max: number): number;
     }
 
+    function toRadians(degrees: number): number;
+    function toDegrees(radians: number): number;
+
     class Vector3 {
       static lerp(a: Vector3, b: Vector3, v: number): Vector3;
 
@@ -92,6 +95,8 @@ declare module Sup {
     setEulerAngles(angles: Math.Vector3): Actor;
     getLocalEulerAngles(): Math.Vector3;
     setLocalEulerAngles(angles: Math.Vector3): Actor;
+    rotateEulerAngles(offset: Math.Vector3): Actor;
+    rotateLocalEulerAngles(offset: Math.Vector3): Actor;
     lookAt(target: Math.Vector3 ): Actor;
     lookTowards(direction: Math.Vector3): void;
 

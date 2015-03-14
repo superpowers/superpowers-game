@@ -16,6 +16,9 @@ module Sup {
       export function integer(min, max) { return jsMath.floor( jsMath.random() * (max + 1 - min) ) + min }
     }
 
+    export function toRadians(degrees) { return degrees * degToRad; }
+    export function toDegrees(radians) { return radians * radToDeg; }
+
     export class Vector3 {
       static lerp(a, b, v) {
         var x = a.x * (1 - v) + b.x * v;
@@ -275,25 +278,33 @@ module Sup {
 
     getEulerAngles() {
       var eulerAngles = this.__inner.getGlobalEulerAngles();
-      var x = eulerAngles.x * radToDeg;
-      var y = eulerAngles.y * radToDeg;
-      var z = eulerAngles.z * radToDeg;
+      var x = eulerAngles.x;
+      var y = eulerAngles.y;
+      var z = eulerAngles.z;
       return new Math.Vector3( parseFloat(x.toFixed(3)), parseFloat(y.toFixed(3)), parseFloat(z.toFixed(3)) )
     }
     setEulerAngles(eulerAngles) {
-      this.__inner.setGlobalEulerAngles( tmpEuler.set(eulerAngles.x * degToRad, eulerAngles.y * degToRad, eulerAngles.z * degToRad) )
+      this.__inner.setGlobalEulerAngles( tmpEuler.set(eulerAngles.x, eulerAngles.y, eulerAngles.z) )
       return this
     }
     getLocalEulerAngles() {
       var eulerAngles = this.__inner.getLocalEulerAngles();
-      var x = eulerAngles.x * radToDeg;
-      var y = eulerAngles.y * radToDeg;
-      var z = eulerAngles.z * radToDeg;
+      var x = eulerAngles.x;
+      var y = eulerAngles.y;
+      var z = eulerAngles.z;
       return new Math.Vector3( parseFloat(x.toFixed(3)), parseFloat(y.toFixed(3)), parseFloat(z.toFixed(3)) )
     }
     setLocalEulerAngles(eulerAngles) {
-      this.__inner.setLocalEulerAngles( tmpEuler.set(eulerAngles.x * degToRad, eulerAngles.y * degToRad, eulerAngles.z * degToRad) )
-      return this
+      this.__inner.setLocalEulerAngles( tmpEuler.set(eulerAngles.x, eulerAngles.y, eulerAngles.z) );
+      return this;
+    }
+    rotateEulerAngles(offset) {
+      this.__inner.rotateEulerAngles( tmpEuler.set(offset.x, offset.y, offset.z) );
+      return this;
+    }
+    rotateLocalEulerAngles(offset) {
+      this.__inner.rotateLocalEulerAngles( tmpEuler.set(offset.x, offset.y, offset.z) );
+      return this;
     }
     lookAt(target) {
       this.__inner.lookAt( tmpVector3.set(target.x, target.y, target.z) );
