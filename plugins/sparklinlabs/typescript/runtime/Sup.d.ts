@@ -79,6 +79,7 @@ declare module Sup {
     setLocalPosition(position: Math.Vector3): Actor;
     move(offset: Math.Vector3): Actor;
     moveLocal(offset: Math.Vector3): Actor;
+    moveOriented(offset: Math.Vector3): Actor;
 
     getOrientation(): Math.Quaternion;
     setOrientation(orientation: Math.Quaternion): Actor;

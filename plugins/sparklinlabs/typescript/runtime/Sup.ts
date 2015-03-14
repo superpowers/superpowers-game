@@ -243,6 +243,10 @@ module Sup {
       this.__inner.moveLocal( tmpVector3.set(offset.x, offset.y, offset.z) )
       return this
     }
+    moveOriented(offset) {
+      this.__inner.moveOriented( tmpVector3.set(offset.x, offset.y, offset.z) )
+      return this
+    }
 
     getOrientation() {
       var orientation = this.__inner.getGlobalOrientation();
