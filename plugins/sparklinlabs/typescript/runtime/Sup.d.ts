@@ -23,6 +23,7 @@ declare module Sup {
       subtract(v: Vector3): Vector3;
       multiplyScalar(m: number): Vector3;
       normalize(): Vector3;
+      rotate(q : Quaternion): Vector3;
       length(): number;
       distanceTo(v: Vector3): number;
       clone(): Vector3;

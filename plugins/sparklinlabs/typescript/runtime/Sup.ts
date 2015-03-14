@@ -58,6 +58,22 @@ module Sup {
         this.x /= length; this.y /= length; this.z /= length;
         return this
       }
+      rotate(q) {
+        var qx = q.x;
+        var qy = q.y;
+        var qz = q.z;
+        var qw = q.w;
+
+        var ix =  qw * this.x + qy * this.z - qz * this.y;
+        var iy =  qw * this.y + qz * this.x - qx * this.z;
+        var iz =  qw * this.z + qx * this.y - qy * this.x;
+        var iw = - qx * this.x - qy * this.y - qz * this.z;
+
+        this.x = ix * qw + iw * - qx + iy * - qz - iz * - qy;
+        this.y = iy * qw + iw * - qy + iz * - qx - ix * - qz;
+        this.z = iz * qw + iw * - qz + ix * - qy - iy * - qx;
+        return this
+      }
       length() { return jsMath.sqrt(this.x * this.x + this.y * this.y + this.z * this.z) }
       distanceTo(v) { return v.clone().subtract(this).length() }
       clone() { return new Vector3(this.x, this.y, this.z) }
