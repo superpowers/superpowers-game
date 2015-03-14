@@ -64,7 +64,6 @@ onLoaded = ->
 
     setTimeout ->
       loadingElt.parentElement.removeChild loadingElt
-      canvas.style.display = ''
 
       player.run()
       return

@@ -3,12 +3,12 @@ html
   head
     link(rel="stylesheet",href="index.css")
   body
+    canvas(tabindex="-1")
+
     #loading
       a(href="http://blog.sparklinlabs.com/superpowers",target="_blank")
         img(src="images/superpowers-splash.svg",draggable="false")
         progress(max="100",value="0")
-
-    canvas(tabindex="-1",style="display: none")
 
     script(src="../api/SupAPI.js")
     script(src="../core/SupCore.js")
