@@ -437,7 +437,7 @@ onResizeMapClick = ->
 
       return if newWidth == data.asset.pub.width and newHeight == data.asset.pub.height
 
-      socket.emit 'edit:assets', info.assetId, 'resizeMap', newWidth, height, (err) ->
+      socket.emit 'edit:assets', info.assetId, 'resizeMap', newWidth, newHeight, (err) ->
         if err? then alert err
         return
       return
