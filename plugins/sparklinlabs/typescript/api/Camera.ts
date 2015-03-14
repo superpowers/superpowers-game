@@ -15,11 +15,28 @@ module Sup {
       this.__inner.setOrthographicMode(enabled);
       return this;
     }
-    getOrthographicMode() { return this.__inner.isOrthographic }
+    getOrthographicMode() { return this.__inner.isOrthographic; }
     setOrthographicScale(scale) {
       this.__inner.setOrthographicScale(scale);
-      return this
+      return this;
     }
-    getOrthographicScale() {return this.__inner.orthographicScale }
+    getOrthographicScale() { return this.__inner.orthographicScale; }
+
+    setFOV(fov) {
+      this.__inner.setFOV(fov);
+      return this;
+    }
+    getFOV() { return this.__inner.fov; }
+    getWidthToHeightRatio() { return this.__inner.cachedRatio; }
+
+    setViewport(x, y, width, height) { this.__inner.setViewport(x, y, width, height); return this; }
+    getViewport() {
+      return {
+        x: this.__inner.viewport.x,
+        y: this.__inner.viewport.y,
+        width: this.__inner.viewport.width,
+        height: this.__inner.viewport.height
+      };
+    }
   }
 }

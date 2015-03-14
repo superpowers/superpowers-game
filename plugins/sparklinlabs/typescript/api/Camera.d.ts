@@ -6,5 +6,11 @@ declare module Sup {
     getOrthographicMode(): boolean;
     setOrthographicScale(scale: number): Camera;
     getOrthographicScale(): number;
+
+    setFOV(angle: number): Camera;
+    getFOV(): number;
+    getWidthToHeightRatio(): number;
+    setViewport(x: number, y: number, width: number, height: number): Camera;
+    getViewport(): { x: number; y: number; width: number; height: number; };
   }
 }

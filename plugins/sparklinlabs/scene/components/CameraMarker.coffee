@@ -7,8 +7,7 @@ module.exports = class CameraMarker extends SupEngine.ActorComponent
   constructor: (actor, config) ->
     super actor, 'Marker'
 
-    @viewportPosition = {}
-    @viewportSize = {}
+    @viewport = { x: 0, y: 0, width: 1, height: 1 }
 
     @projectionNeedsUpdate = true
     @setConfig config if config?
@@ -24,8 +23,7 @@ module.exports = class CameraMarker extends SupEngine.ActorComponent
     @setOrthographicMode config.mode == 'orthographic'
     @setFOV config.fov
     @setOrthographicScale config.orthographicScale
-    @setViewportPosition config.viewport.x, config.viewport.y
-    @setViewportSize config.viewport.width, config.viewport.height
+    @setViewport config.viewport.x, config.viewport.y, config.viewport.width, config.viewport.height
     return
 
   setOrthographicMode: (@isOrthographic) ->
@@ -40,15 +38,11 @@ module.exports = class CameraMarker extends SupEngine.ActorComponent
     if @isOrthographic then @projectionNeedsUpdate = true
     return
 
-  setViewportPosition: (x, y) ->
-    @viewportPosition.x = x
-    @viewportPosition.y = y
-    @projectionNeedsUpdate = true
-    return
-
-  setViewportSize: (x, y) ->
-    @viewportSize.x = x
-    @viewportSize.y = y
+  setViewport: (x, y, width, height) ->
+    @viewport.x = x
+    @viewport.y = y
+    @viewport.width = width
+    @viewport.height = height
     @projectionNeedsUpdate = true
     return
 
