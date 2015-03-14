@@ -78,7 +78,7 @@ module.exports = class GameInstance extends EventEmitter
       @emit 'resize', { width, height }
 
     @threeRenderer.clear()
-    @renderComponents.sort( (a, b) -> @cachedActors.indexOf(a.actor) - @cachedActors.indexOf(b.actor) )
+    @renderComponents.sort( (a, b) => @cachedActors.indexOf(a.actor) - @cachedActors.indexOf(b.actor) )
     renderComponent.render() for renderComponent in @renderComponents
     return
 
