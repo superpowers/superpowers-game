@@ -12,6 +12,22 @@ start = ->
   socket.on 'disconnect', SupClient.onDisconnected
   socket.on 'edit:rooms', onRoomEdited
 
+  # Tools and settings
+  toolsList = document.querySelector('.sidebar .tools ul')
+
+  for tool in SupClient.pluginPaths.tools
+    if tool.name == 'main' and tool.pluginPath == 'sparklinlabs/home' then continue
+
+    toolElt = document.createElement('li')
+
+    anchorElt = document.createElement('a')
+    anchorElt.target = "_blank"
+    anchorElt.href = "/plugins/#{tool.pluginPath}/editors/#{tool.name}/?project=#{info.projectId}"
+    anchorElt.textContent = "#{tool.pluginPath}/#{tool.name}"
+    toolElt.appendChild anchorElt
+
+    toolsList.appendChild toolElt
+
   # Chat
   document.querySelector('.chat-input textarea').addEventListener 'keydown', onChatInputKeyDown
 

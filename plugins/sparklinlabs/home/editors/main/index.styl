@@ -71,6 +71,12 @@ body
 .sidebar
   width 250px
   border-left 1px solid #aaa
+  display flex
+  flex-flow column
+
+  > div
+    display flex
+    flex-flow column
 
   .header
     background #ccc
@@ -80,35 +86,16 @@ body
 
   .content
     padding 0.5em
-
-.links
-  display flex
-  flex-flow column
-
-  .content
     flex 1
     overflow-y auto
 
-  ul
-    list-style none
-    margin 0
-    padding 0
+    ul
+      list-style none
+      margin 0
+      padding 0
 
-  li
-    margin 0.5em 0
+    li
+      margin 0.5em 0
 
 .members
-  display flex
-  flex-flow column
-
-  > .content
-    flex 1
-    overflow-y auto
-
-  ul
-    margin 0
-    padding 0
-    list-style none
-
-  li
-    margin 0.5em 0
+  flex 1
