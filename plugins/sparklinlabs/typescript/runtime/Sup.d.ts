@@ -1,5 +1,6 @@
 declare module Sup {
   function log(x: any): any;
+  function exit();
 
   module Math {
     function lerp(a: number, b: number, v: number): number;

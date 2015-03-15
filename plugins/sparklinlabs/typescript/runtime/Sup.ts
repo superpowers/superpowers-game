@@ -7,6 +7,13 @@ var radToDeg = 180 / jsMath.PI;
 
 module Sup {
   export function log(x) { console.log(x); }
+  export function exit() {
+    player.gameInstance.destroyAllActors();
+    player.gameInstance.exited = true;
+    if (! player.gameInstance.debug && window.nwDispatcher != null) {
+      window.nwDispatcher.requireNwGui().Window.get().close();
+    }
+  }
 
   export module Math {
     export function lerp(a, b, v) { return a + (b - a) * v }
