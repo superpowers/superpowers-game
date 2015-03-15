@@ -5,7 +5,7 @@ THREE = SupEngine.THREE
 module.exports = class GameInstance extends EventEmitter
   @framesPerSecond: 60
 
-  constructor: (canvas, options) ->
+  constructor: (canvas, options={}) ->
     super()
 
     @debug = options.debug == true
