@@ -19,7 +19,7 @@ module.exports = class SpriteRenderer extends SupEngine.ActorComponent
     @animationsByName = {}
     return if ! @asset?
 
-    @animationsByName[animation.name] = animation for animation in @asset.animations
+    @updateAnimationsByName()
 
     geometry = new THREE.PlaneBufferGeometry @asset.grid.width, @asset.grid.height
     material = new THREE.MeshBasicMaterial map: @asset.texture, alphaTest: @asset.alphaTest, side: THREE.DoubleSide, transparent: true, opacity: @opacity
@@ -34,6 +34,11 @@ module.exports = class SpriteRenderer extends SupEngine.ActorComponent
     @setFrame 0
     @actor.threeObject.add @threeMesh
     @threeMesh.updateMatrixWorld()
+    return
+
+  updateAnimationsByName: ->
+    @animationsByName = {}
+    @animationsByName[animation.name] = animation for animation in @asset.animations
     return
 
   _clearMesh: ->

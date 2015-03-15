@@ -42,9 +42,9 @@ module.exports = class SpriteRendererEditor
           @animationSelectBox.value = value ? ""
 
         @animationId = value
-
     return
 
+  # Network callbacks
   onEntriesReceived: (entries) =>
     @spriteTextField.disabled = false
 
@@ -55,27 +55,64 @@ module.exports = class SpriteRendererEditor
     return
 
   onEntryAdded: (entry, parentId, index) => return
-  onEntryMoved: (id, parentId, index) => return
+  onEntryMoved: (id, parentId, index) =>
+    return if id != @spriteAssetId
+    @spriteTextField.value = @projectClient.entries.getPathFromId @spriteAssetId
+    return
   onSetEntryProperty: (id, key, value) =>
-    # TODO: Update name
+    return if id != @spriteAssetId
+    @spriteTextField.value = @projectClient.entries.getPathFromId @spriteAssetId
     return
   onEntryTrashed: (id) => return
 
   onAssetReceived: (assetId, asset) =>
     return if assetId != @spriteAssetId
+    @asset = asset
 
     loop
       child = @animationSelectBox.children[1]
       break if ! child?
       @animationSelectBox.removeChild child
 
-    for animation in asset.pub.animations
+    for animation in @asset.pub.animations
       @SupUI.component.createSelectOption @animationSelectBox, animation.id, animation.name
 
     @animationSelectBox.value = @animationId ? ""
     @animationSelectBox.disabled = false
     return
 
+  onAssetEdited: (assetId, command, args...) =>
+    return if parseInt(assetId) != @spriteAssetId
+
+    return if command.indexOf("Animation") == -1
+    animationId = @animationSelectBox.value
+
+    loop
+      child = @animationSelectBox.children[1]
+      break if ! child?
+      @animationSelectBox.removeChild child
+
+    for animation in @asset.pub.animations
+      @SupUI.component.createSelectOption @animationSelectBox, animation.id, animation.name
+
+    if animationId? and @asset.animations.byId[animationId]?
+      @animationSelectBox.value = animationId
+    else
+      @setProperty 'animationId', ""
+    return
+
+  onAssetTrashed: =>
+    loop
+      child = @animationSelectBox.children[1]
+      break if ! child?
+      @animationSelectBox.removeChild child
+
+    @spriteTextField.value = ""
+    @animationSelectBox.value = ""
+    @animationSelectBox.disabled = true
+    return
+
+  # User interface
   _onChangeSpriteAsset: (event) =>
     entry = @SupUI.findEntryByPath @projectClient.entries.pub, event.target.value
     if entry?.type == 'sprite' then @setProperty 'spriteAssetId', entry.id

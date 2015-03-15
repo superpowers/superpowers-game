@@ -14,8 +14,6 @@ start = ->
   socket = SupClient.connect info.projectId
   socket.on 'connect', onConnected
   socket.on 'disconnect', SupClient.onDisconnected
-  socket.on 'edit:assets', onAssetEdited
-  socket.on 'trash:assets', SupClient.onAssetTrashed
 
   # Drawing
   ui.image = new Image
@@ -29,15 +27,13 @@ start = ->
   ui.animationArea.gameInstance.threeRenderer.setClearColor 0xbbbbbb
   cameraActor = new SupEngine.Actor ui.animationArea.gameInstance, "Camera"
   cameraActor.setLocalPosition new SupEngine.THREE.Vector3 0, 0, 1
-  ui.animationArea.cameraComponent = new SupEngine.componentPlugins.Camera cameraActor
-  ui.animationArea.cameraComponent.setOrthographicMode true
-  ui.animationArea.cameraComponent.setOrthographicScale 5
-  new SupEngine.editorComponents.Camera2DControls cameraActor, ui.animationArea.cameraComponent, { zoomOffset: 0.5, zoomMin: 1, zoomMax: 50 }
+  cameraComponent = new SupEngine.componentPlugins.Camera cameraActor
+  cameraComponent.setOrthographicMode true
+  cameraComponent.setOrthographicScale 5
+  new SupEngine.editorComponents.Camera2DControls cameraActor, cameraComponent, { zoomOffset: 0.5, zoomMin: 1, zoomMax: 50 }
 
-  ui.animationArea.spriteActor = new SupEngine.Actor ui.animationArea.gameInstance, "Sprite"
-
-  ui.animationArea.originActor = new SupEngine.Actor ui.animationArea.gameInstance, "Origin"
-  new SpriteOriginMarker ui.animationArea.originActor
+  originActor = new SupEngine.Actor ui.animationArea.gameInstance, "Origin"
+  new SpriteOriginMarker originActor
 
   ui.animationArea.animationPlay = document.querySelector('button.animation-play')
   ui.animationArea.animationPlay.addEventListener 'click', onPlayAnimation
@@ -97,56 +93,57 @@ start = ->
   return
 
 # Network callbacks
+onEditCommands =  {}
 onConnected = ->
   data = {}
-  socket.emit 'sub', 'assets', info.assetId, onAssetReceived
+  data.projectClient = new SupClient.ProjectClient socket, subEntries: false
+
+  spriteActor = new SupEngine.Actor ui.animationArea.gameInstance, "Sprite"
+  spriteRenderer = new SpriteRenderer spriteActor
+  config = spriteAssetId: info.assetId, animationId: null
+  receiveCallbacks = sprite: onAssetReceived
+  editCallbacks = sprite: onEditCommands
+
+  data.spriteUpdater = new SpriteRenderer.Updater data.projectClient, spriteRenderer, config, receiveCallbacks, editCallbacks
   return
 
-onAssetReceived = (err, asset) ->
-  data.asset = new SpriteAsset asset
+onAssetReceived = (url) ->
+  ui.image.src = url
 
-  setupImage()
   for setting in ui.allSettings
     parts = setting.split '.'
-    obj = data.asset.pub
+    obj = data.spriteUpdater.spriteAsset.pub
     obj = obj[part] for part in parts.slice(0, parts.length - 1)
     setupProperty setting, obj[parts[parts.length - 1]]
 
-  setupAnimation animation, index for animation, index in data.asset.pub.animations
+  setupAnimation animation, index for animation, index in data.spriteUpdater.spriteAsset.pub.animations
   return
 
-onAssetEdited = (id, command, args...) ->
-  data.asset.__proto__["client_#{command}"].apply data.asset, args
-  onAssetCommands[command]?.apply data.asset, args
-
-  refreshAnimationArea() if command != 'upload'
+onEditCommands.upload = (url) ->
+  ui.image.src = url
   return
 
-onAssetCommands =  {}
-
-onAssetCommands.upload = -> setupImage(); return
-
-onAssetCommands.setProperty = (path, value) ->
+onEditCommands.setProperty = (path, value) ->
   setupProperty path, value
   return
 
-onAssetCommands.newAnimation = (animation, index) ->
+onEditCommands.newAnimation = (animation, index) ->
   setupAnimation animation, index
   return
 
-onAssetCommands.deleteAnimation = (id) ->
+onEditCommands.deleteAnimation = (id) ->
   animationElt = ui.animationsTreeView.treeRoot.querySelector("[data-id='#{id}']")
   ui.animationsTreeView.remove animationElt
 
   updateSelectedAnimation() if ui.selectedAnimationId == id
   return
 
-onAssetCommands.moveAnimation = (id, index) ->
+onEditCommands.moveAnimation = (id, index) ->
   animationElt = ui.animationsTreeView.treeRoot.querySelector("[data-id='#{id}']")
   ui.animationsTreeView.insertAt animationElt, 'item', index
   return
 
-onAssetCommands.setAnimationProperty = (id, key, value) ->
+onEditCommands.setAnimationProperty = (id, key, value) ->
   animationElt = ui.animationsTreeView.treeRoot.querySelector("[data-id='#{id}']")
 
   switch key
@@ -228,7 +225,7 @@ onRenameAnimationClick = ->
   return if ui.animationsTreeView.selectedNodes.length != 1
 
   selectedNode = ui.animationsTreeView.selectedNodes[0]
-  animation = data.asset.animations.byId[parseInt(selectedNode.dataset.id)]
+  animation = data.spriteUpdater.spriteAsset.animations.byId[parseInt(selectedNode.dataset.id)]
 
   SupClient.dialogs.prompt "Enter a new name for the animation.", null, animation.name, "Rename", (newName) =>
     return if ! newName?
@@ -253,7 +250,7 @@ onDeleteAnimationClick = ->
 onAnimationDrop = (dropInfo, orderedNodes) =>
   animationIds = ( parseInt(animation.dataset.id) for animation in orderedNodes )
 
-  index = SupClient.getListViewDropIndex dropInfo, data.asset.animations
+  index = SupClient.getListViewDropIndex dropInfo, data.spriteUpdater.spriteAsset.animations
 
   for id, i in animationIds
     socket.emit 'edit:assets', info.assetId, 'moveAnimation', id, index + i, (err) ->
@@ -265,12 +262,12 @@ updateSelectedAnimation = ->
   selectedAnimElt = ui.animationsTreeView.selectedNodes[0]
   if selectedAnimElt?
     ui.selectedAnimationId = parseInt selectedAnimElt.dataset.id
-    ui.animationArea.spriteRenderer.setAnimation data.asset.animations.byId[ui.selectedAnimationId].name
+    data.spriteUpdater.onConfigEdited "animationId", ui.selectedAnimationId
     ui.animationArea.animationPlay.disabled = false
     ui.animationArea.animationSlider.disabled = false
   else
     ui.selectedAnimationId = null
-    ui.animationArea.spriteRenderer.setAnimation null
+    data.spriteUpdater.onConfigEdited "animationId", null
     ui.animationArea.animationPlay.disabled = true
     ui.animationArea.animationSlider.disabled = true
     ui.animationArea.animationSlider.value = 0
@@ -284,36 +281,16 @@ updateSelectedAnimation = ->
 
 onPlayAnimation = ->
   if ui.animationArea.animationPlay.textContent == 'Pause'
-    ui.animationArea.spriteRenderer.pauseAnimation()
+    data.spriteUpdater.spriteRenderer.pauseAnimation()
     ui.animationArea.animationPlay.textContent = 'Play'
   else
-    ui.animationArea.spriteRenderer.playAnimation()
+    data.spriteUpdater.spriteRenderer.playAnimation()
     ui.animationArea.animationPlay.textContent = 'Pause'
   return
 
 onChangeAnimationTime = ->
-  ui.animationArea.spriteRenderer.setAnimationTime ui.animationArea.animationSlider.value / 100 * ui.animationArea.spriteRenderer.getAnimationDuration()
-  return
-
-imageObjectURL = null
-setupImage = ->
-  URL.revokeObjectURL imageObjectURL if imageObjectURL?
-
-  typedArray = new Uint8Array data.asset.pub.image
-  blob = new Blob [ typedArray ], type: 'image/*'
-  imageObjectURL = URL.createObjectURL blob
-
-  ui.image.src = imageObjectURL
-  ui.image.addEventListener 'load', ->
-    texture = data.asset.pub.texture = new SupEngine.THREE.Texture ui.image
-    texture.needsUpdate = true
-
-    if data.asset.pub.filtering == 'pixelated'
-      texture.magFilter = SupEngine.THREE.NearestFilter
-      texture.minFilter = SupEngine.THREE.NearestFilter
-
-    refreshAnimationArea()
-    return
+  return if ! data.spriteUpdater?
+  data.spriteUpdater.spriteRenderer.setAnimationTime ui.animationArea.animationSlider.value / 100 * data.spriteUpdater.spriteRenderer.getAnimationDuration()
   return
 
 setupProperty = (path, value) ->
@@ -358,12 +335,6 @@ setupAnimation = (animation, index) ->
   return
 
 # Drawing
-refreshAnimationArea = ->
-  ui.animationArea.gameInstance.destroyComponent ui.animationArea.spriteRenderer if ui.animationArea.spriteRenderer?
-  ui.animationArea.spriteRenderer = new SpriteRenderer ui.animationArea.spriteActor, data.asset.pub
-  ui.animationArea.spriteRenderer.setAnimation data.asset.animations.byId[ui.selectedAnimationId].name if ui.selectedAnimationId?
-  return
-
 draw = ->
   requestAnimationFrame draw
 
@@ -407,10 +378,12 @@ drawSpritesheet = ->
   ui.spritesheetCanvasCtx.drawImage ui.image, 0 , 0
 
   if ui.selectedAnimationId?
-    selectedAnimation = data.asset.animations.byId[ui.selectedAnimationId]
+    asset = data.spriteUpdater.spriteAsset
 
-    width = data.asset.pub.grid.width
-    height = data.asset.pub.grid.height
+    selectedAnimation = asset.animations.byId[ui.selectedAnimationId]
+
+    width = asset.pub.grid.width
+    height = asset.pub.grid.height
 
     framesPerRow = Math.floor ui.image.width / width
     ui.spritesheetCanvasCtx.strokeStyle = "#900090"
@@ -436,8 +409,8 @@ drawCurrentAnimation = ->
   ui.animationArea.gameInstance.update()
   ui.animationArea.gameInstance.draw()
 
-  if ui.animationArea.spriteRenderer?.getAnimation()? and ui.animationArea.spriteRenderer?.isAnimationPlaying
-    animationTime = ui.animationArea.spriteRenderer.getAnimationTime() / ui.animationArea.spriteRenderer.getAnimationDuration()
+  if data? and ui.selectedAnimationId?
+    animationTime = data.spriteUpdater.spriteRenderer.getAnimationTime() / data.spriteUpdater.spriteRenderer.getAnimationDuration()
     ui.animationArea.animationSlider.value = animationTime * 100
   return
 

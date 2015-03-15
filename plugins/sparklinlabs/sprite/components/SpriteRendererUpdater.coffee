@@ -2,7 +2,7 @@ THREE = SupEngine.THREE
 
 module.exports = class SpriteRendererUpdater
 
-  constructor: (@client, @spriteRenderer, config) ->
+  constructor: (@client, @spriteRenderer, config, @receiveAssetCallbakcs, @editAssetCallbacks) ->
     @spriteAssetId = config.spriteAssetId
     @animationId = config.animationId
     @spriteAsset = null
@@ -19,7 +19,6 @@ module.exports = class SpriteRendererUpdater
     @spriteAsset = asset
 
     image = asset.pub.texture?.image
-
     if ! image?
       image = new Image
 
@@ -28,21 +27,29 @@ module.exports = class SpriteRendererUpdater
         asset.pub.texture.magFilter = THREE.NearestFilter
         asset.pub.texture.minFilter = THREE.NearestFilter
 
+      URL.revokeObjectURL @url if @url?
+
       typedArray = new Uint8Array asset.pub.image
       blob = new Blob [ typedArray ], type: 'image/*'
-      # FIXME: Store and call URL.revokeObjectURL when changing texture
-      url = URL.createObjectURL blob
-      image.src = url
+      @url = URL.createObjectURL blob
+      image.src = @url
 
     if ! image.complete
-      image.addEventListener 'load', =>
+      onImageLoaded = =>
+        image.removeEventListener 'load', onImageLoaded
         asset.pub.texture.needsUpdate = true
         @spriteRenderer.setSprite asset.pub
         @_playAnimation() if @animationId?
+
+        @receiveAssetCallbakcs?.sprite( @url );
         return
+
+      image.addEventListener 'load', onImageLoaded
     else
       @spriteRenderer.setSprite asset.pub
       @_playAnimation() if @animationId?
+
+      @receiveAssetCallbakcs?.sprite( @url );
     return
 
   _playAnimation: ->
@@ -52,12 +59,53 @@ module.exports = class SpriteRendererUpdater
     @spriteRenderer.setAnimation animation.name
     return
 
-  _onSpriteAssetEdited: =>
-    # TODO: Update the sprite live
+  _onSpriteAssetEdited: (id, command, args...) =>
+    callEditCallback = true
+    if @__proto__["_onEditCommand_#{command}"]?
+      callEditCallback = false if @__proto__["_onEditCommand_#{command}"].apply( @, args ) == false
+
+    @editAssetCallbacks?.sprite[command]? args... if callEditCallback
+    return
+
+  _onEditCommand_upload: ->
+    URL.revokeObjectURL @url if @url?
+
+    typedArray = new Uint8Array @spriteAsset.pub.image
+    blob = new Blob [ typedArray ], type: 'image/*'
+    @url = URL.createObjectURL blob
+    image = @spriteAsset.pub.texture.image
+    image.src = @url
+    image.addEventListener 'load', =>
+      @spriteAsset.pub.texture.needsUpdate = true
+      return
+
+    @editAssetCallbacks?.sprite.upload @url
+    return false
+
+  _onEditCommand_setProperty: (path, value) ->
+    @spriteRenderer.setSprite @spriteAsset.pub
+    @_playAnimation() if @animationId?
+    return
+
+  _onEditCommand_newAnimation: ->
+    @spriteRenderer.updateAnimationsByName()
+    @_playAnimation()
+    return
+
+  _onEditCommand_deleteAnimation: ->
+    @spriteRenderer.updateAnimationsByName()
+    @_playAnimation()
+    return
+
+  _onEditCommand_setAnimationProperty: ->
+    @spriteRenderer.updateAnimationsByName()
+    @_playAnimation()
     return
 
   _onSpriteAssetTrashed: =>
-    # TODO: Remove the sprite somehow
+    @spriteRenderer.setSprite null
+    if @editAssetCallbacks?
+      SupClient.onAssetTrashed()
     return
 
   onConfigEdited: (path, value) ->
@@ -78,5 +126,4 @@ module.exports = class SpriteRendererUpdater
         if @spriteAsset?
           if @animationId? then @_playAnimation()
           else @spriteRenderer.setAnimation(null)
-
     return
