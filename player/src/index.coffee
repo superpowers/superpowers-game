@@ -49,7 +49,7 @@ async.each pluginPaths.all, (pluginName, pluginCallback) ->
   if err? then console.log err
   # Load game
   buildPath = if qs.project? then "/builds/#{qs.project}/#{qs.build}/" else '../'
-  player = new SupRuntime.Player canvas, buildPath
+  player = new SupRuntime.Player canvas, buildPath, { debug: qs.debug? }
   player.load onLoadProgress, onLoaded
 
 onLoadProgress = (value, max) ->

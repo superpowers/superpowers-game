@@ -5,8 +5,10 @@ THREE = SupEngine.THREE
 module.exports = class GameInstance extends EventEmitter
   @framesPerSecond: 60
 
-  constructor: (canvas) ->
+  constructor: (canvas, options) ->
     super()
+
+    @debug = options.debug == true
 
     @tree = new SupEngine.ActorTree
     @cachedActors = []
@@ -66,11 +68,11 @@ module.exports = class GameInstance extends EventEmitter
     @_doActorDestruction actor for actor in @actorsToBeDestroyed
     @actorsToBeDestroyed.length = 0
 
+    if @exited then @threeRenderer.clear(); return
     if @skipRendering then @skipRendering = false; @update(); return
     return
 
   draw: ->
-
     width = @threeRenderer.domElement.clientWidth
     height = @threeRenderer.domElement.clientHeight
     if @threeRenderer.domElement.width != width or @threeRenderer.domElement.height != height
@@ -80,6 +82,10 @@ module.exports = class GameInstance extends EventEmitter
     @threeRenderer.clear()
     @renderComponents.sort( (a, b) => @cachedActors.indexOf(a.actor) - @cachedActors.indexOf(b.actor) )
     renderComponent.render() for renderComponent in @renderComponents
+    return
+
+  clear: ->
+    @threeRenderer.clear()
     return
 
   destroyComponent: (component) ->

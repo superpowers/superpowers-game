@@ -5,8 +5,8 @@ module.exports = class Player
   @updateInterval: 1 / SupEngine.GameInstance.framesPerSecond * 1000
   @maxAccumulatedTime: 5 * @updateInterval
 
-  constructor: (@canvas, @dataURL) ->
-    @gameInstance = new SupEngine.GameInstance @canvas
+  constructor: (@canvas, @dataURL, options) ->
+    @gameInstance = new SupEngine.GameInstance @canvas, options
 
     @entriesById = {}
     @entriesByPath = {}
@@ -106,6 +106,7 @@ module.exports = class Player
     gameUpdated = false
     while @accumulatedTime >= @constructor.updateInterval
       @gameInstance.update()
+      if @gameInstance.exited then return
       @accumulatedTime -= @constructor.updateInterval
       gameUpdated = true
 
