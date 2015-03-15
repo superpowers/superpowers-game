@@ -462,16 +462,7 @@ tick = ->
   return
 
 # Load plugins
-pluginsXHR = new XMLHttpRequest
-pluginsXHR.open 'GET', '/plugins.json', false # Synchronous, could be made asynchronous
-pluginsXHR.send null
-
-if pluginsXHR.status != 200
-  throw new Error "Could not get plugins list"
-
-pluginPaths = JSON.parse(pluginsXHR.responseText)
-
-async.each pluginPaths.all, (pluginName, pluginCallback) ->
+async.each SupClient.pluginPaths.all, (pluginName, pluginCallback) ->
   if pluginName == "sparklinlabs/scene" then pluginCallback(); return
 
   async.series [
