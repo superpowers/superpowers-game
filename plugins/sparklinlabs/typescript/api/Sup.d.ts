@@ -14,8 +14,6 @@ declare module Sup {
     function toDegrees(radians: number): number;
 
     class Vector3 {
-      static lerp(a: Vector3, b: Vector3, v: number): Vector3;
-
       x: number;
       y: number;
       z: number;
@@ -23,14 +21,16 @@ declare module Sup {
       constructor(x?: number, y?: number, z?: number);
       set(x: number, y: number, z: number): Vector3;
       copy(v: Vector3): Vector3;
+      clone(): Vector3;
+
       add(v: Vector3): Vector3;
       subtract(v: Vector3): Vector3;
       multiplyScalar(m: number): Vector3;
       normalize(): Vector3;
+      lerp(b: Vector3, v: number): Vector3;
       rotate(q : Quaternion): Vector3;
       length(): number;
       distanceTo(v: Vector3): number;
-      clone(): Vector3;
     }
 
     class Quaternion {
@@ -40,12 +40,16 @@ declare module Sup {
       w: number;
 
       constructor(x?: number, y?: number, z?: number, w?: number);
-      set(x: number, y: number, z: number, w: number);
-      setFromAxisAngle(axis: Vector3, angle: number);
+
+      set(x: number, y: number, z: number, w: number): Quaternion;
+      setFromAxisAngle(axis: Vector3, angle: number): Quaternion;
       setFromYawPitchRoll(yaw: number, pitch: number, roll: number): Quaternion;
+      copy(q: Quaternion): Quaternion;
+      clone(): Quaternion;
+
       multiplyQuaternions(a: Quaternion, b: Quaternion): Quaternion;
       multiply(q: Quaternion): Quaternion;
-      clone(): Quaternion;
+      slerp(q: Quaternion, v: number): Quaternion;
     }
   }
 

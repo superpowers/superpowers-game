@@ -27,13 +27,6 @@ module Sup {
     export function toDegrees(radians) { return radians * radToDeg; }
 
     export class Vector3 {
-      static lerp(a, b, v) {
-        var x = a.x * (1 - v) + b.x * v;
-        var y = a.y * (1 - v) + b.y * v;
-        var z = a.z * (1 - v) + b.z * v;
-        return new Vector3(x, y, z)
-      }
-
       x: number;
       y: number;
       z: number;
@@ -43,31 +36,28 @@ module Sup {
         this.y = (y) ? y : 0;
         this.z = (z) ? z : 0;
       }
-      set(x, y, z) {
-        this.x = x; this.y = y; this.z = z;
-        return this
-      }
-      copy(v) {
-        this.x = v.x; this.y = v.y; this.z = v.z;
-        return this
-      }
-      add(v) {
-        this.x += v.x; this.y += v.y; this.z += v.z;
-        return this
-      }
-      subtract(v) {
-        this.x -= v.x; this.y -= v.y; this.z -= v.z;
-        return this
-      }
-      multiplyScalar(m) {
-        this.x *= m; this.y *= m; this.z *= m;
-        return this
-      }
+
+      set(x, y, z) { this.x = x; this.y = y; this.z = z; return this; }
+      copy(v) { this.x = v.x; this.y = v.y; this.z = v.z; return this; }
+      clone() { return new Vector3(this.x, this.y, this.z); }
+
+      add(v) { this.x += v.x; this.y += v.y; this.z += v.z; return this; }
+      subtract(v) { this.x -= v.x; this.y -= v.y; this.z -= v.z; return this; }
+      multiplyScalar(m) { this.x *= m; this.y *= m; this.z *= m; return this; }
+
       normalize() {
         var length = this.length()
         this.x /= length; this.y /= length; this.z /= length;
-        return this
+        return this;
       }
+
+      lerp(b, v) {
+        this.x = this.x * (1 - v) + b.x * v;
+        this.y = this.y * (1 - v) + b.y * v;
+        this.z = this.z * (1 - v) + b.z * v;
+        return this;
+      }
+
       rotate(q) {
         var qx = q.x;
         var qy = q.y;
@@ -82,11 +72,11 @@ module Sup {
         this.x = ix * qw + iw * - qx + iy * - qz - iz * - qy;
         this.y = iy * qw + iw * - qy + iz * - qx - ix * - qz;
         this.z = iz * qw + iw * - qz + ix * - qy - iy * - qx;
-        return this
+        return this;
       }
-      length() { return jsMath.sqrt(this.x * this.x + this.y * this.y + this.z * this.z) }
-      distanceTo(v) { return v.clone().subtract(this).length() }
-      clone() { return new Vector3(this.x, this.y, this.z) }
+
+      length() { return jsMath.sqrt(this.x * this.x + this.y * this.y + this.z * this.z); }
+      distanceTo(v) { return v.clone().subtract(this).length(); }
     }
 
     export class Quaternion {
@@ -101,10 +91,11 @@ module Sup {
         this.z = (z) ? z : 0;
         this.w = (w) ? w : 1;
       }
-      set(x, y, z, w) {
-        this.x = x; this.y = y; this.z = z; this.w = w;
-        return this
-      }
+
+      set(x, y, z, w) { this.x = x; this.y = y; this.z = z; this.w = w; return this; }
+      copy(q) { this.x = q.x; this.y = q.y; this.z = q.z; this.w = q.w; return this; }
+      clone() { return new Quaternion(this.x, this.y, this.z, this.w); }
+
       setFromAxisAngle(axis, angle) {
         var s = jsMath.sin(angle / 2);
 
@@ -114,6 +105,7 @@ module Sup {
     		this.w = jsMath.cos(angle / 2);
         return this
       }
+
       setFromYawPitchRoll(yaw, pitch, roll) {
         var c1 = jsMath.cos(pitch / 2);
         var c2 = jsMath.cos(yaw / 2);
@@ -122,12 +114,13 @@ module Sup {
         var s2 = jsMath.sin(yaw / 2);
         var s3 = jsMath.sin(roll / 2);
 
-        this.x = s1 * c2 * c3 + c1 * s2 * s3
-        this.y = c1 * s2 * c3 - s1 * c2 * s3
-        this.z = c1 * c2 * s3 - s1 * s2 * c3
-        this.w = c1 * c2 * c3 + s1 * s2 * s3
-        return this
+        this.x = s1 * c2 * c3 + c1 * s2 * s3;
+        this.y = c1 * s2 * c3 - s1 * c2 * s3;
+        this.z = c1 * c2 * s3 - s1 * s2 * c3;
+        this.w = c1 * c2 * c3 + s1 * s2 * s3;
+        return this;
       }
+
       multiplyQuaternions(a, b) {
         var qax = a.x;
         var qay = a.y;
@@ -139,15 +132,47 @@ module Sup {
         var qbz = b.z;
         var qbw = b.w;
 
-        this.x = qax * qbw + qaw * qbx + qay * qbz - qaz * qby
-        this.y = qay * qbw + qaw * qby + qaz * qbx - qax * qbz
-        this.z = qaz * qbw + qaw * qbz + qax * qby - qay * qbx
-        this.w = qaw * qbw - qax * qbx - qay * qby - qaz * qbz
+        this.x = qax * qbw + qaw * qbx + qay * qbz - qaz * qby;
+        this.y = qay * qbw + qaw * qby + qaz * qbx - qax * qbz;
+        this.z = qaz * qbw + qaw * qbz + qax * qby - qay * qbx;
+        this.w = qaw * qbw - qax * qbx - qay * qby - qaz * qbz;
 
-        return this
+        return this;
       }
-      multiply(q) { return this.multiplyQuaternions(this, q) }
-      clone() { return new Quaternion(this.x, this.y, this.z, this.w) }
+
+      multiply(q) { return this.multiplyQuaternions(this, q); }
+
+      slerp(b, v) {
+        var magnitude = this.x * b.x + this.y * b.y + this.z * b.z + this.w * b.w;
+
+        var negative = false;
+        if (magnitude < 0) {
+          negative = true;
+          magnitude = -magnitude;
+        }
+
+        var factor1, factor2;
+        if (magnitude <= 0.999999) {
+          // Spherical interpolation is possible
+          var angle1 = jsMath.acos(magnitude);
+          var inv = (1 / jsMath.sin(angle1));
+
+          factor1 = jsMath.sin((1 - v) * angle1) * inv;
+
+          if (negative) factor2 = (-jsMath.sin(v * angle1)) * inv;
+          else factor2 = jsMath.sin(v * angle1) * inv;
+        } else {
+          // Revert back to linear
+          factor1 = 1 - v;
+          if (negative) factor2 = -v;
+          else factor2 = v;
+        }
+
+        this.x = factor1 * this.x + factor2 * b.x;
+        this.y = factor1 * this.y + factor2 * b.y;
+        this.z = factor1 * this.z + factor2 * b.z;
+        this.w = factor1 * this.w + factor2 * b.w;
+      }
     }
   }
 
