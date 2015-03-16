@@ -62,6 +62,7 @@ onAssetReceived = (err, asset) ->
   data.asset = new ScriptAsset asset
 
   ui.editor.setValue data.asset.pub.draft
+  ui.editor.clearHistory()
   return
 
 onAssetEdited = (id, command, args...) ->
