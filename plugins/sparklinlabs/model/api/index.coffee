@@ -1,6 +1,6 @@
 fs = require 'fs'
 
-SupAPI.addPlugin 'typescript', 'model', {
+SupAPI.addPlugin 'typescript', 'Sup.Model', {
   code: "module Sup { export class Model extends Asset {} }"
   defs: "declare module Sup { class Model extends Asset { dummyModelMember; } }"
 }

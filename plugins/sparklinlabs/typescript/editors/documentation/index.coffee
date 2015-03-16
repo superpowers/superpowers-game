@@ -19,13 +19,24 @@ async.each SupClient.pluginPaths.all, (pluginName, pluginCallback) ->
 
   actorComponentAccessors = ""
   for pluginName, plugin of SupAPI.contexts["typescript"].plugins
-    allDefs[pluginName] = plugin.defs if plugin.defs?
+    name = pluginName
+
     if plugin.exposeActorComponent?
+      name = plugin.exposeActorComponent.className
       actorComponentAccessors += "#{plugin.exposeActorComponent.propertyName}: #{plugin.exposeActorComponent.className}; "
+
+    allDefs[name] = plugin.defs if plugin.defs?
 
   allDefs["Sup"] = allDefs["Sup"].replace "// INSERT_COMPONENT_ACCESSORS", actorComponentAccessors
 
-  for name, defs of allDefs
+  sortedDefNames = Object.keys(allDefs)
+  sortedDefNames.unshift sortedDefNames.splice(sortedDefNames.indexOf('Sup'), 1)[0]
+  sortedDefNames.unshift sortedDefNames.splice(sortedDefNames.indexOf('lib'), 1)[0]
+
+  for name in sortedDefNames
+    defs = allDefs[name]
+    if name == 'lib' then name = 'Built-ins'
+
     liElt = document.createElement('li')
     anchorElt = document.createElement('a')
     anchorElt.href = "##{name}"

@@ -1,6 +1,6 @@
 fs = require 'fs'
 
-SupAPI.addPlugin 'typescript', 'sprite', {
+SupAPI.addPlugin 'typescript', 'Sup.Sprite', {
   code: "module Sup { export class Sprite extends Asset {} }"
   defs: "declare module Sup { class Sprite extends Asset { dummySpriteMember; } }"
 }
