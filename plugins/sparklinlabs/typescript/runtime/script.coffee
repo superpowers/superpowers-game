@@ -84,7 +84,7 @@ exports.start = (player, callback) ->
       count++
     count
 
-  line = getLineCounts(jsGlobals.script) + 2
+  line = getLineCounts(jsGlobals.script)
   combinedSourceMap = combine.create('bundle.js')
   for file in results.files
     comment = convert.fromObject( results.sourceMaps[file.name] ).toComment()
