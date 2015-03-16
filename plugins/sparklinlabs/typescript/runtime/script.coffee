@@ -1,16 +1,12 @@
 async = require 'async'
 convert = require 'convert-source-map'
 combine = require 'combine-source-map'
-
 TsCompiler = require './tsCompiler'
-
 fs = require 'fs'
-tsLibDefs = fs.readFileSync(__dirname + '/lib.d.ts', encoding: 'utf8')
-tsSup = fs.readFileSync(__dirname + '/Sup.ts', encoding: 'utf8')
-tsSupDefs = fs.readFileSync(__dirname + '/Sup.d.ts', encoding: 'utf8')
 
-globalNames = ["Sup.ts"]
-globals = { "Sup.ts": tsSup }
+globalNames = []
+globals = {}
+globalDefs = {}
 
 scriptNames = []
 scripts = {}
@@ -20,7 +16,9 @@ actorComponentAccessors = ""
 
 exports.init = (player, callback) ->
   player.behaviorClasses = {}
+
   player.createActor = (name, parentActor) -> new window.Sup.Actor name, parentActor
+
   player.createComponent = (type, actor, config) ->
     if type == 'Behavior'
       behaviorClass = player.behaviorClasses[config.behaviorName]
@@ -39,7 +37,8 @@ exports.init = (player, callback) ->
       globalNames.push "#{pluginName}.ts"
       globals["#{pluginName}.ts"] = plugin.code
 
-    tsSupDefs += plugin.defs if plugin.defs?
+    if plugin.defs?
+      globalDefs["#{pluginName}.d.ts"] = plugin.defs
 
     if plugin.exposeActorComponent?
       actorComponentAccessors += "#{plugin.exposeActorComponent.propertyName}: #{plugin.exposeActorComponent.className}; "
@@ -50,42 +49,55 @@ exports.init = (player, callback) ->
 exports.start = (player, callback) ->
   console.log "Compiling scripts..."
 
+  # Plug component accessors exposed by plugins into Sup.Actor class
   globals["Sup.ts"] = globals["Sup.ts"].replace "// INSERT_COMPONENT_ACCESSORS", actorComponentAccessors
-  tsSupDefs = tsSupDefs.replace "// INSERT_COMPONENT_ACCESSORS", actorComponentAccessors
-  jsGlobals = TsCompiler globalNames, globals, "#{tsLibDefs}\ndeclare var console, window, localStorage, player, SupEngine, SupRuntime;", sourceMap: false
+  globalDefs["Sup.d.ts"] = globalDefs["Sup.d.ts"].replace "// INSERT_COMPONENT_ACCESSORS", actorComponentAccessors
+
+  # Make sure the Sup namespace is compiled before everything else
+  globalNames.unshift globalNames.splice(globalNames.indexOf('Sup.ts'), 1)[0]
+
+  # Compile plugin globals
+  jsGlobals = TsCompiler globalNames, globals, "#{globalDefs["lib.d.ts"]}\ndeclare var console, window, localStorage, player, SupEngine, SupRuntime;", sourceMap: false
   if jsGlobals.errors.length > 0
     for error in jsGlobals.errors
       console.log "#{error.file}(#{error.position.line}): #{error.message}"
 
-  else
-    results = TsCompiler scriptNames, scripts, "#{tsLibDefs}#{tsSupDefs}", sourceMap: true
-    if results.errors.length > 0
-      for error in results.errors
-        console.log "#{error.file}(#{error.position.line}): #{error.message}"
+    callback(); return
 
-    else
-      console.log "Compilation successful!"
+  # Compile game scripts
+  concatenatedGlobalDefs = (def for name, def of globalDefs).join ''
+  results = TsCompiler scriptNames, scripts, concatenatedGlobalDefs, sourceMap: true
+  if results.errors.length > 0
+    for error in results.errors
+      console.log "#{error.file}(#{error.position.line}): #{error.message}"
 
-      getLineCounts = (string) =>
-        count = 1; index = -2
-        loop
-          index = string.indexOf("\n",index+1)
-          break if index == -1
-          count += 1
-        return count
+    callback(); return
 
-      line = getLineCounts( jsGlobals.script ) + 2
-      combinedSourceMap = combine.create('bundle.js')
-      for file in results.files
-        comment = convert.fromObject( results.sourceMaps[file.name] ).toComment();
-        combinedSourceMap.addFile( { sourceFile: file.name, source: file.text + "\n#{comment}" }, {line} )
-        line += ( getLineCounts( file.text ) )
+  console.log "Compilation successful!"
 
-      convertedSourceMap = convert.fromBase64(combinedSourceMap.base64()).toObject();
-      url = URL.createObjectURL(new Blob([ JSON.stringify(convertedSourceMap) ]));
-      code = jsGlobals.script + results.script + "//# sourceMappingURL=#{url}"
-      scriptFunction = new Function 'player', code
-      scriptFunction player
+  # Prepare source maps
+  getLineCounts = (string) =>
+    count = 1; index = -1
+    loop
+      index = string.indexOf "\n", index + 1
+      break if index == -1
+      count++
+    count
+
+  line = getLineCounts(jsGlobals.script) + 2
+  combinedSourceMap = combine.create('bundle.js')
+  for file in results.files
+    comment = convert.fromObject( results.sourceMaps[file.name] ).toComment()
+    combinedSourceMap.addFile( { sourceFile: file.name, source: file.text + "\n#{comment}" }, {line} )
+    line += ( getLineCounts( file.text ) )
+
+  convertedSourceMap = convert.fromBase64(combinedSourceMap.base64()).toObject();
+  url = URL.createObjectURL(new Blob([ JSON.stringify(convertedSourceMap) ]));
+  code = jsGlobals.script + results.script + "//# sourceMappingURL=#{url}"
+
+  # Execute the generated code
+  scriptFunction = new Function 'player', code
+  scriptFunction player
 
   callback()
   return

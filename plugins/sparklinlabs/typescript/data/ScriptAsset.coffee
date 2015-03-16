@@ -5,16 +5,15 @@ path = require 'path'
 if ! window?
   serverRequire = require
   TsCompiler = serverRequire '../runtime/tsCompiler'
-  tsLibDefs = fs.readFileSync(__dirname + '/../runtime/lib.d.ts', encoding: 'utf8')
-  tsSupDefs = fs.readFileSync(__dirname + '/../runtime/Sup.d.ts', encoding: 'utf8')
+  globalDefs = ""
 
   actorComponentAccessors = ""
   for pluginName, plugin of SupAPI.contexts["typescript"].plugins
-    tsSupDefs += plugin.defs if plugin.defs?
+    globalDefs += plugin.defs if plugin.defs?
     if plugin.exposeActorComponent?
       actorComponentAccessors += "#{plugin.exposeActorComponent.propertyName}: #{plugin.exposeActorComponent.className}; "
 
-  tsSupDefs = tsSupDefs.replace "// INSERT_COMPONENT_ACCESSORS", actorComponentAccessors
+  globalDefs = globalDefs.replace "// INSERT_COMPONENT_ACCESSORS", actorComponentAccessors
 
 module.exports = class ScriptAsset extends SupCore.data.base.Asset
 
@@ -124,7 +123,7 @@ Sup.registerBehavior(MyBehavior);
     ownName = ""
 
     compile = =>
-      results = TsCompiler scriptNames, scripts, "#{tsLibDefs}#{tsSupDefs}", sourceMap: false
+      results = TsCompiler scriptNames, scripts, globalDefs, sourceMap: false
       ownErrors = []
       for error in results.errors
         continue if error.file != ownName
