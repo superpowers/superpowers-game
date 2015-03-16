@@ -4,7 +4,7 @@ module.exports = class BehaviorEditor
 
     @behaviorName = config.behaviorName
 
-    behaviorNameRow = @SupUI.component.createSetting tbody, 'Behavior'
+    behaviorNameRow = @SupUI.component.createSetting tbody, 'Class'
     @behaviorNameField = @SupUI.component.createTextField behaviorNameRow.valueElt, config.behaviorName
 
     @behaviorNameField.addEventListener 'input', @_onChangeBehaviorName
