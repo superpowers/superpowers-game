@@ -1,0 +1,54 @@
+@import 'nib'
+
+body
+  display flex
+
+nav
+  width 200px
+  position fixed
+  top 0
+  background #ddd
+  bottom 0
+
+  ul
+    list-style none
+    margin 0
+    padding 0.5em
+
+  li
+    padding 0
+    margin 0
+
+  a
+    display block
+    color #444
+    padding 0.25em 0.5em
+    text-decoration none
+
+    &:hover
+      background #ccc
+
+    &.active
+      background #444
+      color #eee
+
+main
+  margin-left 200px
+  padding 1em
+  flex 1
+
+section
+  display none
+
+  &.active
+    display initial
+
+section header
+  font-size 24pt
+
+section pre
+  white-space pre-wrap
+  font-family monospace
+  background #eee
+  padding 1em
+  user-select text
