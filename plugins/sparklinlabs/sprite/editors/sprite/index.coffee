@@ -1,4 +1,3 @@
-SpriteAsset = SupCore.data.assetPlugins.sprite
 SpriteRenderer = SupEngine.componentPlugins.SpriteRenderer
 
 TreeView = require 'dnd-tree-view'
@@ -22,9 +21,10 @@ start = ->
 
   ui.animationArea = {}
   ui.animationArea.gameInstance = new SupEngine.GameInstance document.querySelector('canvas.animation-canvas')
-  ui.animationArea.gameInstance.setClearColor
-
   ui.animationArea.gameInstance.threeRenderer.setClearColor 0xbbbbbb
+  ui.animationArea.gameInstance.update()
+  ui.animationArea.gameInstance.draw()
+
   cameraActor = new SupEngine.Actor ui.animationArea.gameInstance, "Camera"
   cameraActor.setLocalPosition new SupEngine.THREE.Vector3 0, 0, 1
   cameraComponent = new SupEngine.componentPlugins.Camera cameraActor
@@ -69,13 +69,13 @@ start = ->
         settingObj.addEventListener 'change', (event) =>
           socket.emit 'edit:assets', info.assetId, 'setProperty', setting, event.target.value, (err) -> if err? then alert err; return
       else if setting.indexOf('origin') != -1
-        settingObj.addEventListener 'input', (event) =>
+        settingObj.addEventListener 'change', (event) =>
           socket.emit 'edit:assets', info.assetId, 'setProperty', setting, event.target.value / 100, (err) -> if err? then alert err; return
       else if setting == 'alphaTest'
-        settingObj.addEventListener 'input', (event) =>
+        settingObj.addEventListener 'change', (event) =>
           socket.emit 'edit:assets', info.assetId, 'setProperty', setting, parseFloat(event.target.value), (err) -> if err? then alert err; return
       else
-        settingObj.addEventListener 'input', (event) =>
+        settingObj.addEventListener 'change', (event) =>
           socket.emit 'edit:assets', info.assetId, 'setProperty', setting, parseInt(event.target.value), (err) -> if err? then alert err; return
 
   document.querySelector('button.set-grid-width').addEventListener 'click', onSetGridWidth
@@ -317,7 +317,7 @@ setupAnimation = (animation, index) ->
   startFrameIndexInput.value = animation.startFrameIndex
   liElt.appendChild startFrameIndexInput
 
-  startFrameIndexInput.addEventListener 'input', (event) =>
+  startFrameIndexInput.addEventListener 'change', (event) =>
     socket.emit 'edit:assets', info.assetId, 'setAnimationProperty', animation.id, 'startFrameIndex', parseInt(event.target.value), (err) ->
       if err? then alert err; return
 
@@ -327,7 +327,7 @@ setupAnimation = (animation, index) ->
   endFrameIndexInput.value = animation.endFrameIndex
   liElt.appendChild endFrameIndexInput
 
-  endFrameIndexInput.addEventListener 'input', (event) =>
+  endFrameIndexInput.addEventListener 'change', (event) =>
     socket.emit 'edit:assets', info.assetId, 'setAnimationProperty', animation.id, 'endFrameIndex', parseInt(event.target.value), (err) ->
       if err? then alert err; return
 
