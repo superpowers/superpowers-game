@@ -69,8 +69,11 @@ appendDaySeparator = (date) ->
   separatorElt.appendChild document.createElement('hr')
 
   dateDiv = document.createElement('div')
-  dateDiv.textContent = date.toDateString()
   separatorElt.appendChild dateDiv
+
+  dateInnerDiv = document.createElement('div')
+  dateInnerDiv.textContent = date.toDateString()
+  dateDiv.appendChild dateInnerDiv
 
   ui.chatHistory.appendChild separatorElt
   return
