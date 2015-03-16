@@ -11,20 +11,40 @@ module.exports = class TileSetRenderer extends SupEngine.ActorComponent
 
   setTileSet: (asset, scaleRatio) ->
     @_clearMesh()
-    @_createMesh asset, scaleRatio if asset?
     @asset = asset
+    @_createMesh asset, scaleRatio if @asset?
     return
 
-  _createMesh: (asset, scaleRatio) ->
+  select: (x, y, width=1, height=1) ->
+    @selectedTileActor.setLocalPosition new SupEngine.THREE.Vector3 x, -y, 2
+    @selectedTileActor.setLocalScale new SupEngine.THREE.Vector3 width, -height, 1
+    return
+
+  _createMesh: (asset) ->
     geometry = new THREE.PlaneBufferGeometry asset.data.texture.image.width, asset.data.texture.image.height
     material = new THREE.MeshBasicMaterial map: asset.data.texture, alphaTest: 0.1, side: THREE.DoubleSide
 
     @mesh = new THREE.Mesh geometry, material
-    @mesh.scale.set scaleRatio, scaleRatio, scaleRatio
-    @mesh.position.setX asset.data.texture.image.width / 2 * scaleRatio
-    @mesh.position.setY -asset.data.texture.image.height / 2 * scaleRatio
-    @mesh.updateMatrixWorld()
     @actor.threeObject.add @mesh
+
+    gridActor = new SupEngine.Actor @actor.gameInstance, "Grid"
+    gridActor.setLocalPosition new SupEngine.THREE.Vector3 0, 0, 1
+    @gridRenderer = new SupEngine.editorComponents.GridRenderer gridActor
+
+    @selectedTileActor = new SupEngine.Actor @actor.gameInstance, "Selection"
+    selectedTileRenderer = new SupEngine.editorComponents.FlatColorRenderer @selectedTileActor, "#900090", 1, 1
+
+    @refreshScaleRatio()
+    return
+
+  refreshScaleRatio: ->
+    scaleRatio = 1 / @asset.data.gridSize
+    @mesh.scale.set scaleRatio, scaleRatio, scaleRatio
+    @mesh.position.setX @asset.data.texture.image.width / 2 * scaleRatio
+    @mesh.position.setY -@asset.data.texture.image.height / 2 * scaleRatio
+    @mesh.updateMatrixWorld()
+
+    @select 0, 0
     return
 
   _clearMesh: ->

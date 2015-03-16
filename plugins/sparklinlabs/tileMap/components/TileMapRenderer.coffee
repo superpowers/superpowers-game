@@ -73,12 +73,11 @@ module.exports = class TileMapRenderer extends SupEngine.ActorComponent
     return
 
   addLayer: (layer, layerIndex) ->
-    scaleRatio = 1 / @tileMap.data.pixelsPerUnit
-
     geometry = new TileLayerGeometry @tileMap.data.width * @tileSet.data.gridSize, @tileMap.data.height * @tileSet.data.gridSize, @tileMap.data.width, @tileMap.data.height
     material = new THREE.MeshBasicMaterial map: @tileSetTexture, alphaTest: 0.1, side: THREE.DoubleSide, transparent: true
     layerMesh = new THREE.Mesh geometry, material
 
+    scaleRatio = 1 / @tileMap.data.pixelsPerUnit
     layerMesh.scale.set scaleRatio, scaleRatio, 1
     layerMesh.updateMatrixWorld()
 
@@ -108,10 +107,27 @@ module.exports = class TileMapRenderer extends SupEngine.ActorComponent
     @refreshLayersDepth()
     return
 
+  refreshPixelsPerUnit: (pixelsPerUnit)->
+    @tileMap.data.pixelsPerUnit = pixelsPerUnit if pixelsPerUnit?
+    scaleRatio = 1 / @tileMap.data.pixelsPerUnit
+    for layerMesh, layerMeshIndex in @layerMeshes
+      layerMesh.scale.set scaleRatio, scaleRatio, 1
+      layerMesh.updateMatrixWorld()
+    return
+
   refreshLayersDepth: ->
-    for mesh, meshIndex in @layerMeshes
-      mesh.position.setZ meshIndex * @tileMap.data.layerDepthOffset
-      mesh.updateMatrixWorld()
+    for layerMesh, layerMeshIndex in @layerMeshes
+      layerMesh.position.setZ layerMeshIndex * @tileMap.data.layerDepthOffset
+      layerMesh.updateMatrixWorld()
+    return
+
+  refreshEntireMap: ->
+    for layerIndex in [0...@tileMap.data.layers.length]
+      for y in [0...@tileMap.data.height]
+        for x in [0...@tileMap.data.width]
+          @refreshTileAt layerIndex, x, y
+
+    @refreshLayersDepth()
     return
 
   _onSetTileAt: (layerIndex, x, y) => @refreshTileAt layerIndex, x, y; return

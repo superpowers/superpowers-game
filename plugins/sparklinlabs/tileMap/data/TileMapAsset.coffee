@@ -13,7 +13,7 @@ module.exports = class TileMapAsset extends SupCore.data.base.Asset
 
     width: { type: 'integer', min: 1 }
     height: { type: 'integer', min: 1 }
-    layerDepthOffset: { type: 'integer', mutable: true }
+    layerDepthOffset: { type: 'number', mutable: true }
 
     layers: { type: 'listById' }
 
@@ -151,14 +151,16 @@ module.exports = class TileMapAsset extends SupCore.data.base.Asset
     if typeof layerId != 'number' or ! @layers.byId[layerId]? then callback "no such layer"; return
     if typeof x != 'number' or x < 0 or x >= @pub.width then callback "x must be an integer between 0 and #{@pub.width-1}"; return
     if typeof y != 'number' or y < 0 or y >= @pub.height then callback "y must be an integer between 0 and #{@pub.height-1}"; return
-    if not Array.isArray(values) or values.length != 5 then callback "values must be an array with 5 items"; return
-    if typeof values[0] != 'number' or values[0] < -1 then callback "tileX must be an integer greater than -1"; return
-    if typeof values[1] != 'number' or values[1] < -1 then callback "tileY must be an integer greater than -1"; return
-    if typeof values[2] != 'boolean' then callback "flipX must be a boolean"; return
-    if typeof values[3] != 'boolean' then callback "flipY must be a boolean"; return
-    if typeof values[4] != 'number' or [0, 90, 180, 270].indexOf(values[4]) == -1 then callback "angle must be an integer in [0, 90, 180, 270]"; return
+    if values?
+      if not Array.isArray(values) or values.length != 5 then callback "values must be an array with 5 items"; return
+      if typeof values[0] != 'number' or values[0] < -1 then callback "tileX must be an integer greater than -1"; return
+      if typeof values[1] != 'number' or values[1] < -1 then callback "tileY must be an integer greater than -1"; return
+      if typeof values[2] != 'boolean' then callback "flipX must be a boolean"; return
+      if typeof values[3] != 'boolean' then callback "flipY must be a boolean"; return
+      if typeof values[4] != 'number' or [0, 90, 180, 270].indexOf(values[4]) == -1 then callback "angle must be an integer in [0, 90, 180, 270]"; return
 
     index = y * @pub.width + x
+    values ?= _.cloneDeep(@constructor.emptyTile)
     @layers.byId[layerId].data[index] = values
     callback null, layerId, x, y, values
     @emit 'change'

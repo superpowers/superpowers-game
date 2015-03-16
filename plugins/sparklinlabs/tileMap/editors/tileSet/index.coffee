@@ -1,5 +1,3 @@
-TileSetAsset = SupCore.data.assetPlugins.tileSet
-TileSet = require '../../components/TileSet'
 TileSetRenderer = SupEngine.editorComponents.TileSetRenderer
 
 TreeView = require 'dnd-tree-view'
@@ -14,12 +12,8 @@ start = ->
   socket = SupClient.connect info.projectId
   socket.on 'connect', onConnected
   socket.on 'disconnect', SupClient.onDisconnected
-  socket.on 'edit:assets', onAssetEdited
-  socket.on 'trash:assets', SupClient.onAssetTrashed
 
   # Drawing
-  ui.image = new Image
-
   ui.gameInstance = new SupEngine.GameInstance document.querySelector('canvas')
   ui.gameInstance.threeRenderer.setClearColor 0xbbbbbb
 
@@ -31,21 +25,7 @@ start = ->
     zoomOffset: 2
     zoomMin: 1
     zoomMax: 50
-  }, => ui.gridRenderer.setOrthgraphicScale(ui.cameraComponent.orthographicScale); return
-
-  ui.tileSetActor = new SupEngine.Actor ui.gameInstance, "Tile Set"
-  ui.tileSetRenderer = new TileSetRenderer ui.tileSetActor
-
-  ui.gridActor = new SupEngine.Actor ui.gameInstance, "Grid"
-  ui.gridActor.setLocalPosition new SupEngine.THREE.Vector3 0, 0, 1
-  ui.gridRenderer = new SupEngine.editorComponents.GridRenderer ui.gridActor
-
-  ui.selectedTileActor = new SupEngine.Actor ui.gameInstance, "Selection"
-  ui.selectedTileActor.setLocalPosition new SupEngine.THREE.Vector3 0, -1, 2
-  ui.selectedTileRenderer = new SupEngine.editorComponents.FlatColorRenderer ui.selectedTileActor
-  ui.selectedTileRenderer.setup "#900090", 1, 1
-
-  requestAnimationFrame draw
+  }, => data.tileSetUpdater.tileSetRenderer.gridRenderer.setOrthgraphicScale(ui.cameraComponent.orthographicScale); return
 
   # Sidebar
   fileSelect = document.querySelector('input.file-select')
@@ -55,7 +35,7 @@ start = ->
   document.querySelector('button.download').addEventListener 'click', onDownloadTileset
 
   ui.gridSizeInput = document.querySelector('input.grid-size')
-  ui.gridSizeInput.addEventListener 'input', (event) =>
+  ui.gridSizeInput.addEventListener 'change', (event) =>
     socket.emit 'edit:assets', info.assetId, 'setProperty', 'gridSize', parseInt(event.target.value), (err) -> if err? then alert err; return
 
   # Tile properties
@@ -64,48 +44,49 @@ start = ->
   document.querySelector('button.new-property').addEventListener 'click', onNewPropertyClick
   document.querySelector('button.rename-property').addEventListener 'click', onRenamePropertyClick
   document.querySelector('button.delete-property').addEventListener 'click', onDeletePropertyClick
-  return
 
+  requestAnimationFrame draw
+  return
 
 # Network callbacks
 onConnected = ->
   data = {}
-  socket.emit 'sub', 'assets', info.assetId, onAssetReceived
+  data.projectClient = new SupClient.ProjectClient socket, subEntries: false
+
+  tileSetActor = new SupEngine.Actor ui.gameInstance, "Tile Set"
+  tileSetRenderer = new TileSetRenderer tileSetActor
+  config = tileSetAssetId: info.assetId
+  receiveCallbacks = tileSet: onAssetReceived
+  editCallbacks = tileSet: onEditCommands
+
+  data.tileSetUpdater = new TileSetRenderer.Updater data.projectClient, tileSetRenderer, config, receiveCallbacks, editCallbacks
   return
 
 onAssetReceived = (err, asset) ->
-  data.asset = new TileSetAsset asset
   data.selectedTile = x: 0, y: 0
 
-  setupImage()
-  setupProperty 'gridSize', data.asset.pub.gridSize
+  setupProperty 'gridSize', data.tileSetUpdater.tileSetAsset.pub.gridSize
   setupTileProperties data.selectedTile
   return
 
-onAssetEdited = (id, command, args...) ->
-  data.asset.__proto__["client_#{command}"].call data.asset, args...
-  onAssetCommands[command]?.apply data.asset, args
-  return
+onEditCommands =  {}
 
-onAssetCommands =  {}
+onEditCommands.setProperty = (key, value) -> setupProperty key, value; return
 
-onAssetCommands.upload = -> setupImage(); return
-onAssetCommands.setProperty = (key, value) -> setupProperty key, value; return
-
-onAssetCommands.addTileProperty = (tile, name) ->
+onEditCommands.addTileProperty = (tile, name) ->
   return if tile.x != data.selectedTile.x and tile.y != data.selectedTile.y
 
   addTileProperty name
   return
 
-onAssetCommands.renameTileProperty = (tile, name, newName) ->
+onEditCommands.renameTileProperty = (tile, name, newName) ->
   return if tile.x != data.selectedTile.x and tile.y != data.selectedTile.y
 
   liElt = ui.propertiesTreeView.treeRoot.querySelector("li[data-name='#{name}']")
   liElt.querySelector('.name').textContent = newName
   liElt.dataset.name = newName
 
-  properties = Object.keys( data.asset.pub.tileProperties["#{tile.x}_#{tile.y}"])
+  properties = Object.keys( data.tileSetUpdater.tileSetAsset.pub.tileProperties["#{tile.x}_#{tile.y}"])
   properties.sort()
   ui.propertiesTreeView.remove liElt
   ui.propertiesTreeView.insertAt liElt, 'item', properties.indexOf(newName)
@@ -115,67 +96,34 @@ onAssetCommands.renameTileProperty = (tile, name, newName) ->
     ui.propertiesTreeView.addToSelection liElt
   return
 
-onAssetCommands.deleteTileProperty = (tile, name) ->
+onEditCommands.deleteTileProperty = (tile, name) ->
   return if tile.x != data.selectedTile.x and tile.y != data.selectedTile.y
 
   ui.propertiesTreeView.remove ui.propertiesTreeView.treeRoot.querySelector("li[data-name='#{name}']")
   return
 
-onAssetCommands.editTileProperty = (tile, name, value) ->
+onEditCommands.editTileProperty = (tile, name, value) ->
   return if tile.x != data.selectedTile.x and tile.y != data.selectedTile.y
 
   liElt = ui.propertiesTreeView.treeRoot.querySelector("li[data-name='#{name}']")
   liElt.querySelector('.value').value = value
   return
 
-imageObjectURL = null
-setupImage = ->
-  URL.revokeObjectURL imageObjectURL if imageObjectURL?
-
-  typedArray = new Uint8Array data.asset.pub.image
-  blob = new Blob [ typedArray ], type: 'image/*'
-  imageObjectURL = URL.createObjectURL blob
-
-  ui.image.src = imageObjectURL
-  ui.image.onload = ->
-    texture = data.asset.pub.texture = new SupEngine.THREE.Texture ui.image
-    texture.needsUpdate = true
-    texture.magFilter = SupEngine.THREE.NearestFilter
-    texture.minFilter = SupEngine.THREE.NearestFilter
-    ui.tileSetRenderer.setTileSet new TileSet(data.asset.pub), 1 / data.asset.pub.gridSize
-
-    ui.gridRenderer.setGrid
-      width: data.asset.pub.texture.image.width / data.asset.pub.gridSize
-      height: data.asset.pub.texture.image.height / data.asset.pub.gridSize
-      direction: -1
-      orthographicScale: ui.cameraComponent.orthographicScale
-      ratio: 1
-    return
-  return
-
 setupProperty = (key, value) ->
   switch key
-    when 'gridSize'
-      ui.gridSizeInput.value = value
-
-      if data.asset.pub.texture?
-        ui.tileSetRenderer.setTileSet new TileSet(data.asset.pub), 1 / data.asset.pub.gridSize
-
-        width = data.asset.pub.texture.image.width / data.asset.pub.gridSize
-        height = data.asset.pub.texture.image.height / data.asset.pub.gridSize
-        ui.gridRenderer.resize width, height
+    when 'gridSize' then ui.gridSizeInput.value = value
   return
 
 setupTileProperties = (tile) ->
   while ui.propertiesTreeView.treeRoot.children.length != 0
     ui.propertiesTreeView.remove ui.propertiesTreeView.treeRoot.children[0]
 
-  return if ! data.asset.pub.tileProperties["#{tile.x}_#{tile.y}"]?
+  return if ! data.tileSetUpdater.tileSetAsset.pub.tileProperties["#{tile.x}_#{tile.y}"]?
 
-  properties = Object.keys( data.asset.pub.tileProperties["#{tile.x}_#{tile.y}"])
+  properties = Object.keys( data.tileSetUpdater.tileSetAsset.pub.tileProperties["#{tile.x}_#{tile.y}"])
   properties.sort()
   for propertyName in properties
-    addTileProperty propertyName, data.asset.pub.tileProperties["#{tile.x}_#{tile.y}"][propertyName]
+    addTileProperty propertyName, data.tileSetUpdater.tileSetAsset.pub.tileProperties["#{tile.x}_#{tile.y}"][propertyName]
   return
 
 addTileProperty = (name, value="") ->
@@ -281,13 +229,12 @@ draw = ->
     x = Math.floor mouseX
     y = Math.floor mouseY
 
-    if x >= 0 and x < data.asset.pub.texture.image.width / data.asset.pub.gridSize and
-    y >= 0 and y < data.asset.pub.texture.image.height / data.asset.pub.gridSize and
+    if x >= 0 and x < data.tileSetUpdater.tileSetAsset.pub.texture.image.width / data.tileSetUpdater.tileSetAsset.pub.gridSize and
+    y >= 0 and y < data.tileSetUpdater.tileSetAsset.pub.texture.image.height / data.tileSetUpdater.tileSetAsset.pub.gridSize and
     (x != data.selectedTile.x or y != data.selectedTile.y)
       data.selectedTile.x = x
       data.selectedTile.y = y
-      ui.selectedTileActor.setLocalPosition new SupEngine.THREE.Vector3 x, -(y+1), 2
-
+      data.tileSetUpdater.tileSetRenderer.select x, y
       setupTileProperties data.selectedTile
 
   ui.gameInstance.draw()
