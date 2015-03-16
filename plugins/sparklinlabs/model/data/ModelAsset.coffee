@@ -60,7 +60,7 @@ module.exports = class ModelAsset extends SupCore.data.base.Asset
       @pub.maps = {}
       @pub.animations ?= []
 
-      async.waterfall [
+      async.series [
 
         (callback) =>
           async.each Object.keys(@constructor.schema.attributes.properties), (key, cb) =>
@@ -106,7 +106,7 @@ module.exports = class ModelAsset extends SupCore.data.base.Asset
     @pub.attributes = attributes
     @pub.maps = maps
 
-    async.waterfall [
+    async.series [
 
       (callback) => fs.writeFile path.join(assetPath, "asset.json"), json, { encoding: 'utf8' }, callback; return
 
