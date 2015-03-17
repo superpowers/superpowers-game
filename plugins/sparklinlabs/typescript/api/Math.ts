@@ -11,6 +11,14 @@ module Sup {
     export function toDegrees(radians) { return radians * radToDeg; }
 
     export class Vector3 {
+      static forward() { return new Vector3( 0,  0,  1); }
+      static back()    { return new Vector3( 0,  0, -1); }
+      static right()   { return new Vector3( 1,  0,  0); }
+      static left()    { return new Vector3(-1,  0,  0); }
+      static up()      { return new Vector3( 0,  1,  0); }
+      static down()    { return new Vector3( 0, -1,  0); }
+      static one()     { return new Vector3( 1,  1,  1); }
+
       x: number;
       y: number;
       z: number;

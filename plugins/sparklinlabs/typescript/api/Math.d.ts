@@ -11,6 +11,14 @@ declare module Sup {
     function toDegrees(radians: number): number;
 
     class Vector3 {
+      static forward(): Vector3;
+      static back(): Vector3;
+      static right(): Vector3;
+      static left(): Vector3;
+      static up(): Vector3;
+      static down(): Vector3;
+      static one(): Vector3;
+
       x: number;
       y: number;
       z: number;
