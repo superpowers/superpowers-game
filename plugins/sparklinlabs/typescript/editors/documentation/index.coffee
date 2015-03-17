@@ -30,7 +30,7 @@ async.each SupClient.pluginPaths.all, (pluginName, pluginCallback) ->
   allDefs["Sup"] = allDefs["Sup"].replace "// INSERT_COMPONENT_ACCESSORS", actorComponentAccessors
 
   sortedDefNames = Object.keys(allDefs)
-  sortedDefNames.unshift sortedDefNames.splice(sortedDefNames.indexOf('Sup'), 1)[0]
+  sortedDefNames.sort (a, b) -> if a.toLowerCase() < b.toLowerCase() then -1 else 1
   sortedDefNames.unshift sortedDefNames.splice(sortedDefNames.indexOf('lib'), 1)[0]
 
   for name in sortedDefNames
