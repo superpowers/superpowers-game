@@ -166,7 +166,7 @@ onRenameAnimationClick = ->
   return if ui.animationsTreeView.selectedNodes.length != 1
 
   selectedNode = ui.animationsTreeView.selectedNodes[0]
-  animation = data.asset.animations.byId[parseInt(selectedNode.dataset.id)]
+  animation = data.modelUpdater.modelAsset.animations.byId[parseInt(selectedNode.dataset.id)]
 
   SupClient.dialogs.prompt "Enter a new name for the animation.", null, animation.name, "Rename", (newName) =>
     return if ! newName?
