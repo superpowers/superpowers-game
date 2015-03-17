@@ -53,6 +53,14 @@ start = ->
 
   ui.editor.on 'changes', onEditText
 
+  ui.errorContainer = document.querySelector('.error-container')
+  ui.errorContainer.querySelector('button').addEventListener "click", =>
+    ui.errorContainer.style.display = "none"
+    ui.editor.refresh()
+    return
+
+  ui.editor.focus()
+
 # Network callbacks
 onWelcome = (clientId) ->
   data = { clientId }
@@ -152,8 +160,19 @@ onAssetCommands.saveText = (errors) ->
     ui.editor.setGutterMarker line, "line-error-gutter", null
 
   # Display new ones
+  if errors.length == 0
+    ui.errorContainer.style.display = "none"
+    ui.editor.refresh()
+    return
+
+  ui.errorContainer.style.display = "flex"
+  ui.editor.refresh()
+
+  text = ui.errorContainer.querySelector('textarea')
+  text.value = ""
   for error in errors
-    console.log "#{error.file}(#{error.position.line}): #{error.message}"
+    #console.log "#{error.file}(#{error.position.line}): #{error.message}"
+    text.value += "#{error.file}(#{error.position.line}): #{error.message}\n"
 
     line = error.position.line - 1
     textMarker = ui.editor.markText(
