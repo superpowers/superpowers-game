@@ -115,7 +115,9 @@ module.exports = class SpriteRendererEditor
   # User interface
   _onChangeSpriteAsset: (event) =>
     entry = @SupUI.findEntryByPath @projectClient.entries.pub, event.target.value
-    if entry?.type == 'sprite' then @setProperty 'spriteAssetId', entry.id
+    if entry?.type == 'sprite'
+      @setProperty 'spriteAssetId', entry.id
+      @setProperty 'animationId', null
     return
 
   _onChangeSpriteAnimation: (event) =>
