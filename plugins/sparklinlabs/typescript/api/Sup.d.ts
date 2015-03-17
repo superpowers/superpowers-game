@@ -27,7 +27,7 @@ declare module Sup {
       subtract(v: Vector3): Vector3;
       multiplyScalar(m: number): Vector3;
       normalize(): Vector3;
-      lerp(b: Vector3, v: number): Vector3;
+      lerp(v: Vector3, t: number): Vector3;
       rotate(q : Quaternion): Vector3;
       length(): number;
       distanceTo(v: Vector3): number;
@@ -49,7 +49,7 @@ declare module Sup {
 
       multiplyQuaternions(a: Quaternion, b: Quaternion): Quaternion;
       multiply(q: Quaternion): Quaternion;
-      slerp(q: Quaternion, v: number): Quaternion;
+      slerp(q: Quaternion, t: number): Quaternion;
     }
   }
 

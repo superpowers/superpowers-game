@@ -51,10 +51,10 @@ module Sup {
         return this;
       }
 
-      lerp(b, v) {
-        this.x = this.x * (1 - v) + b.x * v;
-        this.y = this.y * (1 - v) + b.y * v;
-        this.z = this.z * (1 - v) + b.z * v;
+      lerp(v, t) {
+        this.x = this.x * (1 - t) + v.x * t;
+        this.y = this.y * (1 - t) + v.y * t;
+        this.z = this.z * (1 - t) + v.z * t;
         return this;
       }
 
@@ -142,36 +142,55 @@ module Sup {
 
       multiply(q) { return this.multiplyQuaternions(this, q); }
 
-      slerp(b, v) {
-        var magnitude = this.x * b.x + this.y * b.y + this.z * b.z + this.w * b.w;
+      slerp(q, t) {
+        // Adapted from Three.js
+        if (t === 0) return this;
+        if (t === 1) return this.copy(q);
 
-        var negative = false;
-        if (magnitude < 0) {
-          negative = true;
-          magnitude = -magnitude;
-        }
+        var x = this.x;
+        var y = this.y;
+        var z = this.z;
+        var w = this.w;
 
-        var factor1, factor2;
-        if (magnitude <= 0.999999) {
-          // Spherical interpolation is possible
-          var angle1 = jsMath.acos(magnitude);
-          var inv = (1 / jsMath.sin(angle1));
+        var cosHalfTheta = w * q.w + x * q.x + y * q.y + z * q.z;
 
-          factor1 = jsMath.sin((1 - v) * angle1) * inv;
-
-          if (negative) factor2 = (-jsMath.sin(v * angle1)) * inv;
-          else factor2 = jsMath.sin(v * angle1) * inv;
+        if (cosHalfTheta < 0) {
+          this.w = -q.w;
+          this.x = -q.x;
+          this.y = -q.y;
+          this.z = -q.z;
+          cosHalfTheta = -cosHalfTheta;
         } else {
-          // Revert back to linear
-          factor1 = 1 - v;
-          if (negative) factor2 = -v;
-          else factor2 = v;
+          this.copy(q);
         }
 
-        this.x = factor1 * this.x + factor2 * b.x;
-        this.y = factor1 * this.y + factor2 * b.y;
-        this.z = factor1 * this.z + factor2 * b.z;
-        this.w = factor1 * this.w + factor2 * b.w;
+        if (cosHalfTheta >= 1.0) {
+          this.w = w;
+          this.x = x;
+          this.y = y;
+          this.z = z;
+          return this;
+        }
+
+        var halfTheta = jsMath.acos(cosHalfTheta);
+        var sinHalfTheta = jsMath.sqrt(1.0 - cosHalfTheta * cosHalfTheta);
+
+        if (jsMath.abs(sinHalfTheta) < 0.001) {
+          this.w = 0.5 * (w + this.w);
+          this.x = 0.5 * (x + this.x);
+          this.y = 0.5 * (y + this.y);
+          this.z = 0.5 * (z + this.z);
+          return this;
+        }
+
+        var ratioA = jsMath.sin((1 - t) * halfTheta) / sinHalfTheta,
+        ratioB = jsMath.sin(t * halfTheta) / sinHalfTheta;
+
+        this.w = (w * ratioA + this.w * ratioB);
+        this.x = (x * ratioA + this.x * ratioB);
+        this.y = (y * ratioA + this.y * ratioB);
+        this.z = (z * ratioA + this.z * ratioB);
+        return this;
       }
     }
   }
