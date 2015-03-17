@@ -37,6 +37,10 @@ start = ->
   for transformType, inputs of ui.transform
     input.addEventListener 'change', onTransformInputChange for input in inputs
 
+  ui.componentEditorPlugins = {}
+  for componentName, component of SupEngine.componentEditorPlugins
+    ui.componentEditorPlugins[componentName] = componentName
+
   document.querySelector('button.new-component').addEventListener 'click', onNewComponentClick
 
   # Setup 3D viewport
@@ -401,7 +405,7 @@ createComponentElement = (nodeId, component) ->
   componentElt
 
 onNewComponentClick = ->
-  SupClient.dialogs.select "Select the type of component to create.", Object.keys(SupEngine.componentEditorPlugins), "Create", (type) =>
+  SupClient.dialogs.select "Select the type of component to create.", ui.componentEditorPlugins, "Create", (type) =>
     return if ! type?
 
     nodeId = parseInt(ui.nodesTreeView.selectedNodes[0].dataset.id)
