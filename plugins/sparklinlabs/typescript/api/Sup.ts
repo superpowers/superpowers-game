@@ -1,30 +1,33 @@
-var jsMath = Math;
-var tmpVector3 = new SupEngine.THREE.Vector3();
-var tmpQuaternion = new SupEngine.THREE.Quaternion();
-var tmpEuler = new SupEngine.THREE.Euler();
-var degToRad = jsMath.PI / 180;
-var radToDeg = 180 / jsMath.PI;
-
 module Sup {
+
+  var tmpVector3 = new SupEngine.THREE.Vector3();
+  var tmpQuaternion = new SupEngine.THREE.Quaternion();
+  var tmpEuler = new SupEngine.THREE.Euler();
+
   export function log(x) { console.log(x); }
+
   export function exit() {
     player.gameInstance.destroyAllActors();
     player.gameInstance.exited = true;
-    if (! player.gameInstance.debug && window.nwDispatcher != null) {
+
+    // Close window only if running release mode in NW.js
+    if (! player.gameInstance.debug && window.nwDispatcher != null)
       window.nwDispatcher.requireNwGui().Window.get().close();
-    }
   }
 
   export class Asset {
     type: string;
     children: Array<string>;
     __inner: any;
+
     constructor(inner) {
       this.__inner = inner;
       this.__inner.__outer = this;
     }
   }
+
   export class Folder extends Asset {}
+
   export function get(path, arg1, arg2) {
     var type = arg1;
     var options = (arg2 !== undefined) ? arg2 : { ignoreMissing: false };
@@ -46,11 +49,13 @@ module Sup {
 
     return (outerAsset) ? outerAsset : null
   }
+
   export function getActor(name) {
     var foundActor = null;
     player.gameInstance.tree.walkTopDown( (actor) => { if ( actor.name == name && ! actor.pendingForDestruction ) { foundActor = (foundActor) ? foundActor: actor.__outer; } } )
     return foundActor
   }
+
   export function destroyAllActors() {
     player.gameInstance.destroyAllActors();
     player.gameInstance.tree.walkTopDown( (actor) => { actor.__outer.__inner = null; actor.__outer = null; } )
@@ -68,83 +73,96 @@ module Sup {
       this.__behaviors = {};
       actor.__outer = this;
     }
+
     destroy() {
       player.gameInstance.destroyActor(this.__inner);
       this.__inner.__outer = null;
       this.__inner = null;
     }
 
-    getName() { return this.__inner.name }
-    setName(name) { this.__inner.name = name; return this }
-    getVisible() { return this.__inner.threeObject.visible; return this }
-    setVisible(visible: boolean) { this.__inner.threeObject.visible = visible }
+    getName() { return this.__inner.name; }
+    setName(name) { this.__inner.name = name; return this; }
+    getVisible() { return this.__inner.threeObject.visible; return this; }
+    setVisible(visible: boolean) { this.__inner.threeObject.visible = visible; }
     getParent() { return (this.__inner.parent) ? this. __inner.parent.__outer : null; }
-    setParent(parent) { var innerParent = (parent) ? parent.__inner : null; this.__inner.setParent(innerParent); return this }
+    setParent(parent) { var innerParent = (parent) ? parent.__inner : null; this.__inner.setParent(innerParent); return this; }
 
     getChild(name) {
       var foundActor = null;
-      player.gameInstance.tree.walkDown( this.__inner, (actor) => {
-        if ( actor.name == name ) { foundActor = (foundActor) ? foundActor: actor.__outer; } } )
-      return foundActor
+      player.gameInstance.tree.walkDown(this.__inner, (actor) => {
+        if (actor.name == name) { foundActor = (foundActor) ? foundActor : actor.__outer; }
+      });
+      return foundActor;
     }
+
     getChildren() {
-      var children = []
-      this.__inner.children.forEach( (child) => { if (child.__outer) { children.push(child.__outer); } } )
-      return children
+      var children = [];
+      this.__inner.children.forEach( (child) => { if (child.__outer) { children.push(child.__outer); } } );
+      return children;
     }
 
     getPosition() {
       var position = this.__inner.getGlobalPosition();
-      return new Math.Vector3(position.x, position.y, position.z)
+      return new Math.Vector3(position.x, position.y, position.z);
     }
+
     setPosition(position) {
       this.__inner.setGlobalPosition( tmpVector3.set(position.x, position.y, position.z) );
-      return this
+      return this;
     }
+
     getLocalPosition() {
       var position = this.__inner.getLocalPosition();
       return new Math.Vector3(position.x, position.y, position.z)
     }
+
     setLocalPosition(position) {
       this.__inner.setLocalPosition( tmpVector3.set(position.x, position.y, position.z) );
-      return this
+      return this;
     }
+
     move(offset) {
       this.__inner.moveGlobal( tmpVector3.set(offset.x, offset.y, offset.z) )
-      return this
+      return this;
     }
+
     moveLocal(offset) {
       this.__inner.moveLocal( tmpVector3.set(offset.x, offset.y, offset.z) )
-      return this
+      return this;
     }
     moveOriented(offset) {
       this.__inner.moveOriented( tmpVector3.set(offset.x, offset.y, offset.z) )
-      return this
+      return this;
     }
 
     getOrientation() {
       var orientation = this.__inner.getGlobalOrientation();
-      return new Math.Quaternion(orientation.x, orientation.y, orientation.z, orientation.w)
+      return new Math.Quaternion(orientation.x, orientation.y, orientation.z, orientation.w);
     }
+
     setOrientation(quaternion) {
       this.__inner.setGlobalOrientation( tmpQuaternion.set(quaternion.x, quaternion.y, quaternion.z, quaternion.w) )
-      return this
+      return this;
     }
+
     getLocalOrientation() {
       var orientation = this.__inner.getLocalOrientation();
-      return new Math.Quaternion(orientation.x, orientation.y, orientation.z, orientation.w)
+      return new Math.Quaternion(orientation.x, orientation.y, orientation.z, orientation.w);
     }
+
     setLocalOrientation(quaternion) {
       this.__inner.setLocalOrientation( tmpQuaternion.set(quaternion.x, quaternion.y, quaternion.z, quaternion.w) )
-      return this
+      return this;
     }
+
     rotate(offset) {
-      this.__inner.rotateGlobal( tmpQuaternion.set(offset.x, offset.y, offset.z, offset.w) )
-      return this
+      this.__inner.rotateGlobal( tmpQuaternion.set(offset.x, offset.y, offset.z, offset.w) );
+      return this;
     }
+
     rotateLocal(offset) {
-      this.__inner.rotateLocal( tmpQuaternion.set(offset.x, offset.y, offset.z, offset.w) )
-      return this
+      this.__inner.rotateLocal( tmpQuaternion.set(offset.x, offset.y, offset.z, offset.w) );
+      return this;
     }
 
     getEulerAngles() {
@@ -152,12 +170,14 @@ module Sup {
       var x = eulerAngles.x;
       var y = eulerAngles.y;
       var z = eulerAngles.z;
-      return new Math.Vector3( parseFloat(x.toFixed(3)), parseFloat(y.toFixed(3)), parseFloat(z.toFixed(3)) )
+      return new Math.Vector3( parseFloat(x.toFixed(3)), parseFloat(y.toFixed(3)), parseFloat(z.toFixed(3)) );
     }
+
     setEulerAngles(eulerAngles) {
-      this.__inner.setGlobalEulerAngles( tmpEuler.set(eulerAngles.x, eulerAngles.y, eulerAngles.z) )
-      return this
+      this.__inner.setGlobalEulerAngles( tmpEuler.set(eulerAngles.x, eulerAngles.y, eulerAngles.z) );
+      return this;
     }
+
     getLocalEulerAngles() {
       var eulerAngles = this.__inner.getLocalEulerAngles();
       var x = eulerAngles.x;
@@ -165,34 +185,40 @@ module Sup {
       var z = eulerAngles.z;
       return new Math.Vector3( parseFloat(x.toFixed(3)), parseFloat(y.toFixed(3)), parseFloat(z.toFixed(3)) )
     }
+
     setLocalEulerAngles(eulerAngles) {
       this.__inner.setLocalEulerAngles( tmpEuler.set(eulerAngles.x, eulerAngles.y, eulerAngles.z) );
       return this;
     }
+
     rotateEulerAngles(offset) {
       this.__inner.rotateEulerAngles( tmpEuler.set(offset.x, offset.y, offset.z) );
       return this;
     }
+
     rotateLocalEulerAngles(offset) {
       this.__inner.rotateLocalEulerAngles( tmpEuler.set(offset.x, offset.y, offset.z) );
       return this;
     }
+
     lookAt(target) {
       this.__inner.lookAt( tmpVector3.set(target.x, target.y, target.z) );
-      return this
+      return this;
     }
+
     lookTowards(direction) {
       this.__inner.lookTowards( tmpVector3.set(direction.x, direction.y, direction.z) );
-      return this
+      return this;
     }
 
     getLocalScale() {
       var scale = this.__inner.getLocalScale();
       return new Math.Vector3( scale.x, scale.y, scale.z )
     }
+
     setLocalScale(scale) {
       this.__inner.setLocalScale( tmpVector3.set(scale.x, scale.y, scale.z) );
-      return this
+      return this;
     }
 
     addBehavior(behaviorClass, properties) {
@@ -205,6 +231,7 @@ module Sup {
       behavior.__inner.awake();
       return behavior
     }
+
     getBehavior(type) { return this.__behaviors[type["name"]] }
   }
 
@@ -242,88 +269,9 @@ module Sup {
       this.actor.__behaviors[this.constructor["name"]] = this;
     }
   }
+
   export function registerBehavior(behavior) { player.behaviorClasses[behavior["name"]] = behavior; }
 
-  export module Input {
-    export function getScreenSize() { return { "x": player.canvas.clientWidth, "y": player.canvas.clientHeight } }
-    export function getMouseVisible() { return player.canvas.style.cursor != "none" }
-    export function setMouseVisible(visible) {
-      if (visible) { player.canvas.style.cursor = "auto"; }
-      else         { player.canvas.style.cursor = "none"; }
-    }
-
-    export function getMousePosition() {
-      var mousePos = player.gameInstance.input.mousePosition;
-      return { x: mousePos.x / player.canvas.clientWidth * 2 - 1, y: (mousePos.y / player.canvas.clientHeight * 2 - 1) * -1 };
-    }
-    export function getMouseDelta() { return { x: player.gameInstance.input.mouseDelta.x, y: -player.gameInstance.input.mouseDelta.y }; }
-    export function isMouseButtonDown(button) {
-      if ( player.gameInstance.input.mouseButtons[button] == null ) { throw new Error("Invalid button index") }
-      return player.gameInstance.input.mouseButtons[button].isDown
-    }
-    export function wasMouseButtonJustPressed(button) {
-      if ( player.gameInstance.input.mouseButtons[button] == null ) { throw new Error("Invalid button index") }
-      return player.gameInstance.input.mouseButtons[button].wasJustPressed
-    }
-    export function wasMouseButtonJustReleased(button) {
-      if ( player.gameInstance.input.mouseButtons[button] == null ) { throw new Error("Invalid button index") }
-      return player.gameInstance.input.mouseButtons[button].wasJustReleased
-    }
-
-    export function getTouchPosition(index) {
-      var position = player.gameInstance.input.touches[index].position;
-      return { x: position.x / player.canvas.clientWidth * 2 - 1, y: (position.y / player.canvas.clientHeight * 2 - 1) * -1 };
-    }
-    export function isTouchDown(index) {
-      if ( player.gameInstance.input.touches[index] == null ) { throw new Error("Invalid touch index") }
-      return player.gameInstance.input.touches[index].isDown
-    }
-    export function wasTouchStarted(index) {
-      if ( player.gameInstance.input.touches[index] == null ) { throw new Error("Invalid touch index") }
-      return player.gameInstance.input.touches[index].wasStarted
-    }
-    export function wasTouchEnded(index) {
-      if ( player.gameInstance.input.touches[index] == null ) { throw new Error("Invalid touch index") }
-      return player.gameInstance.input.touches[index].wasReleased
-    }
-    export function vibrate(pattern) { window.navigator.vibrate(pattern) }
-
-    export function isKeyDown(keyName) {
-      if ( player.gameInstance.input.keyboardButtons[window.KeyEvent["DOM_VK_" + keyName ]] == null ) { throw new Error("Invalid key name") }
-      return player.gameInstance.input.keyboardButtons[window.KeyEvent["DOM_VK_" + keyName ]].isDown
-    }
-    export function wasKeyJustPressed(keyName) {
-      if ( player.gameInstance.input.keyboardButtons[window.KeyEvent["DOM_VK_" + keyName ]] == null ) { throw new Error("Invalid key name") }
-      return player.gameInstance.input.keyboardButtons[window.KeyEvent["DOM_VK_" + keyName ]].wasJustPressed
-    }
-    export function wasKeyJustReleased(keyName) {
-      if ( player.gameInstance.input.keyboardButtons[window.KeyEvent["DOM_VK_" + keyName ]] == null ) { throw new Error("Invalid key name") }
-      return player.gameInstance.input.keyboardButtons[window.KeyEvent["DOM_VK_" + keyName ]].wasJustReleased
-    }
-
-    export function isGamepadButtonDown(gamepad, key) {
-      if ( player.gameInstance.input.gamepadsButtons[gamepad][key] == null ) { throw new Error("Invalid gamepad info") }
-      return player.gameInstance.input.gamepadsButtons[gamepad][key].isDown
-    }
-    export function wasGamepadButtonJustPressed(gamepad, key) {
-      if ( player.gameInstance.input.gamepadsButtons[gamepad][key] == null ) { throw new Error("Invalid gamepad info") }
-      return player.gameInstance.input.gamepadsButtons[gamepad][key].wasJustPressed
-    }
-    export function wasGamepadButtonJustReleased(gamepad, key) {
-      if ( player.gameInstance.input.gamepadsButtons[gamepad][key] == null ) { throw new Error("Invalid gamepad info") }
-      return player.gameInstance.input.gamepadsButtons[gamepad][key].wasJustReleased
-    }
-    export function getGamepadAxisValue(gamepad, axis) {
-      if ( player.gameInstance.input.gamepadsAxes[gamepad][axis] == null ) { throw new Error("Invalid gamepad info") }
-      return player.gameInstance.input.gamepadsAxes[gamepad][axis]
-    }
-  }
-
-  export module Storage {
-    export function set(key, value) { localStorage.setItem(key, value); }
-    export function get(key) { return localStorage.getItem(key) }
-    export function remove(key) { localStorage.removeItem(key) }
-    export function clear() { localStorage.clear(); }
-  }
 }
+
 window.Sup = Sup;

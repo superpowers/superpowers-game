@@ -1,4 +1,5 @@
 declare module Sup {
+
   function log(x: any): any;
   function exit();
 
@@ -7,9 +8,11 @@ declare module Sup {
     children: Array<string>;
     constructor(inner: {[key:string]: any;});
   }
+
   class Folder extends Asset {
     dummyFolderMember;
   }
+
   function get(path: string, options?: { "ignoreMissing": boolean; }): Asset;
   function get<T extends Asset>(path: string, type: new(inner: {[key:string]: any;}) => T, options?: { "ignoreMissing": boolean; }): T;
 
@@ -70,40 +73,7 @@ declare module Sup {
   class Behavior extends ActorComponent {
     constructor(actor: any, properties?: { [key: string]: any; });
   }
+
   function registerBehavior(behavior: any): void;
 
-  module Input {
-    function getScreenSize(): { x: number; y: number; };
-    function getMouseVisible(): boolean;
-    function setMouseVisible(visible: boolean);
-
-    function getMousePosition(): { x: number; y: number; };
-    function getMouseDelta(): { x: number; y: number; };
-    function isMouseButtonDown(button: number): boolean;
-    function wasMouseButtonJustPressed(button: number): boolean;
-    function wasMouseButtonJustReleased(button: number): boolean;
-
-    function getTouchPosition(index: number): { x: number; y: number; };
-    function isTouchDown(index: number): boolean;
-    function wasTouchStarted(index: number): boolean;
-    function wasTouchEnded(index: number): boolean;
-    function vibrate(pattern: number): void;
-    function vibrate(pattern: Array<number>): void;
-
-    function isKeyDown(keyName: string): boolean;
-    function wasKeyJustPressed(keyName: string): boolean;
-    function wasKeyJustReleased(keyName: string): boolean;
-
-    function isGamepadButtonDown(gamepad: number, button: number): boolean;
-    function wasGamepadButtonJustPressed(gamepad: number, button: number): boolean;
-    function wasGamepadButtonJustReleased(gamepad: number, button: number): boolean;
-    function getGamepadAxisValue(gamepad: number, axis: number): number;
-  }
-
-  module Storage {
-    function set(key: string, value: string): void;
-    function get(key: string): string;
-    function remove(key: string): void;
-    function clear(): void;
-  }
 }

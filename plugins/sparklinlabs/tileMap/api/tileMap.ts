@@ -12,7 +12,7 @@ module Sup {
         flipX = (flipX) ? flipX : false;
         flipY = (flipY) ? flipY : false;
         angle = (angle) ? angle : 0;
-        this.__inner.setTileAt(layer, x, y, [value % tilesPerRow, jsMath.floor(value / tilesPerRow), flipX, flipY, angle]);
+        this.__inner.setTileAt(layer, x, y, [value % tilesPerRow, window.Math.floor(value / tilesPerRow), flipX, flipY, angle]);
       return this
     }
     getTileAt(layer, x, y) {

@@ -1,10 +1,15 @@
 module Sup {
+
+  var degToRad = window.Math.PI / 180;
+  var radToDeg = 180 / window.Math.PI;
+
   export module Math {
+
     export function lerp(a, b, v) { return a + (b - a) * v }
-    export function clamp(v, min, max) { return jsMath.max( min, jsMath.min(max, v) ) }
+    export function clamp(v, min, max) { return window.Math.max( min, window.Math.min(max, v) ) }
 
     export module Random {
-      export function integer(min, max) { return jsMath.floor( jsMath.random() * (max + 1 - min) ) + min }
+      export function integer(min, max) { return window.Math.floor( window.Math.random() * (max + 1 - min) ) + min }
     }
 
     export function toRadians(degrees) { return degrees * degToRad; }
@@ -67,7 +72,7 @@ module Sup {
         return this;
       }
 
-      length() { return jsMath.sqrt(this.x * this.x + this.y * this.y + this.z * this.z); }
+      length() { return window.Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z); }
       distanceTo(v) { return v.clone().subtract(this).length(); }
     }
 
@@ -89,22 +94,22 @@ module Sup {
       clone() { return new Quaternion(this.x, this.y, this.z, this.w); }
 
       setFromAxisAngle(axis, angle) {
-        var s = jsMath.sin(angle / 2);
+        var s = window.Math.sin(angle / 2);
 
     		this.x = axis.x * s;
     		this.y = axis.y * s;
     		this.z = axis.z * s;
-    		this.w = jsMath.cos(angle / 2);
+    		this.w = window.Math.cos(angle / 2);
         return this
       }
 
       setFromYawPitchRoll(yaw, pitch, roll) {
-        var c1 = jsMath.cos(pitch / 2);
-        var c2 = jsMath.cos(yaw / 2);
-        var c3 = jsMath.cos(roll / 2);
-        var s1 = jsMath.sin(pitch / 2);
-        var s2 = jsMath.sin(yaw / 2);
-        var s3 = jsMath.sin(roll / 2);
+        var c1 = window.Math.cos(pitch / 2);
+        var c2 = window.Math.cos(yaw / 2);
+        var c3 = window.Math.cos(roll / 2);
+        var s1 = window.Math.sin(pitch / 2);
+        var s2 = window.Math.sin(yaw / 2);
+        var s3 = window.Math.sin(roll / 2);
 
         this.x = s1 * c2 * c3 + c1 * s2 * s3;
         this.y = c1 * s2 * c3 - s1 * c2 * s3;
@@ -164,10 +169,10 @@ module Sup {
           return this;
         }
 
-        var halfTheta = jsMath.acos(cosHalfTheta);
-        var sinHalfTheta = jsMath.sqrt(1.0 - cosHalfTheta * cosHalfTheta);
+        var halfTheta = window.Math.acos(cosHalfTheta);
+        var sinHalfTheta = window.Math.sqrt(1.0 - cosHalfTheta * cosHalfTheta);
 
-        if (jsMath.abs(sinHalfTheta) < 0.001) {
+        if (window.Math.abs(sinHalfTheta) < 0.001) {
           this.w = 0.5 * (w + this.w);
           this.x = 0.5 * (x + this.x);
           this.y = 0.5 * (y + this.y);
@@ -175,8 +180,8 @@ module Sup {
           return this;
         }
 
-        var ratioA = jsMath.sin((1 - t) * halfTheta) / sinHalfTheta,
-        ratioB = jsMath.sin(t * halfTheta) / sinHalfTheta;
+        var ratioA = window.Math.sin((1 - t) * halfTheta) / sinHalfTheta,
+        ratioB = window.Math.sin(t * halfTheta) / sinHalfTheta;
 
         this.w = (w * ratioA + this.w * ratioB);
         this.x = (x * ratioA + this.x * ratioB);

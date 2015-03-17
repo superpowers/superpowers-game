@@ -1,5 +1,3 @@
-var jsMath = Math;
-
 module Sup {
   export module ArcadePhysics2D {
     export function getAllBodies() { return SupEngine.ArcadePhysics2D.allBodies }

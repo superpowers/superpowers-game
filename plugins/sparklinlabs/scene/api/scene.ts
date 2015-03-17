@@ -1,9 +1,15 @@
 module Sup {
+
+  var tmpVector3 = new SupEngine.THREE.Vector3();
+  var tmpQuaternion = new SupEngine.THREE.Quaternion();
+
   export function loadScene(sceneAsset) {
     player.gameInstance.destroyAllActors();
     appendScene(sceneAsset);
   }
+
   export function appendScene(sceneAsset) {
+
     function walk(node, parentActor) {
       var actor = player.createActor(node.name, parentActor);
 
@@ -16,10 +22,11 @@ module Sup {
         SupRuntime.plugins[sceneComponent.type].setupComponent(player, actorComponent.__inner, sceneComponent.config);
       })
 
-      node.children.forEach( (child) => { walk(child, actor); } )
+      node.children.forEach( (child) => { walk(child, actor); } );
 
-      return actor
+      return actor;
     }
+
     function awakeActor(actor) {
       actor.__inner.awake();
       actor.getChildren().forEach( (child) => { awakeActor(child); } )
@@ -29,7 +36,7 @@ module Sup {
     sceneAsset.__inner.nodes.forEach( (node) => { actors.push( walk(node, null) ); } )
     actors.forEach( (actor) => { awakeActor(actor); })
 
-    return actors
+    return actors;
   }
 
   export class Scene extends Asset {}
