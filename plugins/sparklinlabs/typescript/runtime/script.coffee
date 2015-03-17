@@ -103,7 +103,7 @@ exports.start = (player, callback) ->
   return
 
 exports.loadAsset = (player, entry, callback) ->
-  scriptNames.push entry.name
+  scriptNames.push "#{entry.name}.ts"
   player.getAssetData "assets/#{entry.id}/script.txt", 'text', (err, script) ->
     scripts["#{entry.name}.ts"] = "#{script}\n"
     callback null, script
