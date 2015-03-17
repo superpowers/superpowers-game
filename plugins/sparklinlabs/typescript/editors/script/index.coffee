@@ -22,6 +22,7 @@ start = ->
   socket.on 'trash:assets', SupClient.onAssetTrashed
 
   extraKeys =
+      'F9': ->
       'Tab': (cm) ->
         if cm.getSelection() != ""
           cm.execCommand 'indentMore'
