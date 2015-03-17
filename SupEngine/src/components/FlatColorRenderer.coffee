@@ -11,19 +11,20 @@ module.exports = class FlatColorRenderer extends SupEngine.ActorComponent
     return if ! color? or ! scaleRatio? or ! width?
     @_clearMesh() if @mesh?
 
-    height ?= width
+    @width = width
+    @height ?= @width
 
     canvas = document.createElement 'canvas'
-    canvas.width = width
-    canvas.height = height
+    canvas.width = @width
+    canvas.height = @height
     ctx = canvas.getContext '2d'
     ctx.fillStyle = color
-    ctx.fillRect 0,0,width,height
+    ctx.fillRect 0, 0, @width, @height
 
     texture = new SupEngine.THREE.Texture canvas
     texture.needsUpdate = true
 
-    geometry = new SupEngine.THREE.PlaneBufferGeometry width, height
+    geometry = new SupEngine.THREE.PlaneBufferGeometry @width, @height
     material = new SupEngine.THREE.MeshBasicMaterial
       map: texture
       alphaTest: 0.1
@@ -32,11 +33,13 @@ module.exports = class FlatColorRenderer extends SupEngine.ActorComponent
       opacity: 0.5
 
     @mesh = new SupEngine.THREE.Mesh geometry, material
-    @mesh.scale.set scaleRatio, scaleRatio, scaleRatio
-    @mesh.position.set width / 2 * scaleRatio, height / 2 * scaleRatio, -0.01
-    @mesh.updateMatrixWorld()
-
     @actor.threeObject.add @mesh
+    @refreshScale scaleRatio
+    return
+
+  refreshScale: (scaleRatio) ->
+    @mesh.scale.set scaleRatio, scaleRatio, scaleRatio
+    @mesh.position.set @width / 2 * scaleRatio, @height / 2 * scaleRatio, -0.01
     @mesh.updateMatrixWorld()
     return
 
