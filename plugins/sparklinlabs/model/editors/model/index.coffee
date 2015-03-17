@@ -1,5 +1,4 @@
 async = require 'async'
-ModelAsset = SupCore.data.assetPlugins.model
 ModelRenderer = SupEngine.componentPlugins.ModelRenderer
 
 TreeView = require 'dnd-tree-view'
@@ -15,8 +14,6 @@ start = ->
   socket = SupClient.connect info.projectId
   socket.on 'connect', onConnected
   socket.on 'disconnect', SupClient.onDisconnected
-  socket.on 'edit:assets', onAssetEdited
-  socket.on 'trash:assets', SupClient.onAssetTrashed
 
   # Model upload
   modelFileSelect = document.querySelector('.model input.file-select')
@@ -59,70 +56,42 @@ start = ->
 # Network callbacks
 onConnected = ->
   data = {}
-  socket.emit 'sub', 'assets', info.assetId, onAssetReceived
+  data.projectClient = new SupClient.ProjectClient socket, subEntries: false
+
+  modelActor = new SupEngine.Actor ui.gameInstance, "Model"
+  modelRenderer = new ModelRenderer modelActor
+  config = modelAssetId: info.assetId, animationId: null
+  receiveCallbacks = model: onAssetReceived
+  editCallbacks = model: onEditCommands
+
+  data.modelUpdater = new ModelRenderer.Updater data.projectClient, modelRenderer, config, receiveCallbacks, editCallbacks
   return
 
-onAssetReceived = (err, asset) ->
-  data.asset = new ModelAsset asset
-
-  prepareMaps => setupModel()
-  setupAnimation animation, index for animation, index in data.asset.pub.animations
+onAssetReceived = ->
+  setupAnimation animation, index for animation, index in data.modelUpdater.modelAsset.pub.animations
   return
 
-onAssetEdited = (id, command, args...) ->
-  data.asset.__proto__["client_#{command}"].apply data.asset, args
-  onAssetCommands[command]?.apply data.asset, args
-  return
-
-onAssetCommands = {}
-
-onAssetCommands.setAttributes = -> setupModel(); return
-
-onAssetCommands.setMaps = (maps) ->
-   # TODO: Only update the maps that changed, don't recreate the whole model
-  prepareMaps => setupModel(); return
-
-onAssetCommands.newAnimation = (animation, index) ->
-  # Add animation to model renderer (TODO: use ModelRendererUpdater)
-  ui.modelRenderer.animationsByName[animation.name] = animation
-
+onEditCommands = {}
+onEditCommands.newAnimation = (animation, index) ->
   setupAnimation animation, index
   return
 
-onAssetCommands.deleteAnimation = (id) ->
-  # Remove animation from model renderer (TODO: use ModelRendererUpdater)
-  for name, animation of ui.modelRenderer.animationsByName
-    if animation.id == id
-      delete ui.modelRenderer.animationsByName[animation.name]
-      break
-
-  if ui.modelRenderer.animation?.id == id
-    ui.modelRenderer.setAnimation null
-
+onEditCommands.deleteAnimation = (id) ->
   animationElt = ui.animationsTreeView.treeRoot.querySelector("[data-id='#{id}']")
   ui.animationsTreeView.remove animationElt
-
   updateSelectedAnimation() if ui.selectedAnimationId == id
   return
 
-onAssetCommands.moveAnimation = (id, index) ->
+onEditCommands.moveAnimation = (id, index) ->
   animationElt = ui.animationsTreeView.treeRoot.querySelector("[data-id='#{id}']")
   ui.animationsTreeView.insertAt animationElt, 'item', index
   return
 
-onAssetCommands.setAnimationProperty = (id, key, value) ->
+onEditCommands.setAnimationProperty = (id, key, value) ->
   animationElt = ui.animationsTreeView.treeRoot.querySelector("[data-id='#{id}']")
 
   switch key
-    when 'name'
-      # Update animation from model renderer (TODO: use ModelRendererUpdater)
-      for name, animation of ui.modelRenderer.animationsByName
-        if animation.id == id
-          delete ui.modelRenderer.animationsByName[name]
-          ui.modelRenderer.animationsByName[value] = animation
-          break
-      animationElt.querySelector('.name').textContent = value
-
+    when 'name' then animationElt.querySelector('.name').textContent = value
   return
 
 # User interface
@@ -136,7 +105,6 @@ onModelFileSelectChange = (event) ->
 
     if err? then alert "Could not import files: #{err.message}"; return
 
-    # TODO: Replace with "setModel" command
     socket.emit 'edit:assets', info.assetId, 'setAttributes', data.attributes, (err) ->
       if err? then alert err; return
 
@@ -235,55 +203,12 @@ updateSelectedAnimation = ->
   selectedAnimElt = ui.animationsTreeView.selectedNodes[0]
   if selectedAnimElt?
     ui.selectedAnimationId = parseInt selectedAnimElt.dataset.id
-
-    animation = data.asset.animations.byId[ui.selectedAnimationId]
-    ui.modelRenderer.setAnimation animation.name
   else
     ui.selectedAnimationId = null
-    ui.modelRenderer.setAnimation null
+  data.modelUpdater.onConfigEdited "animationId", ui.selectedAnimationId
 
   for button in document.querySelectorAll('.animations-buttons button')
     button.disabled = ! ui.selectedAnimationId? and button.className != 'new-animation'
-
-  return
-
-
-setupModel = ->
-  ui.modelRenderer.setModel data.asset.pub
-  return
-
-mapObjectURLs = {}
-prepareMaps = (callback) ->
-  data.asset.pub.textures ?= {}
-
-  async.each Object.keys(data.asset.pub.maps), (key, cb) ->
-    buffer = data.asset.pub.maps[key]
-
-    if mapObjectURLs[key]?
-      URL.revokeObjectURL mapObjectURLs[key]
-      delete mapObjectURLs[key]
-
-    if ! buffer? then cb(); return
-
-    texture = data.asset.pub.textures[key]
-    image = texture?.image
-
-    if ! image?
-      image = new Image
-      texture = data.asset.pub.textures[key] = new THREE.Texture image
-      texture.magFilter = SupEngine.THREE.NearestFilter
-      texture.minFilter = SupEngine.THREE.NearestFilter
-
-      typedArray = new Uint8Array buffer
-      blob = new Blob [ typedArray ], type: 'image/*'
-      image.src = mapObjectURLs[key] = URL.createObjectURL blob
-
-    if ! image.complete
-      image.addEventListener 'load', => texture.needsUpdate = true; cb(); return
-    else
-      cb()
-    return
-  , callback
   return
 
 setupAnimation = (animation, index) ->
