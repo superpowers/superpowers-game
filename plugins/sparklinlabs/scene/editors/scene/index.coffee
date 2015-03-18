@@ -84,7 +84,6 @@ sceneSubscriber.onAssetReceived = (assetId, asset) ->
       walk child, node, liElt for child in node.children
 
     return
-
   walk node, null, null for node in data.asset.nodes.pub
   return
 
@@ -159,8 +158,9 @@ onAssetCommands.setNodeProperty = (id, path, value) ->
 
   return
 
-onAssetCommands.duplicateNode = (node, parentId, index) ->
-  onAssetCommands.addNode node, parentId, index
+onAssetCommands.duplicateNode = (rootNode, newNodes) ->
+  for newNode in newNodes
+    onAssetCommands.addNode newNode.node, newNode.parentId, newNode.index
   return
 
 onAssetCommands.removeNode = (id) ->

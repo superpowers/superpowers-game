@@ -125,42 +125,68 @@ module.exports = class SceneAsset extends SupCore.data.base.Asset
   server_duplicateNode: (client, newName, id, index, callback) ->
     referenceNode = @nodes.byId[id]
     if ! referenceNode? then callback "Invalid node id: #{id}"; return
-    if referenceNode.children.length != 0 then callback "Can't duplicate a node with children"; return
-    
-    parentNode = @nodes.parentNodesById[id]
-    
-    newNode =
+
+    newNodes = []
+    totalNodeCount = 0
+    walk = (node) =>
+      totalNodeCount += 1
+      walk childNode for childNode in node.children
+      return
+    walk referenceNode
+
+    addNode = (newNode, parentId, index, children) =>
+      @nodes.add newNode, parentId, index, (err, actualIndex) =>
+        if err? then callback? err; return
+
+        for componentId, config of @nodes.componentsByNodeId[newNode.id].configsById
+          componentPath = "#{newNode.id}_#{componentId}"
+          do (componentPath) =>
+            config.on 'addDependencies', (depIds) => @_onAddComponentDependencies componentPath, depIds; return
+            config.on 'removeDependencies', (depIds) => @_onRemoveComponentDependencies componentPath, depIds; return
+            return
+          config.restore()
+
+        newNodes.push
+          node: newNode
+          parentId: parentId
+          index: actualIndex
+
+        if newNodes.length == totalNodeCount
+          callback null, rootNode, newNodes
+          @emit 'change'
+
+        for childNode, childIndex in children
+          node =
+            name: childNode.name, children: []
+            components: _.cloneDeep childNode.components
+            position: _.cloneDeep childNode.position
+            orientation: _.cloneDeep childNode.orientation
+            scale: _.cloneDeep childNode.scale
+          addNode node, newNode.id, childIndex, childNode.children
+        return
+      return
+
+    rootNode =
       name: newName, children: []
       components: _.cloneDeep referenceNode.components
       position: _.cloneDeep referenceNode.position
       orientation: _.cloneDeep referenceNode.orientation
       scale: _.cloneDeep referenceNode.scale
-    
-    @nodes.add newNode, parentNode?.id, index, (err, actualIndex) =>
-      if err? then callback? err; return
-      
-      for componentId, config of @nodes.componentsByNodeId[newNode.id].configsById
-        componentPath = "#{newNode.id}_#{componentId}"
-        do (componentPath) =>
-          config.on 'addDependencies', (depIds) => @_onAddComponentDependencies componentPath, depIds; return
-          config.on 'removeDependencies', (depIds) => @_onRemoveComponentDependencies componentPath, depIds; return
-          return
-        config.restore()
+    parentNode = @nodes.parentNodesById[id]
 
-      callback null, newNode, parentNode?.id, actualIndex
-      @emit 'change'
-      return
-      
+    addNode rootNode, parentNode?.id, index, referenceNode.children
     return
-  
-  client_duplicateNode: (node, parentId, index) ->
-    @nodes.client_add node, parentId, index
+
+  client_duplicateNode: (rootNode, newNodes) ->
+    for newNode in newNodes
+      newNode.node.children.length = 0
+      @nodes.client_add newNode.node, newNode.parentId, newNode.index
     return
 
   server_removeNode: (client, id, callback) ->
     @nodes.remove id, (err) =>
       if err? then callback? err; return
-      
+
       callback null, id
       @emit 'change'
       return
