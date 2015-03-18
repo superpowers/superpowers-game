@@ -76,8 +76,6 @@ module Sup {
 
     destroy() {
       player.gameInstance.destroyActor(this.__inner);
-      this.__inner.__outer = null;
-      this.__inner = null;
     }
 
     getName() { return this.__inner.name; }
@@ -96,9 +94,9 @@ module Sup {
     }
 
     getChildren() {
-      var children = [];
-      this.__inner.children.forEach( (child) => { if (child.__outer) { children.push(child.__outer); } } );
-      return children;
+      var children = []
+      this.__inner.children.forEach( (child) => { children.push(child.__outer); } )
+      return children
     }
 
     getPosition() {
