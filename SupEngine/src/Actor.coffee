@@ -178,6 +178,9 @@ module.exports = class Actor
       @gameInstance.threeScene.remove @threeObject
     @threeObject = null
 
+    @__outer?.__inner = null
+    @__outer = null
+
     @gameInstance = null
     return
 
