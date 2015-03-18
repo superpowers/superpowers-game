@@ -6,7 +6,7 @@ SupAPI.addPlugin 'typescript', 'Sup.Model', {
 }
 
 SupAPI.addPlugin 'typescript', 'ModelRenderer', {
-  code: fs.readFileSync(__dirname + '/ModelRenderer.ts', encoding: 'utf8')
-  defs: fs.readFileSync(__dirname + '/ModelRenderer.d.ts', encoding: 'utf8')
+  code: fs.readFileSync(__dirname + '/Sup.ModelRenderer.ts', encoding: 'utf8')
+  defs: fs.readFileSync(__dirname + '/Sup.ModelRenderer.d.ts', encoding: 'utf8')
   exposeActorComponent: { propertyName: "modelRenderer", className: "Sup.ModelRenderer" }
 }

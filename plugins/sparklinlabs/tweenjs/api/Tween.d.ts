@@ -3,20 +3,6 @@
 // Definitions by: sunetos <https://github.com/sunetos>, jzarnikov <https://github.com/jzarnikov>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 
-declare module Sup {
-  class Tween {
-    constructor(actor: Sup.Actor, object: Object);
-
-    to( object: Object, duration: number ): Tween;
-    easing( easing ): Tween;
-    yoyo( yoyo: boolean ): Tween;
-    repeat( times: number ): Tween;
-    onUpdate( onUpdate: Function ): Tween;
-    onComplete( onComplete: Function ): Tween;
-    start(): Tween;
-  }
-}
-
 declare module TWEEN {
   export var REVISION: string;
   export function getAll(): Tween[];

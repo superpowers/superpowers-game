@@ -10,22 +10,22 @@ SupAPI.addPlugin 'typescript', 'Sup', {
 }
 
 SupAPI.addPlugin 'typescript', 'Sup.Math', {
-  code: fs.readFileSync "#{__dirname}/Math.ts", encoding: 'utf8'
-  defs: fs.readFileSync "#{__dirname}/Math.d.ts", encoding: 'utf8'
+  code: fs.readFileSync "#{__dirname}/Sup.Math.ts", encoding: 'utf8'
+  defs: fs.readFileSync "#{__dirname}/Sup.Math.d.ts", encoding: 'utf8'
 }
 
 SupAPI.addPlugin 'typescript', 'Sup.Input', {
-  code: fs.readFileSync "#{__dirname}/Input.ts", encoding: 'utf8'
-  defs: fs.readFileSync "#{__dirname}/Input.d.ts", encoding: 'utf8'
+  code: fs.readFileSync "#{__dirname}/Sup.Input.ts", encoding: 'utf8'
+  defs: fs.readFileSync "#{__dirname}/Sup.Input.d.ts", encoding: 'utf8'
 }
 
 SupAPI.addPlugin 'typescript', 'Sup.Storage', {
-  code: fs.readFileSync "#{__dirname}/Storage.ts", encoding: 'utf8'
-  defs: fs.readFileSync "#{__dirname}/Storage.d.ts", encoding: 'utf8'
+  code: fs.readFileSync "#{__dirname}/Sup.Storage.ts", encoding: 'utf8'
+  defs: fs.readFileSync "#{__dirname}/Sup.Storage.d.ts", encoding: 'utf8'
 }
 
 SupAPI.addPlugin 'typescript', 'Camera', {
-  code: fs.readFileSync "#{__dirname}/Camera.ts", encoding: 'utf8'
-  defs: fs.readFileSync "#{__dirname}/Camera.d.ts", encoding: 'utf8'
+  code: fs.readFileSync "#{__dirname}/Sup.Camera.ts", encoding: 'utf8'
+  defs: fs.readFileSync "#{__dirname}/Sup.Camera.d.ts", encoding: 'utf8'
   exposeActorComponent: { propertyName: "camera", className: "Sup.Camera" }
 }

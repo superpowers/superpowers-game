@@ -2,5 +2,5 @@ fs = require 'fs'
 
 SupAPI.addPlugin 'typescript', 'CANNON', {
   code: ""
-  defs: fs.readFileSync(__dirname + '/Cannon.d.ts', encoding: 'utf8')
+  defs: fs.readFileSync(__dirname + '/CANNON.d.ts', encoding: 'utf8')
 }

@@ -11,6 +11,6 @@ SupAPI.addPlugin 'typescript', 'Sup.Audio', {
 }
 
 SupAPI.addPlugin 'typescript', 'Sup.Audio.SoundInstance', {
-  code: fs.readFileSync(__dirname + '/SoundInstance.ts', encoding: 'utf8')
-  defs: fs.readFileSync(__dirname + '/SoundInstance.d.ts', encoding: 'utf8')
+  code: fs.readFileSync(__dirname + '/Sup.Audio.SoundInstance.ts', encoding: 'utf8')
+  defs: fs.readFileSync(__dirname + '/Sup.Audio.SoundInstance.d.ts', encoding: 'utf8')
 }
