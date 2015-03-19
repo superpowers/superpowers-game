@@ -9,6 +9,11 @@ SupAPI.addPlugin 'typescript', 'Sup', {
   defs: fs.readFileSync "#{__dirname}/Sup.d.ts", encoding: 'utf8'
 }
 
+SupAPI.addPlugin 'typescript', 'Sup.Actor', {
+  code: fs.readFileSync "#{__dirname}/Sup.Actor.ts", encoding: 'utf8'
+  defs: fs.readFileSync "#{__dirname}/Sup.Actor.d.ts", encoding: 'utf8'
+}
+
 SupAPI.addPlugin 'typescript', 'Sup.Math', {
   code: fs.readFileSync "#{__dirname}/Sup.Math.ts", encoding: 'utf8'
   defs: fs.readFileSync "#{__dirname}/Sup.Math.d.ts", encoding: 'utf8'

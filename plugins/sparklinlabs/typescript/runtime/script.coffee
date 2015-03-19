@@ -12,7 +12,7 @@ scriptNames = []
 scripts = {}
 
 actorComponentTypesByName = {}
-actorComponentAccessors = ""
+actorComponentAccessors = []
 
 exports.init = (player, callback) ->
   player.behaviorClasses = {}
@@ -41,7 +41,7 @@ exports.init = (player, callback) ->
       globalDefs["#{pluginName}.d.ts"] = plugin.defs
 
     if plugin.exposeActorComponent?
-      actorComponentAccessors += "#{plugin.exposeActorComponent.propertyName}: #{plugin.exposeActorComponent.className}; "
+      actorComponentAccessors.push "#{plugin.exposeActorComponent.propertyName}: #{plugin.exposeActorComponent.className};"
 
   callback()
   return
@@ -50,8 +50,9 @@ exports.start = (player, callback) ->
   console.log "Compiling scripts..."
 
   # Plug component accessors exposed by plugins into Sup.Actor class
-  globals["Sup.ts"] = globals["Sup.ts"].replace "// INSERT_COMPONENT_ACCESSORS", actorComponentAccessors
-  globalDefs["Sup.d.ts"] = globalDefs["Sup.d.ts"].replace "// INSERT_COMPONENT_ACCESSORS", actorComponentAccessors
+  actorComponentAccessors = actorComponentAccessors.join('\n    ')
+  globals["Sup.Actor.ts"] = globals["Sup.Actor.ts"].replace "// INSERT_COMPONENT_ACCESSORS", actorComponentAccessors
+  globalDefs["Sup.Actor.d.ts"] = globalDefs["Sup.Actor.d.ts"].replace "// INSERT_COMPONENT_ACCESSORS", actorComponentAccessors
 
   # Make sure the Sup namespace is compiled before everything else
   globalNames.unshift globalNames.splice(globalNames.indexOf('Sup.ts'), 1)[0]

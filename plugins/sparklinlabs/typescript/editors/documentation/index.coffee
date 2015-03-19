@@ -17,17 +17,17 @@ async.each SupClient.pluginPaths.all, (pluginName, pluginCallback) ->
 
   allDefs = {}
 
-  actorComponentAccessors = ""
+  actorComponentAccessors = []
   for pluginName, plugin of SupAPI.contexts["typescript"].plugins
     name = pluginName
 
     if plugin.exposeActorComponent?
       name = plugin.exposeActorComponent.className
-      actorComponentAccessors += "#{plugin.exposeActorComponent.propertyName}: #{plugin.exposeActorComponent.className}; "
+      actorComponentAccessors.push "#{plugin.exposeActorComponent.propertyName}: #{plugin.exposeActorComponent.className};"
 
     allDefs[name] = plugin.defs if plugin.defs?
 
-  allDefs["Sup"] = allDefs["Sup"].replace "// INSERT_COMPONENT_ACCESSORS", actorComponentAccessors
+  allDefs["Sup.Actor"] = allDefs["Sup.Actor"].replace "// INSERT_COMPONENT_ACCESSORS", actorComponentAccessors.join('\n    ')
 
   sortedDefNames = Object.keys(allDefs)
   sortedDefNames.sort (a, b) -> if a.toLowerCase() < b.toLowerCase() then -1 else 1

@@ -7,13 +7,13 @@ if ! window?
   TsCompiler = serverRequire '../runtime/tsCompiler'
   globalDefs = ""
 
-  actorComponentAccessors = ""
+  actorComponentAccessors = []
   for pluginName, plugin of SupAPI.contexts["typescript"].plugins
     globalDefs += plugin.defs if plugin.defs?
     if plugin.exposeActorComponent?
-      actorComponentAccessors += "#{plugin.exposeActorComponent.propertyName}: #{plugin.exposeActorComponent.className}; "
+      actorComponentAccessors.push "#{plugin.exposeActorComponent.propertyName}: #{plugin.exposeActorComponent.className};"
 
-  globalDefs = globalDefs.replace "// INSERT_COMPONENT_ACCESSORS", actorComponentAccessors
+  globalDefs = globalDefs.replace "// INSERT_COMPONENT_ACCESSORS", actorComponentAccessors.join('\n    ')
 
 module.exports = class ScriptAsset extends SupCore.data.base.Asset
 
