@@ -225,7 +225,8 @@ draw = ->
   ui.gameInstance.update()
 
   if ui.gameInstance.input.mouseButtons[0].wasJustReleased
-    [mouseX, mouseY] = ui.cameraControls.getScenePosition()
+    mousePosition = ui.gameInstance.input.mousePosition
+    [mouseX, mouseY] = ui.cameraControls.getScenePosition mousePosition.x, mousePosition.y
     x = Math.floor mouseX
     y = Math.floor mouseY
 
