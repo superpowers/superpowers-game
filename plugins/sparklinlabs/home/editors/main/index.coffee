@@ -92,7 +92,7 @@ appendHistoryEntry = (entry) ->
   return
 
 onRoomCommands.appendMessage = (entry) ->
-  window.parent?.postMessage { type: "chat", content: "#{entry.author}: #{entry.text}"}, window.location.origin
+  window.parent?.postMessage { type: "chat", content: "#{entry.author}: #{entry.text}" }, window.location.origin
   appendHistoryEntry entry
   scrollToBottom(); return
 
