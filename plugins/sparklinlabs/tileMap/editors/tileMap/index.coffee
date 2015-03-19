@@ -29,10 +29,10 @@ start = ->
   cameraActor.setLocalPosition new SupEngine.THREE.Vector3 0, 0, 100
   ui.mapArea.cameraComponent = new SupEngine.componentPlugins.Camera cameraActor
   ui.mapArea.cameraComponent.setOrthographicMode true
-  new SupEngine.editorComponents.Camera2DControls cameraActor, ui.mapArea.cameraComponent, {
-    zoomOffset: 2
+  ui.mapArea.cameraControls = new SupEngine.editorComponents.Camera2DControls cameraActor, ui.mapArea.cameraComponent, {
+    zoomSpeed: 1.5
     zoomMin: 1
-    zoomMax: 100
+    zoomMax: 60
   }, => ui.mapArea.gridRenderer.setOrthgraphicScale(ui.mapArea.cameraComponent.orthographicScale); return
 
   ui.mapArea.gridActor = new SupEngine.Actor ui.mapArea.gameInstance, "Grid"
@@ -62,9 +62,9 @@ start = ->
   ui.tileSetArea.cameraComponent = new SupEngine.componentPlugins.Camera cameraActor
   ui.tileSetArea.cameraComponent.setOrthographicMode true
   new SupEngine.editorComponents.Camera2DControls cameraActor, ui.tileSetArea.cameraComponent, {
-    zoomOffset: 2
+    zoomSpeed: 1.5
     zoomMin: 1
-    zoomMax: 100
+    zoomMax: 60
   }, => data.tileSetUpdater.tileSetRenderer.gridRenderer.setOrthgraphicScale(ui.tileSetArea.cameraComponent.orthographicScale); return
 
   # Sidebar
@@ -196,6 +196,8 @@ onEditCommands.setProperty = (path, value) ->
   obj[parts[parts.length - 1]].value = value
 
   if path == "pixelsPerUnit" and data.tileMapUpdater.tileSetAsset?
+    ui.mapArea.cameraControls.setMultiplier value / data.tileMapUpdater.tileSetAsset.pub.gridSize / 1
+
     ui.mapArea.gridRenderer.setRatio data.tileMapUpdater.tileMapAsset.pub.pixelsPerUnit / data.tileMapUpdater.tileSetAsset.pub.gridSize
     ui.mapArea.patternRenderer.refreshPixelsPerUnit data.tileMapUpdater.tileMapAsset.pub.pixelsPerUnit
     ui.mapArea.patternBackgroundRenderer.refreshScale 1 / data.tileMapUpdater.tileMapAsset.pub.pixelsPerUnit
@@ -254,9 +256,10 @@ onTileSetAssetReceived = ->
   tileMapPub = data.tileMapUpdater.tileMapAsset.pub
   tileSetPub = data.tileMapUpdater.tileSetAsset.pub
 
+  ui.mapArea.cameraControls.setMultiplier tileMapPub.pixelsPerUnit / tileSetPub.gridSize / 1
+  ui.mapArea.gridRenderer.setRatio tileMapPub.pixelsPerUnit / tileSetPub.gridSize
   ui.mapArea.patternRenderer.setTileSet new TileSet tileSetPub
   ui.mapArea.patternBackgroundRenderer.setup "#900090", 1 / tileMapPub.pixelsPerUnit, tileSetPub.gridSize
-  ui.mapArea.gridRenderer.setRatio tileMapPub.pixelsPerUnit / tileSetPub.gridSize
   return
 
 # User interface

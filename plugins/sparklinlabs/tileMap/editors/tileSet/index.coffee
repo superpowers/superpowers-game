@@ -22,9 +22,9 @@ start = ->
   ui.cameraComponent = new SupEngine.componentPlugins.Camera cameraActor
   ui.cameraComponent.setOrthographicMode true
   ui.cameraControls = new SupEngine.editorComponents.Camera2DControls cameraActor, ui.cameraComponent, {
-    zoomOffset: 2
+    zoomSpeed: 1.5
     zoomMin: 1
-    zoomMax: 50
+    zoomMax: 60
   }, => data.tileSetUpdater.tileSetRenderer.gridRenderer.setOrthgraphicScale(ui.cameraComponent.orthographicScale); return
 
   # Sidebar
@@ -225,7 +225,7 @@ draw = ->
   ui.gameInstance.update()
 
   if ui.gameInstance.input.mouseButtons[0].wasJustReleased
-    [mouseX, mouseY] = ui.cameraControls.getMouseScenePosition()
+    [mouseX, mouseY] = ui.cameraControls.getScenePosition()
     x = Math.floor mouseX
     y = Math.floor mouseY
 

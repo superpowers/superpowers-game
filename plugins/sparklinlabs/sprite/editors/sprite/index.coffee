@@ -30,7 +30,10 @@ start = ->
   cameraComponent = new SupEngine.componentPlugins.Camera cameraActor
   cameraComponent.setOrthographicMode true
   cameraComponent.setOrthographicScale 5
-  new SupEngine.editorComponents.Camera2DControls cameraActor, cameraComponent, { zoomOffset: 0.5, zoomMin: 1, zoomMax: 50 }
+  ui.animationArea.cameraControls = new SupEngine.editorComponents.Camera2DControls cameraActor, cameraComponent,
+    zoomSpeed: 1.5
+    zoomMin: 1
+    zoomMax: 60
 
   originActor = new SupEngine.Actor ui.animationArea.gameInstance, "Origin"
   new SpriteOriginMarker originActor
@@ -300,6 +303,9 @@ setupProperty = (path, value) ->
   obj = obj[part] for part in parts.slice(0, parts.length - 1)
   value *= 100 if path.indexOf('origin') != -1
   obj[parts[parts.length - 1]].value = value
+
+  if path == "pixelsPerUnit"
+    ui.animationArea.cameraControls.setMultiplier value
   return
 
 setupAnimation = (animation, index) ->
