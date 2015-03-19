@@ -112,7 +112,7 @@ module Sup {
       var x = eulerAngles.x;
       var y = eulerAngles.y;
       var z = eulerAngles.z;
-      return new Math.Vector3( parseFloat(x.toFixed(3)), parseFloat(y.toFixed(3)), parseFloat(z.toFixed(3)) );
+      return new Math.Vector3( x, y, z );
     }
 
     setEulerAngles(eulerAngles) {
@@ -125,7 +125,7 @@ module Sup {
       var x = eulerAngles.x;
       var y = eulerAngles.y;
       var z = eulerAngles.z;
-      return new Math.Vector3( parseFloat(x.toFixed(3)), parseFloat(y.toFixed(3)), parseFloat(z.toFixed(3)) )
+      return new Math.Vector3( x, y, z );
     }
 
     setLocalEulerAngles(eulerAngles) {
@@ -155,7 +155,7 @@ module Sup {
 
     getLocalScale() {
       var scale = this.__inner.getLocalScale();
-      return new Math.Vector3( scale.x, scale.y, scale.z )
+      return new Math.Vector3( scale.x, scale.y, scale.z );
     }
 
     setLocalScale(scale) {
@@ -171,10 +171,10 @@ module Sup {
       var behavior = new behaviorClass(this.__inner);
       if (properties != null) { for (var propertyName in properties) { behavior[propertyName] = properties[propertyName]; } }
       behavior.__inner.awake();
-      return behavior
+      return behavior;
     }
 
-    getBehavior(type) { return this.__behaviors[type["name"]] }
+    getBehavior(type) { return this.__behaviors[type["name"]]; }
   }
 
 }
