@@ -4,23 +4,37 @@ module.exports = class Camera2DControls extends SupEngine.ActorComponent
 
   constructor: (actor, @camera, @options, @zoomCallback) ->
     super actor, 'Camera2DControls'
+    @multiplier = 1
+
+  setMultiplier: (newMultiplier) ->
+    newOrthographicScale = @camera.orthographicScale * @multiplier
+    @multiplier = newMultiplier / 10
+
+    cameraPosition = @camera.actor.getLocalPosition()
+    [x, y] = @getScreenPosition cameraPosition.x, cameraPosition.y
+    @changeOrthographicScale newOrthographicScale, x, y
+    return
+
+  changeOrthographicScale: (newOrthographicScale, x, y) ->
+    [startX, startY] = @getScenePosition x, y
+    @camera.setOrthographicScale newOrthographicScale / @multiplier
+    [endX, endY] = @getScenePosition x, y
+
+    @camera.actor.moveLocal new SupEngine.THREE.Vector3 startX - endX, endY - startY, 0
+    @zoomCallback?()
+    return
 
   update: ->
     # Zoom
-    zoomed = false
     if @actor.gameInstance.input.mouseButtons[5].isDown
-      newOrthographicScale = Math.max @options.zoomMin, @camera.orthographicScale - @options.zoomOffset
+      newOrthographicScale = Math.max @options.zoomMin, @camera.orthographicScale * @multiplier / @options.zoomSpeed
 
     if @actor.gameInstance.input.mouseButtons[6].isDown
-      newOrthographicScale = Math.min @options.zoomMax, @camera.orthographicScale + @options.zoomOffset
+      newOrthographicScale = Math.min @options.zoomMax, @camera.orthographicScale * @multiplier * @options.zoomSpeed
 
     if newOrthographicScale? and newOrthographicScale != @camera.orthographicScale
-      [startX, startY] = @getMouseScenePosition()
-      @camera.setOrthographicScale newOrthographicScale
-      [endX, endY] = @getMouseScenePosition()
-
-      @camera.actor.moveLocal new SupEngine.THREE.Vector3 startX - endX, endY - startY, 0
-      zoomed = true
+      mousePosition = @actor.gameInstance.input.mousePosition
+      @changeOrthographicScale newOrthographicScale, mousePosition.x, mousePosition.y
 
     # Move
     if @actor.gameInstance.input.mouseButtons[1].isDown
@@ -33,22 +47,27 @@ module.exports = class Camera2DControls extends SupEngine.ActorComponent
 
       if mouseDelta.x != 0 or mouseDelta.y != 0
         cameraPosition = @camera.actor.moveLocal new SupEngine.THREE.Vector3 -mouseDelta.x, mouseDelta.y, 0
-
-    @zoomCallback?() if zoomed
     return
 
-  getMouseScenePosition: ->
-    mousePosition = @actor.gameInstance.input.mousePosition
-    position = new SupEngine.THREE.Vector3 mousePosition.x, mousePosition.y, 0
+  getScreenPosition: (x, y) ->
+    x /= @camera.orthographicScale / 2 * @camera.cachedRatio
+    x = (1-x) / 2
+    x *= @actor.gameInstance.threeRenderer.domElement.width
+
+    y /= @camera.orthographicScale / 2
+    y = (y+1) / 2
+    y *= @actor.gameInstance.threeRenderer.domElement.height
+    return [x, y]
+
+  getScenePosition: (x, y)->
     cameraPosition = @camera.actor.getLocalPosition()
 
-    x = position.x / @actor.gameInstance.threeRenderer.domElement.width
-
+    x /= @actor.gameInstance.threeRenderer.domElement.width
     x = x * 2 - 1
     x *= @camera.orthographicScale / 2 * @camera.cachedRatio
     x += cameraPosition.x
 
-    y = position.y / @actor.gameInstance.threeRenderer.domElement.height
+    y /= @actor.gameInstance.threeRenderer.domElement.height
     y = y * 2 - 1
     y *= @camera.orthographicScale / 2
     y -= cameraPosition.y
