@@ -177,7 +177,7 @@ onDownloadSpritesheet = (event) ->
     a = document.createElement "a"
     document.body.appendChild a
     a.style = "display: none"
-    a.href = imageObjectURL
+    a.href = data.spriteUpdater.url
 
     a.download = name + '.png'
     a.click()
