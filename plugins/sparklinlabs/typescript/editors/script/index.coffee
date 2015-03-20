@@ -22,17 +22,44 @@ start = ->
   socket.on 'trash:assets', SupClient.onAssetTrashed
 
   extraKeys =
-      'F9': ->
-      'Tab': (cm) ->
-        if cm.getSelection() != ""
-          cm.execCommand 'indentMore'
-        else
-          cm.replaceSelection Array(cm.getOption("indentUnit") + 1).join " "
-        return
+    'F9': ->
+    'Tab': (cm) ->
+      if cm.getSelection() != ""
+        cm.execCommand 'indentMore'
+      else
+        cm.replaceSelection Array(cm.getOption("indentUnit") + 1).join " "
+      return
+    'Ctrl-Z': ->
+      return if ui.undoStack.length == 0
 
-      'Ctrl-S': ->
-        socket.emit 'edit:assets', info.assetId, 'saveText', (err) -> if err? then alert err; SupClient.onDisconnected(); return
-        return
+      revisionIndex = ui.undoStack[ui.undoStack.length-1]
+      operationToUndo = ui.clientDocument.operations[revisionIndex]
+      ui.clientDocument.apply operationToUndo.clone().invert(), revisionIndex + 1
+
+      newRevisionIndex = ui.clientDocument.operations.length-1
+      newOperation = ui.clientDocument.operations[newRevisionIndex]
+      applyOperation newOperation.clone(), 'undo', true
+
+      ui.undoStack.pop()
+      ui.redoStack.push newRevisionIndex
+      return
+    'Shift-Ctrl-Z': ->
+      return if ui.redoStack.length == 0
+
+      revisionIndex = ui.redoStack[ui.redoStack.length-1]
+      operationToRedo = ui.clientDocument.operations[revisionIndex]
+      ui.clientDocument.apply operationToRedo.clone().invert(), revisionIndex + 1
+
+      newRevisionIndex = ui.clientDocument.operations.length-1
+      newOperation = ui.clientDocument.operations[newRevisionIndex]
+      applyOperation newOperation.clone(), 'redo', true
+
+      ui.redoStack.pop()
+      ui.undoStack.push newRevisionIndex
+      return
+    'Ctrl-S': ->
+      socket.emit 'edit:assets', info.assetId, 'saveText', (err) -> if err? then alert err; SupClient.onDisconnected(); return
+      return
 
   textArea = document.querySelector('.code-editor')
   ui.editor = CodeMirror.fromTextArea textArea,
@@ -43,8 +70,12 @@ start = ->
     viewportMargin: Infinity
     mode: 'text/typescript'
 
-  ui.tmpDoc = new CodeMirror.Doc ""
+  ui.tmpCodeMirrorDoc = new CodeMirror.Doc ""
   ui.texts = []
+
+  ui.clientDocument = new OT.Document
+  ui.undoStack = []
+  ui.redoStack = []
 
   ui.editor.on 'beforeChange', (instance, change) =>
     return if change.origin in ['setValue', 'network']
@@ -72,6 +103,8 @@ onAssetReceived = (err, asset) ->
 
   ui.editor.setValue data.asset.pub.draft
   ui.editor.clearHistory()
+
+  ui.clientDocument.text = data.asset.pub.draft
   return
 
 onAssetEdited = (id, command, args...) ->
@@ -97,19 +130,32 @@ onAssetCommands.editText = (operationData) ->
   operation = new OT.TextOperation
   operation.deserialize operationData
 
+  # Transform new ops with local changes
   if ui.sentOperation?
     operationToTransformFrom = ui.sentOperation.clone()
     if ui.pendingOperation?
       operationToTransformFrom = operationToTransformFrom.compose ui.pendingOperation
 
     [operationPrime, operationToTransformFromPrime] = operation.transform operationToTransformFrom
-    ops = operationPrime.ops
+    operationToApply = operationPrime
   else
-    ops = operation.ops
+    operationToApply = operation
 
+  applyOperation operationToApply.clone(), 'network', false
+  ui.clientDocument.apply operationToApply, ui.clientDocument.operations.length
+
+  # Transform local changes with new text
+  if ui.sentOperation?
+    [ui.sentOperation, operationPrime] = ui.sentOperation.transform operation
+
+    if ui.pendingOperation?
+      [ui.pendingOperation, operationPrime2] = ui.pendingOperation.transform operationPrime
+  return
+
+applyOperation = (operation, origin, moveCursor) ->
   cursorPosition = 0
   line = 0
-  for op in ops
+  for op in operation.ops
     switch op.type
       when 'retain'
         loop
@@ -123,7 +169,7 @@ onAssetCommands.editText = (operationData) ->
 
       when 'insert'
         cursor = ui.editor.getCursor()
-        ui.editor.replaceRange op.attributes.text, { line, ch: cursorPosition }, null, 'network'
+        ui.editor.replaceRange op.attributes.text, { line, ch: cursorPosition }, null, origin
 
         if line == cursor.line and cursorPosition == cursor.ch
           if ! operation.gotPriority data.clientId
@@ -131,23 +177,18 @@ onAssetCommands.editText = (operationData) ->
 
         cursorPosition += op.attributes.text.length
 
+        ui.editor.setCursor line, cursorPosition if moveCursor
+
       when 'delete'
         texts = op.attributes.text.split '\n'
 
         for text, textIndex in texts
           if texts[textIndex + 1]?
-            ui.editor.replaceRange '', { line, ch: cursorPosition }, { line: line + 1, ch: 0 }, 'network'
+            ui.editor.replaceRange '', { line, ch: cursorPosition }, { line: line + 1, ch: 0 }, origin
           else
-            ui.editor.replaceRange '', { line, ch: cursorPosition }, { line, ch: cursorPosition + text.length }, 'network'
+            ui.editor.replaceRange '', { line, ch: cursorPosition }, { line, ch: cursorPosition + text.length }, origin
 
-
-  # Transform local changes with new inserted text
-  if ui.sentOperation?
-    [ui.sentOperation, operationPrime] = ui.sentOperation.transform operation
-
-    if ui.pendingOperation?
-      [ui.pendingOperation, operationPrime2] = ui.pendingOperation.transform operationPrime
-
+        ui.editor.setCursor line, cursorPosition if moveCursor
   return
 
 onAssetCommands.saveText = (errors) ->
@@ -188,15 +229,16 @@ onAssetCommands.saveText = (errors) ->
 
 # User interface
 onEditText = (instance, changes) ->
+  #console.log changes
   for change, changeIndex in changes
     # Modification from an other person
     continue if change.origin in ['setValue', 'network']
 
-    ui.tmpDoc.setValue ui.texts[changeIndex]
+    ui.tmpCodeMirrorDoc.setValue ui.texts[changeIndex]
 
     operation = new OT.TextOperation data.clientId
     for line in [0...change.from.line]
-      operation.retain ui.tmpDoc.getLine(line).length + 1
+      operation.retain ui.tmpCodeMirrorDoc.getLine(line).length + 1
     operation.retain change.from.ch
 
     offset = 0
@@ -215,7 +257,7 @@ onEditText = (instance, changes) ->
         operation.insert text
 
     beforeLength = operation.ops[0].attributes.amount ? 0
-    operation.retain ui.tmpDoc.getValue().length - beforeLength - offset
+    operation.retain ui.tmpCodeMirrorDoc.getValue().length - beforeLength - offset
 
     if ! operationToSend?
       operationToSend = operation.clone()
@@ -224,6 +266,12 @@ onEditText = (instance, changes) ->
 
   ui.texts.length = 0
   return if ! operationToSend?
+
+  if changes[0].origin not in ['setValue', 'network', 'undo', 'redo']
+    localOperation = operationToSend.clone()
+    ui.undoStack.push ui.clientDocument.operations.length
+    ui.clientDocument.apply localOperation, ui.clientDocument.operations.length
+    ui.redoStack.length = 0
 
   if ! ui.sentOperation?
     socket.emit 'edit:assets', info.assetId, 'editText', operationToSend.serialize(), data.asset.document.operations.length, (err) ->

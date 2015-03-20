@@ -30,10 +30,10 @@ module.exports = class ScriptAsset extends SupCore.data.base.Asset
     @pub = text: """
 class MyBehavior extends Sup.Behavior {
   awake() {
-    
+
   }
   update() {
-    
+
   }
 }
 Sup.registerBehavior(MyBehavior);
@@ -113,6 +113,8 @@ Sup.registerBehavior(MyBehavior);
     operation = new OT.TextOperation
     operation.deserialize operationData
     @document.apply operation, revisionIndex
+    @pub.draft = @document.text
+    @pub.revisionId++
     return
 
   server_saveText: (client, callback) ->
