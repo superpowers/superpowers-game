@@ -63,15 +63,23 @@ onConnected = ->
   return
 
 onAssetReceived = (err, asset) ->
-  data.selectedTile = x: 0, y: 0
-
   setupProperty 'gridSize', data.tileSetUpdater.tileSetAsset.pub.gridSize
+  data.selectedTile = x: 0, y: 0
   setupTileProperties data.selectedTile
   return
 
 onEditCommands =  {}
 
-onEditCommands.setProperty = (key, value) -> setupProperty key, value; return
+onEditCommands.upload = ->
+  data.selectedTile = x: 0, y: 0
+  setupTileProperties data.selectedTile
+  return
+
+onEditCommands.setProperty = (key, value) ->
+  setupProperty key, value
+  data.selectedTile = x: 0, y: 0
+  setupTileProperties data.selectedTile
+  return
 
 onEditCommands.addTileProperty = (tile, name) ->
   return if tile.x != data.selectedTile.x and tile.y != data.selectedTile.y

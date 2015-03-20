@@ -114,8 +114,30 @@ module.exports = class TileMapRendererUpdater
       @receiveAssetCallbacks?.tileSet();
     return
 
-  _onTileSetAssetEdited: =>
-    # TODO: Update the tileMap live
+  _onTileSetAssetEdited: (id, command, args...) =>
+    callEditCallback = true
+    if @__proto__["_onTileSetEditCommand_#{command}"]?
+      callEditCallback = false if @__proto__["_onTileSetEditCommand_#{command}"].apply( @, args ) == false
+
+    @editAssetCallbacks?.tileSet[command]? args... if callEditCallback
+    return
+
+  _onTileSetEditCommand_upload: ->
+    URL.revokeObjectURL @url if @url?
+
+    typedArray = new Uint8Array @tileSetAsset.pub.image
+    blob = new Blob [ typedArray ], type: 'image/*'
+    @url = URL.createObjectURL blob
+    image = @tileSetAsset.pub.texture.image
+    image.src = @url
+    image.addEventListener 'load', =>
+      @tileSetAsset.pub.texture.needsUpdate = true
+      @tileMapRenderer.setTileSet new TileSet @tileSetAsset.pub
+      return
+    return
+
+  _onTileSetEditCommand_setProperty: ->
+    @tileMapRenderer.setTileSet new TileSet @tileSetAsset.pub
     return
 
   _onTileSetAssetTrashed: =>

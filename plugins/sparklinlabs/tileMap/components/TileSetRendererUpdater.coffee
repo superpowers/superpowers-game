@@ -68,6 +68,24 @@ module.exports = class TileSetRendererUpdater
     @editAssetCallbacks?.tileSet[command]? args...
     return
 
+  _onEditCommand_upload: ->
+    URL.revokeObjectURL @url if @url?
+
+    typedArray = new Uint8Array @tileSetAsset.pub.image
+    blob = new Blob [ typedArray ], type: 'image/*'
+    @url = URL.createObjectURL blob
+    image = @tileSetAsset.pub.texture.image
+    image.src = @url
+    image.addEventListener 'load', =>
+      @tileSetAsset.pub.texture.needsUpdate = true
+      @tileSetRenderer.setTileSet new TileSet @tileSetAsset.pub
+
+      width = @tileSetAsset.pub.texture.image.width / @tileSetAsset.pub.gridSize
+      height = @tileSetAsset.pub.texture.image.height / @tileSetAsset.pub.gridSize
+      @tileSetRenderer.gridRenderer.resize width, height
+      return
+    return
+
   _onEditCommand_setProperty: (key, value) ->
     switch key
       when 'gridSize'

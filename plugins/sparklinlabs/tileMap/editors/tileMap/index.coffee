@@ -144,7 +144,7 @@ onConnected = ->
   tileMapRenderer = new TileMapRenderer tileMapActor
   config = tileMapAssetId: info.assetId, tileSetAssetId: null
   receiveCallbacks = tileMap: onTileMapAssetReceived, tileSet: onTileSetAssetReceived
-  editCallbacks = tileMap: onEditCommands
+  editCallbacks = tileMap: onEditCommands, tileSet: onTileSetEditCommands
 
   data.tileMapUpdater = new TileMapRenderer.Updater data.projectClient, tileMapRenderer, config, receiveCallbacks, editCallbacks
   return
@@ -252,7 +252,6 @@ onEditCommands.moveLayer = (id, newIndex) ->
   return
 
 onTileSetAssetReceived = ->
-  # Map Area
   tileMapPub = data.tileMapUpdater.tileMapAsset.pub
   tileSetPub = data.tileMapUpdater.tileSetAsset.pub
 
@@ -260,6 +259,28 @@ onTileSetAssetReceived = ->
   ui.mapArea.gridRenderer.setRatio tileMapPub.pixelsPerUnit / tileSetPub.gridSize
   ui.mapArea.patternRenderer.setTileSet new TileSet tileSetPub
   ui.mapArea.patternBackgroundRenderer.setup "#900090", 1 / tileMapPub.pixelsPerUnit, tileSetPub.gridSize
+  return
+
+onTileSetEditCommands = {}
+onTileSetEditCommands.upload = ->
+  ui.mapArea.patternRenderer.setTileSet new TileSet data.tileMapUpdater.tileSetAsset.pub
+  if ui.brushToolButton.checked
+    selectBrush 0, 0
+    setupPattern [ [0, 0, false, false, 0] ]
+  return
+
+onTileSetEditCommands.setProperty = ->
+  tileMapPub = data.tileMapUpdater.tileMapAsset.pub
+  tileSetPub = data.tileMapUpdater.tileSetAsset.pub
+
+  ui.mapArea.cameraControls.setMultiplier tileMapPub.pixelsPerUnit / tileSetPub.gridSize / 1
+  ui.mapArea.gridRenderer.setRatio tileMapPub.pixelsPerUnit / tileSetPub.gridSize
+  ui.mapArea.patternRenderer.setTileSet new TileSet tileSetPub
+  ui.mapArea.patternBackgroundRenderer.setup "#900090", 1 / tileMapPub.pixelsPerUnit, tileSetPub.gridSize
+
+  if ui.brushToolButton.checked
+    selectBrush 0, 0
+    setupPattern [ [0, 0, false, false, 0] ]
   return
 
 # User interface

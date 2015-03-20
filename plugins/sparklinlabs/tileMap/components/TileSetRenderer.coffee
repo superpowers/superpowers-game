@@ -7,6 +7,13 @@ module.exports = class TileSetRenderer extends SupEngine.ActorComponent
   constructor: (actor, asset, scaleRatio) ->
     super actor, 'TileSetRenderer'
 
+    gridActor = new SupEngine.Actor @actor.gameInstance, "Grid"
+    gridActor.setLocalPosition new SupEngine.THREE.Vector3 0, 0, 1
+    @gridRenderer = new SupEngine.editorComponents.GridRenderer gridActor
+
+    @selectedTileActor = new SupEngine.Actor @actor.gameInstance, "Selection"
+    selectedTileRenderer = new SupEngine.editorComponents.FlatColorRenderer @selectedTileActor, "#900090", 1, 1
+
     @setTileSet asset, scaleRatio
 
   setTileSet: (asset, scaleRatio) ->
@@ -26,14 +33,6 @@ module.exports = class TileSetRenderer extends SupEngine.ActorComponent
 
     @mesh = new THREE.Mesh geometry, material
     @actor.threeObject.add @mesh
-
-    gridActor = new SupEngine.Actor @actor.gameInstance, "Grid"
-    gridActor.setLocalPosition new SupEngine.THREE.Vector3 0, 0, 1
-    @gridRenderer = new SupEngine.editorComponents.GridRenderer gridActor
-
-    @selectedTileActor = new SupEngine.Actor @actor.gameInstance, "Selection"
-    selectedTileRenderer = new SupEngine.editorComponents.FlatColorRenderer @selectedTileActor, "#900090", 1, 1
-
     @refreshScaleRatio()
     return
 
@@ -57,6 +56,8 @@ module.exports = class TileSetRenderer extends SupEngine.ActorComponent
 
   _destroy: ->
     @_clearMesh()
+    @actor.gameInstance.destroyActor @gridRenderer.actor
+    @actor.gameInstance.destroyActor @selectedTileActor
     @asset = null
     super()
     return
