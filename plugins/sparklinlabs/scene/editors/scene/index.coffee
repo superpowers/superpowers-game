@@ -15,6 +15,7 @@ start = ->
   socket = SupClient.connect info.projectId
   socket.on 'connect', onConnected
   socket.on 'disconnect', SupClient.onDisconnected
+  SupClient.setupHotkeys()
 
   # Setup tree view
   ui.nodesTreeView = new TreeView document.querySelector('.nodes-tree-view'), onNodeDrop

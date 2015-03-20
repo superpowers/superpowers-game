@@ -17,6 +17,7 @@ start = ->
   socket = SupClient.connect info.projectId
   socket.on 'connect', onConnected
   socket.on 'disconnect', SupClient.onDisconnected
+  SupClient.setupHotkeys()
 
   # Map Area
   ui.mapArea = {}

@@ -13,6 +13,7 @@ start = ->
   socket = SupClient.connect info.projectId
   socket.on 'connect', onConnected
   socket.on 'disconnect', SupClient.onDisconnected
+  SupClient.setupHotkeys()
 
   # Drawing
   ui.image = new Image

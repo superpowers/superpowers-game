@@ -14,6 +14,7 @@ start = ->
   socket = SupClient.connect info.projectId
   socket.on 'connect', onConnected
   socket.on 'disconnect', SupClient.onDisconnected
+  SupClient.setupHotkeys()
 
   # Model upload
   modelFileSelect = document.querySelector('.model input.file-select')

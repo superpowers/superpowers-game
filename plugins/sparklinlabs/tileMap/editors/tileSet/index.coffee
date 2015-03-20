@@ -12,6 +12,7 @@ start = ->
   socket = SupClient.connect info.projectId
   socket.on 'connect', onConnected
   socket.on 'disconnect', SupClient.onDisconnected
+  SupClient.setupHotkeys()
 
   # Drawing
   ui.gameInstance = new SupEngine.GameInstance document.querySelector('canvas')

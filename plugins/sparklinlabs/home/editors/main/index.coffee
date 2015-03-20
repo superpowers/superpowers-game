@@ -11,6 +11,7 @@ start = ->
   socket.on 'connect', onConnected
   socket.on 'disconnect', SupClient.onDisconnected
   socket.on 'edit:rooms', onRoomEdited
+  SupClient.setupHotkeys()
 
   # Chat
   document.querySelector('.chat-input textarea').addEventListener 'keydown', onChatInputKeyDown

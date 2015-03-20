@@ -12,6 +12,7 @@ start = ->
   socket.on 'disconnect', SupClient.onDisconnected
   socket.on 'edit:assets', onAssetEdited
   socket.on 'trash:assets', SupClient.onAssetTrashed
+  SupClient.setupHotkeys()
 
   # Upload
   fileSelect = document.querySelector('input.file-select')
@@ -62,7 +63,7 @@ onFileSelectChange = (event) ->
 onDownloadSound = ->
   SupClient.dialogs.prompt "Enter the name of the sound", null, "Sound.wav", "OK", (name) =>
     return if ! name?
-    
+
     a = document.createElement "a"
     document.body.appendChild a
     a.style = "display: none"

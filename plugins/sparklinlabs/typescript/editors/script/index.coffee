@@ -20,6 +20,7 @@ start = ->
   socket.on 'disconnect', SupClient.onDisconnected
   socket.on 'edit:assets', onAssetEdited
   socket.on 'trash:assets', SupClient.onAssetTrashed
+  SupClient.setupHotkeys()
 
   extraKeys =
     'F9': ->
