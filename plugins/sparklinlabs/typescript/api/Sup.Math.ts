@@ -42,6 +42,19 @@ module Sup {
       subtract(v) { this.x -= v.x; this.y -= v.y; this.z -= v.z; return this; }
       multiplyScalar(m) { this.x *= m; this.y *= m; this.z *= m; return this; }
 
+      cross(v) {
+        var x = this.x;
+        var y = this.y;
+        var z = this.z;
+
+        this.x = y * v.z - z * v.y;
+        this.y = z * v.x - x * v.z;
+        this.z = x * v.y - y * v.x;
+        return this;
+      }
+
+      dot(v) { return this.x * v.x + this.y * v.y + this.z * v.z; }
+
       normalize() {
         var length = this.length()
         this.x /= length; this.y /= length; this.z /= length;

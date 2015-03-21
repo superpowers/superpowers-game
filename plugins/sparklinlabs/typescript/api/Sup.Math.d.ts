@@ -31,6 +31,8 @@ declare module Sup {
       add(v: Vector3): Vector3;
       subtract(v: Vector3): Vector3;
       multiplyScalar(m: number): Vector3;
+      cross(v: Vector3): Vector3;
+      dot(v: Vector3): number;
       normalize(): Vector3;
       lerp(v: Vector3, t: number): Vector3;
       rotate(q : Quaternion): Vector3;
