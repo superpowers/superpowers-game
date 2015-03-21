@@ -43,8 +43,8 @@ SupEngine.ArcadePhysics2D =
             body1.velocity.x = -body1.velocity.x * body1.bounceX
             body1.position.x -= insideX
 
-            if body1.position.x > otherBody.position.x then body1.touches.right = true
-            else body1.touches.left = true
+            if body1.position.x > otherBody.position.x then body1.touches.left = true
+            else body1.touches.right = true
 
         body1.actor.setLocalPosition( body1.position )
     return gotCollision
