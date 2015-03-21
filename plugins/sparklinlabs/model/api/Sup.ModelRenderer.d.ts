@@ -4,7 +4,9 @@ declare module Sup {
 
     getModel(): Model;
     setModel(asset?: Model): ModelRenderer;
+    getOpacity(): number;
     setOpacity(opacity: number): ModelRenderer;
+    getColor(): { r: number; g: number; b: number };
     setColor(r: number, g: number, b: number): ModelRenderer;
 
     getAnimation(): string;

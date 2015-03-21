@@ -4,7 +4,9 @@ declare module Sup {
 
     getSprite(): Sprite;
     setSprite(asset?: Sprite): SpriteRenderer;
+    getOpacity(): number;
     setOpacity(opacity: number): SpriteRenderer;
+    getColor(): { r: number; g: number; b: number };
     setColor(r: number, g: number, b: number): SpriteRenderer;
 
     getAnimation(): string;
