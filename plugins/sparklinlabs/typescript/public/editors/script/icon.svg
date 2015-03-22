@@ -13,8 +13,8 @@
    height="24"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.5 r10040"
-   sodipodi:docname="script.svg"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="icon.svg"
    inkscape:export-filename="C:\Users\streamshack\Documents\tree-view\build\group-open.png"
    inkscape:export-xdpi="180"
    inkscape:export-ydpi="180">
@@ -27,17 +27,20 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="33.010785"
-     inkscape:cx="9.097443"
-     inkscape:cy="13.062963"
+     inkscape:zoom="11.131533"
+     inkscape:cx="16.200861"
+     inkscape:cy="17.045435"
      inkscape:document-units="px"
      inkscape:current-layer="g3801"
      showgrid="true"
-     inkscape:window-width="1680"
+     inkscape:window-width="1618"
      inkscape:window-height="1028"
-     inkscape:window-x="-8"
+     inkscape:window-x="1734"
      inkscape:window-y="-8"
-     inkscape:window-maximized="1">
+     inkscape:window-maximized="1"
+     inkscape:snap-bbox="true"
+     inkscape:object-nodes="true"
+     inkscape:snap-smooth-nodes="true">
     <inkscape:grid
        type="xygrid"
        id="grid2993"
@@ -66,30 +69,28 @@
     <g
        id="g3801"
        transform="translate(-4,4)">
-      <path
-         sodipodi:nodetypes="cccccc"
-         inkscape:connector-curvature="0"
-         id="path3799"
-         d="m 8.5,1024.8622 0,22 16,0 0,-18 -4,-4 z"
-         style="color:#000000;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
-      <path
-         sodipodi:nodetypes="cccccc"
-         inkscape:connector-curvature="0"
-         id="rect2995"
-         d="m 10.5,1026.8622 0,18 12,0 0,-14 -4,-4 z"
-         style="color:#000000;fill:#ffe680;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
-      <path
-         style="color:#000000;fill:none;stroke:#808080;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
-         d="m 8.5,1024.8622 0,22 16,0 0,-18 -4,-4 z"
-         id="path3754"
-         inkscape:connector-curvature="0"
-         sodipodi:nodetypes="cccccc" />
-      <path
-         sodipodi:nodetypes="cccc"
-         inkscape:connector-curvature="0"
-         id="path3756"
-         d="m 20.5,1028.8622 4,0 -4,-4 z"
-         style="color:#000000;fill:none;stroke:#808080;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+      <g
+         id="g4147"
+         transform="matrix(0.5,0,0,0.5,15.500047,517.6811)">
+        <path
+           style="color:#000000;display:inline;overflow:visible;visibility:visible;fill:none;stroke:#6a6553;stroke-width:4;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;enable-background:accumulate"
+           d="m 9.53386,1019.3622 -7.96494,14.2789 9.86136,0 -17.06773,21.4183 5.68924003,-15.7068 -9.48206973,0 7.5856597,-19.9904 z"
+           id="path3862"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="cccccccc" />
+        <path
+           sodipodi:nodetypes="cccccccc"
+           inkscape:connector-curvature="0"
+           id="rect3010"
+           d="m 9.53386,1019.3622 -7.96494,14.2789 9.86136,0 -17.06773,21.4183 5.68924003,-15.7068 -9.48206973,0 7.5856597,-19.9904 z"
+           style="color:#000000;display:inline;overflow:visible;visibility:visible;fill:#ffdc00;fill-opacity:1;fill-rule:evenodd;stroke:none;marker:none;enable-background:accumulate" />
+        <path
+           sodipodi:nodetypes="ccccccc"
+           inkscape:connector-curvature="0"
+           id="path3946"
+           d="m -1.84463,1019.3622 -5.4758897,14.4574 c 5.9470097,0.7739 10.5780297,2.8307 12.9904397,7.0502 l 5.76035,-7.2287 -9.86135,0 7.96494,-14.2789 z"
+           style="color:#000000;display:inline;overflow:visible;visibility:visible;fill:#ffea63;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1;marker:none;enable-background:accumulate" />
+      </g>
     </g>
   </g>
 </svg>
