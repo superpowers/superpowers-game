@@ -31,35 +31,14 @@ start = ->
       else
         cm.replaceSelection Array(cm.getOption("indentUnit") + 1).join " "
       return
-    'Ctrl-Z': ->
-      return if ui.undoStack.length == 0
-
-      revisionIndex = ui.undoStack[ui.undoStack.length-1]
-      operationToUndo = ui.clientDocument.operations[revisionIndex]
-      ui.clientDocument.apply operationToUndo.clone().invert(), revisionIndex + 1
-
-      newRevisionIndex = ui.clientDocument.operations.length-1
-      newOperation = ui.clientDocument.operations[newRevisionIndex]
-      applyOperation newOperation.clone(), 'undo', true
-
-      ui.undoStack.pop()
-      ui.redoStack.push newRevisionIndex
-      return
-    'Shift-Ctrl-Z': ->
-      return if ui.redoStack.length == 0
-
-      revisionIndex = ui.redoStack[ui.redoStack.length-1]
-      operationToRedo = ui.clientDocument.operations[revisionIndex]
-      ui.clientDocument.apply operationToRedo.clone().invert(), revisionIndex + 1
-
-      newRevisionIndex = ui.clientDocument.operations.length-1
-      newOperation = ui.clientDocument.operations[newRevisionIndex]
-      applyOperation newOperation.clone(), 'redo', true
-
-      ui.redoStack.pop()
-      ui.undoStack.push newRevisionIndex
-      return
+    'Ctrl-Z': -> onUndo(); return
+    'Cmd-Z': -> onUndo(); return
+    'Shift-Ctrl-Z': -> onRedo(); return
+    'Shift-Cmd-Z': -> onRedo(); return
     'Ctrl-S': ->
+      socket.emit 'edit:assets', info.assetId, 'saveText', (err) -> if err? then alert err; SupClient.onDisconnected(); return
+      return
+    'Cmd-S': ->
       socket.emit 'edit:assets', info.assetId, 'saveText', (err) -> if err? then alert err; SupClient.onDisconnected(); return
       return
 
@@ -285,6 +264,36 @@ onEditText = (instance, changes) ->
       ui.pendingOperation = ui.pendingOperation.compose operationToSend
     else
       ui.pendingOperation = operationToSend
+
+onUndo = ->
+  return if ui.undoStack.length == 0
+
+  revisionIndex = ui.undoStack[ui.undoStack.length-1]
+  operationToUndo = ui.clientDocument.operations[revisionIndex]
+  ui.clientDocument.apply operationToUndo.clone().invert(), revisionIndex + 1
+
+  newRevisionIndex = ui.clientDocument.operations.length-1
+  newOperation = ui.clientDocument.operations[newRevisionIndex]
+  applyOperation newOperation.clone(), 'undo', true
+
+  ui.undoStack.pop()
+  ui.redoStack.push newRevisionIndex
+  return
+
+onRedo = ->
+  return if ui.redoStack.length == 0
+
+  revisionIndex = ui.redoStack[ui.redoStack.length-1]
+  operationToRedo = ui.clientDocument.operations[revisionIndex]
+  ui.clientDocument.apply operationToRedo.clone().invert(), revisionIndex + 1
+
+  newRevisionIndex = ui.clientDocument.operations.length-1
+  newOperation = ui.clientDocument.operations[newRevisionIndex]
+  applyOperation newOperation.clone(), 'redo', true
+
+  ui.redoStack.pop()
+  ui.undoStack.push newRevisionIndex
+  return
 
 # Start
 start()
