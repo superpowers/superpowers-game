@@ -23,6 +23,10 @@ start = ->
   socket.on 'trash:assets', SupClient.onAssetTrashed
   SupClient.setupHotkeys()
 
+  window.addEventListener "message", (event) =>
+    if event.data.type == 'activate' then ui.editor.focus()
+    return
+
   extraKeys =
     'F9': ->
     'Tab': (cm) ->
