@@ -51,6 +51,7 @@ module.exports = class SpriteAsset extends SupCore.data.base.Asset
   load: (assetPath) ->
     fs.readFile path.join(assetPath, "asset.json"), { encoding: 'utf8' }, (err, json) =>
       @pub = JSON.parse(json)
+      @pub.alphaTest ?= 0.1
       fs.readFile path.join(assetPath, "image.dat"), (err, buffer) =>
         @pub.image = buffer
         @setup()
