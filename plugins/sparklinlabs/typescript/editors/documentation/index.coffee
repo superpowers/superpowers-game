@@ -39,6 +39,7 @@ async.each SupClient.pluginPaths.all, (pluginName, pluginCallback) ->
 
     liElt = document.createElement('li')
     anchorElt = document.createElement('a')
+    anchorElt.id = "link-#{name}"
     anchorElt.href = "##{name}"
     anchorElt.textContent = name
     liElt.appendChild anchorElt
@@ -65,6 +66,15 @@ async.each SupClient.pluginPaths.all, (pluginName, pluginCallback) ->
     document.getElementById("doc-#{event.target.textContent}").classList.add 'active'
     return
 
+  if window.location.hash.length > 1
+    hash = window.location.hash.substring 1
+    sectionElt = document.getElementById("doc-#{hash}")
+    if sectionElt?
+      sectionElt.classList.add('active')
+      document.getElementById("link-#{hash}").classList.add 'active'
+      return
+
+    window.location.hash = ''
+
   navListElt.querySelector('li a').classList.add 'active'
   mainElt.querySelector('section').classList.add 'active'
-
