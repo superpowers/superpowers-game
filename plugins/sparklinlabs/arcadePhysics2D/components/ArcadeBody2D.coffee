@@ -1,22 +1,31 @@
 module.exports = class ArcadeBody2D extends SupEngine.ActorComponent
-  constructor: (actor, options) ->
+  constructor: (actor, config={}) ->
     super actor, 'ArcadeBody2D'
 
-    options ?= {}
-    @movable = options.movable ? true
-    @width = options.width ? 1
-    @height = options.height ? 1
-    @bounceX = options.bounceX ? 0
-    @bounceY = options.bounceY ? 0
+    @setup config
 
-    @position = @actor.getLocalPosition()
+  setup: (config) ->
+    @movable = config.movable ? true
+    @width = config.width ? 1
+    @height = config.height ? 1
+    @offsetX = config.offsetX ? 0
+    @offsetY = config.offsetY ? 0
+    @bounceX = config.bounceX ? 0
+    @bounceY = config.bounceY ? 0
+
+    @actorPosition = @actor.getLocalPosition()
+    @position = @actorPosition.clone()
+    @position.x += @offsetX
+    @position.y += @offsetY
     @previousPosition = @position.clone()
+
     @velocity = new SupEngine.THREE.Vector3 0, 0, 0
     @velocityMin = new SupEngine.THREE.Vector3 -0.5, -0.5, 0
     @velocityMax = new SupEngine.THREE.Vector3 0.5, 0.5, 0
     @velocityMultiplier = new SupEngine.THREE.Vector3 0, 0, 0
 
     @touches = { top: false, bottom: false, right: false, left: false }
+    return
 
   earlyUpdate: ->
     return if not @movable
@@ -32,7 +41,13 @@ module.exports = class ArcadeBody2D extends SupEngine.ActorComponent
       @velocity.x = Math.min( Math.max( @velocity.x, @velocityMin.x ), @velocityMax.x )
       @velocity.y = Math.min( Math.max( @velocity.y, @velocityMin.y ), @velocityMax.y )
       @position.add @velocity
-      @actor.setLocalPosition @position
+      @refreshActorPosition()
+    return
+
+  refreshActorPosition: ->
+    @actorPosition.x = @position.x - @offsetX
+    @actorPosition.y = @position.y - @offsetY
+    @actor.setLocalPosition @actorPosition
     return
 
   _destroy: ->
