@@ -1,6 +1,4 @@
 module.exports = class ArcadeBody2D extends SupEngine.ActorComponent
-  @Updater: require './ArcadeBody2DUpdater'
-
   constructor: (actor, options) ->
     super actor, 'ArcadeBody2D'
 

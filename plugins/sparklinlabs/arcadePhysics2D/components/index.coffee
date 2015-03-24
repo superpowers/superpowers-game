@@ -54,3 +54,4 @@ SupEngine.addEarlyUpdatePlugin "ArcadePhysics2D", (player) =>
   return
 
 SupEngine.addComponentPlugin 'ArcadeBody2D', require './ArcadeBody2D'
+SupEngine.addEditorComponent 'ArcadeBody2DMarker', require './ArcadeBody2DMarker'
