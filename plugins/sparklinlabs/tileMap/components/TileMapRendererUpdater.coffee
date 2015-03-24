@@ -27,7 +27,8 @@ module.exports = class TileMapRendererUpdater
     @tileMapAsset = asset
     @tileMapRenderer.setTileMap new TileMap @tileMapAsset.pub
 
-    @client.sub @tileMapAsset.pub.tileSetId, 'tileSet', @tileSetSubscriber
+    if @tileMapAsset.pub.tileSetId?
+      @client.sub @tileMapAsset.pub.tileSetId, 'tileSet', @tileSetSubscriber
     @receiveAssetCallbacks?.tileMap();
     return
 

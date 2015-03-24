@@ -14,6 +14,12 @@ module.exports = class TileSetRendererUpdater
     if @tileSetAssetId?
       @client.sub @tileSetAssetId, 'tileSet', @tileSetSubscriber
 
+  changeTileSetId: (tileSetId) ->
+    @client.unsub @tileSetAssetId, 'tileSet', @tileSetSubscriber if @tileSetAssetId?
+    @tileSetAssetId = tileSetId
+    @client.sub @tileSetAssetId, 'tileSet', @tileSetSubscriber if @tileSetAssetId?
+    return
+
   _onTileSetAssetReceived: (assetId, asset) =>
     @tileSetAsset = asset
 

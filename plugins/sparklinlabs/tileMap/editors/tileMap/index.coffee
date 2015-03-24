@@ -153,6 +153,12 @@ onConnected = ->
 onTileMapAssetReceived = ->
   pub = data.tileMapUpdater.tileMapAsset.pub
 
+  tileSetActor = new SupEngine.Actor ui.tileSetArea.gameInstance, "Tile Set"
+  tileSetRenderer = new TileSetRenderer tileSetActor
+  config = tileSetAssetId: pub.tileSetId
+  tileSetProjectClient = new SupClient.ProjectClient socket, subEntries: false
+  data.tileSetUpdater = new TileSetRenderer.Updater tileSetProjectClient, tileSetRenderer, config
+
   onEditCommands.changeTileSet()
   onEditCommands.resizeMap()
 
@@ -168,19 +174,20 @@ onTileMapAssetReceived = ->
   ui.layersTreeView.addToSelection ui.layersTreeView.treeRoot.querySelector("li[data-id='#{pub.layers[0].id}']")
 
   setupPattern [ [0, 0, false, false, 0] ]
-
-  tileSetActor = new SupEngine.Actor ui.tileSetArea.gameInstance, "Tile Set"
-  tileSetRenderer = new TileSetRenderer tileSetActor
-  config = tileSetAssetId: pub.tileSetId
-  tileSetProjectClient = new SupClient.ProjectClient socket, subEntries: false
-  data.tileSetUpdater = new TileSetRenderer.Updater tileSetProjectClient, tileSetRenderer, config
   return
 
 # Tile map network callbacks
 onEditCommands = {}
 
 onEditCommands.changeTileSet = ->
-  ui.tileSetInput.value = data.projectClient.entries.getPathFromId data.tileMapUpdater.tileMapAsset.pub.tileSetId
+  tileSetName =
+    if data.tileMapUpdater.tileMapAsset.pub.tileSetId?
+      data.projectClient.entries.getPathFromId data.tileMapUpdater.tileMapAsset.pub.tileSetId
+    else
+      ""
+  ui.tileSetInput.value = tileSetName
+
+  data.tileSetUpdater.changeTileSetId data.tileMapUpdater.tileMapAsset.pub.tileSetId
   return
 
 onEditCommands.resizeMap = ->
