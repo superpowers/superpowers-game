@@ -58,13 +58,15 @@ start = ->
   ui.tmpCodeMirrorDoc = new CodeMirror.Doc ""
   ui.texts = []
 
-  ui.clientDocument = new OT.Document
   ui.undoStack = []
+  ui.undoQuantityByAction = [0]
   ui.redoStack = []
+  ui.redoQuantityByAction = []
 
   ui.editor.on 'beforeChange', (instance, change) =>
     return if change.origin in ['setValue', 'network']
-    ui.texts.push ui.editor.getValue()
+    lastText = ui.editor.getValue()
+    ui.texts.push lastText if lastText != ui.texts[ui.texts.length-1]
     return
 
   ui.editor.on 'changes', onEditText
@@ -88,8 +90,6 @@ onAssetReceived = (err, asset) ->
 
   ui.editor.setValue data.asset.pub.draft
   ui.editor.clearHistory()
-
-  ui.clientDocument.text = data.asset.pub.draft
   return
 
 onAssetEdited = (id, command, args...) ->
@@ -111,31 +111,31 @@ onAssetCommands.editText = (operationData) ->
       ui.sentOperation = null
     return
 
-  # Transform operation with local changes
+  # Transform operation and local changes
   operation = new OT.TextOperation
   operation.deserialize operationData
 
-  # Transform new ops with local changes
   if ui.sentOperation?
-    operationToTransformFrom = ui.sentOperation.clone()
-    if ui.pendingOperation?
-      operationToTransformFrom = operationToTransformFrom.compose ui.pendingOperation
-
-    [operationPrime, operationToTransformFromPrime] = operation.transform operationToTransformFrom
-    operationToApply = operationPrime
-  else
-    operationToApply = operation
-
-  applyOperation operationToApply.clone(), 'network', false
-  ui.clientDocument.apply operationToApply, ui.clientDocument.operations.length
-
-  # Transform local changes with new text
-  if ui.sentOperation?
-    [ui.sentOperation, operationPrime] = ui.sentOperation.transform operation
+    [ui.sentOperation, operation] = ui.sentOperation.transform operation
 
     if ui.pendingOperation?
-      [ui.pendingOperation, operationPrime2] = ui.pendingOperation.transform operationPrime
+      [ui.pendingOperation, operation] = ui.pendingOperation.transform operation
+
+  ui.undoStack = transformStack ui.undoStack, operation
+  ui.redoStack = transformStack ui.redoStack, operation
+
+  applyOperation operation.clone(), 'network', false
   return
+
+transformStack = (stack, operation)->
+  return stack if stack.length == 0
+
+  newStack = []
+  for i in [stack.length-1 .. 0]
+    pair = stack[i].transform operation
+    newStack.push pair[0]
+    operation = pair[1]
+  return newStack.reverse()
 
 applyOperation = (operation, origin, moveCursor) ->
   cursorPosition = 0
@@ -154,13 +154,20 @@ applyOperation = (operation, origin, moveCursor) ->
 
       when 'insert'
         cursor = ui.editor.getCursor()
-        ui.editor.replaceRange op.attributes.text, { line, ch: cursorPosition }, null, origin
+
+        texts = op.attributes.text.split '\n'
+        for text, textIndex in texts
+          text += '\n' if textIndex != texts.length - 1
+          ui.editor.replaceRange text, { line, ch: cursorPosition }, null, origin
+          cursorPosition += text.length
+
+          if textIndex != texts.length - 1
+            cursorPosition = 0
+            line++
 
         if line == cursor.line and cursorPosition == cursor.ch
           if ! operation.gotPriority data.clientId
             ui.editor.execCommand 'goCharLeft' for i in [0 ... op.attributes.text.length ]
-
-        cursorPosition += op.attributes.text.length
 
         ui.editor.setCursor line, cursorPosition if moveCursor
 
@@ -214,7 +221,7 @@ onAssetCommands.saveText = (errors) ->
 
 # User interface
 onEditText = (instance, changes) ->
-  #console.log changes
+  undoRedo = false
   for change, changeIndex in changes
     # Modification from an other person
     continue if change.origin in ['setValue', 'network']
@@ -249,14 +256,29 @@ onEditText = (instance, changes) ->
     else
       operationToSend = operationToSend.compose operation
 
+    undoRedo = true if change.origin in ['undo', 'redo']
+
   ui.texts.length = 0
   return if ! operationToSend?
 
-  if changes[0].origin not in ['setValue', 'network', 'undo', 'redo']
-    localOperation = operationToSend.clone()
-    ui.undoStack.push ui.clientDocument.operations.length
-    ui.clientDocument.apply localOperation, ui.clientDocument.operations.length
+  if ! undoRedo
+    if ui.undoTimeout?
+      clearTimeout ui.undoTimeout
+      ui.undoTimeout = null
+
+    ui.undoStack.push operationToSend.clone().invert()
+    ui.undoQuantityByAction[ui.undoQuantityByAction.length-1] += 1
+    if ui.undoQuantityByAction[ui.undoQuantityByAction.length-1] > 20
+      ui.undoQuantityByAction.push 0
+    else
+      ui.undoTimeout = setTimeout =>
+        ui.undoTimeout = null
+        ui.undoQuantityByAction.push 0
+        return
+      , 500
+
     ui.redoStack.length = 0
+    ui.redoQuantityByAction.length = 0
 
   if ! ui.sentOperation?
     socket.emit 'edit:assets', info.assetId, 'editText', operationToSend.serialize(), data.asset.document.operations.length, (err) ->
@@ -272,31 +294,45 @@ onEditText = (instance, changes) ->
 onUndo = ->
   return if ui.undoStack.length == 0
 
-  revisionIndex = ui.undoStack[ui.undoStack.length-1]
-  operationToUndo = ui.clientDocument.operations[revisionIndex]
-  ui.clientDocument.apply operationToUndo.clone().invert(), revisionIndex + 1
+  ui.undoQuantityByAction.pop() if ui.undoQuantityByAction[ui.undoQuantityByAction.length-1] == 0
+  undoQuantityByAction = ui.undoQuantityByAction[ui.undoQuantityByAction.length-1]
 
-  newRevisionIndex = ui.clientDocument.operations.length-1
-  newOperation = ui.clientDocument.operations[newRevisionIndex]
-  applyOperation newOperation.clone(), 'undo', true
+  for i in [0...undoQuantityByAction]
+    operationToUndo = ui.undoStack[ui.undoStack.length-1]
+    applyOperation operationToUndo.clone(), 'undo', true
 
-  ui.undoStack.pop()
-  ui.redoStack.push newRevisionIndex
+    ui.undoStack.pop()
+    ui.redoStack.push operationToUndo.invert()
+
+  if ui.undoTimeout?
+    clearTimeout ui.undoTimeout
+    ui.undoTimeout = null
+
+  ui.redoQuantityByAction.push ui.undoQuantityByAction[ui.undoQuantityByAction.length-1]
+  ui.undoQuantityByAction[ui.undoQuantityByAction.length-1] = 0
   return
 
 onRedo = ->
   return if ui.redoStack.length == 0
 
-  revisionIndex = ui.redoStack[ui.redoStack.length-1]
-  operationToRedo = ui.clientDocument.operations[revisionIndex]
-  ui.clientDocument.apply operationToRedo.clone().invert(), revisionIndex + 1
+  redoQuantityByAction = ui.redoQuantityByAction[ui.redoQuantityByAction.length-1]
+  for i in [0...redoQuantityByAction]
+    operationToRedo = ui.redoStack[ui.redoStack.length-1]
+    applyOperation operationToRedo.clone(), 'undo', true
 
-  newRevisionIndex = ui.clientDocument.operations.length-1
-  newOperation = ui.clientDocument.operations[newRevisionIndex]
-  applyOperation newOperation.clone(), 'redo', true
+    ui.redoStack.pop()
+    ui.undoStack.push operationToRedo.invert()
 
-  ui.redoStack.pop()
-  ui.undoStack.push newRevisionIndex
+  if ui.undoTimeout?
+    clearTimeout ui.undoTimeout
+    ui.undoTimeout = null
+
+    ui.undoQuantityByAction.push ui.redoQuantityByAction[ui.redoQuantityByAction.length-1]
+  else
+    ui.undoQuantityByAction[ui.undoQuantityByAction.length-1] = ui.redoQuantityByAction[ui.redoQuantityByAction.length-1]
+
+  ui.undoQuantityByAction.push 0
+  ui.redoQuantityByAction.pop()
   return
 
 # Start
