@@ -5,13 +5,13 @@ module.exports = class ArcadeBody2DEditor
 
     widthRow = @SupUI.component.createSetting tbody, 'Width'
     @fields["width"] = @SupUI.component.createNumberField widthRow.valueElt, config.width, 0
-    @fields["width"].addEventListener "input", (event) =>
+    @fields["width"].addEventListener "change", (event) =>
       @setProperty 'width', parseFloat(event.target.value)
       return
 
     heightRow = @SupUI.component.createSetting tbody, 'Height'
     @fields["height"] = @SupUI.component.createNumberField heightRow.valueElt, config.height, 0
-    @fields["height"].addEventListener "input", (event) =>
+    @fields["height"].addEventListener "change", (event) =>
       @setProperty 'height', parseFloat(event.target.value)
       return
 
