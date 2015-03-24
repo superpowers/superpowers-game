@@ -13,7 +13,7 @@ module.exports = class ArcadeBody2D extends SupEngine.ActorComponent
     @bounceX = config.bounceX ? 0
     @bounceY = config.bounceY ? 0
 
-    @actorPosition = @actor.getLocalPosition()
+    @actorPosition = @actor.getGlobalPosition()
     @position = @actorPosition.clone()
     @position.x += @offsetX
     @position.y += @offsetY
@@ -47,7 +47,7 @@ module.exports = class ArcadeBody2D extends SupEngine.ActorComponent
   refreshActorPosition: ->
     @actorPosition.x = @position.x - @offsetX
     @actorPosition.y = @position.y - @offsetY
-    @actor.setLocalPosition @actorPosition
+    @actor.setGlobalPosition @actorPosition
     return
 
   _destroy: ->
