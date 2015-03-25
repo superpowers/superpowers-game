@@ -1,0 +1,7 @@
+{
+  "name": "superpowers-sparklinlabs-p2js-plugin",
+  "version": "1.0.0",
+  "dependencies": {
+    "p2": "^0.6.0"
+  }
+}
