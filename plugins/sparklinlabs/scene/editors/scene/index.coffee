@@ -19,7 +19,7 @@ start = ->
 
   # Setup tree view
   ui.nodesTreeView = new TreeView document.querySelector('.nodes-tree-view'), onNodeDrop
-  # ui.nodesTreeView.on 'activate', onNodeActivate
+  ui.nodesTreeView.on 'activate', onNodeActivate
   ui.nodesTreeView.on 'selectionChange', onNodeSelect
 
   document.querySelector('button.new-node').addEventListener 'click', onNewNodeClick
@@ -235,6 +235,8 @@ onNodeDrop = (dropInfo, orderedNodes) ->
     if ! sameParent or sourceChildren.indexOf(data.asset.nodes.byId[id]) >= index then i++
 
   false
+
+onNodeActivate = -> ui.nodesTreeView.selectedNodes[0].classList.toggle 'collapsed'; return
 
 onNodeSelect = ->
   # Clear component editors
