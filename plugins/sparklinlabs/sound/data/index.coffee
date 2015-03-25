@@ -1,1 +1,1 @@
-SupCore.data.addAssetPlugin 'sound', require './SoundAsset'
+SupCore.data.registerAssetClass 'sound', require './SoundAsset'

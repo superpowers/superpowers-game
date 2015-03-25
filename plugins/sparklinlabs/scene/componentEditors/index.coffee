@@ -1,1 +1,1 @@
-SupEngine.addComponentEditorPlugin 'Camera', require './CameraEditor'
+SupEngine.registerComponentEditorClass 'Camera', require './CameraEditor'

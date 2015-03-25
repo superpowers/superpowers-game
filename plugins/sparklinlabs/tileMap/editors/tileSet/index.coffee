@@ -1,4 +1,4 @@
-TileSetRenderer = SupEngine.editorComponents.TileSetRenderer
+TileSetRenderer = SupEngine.editorComponentClasses.TileSetRenderer
 
 TreeView = require 'dnd-tree-view'
 
@@ -20,9 +20,9 @@ start = ->
 
   cameraActor = new SupEngine.Actor ui.gameInstance, "Camera"
   cameraActor.setLocalPosition new SupEngine.THREE.Vector3 0, 0, 10
-  ui.cameraComponent = new SupEngine.componentPlugins.Camera cameraActor
+  ui.cameraComponent = new SupEngine.componentClasses.Camera cameraActor
   ui.cameraComponent.setOrthographicMode true
-  ui.cameraControls = new SupEngine.editorComponents.Camera2DControls cameraActor, ui.cameraComponent, {
+  ui.cameraControls = new SupEngine.editorComponentClasses.Camera2DControls cameraActor, ui.cameraComponent, {
     zoomSpeed: 1.5
     zoomMin: 1
     zoomMax: 60

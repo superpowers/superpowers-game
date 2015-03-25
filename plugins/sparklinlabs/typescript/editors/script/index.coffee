@@ -1,4 +1,4 @@
-ScriptAsset = SupCore.data.assetPlugins.script
+ScriptAsset = SupCore.data.assetClasses.script
 
 CodeMirror = require 'codemirror'
 require 'codemirror/addon/search/search'

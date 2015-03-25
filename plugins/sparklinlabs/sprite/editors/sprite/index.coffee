@@ -1,4 +1,4 @@
-SpriteRenderer = SupEngine.componentPlugins.SpriteRenderer
+SpriteRenderer = SupEngine.componentClasses.SpriteRenderer
 
 TreeView = require 'dnd-tree-view'
 SpriteOriginMarker = require './SpriteOriginMarker'
@@ -28,10 +28,10 @@ start = ->
 
   cameraActor = new SupEngine.Actor ui.animationArea.gameInstance, "Camera"
   cameraActor.setLocalPosition new SupEngine.THREE.Vector3 0, 0, 1
-  cameraComponent = new SupEngine.componentPlugins.Camera cameraActor
+  cameraComponent = new SupEngine.componentClasses.Camera cameraActor
   cameraComponent.setOrthographicMode true
   cameraComponent.setOrthographicScale 5
-  ui.animationArea.cameraControls = new SupEngine.editorComponents.Camera2DControls cameraActor, cameraComponent,
+  ui.animationArea.cameraControls = new SupEngine.editorComponentClasses.Camera2DControls cameraActor, cameraComponent,
     zoomSpeed: 1.5
     zoomMin: 1
     zoomMax: 60

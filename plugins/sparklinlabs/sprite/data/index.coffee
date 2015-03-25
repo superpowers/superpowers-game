@@ -1,2 +1,2 @@
-SupCore.data.addAssetPlugin 'sprite', require './SpriteAsset'
-SupCore.data.addComponentConfigPlugin 'SpriteRenderer', require './SpriteRendererConfig'
+SupCore.data.registerAssetClass 'sprite', require './SpriteAsset'
+SupCore.data.registerComponentConfigClass 'SpriteRenderer', require './SpriteRendererConfig'

@@ -1,2 +1,2 @@
-SupRuntime.addPlugin 'Camera', require './Camera'
-SupRuntime.addPlugin 'scene', require './scene'
+SupRuntime.registerPlugin 'Camera', require './Camera'
+SupRuntime.registerPlugin 'scene', require './scene'

@@ -1,1 +1,1 @@
-SupEngine.addComponentEditorPlugin 'Behavior', require './BehaviorEditor'
+SupEngine.registerComponentEditorClass 'Behavior', require './BehaviorEditor'

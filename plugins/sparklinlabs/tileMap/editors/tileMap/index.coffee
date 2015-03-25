@@ -1,8 +1,8 @@
 TileMap = require '../../components/TileMap'
-TileMapRenderer = SupEngine.componentPlugins.TileMapRenderer
+TileMapRenderer = SupEngine.componentClasses.TileMapRenderer
 
 TileSet = require '../../components/TileSet'
-TileSetRenderer = SupEngine.editorComponents.TileSetRenderer
+TileSetRenderer = SupEngine.editorComponentClasses.TileSetRenderer
 
 TreeView = require 'dnd-tree-view'
 _ = require 'lodash'
@@ -28,9 +28,9 @@ start = ->
 
   cameraActor = new SupEngine.Actor ui.mapArea.gameInstance, "Camera"
   cameraActor.setLocalPosition new SupEngine.THREE.Vector3 0, 0, 100
-  ui.mapArea.cameraComponent = new SupEngine.componentPlugins.Camera cameraActor
+  ui.mapArea.cameraComponent = new SupEngine.componentClasses.Camera cameraActor
   ui.mapArea.cameraComponent.setOrthographicMode true
-  ui.mapArea.cameraControls = new SupEngine.editorComponents.Camera2DControls cameraActor, ui.mapArea.cameraComponent, {
+  ui.mapArea.cameraControls = new SupEngine.editorComponentClasses.Camera2DControls cameraActor, ui.mapArea.cameraComponent, {
     zoomSpeed: 1.5
     zoomMin: 1
     zoomMax: 60
@@ -38,7 +38,7 @@ start = ->
 
   ui.mapArea.gridActor = new SupEngine.Actor ui.mapArea.gameInstance, "Grid"
   ui.mapArea.gridActor.setLocalPosition new SupEngine.THREE.Vector3 0, 0, 90
-  ui.mapArea.gridRenderer = new SupEngine.editorComponents.GridRenderer ui.mapArea.gridActor, {
+  ui.mapArea.gridRenderer = new SupEngine.editorComponentClasses.GridRenderer ui.mapArea.gridActor, {
     width: 1
     height: 1
     orthographicScale: ui.mapArea.cameraComponent.orthographicScale
@@ -48,7 +48,7 @@ start = ->
   ui.mapArea.patternActor = new SupEngine.Actor ui.mapArea.gameInstance, "Pattern"
   ui.mapArea.patternRenderer = new TileMapRenderer ui.mapArea.patternActor
   ui.mapArea.patternBackgroundActor = new SupEngine.Actor ui.mapArea.gameInstance, "Pattern Background"
-  ui.mapArea.patternBackgroundRenderer = new SupEngine.editorComponents.FlatColorRenderer ui.mapArea.patternBackgroundActor
+  ui.mapArea.patternBackgroundRenderer = new SupEngine.editorComponentClasses.FlatColorRenderer ui.mapArea.patternBackgroundActor
   ui.mapArea.duplicatingSelection = false
 
   # Tile Set Area
@@ -60,9 +60,9 @@ start = ->
 
   cameraActor = new SupEngine.Actor ui.tileSetArea.gameInstance, "Camera"
   cameraActor.setLocalPosition new SupEngine.THREE.Vector3 0, 0, 10
-  ui.tileSetArea.cameraComponent = new SupEngine.componentPlugins.Camera cameraActor
+  ui.tileSetArea.cameraComponent = new SupEngine.componentClasses.Camera cameraActor
   ui.tileSetArea.cameraComponent.setOrthographicMode true
-  new SupEngine.editorComponents.Camera2DControls cameraActor, ui.tileSetArea.cameraComponent, {
+  new SupEngine.editorComponentClasses.Camera2DControls cameraActor, ui.tileSetArea.cameraComponent, {
     zoomSpeed: 1.5
     zoomMin: 1
     zoomMax: 60

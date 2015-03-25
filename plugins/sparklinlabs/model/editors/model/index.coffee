@@ -1,5 +1,5 @@
 async = require 'async'
-ModelRenderer = SupEngine.componentPlugins.ModelRenderer
+ModelRenderer = SupEngine.componentClasses.ModelRenderer
 
 TreeView = require 'dnd-tree-view'
 THREE = SupEngine.THREE
@@ -45,8 +45,8 @@ start = ->
 
   ui.cameraActor = new SupEngine.Actor ui.gameInstance, "Camera"
   ui.cameraActor.setLocalPosition new THREE.Vector3 0, 3, 10
-  cameraComponent = new SupEngine.componentPlugins.Camera ui.cameraActor
-  new SupEngine.editorComponents.Camera3DControls ui.cameraActor, cameraComponent
+  cameraComponent = new SupEngine.componentClasses.Camera ui.cameraActor
+  new SupEngine.editorComponentClasses.Camera3DControls ui.cameraActor, cameraComponent
 
   ui.modelActor = new SupEngine.Actor ui.gameInstance, "Model"
   ui.modelRenderer = new ModelRenderer ui.modelActor

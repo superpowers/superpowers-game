@@ -3,7 +3,7 @@ module Sup {
     export class Body extends ActorComponent {
       constructor( actor, options ) {
         super( actor );
-        this.__inner = new SupEngine.componentPlugins.ArcadeBody2D( actor.__inner, options );
+        this.__inner = new SupEngine.componentClasses.ArcadeBody2D( actor.__inner, options );
         this.__inner.__outer = this;
         SupEngine.ArcadePhysics2D.allBodies.push( this );
         this.actor.arcadeBody2D = this;

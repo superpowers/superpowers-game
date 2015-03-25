@@ -230,7 +230,7 @@ module.exports = class SceneAsset extends SupCore.data.base.Asset
     return
 
   server_addComponent: (client, nodeId, componentType, index, callback) ->
-    componentConfigClass = SupCore.data.componentConfigPlugins[componentType]
+    componentConfigClass = SupCore.data.componentConfigClasses[componentType]
     if ! componentConfigClass? then callback "Invalid component type"; return
 
     component =

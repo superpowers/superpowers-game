@@ -2,7 +2,7 @@ module Sup {
   export class SpriteRenderer extends Sup.ActorComponent {
     constructor(actor, asset) {
       super(actor);
-      this.__inner = new SupEngine.componentPlugins.SpriteRenderer(this.actor.__inner);
+      this.__inner = new SupEngine.componentClasses.SpriteRenderer(this.actor.__inner);
       if (asset) { this.setSprite(asset); }
       this.__inner.__outer = this;
       this.actor.spriteRenderer = this;

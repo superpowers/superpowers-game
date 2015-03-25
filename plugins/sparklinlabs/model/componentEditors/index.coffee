@@ -1,1 +1,1 @@
-SupEngine.addComponentEditorPlugin 'ModelRenderer', require './ModelRendererEditor'
+SupEngine.registerComponentEditorClass 'ModelRenderer', require './ModelRendererEditor'

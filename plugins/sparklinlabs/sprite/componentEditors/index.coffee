@@ -1,1 +1,1 @@
-SupEngine.addComponentEditorPlugin 'SpriteRenderer', require './SpriteRendererEditor'
+SupEngine.registerComponentEditorClass 'SpriteRenderer', require './SpriteRendererEditor'

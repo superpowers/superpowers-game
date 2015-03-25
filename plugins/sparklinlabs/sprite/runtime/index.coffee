@@ -1,2 +1,2 @@
-SupRuntime.addPlugin 'SpriteRenderer', require './SpriteRenderer'
-SupRuntime.addPlugin 'sprite', require './sprite'
+SupRuntime.registerPlugin 'SpriteRenderer', require './SpriteRenderer'
+SupRuntime.registerPlugin 'sprite', require './sprite'

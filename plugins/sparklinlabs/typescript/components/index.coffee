@@ -1,2 +1,2 @@
-SupEngine.addComponentPlugin 'Behavior', require './Behavior'
-SupEngine.addEditorComponent 'BehaviorMarker', require './BehaviorMarker'
+SupEngine.registerComponentClass 'Behavior', require './Behavior'
+SupEngine.registerEditorComponentClass 'BehaviorMarker', require './BehaviorMarker'

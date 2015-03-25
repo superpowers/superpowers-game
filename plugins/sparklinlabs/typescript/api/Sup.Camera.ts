@@ -2,7 +2,7 @@ module Sup {
   export class Camera extends ActorComponent {
     constructor(actor) {
       super(actor);
-      this.__inner = new SupEngine.componentPlugins.Camera(this.actor.__inner);
+      this.__inner = new SupEngine.componentClasses.Camera(this.actor.__inner);
       this.__inner.__outer = this;
       this.actor.camera = this;
     }

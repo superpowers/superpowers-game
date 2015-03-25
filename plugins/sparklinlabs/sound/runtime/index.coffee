@@ -1,1 +1,1 @@
-SupRuntime.addPlugin 'sound', require './sound'
+SupRuntime.registerPlugin 'sound', require './sound'

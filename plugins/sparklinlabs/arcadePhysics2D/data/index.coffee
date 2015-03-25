@@ -1,1 +1,1 @@
-SupCore.data.addComponentConfigPlugin 'ArcadeBody2D', require './ArcadeBody2DConfig'
+SupCore.data.registerComponentConfigClass 'ArcadeBody2D', require './ArcadeBody2DConfig'

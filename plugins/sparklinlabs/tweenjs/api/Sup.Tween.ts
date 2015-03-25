@@ -18,7 +18,7 @@ module Sup {
 
       var funcs = {};
       funcs["update"] = this.update.bind(this)
-      this.__inner = new SupEngine.componentPlugins.Behavior(actor.__inner, funcs);
+      this.__inner = new SupEngine.componentClasses.Behavior(actor.__inner, funcs);
     }
     update() {
       if (this.timer == -1 ) { return }

@@ -1,2 +1,2 @@
-SupCore.data.addAssetPlugin 'model', require './ModelAsset'
-SupCore.data.addComponentConfigPlugin 'ModelRenderer', require './ModelRendererConfig'
+SupCore.data.registerAssetClass 'model', require './ModelAsset'
+SupCore.data.registerComponentConfigClass 'ModelRenderer', require './ModelRendererConfig'

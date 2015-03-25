@@ -1,1 +1,1 @@
-SupEngine.addComponentEditorPlugin 'ArcadeBody2D', require './ArcadeBody2DEditor'
+SupEngine.registerComponentEditorClass 'ArcadeBody2D', require './ArcadeBody2DEditor'

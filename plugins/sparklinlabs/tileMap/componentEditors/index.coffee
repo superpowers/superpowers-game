@@ -1,1 +1,1 @@
-SupEngine.addComponentEditorPlugin 'TileMapRenderer', require './TileMapRendererEditor'
+SupEngine.registerComponentEditorClass 'TileMapRenderer', require './TileMapRendererEditor'

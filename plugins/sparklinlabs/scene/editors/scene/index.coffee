@@ -1,4 +1,4 @@
-SceneAsset = SupCore.data.assetPlugins.scene
+SceneAsset = SupCore.data.assetClasses.scene
 TreeView = require 'dnd-tree-view'
 async = require 'async'
 THREE = SupEngine.THREE
@@ -38,9 +38,9 @@ start = ->
   for transformType, inputs of ui.transform
     input.addEventListener 'change', onTransformInputChange for input in inputs
 
-  ui.componentEditorPlugins = {}
-  for componentName, component of SupEngine.componentEditorPlugins
-    ui.componentEditorPlugins[componentName] = componentName
+  ui.componentEditorClasses = {}
+  for componentName, component of SupEngine.componentEditorClasses
+    ui.componentEditorClasses[componentName] = componentName
 
   document.querySelector('button.new-component').addEventListener 'click', onNewComponentClick
 
@@ -50,8 +50,8 @@ start = ->
   ui.gameInstance = new SupEngine.GameInstance canvasElt
   ui.cameraActor = new SupEngine.Actor ui.gameInstance, "Camera"
   ui.cameraActor.setLocalPosition new THREE.Vector3 0, 0, 10
-  cameraComponent = new SupEngine.componentPlugins.Camera ui.cameraActor
-  new SupEngine.editorComponents.Camera3DControls ui.cameraActor, cameraComponent
+  cameraComponent = new SupEngine.componentClasses.Camera ui.cameraActor
+  new SupEngine.editorComponentClasses.Camera3DControls ui.cameraActor, cameraComponent
 
   ui.bySceneNodeId = {}
 
@@ -389,7 +389,7 @@ createComponentElement = (nodeId, component) ->
     socket.emit 'edit:assets', info.assetId, 'setComponentProperty', nodeId, component.id, path, value, (err) ->
       if err? then alert err; return
 
-  componentEditorPlugin = SupEngine.componentEditorPlugins[component.type]
+  componentEditorPlugin = SupEngine.componentEditorClasses[component.type]
   ui.componentEditors[component.id] = new componentEditorPlugin SupClient, tbody, component.config, data.projectClient, setProperty
 
   shrinkButton = clone.querySelector('.shrink-component')
@@ -408,7 +408,7 @@ createComponentElement = (nodeId, component) ->
   componentElt
 
 onNewComponentClick = ->
-  SupClient.dialogs.select "Select the type of component to create.", ui.componentEditorPlugins, "Create", (type) =>
+  SupClient.dialogs.select "Select the type of component to create.", ui.componentEditorClasses, "Create", (type) =>
     return if ! type?
 
     nodeId = parseInt(ui.nodesTreeView.selectedNodes[0].dataset.id)
@@ -452,7 +452,7 @@ createNodeActor = (node) ->
   nodeActor
 
 createNodeActorComponent = (sceneNode, sceneComponent, nodeActor) ->
-  componentClass = SupEngine.editorComponents["#{sceneComponent.type}Marker"] ? SupEngine.componentPlugins[sceneComponent.type]
+  componentClass = SupEngine.editorComponentClasses["#{sceneComponent.type}Marker"] ? SupEngine.componentClasses[sceneComponent.type]
   actorComponent = new componentClass nodeActor
 
   ui.bySceneNodeId[sceneNode.id].bySceneComponentId[sceneComponent.id] =

@@ -9,10 +9,10 @@ module.exports = class TileSetRenderer extends SupEngine.ActorComponent
 
     gridActor = new SupEngine.Actor @actor.gameInstance, "Grid"
     gridActor.setLocalPosition new SupEngine.THREE.Vector3 0, 0, 1
-    @gridRenderer = new SupEngine.editorComponents.GridRenderer gridActor
+    @gridRenderer = new SupEngine.editorComponentClasses.GridRenderer gridActor
 
     @selectedTileActor = new SupEngine.Actor @actor.gameInstance, "Selection"
-    selectedTileRenderer = new SupEngine.editorComponents.FlatColorRenderer @selectedTileActor, "#900090", 1, 1
+    selectedTileRenderer = new SupEngine.editorComponentClasses.FlatColorRenderer @selectedTileActor, "#900090", 1, 1
 
     @setTileSet asset, overrideTexture ? asset?.data.texture
 

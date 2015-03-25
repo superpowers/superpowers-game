@@ -1,2 +1,2 @@
-SupRuntime.addPlugin 'ModelRenderer', require './ModelRenderer'
-SupRuntime.addPlugin 'model', require './model'
+SupRuntime.registerPlugin 'ModelRenderer', require './ModelRenderer'
+SupRuntime.registerPlugin 'model', require './model'

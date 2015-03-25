@@ -1,4 +1,4 @@
-SoundAsset = SupCore.data.assetPlugins.sound
+SoundAsset = SupCore.data.assetClasses.sound
 
 qs = require('querystring').parse window.location.search.slice(1)
 info = { projectId: qs.project, assetId: qs.asset }

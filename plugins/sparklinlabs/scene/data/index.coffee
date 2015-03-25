@@ -1,2 +1,2 @@
-SupCore.data.addAssetPlugin 'scene', require './SceneAsset'
-SupCore.data.addComponentConfigPlugin 'Camera', require './CameraConfig'
+SupCore.data.registerAssetClass 'scene', require './SceneAsset'
+SupCore.data.registerComponentConfigClass 'Camera', require './CameraConfig'

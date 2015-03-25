@@ -2,7 +2,7 @@ module Sup {
   export class TileMapRenderer extends Sup.ActorComponent {
     constructor(actor, asset) {
       super(actor);
-      this.__inner = new SupEngine.componentPlugins.TileMapRenderer(this.actor.__inner);
+      this.__inner = new SupEngine.componentClasses.TileMapRenderer(this.actor.__inner);
       if (asset) { this.setTileMap(asset, true); }
       this.__inner.__outer = this;
       this.actor.tileMapRenderer = this;

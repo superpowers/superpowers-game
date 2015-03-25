@@ -1,2 +1,2 @@
-SupRuntime.addPlugin 'script', require './script'
-SupRuntime.addPlugin 'Behavior', require './Behavior'
+SupRuntime.registerPlugin 'script', require './script'
+SupRuntime.registerPlugin 'Behavior', require './Behavior'

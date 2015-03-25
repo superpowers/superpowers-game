@@ -49,9 +49,9 @@ SupEngine.ArcadePhysics2D =
         body1.refreshActorPosition()
     return gotCollision
 
-SupEngine.addEarlyUpdatePlugin "ArcadePhysics2D", (player) =>
+SupEngine.registerEarlyUpdateFunction "ArcadePhysics2D", (player) =>
   body.__inner.earlyUpdate() for body in SupEngine.ArcadePhysics2D.allBodies
   return
 
-SupEngine.addComponentPlugin 'ArcadeBody2D', require './ArcadeBody2D'
-SupEngine.addEditorComponent 'ArcadeBody2DMarker', require './ArcadeBody2DMarker'
+SupEngine.registerComponentClass 'ArcadeBody2D', require './ArcadeBody2D'
+SupEngine.registerEditorComponentClass 'ArcadeBody2DMarker', require './ArcadeBody2DMarker'

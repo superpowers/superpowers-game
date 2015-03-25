@@ -1,4 +1,4 @@
-SupCore.data.addAssetPlugin 'tileMap', require './TileMapAsset'
-SupCore.data.addAssetPlugin 'tileSet', require './TileSetAsset'
+SupCore.data.registerAssetClass 'tileMap', require './TileMapAsset'
+SupCore.data.registerAssetClass 'tileSet', require './TileSetAsset'
 
-SupCore.data.addComponentConfigPlugin 'TileMapRenderer', require './TileMapRendererConfig'
+SupCore.data.registerComponentConfigClass 'TileMapRenderer', require './TileMapRendererConfig'

@@ -1,2 +1,2 @@
-SupCore.data.addAssetPlugin 'script', require './ScriptAsset'
-SupCore.data.addComponentConfigPlugin 'Behavior', require './BehaviorConfig'
+SupCore.data.registerAssetClass 'script', require './ScriptAsset'
+SupCore.data.registerComponentConfigClass 'Behavior', require './BehaviorConfig'

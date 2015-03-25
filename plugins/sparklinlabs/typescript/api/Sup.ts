@@ -85,7 +85,7 @@ module Sup {
       funcs["start"]  = (this.start)  ? this.start.bind(this) : null;
       funcs["update"] = (this.update) ? this.update.bind(this) : null;
       funcs["destroy"] = (this.onDestroy) ? this.onDestroy.bind(this) : null;
-      this.__inner = new SupEngine.componentPlugins.Behavior(actor, funcs);
+      this.__inner = new SupEngine.componentClasses.Behavior(actor, funcs);
 
       this.__inner.__outer = this;
       this.actor.__behaviors[this.constructor["name"]] = this;

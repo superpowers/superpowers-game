@@ -2,7 +2,7 @@ module Sup {
   export class ModelRenderer extends Sup.ActorComponent {
     constructor(actor, asset) {
       super(actor);
-      this.__inner = new SupEngine.componentPlugins.ModelRenderer(this.actor.__inner);
+      this.__inner = new SupEngine.componentClasses.ModelRenderer(this.actor.__inner);
       if (asset) { this.setModel(asset); }
       this.__inner.__outer = this;
       this.actor.modelRenderer = this;

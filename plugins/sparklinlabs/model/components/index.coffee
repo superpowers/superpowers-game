@@ -1,1 +1,1 @@
-SupEngine.addComponentPlugin 'ModelRenderer', require './ModelRenderer'
+SupEngine.registerComponentClass 'ModelRenderer', require './ModelRenderer'
