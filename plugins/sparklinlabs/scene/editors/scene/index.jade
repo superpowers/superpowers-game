@@ -15,6 +15,8 @@ html
         tbody.settings
 
   body
+    .main
+      canvas(tabindex="0")
     .sidebar
       .nodes-buttons
         button.new-node New Actor
@@ -47,8 +49,6 @@ html
         .components-buttons
           button.new-component New Component
         .components
-    .main
-      canvas(tabindex="0")
 
     script(src="/system/SupEngine.js")
     script(src="/core/SupCore.js")
