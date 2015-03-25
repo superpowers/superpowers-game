@@ -4,7 +4,7 @@ module.exports = class TileSetRenderer extends SupEngine.ActorComponent
 
   @Updater: require './TileSetRendererUpdater'
 
-  constructor: (actor, asset) ->
+  constructor: (actor, asset, overrideTexture=null) ->
     super actor, 'TileSetRenderer'
 
     gridActor = new SupEngine.Actor @actor.gameInstance, "Grid"
@@ -14,12 +14,19 @@ module.exports = class TileSetRenderer extends SupEngine.ActorComponent
     @selectedTileActor = new SupEngine.Actor @actor.gameInstance, "Selection"
     selectedTileRenderer = new SupEngine.editorComponents.FlatColorRenderer @selectedTileActor, "#900090", 1, 1
 
-    @setTileSet asset
+    @setTileSet asset, overrideTexture ? asset?.data.texture
 
-  setTileSet: (asset) ->
+  setTileSet: (asset, texture) ->
     @_clearMesh()
     @asset = asset
-    @_createMesh asset if @asset?
+
+    if @asset?
+      geometry = new THREE.PlaneBufferGeometry texture.image.width, texture.image.height
+      material = new THREE.MeshBasicMaterial map: texture, alphaTest: 0.1, side: THREE.DoubleSide
+
+      @mesh = new THREE.Mesh geometry, material
+      @actor.threeObject.add @mesh
+      @refreshScaleRatio()
     return
 
   select: (x, y, width=1, height=1) ->
@@ -27,20 +34,11 @@ module.exports = class TileSetRenderer extends SupEngine.ActorComponent
     @selectedTileActor.setLocalScale new SupEngine.THREE.Vector3 width, -height, 1
     return
 
-  _createMesh: (asset) ->
-    geometry = new THREE.PlaneBufferGeometry asset.data.texture.image.width, asset.data.texture.image.height
-    material = new THREE.MeshBasicMaterial map: asset.data.texture, alphaTest: 0.1, side: THREE.DoubleSide
-
-    @mesh = new THREE.Mesh geometry, material
-    @actor.threeObject.add @mesh
-    @refreshScaleRatio()
-    return
-
   refreshScaleRatio: ->
     scaleRatio = 1 / @asset.data.gridSize
     @mesh.scale.set scaleRatio, scaleRatio, scaleRatio
-    @mesh.position.setX @asset.data.texture.image.width / 2 * scaleRatio
-    @mesh.position.setY -@asset.data.texture.image.height / 2 * scaleRatio
+    @mesh.position.setX @mesh.material.map.image.width / 2 * scaleRatio
+    @mesh.position.setY -@mesh.material.map.image.height / 2 * scaleRatio
     @mesh.updateMatrixWorld()
 
     @select 0, 0

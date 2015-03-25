@@ -156,10 +156,10 @@ onTileMapAssetReceived = ->
   tileSetActor = new SupEngine.Actor ui.tileSetArea.gameInstance, "Tile Set"
   tileSetRenderer = new TileSetRenderer tileSetActor
   config = tileSetAssetId: pub.tileSetId
-  tileSetProjectClient = new SupClient.ProjectClient socket, subEntries: false
-  data.tileSetUpdater = new TileSetRenderer.Updater tileSetProjectClient, tileSetRenderer, config
+  # tileSetProjectClient = new SupClient.ProjectClient socket, subEntries: false
+  data.tileSetUpdater = new TileSetRenderer.Updater data.projectClient, tileSetRenderer, config
 
-  onEditCommands.changeTileSet()
+  updateTileSetInput()
   onEditCommands.resizeMap()
 
   for setting in ui.allSettings
@@ -179,14 +179,17 @@ onTileMapAssetReceived = ->
 # Tile map network callbacks
 onEditCommands = {}
 
-onEditCommands.changeTileSet = ->
+updateTileSetInput = ->
   tileSetName =
     if data.tileMapUpdater.tileMapAsset.pub.tileSetId?
       data.projectClient.entries.getPathFromId data.tileMapUpdater.tileMapAsset.pub.tileSetId
     else
       ""
   ui.tileSetInput.value = tileSetName
+  return
 
+onEditCommands.changeTileSet = ->
+  updateTileSetInput()
   data.tileSetUpdater.changeTileSetId data.tileMapUpdater.tileMapAsset.pub.tileSetId
   return
 
@@ -265,13 +268,13 @@ onTileSetAssetReceived = ->
 
   ui.mapArea.cameraControls.setMultiplier tileMapPub.pixelsPerUnit / tileSetPub.gridSize / 1
   ui.mapArea.gridRenderer.setRatio tileMapPub.pixelsPerUnit / tileSetPub.gridSize
-  ui.mapArea.patternRenderer.setTileSet new TileSet tileSetPub
+  ui.mapArea.patternRenderer.setTileSet new TileSet(tileSetPub), data.tileMapUpdater.tileSetThreeTexture
   ui.mapArea.patternBackgroundRenderer.setup "#900090", 1 / tileMapPub.pixelsPerUnit, tileSetPub.gridSize
   return
 
 onTileSetEditCommands = {}
 onTileSetEditCommands.upload = ->
-  ui.mapArea.patternRenderer.setTileSet new TileSet data.tileMapUpdater.tileSetAsset.pub
+  ui.mapArea.patternRenderer.setTileSet new TileSet(data.tileMapUpdater.tileSetAsset.pub), data.tileMapUpdater.tileSetThreeTexture
   if ui.brushToolButton.checked
     selectBrush 0, 0
     setupPattern [ [0, 0, false, false, 0] ]
@@ -283,7 +286,7 @@ onTileSetEditCommands.setProperty = ->
 
   ui.mapArea.cameraControls.setMultiplier tileMapPub.pixelsPerUnit / tileSetPub.gridSize / 1
   ui.mapArea.gridRenderer.setRatio tileMapPub.pixelsPerUnit / tileSetPub.gridSize
-  ui.mapArea.patternRenderer.setTileSet new TileSet tileSetPub
+  ui.mapArea.patternRenderer.setTileSet new TileSet(tileSetPub), data.tileMapUpdater.tileSetThreeTexture
   ui.mapArea.patternBackgroundRenderer.setup "#900090", 1 / tileMapPub.pixelsPerUnit, tileSetPub.gridSize
 
   if ui.brushToolButton.checked
@@ -672,8 +675,8 @@ getMapGridPosition = (gameInstance, cameraComponent)->
 handleTileSetArea = ->
   ui.tileSetArea.gameInstance.update()
 
-  tilesPerRow = data.tileMapUpdater.tileSetAsset.pub.texture.image.width / data.tileMapUpdater.tileSetAsset.pub.gridSize
-  tilesPerColumn = data.tileMapUpdater.tileSetAsset.pub.texture.image.height / data.tileMapUpdater.tileSetAsset.pub.gridSize
+  tilesPerRow = data.tileMapUpdater.tileSetAsset.pub.domImage.width / data.tileMapUpdater.tileSetAsset.pub.gridSize
+  tilesPerColumn = data.tileMapUpdater.tileSetAsset.pub.domImage.height / data.tileMapUpdater.tileSetAsset.pub.gridSize
 
   [mouseX, mouseY] = getTileSetGridPosition ui.tileSetArea.gameInstance, ui.tileSetArea.cameraComponent
   if ui.tileSetArea.gameInstance.input.mouseButtons[0].wasJustPressed

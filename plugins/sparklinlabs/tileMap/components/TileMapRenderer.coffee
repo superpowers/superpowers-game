@@ -5,11 +5,11 @@ module.exports = class TileMapRenderer extends SupEngine.ActorComponent
 
   @Updater: require './TileMapRendererUpdater'
 
-  constructor: (actor, @tileMap, @tileSet) ->
+  constructor: (actor, @tileMap, @tileSet, overrideTexture=null) ->
     super actor, 'TileMapRenderer'
 
     if @tileSet?
-      @_setupTexture()
+      @_setupTexture overrideTexture ? @tileSet.data.texture
       @_createLayerMeshes() if @tileMap?
 
   setTileMap: (asset) ->
@@ -21,7 +21,7 @@ module.exports = class TileMapRenderer extends SupEngine.ActorComponent
     @_createLayerMeshes()
     return
 
-  setTileSet: (asset) ->
+  setTileSet: (asset, overrideTexture=null) ->
     if @tileSetTexture?
       @_clearTexture()
       @_clearLayerMeshes() if @tileMap?
@@ -29,7 +29,7 @@ module.exports = class TileMapRenderer extends SupEngine.ActorComponent
     @tileSet = asset
     return if ! @tileSet?
 
-    @_setupTexture()
+    @_setupTexture overrideTexture ? @tileSet.data.texture
     @_createLayerMeshes() if @tileMap?
     return
 
@@ -52,8 +52,8 @@ module.exports = class TileMapRenderer extends SupEngine.ActorComponent
     @tileMap.removeListener 'setTileAt', @_onSetTileAt
     return
 
-  _setupTexture: ->
-    @tileSetTexture = @tileSet.data.texture
+  _setupTexture: (texture) ->
+    @tileSetTexture = texture
     @tilesPerRow = @tileSetTexture.image.width / @tileSet.data.gridSize
     @tilesPerColumn = @tileSetTexture.image.height / @tileSet.data.gridSize
     return

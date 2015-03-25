@@ -9,6 +9,7 @@ module.exports = class TileMapRendererUpdater
 
     @tileSetAssetId = config.tileSetAssetId
     @tileSetAsset = null
+    @tileSetThreeTexture = null
 
     @tileMapSubscriber =
       onAssetReceived: @_onTileMapAssetReceived
@@ -81,38 +82,38 @@ module.exports = class TileMapRendererUpdater
   _onTileMapAssetTrashed: =>
     @tileMapRenderer.setTileMap null
     if @editAssetCallbacks?
+      # FIXME: We should probably have a @trashAssetCallback instead
+      # and let editors handle things how they want
       SupClient.onAssetTrashed()
     return
 
   _onTileSetAssetReceived: (assetId, asset) =>
     @tileSetAsset = asset
 
-    image = asset.pub.texture?.image
-
-    if ! image?
-      image = new Image
-
-      asset.pub.texture = new SupEngine.THREE.Texture image
-      asset.pub.texture.magFilter = SupEngine.THREE.NearestFilter
-      asset.pub.texture.minFilter = SupEngine.THREE.NearestFilter
-
+    if ! asset.pub.domImage?
       URL.revokeObjectURL @url if @url?
-
       typedArray = new Uint8Array asset.pub.image
       blob = new Blob [ typedArray ], type: 'image/*'
-
       @url = URL.createObjectURL blob
-      image.src = @url
 
-    if ! image.complete
-      image.addEventListener 'load', =>
-        asset.pub.texture.needsUpdate = true
-        @tileMapRenderer.setTileSet new TileSet asset.pub
-        @receiveAssetCallbacks?.tileSet();
-        return
-    else
-      @tileMapRenderer.setTileSet new TileSet asset.pub
-      @receiveAssetCallbacks?.tileSet();
+      asset.pub.domImage = new Image
+      asset.pub.domImage.src = @url
+
+    @tileSetThreeTexture = new SupEngine.THREE.Texture asset.pub.domImage
+    @tileSetThreeTexture.magFilter = SupEngine.THREE.NearestFilter
+    @tileSetThreeTexture.minFilter = SupEngine.THREE.NearestFilter
+
+    if asset.pub.domImage.complete
+      @tileMapRenderer.setTileSet new TileSet(asset.pub), @tileSetThreeTexture
+      @receiveAssetCallbacks?.tileSet(); return
+
+    onImageLoaded = =>
+      asset.pub.domImage.removeEventListener 'load', onImageLoaded
+      @tileSetThreeTexture.needsUpdate = true
+      @tileMapRenderer.setTileSet new TileSet(asset.pub), @tileSetThreeTexture
+      @receiveAssetCallbacks?.tileSet(); return
+
+    asset.pub.domImage.addEventListener 'load', onImageLoaded
     return
 
   _onTileSetAssetEdited: (id, command, args...) =>
@@ -125,20 +126,20 @@ module.exports = class TileMapRendererUpdater
 
   _onTileSetEditCommand_upload: ->
     URL.revokeObjectURL @url if @url?
-
     typedArray = new Uint8Array @tileSetAsset.pub.image
     blob = new Blob [ typedArray ], type: 'image/*'
     @url = URL.createObjectURL blob
-    image = @tileSetAsset.pub.texture.image
+
+    image = @tileSetThreeTexture.image
     image.src = @url
     image.addEventListener 'load', =>
-      @tileSetAsset.pub.texture.needsUpdate = true
-      @tileMapRenderer.setTileSet new TileSet @tileSetAsset.pub
+      @tileSetThreeTexture.needsUpdate = true
+      @tileMapRenderer.setTileSet new TileSet(@tileSetAsset.pub), @tileSetThreeTexture
       return
     return
 
   _onTileSetEditCommand_setProperty: ->
-    @tileMapRenderer.setTileSet new TileSet @tileSetAsset.pub
+    @tileMapRenderer.setTileSet new TileSet(@tileSetAsset.pub), @tileSetThreeTexture
     return
 
   _onTileSetAssetTrashed: =>

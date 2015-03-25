@@ -5,6 +5,7 @@ module.exports = class TileSetRendererUpdater
   constructor: (@client, @tileSetRenderer, config, @receiveAssetCallbacks, @editAssetCallbacks) ->
     @tileSetAssetId = config.tileSetAssetId
     @tileSetAsset = null
+    @tileSetThreeTexture = null
 
     @tileSetSubscriber =
       onAssetReceived: @_onTileSetAssetReceived
@@ -15,58 +16,53 @@ module.exports = class TileSetRendererUpdater
       @client.sub @tileSetAssetId, 'tileSet', @tileSetSubscriber
 
   changeTileSetId: (tileSetId) ->
-    @client.unsub @tileSetAssetId, 'tileSet', @tileSetSubscriber if @tileSetAssetId?
+    @client.unsub @tileSetAssetId, @tileSetSubscriber if @tileSetAssetId?
     @tileSetAssetId = tileSetId
+
+    @tileSetAsset = null
+    URL.revokeObjectURL @url if @url?
+    @tileSetThreeTexture?.dispose()
+    @tileSetThreeTexture = null
+
     @client.sub @tileSetAssetId, 'tileSet', @tileSetSubscriber if @tileSetAssetId?
     return
 
   _onTileSetAssetReceived: (assetId, asset) =>
     @tileSetAsset = asset
 
-    image = asset.pub.texture?.image
-
-    if ! image?
-      image = new Image
-
-      asset.pub.texture = new SupEngine.THREE.Texture image
-      asset.pub.texture.magFilter = SupEngine.THREE.NearestFilter
-      asset.pub.texture.minFilter = SupEngine.THREE.NearestFilter
-
+    if ! asset.pub.domImage?
       URL.revokeObjectURL @url if @url?
-
       typedArray = new Uint8Array asset.pub.image
       blob = new Blob [ typedArray ], type: 'image/*'
-
       @url = URL.createObjectURL blob
-      image.src = @url
 
-    if ! image.complete
-      onImageLoaded = =>
-        image.removeEventListener 'load', onImageLoaded
-        asset.pub.texture.needsUpdate = true
-        @tileSetRenderer.setTileSet new TileSet asset.pub
-        @tileSetRenderer.gridRenderer.setGrid
-          width: asset.pub.texture.image.width / asset.pub.gridSize
-          height: asset.pub.texture.image.height / asset.pub.gridSize
-          direction: -1
-          orthographicScale: 10
-          ratio: 1
+      asset.pub.domImage = new Image
+      asset.pub.domImage.src = @url
 
-        @receiveAssetCallbacks?.tileSet();
-        return
+    @tileSetThreeTexture?.dispose()
+    @tileSetThreeTexture = new SupEngine.THREE.Texture asset.pub.domImage
+    @tileSetThreeTexture.magFilter = SupEngine.THREE.NearestFilter
+    @tileSetThreeTexture.minFilter = SupEngine.THREE.NearestFilter
 
-      image.addEventListener 'load', onImageLoaded
-    else
-      @tileSetRenderer.setTileSet new TileSet asset.pub
+    setupTileSetTexture = =>
+      @tileSetRenderer.setTileSet new TileSet(asset.pub), @tileSetThreeTexture
       @tileSetRenderer.gridRenderer.setGrid
-        width: asset.pub.texture.image.width / asset.pub.gridSize
-        height: asset.pub.texture.image.height / asset.pub.gridSize
+        width: asset.pub.domImage.width / asset.pub.gridSize
+        height: asset.pub.domImage.height / asset.pub.gridSize
         direction: -1
         orthographicScale: 10
         ratio: 1
 
-      @receiveAssetCallbacks?.tileSet();
-    return
+      @receiveAssetCallbacks?.tileSet(); return
+
+    if asset.pub.domImage.complete then setupTileSetTexture(); return
+
+    onImageLoaded = =>
+      asset.pub.domImage.removeEventListener 'load', onImageLoaded
+      @tileSetThreeTexture.needsUpdate = true
+      setupTileSetTexture(); return
+
+    asset.pub.domImage.addEventListener 'load', onImageLoaded
     return
 
   _onTileSetAssetEdited: (id, command, args...) =>
@@ -76,18 +72,18 @@ module.exports = class TileSetRendererUpdater
 
   _onEditCommand_upload: ->
     URL.revokeObjectURL @url if @url?
-
     typedArray = new Uint8Array @tileSetAsset.pub.image
     blob = new Blob [ typedArray ], type: 'image/*'
     @url = URL.createObjectURL blob
-    image = @tileSetAsset.pub.texture.image
+
+    image = @tileSetThreeTexture.image
     image.src = @url
     image.addEventListener 'load', =>
-      @tileSetAsset.pub.texture.needsUpdate = true
-      @tileSetRenderer.setTileSet new TileSet @tileSetAsset.pub
+      @tileSetThreeTexture.needsUpdate = true
+      @tileSetRenderer.setTileSet new TileSet(@tileSetAsset.pub), @tileSetThreeTexture
 
-      width = @tileSetAsset.pub.texture.image.width / @tileSetAsset.pub.gridSize
-      height = @tileSetAsset.pub.texture.image.height / @tileSetAsset.pub.gridSize
+      width = @tileSetThreeTexture.image.width / @tileSetAsset.pub.gridSize
+      height = @tileSetThreeTexture.image.height / @tileSetAsset.pub.gridSize
       @tileSetRenderer.gridRenderer.resize width, height
       return
     return
@@ -97,13 +93,15 @@ module.exports = class TileSetRendererUpdater
       when 'gridSize'
         @tileSetRenderer.refreshScaleRatio()
 
-        width = @tileSetAsset.pub.texture.image.width / @tileSetAsset.pub.gridSize
-        height = @tileSetAsset.pub.texture.image.height / @tileSetAsset.pub.gridSize
+        width = @tileSetThreeTexture.image.width / @tileSetAsset.pub.gridSize
+        height = @tileSetThreeTexture.image.height / @tileSetAsset.pub.gridSize
         @tileSetRenderer.gridRenderer.resize width, height
         return
 
   _onTileSetAssetTrashed: =>
     @tileSetRenderer.setTileSet null
     if @editAssetCallbacks?
+      # FIXME: We should probably have a @trashAssetCallback instead
+      # and let editors handle things how they want
       SupClient.onAssetTrashed()
     return

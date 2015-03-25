@@ -239,8 +239,8 @@ draw = ->
     x = Math.floor mouseX
     y = Math.floor mouseY
 
-    if x >= 0 and x < data.tileSetUpdater.tileSetAsset.pub.texture.image.width / data.tileSetUpdater.tileSetAsset.pub.gridSize and
-    y >= 0 and y < data.tileSetUpdater.tileSetAsset.pub.texture.image.height / data.tileSetUpdater.tileSetAsset.pub.gridSize and
+    if x >= 0 and x < data.tileSetUpdater.tileSetAsset.pub.domImage.width / data.tileSetUpdater.tileSetAsset.pub.gridSize and
+    y >= 0 and y < data.tileSetUpdater.tileSetAsset.pub.domImage.height / data.tileSetUpdater.tileSetAsset.pub.gridSize and
     (x != data.selectedTile.x or y != data.selectedTile.y)
       data.selectedTile.x = x
       data.selectedTile.y = y
