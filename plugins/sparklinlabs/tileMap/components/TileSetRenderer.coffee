@@ -4,7 +4,7 @@ module.exports = class TileSetRenderer extends SupEngine.ActorComponent
 
   @Updater: require './TileSetRendererUpdater'
 
-  constructor: (actor, asset, scaleRatio) ->
+  constructor: (actor, asset) ->
     super actor, 'TileSetRenderer'
 
     gridActor = new SupEngine.Actor @actor.gameInstance, "Grid"
@@ -14,12 +14,12 @@ module.exports = class TileSetRenderer extends SupEngine.ActorComponent
     @selectedTileActor = new SupEngine.Actor @actor.gameInstance, "Selection"
     selectedTileRenderer = new SupEngine.editorComponents.FlatColorRenderer @selectedTileActor, "#900090", 1, 1
 
-    @setTileSet asset, scaleRatio
+    @setTileSet asset
 
-  setTileSet: (asset, scaleRatio) ->
+  setTileSet: (asset) ->
     @_clearMesh()
     @asset = asset
-    @_createMesh asset, scaleRatio if @asset?
+    @_createMesh asset if @asset?
     return
 
   select: (x, y, width=1, height=1) ->
