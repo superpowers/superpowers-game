@@ -26,27 +26,29 @@ module.exports = class SpriteAsset extends SupCore.data.base.Asset
 
     animations: { type: 'listById' }
 
-  constructor: (pub, serverData) ->
+  constructor: (pub, serverData, @pluginFullName) ->
     super pub, @constructor.schema, serverData
 
   setup: ->
     @animations = new SpriteAnimations @pub.animations
     return
 
-  init: ->
-    @pub =
-      image: new Buffer(0)
-      filtering: 'pixelated'
-      pixelsPerUnit: 100
-      framesPerSecond: 10
-      alphaTest: 0.1
+  init: (callback) ->
+    @serverData.resources.acquire 'spriteSettings', null, (err, spriteSettings) =>
+      @pub =
+        image: new Buffer 0
+        filtering: spriteSettings.pub.filtering
+        pixelsPerUnit: spriteSettings.pub.pixelsPerUnit
+        framesPerSecond: spriteSettings.pub.framesPerSecond
+        alphaTest: spriteSettings.pub.alphaTest
 
-      grid: { width: 100, height: 100 }
-      origin: { x: 0.5, y: 0.5 }
+        grid: { width: 100, height: 100 }
+        origin: { x: 0.5, y: 0.5 }
 
-      animations: []
+        animations: []
 
-    super(); return
+      super callback; return
+    return
 
   load: (assetPath) ->
     fs.readFile path.join(assetPath, "asset.json"), { encoding: 'utf8' }, (err, json) =>

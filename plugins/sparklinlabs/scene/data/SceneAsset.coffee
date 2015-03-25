@@ -17,9 +17,9 @@ module.exports = class SceneAsset extends SupCore.data.base.Asset
 
     super pub, @constructor.schema
 
-  init: ->
+  init: (callback) ->
     @pub = nodes: []
-    super(); return
+    super callback; return
 
   setup: ->
     @nodes = new SceneNodes @pub.nodes

@@ -23,7 +23,7 @@ module.exports = class TileMapAsset extends SupCore.data.base.Asset
   constructor: (pub, serverData) ->
     super pub, @constructor.schema, serverData
 
-  init: ->
+  init: (callback) ->
     @pub =
       tileSetId: null
       pixelsPerUnit: 100
@@ -31,9 +31,10 @@ module.exports = class TileMapAsset extends SupCore.data.base.Asset
       layerDepthOffset: 1
       layers: []
 
-    super()
-
-    @layers.add @createEmptyLayer("Layer"), null, (err, index) => if err? then callback err; return
+    super =>
+      @layers.add @createEmptyLayer("Layer"), null, (err, index) =>
+        if err? then callback err; return
+        callback(); return
     return
 
   setup: ->

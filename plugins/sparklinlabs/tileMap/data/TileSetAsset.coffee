@@ -16,14 +16,13 @@ module.exports = class TileSetAsset extends SupCore.data.base.Asset
   constructor: (pub, serverData) ->
     super pub, @constructor.schema, serverData
 
-  init: ->
+  init: (callback) ->
     @pub =
       image: new Buffer(0)
       gridSize: 40
       tileProperties: {}
 
-    super()
-    return
+    super callback; return
 
   load: (assetPath) ->
     fs.readFile path.join(assetPath, "asset.json"), { encoding: 'utf8' }, (err, json) =>

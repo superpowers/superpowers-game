@@ -26,7 +26,7 @@ module.exports = class ScriptAsset extends SupCore.data.base.Asset
     @document = new OT.Document
     super pub, @constructor.schema, serverData
 
-  init: ->
+  init: (callback) ->
     @pub = text: """
 class MyBehavior extends Sup.Behavior {
   awake() {
@@ -41,7 +41,7 @@ Sup.registerBehavior(MyBehavior);
 """
     @pub.draft = @pub.text
     @pub.revisionId = 0
-    super(); return
+    super callback; return
 
   setup: ->
     @document.text = @pub.draft
