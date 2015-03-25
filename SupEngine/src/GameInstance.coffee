@@ -57,7 +57,7 @@ module.exports = class GameInstance extends EventEmitter
       component.start()
       @componentsToBeStarted.splice index, 1
 
-    earlyUpdate() for pluginName, earlyUpdate of SupEngine.earlyUpdatePlugins
+    earlyUpdate() for pluginName, earlyUpdate of SupEngine.earlyUpdateFunctions
 
     # Update all actors
     actor.update() for actor in @cachedActors

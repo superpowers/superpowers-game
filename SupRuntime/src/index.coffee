@@ -1,9 +1,9 @@
 exports.Player = require './Player'
 exports.plugins = {}
 
-exports.addPlugin = (name, plugin) ->
+exports.registerPlugin = (name, plugin) ->
   if exports.plugins[name]?
-    console.error "SupRuntime.addPlugin: Tried to load two or more plugins named \"#{name}\""
+    console.error "SupRuntime.register: Tried to register two or more plugins named \"#{name}\""
     return
 
   exports.plugins[name] = plugin

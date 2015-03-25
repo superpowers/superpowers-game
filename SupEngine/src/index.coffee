@@ -11,48 +11,48 @@ exports.GameInstance = require './GameInstance'
 exports.Actor = require './Actor'
 exports.ActorComponent = require './ActorComponent'
 
-exports.editorComponents =
+exports.editorComponentClasses =
   Camera2DControls: require './components/Camera2DControls'
   Camera3DControls: require './components/Camera3DControls'
   FlatColorRenderer: require './components/FlatColorRenderer'
   GridRenderer: require './components/GridRenderer'
 
-exports.addEditorComponent = (name, component) ->
-  if exports.editorComponents[name]?
-    console.error "SupEngine.addEditorComponent: Tried to load two or more components named \"#{name}\""
+exports.registerEditorComponentClass = (name, component) ->
+  if exports.editorComponentClasses[name]?
+    console.error "SupEngine.registerEditorComponent: Tried to register two or more classes named \"#{name}\""
     return
 
-  exports.editorComponents[name] = component
+  exports.editorComponentClasses[name] = component
   return
 
-exports.componentPlugins =
+exports.componentClasses =
   # Built-ins
   Camera: require './components/Camera'
 
-exports.addComponentPlugin = (name, plugin) ->
-  if exports.componentPlugins[name]?
-    console.error "SupEngine.addComponentPlugin: Tried to load two or more plugins named \"#{name}\""
+exports.registerComponentClass = (name, plugin) ->
+  if exports.componentClasses[name]?
+    console.error "SupEngine.registerComponentClass: Tried to register two or more classes named \"#{name}\""
     return
 
-  exports.componentPlugins[name] = plugin
+  exports.componentClasses[name] = plugin
   return
 
-exports.componentEditorPlugins = {}
+exports.componentEditorClasses = {}
 
-exports.addComponentEditorPlugin = (name, plugin) ->
-  if exports.componentEditorPlugins[name]?
-    console.error "SupEngine.addComponentEditorPlugin: Tried to load two or more plugins named \"#{name}\""
+exports.registerComponentEditorClass = (name, plugin) ->
+  if exports.componentEditorClasses[name]?
+    console.error "SupEngine.registerComponentEditorClass: Tried to register two or more classes named \"#{name}\""
     return
 
-  exports.componentEditorPlugins[name] = plugin
+  exports.componentEditorClasses[name] = plugin
   return
 
-exports.earlyUpdatePlugins = {}
+exports.earlyUpdateFunctions = {}
 
-exports.addEarlyUpdatePlugin = (name, callback) ->
-  if exports.earlyUpdatePlugins[name]?
-    console.error "SupEngine.addEarlyUpdatePlugin: Tried to load two or more plugins named \"#{name}\""
+exports.registerEarlyUpdateFunction = (name, callback) ->
+  if exports.earlyUpdateFunctions[name]?
+    console.error "SupEngine.registerEarlyUpdateFunction: Tried to register two or more functions named \"#{name}\""
     return
 
-  exports.earlyUpdatePlugins[name] = callback
+  exports.earlyUpdateFunctions[name] = callback
   return
