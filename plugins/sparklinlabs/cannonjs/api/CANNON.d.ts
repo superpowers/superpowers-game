@@ -1,4 +1,9 @@
-/*The MIT License (MIT)
+/*
+// Type definitions for cannon.js
+// Initial Project: https://github.com/schteppe/cannon.js
+// Project: https://github.com/clark-stevenson/cannon.d.ts
+
+The MIT License (MIT)
 
 Copyright (c) 2014 Clark Stevenson
 
