@@ -8,7 +8,7 @@ module Sup {
     appendScene(sceneAsset);
   }
 
-  export function appendScene(sceneAsset) {
+  export function appendScene(sceneAsset, sceneParentActor=null) {
 
     function walk(node, parentActor) {
       var actor = player.createActor(node.name, parentActor);
@@ -33,7 +33,7 @@ module Sup {
     }
 
     var actors = [];
-    sceneAsset.__inner.nodes.forEach( (node) => { actors.push( walk(node, null) ); } )
+    sceneAsset.__inner.nodes.forEach( (node) => { actors.push( walk(node, sceneParentActor) ); } )
     actors.forEach( (actor) => { awakeActor(actor); })
 
     return actors;
