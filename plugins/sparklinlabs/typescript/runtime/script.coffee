@@ -94,7 +94,7 @@ exports.start = (player, callback) ->
 
   convertedSourceMap = convert.fromBase64(combinedSourceMap.base64()).toObject();
   url = URL.createObjectURL(new Blob([ JSON.stringify(convertedSourceMap) ]));
-  code = jsGlobals.script + results.script + "//# sourceMappingURL=#{url}"
+  code = jsGlobals.script + results.script + "\n//# sourceMappingURL=#{url}"
 
   # Execute the generated code
   scriptFunction = new Function 'player', code
