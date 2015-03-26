@@ -28,3 +28,8 @@ module.exports = class CannonBodyMarker extends SupEngine.ActorComponent
     @cube.traverse (obj) -> obj.dispose?(); return
     @cube = null
     return
+
+  _destroy: ->
+    @_clearRenderer() if @cube?
+    super()
+    return
