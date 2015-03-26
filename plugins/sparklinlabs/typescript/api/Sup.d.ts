@@ -4,6 +4,7 @@ declare module Sup {
   function exit();
 
   class Asset {
+    name: string;
     type: string;
     children: Array<string>;
     constructor(inner: {[key:string]: any;});
