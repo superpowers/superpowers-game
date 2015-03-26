@@ -1,6 +1,8 @@
 ts = require "typescript"
 
 module.exports = (sourceFileNames, sourceFiles, libSource, compilerOptions={}) ->
+  compilerOptions.target ?= ts.ScriptTarget.ES5
+
   script = ""
   sourceMaps = {}
   files = []
