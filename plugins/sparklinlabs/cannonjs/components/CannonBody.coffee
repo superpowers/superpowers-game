@@ -7,7 +7,7 @@ module.exports = class CannonBody extends SupEngine.ActorComponent
 
   setup: (config) ->
     @mass = config.mass ? 0
-    @fixedRotation = config.fixedRotation ? true
+    @fixedRotation = config.fixedRotation ? false
     @halfWidth = config.halfWidth ? 0.5
     @halfHeight = config.halfHeight ? 0.5
     @halfDepth = config.halfDepth ? 0.5

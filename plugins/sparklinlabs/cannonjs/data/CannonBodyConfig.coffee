@@ -12,7 +12,7 @@ module.exports = class CannonBodyConfig extends SupCore.data.base.ComponentConfi
 
   @create: ->
     mass: 0
-    fixedRotation: true
+    fixedRotation: false
     halfWidth: 0.5
     halfHeight: 0.5
     halfDepth: 0.5
