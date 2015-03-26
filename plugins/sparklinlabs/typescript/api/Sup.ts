@@ -36,7 +36,7 @@ module Sup {
     var entry = player.entriesByPath[path];
 
     if (entry) { var outerAsset = player.getOuterAsset(entry.id); }
-    else if(!options.ignoreMissing) { throw new Error("Invalid asset path") }
+    else if(!options.ignoreMissing) { throw new Error("Invalid asset path: " + path) }
 
     if (type != null && outerAsset !=null) {
       var typeName = type.name.charAt(0).toLowerCase() + type.name.slice(1);
