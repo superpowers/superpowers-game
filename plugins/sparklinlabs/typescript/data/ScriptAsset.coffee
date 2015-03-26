@@ -125,7 +125,12 @@ Sup.registerBehavior(MyBehavior);
     ownName = ""
 
     compile = =>
-      results = TsCompiler scriptNames, scripts, globalDefs, sourceMap: false
+      try
+        results = TsCompiler scriptNames, scripts, globalDefs, sourceMap: false
+      catch e
+        callback null, [ { file: "", position: { line: 1, character: 1 }, message: e.message } ]
+        return
+
       ownErrors = []
       for error in results.errors
         continue if error.file != ownName
