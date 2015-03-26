@@ -23,6 +23,7 @@ module.exports = class CannonBody extends SupEngine.ActorComponent
     @body.type =
       if @mass == 0 then window.CANNON.Body.STATIC
       else window.CANNON.Body.DYNAMIC
+    @body.material = SupEngine.CannonWorld.defaultMaterial
 
     @body.fixedRotation = @fixedRotation
 
