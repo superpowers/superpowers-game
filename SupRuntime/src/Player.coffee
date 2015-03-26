@@ -138,11 +138,11 @@ module.exports = class Player
   getOuterAsset: (assetId) ->
     outerAsset = @outerAssetsById[assetId]
     asset = @_assetsById[assetId]
+    entry = @entriesById[assetId]
 
     if ! outerAsset? and asset?
-      entry = @entriesById[assetId]
       if ! entry.type?
-        outerAsset = { type: "folder", children: entry.children }
+        outerAsset = { name: entry.name, type: "folder", children: entry.children }
 
       else
         plugin = SupRuntime.plugins[@entriesById[assetId].type]
@@ -151,7 +151,8 @@ module.exports = class Player
           if plugin.createOuterAsset? then plugin.createOuterAsset @, asset
           else asset
 
-        outerAsset.type = @entriesById[assetId].type
+        outerAsset.name = entry.name
+        outerAsset.type = entry.type
 
     outerAsset
 
