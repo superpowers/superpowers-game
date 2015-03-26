@@ -3,6 +3,7 @@ module.exports = class CannonBody extends SupEngine.ActorComponent
     super actor, 'CannonBody'
 
     @body = new window.CANNON.Body()
+    @body.addShape(new window.CANNON.Box(new window.CANNON.Vec3(1, 1, 1)))
     @setup config
 
   setup: (config) ->
@@ -25,12 +26,16 @@ module.exports = class CannonBody extends SupEngine.ActorComponent
 
     @body.fixedRotation = @fixedRotation
 
-    @body.shapes.length = 0
-    @body.addShape(new window.CANNON.Box(new window.CANNON.Vec3(@halfWidth, @halfHeight, @halfDepth)))
+    @body.shapes[0].halfExtents.set @halfWidth, @halfHeight, @halfDepth
+    @body.shapes[0].updateBoundingSphereRadius()
+    @body.shapes[0].updateConvexPolyhedronRepresentation()
+
     @body.position.set @actorPosition.x + @offsetX, @actorPosition.y + @offsetY, @actorPosition.z + @offsetZ
     @body.quaternion.set @actorOrientation.x, @actorOrientation.y, @actorOrientation.z, @actorOrientation.w
 
+    @body.updateBoundingRadius()
     @body.updateMassProperties()
+    @body.aabbNeedsUpdate = true
     return
 
   update: ->
