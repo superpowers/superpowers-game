@@ -22,7 +22,9 @@ module.exports = class CannonBody extends SupEngine.ActorComponent
       if @mass == 0 then window.CANNON.Body.STATIC
       else window.CANNON.Body.DYNAMIC
 
-    @body.fixedRotation = true
+    @body.fixedRotation = @fixedRotation
+
+    @body.shapes.length = 0
     @body.addShape(new window.CANNON.Box(new window.CANNON.Vec3(@halfWidth, @halfHeight, @halfDepth)))
     @body.position.set @actorPosition.x + @offsetX, @actorPosition.y + @offsetY, @actorPosition.z + @offsetZ
     @body.updateMassProperties()
