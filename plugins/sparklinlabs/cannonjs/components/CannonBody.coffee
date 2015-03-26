@@ -16,6 +16,7 @@ module.exports = class CannonBody extends SupEngine.ActorComponent
     @offsetZ = config.offsetZ ? 0
 
     @actorPosition = @actor.getGlobalPosition()
+    @actorOrientation = @actor.getGlobalOrientation()
 
     @body.mass = @mass
     @body.type =
@@ -27,6 +28,8 @@ module.exports = class CannonBody extends SupEngine.ActorComponent
     @body.shapes.length = 0
     @body.addShape(new window.CANNON.Box(new window.CANNON.Vec3(@halfWidth, @halfHeight, @halfDepth)))
     @body.position.set @actorPosition.x + @offsetX, @actorPosition.y + @offsetY, @actorPosition.z + @offsetZ
+    @body.quaternion.set @actorOrientation.x, @actorOrientation.y, @actorOrientation.z, @actorOrientation.w
+
     @body.updateMassProperties()
     return
 
@@ -35,6 +38,12 @@ module.exports = class CannonBody extends SupEngine.ActorComponent
     @actorPosition.y = @body.position.y - @offsetY
     @actorPosition.z = @body.position.z - @offsetZ
     @actor.setGlobalPosition @actorPosition
+
+    @actorOrientation.x = @body.quaternion.x
+    @actorOrientation.y = @body.quaternion.y
+    @actorOrientation.z = @body.quaternion.z
+    @actorOrientation.w = @body.quaternion.w
+    @actor.setGlobalOrientation @actorOrientation
     return
 
   _destroy: ->
