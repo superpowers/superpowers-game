@@ -24,17 +24,7 @@ module Sup {
 
     export module Random {
       export function integer(min, max) { return window.Math.floor( window.Math.random() * (max + 1 - min) ) + min }
-      export function sample(collection, number) {
-        var results = [];
-        var sampleRemaining = (number != null) ? number : 1;
-        while (sampleRemaining > 0) {
-          var item = collection[integer(0, collection.length - 1)];
-          if (item != null) results.push(item);
-          sampleRemaining -= 1;
-        }
-        if (number == null) results = results[0];
-        return results;
-      }
+      export function sample(collection) { return collection[integer(0, collection.length - 1)]; }
     }
 
     export function toRadians(degrees) { return degrees * degToRad; }

@@ -9,7 +9,6 @@ declare module Sup {
     module Random {
       function integer(min: number, max: number): number;
       function sample<T>(collection: T[]): T;
-      function sample<T>(collection: T[], number: number): T[];
     }
 
     function toRadians(degrees: number): number;
