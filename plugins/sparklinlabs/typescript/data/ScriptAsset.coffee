@@ -4,7 +4,7 @@ path = require 'path'
 
 if ! window?
   serverRequire = require
-  TsCompiler = serverRequire '../runtime/tsCompiler'
+  compileTypeScript = serverRequire '../runtime/compileTypeScript'
   globalDefs = ""
 
   actorComponentAccessors = []
@@ -126,7 +126,7 @@ Sup.registerBehavior(MyBehavior);
 
     compile = =>
       try
-        results = TsCompiler scriptNames, scripts, globalDefs, sourceMap: false
+        results = compileTypeScript scriptNames, scripts, globalDefs, sourceMap: false
       catch e
         callback null, [ { file: "", position: { line: 1, character: 1 }, message: e.message } ]
         return

@@ -1,7 +1,7 @@
 async = require 'async'
 convert = require 'convert-source-map'
 combine = require 'combine-source-map'
-TsCompiler = require './tsCompiler'
+compileTypeScript = require './compileTypeScript'
 fs = require 'fs'
 
 globalNames = []
@@ -58,7 +58,7 @@ exports.start = (player, callback) ->
   globalNames.unshift globalNames.splice(globalNames.indexOf('Sup.ts'), 1)[0]
 
   # Compile plugin globals
-  jsGlobals = TsCompiler globalNames, globals, "#{globalDefs["lib.d.ts"]}\ndeclare var console, window, localStorage, player, SupEngine, SupRuntime;", sourceMap: false
+  jsGlobals = compileTypeScript globalNames, globals, "#{globalDefs["lib.d.ts"]}\ndeclare var console, window, localStorage, player, SupEngine, SupRuntime;", sourceMap: false
   if jsGlobals.errors.length > 0
     for error in jsGlobals.errors
       console.log "#{error.file}(#{error.position.line}): #{error.message}"
@@ -67,7 +67,7 @@ exports.start = (player, callback) ->
 
   # Compile game scripts
   concatenatedGlobalDefs = (def for name, def of globalDefs).join ''
-  results = TsCompiler scriptNames, scripts, concatenatedGlobalDefs, sourceMap: true
+  results = compileTypeScript scriptNames, scripts, concatenatedGlobalDefs, sourceMap: true
   if results.errors.length > 0
     for error in results.errors
       console.log "#{error.file}(#{error.position.line}): #{error.message}"
