@@ -44,13 +44,15 @@ module Sup {
       return this
     }
     onUpdate( update ) {
-      this.tween.onUpdate( update )
+      this.tween.onUpdate( function() {
+        update(this);
+      });
       return this
     }
     onComplete( complete ) {
       var self = this
       this.tween.onComplete( function() {
-        complete();
+        complete(this);
         self.destroy();
       });
       return this
