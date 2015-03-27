@@ -1,6 +1,10 @@
 module Sup {
   export module Cannon {
     export var World = SupEngine.CannonWorld;
+    export function getWorldAutoUpdate() { return SupEngine.CannonWorld.autoUpdate; }
+    export function setWorldAutoUpdate(autoUpdate) {
+      SupEngine.CannonWorld.autoUpdate = autoUpdate
+    }
 
     export class Body extends ActorComponent {
       body: any;
