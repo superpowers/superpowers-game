@@ -27,7 +27,7 @@ module.exports = (sourceFileNames, sourceFiles, libSource, compilerOptions={}) -
         sourceMapEmpty += " " for i in [0...sourceMapText.length]
         text = text.replace( sourceMapText, sourceMapEmpty)
 
-        files.push( { name, text} )
+        files.push { name, text }
         script += "\n#{text}"
 
     getDefaultLibFilename: () => "lib.d.ts"
@@ -41,16 +41,14 @@ module.exports = (sourceFileNames, sourceFiles, libSource, compilerOptions={}) -
   # Query for early errors
   errors = program.getDiagnostics()
   # Do not generate code in the presence of early errors
-  if !errors.length
+  if errors.length == 0
     # Type check and get semantic errors
-    checker = program.getTypeChecker true
-    errors = checker.getDiagnostics()
+    typeChecker = program.getTypeChecker true
+    errors = typeChecker.getDiagnostics()
     # Generate output
-    checker.emitFiles()
+    typeChecker.emitFiles()
 
   return {
     errors: errors.map (e) => { file: e.file.filename, position: e.file.getLineAndCharacterFromPosition(e.start), length: e.length, message: e.messageText}
-    script
-    sourceMaps
-    files
+    program, typeChecker, script, sourceMaps, files
   }
