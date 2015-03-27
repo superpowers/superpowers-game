@@ -5,8 +5,22 @@ module Sup {
 
   export module Math {
 
-    export function lerp(a, b, v) { return a + (b - a) * v }
     export function clamp(v, min, max) { return window.Math.max( min, window.Math.min(max, v) ) }
+
+    export function lerp(a, b, v) { return a + (b - a) * v; }
+
+    export function lerpAngle(a, b, v) {
+      a = wrapAngle(a);
+      b = wrapAngle(b);
+      return a + wrapAngle(b - a) * v;
+    }
+
+    export function wrapAngle(a) {
+      a %= (window.Math.PI * 2);
+      if (a < -window.Math.PI) a += window.Math.PI * 2;
+      else if (a > window.Math.PI) a -= window.Math.PI * 2;
+      return a;
+    }
 
     export module Random {
       export function integer(min, max) { return window.Math.floor( window.Math.random() * (max + 1 - min) ) + min }

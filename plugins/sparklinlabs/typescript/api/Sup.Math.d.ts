@@ -1,7 +1,10 @@
 declare module Sup {
   module Math {
-    function lerp(a: number, b: number, v: number): number;
     function clamp(v: number, min: number, max: number): number;
+
+    function lerp(a: number, b: number, v: number): number;
+    function lerpAngle(a: number, b: number, v: number): number;
+    function wrapAngle(a);
 
     module Random {
       function integer(min: number, max: number): number;
