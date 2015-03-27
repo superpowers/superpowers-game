@@ -36,11 +36,11 @@ module Sup {
     var entry = player.entriesByPath[path];
 
     if (entry) { var outerAsset = player.getOuterAsset(entry.id); }
-    else if(!options.ignoreMissing) { throw new Error("Invalid asset path: " + path) }
+    else if(!options.ignoreMissing) throw new Error(`Invalid asset path: ${path}`);
 
     if (type != null && outerAsset !=null) {
       var typeName = type.name.charAt(0).toLowerCase() + type.name.slice(1);
-      if (typeName != outerAsset.type) { throw new Error("Invalid asset type") }
+      if (typeName != outerAsset.type) throw new Error(`Invalid asset type: got ${outerAsset.type} but asked for ${typeName}`);
     }
 
     return (outerAsset) ? outerAsset : null
