@@ -74,10 +74,13 @@ module.exports = class ModelRenderer extends SupEngine.ActorComponent
       @threeMesh = new THREE.SkinnedMesh geometry, material
 
       bones = []
+      @bonesByName = {}
 
       for boneInfo in @asset.bones
         bone = new THREE.Bone @threeMesh
         bone.name = boneInfo.name
+        console.log bone.name
+        @bonesByName[bone.name] = bone
         bone.applyMatrix tmpBoneMatrix.fromArray(boneInfo.matrix)
         bones.push bone
 
@@ -155,6 +158,16 @@ module.exports = class ModelRenderer extends SupEngine.ActorComponent
 
     @skeletonHelper?.update()
     return
+
+  getBoneTransform: (name) ->
+    position = new THREE.Vector3
+    orientation = new THREE.Quaternion
+    scale = new THREE.Vector3
+
+    return null if ! @bonesByName? or ! @bonesByName[name]?
+
+    @bonesByName[name].matrixWorld.decompose position, orientation, scale
+    return {position, orientation, scale}
 
   tmpVector = new THREE.Vector3
   tmpQuaternion = new THREE.Quaternion

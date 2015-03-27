@@ -22,6 +22,18 @@ module Sup {
       this.__inner.threeMesh.material.color.setRGB(r, g, b);
       return this
     }
+    getBoneTransform(name) {
+      var data = this.__inner.getBoneTransform(name);
+      if (data != null) {
+        var position = new Math.Vector3(data.position.x, data.position.y, data.position.z);
+        var orientation = new Math.Quaternion(data.orientation.x, data.orientation.y, data.orientation.z, data.orientation.w);
+        var scale = new Math.Vector3(data.scale.x, data.scale.y, data.scale.z);
+
+        return { position, orientation, scale }
+      } else {
+        return null
+      }
+    }
 
     setAnimation(animationName, looping) { this.__inner.setAnimation(animationName, looping); return this }
     getAnimation() { return this.__inner.getAnimation() }
