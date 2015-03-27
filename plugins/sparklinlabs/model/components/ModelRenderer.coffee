@@ -79,7 +79,6 @@ module.exports = class ModelRenderer extends SupEngine.ActorComponent
       for boneInfo in @asset.bones
         bone = new THREE.Bone @threeMesh
         bone.name = boneInfo.name
-        console.log bone.name
         @bonesByName[bone.name] = bone
         bone.applyMatrix tmpBoneMatrix.fromArray(boneInfo.matrix)
         bones.push bone
