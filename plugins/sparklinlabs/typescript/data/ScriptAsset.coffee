@@ -131,12 +131,9 @@ Sup.registerBehavior(MyBehavior);
         callback null, [ { file: "", position: { line: 1, character: 1 }, message: e.message } ]
         return
 
-      ownErrors = []
-      for error in results.errors
-        continue if error.file != ownName
-        ownErrors.push error
-
+      ownErrors = ( error for error in results.errors when error.file == ownName )
       callback null, ownErrors
+
       if @hasDraft
         @hasDraft = false
         @emit 'clearDiagnostic', 'draft'
@@ -144,23 +141,23 @@ Sup.registerBehavior(MyBehavior);
       @emit 'change'
       return
 
-    remainingAssetsToLoad = Object.keys( @serverData.entries.byId ).length
+    remainingAssetsToLoad = Object.keys(@serverData.entries.byId).length
     assetsLoading = 0
     @serverData.entries.walk (entry) =>
-      remainingAssetsToLoad -= 1
+      remainingAssetsToLoad--
       if entry.type != "script"
         compile() if remainingAssetsToLoad == 0 and assetsLoading == 0
         return
 
       name = "#{@serverData.entries.getPathFromId(entry.id)}.ts"
       scriptNames.push name
-      assetsLoading += 1
+      assetsLoading++
       @serverData.assets.acquire entry.id, null, (err, asset) =>
-        assetsLoading -= 1
-        @serverData.assets.release entry.id
-
         scripts[name] = "#{asset.pub.text}"
         ownName = name if asset == @
+
+        @serverData.assets.release entry.id
+        assetsLoading--
 
         compile() if remainingAssetsToLoad == 0 and assetsLoading == 0
         return
