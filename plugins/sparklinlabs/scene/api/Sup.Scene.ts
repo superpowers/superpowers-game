@@ -3,12 +3,24 @@ module Sup {
   var tmpVector3 = new SupEngine.THREE.Vector3();
   var tmpQuaternion = new SupEngine.THREE.Quaternion();
 
-  export function loadScene(sceneAsset) {
+  export function loadScene(scenePathOrAsset) {
     player.gameInstance.destroyAllActors();
-    appendScene(sceneAsset);
+    appendScene(scenePathOrAsset);
   }
 
-  export function appendScene(sceneAsset, sceneParentActor=null) {
+  export function appendScene(scenePathOrAsset, sceneParentActor=null) {
+    var sceneAsset: Scene;
+
+    if (typeof scenePathOrAsset === 'string') {
+      var entry = player.entriesByPath[scenePathOrAsset];
+      if (entry == null) throw new Error(`Invalid asset path: ${scenePathOrAsset}`);
+
+      var outerAsset = player.getOuterAsset(entry.id);
+      if (outerAsset.type != 'scene') throw new Error(`Invalid asset type: got ${outerAsset.type}, expected scene`);
+      sceneAsset = <Scene>outerAsset;
+    } else {
+      sceneAsset = <Scene>scenePathOrAsset;
+    }
 
     function walk(node, parentActor) {
       var actor = player.createActor(node.name, parentActor);

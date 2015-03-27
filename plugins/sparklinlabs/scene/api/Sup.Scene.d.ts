@@ -1,6 +1,8 @@
 declare module Sup {
   function loadScene(sceneAsset: Scene): void;
+  function loadScene(sceneAssetPath: string): void;
   function appendScene(sceneAsset: Scene, parent?: Actor): Array<Actor>;
+  function appendScene(sceneAssetPath: string, parent?: Actor): Array<Actor>;
 
   class Scene extends Asset {
     dummySceneMember;
