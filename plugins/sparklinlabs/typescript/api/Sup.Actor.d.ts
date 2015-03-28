@@ -11,7 +11,7 @@ declare module Sup {
     getVisible(): boolean;
     setVisible(visible: boolean): Actor;
     getParent(): Actor;
-    setParent(parent: Actor): Actor;
+    setParent(parent: Actor, keepLocalTransform?: boolean): Actor;
     getChild(name: string): Actor;
     getChildren(): Array<Actor>;
 
