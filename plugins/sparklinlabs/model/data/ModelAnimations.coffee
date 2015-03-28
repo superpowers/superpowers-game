@@ -2,7 +2,7 @@ module.exports = class ModelAnimations extends SupCore.data.base.ListById
 
   @schema =
     name: { type: 'string', minLength: 1, maxLength: 80, mutable: true }
-    duration: { type: 'number' }
+    duration: { type: 'number' } # seconds
     keyFrames:
       type: 'hash'
       keys: { minLength: 1, maxLength: 80 }

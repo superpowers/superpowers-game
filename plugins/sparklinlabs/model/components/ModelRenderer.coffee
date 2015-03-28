@@ -185,9 +185,9 @@ module.exports = class ModelRenderer extends SupEngine.ActorComponent
 
     timeSpan = nextKeyFrame.time - prevKeyFrame.time
     timeProgress = time - prevKeyFrame.time
-    if timeSpan < 0 then console.log("timeSpan: #{timeSpan}")
+    t = if timeSpan > 0 then timeProgress / timeSpan else 0
 
-    { prevKeyFrame, nextKeyFrame, t: timeProgress / timeSpan }
+    { prevKeyFrame, nextKeyFrame, t }
 
   updatePose: ->
     # TODO: @asset.speedMultiplier
