@@ -42,6 +42,7 @@ declare module Sup {
       rotate(q : Quaternion): Vector3;
       length(): number;
       distanceTo(v: Vector3): number;
+      angleTo(v: Vector3): number;
     }
 
     class Quaternion {

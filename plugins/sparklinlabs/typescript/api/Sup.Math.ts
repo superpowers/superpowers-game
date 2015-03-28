@@ -102,6 +102,10 @@ module Sup {
 
       length() { return window.Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z); }
       distanceTo(v) { return v.clone().subtract(this).length(); }
+      angleTo(v) {
+        var theta = this.dot( v ) / ( this.length() * v.length() );
+		    return window.Math.acos( Math.clamp( theta, - 1, 1 ) );
+      }
     }
 
     export class Quaternion {
