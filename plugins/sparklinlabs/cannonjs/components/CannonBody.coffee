@@ -3,6 +3,7 @@ module.exports = class CannonBody extends SupEngine.ActorComponent
     super actor, 'CannonBody'
 
     @body = new window.CANNON.Body()
+    SupEngine.CannonWorld.addBody @body
     return if ! config.shape?
 
     @setup config
@@ -54,6 +55,7 @@ module.exports = class CannonBody extends SupEngine.ActorComponent
     return
 
   _destroy: ->
+    SupEngine.CannonWorld.remove @body
     @body = null
     super()
     return

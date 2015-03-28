@@ -14,11 +14,9 @@ module Sup {
         this.__inner = new SupEngine.componentClasses.CannonBody( actor.__inner, options );
         this.__inner.__outer = this;
         this.body = this.__inner.body;
-        World.addBody(this.body);
         this.actor.cannonBody = this;
       }
       destroy() {
-        World.remove(this.body);
         this.body = null;
         this.actor.cannonBody = null;
         super.destroy();
