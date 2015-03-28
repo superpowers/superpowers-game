@@ -27,7 +27,7 @@ module Sup {
     getVisible() { return this.__inner.threeObject.visible; return this; }
     setVisible(visible: boolean) { this.__inner.threeObject.visible = visible; }
     getParent() { return (this.__inner.parent) ? this. __inner.parent.__outer : null; }
-    setParent(parent, options={}) {
+    setParent(parent, options={ keepLocalTransform: false }) {
       var innerParent = (parent) ? parent.__inner : null;
       this.__inner.setParent(innerParent, options.keepLocalTransform == true);
       return this;
