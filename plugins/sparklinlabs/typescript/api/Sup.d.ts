@@ -1,6 +1,6 @@
 declare module Sup {
 
-  function log(x: any): any;
+  function log(message?: any, ...optionalParams: any[]): void;
   function exit();
 
   class Asset {

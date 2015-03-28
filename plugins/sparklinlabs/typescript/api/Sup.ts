@@ -1,6 +1,6 @@
 module Sup {
 
-  export function log(x) { console.log(x); }
+  export function log(message, ...optionalParams) { console.log.apply(console, [ message ].concat(optionalParams)); }
 
   export function exit() {
     player.gameInstance.destroyAllActors();
