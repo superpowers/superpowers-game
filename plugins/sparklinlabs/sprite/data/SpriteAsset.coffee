@@ -47,6 +47,7 @@ module.exports = class SpriteAsset extends SupCore.data.base.Asset
 
         animations: []
 
+      @serverData.resources.release 'spriteSettings', null
       super options, callback; return
     return
 
