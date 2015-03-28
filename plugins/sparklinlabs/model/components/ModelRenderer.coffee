@@ -12,6 +12,8 @@ module.exports = class ModelRenderer extends SupEngine.ActorComponent
     @color = { r: 1, g: 1, b: 1}
     @setModel modelAsset if modelAsset?
 
+    @isAlreadyUpdated = false
+
   _clearMesh: ->
     @actor.threeObject.remove @threeMesh
     @threeMesh.traverse (obj) -> obj.dispose?(); return
@@ -159,6 +161,8 @@ module.exports = class ModelRenderer extends SupEngine.ActorComponent
     return
 
   getBoneTransform: (name) ->
+    @_tickAnimation() if ! @hasPoseBeenUpdated
+
     position = new THREE.Vector3
     orientation = new THREE.Quaternion
     scale = new THREE.Vector3
@@ -190,6 +194,8 @@ module.exports = class ModelRenderer extends SupEngine.ActorComponent
     { prevKeyFrame, nextKeyFrame, t }
 
   updatePose: ->
+    @hasPoseBeenUpdated = true
+
     # TODO: @asset.speedMultiplier
     speedMultiplier = 1
     time = @animationTimer * speedMultiplier / SupEngine.GameInstance.framesPerSecond
@@ -229,6 +235,15 @@ module.exports = class ModelRenderer extends SupEngine.ActorComponent
     return
 
   update: ->
+    if @hasPoseBeenUpdated
+      @hasPoseBeenUpdated = false
+      return
+
+    @_tickAnimation()
+    @hasPoseBeenUpdated = false
+    return
+
+  _tickAnimation: ->
     return if ! @threeMesh?.skeleton?
     return if ! @animation? or @animation.duration == 0 or ! @isAnimationPlaying
 
