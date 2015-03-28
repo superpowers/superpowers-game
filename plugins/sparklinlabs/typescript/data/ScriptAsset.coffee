@@ -28,7 +28,19 @@ module.exports = class ScriptAsset extends SupCore.data.base.Asset
     super pub, @constructor.schema, serverData
 
   init: (options, callback) ->
-    behaviorName = options.name.replace /\s/g, ''
+    # Transform "script asset name" into "ScriptAssetNameBehavior"
+    behaviorName = options.name.trim()
+    behaviorName = behaviorName.slice(0, 1).toUpperCase() + behaviorName.slice(1)
+
+    loop
+      index = behaviorName.indexOf(' ')
+      break if index == -1
+
+      behaviorName =
+        behaviorName.slice(0, index) +
+        behaviorName.slice(index + 1, index + 2).toUpperCase() +
+        behaviorName.slice(index + 2)
+
     behaviorName += "Behavior" if ! _.endsWith(behaviorName, "Behavior")
 
     @pub = text: """
