@@ -27,7 +27,11 @@ module Sup {
     getVisible() { return this.__inner.threeObject.visible; return this; }
     setVisible(visible: boolean) { this.__inner.threeObject.visible = visible; }
     getParent() { return (this.__inner.parent) ? this. __inner.parent.__outer : null; }
-    setParent(parent, keepLocalTransform=false) { var innerParent = (parent) ? parent.__inner : null; this.__inner.setParent(innerParent, keepLocalTransform); return this; }
+    setParent(parent, options={}) {
+      var innerParent = (parent) ? parent.__inner : null;
+      this.__inner.setParent(innerParent, options.keepLocalTransform == true);
+      return this;
+    }
 
     getChild(name) {
       var foundActor = null;
