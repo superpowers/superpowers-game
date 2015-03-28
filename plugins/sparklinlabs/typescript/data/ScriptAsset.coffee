@@ -6,6 +6,7 @@ _ = require 'lodash'
 if ! window?
   serverRequire = require
   compileTypeScript = serverRequire '../runtime/compileTypeScript'
+  ts = serverRequire 'typescript'
   globalDefs = ""
 
   actorComponentAccessors = []
@@ -43,20 +44,25 @@ module.exports = class ScriptAsset extends SupCore.data.base.Asset
 
     behaviorName += "Behavior" if ! _.endsWith(behaviorName, "Behavior")
 
-    @pub = text: """
-class #{behaviorName} extends Sup.Behavior {
-  awake() {
+    defaultContent =
+      """
+      class #{behaviorName} extends Sup.Behavior {
+        awake() {
 
-  }
-  update() {
+        }
+        update() {
 
-  }
-}
-Sup.registerBehavior(#{behaviorName});
+        }
+      }
+      Sup.registerBehavior(#{behaviorName});
 
-"""
-    @pub.draft = @pub.text
-    @pub.revisionId = 0
+      """
+
+    @pub =
+      text: defaultContent
+      draft: defaultContent
+      revisionId: 0
+
     super options, callback; return
 
   setup: ->
@@ -138,23 +144,55 @@ Sup.registerBehavior(#{behaviorName});
 
     scriptNames = []
     scripts = {}
-    ownName = ""
+    ownEntryId = null
+    ownScriptName = ""
 
-    compile = =>
-      try
-        results = compileTypeScript scriptNames, scripts, globalDefs, sourceMap: false
-      catch e
-        callback null, [ { file: "", position: { line: 1, character: 1 }, message: e.message } ]
-        return
-
-      ownErrors = ( error for error in results.errors when error.file == ownName )
-      callback null, ownErrors
+    finish = (errors) =>
+      callback null, errors
 
       if @hasDraft
         @hasDraft = false
         @emit 'clearDiagnostic', 'draft'
 
       @emit 'change'
+      return
+
+    compile = =>
+      try results = compileTypeScript scriptNames, scripts, globalDefs, sourceMap: false
+      catch e then finish [ { file: "", position: { line: 1, character: 1 }, message: e.message } ]; return
+
+      ownErrors = ( error for error in results.errors when error.file == ownScriptName )
+      if ownErrors.length > 0 then finish ownErrors; return
+
+      supBehaviorTypeSymbol = results.program.getSourceFile("lib.d.ts").locals.Sup.exports.Behavior
+      behaviors = {}
+
+      for symbolName, symbol of results.program.getSourceFile(ownScriptName).locals
+        continue if (symbol.flags & ts.SymbolFlags.Class) != ts.SymbolFlags.Class
+
+        baseTypeNode = ts.getClassBaseTypeNode(symbol.valueDeclaration)
+        continue if ! baseTypeNode?
+
+        typeSymbol = results.typeChecker.getSymbolAtLocation baseTypeNode.typeName
+        continue if typeSymbol != supBehaviorTypeSymbol
+
+        properties = behaviors[symbolName] = []
+
+        for memberName, member of symbol.members
+          # Skip non-properties
+          continue if (member.flags & ts.SymbolFlags.Property) != ts.SymbolFlags.Property
+
+          # Skip static, private and protected members
+          modifierFlags = member.valueDeclaration.modifiers?.flags
+          continue if modifierFlags? and (modifierFlags & (ts.NodeFlags.Private | ts.NodeFlags.Protected | ts.NodeFlags.Static)) != 0
+
+          # TODO: skip members annotated as "non-customizable"
+          properties.push { name: memberName, type: '' }
+
+      @serverData.resources.acquire 'behaviorProperties', null, (err, behaviorProperties) =>
+        behaviorProperties.setScriptBehaviors ownEntryId, behaviors
+        @serverData.resources.release 'behaviorProperties', null
+        finish []; return
       return
 
     remainingAssetsToLoad = Object.keys(@serverData.entries.byId).length
@@ -169,8 +207,10 @@ Sup.registerBehavior(#{behaviorName});
       scriptNames.push name
       assetsLoading++
       @serverData.assets.acquire entry.id, null, (err, asset) =>
-        scripts[name] = "#{asset.pub.text}"
-        ownName = name if asset == @
+        scripts[name] = asset.pub.text
+        if asset == @
+          ownScriptName = name
+          ownEntryId = entry.id
 
         @serverData.assets.release entry.id
         assetsLoading--
