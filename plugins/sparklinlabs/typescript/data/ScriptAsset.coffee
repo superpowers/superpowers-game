@@ -1,6 +1,7 @@
 OT = require 'operational-transform'
 fs = require 'fs'
 path = require 'path'
+_ = require 'lodash'
 
 if ! window?
   serverRequire = require
@@ -26,9 +27,12 @@ module.exports = class ScriptAsset extends SupCore.data.base.Asset
     @document = new OT.Document
     super pub, @constructor.schema, serverData
 
-  init: (callback) ->
+  init: (options, callback) ->
+    behaviorName = options.name.replace /\s/g, ''
+    behaviorName += "Behavior" if ! _.endsWith(behaviorName, "Behavior")
+
     @pub = text: """
-class MyBehavior extends Sup.Behavior {
+class #{behaviorName} extends Sup.Behavior {
   awake() {
 
   }
@@ -36,12 +40,12 @@ class MyBehavior extends Sup.Behavior {
 
   }
 }
-Sup.registerBehavior(MyBehavior);
+Sup.registerBehavior(#{behaviorName});
 
 """
     @pub.draft = @pub.text
     @pub.revisionId = 0
-    super callback; return
+    super options, callback; return
 
   setup: ->
     @document.text = @pub.draft

@@ -40,14 +40,14 @@ module.exports = class ModelAsset extends SupCore.data.base.Asset
   constructor: (pub, serverAPI) ->
     super pub, @constructor.schema, serverAPI
 
-  init: (callback) ->
+  init: (options, callback) ->
     @pub =
       attributes: { position: null, index: null, color: null, uv: null, normal: null }
       bones: null
       maps: { diffuse: null }
       animations: []
 
-    super callback; return
+    super options, callback; return
 
   setup: ->
     @animations = new ModelAnimations @pub.animations

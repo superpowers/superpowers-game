@@ -33,7 +33,7 @@ module.exports = class SpriteAsset extends SupCore.data.base.Asset
     @animations = new SpriteAnimations @pub.animations
     return
 
-  init: (callback) ->
+  init: (options, callback) ->
     @serverData.resources.acquire 'spriteSettings', null, (err, spriteSettings) =>
       @pub =
         image: new Buffer 0
@@ -47,7 +47,7 @@ module.exports = class SpriteAsset extends SupCore.data.base.Asset
 
         animations: []
 
-      super callback; return
+      super options, callback; return
     return
 
   load: (assetPath) ->

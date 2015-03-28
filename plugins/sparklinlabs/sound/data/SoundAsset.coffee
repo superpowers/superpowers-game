@@ -10,9 +10,9 @@ module.exports = class SoundAsset extends SupCore.data.base.Asset
   constructor: (pub, serverData) ->
     super pub, @constructor.schema, serverData
 
-  init: (callback) ->
+  init: (options, callback) ->
     @pub =  sound: new Buffer(0), streaming: false
-    super callback; return
+    super options, callback; return
 
   load: (assetPath) ->
     fs.readFile path.join(assetPath, "asset.json"), { encoding: 'utf8' }, (err, json) =>
