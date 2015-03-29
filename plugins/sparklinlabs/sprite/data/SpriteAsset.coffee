@@ -26,8 +26,8 @@ module.exports = class SpriteAsset extends SupCore.data.base.Asset
 
     animations: { type: 'listById' }
 
-  constructor: (pub, serverData, @pluginFullName) ->
-    super pub, @constructor.schema, serverData
+  constructor: (id, pub, serverData) ->
+    super id, pub, @constructor.schema, serverData
 
   setup: ->
     @animations = new SpriteAnimations @pub.animations

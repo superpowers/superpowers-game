@@ -13,8 +13,8 @@ module.exports = class TileSetAsset extends SupCore.data.base.Asset
         keys: { minLength: 1, maxLength: 80 }
         values: { type: 'string', minLength: 0, maxLength: 80 }
 
-  constructor: (pub, serverData) ->
-    super pub, @constructor.schema, serverData
+  constructor: (id, pub, serverData) ->
+    super id, pub, @constructor.schema, serverData
 
   init: (options, callback) ->
     @pub =

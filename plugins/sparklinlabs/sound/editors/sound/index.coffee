@@ -34,7 +34,7 @@ onConnected = ->
   return
 
 onAssetReceived = (err, asset) ->
-  data.asset = new SoundAsset asset
+  data.asset = new SoundAsset info.assetId, asset
 
   setupSound()
   setupProperty 'streaming', data.asset.pub.streaming

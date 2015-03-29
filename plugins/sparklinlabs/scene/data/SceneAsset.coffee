@@ -12,10 +12,9 @@ module.exports = class SceneAsset extends SupCore.data.base.Asset
   @schema =
     nodes: { type: 'treeById' }
 
-  constructor: (pub) ->
+  constructor: (id, pub, serverData) ->
     @componentPathsByDependentAssetId = {}
-
-    super pub, @constructor.schema
+    super id, pub, @constructor.schema, serverData
 
   init: (options, callback) ->
     @pub = nodes: []

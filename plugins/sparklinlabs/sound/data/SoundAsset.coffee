@@ -7,8 +7,8 @@ module.exports = class SoundAsset extends SupCore.data.base.Asset
     sound: { type: 'buffer' }
     streaming: { type: 'boolean', mutable: true }
 
-  constructor: (pub, serverData) ->
-    super pub, @constructor.schema, serverData
+  constructor: (id, pub, serverData) ->
+    super id, pub, @constructor.schema, serverData
 
   init: (options, callback) ->
     @pub =  sound: new Buffer(0), streaming: false

@@ -37,8 +37,8 @@ module.exports = class ModelAsset extends SupCore.data.base.Asset
 
     animations: { type: 'listById' }
 
-  constructor: (pub, serverAPI) ->
-    super pub, @constructor.schema, serverAPI
+  constructor: (id, pub, serverData) ->
+    super id, pub, @constructor.schema, serverData
 
   init: (options, callback) ->
     @pub =

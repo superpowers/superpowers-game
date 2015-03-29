@@ -86,7 +86,7 @@ onWelcome = (clientId) ->
   return
 
 onAssetReceived = (err, asset) ->
-  data.asset = new ScriptAsset asset
+  data.asset = new ScriptAsset info.assetId, asset
 
   ui.editor.setValue data.asset.pub.draft
   ui.editor.clearHistory()

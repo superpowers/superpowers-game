@@ -24,9 +24,9 @@ module.exports = class ScriptAsset extends SupCore.data.base.Asset
     draft: { type: 'string' }
     revisionId: { type: 'integer' }
 
-  constructor: (pub, serverData) ->
+  constructor: (id, pub, serverData) ->
     @document = new OT.Document
-    super pub, @constructor.schema, serverData
+    super id, pub, @constructor.schema, serverData
 
   init: (options, callback) ->
     # Transform "script asset name" into "ScriptAssetNameBehavior"
@@ -63,7 +63,15 @@ module.exports = class ScriptAsset extends SupCore.data.base.Asset
       draft: defaultContent
       revisionId: 0
 
-    super options, callback; return
+    @serverData.resources.acquire 'behaviorProperties', null, (err, behaviorProperties) =>
+      if ! behaviorProperties.pub.behaviors[behaviorName]?
+        behaviors = {}
+        behaviors[behaviorName] = []
+        behaviorProperties.setScriptBehaviors @id, behaviors
+
+      @serverData.resources.release 'behaviorProperties', null
+      super options, callback; return
+    return
 
   setup: ->
     @document.text = @pub.draft
@@ -74,6 +82,13 @@ module.exports = class ScriptAsset extends SupCore.data.base.Asset
 
   restore: ->
     if @hasDraft then @emit 'setDiagnostic', 'draft', 'info'
+    return
+
+  destroy: (callback) ->
+    @serverData.resources.acquire 'behaviorProperties', null, (err, behaviorProperties) =>
+      behaviorProperties.clearScriptBehaviors @id
+      @serverData.resources.release 'behaviorProperties', null
+      callback(); return
     return
 
   load: (assetPath) ->
@@ -144,7 +159,6 @@ module.exports = class ScriptAsset extends SupCore.data.base.Asset
 
     scriptNames = []
     scripts = {}
-    ownEntryId = null
     ownScriptName = ""
 
     finish = (errors) =>
@@ -190,7 +204,7 @@ module.exports = class ScriptAsset extends SupCore.data.base.Asset
           properties.push { name: memberName, type: '' }
 
       @serverData.resources.acquire 'behaviorProperties', null, (err, behaviorProperties) =>
-        behaviorProperties.setScriptBehaviors ownEntryId, behaviors
+        behaviorProperties.setScriptBehaviors @id, behaviors
         @serverData.resources.release 'behaviorProperties', null
         finish []; return
       return
@@ -208,9 +222,7 @@ module.exports = class ScriptAsset extends SupCore.data.base.Asset
       assetsLoading++
       @serverData.assets.acquire entry.id, null, (err, asset) =>
         scripts[name] = asset.pub.text
-        if asset == @
-          ownScriptName = name
-          ownEntryId = entry.id
+        ownScriptName = name if asset == @
 
         @serverData.assets.release entry.id
         assetsLoading--

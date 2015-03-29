@@ -52,3 +52,18 @@ module.exports = class BehaviorPropertiesResource extends SupCore.data.base.Reso
       delete @pub.behaviors[oldBehaviorName]
 
     return
+
+  clearScriptBehaviors: (scriptId) ->
+    @client_clearScriptBehaviors scriptId
+    @emit 'command', 'clearScriptBehaviors', scriptId
+    @emit 'change'; return
+
+  client_clearScriptBehaviors: (scriptId, behaviorProperties) ->
+    oldBehaviorNames = @behaviorNamesByScriptId[scriptId]
+    return if ! oldBehaviorNames?
+
+    for oldBehaviorName in oldBehaviorNames
+      delete @pub.behaviors[oldBehaviorName]
+
+    delete @behaviorNamesByScriptId[scriptId]
+    return

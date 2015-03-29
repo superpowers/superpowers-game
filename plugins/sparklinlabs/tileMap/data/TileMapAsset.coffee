@@ -20,8 +20,8 @@ module.exports = class TileMapAsset extends SupCore.data.base.Asset
   #             x,  y, flipX, flipY, angle
   @emptyTile: [-1, -1, false, false, 0]
 
-  constructor: (pub, serverData) ->
-    super pub, @constructor.schema, serverData
+  constructor: (id, pub, serverData) ->
+    super id, pub, @constructor.schema, serverData
 
   init: (options, callback) ->
     @pub =
