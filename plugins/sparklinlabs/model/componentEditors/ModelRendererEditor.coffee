@@ -81,7 +81,6 @@ module.exports = class ModelRendererEditor
 
   onAssetEdited: (assetId, command, args...) =>
     return if parseInt(assetId) != @modelAssetId
-    console.log "edit"
 
     return if command.indexOf("Animation") == -1
     animationId = @animationSelectBox.value
@@ -98,7 +97,7 @@ module.exports = class ModelRendererEditor
       @animationSelectBox.value = animationId
     else
       @setProperty 'animationId', null
-    console.log "edited"
+
     return
 
   onAssetTrashed: =>
