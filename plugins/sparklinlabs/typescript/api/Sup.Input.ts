@@ -20,6 +20,11 @@ module Sup {
       return { x: mousePos.x / player.canvas.clientWidth * 2 - 1, y: (mousePos.y / player.canvas.clientHeight * 2 - 1) * -1 };
     }
 
+    export function getMouseDelta() {
+      var mouseDelta = player.gameInstance.input.mouseDelta;
+      return { x: mouseDelta.x / player.canvas.clientWidth * 2 - 1, y: (mouseDelta.y / player.canvas.clientHeight * 2 - 1) * -1 };
+    }
+
     export function isMouseButtonDown(button) {
       if ( player.gameInstance.input.mouseButtons[button] == null ) { throw new Error("Invalid button index") }
       return player.gameInstance.input.mouseButtons[button].isDown
