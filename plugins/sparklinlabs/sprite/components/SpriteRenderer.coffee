@@ -11,6 +11,8 @@ module.exports = class SpriteRenderer extends SupEngine.ActorComponent
     @color = { r: 1, g: 1, b: 1}
     @setSprite spriteAsset if spriteAsset?
 
+    @hasFrameBeenUpdated = false
+
   setSprite: (asset) ->
     @_clearMesh() if @asset?
     @asset = asset
@@ -81,6 +83,7 @@ module.exports = class SpriteRenderer extends SupEngine.ActorComponent
       @animationLooping = newAnimationLooping
       @animationTimer = 0
       @isAnimationPlaying = true
+      @updateFrame()
     else
       @animationName = null
       @setFrame 0
@@ -116,6 +119,8 @@ module.exports = class SpriteRenderer extends SupEngine.ActorComponent
     return
 
   updateFrame: ->
+    @hasFrameBeenUpdated = true
+
     animation = @animationsByName[@animationName]
     frame = animation.startFrameIndex + Math.max(1, Math.ceil(@animationTimer / SupEngine.GameInstance.framesPerSecond * @asset.framesPerSecond)) - 1
     if frame > animation.endFrameIndex
@@ -130,6 +135,15 @@ module.exports = class SpriteRenderer extends SupEngine.ActorComponent
     return
 
   update: ->
+    if @hasFrameBeenUpdated
+      @hasFrameBeenUpdated = false
+      return
+
+    @_tickAnimation()
+    @hasFrameBeenUpdated = false
+    return
+
+  _tickAnimation: ->
     return if ! @animationName? or ! @isAnimationPlaying
 
     @animationTimer += 1
