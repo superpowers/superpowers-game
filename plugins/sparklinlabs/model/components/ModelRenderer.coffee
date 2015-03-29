@@ -12,7 +12,7 @@ module.exports = class ModelRenderer extends SupEngine.ActorComponent
     @color = { r: 1, g: 1, b: 1}
     @setModel modelAsset if modelAsset?
 
-    @isAlreadyUpdated = false
+    @hasPoseBeenUpdated = false
 
   _clearMesh: ->
     @actor.threeObject.remove @threeMesh
