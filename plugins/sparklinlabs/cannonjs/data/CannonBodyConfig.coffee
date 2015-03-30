@@ -19,7 +19,7 @@ module.exports = class CannonBodyConfig extends SupCore.data.base.ComponentConfi
     offsetX: 0
     offsetY: 0
     offsetZ: 0
-    shape: 'Box'
+    shape: 'box'
     halfWidth: 0.5
     halfHeight: 0.5
     halfDepth: 0.5
