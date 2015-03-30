@@ -34,9 +34,6 @@ module.exports = class P2Body extends SupEngine.ActorComponent
       when "circle"
         @radius = config.radius ? 1
         @body.addShape(new window.p2.Circle(@radius))
-      when "line"
-        @length = config.length ? 1
-        @body.addShape(new window.p2.Line(@length))
 
     @body.position = [@actorPosition.x, @actorPosition.y]
     @body.shapeOffsets[0] = [@offsetX, @offsetY]
