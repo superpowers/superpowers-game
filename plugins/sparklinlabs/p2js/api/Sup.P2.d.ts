@@ -1,0 +1,14 @@
+declare module Sup {
+  module P2 {
+    function getWorld(): p2.World;
+    function resetWorld();
+    function getWorldAutoUpdate(): boolean;
+    function setWorldAutoUpdate(autoUpdate: boolean);
+
+    class Body extends ActorComponent {
+      body: p2.Body;
+
+      constructor( actor: Sup.Actor, options?: any );
+    }
+  }
+}

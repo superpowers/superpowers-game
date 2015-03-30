@@ -14,6 +14,7 @@ makeBrowserify = (source, destination, output) ->
 
   tasks.push "#{output}-browserify"
 
+makeBrowserify "./components/index.coffee", "./public", "components"
 makeBrowserify "./runtime/index.coffee", "./public", "runtime"
 makeBrowserify "./api/index.coffee", "./public", "api"
 
