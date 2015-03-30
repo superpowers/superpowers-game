@@ -1,6 +1,7 @@
 declare module Sup {
   module Cannon {
-    var World: CANNON.World;
+    function getWorld(): CANNON.World;
+    function resetWorld();
     function getWorldAutoUpdate(): boolean;
     function setWorldAutoUpdate(autoUpdate: boolean);
 
