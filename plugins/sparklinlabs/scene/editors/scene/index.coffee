@@ -355,8 +355,7 @@ onDeleteNodeClick = ->
 onTransformInputChange = (event) ->
   return if ui.nodesTreeView.selectedNodes.length != 1
 
-  transformType = event.target.parentElement.parentElement.className
-
+  transformType = event.target.parentElement.parentElement.parentElement.className
   inputs = ui.transform["#{transformType}Elts"]
 
   value =
@@ -383,23 +382,23 @@ createComponentElement = (nodeId, component) ->
   clone = document.importNode template.content, true
 
   clone.querySelector('.type').textContent = component.type
-  tbody = clone.querySelector('.settings')
+  table = clone.querySelector('.settings')
 
   setProperty = (path, value) ->
     socket.emit 'edit:assets', info.assetId, 'setComponentProperty', nodeId, component.id, path, value, (err) ->
       if err? then alert err; return
 
   componentEditorPlugin = SupEngine.componentEditorClasses[component.type]
-  ui.componentEditors[component.id] = new componentEditorPlugin SupClient, tbody, component.config, data.projectClient, setProperty
+  ui.componentEditors[component.id] = new componentEditorPlugin SupClient, table.querySelector('tbody'), component.config, data.projectClient, setProperty
 
   shrinkButton = clone.querySelector('.shrink-component')
   shrinkButton.addEventListener 'click', =>
-    if tbody.style.display == "none"
-      tbody.style.display = ""
-      shrinkButton.innerHTML = "-"
+    if table.style.display == 'none'
+      table.style.display = ''
+      shrinkButton.textContent = '–'
     else
-      tbody.style.display = "none"
-      shrinkButton.innerHTML = "+"
+      table.style.display = 'none'
+      shrinkButton.textContent = '+'
     return
 
   clone.querySelector('.delete-component').addEventListener 'click', onDeleteComponentClick

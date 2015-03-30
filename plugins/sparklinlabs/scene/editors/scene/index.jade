@@ -9,10 +9,10 @@ html
     template#component-cartridge-template
       .header
         .type
-        button.shrink-component -
-        button.delete-component x
-      table
-        tbody.settings
+        button.shrink-component –
+        button.delete-component ×
+      table.settings
+        tbody
 
   body
     .main
@@ -27,25 +27,28 @@ html
       .nodes-tree-view
 
       .inspector.noSelection
-        .transform
-          .position
-            .label Position
-            .values
-              input(type="number").x
-              input(type="number").y
-              input(type="number").z
-          .orientation
-            .label Orientation
-            .values
-              input(type="number").x
-              input(type="number").y
-              input(type="number").z
-          .scale
-            .label Scale
-            .values
-              input(type="number").x
-              input(type="number").y
-              input(type="number").z
+        table.transform
+          tr.position
+            th.label  Position
+            td
+              .values
+                input(type="number").x
+                input(type="number").y
+                input(type="number").z
+          tr.orientation
+            th.label Orientation
+            td
+              .values
+                input(type="number").x
+                input(type="number").y
+                input(type="number").z
+          tr.scale
+            th.label Scale
+            td
+              .values
+                input(type="number").x
+                input(type="number").y
+                input(type="number").z
         .components-buttons
           button.new-component New Component
         .components

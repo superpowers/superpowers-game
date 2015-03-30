@@ -40,7 +40,8 @@ body
 
       > input
         flex 1
-        margin 0.25em
+      > input:not(:last-of-type)
+        border-right 1px solid #ccc
 
   &.noSelection
     visibility hidden
@@ -50,26 +51,71 @@ body
 
   button
     flex 1
+    padding 0.25em
 
 .components
   .header
     display flex
-    background #ccc
+    background #444
+    color #fff
 
     .type
       flex 1
       padding 0.5em
 
-  .settings
-    td, th
-      padding 0.25em
+    button
+      width 30px
+      background transparent
+      border none
+      opacity 0.5
+      font-size 20px
+      font-weight bold
+      cursor pointer
+      color #fff
 
-    th
-      text-align left
+      &:hover
+        opacity 1
+        background-color rgba(0,0,0,0.1)
 
-    td
-      input, select
-        width 100%
+      &:active
+        background-color #fff
+        color #444
+
+      &:disabled
+        opacity 0.2
+        cursor default
+
+.inspector table
+  width 100%
+  border-collapse collapse
+  font-size 12px
+
+.inspector table
+  th, td
+    border 1px solid #ccc
+
+  th
+    text-align left
+    padding 0.5em
+    white-space nowrap
+    overflow-x hidden
+    text-overflow ellipsis
+    font-weight normal
+    background #eee
+
+  td input, td select
+    width 100%
+    margin 0
+    padding 0.25em
+    border none
+
+  td select
+    padding 0.25em 0
+
+  td input[type=checkbox]
+    width auto
+    margin 0.25em
+    cursor pointer
 
 .main
   flex 1
