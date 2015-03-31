@@ -147,13 +147,13 @@ module Sup {
       return this;
     }
 
-    lookAt(target) {
-      this.__inner.lookAt( tmpVector3.set(target.x, target.y, target.z) );
+    lookAt(target, upVector) {
+      this.__inner.lookAt( tmpVector3.set(target.x, target.y, target.z), upVector );
       return this;
     }
 
-    lookTowards(direction) {
-      this.__inner.lookTowards( tmpVector3.set(direction.x, direction.y, direction.z) );
+    lookTowards(direction, upVector) {
+      this.__inner.lookTowards( tmpVector3.set(direction.x, direction.y, direction.z), upVector );
       return this;
     }
 

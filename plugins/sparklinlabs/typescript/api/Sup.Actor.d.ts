@@ -36,8 +36,8 @@ declare module Sup {
     setLocalEulerAngles(angles: Math.Vector3): Actor;
     rotateEulerAngles(offset: Math.Vector3): Actor;
     rotateLocalEulerAngles(offset: Math.Vector3): Actor;
-    lookAt(target: Math.Vector3 ): Actor;
-    lookTowards(direction: Math.Vector3): void;
+    lookAt(target: Math.Vector3, upVector?: Math.Vector3): Actor;
+    lookTowards(direction: Math.Vector3, upVector?: Math.Vector3): void;
 
     getLocalScale(): Math.Vector3;
     setLocalScale(scale: Math.Vector3);
