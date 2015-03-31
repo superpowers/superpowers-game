@@ -3,6 +3,8 @@ module Sup {
   var degToRad = window.Math.PI / 180;
   var radToDeg = 180 / window.Math.PI;
 
+  var tmpVector3 = new SupEngine.THREE.Vector3();
+
   export module Math {
 
     export function clamp(v, min, max) { return window.Math.max( min, window.Math.min(max, v) ) }
@@ -106,6 +108,13 @@ module Sup {
         var theta = this.dot( v ) / ( this.length() * v.length() );
 		    return window.Math.acos( Math.clamp( theta, - 1, 1 ) );
       }
+
+      unproject(camera) {
+        tmpVector3.set(this.x, this.y, this.z);
+        tmpVector3.unproject(camera.__inner.threeCamera);
+        this.set(tmpVector3.x, tmpVector3.y, tmpVector3.z);
+        return this;
+     }
     }
 
     export class Quaternion {

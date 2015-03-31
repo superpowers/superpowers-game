@@ -43,6 +43,7 @@ declare module Sup {
       length(): number;
       distanceTo(v: Vector3): number;
       angleTo(v: Vector3): number;
+      unproject(camera: Camera): Vector3;
     }
 
     class Quaternion {
