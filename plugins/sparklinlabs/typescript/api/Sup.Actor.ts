@@ -138,7 +138,7 @@ module Sup {
     }
 
     rotateEulerAngles(offset) {
-      this.__inner.rotateEulerAngles( tmpEuler.set(offset.x, offset.y, offset.z) );
+      this.__inner.rotateGlobalEulerAngles( tmpEuler.set(offset.x, offset.y, offset.z) );
       return this;
     }
 
