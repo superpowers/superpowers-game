@@ -63,17 +63,14 @@ module.exports = class Actor
     @threeObject.updateMatrixWorld()
     return
 
-  lookAt: (target) ->
-    @lookTowards target.sub @getGlobalPosition()
+  lookAt: (target, up) ->
+    m = new THREE.Matrix4
+    m.lookAt @getGlobalPosition(), target, up
+    @setGlobalOrientation new THREE.Quaternion().setFromRotationMatrix m
     return
 
-  lookTowards: (direction) ->
-    angleY = Math.atan2 direction.x, direction.z
-
-    planeDistance = Math.sqrt Math.pow(direction.x, 2) + Math.pow(direction.z, 2)
-    angleX = -Math.atan2 direction.y, planeDistance
-
-    @setGlobalOrientation new THREE.Quaternion().setFromEuler new THREE.Euler angleX, angleY, 0
+  lookTowards: (direction, up) ->
+    @lookAt @getGlobalPosition().add(direction), up
     return
 
   setLocalOrientation: (quaternion) ->
@@ -108,7 +105,7 @@ module.exports = class Actor
     @threeObject.updateMatrixWorld()
     return
 
-  setParent: (newParent, keepLocal = false) ->
+  setParent: (newParent, keepLocal=false) ->
     return if @pendingForDestruction or newParent?.pendingForDestruction
 
     globalMatrix = @getGlobalMatrix() if ! keepLocal
