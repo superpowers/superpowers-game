@@ -173,7 +173,14 @@ module Sup {
       }
 
       var behavior = new behaviorClass(this.__inner);
-      if (properties != null) { for (var propertyName in properties) { behavior[propertyName] = properties[propertyName]; } }
+
+      if (properties != null) {
+        for (var propertyName in properties) {
+          // TODO: Validate property existence and type like in Behavior.setupComponent
+          behavior[propertyName] = properties[propertyName];
+        }
+      }
+
       behavior.__inner.awake();
       return behavior;
     }

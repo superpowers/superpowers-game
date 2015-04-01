@@ -12,7 +12,7 @@ module.exports = class BehaviorEditor
     behaviorNameRow = @SupUI.component.createSetting @tbody, 'Class'
     @behaviorNameField = @SupUI.component.createTextField behaviorNameRow.valueElt, @config.behaviorName
     @behaviorNameField.setAttribute 'list', @behaviorNamesDataListElt.id
-    @behaviorNameField.addEventListener 'input', @_onChangeBehaviorName
+    @behaviorNameField.addEventListener 'change', @_onChangeBehaviorName
 
     @behaviorPropertiesHeaderRow = document.createElement('tr')
     headerTh = document.createElement('th')
@@ -58,6 +58,7 @@ module.exports = class BehaviorEditor
         propertySetting = @SupUI.component.createSetting @tbody, property.name
         @propertyRows.push propertySetting.rowElt
         propertyField = @SupUI.component.createTextField propertySetting.valueElt, @config.propertyValues[property.name] ? ""
+        propertyField.addEventListener 'change', @_onChangePropertyValue
 
     return
 
@@ -69,3 +70,5 @@ module.exports = class BehaviorEditor
     return
 
   _onChangeBehaviorName: (event) => @setProperty 'behaviorName', event.target.value; return
+
+  _onChangePropertyValue: (event) =>

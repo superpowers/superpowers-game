@@ -30,9 +30,11 @@ module Sup {
       actor.__inner.setLocalScale( tmpVector3.set(node.scale.x, node.scale.y, node.scale.z) )
 
       node.components.forEach( (sceneComponent) => {
-        var actorComponent = player.createComponent(sceneComponent.type, actor, sceneComponent.config);
-        SupRuntime.plugins[sceneComponent.type].setupComponent(player, actorComponent.__inner, sceneComponent.config);
-      })
+        allComponents.push({
+          sceneComponent: sceneComponent,
+          actorComponent: player.createComponent(sceneComponent.type, actor, sceneComponent.config)
+        });
+      });
 
       node.children.forEach( (child) => { walk(child, actor); } );
 
@@ -44,9 +46,15 @@ module Sup {
       actor.getChildren().forEach( (child) => { awakeActor(child); } )
     }
 
-    var actors = [];
-    sceneAsset.__inner.nodes.forEach( (node) => { actors.push( walk(node, sceneParentActor) ); } )
-    actors.forEach( (actor) => { awakeActor(actor); })
+    var actors: Actor[] = [];
+    var allComponents = [];
+    sceneAsset.__inner.nodes.forEach( (node) => { actors.push( walk(node, sceneParentActor) ); } );
+
+    allComponents.forEach((x) => {
+      SupRuntime.plugins[x.sceneComponent.type].setupComponent(player, x.actorComponent.__inner, x.sceneComponent.config);
+    });
+
+    actors.forEach( (actor) => { awakeActor(actor); });
 
     return actors;
   }

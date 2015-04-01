@@ -178,7 +178,15 @@ module.exports = class ScriptAsset extends SupCore.data.base.Asset
       ownErrors = ( error for error in results.errors when error.file == ownScriptName )
       if ownErrors.length > 0 then finish ownErrors; return
 
-      supBehaviorTypeSymbol = results.program.getSourceFile("lib.d.ts").locals.Sup.exports.Behavior
+      libSourceFile = results.program.getSourceFile("lib.d.ts")
+      supTypeSymbols =
+        Actor: libSourceFile.locals.Sup.exports.Actor
+        Behavior: libSourceFile.locals.Sup.exports.Behavior
+        MathVector3: libSourceFile.locals.Sup.exports.Math.exports.Vector3
+        Asset: libSourceFile.locals.Sup.exports.Asset
+
+      supTypeSymbolsList = (value for name, value of supTypeSymbols)
+
       behaviors = {}
 
       for symbolName, symbol of results.program.getSourceFile(ownScriptName).locals
@@ -188,7 +196,7 @@ module.exports = class ScriptAsset extends SupCore.data.base.Asset
         continue if ! baseTypeNode?
 
         typeSymbol = results.typeChecker.getSymbolAtLocation baseTypeNode.typeName
-        continue if typeSymbol != supBehaviorTypeSymbol
+        continue if typeSymbol != supTypeSymbols.Behavior
 
         properties = behaviors[symbolName] = []
 
@@ -201,7 +209,17 @@ module.exports = class ScriptAsset extends SupCore.data.base.Asset
           continue if modifierFlags? and (modifierFlags & (ts.NodeFlags.Private | ts.NodeFlags.Protected | ts.NodeFlags.Static)) != 0
 
           # TODO: skip members annotated as "non-customizable"
-          properties.push { name: memberName, type: '' }
+
+          type = results.typeChecker.getTypeAtLocation(member.valueDeclaration)
+          typeName = "unknown"
+          symbol = type.getSymbol()
+          if symbol in supTypeSymbolsList
+            typeName = symbol.getName()
+          else if type.intrinsicName?
+            typeName = type.intrinsicName
+
+          if typeName?
+            properties.push { name: memberName, type: typeName }
 
       @serverData.resources.acquire 'behaviorProperties', null, (err, behaviorProperties) =>
         behaviorProperties.setScriptBehaviors @id, behaviors

@@ -24,7 +24,7 @@ exports.init = (player, callback) ->
       behaviorClass = player.behaviorClasses[config.behaviorName]
       if ! behaviorClass?
         throw new Error "Could not find a behavior class named \"#{config.behaviorName}\" for actor \"#{actor.getName()}\". Make sure you're using the class name, not the script's name and that the class is declared before the behavior component is created (or before the scene is loaded)."
-      new behaviorClass actor.__inner, config.properties
+      new behaviorClass actor.__inner
     else
       if ! actorComponentTypesByName[type]?
         actorComponentTypesByName[type] = window

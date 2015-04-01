@@ -5,8 +5,7 @@ module.exports = class BehaviorConfig extends SupCore.data.base.ComponentConfig
     propertyValues:
       type: 'hash'
       keys: { minLength: 1, maxLength: 80 }
-      values:
-        type: 'string'
+      values: { type: 'any' }
 
   @create: ->
     behaviorName: ''
@@ -15,3 +14,17 @@ module.exports = class BehaviorConfig extends SupCore.data.base.ComponentConfig
   constructor: (pub) ->
     pub.propertyValues ?= {}
     super pub, @constructor.schema
+
+  server_setBehaviorPropertyValue: (name, value, callback) ->
+    @pub.propertyValues[name] = value
+    callback null, name, value; return
+
+  client_setBehaviorPropertyValue: (name, value) ->
+    @pub.propertyValues[name] = value; return
+
+  server_clearBehaviorPropertyValue: (name, callback) ->
+    delete @pub.propertyValues[name]
+    callback null, name; return
+
+  client_clearBehaviorPropertyValue: (name) ->
+    delete @pub.propertyValues[name]; return
