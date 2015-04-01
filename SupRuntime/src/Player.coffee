@@ -10,66 +10,30 @@ module.exports = class Player
 
     @entriesById = {}
     @entriesByPath = {}
+    @resources = {}
 
     @_assetsById = {}
     @outerAssetsById = {}
 
   load: (progressCallback, callback) ->
-    assetsToLoad = null
-    assetCount = 1
-    loadedAssetCount = 0
+    progress = 0
 
-    onAssetLoaded = (err, entry, asset) =>
-      if err? then alert "Failed to load #{entry.name}: #{err.message}"; return
-
-      loadedAssetCount += 1
-      progressCallback loadedAssetCount, assetsToLoad.length
-
-      @entriesById[entry.id] = entry
-      @entriesByPath[entry.name] = entry
-
-      @_assetsById[entry.id] = asset
-
-      @_startPlugins callback if loadedAssetCount == assetsToLoad.length
+    innerProgressCallback = =>
+      progress++
+      total = @resourcesToLoad.length + @assetsToLoad.length
+      progressCallback progress, total
       return
 
-    @_initPlugins (err) =>
-      @getAssetData "game.json", 'json', (err, gameData) =>
-        if err? then alert "Failed to load game manifest"; return
-
-        document.title = gameData.name
-
-        assetsToLoad = []
-        walk = (asset, parent="") =>
-          if asset.children?
-            children = []
-            children.push child.name for child in asset.children
-
-          assetsToLoad.push {id: asset.id, name: "#{parent}#{asset.name}", type: asset.type, children: children}
-          parent += "#{asset.name}/"
-
-          walk child, parent for child in asset.children if asset.children?
-          return
-        walk asset for asset in gameData.assets
-
-        assetsToLoad.forEach (entry) =>
-          if entry.children?
-            onAssetLoaded null, entry, {}
-            return
-
-          plugin = SupRuntime.plugins[entry.type]
-          if ! plugin?.loadAsset?
-            console.warn "Don't know how to load assets of type '#{entry.type}'"
-            onAssetLoaded null, entry, {}
-            return
-
-          plugin.loadAsset @, entry, (err, data) => onAssetLoaded err, entry, data; return
-          return
-        return
-      return
+    async.series [
+      @_initPlugins
+      @_loadManifest
+      (cb) => @_loadResources innerProgressCallback, cb; return
+      (cb) => @_loadAssets innerProgressCallback, cb; return
+      @_startPlugins
+    ], callback
     return
 
-  _initPlugins: (callback) ->
+  _initPlugins: (callback) =>
     async.each Object.keys(SupRuntime.plugins), (name, cb) =>
       plugin = SupRuntime.plugins[name]
       if plugin.init? then plugin.init @, cb
@@ -78,7 +42,82 @@ module.exports = class Player
     , callback
     return
 
-  _startPlugins: (callback) ->
+  _loadManifest: (callback) =>
+    @getAssetData "game.json", 'json', (err, gameData) =>
+      if err? then callback new Error "Failed to load game manifest"; return
+
+      document.title = gameData.name
+
+      @resourcesToLoad = Object.keys(SupRuntime.resourcePlugins)
+
+      @assetsToLoad = []
+      walk = (asset, parent="") =>
+        children = ( child.name for child in asset.children ) if asset.children?
+        @assetsToLoad.push { id: asset.id, name: "#{parent}#{asset.name}", type: asset.type, children: children }
+        parent += "#{asset.name}/"
+        walk child, parent for child in asset.children if asset.children?
+        return
+
+      walk asset for asset in gameData.assets
+      callback(); return
+    return
+
+  _loadResources: (progressCallback, callback) =>
+    if @resourcesToLoad.length == 0 then callback(); return
+    resourcesLoaded = 0
+
+    onResourceLoaded = (err, resourceName, resource) =>
+      if err? then callback new Error "Failed to load resource #{resourceName}: #{err.message}"; return
+
+      @resources[resourceName] = resource
+
+      progressCallback()
+      resourcesLoaded++
+      callback() if resourcesLoaded == @resourcesToLoad.length
+      return
+
+    @resourcesToLoad.forEach (resourceName) =>
+      plugin = SupRuntime.resourcePlugins[resourceName]
+      if ! plugin?
+        # This resource isn't meant to be loaded at runtime, skip
+        onResourceLoaded null, resourceName, null; return
+
+      plugin.loadResource @, resourceName, (err, data) => onResourceLoaded err, resourceName, data; return
+      return
+    return
+
+  _loadAssets: (progressCallback, callback) =>
+    if @assetsToLoad.length == 0 then callback(); return
+    assetsLoaded = 0
+
+    onAssetLoaded = (err, entry, asset) =>
+      if err? then callback new Error "Failed to load asset #{entry.name}: #{err.message}"; return
+
+      @entriesById[entry.id] = entry
+      @entriesByPath[entry.name] = entry
+      @_assetsById[entry.id] = asset
+
+      progressCallback()
+      assetsLoaded++
+      callback() if assetsLoaded == @assetsToLoad.length
+      return
+
+    @assetsToLoad.forEach (entry) =>
+      if entry.children?
+        onAssetLoaded null, entry, {}
+        return
+
+      plugin = SupRuntime.plugins[entry.type]
+      if ! plugin?.loadAsset?
+        console.warn "Don't know how to load assets of type '#{entry.type}'"
+        onAssetLoaded null, entry, {}
+        return
+
+      plugin.loadAsset @, entry, (err, data) => onAssetLoaded err, entry, data; return
+      return
+    return
+
+  _startPlugins: (callback) =>
     async.each Object.keys(SupRuntime.plugins), (name, cb) =>
       plugin = SupRuntime.plugins[name]
       if plugin.start? then plugin.start @, cb

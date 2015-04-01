@@ -57,7 +57,11 @@ onLoadProgress = (value, max) ->
   progressBar.max = max
   return
 
-onLoaded = ->
+onLoaded = (err) ->
+  if err?
+    console.error err
+    alert err.message; return
+
   setTimeout ->
     loadingElt.classList.remove 'start'
     loadingElt.classList.add 'end'
