@@ -65,12 +65,12 @@ module.exports = class Actor
 
   lookAt: (target, up) ->
     m = new THREE.Matrix4
-    m.lookAt @getGlobalPosition(), target, up
+    m.lookAt @getGlobalPosition(), target, up ? @threeObject.up
     @setGlobalOrientation new THREE.Quaternion().setFromRotationMatrix m
     return
 
   lookTowards: (direction, up) ->
-    @lookAt @getGlobalPosition().add(direction), up
+    @lookAt @getGlobalPosition().sub(direction), up
     return
 
   setLocalOrientation: (quaternion) ->
