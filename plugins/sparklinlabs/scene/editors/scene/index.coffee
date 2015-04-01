@@ -386,12 +386,16 @@ createComponentElement = (nodeId, component) ->
   clone.querySelector('.type').textContent = component.type
   table = clone.querySelector('.settings')
 
-  editComponent = (command, args...) ->
-    socket.emit 'edit:assets', info.assetId, 'editComponent', nodeId, component.id, command, args..., (err) ->
-      if err? then alert err; return
+  editConfig = (command, args..., callback) ->
+    # If no callback was provided, add it to the arguments list
+    if typeof callback != 'function'
+      args.push callback
+      callback = (err) => if err? then alert err; return
+
+    socket.emit 'edit:assets', info.assetId, 'editComponent', nodeId, component.id, command, args..., callback; return
 
   componentEditorPlugin = SupEngine.componentEditorClasses[component.type]
-  ui.componentEditors[component.id] = new componentEditorPlugin SupClient, table.querySelector('tbody'), component.config, data.projectClient, editComponent
+  ui.componentEditors[component.id] = new componentEditorPlugin SupClient, table.querySelector('tbody'), component.config, data.projectClient, editConfig
 
   shrinkButton = clone.querySelector('.shrink-component')
   shrinkButton.addEventListener 'click', =>

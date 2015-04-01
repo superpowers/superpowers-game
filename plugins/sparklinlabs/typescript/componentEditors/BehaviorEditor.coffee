@@ -56,8 +56,12 @@ module.exports = class BehaviorEditor
     if behavior?
       for property in behavior.properties
         propertySetting = @SupUI.component.createSetting @tbody, property.name
+        # TODO: Add a checkbox so that we can choose to set a value or not
+
         @propertyRows.push propertySetting.rowElt
-        propertyField = @SupUI.component.createTextField propertySetting.valueElt, @config.propertyValues[property.name] ? ""
+        propertyField = @SupUI.component.createTextField propertySetting.valueElt, @config.propertyValues[property.name]?.value ? ""
+        propertyField.dataset.behaviorPropertyName = property.name
+        propertyField.dataset.behaviorPropertyType = property.type
         propertyField.addEventListener 'change', @_onChangePropertyValue
 
     return
@@ -69,12 +73,23 @@ module.exports = class BehaviorEditor
         @_buildBehaviorPropertiesUI()
     return
 
-  config_setBehaviorPropertyValue: (name, value) ->
-    console.log "setBehaviorPropertyValue", name, value
+  config_setBehaviorPropertyValue: (name, type, value) ->
+    console.log "setBehaviorPropertyValue: ", name, type, value
+    return
 
   config_clearBehaviorPropertyValue: (name) ->
-    console.log "clearBehaviorPropertyValue", name
+    console.log "clearBehaviorPropertyValue: ", name
+    return
 
-  _onChangeBehaviorName: (event) => @editConfig 'setProperty', 'behaviorName', event.target.value; return
+  _onChangeBehaviorName: (event) =>
+    @editConfig 'setProperty', 'behaviorName', event.target.value; return
+
+  # _onChangePropertySet: (event) =>
 
   _onChangePropertyValue: (event) =>
+    propertyName = event.target.dataset.behaviorPropertyName
+    propertyType = event.target.dataset.behaviorPropertyType
+    @editConfig 'setBehaviorPropertyValue', propertyName, propertyType, event.target.value, (err) =>
+      if err? then alert err
+      return
+    return

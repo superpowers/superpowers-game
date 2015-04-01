@@ -1,10 +1,10 @@
 exports.setupComponent = (player, component, config) ->
   return if ! config.propertyValues?
 
-  behaviorInfo = player.resources.behaviorProperties[config.behaviorName]
+  behaviorInfo = player.resources.behaviorProperties.behaviors[config.behaviorName]
 
   for name, valueInfo of config.propertyValues
-    behaviorPropertyInfo = behaviorInfo.properties[name]
+    behaviorPropertyInfo = behaviorInfo.propertiesByName[name]
     if ! behaviorPropertyInfo?
       console.warn "Tried to set a property named #{name} on behavior class #{component.__outer.constructor.name} but no such property is declared. Skipping."
       continue
@@ -14,6 +14,6 @@ exports.setupComponent = (player, component, config) ->
       continue
 
     # Convert value based on type
-    component.__outer[propertyName] = switch behaviorPropertyInfo.type
+    component.__outer[name] = switch behaviorPropertyInfo.type
       when "Vector3" then new window.Sup.Math.Vector3 valueInfo.value.x, valueInfo.value.y, valueInfo.value.z
       else valueInfo.value
