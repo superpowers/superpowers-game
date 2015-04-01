@@ -4,6 +4,6 @@ module.exports = class CameraUpdater
     @camera.setConfig @config
     return
 
-  onConfigEdited: (path, value) ->
+  config_setProperty: (path, value) ->
     @camera.setConfig @config
     return

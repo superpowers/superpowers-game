@@ -186,12 +186,14 @@ onAssetCommands.addComponent = (nodeId, nodeComponent, index) ->
   createNodeActorComponent data.asset.nodes.byId[nodeId], nodeComponent, ui.bySceneNodeId[nodeId].actor
   return
 
-onAssetCommands.setComponentProperty = (nodeId, componentId, path, value) ->
+onAssetCommands.editComponent = (nodeId, componentId, command, args...) ->
   componentUpdater = ui.bySceneNodeId[nodeId].bySceneComponentId[componentId].componentUpdater
-  componentUpdater.onConfigEdited path, value
+  componentUpdater.__proto__["config_#{command}"]?.call componentUpdater, args...
 
   isInspected = ui.nodesTreeView.selectedNodes.length == 1 and nodeId == parseInt(ui.nodesTreeView.selectedNodes[0].dataset.id)
-  ui.componentEditors[componentId].onConfigEdited path, value if isInspected
+  if isInspected
+    componentEditor = ui.componentEditors[componentId]
+    componentEditor.__proto__["config_#{command}"]?.call componentEditor, args...
   return
 
 onAssetCommands.removeComponent = (nodeId, componentId) ->
@@ -384,12 +386,12 @@ createComponentElement = (nodeId, component) ->
   clone.querySelector('.type').textContent = component.type
   table = clone.querySelector('.settings')
 
-  setProperty = (path, value) ->
-    socket.emit 'edit:assets', info.assetId, 'setComponentProperty', nodeId, component.id, path, value, (err) ->
+  editComponent = (command, args...) ->
+    socket.emit 'edit:assets', info.assetId, 'editComponent', nodeId, component.id, command, args..., (err) ->
       if err? then alert err; return
 
   componentEditorPlugin = SupEngine.componentEditorClasses[component.type]
-  ui.componentEditors[component.id] = new componentEditorPlugin SupClient, table.querySelector('tbody'), component.config, data.projectClient, setProperty
+  ui.componentEditors[component.id] = new componentEditorPlugin SupClient, table.querySelector('tbody'), component.config, data.projectClient, editComponent
 
   shrinkButton = clone.querySelector('.shrink-component')
   shrinkButton.addEventListener 'click', =>

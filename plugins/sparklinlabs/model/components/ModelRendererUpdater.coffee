@@ -117,7 +117,7 @@ module.exports = class ModelRendererUpdater
       SupClient.onAssetTrashed()
     return
 
-  onConfigEdited: (path, value) ->
+  config_setProperty: (path, value) ->
     switch path
       when 'modelAssetId'
         @client.unsub @modelAssetId, @modelSubscriber if @modelAssetId?

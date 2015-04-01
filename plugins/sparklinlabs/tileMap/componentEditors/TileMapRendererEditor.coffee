@@ -1,6 +1,6 @@
 module.exports = class TileMapRendererEditor
 
-  constructor: (@SupUI, tbody, config, @projectClient, @setProperty) ->
+  constructor: (@SupUI, tbody, config, @projectClient, @editConfig) ->
     @tileMapAssetId = config.tileMapAssetId
     @tileSetAssetId = config.tileSetAssetId
 
@@ -20,7 +20,7 @@ module.exports = class TileMapRendererEditor
       @projectClient.unsub @tileMapAssetId, @
     return
 
-  onConfigEdited: (path, value) ->
+  config_setProperty: (path, value) ->
     return if ! @projectClient.entries?
 
     switch path
@@ -60,10 +60,10 @@ module.exports = class TileMapRendererEditor
 
   _onChangeTileMapAsset: (event) =>
     entry = @SupUI.findEntryByPath @projectClient.entries.pub, event.target.value
-    if entry?.type == 'tileMap' then @setProperty 'tileMapAssetId', entry.id
+    if entry?.type == 'tileMap' then @editConfig 'setProperty', 'tileMapAssetId', entry.id
     return
 
   ###_onChangeTileSetAsset: (event) =>
     entry = @SupUI.findEntryByPath @projectClient.entries.pub, event.target.value
-    if entry?.type == 'tileSet' then @setProperty 'tileSetAssetId', entry.id
+    if entry?.type == 'tileSet' then @editConfig 'setProperty', 'tileSetAssetId', entry.id
     return###

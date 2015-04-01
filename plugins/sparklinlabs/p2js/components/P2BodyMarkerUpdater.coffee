@@ -6,7 +6,7 @@ module.exports = class P2BodyMarkerUpdater
 
     @bodyRenderer.setOffset { x: @config.offsetX, y: @config.offsetY }
 
-  onConfigEdited: (path, value) ->
+  config_setProperty: (path, value) ->
     @config[path] = value
 
     if path in ['width', 'height'] or (path == 'shape' and value == 'rectangle')

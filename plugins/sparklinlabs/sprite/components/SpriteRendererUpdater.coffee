@@ -108,7 +108,7 @@ module.exports = class SpriteRendererUpdater
       SupClient.onAssetTrashed()
     return
 
-  onConfigEdited: (path, value) ->
+  config_setProperty: (path, value) ->
     switch path
       when 'spriteAssetId'
         @client.unsub @spriteAssetId, @spriteSubscriber if @spriteAssetId?

@@ -266,12 +266,12 @@ updateSelectedAnimation = ->
   selectedAnimElt = ui.animationsTreeView.selectedNodes[0]
   if selectedAnimElt?
     ui.selectedAnimationId = parseInt selectedAnimElt.dataset.id
-    data.spriteUpdater.onConfigEdited "animationId", ui.selectedAnimationId
+    data.spriteUpdater.config_setProperty "animationId", ui.selectedAnimationId
     ui.animationArea.animationPlay.disabled = false
     ui.animationArea.animationSlider.disabled = false
   else
     ui.selectedAnimationId = null
-    data.spriteUpdater.onConfigEdited "animationId", null
+    data.spriteUpdater.config_setProperty "animationId", null
     ui.animationArea.animationPlay.disabled = true
     ui.animationArea.animationSlider.disabled = true
     ui.animationArea.animationSlider.value = 0

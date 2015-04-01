@@ -7,7 +7,7 @@ module.exports = class CannonBodyMarkerUpdater
 
     @bodyRenderer.setOffset { x: @config.offsetX, y: @config.offsetY, z: @config.offsetZ }
 
-  onConfigEdited: (path, value) ->
+  config_setProperty: (path, value) ->
     @config[path] = value
 
     if path in ['halfWidth', 'halfHeight', 'halfDepth'] or (path == 'shape' and value == 'box')

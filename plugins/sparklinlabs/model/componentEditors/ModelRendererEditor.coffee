@@ -1,6 +1,6 @@
 module.exports = class ModelRendererEditor
 
-  constructor: (@SupUI, tbody, config, @projectClient, @setProperty) ->
+  constructor: (@SupUI, tbody, config, @projectClient, @editConfig) ->
     @modelAssetId = config.modelAssetId
     @animationId = config.animationId
 
@@ -24,7 +24,7 @@ module.exports = class ModelRendererEditor
       @projectClient.unsub @modelAssetId, @
     return
 
-  onConfigEdited: (path, value) ->
+  config_setProperty: (path, value) ->
     return if ! @projectClient.entries?
 
     switch path
@@ -96,7 +96,7 @@ module.exports = class ModelRendererEditor
     if animationId? and @asset.animations.byId[animationId]?
       @animationSelectBox.value = animationId
     else
-      @setProperty 'animationId', null
+      @editConfig 'setProperty', 'animationId', null
 
     return
 
@@ -108,8 +108,8 @@ module.exports = class ModelRendererEditor
   _onChangeModelAsset: (event) =>
     entry = @SupUI.findEntryByPath @projectClient.entries.pub, event.target.value
     if entry?.type == 'model'
-      @setProperty 'modelAssetId', entry.id
-      @setProperty 'animationId', null
+      @editConfig 'setProperty', 'modelAssetId', entry.id
+      @editConfig 'setProperty', 'animationId', null
     return
 
   _onChangeModelAnimation: (event) =>
@@ -117,5 +117,5 @@ module.exports = class ModelRendererEditor
       if event.target.value == '' then null
       else parseInt(event.target.value)
 
-    @setProperty 'animationId', animationId
+    @editConfig 'setProperty', 'animationId', animationId
     return

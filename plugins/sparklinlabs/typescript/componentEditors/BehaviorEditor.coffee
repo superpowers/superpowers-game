@@ -2,7 +2,7 @@ behaviorEditorDataListIndex = 0
 
 module.exports = class BehaviorEditor
 
-  constructor: (@SupUI, @tbody, @config, @projectClient, @setProperty) ->
+  constructor: (@SupUI, @tbody, @config, @projectClient, @editConfig) ->
     @behaviorName = @config.behaviorName
 
     @behaviorNamesDataListElt = document.createElement('datalist')
@@ -62,13 +62,19 @@ module.exports = class BehaviorEditor
 
     return
 
-  onConfigEdited: (path, value) ->
+  config_setProperty: (path, value) ->
     switch path
       when 'behaviorName'
         @behaviorNameField.value = value
         @_buildBehaviorPropertiesUI()
     return
 
-  _onChangeBehaviorName: (event) => @setProperty 'behaviorName', event.target.value; return
+  config_setBehaviorPropertyValue: (name, value) ->
+    console.log "setBehaviorPropertyValue", name, value
+
+  config_clearBehaviorPropertyValue: (name) ->
+    console.log "clearBehaviorPropertyValue", name
+
+  _onChangeBehaviorName: (event) => @editConfig 'setProperty', 'behaviorName', event.target.value; return
 
   _onChangePropertyValue: (event) =>

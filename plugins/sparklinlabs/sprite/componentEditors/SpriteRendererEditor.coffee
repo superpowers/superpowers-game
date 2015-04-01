@@ -1,6 +1,6 @@
 module.exports = class SpriteRendererEditor
 
-  constructor: (@SupUI, tbody, config, @projectClient, @setProperty) ->
+  constructor: (@SupUI, tbody, config, @projectClient, @editConfig) ->
     @spriteAssetId = config.spriteAssetId
     @animationId = config.animationId
 
@@ -24,7 +24,7 @@ module.exports = class SpriteRendererEditor
       @projectClient.unsub @spriteAssetId, @
     return
 
-  onConfigEdited: (path, value) ->
+  config_setProperty: (path, value) ->
     return if ! @projectClient.entries?
 
     switch path
@@ -98,7 +98,7 @@ module.exports = class SpriteRendererEditor
     if animationId? and @asset.animations.byId[animationId]?
       @animationSelectBox.value = animationId
     else
-      @setProperty 'animationId', ""
+      @editConfig 'setProperty', 'animationId', ""
     return
 
   onAssetTrashed: =>
@@ -116,8 +116,8 @@ module.exports = class SpriteRendererEditor
   _onChangeSpriteAsset: (event) =>
     entry = @SupUI.findEntryByPath @projectClient.entries.pub, event.target.value
     if entry?.type == 'sprite'
-      @setProperty 'spriteAssetId', entry.id
-      @setProperty 'animationId', null
+      @editConfig 'setProperty', 'spriteAssetId', entry.id
+      @editConfig 'setProperty', 'animationId', null
     return
 
   _onChangeSpriteAnimation: (event) =>
@@ -125,5 +125,5 @@ module.exports = class SpriteRendererEditor
       if event.target.value == '' then null
       else parseInt(event.target.value)
 
-    @setProperty 'animationId', animationId
+    @editConfig 'setProperty', 'animationId', animationId
     return

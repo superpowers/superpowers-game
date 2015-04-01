@@ -206,7 +206,7 @@ updateSelectedAnimation = ->
     ui.selectedAnimationId = parseInt selectedAnimElt.dataset.id
   else
     ui.selectedAnimationId = null
-  data.modelUpdater.onConfigEdited "animationId", ui.selectedAnimationId
+  data.modelUpdater.config_setProperty "animationId", ui.selectedAnimationId
 
   for button in document.querySelectorAll('.animations-buttons button')
     button.disabled = ! ui.selectedAnimationId? and button.className != 'new-animation'

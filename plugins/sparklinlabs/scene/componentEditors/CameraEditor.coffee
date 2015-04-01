@@ -1,6 +1,6 @@
 module.exports = class CameraEditor
 
-  constructor: (@SupUI, tbody, config, @projectClient, @setProperty) ->
+  constructor: (@SupUI, tbody, config, @projectClient, @editConfig) ->
 
     @mode = config.mode
     @fov = config.fov
@@ -25,13 +25,13 @@ module.exports = class CameraEditor
 
   destroy: ->
 
-  onConfigEdited: (path, value) ->
+  config_setProperty: (path, value) ->
     switch path
       when 'mode' then @modeSelectBox.value = value
       when 'fov' then @fovField.value = value
       when 'orthographicScale' then @orthographicScaleField.value = value
     return
 
-  _onChangeMode: (event) => @setProperty 'mode', event.target.value; return
-  _onChangeFOV: (event) => @setProperty 'fov', parseFloat(event.target.value); return
-  _onChangeOrthographicScale: (event) => @setProperty 'orthographicScale', parseFloat(event.target.value); return
+  _onChangeMode: (event) => @editConfig 'setProperty', 'mode', event.target.value; return
+  _onChangeFOV: (event) => @editConfig 'setProperty', 'fov', parseFloat(event.target.value); return
+  _onChangeOrthographicScale: (event) => @editConfig 'setProperty', 'orthographicScale', parseFloat(event.target.value); return

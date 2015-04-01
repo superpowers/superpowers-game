@@ -3,7 +3,7 @@ module.exports = class ArcadeBody2DUpdater
     @bodyRenderer.setSize { width: @config.width, height: @config.height }
     @bodyRenderer.setOffset { x: @config.offsetX, y: @config.offsetY }
 
-  onConfigEdited: (path, value) ->
+  config_setProperty: (path, value) ->
     @config[path] = value
 
     if path in ['width', 'height'] then @bodyRenderer.setSize { width: @config.width, height: @config.height }

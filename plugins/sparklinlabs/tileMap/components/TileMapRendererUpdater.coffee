@@ -146,7 +146,7 @@ module.exports = class TileMapRendererUpdater
     @tileMapRenderer.setTileSet null
     return
 
-  onConfigEdited: (path, value) ->
+  config_setProperty: (path, value) ->
     switch path
       when 'tileMapAssetId'
         @client.unsub @tileMapAssetId, @tileMapSubscriber if @tileMapAssetId?

@@ -66,7 +66,7 @@ module.exports = class SceneAsset extends SupCore.data.base.Asset
   server_setNodeProperty: (client, id, path, value, callback) ->
     @nodes.setProperty id, path, value, (err, actualValue) =>
       if err? then callback? err; return
-      
+
       callback null, id, path, actualValue
       @emit 'change'
       return
@@ -86,7 +86,7 @@ module.exports = class SceneAsset extends SupCore.data.base.Asset
       if err? then callback? err; return
 
       @applyGlobalMatrix node, globalMatrix
-      
+
       callback null, id, parentId, actualIndex
       @emit 'change'
       return
@@ -107,7 +107,7 @@ module.exports = class SceneAsset extends SupCore.data.base.Asset
     if parentNode?
       parentGlobalMatrix = @computeGlobalMatrix parentNode
       matrix.multiplyMatrices new SupEngine.THREE.Matrix4().getInverse(parentGlobalMatrix), matrix
-    
+
     position = new SupEngine.THREE.Vector3()
     orientation = new SupEngine.THREE.Quaternion()
     scale = new SupEngine.THREE.Vector3()
@@ -120,7 +120,7 @@ module.exports = class SceneAsset extends SupCore.data.base.Asset
   client_moveNode: (id, parentId, index) ->
     @nodes.client_move id, parentId, index
     return
-  
+
   server_duplicateNode: (client, newName, id, index, callback) ->
     referenceNode = @nodes.byId[id]
     if ! referenceNode? then callback "Invalid node id: #{id}"; return
@@ -254,25 +254,29 @@ module.exports = class SceneAsset extends SupCore.data.base.Asset
     @nodes.client_addComponent nodeId, component, index
     return
 
-  server_setComponentProperty: (client, nodeId, componentId, path, value, callback) ->
+  server_editComponent: (client, nodeId, componentId, command, args..., callback) ->
     components = @nodes.componentsByNodeId[nodeId]
     if ! components? then callback "Invalid node id: #{nodeId}"; return
 
     componentConfig = components.configsById[componentId]
     if ! componentConfig? then callback "Invalid component id: #{componentId}"; return
 
-    componentConfig.setProperty path, value, (err, actualValue) =>
+    commandMethod = componentConfig.__proto__["server_#{command}"]
+    if ! commandMethod? then callback "Invalid component command"; return
+
+    commandMethod.call componentConfig, client, args..., (err, callbackArgs...) =>
       if err? then callback? err; return
-      
-      callback null, nodeId, componentId, path, actualValue
+
+      callback null, nodeId, componentId, command, callbackArgs...
       @emit 'change'
       return
     return
 
-  client_setComponentProperty: (nodeId, componentId, path, value) ->
+  client_editComponent: (nodeId, componentId, command, args...) ->
     componentConfig = @nodes.componentsByNodeId[nodeId].configsById[componentId]
-    componentConfig.client_setProperty path, value
-    return
+
+    commandMethod = componentConfig.__proto__["client_#{command}"]
+    commandMethod.call componentConfig, args...; return
 
   server_removeComponent: (client, nodeId, componentId, callback) ->
     components = @nodes.componentsByNodeId[nodeId]
@@ -280,7 +284,7 @@ module.exports = class SceneAsset extends SupCore.data.base.Asset
 
     components.remove componentId, (err) =>
       if err? then callback? err; return
-      
+
       callback null, nodeId, componentId
       @emit 'change'
       return
