@@ -180,10 +180,10 @@ module.exports = class ScriptAsset extends SupCore.data.base.Asset
 
       libSourceFile = results.program.getSourceFile("lib.d.ts")
       supTypeSymbols =
-        Actor: libSourceFile.locals.Sup.exports.Actor
-        Behavior: libSourceFile.locals.Sup.exports.Behavior
-        MathVector3: libSourceFile.locals.Sup.exports.Math.exports.Vector3
-        Asset: libSourceFile.locals.Sup.exports.Asset
+        "Sup.Actor": libSourceFile.locals.Sup.exports.Actor
+        "Sup.Behavior": libSourceFile.locals.Sup.exports.Behavior
+        "Sup.Math.Vector3": libSourceFile.locals.Sup.exports.Math.exports.Vector3
+        "Sup.Asset": libSourceFile.locals.Sup.exports.Asset
 
       supTypeSymbolsList = (value for name, value of supTypeSymbols)
 
@@ -196,7 +196,7 @@ module.exports = class ScriptAsset extends SupCore.data.base.Asset
         continue if ! baseTypeNode?
 
         typeSymbol = results.typeChecker.getSymbolAtLocation baseTypeNode.typeName
-        continue if typeSymbol != supTypeSymbols.Behavior
+        continue if typeSymbol != supTypeSymbols["Sup.Behavior"]
 
         properties = behaviors[symbolName] = []
 
@@ -211,10 +211,12 @@ module.exports = class ScriptAsset extends SupCore.data.base.Asset
           # TODO: skip members annotated as "non-customizable"
 
           type = results.typeChecker.getTypeAtLocation(member.valueDeclaration)
-          typeName = "unknown"
+          typeName = null # "unknown"
           symbol = type.getSymbol()
           if symbol in supTypeSymbolsList
-            typeName = symbol.getName()
+            # TODO: Get full name
+            # Until then, we only support intrinsic types
+            # typeName = symbol.getName()
           else if type.intrinsicName?
             typeName = type.intrinsicName
 
