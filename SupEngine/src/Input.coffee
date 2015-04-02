@@ -56,7 +56,7 @@ module.exports = class Input
     @canvas.removeEventListener 'keydown', @_onKeyDown
     document.removeEventListener 'keyup', @_onKeyUp
 
-    window.removeEventListener 'blur'
+    window.removeEventListener 'blur', @_onBlur
     return
 
   reset: ->
