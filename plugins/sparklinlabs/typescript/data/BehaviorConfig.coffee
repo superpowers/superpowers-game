@@ -21,7 +21,7 @@ module.exports = class BehaviorConfig extends SupCore.data.base.ComponentConfig
 
   server_setBehaviorPropertyValue: (client, name, type, value, callback) ->
     @pub.propertyValues[name] = { type, value }
-    callback null, name, value; return
+    callback null, name, type, value; return
 
   client_setBehaviorPropertyValue: (name, type, value) ->
     @pub.propertyValues[name] = { type, value }; return
