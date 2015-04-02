@@ -21,7 +21,7 @@ module Sup {
       this.__inner = new SupEngine.componentClasses.Behavior(actor.__inner, funcs);
     }
     update() {
-      if (this.timer == -1 ) { return }
+      if (this.timer == -1 ) { return; }
 
       this.timer += 1 / SupEngine.GameInstance.framesPerSecond
       this.tween.update(this.timer * 1000);
@@ -29,25 +29,25 @@ module Sup {
 
     to( object, duration ) {
       this.tween.to( object, duration )
-      return this
+      return this;
     }
     easing( easing ) {
       this.tween.easing( easing )
-      return this
+      return this;
     }
     yoyo( yoyo ) {
       this.tween.yoyo( yoyo );
-      return this
+      return this;
     }
     repeat( times ) {
       this.tween.repeat( times );
-      return this
+      return this;
     }
     onUpdate( update ) {
       this.tween.onUpdate( function() {
         update(this);
       });
-      return this
+      return this;
     }
     onComplete( complete ) {
       var self = this
@@ -55,12 +55,12 @@ module Sup {
         complete(this);
         self.destroy();
       });
-      return this
+      return this;
     }
     start() {
       this.timer = 0;
       this.tween.start(this.timer);
-      return this
+      return this;
     }
   }
 }
