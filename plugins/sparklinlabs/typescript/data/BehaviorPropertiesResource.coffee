@@ -24,10 +24,14 @@ module.exports = class BehaviorPropertiesResource extends SupCore.data.base.Reso
 
   setup: ->
     @behaviorNamesByScriptId = {}
+    @propertiesByNameByBehavior = {}
 
     for behaviorName, behavior of @pub.behaviors
       behaviorNames = @behaviorNamesByScriptId[behavior.scriptId] ?= []
       behaviorNames.push behaviorName
+
+      propertiesByName = @propertiesByNameByBehavior[behaviorName] = {}
+      propertiesByName[property.name] = property for property in behavior.properties
     return
 
   init: (callback) ->
@@ -45,10 +49,13 @@ module.exports = class BehaviorPropertiesResource extends SupCore.data.base.Reso
 
     for name, properties of behaviorProperties
       @pub.behaviors[name] = { scriptId, properties }
+      propertiesByName = @propertiesByNameByBehavior[name] = {}
+      propertiesByName[property.name] = property for property in properties
       newBehaviorNames.push name
 
     for oldBehaviorName in oldBehaviorNames
       continue if newBehaviorNames.indexOf(oldBehaviorName) != -1
+      delete @propertiesByNameByBehavior[oldBehaviorName]
       delete @pub.behaviors[oldBehaviorName]
 
     return
@@ -64,6 +71,7 @@ module.exports = class BehaviorPropertiesResource extends SupCore.data.base.Reso
 
     for oldBehaviorName in oldBehaviorNames
       delete @pub.behaviors[oldBehaviorName]
+      delete @propertiesByNameByBehavior[oldBehaviorName]
 
     delete @behaviorNamesByScriptId[scriptId]
     return
