@@ -96,21 +96,32 @@ body
 
   th
     text-align left
-    padding 0.5em
     white-space nowrap
     overflow-x hidden
     text-overflow ellipsis
     font-weight normal
     background #eee
+    padding 0 0.5em
+
+    > div
+      display flex
+      align-items center
+    > div > div
+      flex 1
+      white-space nowrap
+      overflow-x hidden
+      text-overflow ellipsis
+      max-width 100px
 
     &:only-child
-      background #888
+      background #777
       color #eee
+      padding 0.5em
 
   td input, td select
     width 100%
     margin 0
-    padding 0.25em
+    padding 0.5em 0.25em
     border none
 
   td select
@@ -118,7 +129,7 @@ body
 
   td input[type=checkbox]
     width auto
-    margin 0.25em
+    margin 0.5em
     cursor pointer
 
 .main
