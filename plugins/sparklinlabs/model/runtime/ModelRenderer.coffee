@@ -4,7 +4,7 @@ exports.setupComponent = (player, component, config) ->
     component.setModel model
 
     if config.animationId?
-      # FIXME: should we load model with SupAPI?
+      # FIXME: should we load model with SupCore.data?
       for animation in model.animations
         if animation.id == config.animationId
           component.setAnimation animation.name
