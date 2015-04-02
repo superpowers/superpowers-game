@@ -24,7 +24,6 @@ start = ->
 
 onConnected = ->
   data = {}
-  # TODO: Subscribe to home chat and get latest messages
   socket.emit 'sub', 'rooms', 'home', onRoomReceived
 
 onRoomReceived = (err, room) ->
