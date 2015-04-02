@@ -4,7 +4,7 @@ module.exports = class ArcadeBody2DEditor
     @fields = {}
 
     movableRow = @SupUI.component.createSetting tbody, 'Movable'
-    @fields["movable"] = @SupUI.component.createCheckBox movableRow.valueElt, config.movable
+    @fields["movable"] = @SupUI.component.createBooleanField movableRow.valueElt, config.movable
     @fields["movable"].addEventListener "click", (event) =>
       @editConfig 'setProperty', 'movable', event.target.checked
       return

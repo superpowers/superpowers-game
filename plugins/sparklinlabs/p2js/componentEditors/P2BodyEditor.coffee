@@ -11,7 +11,7 @@ module.exports = class P2BodyEditor
       return
 
     fixedRotationRow = @SupUI.component.createSetting @tbody, 'Fixed rotation'
-    @fields["fixedRotation"] = @SupUI.component.createCheckBox fixedRotationRow.valueElt, config.fixedRotation
+    @fields["fixedRotation"] = @SupUI.component.createBooleanField fixedRotationRow.valueElt, config.fixedRotation
     @fields["fixedRotation"].addEventListener "click", (event) =>
       @editConfig 'setProperty', 'fixedRotation', event.target.checked
       return
