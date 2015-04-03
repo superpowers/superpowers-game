@@ -26,6 +26,8 @@ module Sup {
       }
       getSize() { return { width: this.__inner.width, height: this.__inner.height}}
 
+      warpPosition(position) { this.__inner.warpPosition(position); }
+
       setVelocity( velocity ) {
         this.__inner.velocity.x = velocity.x;
         this.__inner.velocity.y = velocity.y;

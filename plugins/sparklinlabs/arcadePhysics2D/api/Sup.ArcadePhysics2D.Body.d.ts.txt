@@ -6,6 +6,7 @@ declare module Sup {
       getMovable(): boolean;
       setSize( width: number, height: number ): Body;
       getSize(): { width: number; height: number; };
+      warpPosition(position: Sup.Math.Vector3): Body;
       setVelocity( velocity: Sup.Math.Vector3 ): Body;
       getVelocity(): Sup.Math.Vector3;
       setVelocityMin( velocityMin: Sup.Math.Vector3 ): Body;

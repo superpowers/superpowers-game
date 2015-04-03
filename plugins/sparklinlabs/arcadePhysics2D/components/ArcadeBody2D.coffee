@@ -44,6 +44,12 @@ module.exports = class ArcadeBody2D extends SupEngine.ActorComponent
       @refreshActorPosition()
     return
 
+  warpPosition: (position) ->
+    @position.x = position.x + @offsetX
+    @position.y = position.y + @offsetY
+    @refreshActorPosition();
+    return
+
   refreshActorPosition: ->
     @actorPosition.x = @position.x - @offsetX
     @actorPosition.y = @position.y - @offsetY
