@@ -1,5 +1,12 @@
 async = require 'async'
 
+# In NW.js, open links in a browser window
+document.body.addEventListener 'click', (event) ->
+  return if ! window.nwDispatcher? or event.target.tagName != 'A'
+  event.preventDefault()
+  gui.Shell.openExternal event.target.href
+  return
+
 progressBar = document.querySelector('progress')
 loadingElt = document.getElementById('loading')
 canvas = document.querySelector('canvas')
