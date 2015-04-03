@@ -34,7 +34,7 @@ class Camera extends ActorComponent {
     super._destroy();
   }
 
-  _computeAspectRatio() {
+  _computeAspectRatio = () => {
     var canvas = this.actor.gameInstance.threeRenderer.domElement;
     this.cachedRatio = (canvas.width * this.viewport.width) / (canvas.height * this.viewport.height)
     this.projectionNeedsUpdate = true;
