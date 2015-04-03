@@ -1,22 +1,23 @@
 async = require 'async'
 
 # In NW.js, open links in a browser window
-document.body.addEventListener 'click', (event) ->
-  return if ! window.nwDispatcher? or event.target.tagName != 'A'
-  event.preventDefault()
-  gui.Shell.openExternal event.target.href
-  return
+if window.nwDispatcher?
+  gui = window.nwDispatcher.requireNwGui()
+
+  document.body.addEventListener 'click', (event) ->
+    return if event.target.tagName != 'A'
+    event.preventDefault()
+    gui.Shell.openExternal event.target.href
+    return
 
 progressBar = document.querySelector('progress')
 loadingElt = document.getElementById('loading')
 canvas = document.querySelector('canvas')
 
 qs = require('querystring').parse window.location.search.slice(1)
-player = null
+if qs.debug? then gui?.Window.get().showDevTools()
 
-if qs.debug? and window.nwDispatcher?
-  gui = window.nwDispatcher.requireNwGui()
-  gui.Window.get().showDevTools()
+player = null
 
 # Load plugins
 pluginsXHR = new XMLHttpRequest
