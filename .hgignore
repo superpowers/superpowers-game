@@ -1,2 +1,4 @@
 syntax: glob
 node_modules/
+SupEngine/**.js
+SupEngine/typings/*
