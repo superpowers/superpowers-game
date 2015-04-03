@@ -104,7 +104,7 @@ class SoundInstance {
       }
     }
 
-    this.offset = 0;ChannelInterpretation
+    this.offset = 0;
     this.state = SoundStates.stopped;
   }
 
@@ -134,7 +134,7 @@ class SoundInstance {
 
   setLoop(isLooping: boolean) {
     this.isLooping = isLooping;
-    if (this.source = null) return;
+    if (this.source == null) return;
 
     if (this.source["mediaElement"] != null) this.source["mediaElement"].loop = this.isLooping;
     else this.source.loop = this.isLooping;

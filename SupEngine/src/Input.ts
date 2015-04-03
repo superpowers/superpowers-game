@@ -241,14 +241,14 @@ class Input {
       });
 
       for (var stick = 0; stick < 2; stick++) {
-        var axisLength = Math.sqrt( Math.pow(Math.abs(gamepad.axes[stick]), 2) + Math.pow(Math.abs(gamepad.axes[stick+1]), 2) );
+        var axisLength = Math.sqrt( Math.pow(Math.abs(gamepad.axes[2*stick]), 2) + Math.pow(Math.abs(gamepad.axes[2*stick+1]), 2) );
         if (axisLength < 0.25) {
-          this.gamepadsAxes[index][stick] = 0;
-          this.gamepadsAxes[index][stick+1] = 0;
+          this.gamepadsAxes[index][2*stick] = 0;
+          this.gamepadsAxes[index][2*stick+1] = 0;
         }
         else {
-          this.gamepadsAxes[index][stick] = gamepad.axes[stick];
-          this.gamepadsAxes[index][stick+1] = gamepad.axes[stick+1];
+          this.gamepadsAxes[index][2*stick] = gamepad.axes[2*stick];
+          this.gamepadsAxes[index][2*stick+1] = gamepad.axes[2*stick+1];
         }
       }
     }
