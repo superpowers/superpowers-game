@@ -1,14 +1,26 @@
+class Input {
+  static maxTouches = 10;
 
   canvas: HTMLCanvasElement;
 
+  mouseButtons: Array<{isDown: boolean; wasJustPressed: boolean; wasJustReleased: boolean;}> = [];
+  mouseButtonsDown: boolean[] = [];
+  mousePosition = { x: 0, y: 0 };
+  newMousePosition: {x: number; y: number;};
+  mouseDelta    = { x: 0, y: 0 };
+  newScrollDelta: number;
 
   touches: Array<{isDown: boolean; wasStarted: boolean; wasEnded: boolean; position: {x: number; y: number;}}> = [];
   touchesDown: boolean[] = [];
 
+  keyboardButtons: Array<{isDown: boolean; wasJustPressed: boolean; wasJustReleased: boolean;}> = [];
+  keyboardButtonsDown: boolean[] = [];
 
   gamepadsButtons = [];
   gamepadsAxes = [];
 
+  constructor(canvas: HTMLCanvasElement) {
+    this.canvas = canvas;
 
     // Mouse
     this.canvas.addEventListener("mousemove", this._onMouseMove);
@@ -18,6 +30,10 @@
     this.canvas.addEventListener("DOMMouseScroll", this._onMouseWheel);
     this.canvas.addEventListener("mousewheel", this._onMouseWheel);
 
+    // Touch
+    this.canvas.addEventListener("touchstart", this._onTouchStart);
+    this.canvas.addEventListener("touchend", this._onTouchEnd);
+    this.canvas.addEventListener("touchmove", this._onTouchMove);
 
     // Keyboard
     this.canvas.addEventListener("keydown", this._onKeyDown);
