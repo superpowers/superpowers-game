@@ -97,6 +97,7 @@ class SoundInstance {
 
       this.source.disconnect();
       delete this.source;
+      delete this.gainNode;
 
       if (this.panner != null) {
         this.panner.disconnect();
