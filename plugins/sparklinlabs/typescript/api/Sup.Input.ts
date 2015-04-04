@@ -22,7 +22,7 @@ module Sup {
 
     export function getMouseDelta() {
       var mouseDelta = player.gameInstance.input.mouseDelta;
-      return { x: mouseDelta.x / player.canvas.clientWidth * 2 - 1, y: (mouseDelta.y / player.canvas.clientHeight * 2 - 1) * -1 };
+      return { x: mouseDelta.x / player.canvas.clientWidth * 2, y: mouseDelta.y / player.canvas.clientHeight * -2 };
     }
 
     export function isMouseButtonDown(button) {
