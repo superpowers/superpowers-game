@@ -14,7 +14,7 @@ module Sup {
 
     getModel() { return this.__inner.asset.__outer }
     setModel(asset) { this.__inner.setModel(asset.__inner); return this }
-    getOpacity() { this.__inner.opacity; }
+    getOpacity() { return this.__inner.opacity; }
     setOpacity(opacity) { this.__inner.opacity = opacity; this.__inner.threeMesh.material.opacity = opacity; return this }
     getColor() { return { r: this.__inner.color.r, g: this.__inner.color.g, b: this.__inner.color.b }; }
     setColor(r, g, b) {
