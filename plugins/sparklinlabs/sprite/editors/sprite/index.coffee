@@ -37,7 +37,7 @@ start = ->
     zoomMax: 60
 
   originActor = new SupEngine.Actor ui.animationArea.gameInstance, "Origin"
-  new SpriteOriginMarker originActor
+  ui.originMakerComponent = new SpriteOriginMarker originActor
 
   ui.animationArea.animationPlay = document.querySelector('button.animation-play')
   ui.animationArea.animationPlay.addEventListener 'click', onPlayAnimation
@@ -307,6 +307,7 @@ setupProperty = (path, value) ->
 
   if path == "pixelsPerUnit"
     ui.animationArea.cameraControls.setMultiplier value
+    ui.originMakerComponent.setScale 100 / value
   return
 
 setupAnimation = (animation, index) ->
