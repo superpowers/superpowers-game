@@ -483,8 +483,15 @@ editMap = (x, y, tileValue) =>
     layer = data.tileMapUpdater.tileMapAsset.layers.byId[ui.tileSetArea.selectedLayerId]
     index = y * data.tileMapUpdater.tileMapAsset.pub.width + x
 
-    if ! tileValue? or layer.data[index][0] != tileValue[0] or layer.data[index][1] != tileValue[1]
-      socket.emit 'edit:assets', info.assetId, 'editMap', layer.id, x, y, tileValue, (err) -> if err? then alert err; return
+    if tileValue?
+      sameTile = true
+      for i in [0...tileValue.length]
+        if layer.data[index][i] != tileValue[i]
+          sameTile = false
+          break
+      return if sameTile
+
+    socket.emit 'edit:assets', info.assetId, 'editMap', layer.id, x, y, tileValue, (err) -> if err? then alert err; return
   return
 
 flipTilesHorizontally = ->
