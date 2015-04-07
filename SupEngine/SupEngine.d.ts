@@ -1,4 +1,4 @@
-/// <reference path="./typings/node/node.d.ts"/>
+///<reference path="../../typings/tsd.d.ts"/>
 /// <reference path="./typings/threejs/three.d.ts"/>
 
 declare var __tmpTHREE: typeof THREE;
