@@ -28,7 +28,7 @@ declare module SupRuntime {
     constructor(canvas: HTMLCanvasElement, dataURL, options: {debug?: boolean;});
     load(progressCallback, callback);
     run();
-    getAssetData(path, responseType, callback: (err: Error, data?: any) => any): any;
+    getAssetData(path: string, responseType: string, callback: (err: Error, data?: any) => any): any;
     getOuterAsset(assetId: number): any;
     createActor();
     createComponent();

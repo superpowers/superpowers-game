@@ -185,7 +185,7 @@ class Player {
     this.tickAnimationFrameId = requestAnimationFrame((timestamp) => { this.tick(timestamp); });
   }
 
-  getAssetData(path, responseType, callback: (err: Error, data?: any) => any) {
+  getAssetData(path: string, responseType: string, callback: (err: Error, data?: any) => any) {
     var xhr = new XMLHttpRequest()
     xhr.open("GET", `${this.dataURL}${path}`, true);
     xhr.responseType = responseType;
