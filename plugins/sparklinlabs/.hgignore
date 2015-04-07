@@ -1,5 +1,5 @@
 syntax: glob
-public/**.js
+*/**.js
 public/**.css
 public/**.html
 node_modules/
