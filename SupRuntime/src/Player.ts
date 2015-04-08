@@ -3,6 +3,13 @@
 import SupRuntime = require("./index");
 import async = require("async");
 
+interface Asset {
+  id: string;
+  name: string;
+  type: string;
+  children?: any[];
+}
+
 class Player {
 
   static updateInterval = 1 / SupEngine.GameInstance.framesPerSecond * 1000;
@@ -13,16 +20,16 @@ class Player {
 
   gameInstance: SupEngine.GameInstance;
 
-  entriesById = {};
-  entriesByPath = {};
-  resources = {};
+  entriesById: {[name: string]: any} = {};
+  entriesByPath: {[name: string]: any} = {};
+  resources: {[name: string]: any} = {};
 
-  _assetsById = {};
-  outerAssetsById = {};
+  _assetsById: {[name: string]: any} = {};
+  outerAssetsById: {[name: string]: any} = {};
 
   resourcesToLoad: string[];
 
-  assetsToLoad: Array<any>;
+  assetsToLoad: Asset[];
 
   accumulatedTime: number;
   lastTimestamp: number;
@@ -35,7 +42,7 @@ class Player {
     this.gameInstance = new SupEngine.GameInstance(this.canvas, options);
   }
 
-  load(progressCallback, callback) {
+  load(progressCallback: (progress: number, total: number) => any, callback: any) {
     var progress = 0;
 
     var innerProgressCallback = () => {
@@ -53,7 +60,7 @@ class Player {
     ], callback);
   }
 
-  _initPlugins(callback) {
+  _initPlugins(callback: any) {
     async.each(Object.keys(SupRuntime.plugins), (name: string, cb: Function) => {
       var plugin = SupRuntime.plugins[name];
       if (plugin.init != null) plugin.init(this, cb);
@@ -61,8 +68,8 @@ class Player {
     }, callback);
   }
 
-  _loadManifest(callback) {
-    this.getAssetData("game.json", 'json', (err, gameData) => {
+  _loadManifest(callback: any) {
+    this.getAssetData("game.json", 'json', (err: any, gameData: {name: string; assets: Asset[]}) => {
       if (err != null) { callback(new Error("Failed to load game manifest")); return; }
 
       document.title = gameData.name;
@@ -70,7 +77,7 @@ class Player {
       this.resourcesToLoad = Object.keys(SupRuntime.resourcePlugins);
 
       this.assetsToLoad = [];
-      var walk = (asset, parent="") => {
+      var walk = (asset: Asset, parent="") => {
         var children: string[];
         if (asset.children != null) {
           children = [];
@@ -87,11 +94,11 @@ class Player {
     });
   }
 
-  _loadResources(progressCallback, callback) {
+  _loadResources(progressCallback: Function, callback: any) {
     if (this.resourcesToLoad.length === 0) { callback(); return; }
     var resourcesLoaded = 0;
 
-    var onResourceLoaded = (err, resourceName: string, resource: any) => {
+    var onResourceLoaded = (err: any, resourceName: string, resource: any) => {
       if (err != null) { callback(new Error(`Failed to load resource ${resourceName}: ${err.message}`)); return; }
 
       this.resources[resourceName] = resource
@@ -113,11 +120,11 @@ class Player {
     });
   }
 
-  _loadAssets(progressCallback, callback) {
+  _loadAssets(progressCallback: Function, callback: any) {
     if (this.assetsToLoad.length === 0 ) { callback(); return; }
     var assetsLoaded = 0;
 
-    var onAssetLoaded = (err, entry, asset) => {
+    var onAssetLoaded = (err: any, entry: any, asset: any) => {
       if (err != null) { callback(new Error(`Failed to load asset ${entry.name}: ${err.message}`)); return; }
 
       this.entriesById[entry.id] = entry;
@@ -146,7 +153,7 @@ class Player {
     });
   }
 
-  _startPlugins(callback) {
+  _startPlugins(callback: any) {
     async.each(Object.keys(SupRuntime.plugins), (name, cb) => {
       var plugin = SupRuntime.plugins[name];
       if (plugin.start != null) plugin.start(this, cb);
