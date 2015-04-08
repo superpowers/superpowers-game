@@ -188,9 +188,10 @@ class Actor {
     }
     this.threeObject = null;
 
-    if (this["__outer"] != null) {
-      this["__outer"].__inner = null;
-      this["__outer"] = null;
+    var outer = (<any>this).__outer;
+    if (outer != null) {
+      outer.__inner = null;
+      outer = null;
     }
 
     this.gameInstance = null;

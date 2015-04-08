@@ -6,55 +6,58 @@ declare var __tmpTHREE: typeof THREE;
 declare module SupEngine {
   var THREE: typeof __tmpTHREE;
 
-  var editorComponentClasses: any;
-  function registerEditorComponentClass(name: string, component: any);
+  var editorComponentClasses: {[name: string]: ActorComponent};
+  function registerEditorComponentClass(name: string, component: ActorComponent): void;
 
-  var componentClasses: any;
-  function registerComponentClass(name: string, plugin: any);
+  var componentClasses: {[name: string]: ActorComponent};
+  function registerComponentClass(name: string, plugin: ActorComponent): void;
 
-  var componentEditorClasses: any;
-  function registerComponentEditorClass(name: string, plugin: any);
+  interface ComponentEditorClass {
+    new (SupUI: any, tbody: HTMLDivElement, config: any, projectClient: any, editConfig: any): any;
+    destroy(): void;
+    config_setProperty(path: string, value: any): void;
+  }
+  var componentEditorClasses: {[name: string]: ComponentEditorClass};
+  function registerComponentEditorClass(name: string, plugin: ComponentEditorClass): void;
 
   var earlyUpdateFunctions: any;
-  function registerEarlyUpdateFunction(name: string, callback);
+  function registerEarlyUpdateFunction(name: string, callback: Function): void;
 
   class GameInstance extends EventEmitter {
     static framesPerSecond: number;
 
     debug: boolean;
-    tree: SupEngine.ActorTree;
-    cachedActors: SupEngine.Actor[];
-    renderComponents; // SupEngine.components.Camera[]
-    componentsToBeStarted: SupEngine.ActorComponent[];
-    componentsToBeDestroyed: SupEngine.ActorComponent[];
-    actorsToBeDestroyed: SupEngine.Actor[];
+    tree: ActorTree;
+    cachedActors: Actor[];
+    renderComponents: ActorComponent[];
+    componentsToBeStarted: ActorComponent[];
+    componentsToBeDestroyed: ActorComponent[];
+    actorsToBeDestroyed: Actor[];
     skipRendering: boolean;
     exited: boolean;
 
-    input: SupEngine.Input;
-    audio: SupEngine.Audio;
+    input: Input;
+    audio: Audio;
 
     threeRenderer: THREE.WebGLRenderer;
     threeScene: THREE.Scene;
 
     constructor(canvas: HTMLCanvasElement, options: {debug?: boolean});
-    update();
-    draw();
-    clear();
-    destroyComponent(component: SupEngine.ActorComponent);
-    destroyActor(actor: SupEngine.Actor);
-    destroyAllActors();
-    _doComponentDestruction(component: SupEngine.ActorComponent) ;
-    _doActorDestruction(actor: SupEngine.Actor);
+    update(): void;
+    draw(): void;
+    clear(): void;
+    destroyComponent(component: ActorComponent): void;
+    destroyActor(actor: Actor): void;
+    destroyAllActors(): void;
   }
 
   class ActorTree {
     root: Actor[];
 
     constructor();
-    _walkRecurseTopDown(node: Actor, parentNode: Actor, callback: (node: Actor, parentNode?: Actor) => any);
-    walkTopDown(callback: (node: Actor, parentNode?: Actor) => any);
-    walkDown(rootNode: Actor, callback: (node: Actor, parentNode?: Actor) => any);
+    _walkRecurseTopDown(node: Actor, parentNode: Actor, callback: (node: Actor, parentNode?: Actor) => any): void;
+    walkTopDown(callback: (node: Actor, parentNode?: Actor) => any): void;
+    walkDown(rootNode: Actor, callback: (node: Actor, parentNode?: Actor) => any): void;
   }
 
   class Actor {
@@ -70,10 +73,10 @@ declare module SupEngine {
     constructor(gameInstance: GameInstance, name: string, parent: Actor);
     // We have to duplicate the components list because a script could add more
     // components to the actor during the loop and they will be awoken automatically
-    awake();
+    awake(): void;
     // Same here, a script component could create additional components and they
     // should only be updated after being started during the next loop
-    update();
+    update(): void;
 
     // Transform
     getGlobalMatrix(): THREE.Matrix4;
@@ -84,31 +87,31 @@ declare module SupEngine {
     getLocalOrientation(): THREE.Quaternion;
     getLocalEulerAngles(): THREE.Euler;
     getLocalScale(): THREE.Vector3;
-    getParentGlobalOrientation();
+    getParentGlobalOrientation(): THREE.Quaternion;
 
-    setGlobalMatrix(matrix: THREE.Matrix4);
-    setGlobalPosition(pos: THREE.Vector3);
-    setLocalPosition(pos: THREE.Vector3);
-    lookAt(target: THREE.Vector3, up: THREE.Vector3);
-    lookTowards(direction: THREE.Vector3, up?: THREE.Vector3);
+    setGlobalMatrix(matrix: THREE.Matrix4): void;
+    setGlobalPosition(pos: THREE.Vector3): void;
+    setLocalPosition(pos: THREE.Vector3): void;
+    lookAt(target: THREE.Vector3, up: THREE.Vector3): void;
+    lookTowards(direction: THREE.Vector3, up?: THREE.Vector3): void;
 
-    setLocalOrientation(quaternion: THREE.Quaternion);
-    setGlobalOrientation(quaternion: THREE.Quaternion);
-    setLocalEulerAngles(eulerAngles: THREE.Euler);
-    setGlobalEulerAngles(eulerAngles: THREE.Euler);
-    setLocalScale(scale: THREE.Vector3);
-    setParent(newParent: Actor, keepLocal: boolean);
+    setLocalOrientation(quaternion: THREE.Quaternion): void;
+    setGlobalOrientation(quaternion: THREE.Quaternion): void;
+    setLocalEulerAngles(eulerAngles: THREE.Euler): void;
+    setGlobalEulerAngles(eulerAngles: THREE.Euler): void;
+    setLocalScale(scale: THREE.Vector3): void;
+    setParent(newParent: Actor, keepLocal: boolean): void;
 
-    rotateGlobal(quaternion: THREE.Quaternion);
-    rotateLocal(quaternion: THREE.Quaternion);
-    rotateGlobalEulerAngles(eulerAngles: THREE.Euler);
-    rotateLocalEulerAngles(eulerAngles: THREE.Euler);
-    moveGlobal(offset: THREE.Vector3);
-    moveLocal(offset: THREE.Vector3);
-    moveOriented(offset: THREE.Vector3);
+    rotateGlobal(quaternion: THREE.Quaternion): void;
+    rotateLocal(quaternion: THREE.Quaternion): void;
+    rotateGlobalEulerAngles(eulerAngles: THREE.Euler): void;
+    rotateLocalEulerAngles(eulerAngles: THREE.Euler): void;
+    moveGlobal(offset: THREE.Vector3): void;
+    moveLocal(offset: THREE.Vector3): void;
+    moveOriented(offset: THREE.Vector3): void;
 
-    _destroy();
-    _markDestructionPending();
+    _destroy(): void;
+    _markDestructionPending(): void;
   }
 
 
@@ -117,10 +120,10 @@ declare module SupEngine {
     typeName: string;
 
     constructor(actor: Actor, typeName: string);
-    _destroy();
-    awake();
-    start();
-    update();
+    _destroy(): void;
+    awake(): void;
+    start(): void;
+    update(): void;
   }
 
   class Input {
@@ -145,9 +148,9 @@ declare module SupEngine {
     gamepadsAxes: Array<any>;
 
     constructor(canvas: HTMLCanvasElement);
-    destroy();
-    reset();
-    update();
+    destroy(): void;
+    reset(): void;
+    update(): void;
   }
 
   class Audio {
@@ -176,15 +179,15 @@ declare module SupEngine {
     pan: number;
 
     constructor(audioCtx: AudioContext, audioMasterGain: GainNode, buffer: string|AudioBuffer);
-    destroy();
-    play();
-    stop();
-    pause();
+    destroy(): void;
+    play(): void;
+    stop(): void;
+    pause(): void;
     getState(): SoundStates;
-    setLoop(isLooping: boolean);
-    setVolume(volume: number);
-    setPan(pan: number);
-    setPitch(pitch: number);
+    setLoop(isLooping: boolean): void;
+    setVolume(volume: number): void;
+    setPan(pan: number): void;
+    setPitch(pitch: number): void;
   }
 
   class EventEmitter implements NodeJS.EventEmitter {

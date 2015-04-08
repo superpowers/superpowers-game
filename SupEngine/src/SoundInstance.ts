@@ -39,8 +39,8 @@ class SoundInstance {
       audio.src = <string>this.buffer;
       this.source = <any>this.audioCtx.createMediaElementSource(audio);
       // FIX ME: Very new so not included in d.ts file just yet
-      if (this.source["mediaElement"] == null) { this.source = null; return; }
-      this.source["mediaElement"].loop = this.isLooping;
+      if ((<any>this.source)["mediaElement"] == null) { this.source = null; return; }
+      (<any>this.source)["mediaElement"].loop = this.isLooping;
     }
     else {
       // Assuming AudioBuffer
@@ -78,9 +78,9 @@ class SoundInstance {
 
     this.startTime = this.audioCtx.currentTime - this.offset;
 
-    if (this.source["mediaElement"] != null) {
-      this.source["mediaElement"].currentTime = this.offset;
-      this.source["mediaElement"].play();
+    if ((<any>this.source)["mediaElement"] != null) {
+      (<any>this.source)["mediaElement"].currentTime = this.offset;
+      (<any>this.source)["mediaElement"].play();
     }
     else this.source.start(0, this.offset);
   }
@@ -89,9 +89,9 @@ class SoundInstance {
     if (this.audioCtx == null) return;
 
     if (this.source != null) {
-      if (this.source["mediaElement"] != null) {
-        this.source["mediaElement"].pause();
-        this.source["mediaElement"].currentTime = 0;
+      if ((<any>this.source)["mediaElement"] != null) {
+        (<any>this.source)["mediaElement"].pause();
+        (<any>this.source)["mediaElement"].currentTime = 0;
       }
       else this.source.stop(0);
 
@@ -114,7 +114,7 @@ class SoundInstance {
 
     this.offset = this.audioCtx.currentTime - this.startTime
 
-    if (this.source["mediaElement"] != null) this.source["mediaElement"].pause();
+    if ((<any>this.source)["mediaElement"] != null) (<any>this.source)["mediaElement"].pause();
     else this.source.stop(0);
     delete this.source;
     delete this.panner;
@@ -126,8 +126,8 @@ class SoundInstance {
     // Workaround Webkit audio's lack of support for the onended callback
     if (this.state == SoundStates.playing) {
       // FIX ME: Very new so not included in d.ts file just yet
-      if (this.source["playbackState"] != null && this.source["playbackState"] == this.source["FINISHED_STATE"]) this.state = SoundStates.stopped;
-      else if (this.source["mediaElement"] != null && this.source["mediaElement"].paused) this.state = SoundStates.stopped;
+      if ((<any>this.source)["playbackState"] != null && (<any>this.source)["playbackState"] == (<any>this.source)["FINISHED_STATE"]) this.state = SoundStates.stopped;
+      else if ((<any>this.source)["mediaElement"] != null && (<any>this.source)["mediaElement"].paused) this.state = SoundStates.stopped;
     }
 
     return this.state;
@@ -137,7 +137,7 @@ class SoundInstance {
     this.isLooping = isLooping;
     if (this.source == null) return;
 
-    if (this.source["mediaElement"] != null) this.source["mediaElement"].loop = this.isLooping;
+    if ((<any>this.source)["mediaElement"] != null) (<any>this.source)["mediaElement"].loop = this.isLooping;
     else this.source.loop = this.isLooping;
   }
 

@@ -22,20 +22,21 @@ class Camera3DControls extends ActorComponent {
     var movementSpeed = 0.1;
 
     var keyButtons = this.actor.gameInstance.input.keyboardButtons;
+    var keyEvent = (<any>window).KeyEvent; // Workaround for unknown KeyEvent property on window object
 
     tmpMovement.setX(
-      (keyButtons[window["KeyEvent"].DOM_VK_A].isDown || keyButtons[window["KeyEvent"].DOM_VK_Q].isDown) ? -movementSpeed :
-      ((keyButtons[window["KeyEvent"].DOM_VK_D].isDown) ? movementSpeed :
+      (keyButtons[keyEvent.DOM_VK_A].isDown || keyButtons[keyEvent.DOM_VK_Q].isDown) ? -movementSpeed :
+      ((keyButtons[keyEvent.DOM_VK_D].isDown) ? movementSpeed :
       0));
 
     tmpMovement.setZ(
-      (keyButtons[window["KeyEvent"].DOM_VK_W].isDown || keyButtons[window["KeyEvent"].DOM_VK_Z].isDown) ? -movementSpeed :
-      ((keyButtons[window["KeyEvent"].DOM_VK_S].isDown) ? movementSpeed :
+      (keyButtons[keyEvent.DOM_VK_W].isDown || keyButtons[keyEvent.DOM_VK_Z].isDown) ? -movementSpeed :
+      ((keyButtons[keyEvent.DOM_VK_S].isDown) ? movementSpeed :
       0 ));
 
     tmpMovement.setY(
-      (keyButtons[window["KeyEvent"].DOM_VK_SPACE].isDown) ? movementSpeed :
-      ((keyButtons[window["KeyEvent"].DOM_VK_SHIFT].isDown) ? -movementSpeed :
+      (keyButtons[keyEvent.DOM_VK_SPACE].isDown) ? movementSpeed :
+      ((keyButtons[keyEvent.DOM_VK_SHIFT].isDown) ? -movementSpeed :
       0 ));
 
     tmpMovement.applyQuaternion(tmpQuaternion.setFromAxisAngle(forwardVector, this.rotation.y));
@@ -43,7 +44,7 @@ class Camera3DControls extends ActorComponent {
 
     // Camera rotation
     if (this.actor.gameInstance.input.mouseButtons[1].isDown ||
-    (this.actor.gameInstance.input.mouseButtons[0].isDown && keyButtons[window["KeyEvent"].DOM_VK_ALT].isDown)) {
+    (this.actor.gameInstance.input.mouseButtons[0].isDown && keyButtons[keyEvent.DOM_VK_ALT].isDown)) {
       this.rotation.x -= this.actor.gameInstance.input.mouseDelta.y / 250
       this.rotation.y -= this.actor.gameInstance.input.mouseDelta.x / 250
       this.actor.setLocalEulerAngles(this.rotation);

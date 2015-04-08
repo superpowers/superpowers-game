@@ -4,7 +4,7 @@ class Audio {
 
   constructor() {}
   getContext(): AudioContext {
-    if (window["AudioContext"] == null) return null
+    if ((<any>window)["AudioContext"] == null) return null
 
     if (this._ctx != null) return this._ctx;
 

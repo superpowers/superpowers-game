@@ -11,13 +11,13 @@ export import Input = require("./Input");
 export import Audio = require("./Audio");
 export import SoundInstance = require("./SoundInstance");
 
-export var editorComponentClasses = {
+export var editorComponentClasses: {[name: string]: ActorComponent} = {
   Camera2DControls: require('./components/Camera2DControls'),
   Camera3DControls: require('./components/Camera3DControls'),
   FlatColorRenderer: require('./components/FlatColorRenderer'),
   GridRenderer: require('./components/GridRenderer')
 };
-export function registerEditorComponentClass(name: string, component: any) {
+export function registerEditorComponentClass(name: string, component: ActorComponent) {
   if (editorComponentClasses[name] != null) {
     console.error(`SupEngine.registerEditorComponent: Tried to register two or more classes named "${name}"`);
     return;
@@ -26,11 +26,11 @@ export function registerEditorComponentClass(name: string, component: any) {
   editorComponentClasses[name] = component;
 };
 
-export var componentClasses = {
+export var componentClasses: {[name: string]: ActorComponent} = {
   // Built-ins
   Camera: require("./components/Camera")
 };
-export function registerComponentClass(name: string, plugin: any) {
+export function registerComponentClass(name: string, plugin: ActorComponent) {
   if (componentClasses[name] != null) {
     console.error(`SupEngine.registerComponentClass: Tried to register two or more classes named "${name}"`);
     return;
@@ -39,8 +39,13 @@ export function registerComponentClass(name: string, plugin: any) {
   componentClasses[name] = plugin;
 };
 
-export var componentEditorClasses = {};
-export function registerComponentEditorClass(name: string, plugin: any) {
+interface ComponentEditorClass {
+  new (SupUI: any, tbody: HTMLDivElement, config: any, projectClient: any, editConfig: any): any;
+  destroy(): void;
+  config_setProperty(path: string, value: any): void;
+}
+export var componentEditorClasses: {[name: string]: ComponentEditorClass} = {};
+export function registerComponentEditorClass(name: string, plugin: ComponentEditorClass) {
   if (componentEditorClasses[name] != null) {
     console.error(`SupEngine.registerComponentEditorClass: Tried to register two or more classes named "${name}"`);
     return;
@@ -49,8 +54,8 @@ export function registerComponentEditorClass(name: string, plugin: any) {
   componentEditorClasses[name] = plugin;
 };
 
-export var earlyUpdateFunctions = {};
-export function registerEarlyUpdateFunction(name: string, callback) {
+export var earlyUpdateFunctions: {[name: string]: Function} = {};
+export function registerEarlyUpdateFunction(name: string, callback: Function) {
   if (earlyUpdateFunctions[name] != null) {
     console.error(`SupEngine.registerEarlyUpdateFunction: Tried to register two or more functions named "${name}"`);
     return;

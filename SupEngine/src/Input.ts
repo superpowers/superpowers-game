@@ -16,8 +16,8 @@ class Input {
   keyboardButtons: Array<{isDown: boolean; wasJustPressed: boolean; wasJustReleased: boolean;}> = [];
   keyboardButtonsDown: boolean[] = [];
 
-  gamepadsButtons = [];
-  gamepadsAxes = [];
+  gamepadsButtons: Array<Array<{isDown: boolean; wasJustPressed: boolean; wasJustReleased: boolean;}>> = [];
+  gamepadsAxes: Array<number[]> = [];
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
@@ -103,39 +103,39 @@ class Input {
 
   _onBlur = () => { this.reset(); }
 
-  _onMouseMove = (event) => {
+  _onMouseMove = (event: any) => {
     event.preventDefault();
 
     var rect = event.target.getBoundingClientRect()
     this.newMousePosition = { x: event.clientX - rect.left, y: event.clientY - rect.top };
   }
 
-  _onMouseDown = (event) => {
+  _onMouseDown = (event: MouseEvent) => {
     event.preventDefault();
     this.canvas.focus();
     this.mouseButtonsDown[event.button] = true;
   }
 
-  _onMouseUp = (event) => {
+  _onMouseUp = (event: MouseEvent) => {
     if (this.mouseButtonsDown[event.button]) event.preventDefault();
     this.mouseButtonsDown[event.button] = false;
   }
 
-  _onContextMenu = (event) => {
+  _onContextMenu = (event: Event) => {
     event.preventDefault();
   }
 
-  _onMouseWheel = (event) => {
+  _onMouseWheel = (event: MouseWheelEvent) => {
     event.preventDefault();
     this.newScrollDelta = (event.wheelDelta > 0 || event.detail < 0) ? 1 : -1;
     return false;
   }
 
-  _onTouchStart = (event) => {
+  _onTouchStart = (event: any) => {
     event.preventDefault();
 
     var rect = event.target.getBoundingClientRect();
-    event.changedTouches.forEach((touch) => {
+    event.changedTouches.forEach((touch: any) => {
       this.touches[touch.identifier].position.x = touch.clientX - rect.left;
       this.touches[touch.identifier].position.y = touch.clientY - rect.top;
 
@@ -148,21 +148,21 @@ class Input {
     });
   }
 
-  _onTouchEnd = (event) => {
+  _onTouchEnd = (event: any) => {
     event.preventDefault();
 
-    event.changedTouches.forEach((touch) => {
+    event.changedTouches.forEach((touch: any) => {
       this.touchesDown[touch.identifier] = false;
       if (touch.identifier == 0) this.mouseButtonsDown[0] = false;
     });
   }
 
-  _onTouchMove = (event) => {
+  _onTouchMove = (event: any) => {
     event.preventDefault();
 
     var rect = event.target.getBoundingClientRect();
 
-    event.changedTouches.forEach((touch) => {
+    event.changedTouches.forEach((touch: any) => {
       this.touches[touch.identifier].position.x = touch.clientX - rect.left;
       this.touches[touch.identifier].position.y = touch.clientY - rect.top;
 
@@ -173,12 +173,12 @@ class Input {
   // TODO: stop using keyCode when KeyboardEvent.code is supported more widely
   // See https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent.code
 
-  _onKeyDown = (event) => {
-    if (event.keyCode !== window["KeyEvent"].DOM_VK_F12 && event.keyCode !== window["KeyEvent"].DOM_VK_F5) event.preventDefault();
+  _onKeyDown = (event: KeyboardEvent) => {
+    if (event.keyCode !== (<any>window)["KeyEvent"].DOM_VK_F12 && event.keyCode !== (<any>window)["KeyEvent"].DOM_VK_F5) event.preventDefault();
     this.keyboardButtonsDown[event.keyCode] = true;
   }
 
-  _onKeyUp = (event) => {
+  _onKeyUp = (event: KeyboardEvent) => {
     this.keyboardButtonsDown[event.keyCode] = false;
   }
 
@@ -258,8 +258,8 @@ class Input {
 export = Input;
 
 // FIXME: KeyEvent isn't in lib.d.ts yet
-if (global.window != null && window["KeyEvent"] == null) {
-  window["KeyEvent"] = {
+if (global.window != null && (<any>window)["KeyEvent"] == null) {
+  (<any>window)["KeyEvent"] = {
     DOM_VK_CANCEL: 3,
     DOM_VK_HELP: 6,
     DOM_VK_BACK_SPACE: 8,
