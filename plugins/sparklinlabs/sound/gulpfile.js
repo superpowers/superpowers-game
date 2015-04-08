@@ -32,7 +32,8 @@ function makeBrowserify(source, destination, output) {
   gulp.task(output + "-browserify", ["typescript"], function() {
     var bundler = browserify(source);
     bundler.transform("brfs");
-    return bundler.bundle().pipe(vinylSourceStream(output + ".js")).pipe(gulp.dest(destination));
+    function bundle() { return bundler.bundle().pipe(vinylSourceStream(output + ".js")).pipe(gulp.dest(destination)); };
+    return bundle();
   });
   tasks.push(output + "-browserify");
 }
