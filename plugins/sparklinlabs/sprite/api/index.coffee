@@ -6,7 +6,7 @@ SupAPI.registerPlugin 'typescript', 'Sup.Sprite', {
 }
 
 SupAPI.registerPlugin 'typescript', 'SpriteRenderer', {
-  code: fs.readFileSync(__dirname + '/Sup.SpriteRenderer.ts', encoding: 'utf8')
-  defs: fs.readFileSync(__dirname + '/Sup.SpriteRenderer.d.ts', encoding: 'utf8')
+  code: fs.readFileSync(__dirname + '/Sup.SpriteRenderer.ts.txt', encoding: 'utf8')
+  defs: fs.readFileSync(__dirname + '/Sup.SpriteRenderer.d.ts.txt', encoding: 'utf8')
   exposeActorComponent: { propertyName: "spriteRenderer", className: "Sup.SpriteRenderer" }
 }
