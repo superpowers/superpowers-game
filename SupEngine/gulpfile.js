@@ -16,8 +16,8 @@ var browserify = require("browserify");
 var source = require("vinyl-source-stream");
 gulp.task("browserify", [ "typescript" ], function() {
   var bundler = browserify("./SupEngine.js", { standalone: "SupEngine" } );
-  function bundle() { bundler.bundle().pipe(source("SupEngine.js")).pipe(gulp.dest("../../public/system")) };
-  bundle();
+  function bundle() { return bundler.bundle().pipe(source("SupEngine.js")).pipe(gulp.dest("../../public/system")); };
+  return bundle();
 });
 
 // All
