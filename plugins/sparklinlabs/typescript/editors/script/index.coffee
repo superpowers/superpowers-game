@@ -39,6 +39,8 @@ start = ->
     'Cmd-Z': -> onUndo(); return
     'Shift-Ctrl-Z': -> onRedo(); return
     'Shift-Cmd-Z': -> onRedo(); return
+    'Ctrl-Y': -> onRedo(); return
+    'Cmd-Y': -> onRedo(); return
     'Ctrl-S': ->
       socket.emit 'edit:assets', info.assetId, 'saveText', (err) -> if err? then alert err; SupClient.onDisconnected(); return
       return
