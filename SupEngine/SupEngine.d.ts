@@ -6,11 +6,11 @@ declare var __tmpTHREE: typeof THREE;
 declare module SupEngine {
   var THREE: typeof __tmpTHREE;
 
-  var editorComponentClasses: {[name: string]: ActorComponent};
-  function registerEditorComponentClass(name: string, component: ActorComponent): void;
+  var editorComponentClasses: {[name: string]: any};
+  function registerEditorComponentClass(name: string, component: any): void;
 
-  var componentClasses: {[name: string]: ActorComponent};
-  function registerComponentClass(name: string, plugin: ActorComponent): void;
+  var componentClasses: {[name: string]: any};
+  function registerComponentClass(name: string, plugin: any): void;
 
   interface ComponentEditorClass {
     new (SupUI: any, tbody: HTMLDivElement, config: any, projectClient: any, editConfig: any): any;
@@ -42,7 +42,7 @@ declare module SupEngine {
     threeRenderer: THREE.WebGLRenderer;
     threeScene: THREE.Scene;
 
-    constructor(canvas: HTMLCanvasElement, options: {debug?: boolean});
+    constructor(canvas: HTMLCanvasElement, options?: {debug?: boolean});
     update(): void;
     draw(): void;
     clear(): void;
@@ -70,7 +70,7 @@ declare module SupEngine {
     components: ActorComponent[];
     pendingForDestruction: boolean;
 
-    constructor(gameInstance: GameInstance, name: string, parent: Actor);
+    constructor(gameInstance: GameInstance, name: string, parent?: Actor);
     // We have to duplicate the components list because a script could add more
     // components to the actor during the loop and they will be awoken automatically
     awake(): void;

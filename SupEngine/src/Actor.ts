@@ -14,7 +14,7 @@ class Actor {
   components: ActorComponent[] = [];
   pendingForDestruction = false;
 
-  constructor(gameInstance: GameInstance, name: string, parent: Actor) {
+  constructor(gameInstance: GameInstance, name: string, parent?: Actor) {
     this.gameInstance = gameInstance;
     this.name = name;
     this.parent = parent;
