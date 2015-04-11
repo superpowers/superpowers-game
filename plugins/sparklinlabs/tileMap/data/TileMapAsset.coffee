@@ -7,7 +7,7 @@ _ = require 'lodash'
 module.exports = class TileMapAsset extends SupCore.data.base.Asset
 
   @schema:
-    tileSetId: { type: 'integer', min: 0 }
+    tileSetId: { type: 'integer?' }
 
     pixelsPerUnit: { type: 'number', min: 1, mutable: true }
 
