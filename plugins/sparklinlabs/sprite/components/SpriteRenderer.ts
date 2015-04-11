@@ -10,7 +10,7 @@ class SpriteRenderer extends SupEngine.ActorComponent {
   static Updater = require("./SpriteRendererUpdater");
 
   opacity = 1;
-  color = { r: 1, g: 1, b: 1};
+  color = { r: 1, g: 1, b: 1 };
   hasFrameBeenUpdated = false;
 
   asset: any;
@@ -33,9 +33,9 @@ class SpriteRenderer extends SupEngine.ActorComponent {
   setSprite(asset: any) {
     this._clearMesh();
 
-    this.asset = asset
-    this.animationName = null
-    this.animationsByName = {}
+    this.asset = asset;
+    this.animationName = null;
+    this.animationsByName = {};
     if (this.asset == null) return;
 
     this.updateAnimationsByName();
@@ -73,7 +73,7 @@ class SpriteRenderer extends SupEngine.ActorComponent {
     this.actor.threeObject.remove(this.threeMesh);
     this.geometry.dispose();
     this.material.dispose();
-    this.threeMesh = null
+    this.threeMesh = null;
   }
 
   _destroy() {
