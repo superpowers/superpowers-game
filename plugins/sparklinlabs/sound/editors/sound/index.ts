@@ -93,7 +93,7 @@ var setupSound = () => {
 
 var setupProperty = (path, value) => {
   switch(path) {
-    case "streaming": ui.streamingSelect.value = value;
+    case "streaming": ui.streamingSelect.value = value; break;
   }
 }
 
