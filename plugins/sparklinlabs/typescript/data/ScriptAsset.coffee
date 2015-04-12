@@ -177,6 +177,8 @@ module.exports = class ScriptAsset extends SupCore.data.base.Asset
 
       ownErrors = ( error for error in results.errors when error.file == ownScriptName )
       if ownErrors.length > 0 then finish ownErrors; return
+      # If there were no errors in this script but there are errors in others, report them
+      if results.errors.length > 0 then finish results.errors; return
 
       libSourceFile = results.program.getSourceFile("lib.d.ts")
       supTypeSymbols =
