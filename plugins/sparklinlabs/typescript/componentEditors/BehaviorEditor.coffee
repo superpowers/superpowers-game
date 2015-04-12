@@ -160,7 +160,7 @@ module.exports = class BehaviorEditor
 
     switch propertyType
       when 'boolean' then propertyValue = event.target.checked
-      when 'number', then propertyValue = parseFloat(event.target.value)
+      when 'number' then propertyValue = parseFloat(event.target.value)
       when 'string' then propertyValue = event.target.value
       else console.error "Unsupported property type: #{propertyType}"
 
