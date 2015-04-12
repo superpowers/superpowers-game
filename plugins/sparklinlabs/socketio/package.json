@@ -1,0 +1,7 @@
+{
+  "name": "superpowers-sparklinlabs-socketio-plugin",
+  "version": "1.0.0",
+  "dependencies": {
+    "socket.io-client": "^1.3.5"
+  }
+}
