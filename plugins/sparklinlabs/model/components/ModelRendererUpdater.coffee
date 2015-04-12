@@ -15,7 +15,7 @@ module.exports = class ModelRendererUpdater
       onAssetTrashed: @_onModelAssetTrashed
 
     if @modelAssetId?
-      @client.sub @modelAssetId, 'model', @modelSubscriber
+      @client.subAsset @modelAssetId, 'model', @modelSubscriber
 
   _onModelAssetReceived: (assetId, asset) =>
     @modelAsset = asset
@@ -120,14 +120,14 @@ module.exports = class ModelRendererUpdater
   config_setProperty: (path, value) ->
     switch path
       when 'modelAssetId'
-        @client.unsub @modelAssetId, @modelSubscriber if @modelAssetId?
+        @client.unsubAsset @modelAssetId, @modelSubscriber if @modelAssetId?
         @modelAssetId = value
 
         @modelAsset = null
         @modelRenderer.setModel null
 
         if @modelAssetId?
-          @client.sub @modelAssetId, 'model', @modelSubscriber
+          @client.subAsset @modelAssetId, 'model', @modelSubscriber
 
       when 'animationId'
         @animationId = value

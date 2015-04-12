@@ -61,7 +61,7 @@ start = ->
 # Network callbacks
 onConnected = ->
   data = projectClient: new SupClient.ProjectClient socket, { subEntries: true }
-  data.projectClient.sub info.assetId, 'scene', sceneSubscriber
+  data.projectClient.subAsset info.assetId, 'scene', sceneSubscriber
   return
 
 sceneSubscriber.onAssetTrashed = SupClient.onAssetTrashed

@@ -22,14 +22,14 @@ module.exports = class TileMapRendererUpdater
       onAssetTrashed: @_onTileSetAssetTrashed
 
     if @tileMapAssetId?
-      @client.sub @tileMapAssetId, 'tileMap', @tileMapSubscriber
+      @client.subAsset @tileMapAssetId, 'tileMap', @tileMapSubscriber
 
   _onTileMapAssetReceived: (assetId, asset) =>
     @tileMapAsset = asset
     @tileMapRenderer.setTileMap new TileMap @tileMapAsset.pub
 
     if @tileMapAsset.pub.tileSetId?
-      @client.sub @tileMapAsset.pub.tileSetId, 'tileSet', @tileSetSubscriber
+      @client.subAsset @tileMapAsset.pub.tileSetId, 'tileSet', @tileSetSubscriber
     @receiveAssetCallbacks?.tileMap();
     return
 
@@ -39,13 +39,13 @@ module.exports = class TileMapRendererUpdater
     return
 
   _onEditCommand_changeTileSet: =>
-    @client.unsub @tileSetAssetId, @tileSetSubscriber if @tileSetAssetId?
+    @client.unsubAsset @tileSetAssetId, @tileSetSubscriber if @tileSetAssetId?
     @tileSetAsset = null
     @tileMapRenderer.setTileSet null
 
     @tileSetAssetId = @tileMapAsset.pub.tileSetId
     if @tileSetAssetId?
-      @client.sub @tileSetAssetId, 'tileSet', @tileSetSubscriber
+      @client.subAsset @tileSetAssetId, 'tileSet', @tileSetSubscriber
     return
 
   _onEditCommand_resizeMap: =>
@@ -149,14 +149,14 @@ module.exports = class TileMapRendererUpdater
   config_setProperty: (path, value) ->
     switch path
       when 'tileMapAssetId'
-        @client.unsub @tileMapAssetId, @tileMapSubscriber if @tileMapAssetId?
+        @client.unsubAsset @tileMapAssetId, @tileMapSubscriber if @tileMapAssetId?
         @tileMapAssetId = value
 
         @tileMapAsset = null
         @tileMapRenderer.setTileMap null
 
         if @tileMapAssetId?
-          @client.sub @tileMapAssetId, 'tileMap', @tileMapSubscriber
+          @client.subAsset @tileMapAssetId, 'tileMap', @tileMapSubscriber
 
       # when 'tileSetAssetId'
 

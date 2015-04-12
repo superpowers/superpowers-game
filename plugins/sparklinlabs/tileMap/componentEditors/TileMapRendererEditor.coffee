@@ -17,7 +17,7 @@ module.exports = class TileMapRendererEditor
     @projectClient.unsubEntries @
 
     if @tileMapAssetId?
-      @projectClient.unsub @tileMapAssetId, @
+      @projectClient.unsubAsset @tileMapAssetId, @
     return
 
   config_setProperty: (path, value) ->
@@ -25,10 +25,10 @@ module.exports = class TileMapRendererEditor
 
     switch path
       when 'tileMapAssetId'
-        # @projectClient.unsub @tileMapAssetId, @ if @tileMapAssetId?
+        # @projectClient.unsubAsset @tileMapAssetId, @ if @tileMapAssetId?
         @tileMapAssetId = value
 
-        # @projectClient.sub @tileMapAssetId, 'sprite', @
+        # @projectClient.subAsset @tileMapAssetId, 'sprite', @
 
         @tileMapTextField.value = @projectClient.entries.getPathFromId @tileMapAssetId
 
@@ -41,7 +41,7 @@ module.exports = class TileMapRendererEditor
       @tileMapTextField.value = entries.getPathFromId @tileMapAssetId
       # NOTE: We'll probably need to subscribe later
       # when we want to be kept up-to-date about tile set change
-      # @projectClient.sub @tileMapAssetId, 'tileMap', @
+      # @projectClient.subAsset @tileMapAssetId, 'tileMap', @
 
     return
 

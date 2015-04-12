@@ -13,10 +13,10 @@ module.exports = class TileSetRendererUpdater
       onAssetTrashed: @_onTileSetAssetTrashed
 
     if @tileSetAssetId?
-      @client.sub @tileSetAssetId, 'tileSet', @tileSetSubscriber
+      @client.subAsset @tileSetAssetId, 'tileSet', @tileSetSubscriber
 
   changeTileSetId: (tileSetId) ->
-    @client.unsub @tileSetAssetId, @tileSetSubscriber if @tileSetAssetId?
+    @client.unsubAsset @tileSetAssetId, @tileSetSubscriber if @tileSetAssetId?
     @tileSetAssetId = tileSetId
 
     @tileSetAsset = null
@@ -24,7 +24,7 @@ module.exports = class TileSetRendererUpdater
     @tileSetThreeTexture?.dispose()
     @tileSetThreeTexture = null
 
-    @client.sub @tileSetAssetId, 'tileSet', @tileSetSubscriber if @tileSetAssetId?
+    @client.subAsset @tileSetAssetId, 'tileSet', @tileSetSubscriber if @tileSetAssetId?
     return
 
   _onTileSetAssetReceived: (assetId, asset) =>

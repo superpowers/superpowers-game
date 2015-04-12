@@ -21,7 +21,7 @@ module.exports = class ModelRendererEditor
     @projectClient.unsubEntries @
 
     if @modelAssetId?
-      @projectClient.unsub @modelAssetId, @
+      @projectClient.unsubAsset @modelAssetId, @
     return
 
   config_setProperty: (path, value) ->
@@ -29,11 +29,11 @@ module.exports = class ModelRendererEditor
 
     switch path
       when 'modelAssetId'
-        @projectClient.unsub @modelAssetId, @ if @modelAssetId?
+        @projectClient.unsubAsset @modelAssetId, @ if @modelAssetId?
         @modelAssetId = value
         @animationSelectBox.disabled = true
 
-        @projectClient.sub @modelAssetId, 'model', @
+        @projectClient.subAsset @modelAssetId, 'model', @
 
         @modelTextField.value = @projectClient.entries.getPathFromId @modelAssetId
 
@@ -49,7 +49,7 @@ module.exports = class ModelRendererEditor
 
     if entries.byId[@modelAssetId]?
       @modelTextField.value = entries.getPathFromId @modelAssetId
-      @projectClient.sub @modelAssetId, 'model', @
+      @projectClient.subAsset @modelAssetId, 'model', @
     return
 
   onEntryAdded: (entry, parentId, index) => return
