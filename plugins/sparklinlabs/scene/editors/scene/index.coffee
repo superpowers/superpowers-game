@@ -176,7 +176,7 @@ onAssetCommands.removeNode = (id) ->
   return
 
 onAssetCommands.addComponent = (nodeId, nodeComponent, index) ->
-  isInspected = ui.nodesTreeView.selectedNodes.length == 1 and nodeId == parseInt(ui.nodesTreeView.selectedNodes[0].dataset.id)
+  isInspected = ui.nodesTreeView.selectedNodes.length == 1 and nodeId == ui.nodesTreeView.selectedNodes[0].dataset.id
 
   if isInspected
     componentElt = createComponentElement nodeId, nodeComponent
@@ -190,14 +190,14 @@ onAssetCommands.editComponent = (nodeId, componentId, command, args...) ->
   componentUpdater = ui.bySceneNodeId[nodeId].bySceneComponentId[componentId].componentUpdater
   componentUpdater.__proto__["config_#{command}"]?.call componentUpdater, args...
 
-  isInspected = ui.nodesTreeView.selectedNodes.length == 1 and nodeId == parseInt(ui.nodesTreeView.selectedNodes[0].dataset.id)
+  isInspected = ui.nodesTreeView.selectedNodes.length == 1 and nodeId == ui.nodesTreeView.selectedNodes[0].dataset.id
   if isInspected
     componentEditor = ui.componentEditors[componentId]
     componentEditor.__proto__["config_#{command}"]?.call componentEditor, args...
   return
 
 onAssetCommands.removeComponent = (nodeId, componentId) ->
-  isInspected = ui.nodesTreeView.selectedNodes.length == 1 and nodeId == parseInt(ui.nodesTreeView.selectedNodes[0].dataset.id)
+  isInspected = ui.nodesTreeView.selectedNodes.length == 1 and nodeId == ui.nodesTreeView.selectedNodes[0].dataset.id
 
   if isInspected
     ui.componentEditors[componentId].destroy()
@@ -225,7 +225,7 @@ createNodeElement = (node) ->
 onNodeDrop = (dropInfo, orderedNodes) ->
   { parentId, index } = SupClient.getTreeViewDropPoint dropInfo, data.asset.nodes
 
-  nodeIds = ( parseInt(node.dataset.id) for node in orderedNodes )
+  nodeIds = ( node.dataset.id for node in orderedNodes )
 
   sourceParentNode = data.asset.nodes.parentNodesById[nodeIds[0]]
   sourceChildren = sourceParentNode?.children ? data.asset.nodes.pub
@@ -313,7 +313,7 @@ onRenameNodeClick = ->
   return if ui.nodesTreeView.selectedNodes.length != 1
 
   selectedNode = ui.nodesTreeView.selectedNodes[0]
-  node = data.asset.nodes.byId[parseInt(selectedNode.dataset.id)]
+  node = data.asset.nodes.byId[selectedNode.dataset.id]
 
   SupClient.dialogs.prompt "Enter a new name for the actor.", null, node.name, "Rename", (newName) =>
     return if ! newName?
@@ -327,7 +327,7 @@ onDuplicateNodeClick = ->
   return if ui.nodesTreeView.selectedNodes.length != 1
 
   selectedNode = ui.nodesTreeView.selectedNodes[0]
-  node = data.asset.nodes.byId[parseInt(selectedNode.dataset.id)]
+  node = data.asset.nodes.byId[selectedNode.dataset.id]
 
   SupClient.dialogs.prompt "Enter a name for the new actor.", null, node.name, "Duplicate", (newName) =>
     return if ! newName?
@@ -349,7 +349,7 @@ onDeleteNodeClick = ->
     return if ! confirm
 
     for selectedNode in ui.nodesTreeView.selectedNodes
-      socket.emit 'edit:assets', info.assetId, 'removeNode', parseInt(selectedNode.dataset.id), (err) ->
+      socket.emit 'edit:assets', info.assetId, 'removeNode', selectedNode.dataset.id, (err) ->
         alert err if err?; return
     return
   return
@@ -370,7 +370,7 @@ onTransformInputChange = (event) ->
     quaternion = new THREE.Quaternion().setFromEuler euler
     value = { x: quaternion.x, y: quaternion.y, z: quaternion.z, w: quaternion.w }
 
-  nodeId = parseInt(ui.nodesTreeView.selectedNodes[0].dataset.id)
+  nodeId = ui.nodesTreeView.selectedNodes[0].dataset.id
 
   socket.emit 'edit:assets', info.assetId, 'setNodeProperty', nodeId, transformType, value, (err) ->
     alert err if err?; return
@@ -395,6 +395,7 @@ createComponentElement = (nodeId, component) ->
     socket.emit 'edit:assets', info.assetId, 'editComponent', nodeId, component.id, command, args..., callback; return
 
   componentEditorPlugin = SupEngine.componentEditorClasses[component.type]
+  # FIXME: Remove SupClient parameter, it's useless?
   ui.componentEditors[component.id] = new componentEditorPlugin SupClient, table.querySelector('tbody'), component.config, data.projectClient, editConfig
 
   shrinkButton = clone.querySelector('.shrink-component')
@@ -416,7 +417,7 @@ onNewComponentClick = ->
   SupClient.dialogs.select "Select the type of component to create.", ui.componentEditorClasses, "Create", (type) =>
     return if ! type?
 
-    nodeId = parseInt(ui.nodesTreeView.selectedNodes[0].dataset.id)
+    nodeId = ui.nodesTreeView.selectedNodes[0].dataset.id
 
     socket.emit 'edit:assets', info.assetId, 'addComponent', nodeId, type, null, (err, componentId) ->
       if err? then alert err; return
@@ -428,8 +429,8 @@ onDeleteComponentClick = (event) ->
   SupClient.dialogs.confirm "Are you sure you want to delete this component?", "Delete", (confirm) =>
     return if ! confirm
 
-    nodeId = parseInt(ui.nodesTreeView.selectedNodes[0].dataset.id)
-    componentId = parseInt(event.target.parentElement.parentElement.dataset.componentId)
+    nodeId = ui.nodesTreeView.selectedNodes[0].dataset.id
+    componentId = event.target.parentElement.parentElement.dataset.componentId
 
     socket.emit 'edit:assets', info.assetId, 'removeComponent', nodeId, componentId, (err) ->
       if err? then alert err; return

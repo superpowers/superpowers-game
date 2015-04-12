@@ -252,7 +252,7 @@ var onRenameAnimationClick = () => {
   if (ui.animationsTreeView.selectedNodes.length !== 1) return;
 
   var selectedNode = ui.animationsTreeView.selectedNodes[0];
-  var animation = data.spriteUpdater.spriteAsset.animations.byId[parseInt(selectedNode.dataset.id)];
+  var animation = data.spriteUpdater.spriteAsset.animations.byId[selectedNode.dataset.id];
 
   SupClient.dialogs.prompt("Enter a new name for the animation.", null, animation.name, "Rename", (newName) => {
     if (newName == null) return;
@@ -269,7 +269,7 @@ var onDeleteAnimationClick = () => {
     if (! confirm) return;
 
     ui.animationsTreeView.selectedNodes.forEach((selectedNode: any) => {
-      socket.emit("edit:assets", info.assetId, "deleteAnimation", parseInt(selectedNode.dataset.id), (err: string) => {
+      socket.emit("edit:assets", info.assetId, "deleteAnimation", selectedNode.dataset.id, (err: string) => {
         if (err != null) alert(err);
       });
     });
@@ -278,7 +278,7 @@ var onDeleteAnimationClick = () => {
 
 var onAnimationDrop = (dropInfo: any, orderedNodes: any) => {
   var animationIds: number[] = [];
-  orderedNodes.forEach((animation: any) => { animationIds.push(parseInt(animation.dataset.id)); });
+  orderedNodes.forEach((animation: any) => { animationIds.push(animation.dataset.id); });
 
   var index = SupClient.getListViewDropIndex(dropInfo, data.spriteUpdater.spriteAsset.animations);
 
@@ -293,7 +293,7 @@ var onAnimationDrop = (dropInfo: any, orderedNodes: any) => {
 var updateSelectedAnimation = () => {
   var selectedAnimElt = ui.animationsTreeView.selectedNodes[0];
   if (selectedAnimElt != null) {
-    ui.selectedAnimationId = parseInt(selectedAnimElt.dataset.id);
+    ui.selectedAnimationId = selectedAnimElt.dataset.id;
     data.spriteUpdater.config_setProperty("animationId", ui.selectedAnimationId);
     ui.animationArea.animationPlay.disabled = false;
     ui.animationArea.animationSlider.disabled = false;

@@ -51,7 +51,7 @@ class SpriteRendererEditor {
           this.spriteTextField.value = this.projectClient.entries.getPathFromId(this.spriteAssetId);
           this.projectClient.subAsset(this.spriteAssetId, 'sprite', this);
         }
-        else this.spriteTextField.value = ""
+        else this.spriteTextField.value = "";
         break;
       }
 
@@ -146,7 +146,7 @@ class SpriteRendererEditor {
     }
 
   _onChangeSpriteAnimation(event: any) {
-    var animationId = (event.target.value == '') ? null : parseInt(event.target.value);
+    var animationId = (event.target.value == '') ? null : event.target.value;
     this.editConfig('setProperty', 'animationId', animationId);
   }
 }

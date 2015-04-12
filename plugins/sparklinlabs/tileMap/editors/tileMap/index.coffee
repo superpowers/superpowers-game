@@ -250,7 +250,7 @@ onEditCommands.deleteLayer = (id, index) ->
   layerElt = ui.layersTreeView.treeRoot.querySelector("[data-id='#{id}']")
   ui.layersTreeView.remove layerElt
 
-  if id == parseInt(ui.tileSetArea.selectedLayerId)
+  if id == ui.tileSetArea.selectedLayerId
     index = Math.max 0, index-1
     ui.tileSetArea.selectedLayerId = data.tileMapUpdater.tileMapAsset.pub.layers[index].id
     ui.layersTreeView.clearSelection()
@@ -356,7 +356,7 @@ onNewLayerClick = ->
   SupClient.dialogs.prompt "Enter a name for the layer.", null, "Layer", "Create", (name) =>
     return if ! name?
 
-    socket.emit 'edit:assets', info.assetId, 'newLayer', name, SupClient.getTreeViewInsertionPoint(ui.layersTreeView).index , (err, layerId) ->
+    socket.emit 'edit:assets', info.assetId, 'newLayer', name, SupClient.getTreeViewInsertionPoint(ui.layersTreeView).index, (err, layerId) ->
       if err? then alert err; return
 
       ui.layersTreeView.clearSelection()
@@ -370,7 +370,7 @@ onRenameLayerClick = ->
   return if ui.layersTreeView.selectedNodes.length != 1
 
   selectedNode = ui.layersTreeView.selectedNodes[0]
-  layer = data.tileMapUpdater.tileMapAsset.layers.byId[parseInt(selectedNode.dataset.id)]
+  layer = data.tileMapUpdater.tileMapAsset.layers.byId[selectedNode.dataset.id]
 
   SupClient.dialogs.prompt "Enter a new name for the layer.", null, layer.name, "Rename", (newName) =>
     return if ! newName?
@@ -387,13 +387,13 @@ onDeleteLayerClick = ->
     return if ! confirm
 
     selectedNode = ui.layersTreeView.selectedNodes[0]
-    socket.emit 'edit:assets', info.assetId, 'deleteLayer', parseInt(selectedNode.dataset.id), (err) ->
+    socket.emit 'edit:assets', info.assetId, 'deleteLayer', selectedNode.dataset.id, (err) ->
       alert err if err?; return
     return
   return
 
 onLayerDrop = (dropInfo, orderedNodes) =>
-  id = parseInt(orderedNodes[0].dataset.id)
+  id = orderedNodes[0].dataset.id
 
   newIndex = SupClient.getListViewDropIndex dropInfo, data.tileMapUpdater.tileMapAsset.layers
   socket.emit 'edit:assets', info.assetId, 'moveLayer', id, newIndex, (err) ->

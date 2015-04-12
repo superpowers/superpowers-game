@@ -7,7 +7,7 @@ _ = require 'lodash'
 module.exports = class TileMapAsset extends SupCore.data.base.Asset
 
   @schema:
-    tileSetId: { type: 'integer?' }
+    tileSetId: { type: 'string?' }
 
     pixelsPerUnit: { type: 'number', min: 1, mutable: true }
 
@@ -21,6 +21,9 @@ module.exports = class TileMapAsset extends SupCore.data.base.Asset
   @emptyTile: [-1, -1, false, false, 0]
 
   constructor: (id, pub, serverData) ->
+    # TODO: Remove this cast by Superpowers 0.6, legacy stuff
+    if pub? and typeof pub.tileSetId == 'number' then pub.tileSetId = pub.tileSetId.toString()
+
     super id, pub, @constructor.schema, serverData
 
   init: (options, callback) ->
@@ -47,7 +50,7 @@ module.exports = class TileMapAsset extends SupCore.data.base.Asset
 
   server_changeTileSet: (client, tileSetId, callback) ->
     if tileSetId?
-      if typeof(tileSetId) != 'number' then callback 'Id must be an integer or null'; return
+      if typeof(tileSetId) != 'string' then callback 'Id must be a string or null'; return
 
       entry = @serverData.entries.byId[tileSetId]
       if ! entry? then callback 'Invalid tileSetId'; return
@@ -149,7 +152,7 @@ module.exports = class TileMapAsset extends SupCore.data.base.Asset
     return
 
   server_editMap: (client, layerId, x, y, values, callback) ->
-    if typeof layerId != 'number' or ! @layers.byId[layerId]? then callback "no such layer"; return
+    if typeof layerId != 'string' or ! @layers.byId[layerId]? then callback "no such layer"; return
     if typeof x != 'number' or x < 0 or x >= @pub.width then callback "x must be an integer between 0 and #{@pub.width-1}"; return
     if typeof y != 'number' or y < 0 or y >= @pub.height then callback "y must be an integer between 0 and #{@pub.height-1}"; return
     if values?
@@ -198,7 +201,7 @@ module.exports = class TileMapAsset extends SupCore.data.base.Asset
     return
 
   server_renameLayer: (client, layerId, newName, callback) ->
-    if typeof layerId != 'number' or ! @layers.byId[layerId]? then callback "no such layer"; return
+    if typeof layerId != 'string' or ! @layers.byId[layerId]? then callback "no such layer"; return
 
     @layers.setProperty layerId, 'name', newName, (err) =>
       if err? then callback err; return
@@ -212,7 +215,7 @@ module.exports = class TileMapAsset extends SupCore.data.base.Asset
     return
 
   server_deleteLayer: (client, layerId, callback) ->
-    if typeof layerId != 'number' or ! @layers.byId[layerId]? then callback "no such layer"; return
+    if typeof layerId != 'string' or ! @layers.byId[layerId]? then callback "no such layer"; return
     if @pub.layers.length == 1 then callback "Last layer can't be deleted"; return
 
     @layers.remove layerId, (err, index) =>
@@ -227,7 +230,7 @@ module.exports = class TileMapAsset extends SupCore.data.base.Asset
     return
 
   server_moveLayer: (client, layerId, layerIndex, callback) ->
-    if typeof layerId != 'number' or ! @layers.byId[layerId]? then callback "no such layer"; return
+    if typeof layerId != 'string' or ! @layers.byId[layerId]? then callback "no such layer"; return
     if typeof layerIndex != 'number' then callback "index must be an integer"; return
 
     @layers.move layerId, layerIndex, (err, index) =>

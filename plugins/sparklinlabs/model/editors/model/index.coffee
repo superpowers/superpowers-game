@@ -167,7 +167,7 @@ onRenameAnimationClick = ->
   return if ui.animationsTreeView.selectedNodes.length != 1
 
   selectedNode = ui.animationsTreeView.selectedNodes[0]
-  animation = data.modelUpdater.modelAsset.animations.byId[parseInt(selectedNode.dataset.id)]
+  animation = data.modelUpdater.modelAsset.animations.byId[selectedNode.dataset.id]
 
   SupClient.dialogs.prompt "Enter a new name for the animation.", null, animation.name, "Rename", (newName) =>
     return if ! newName?
@@ -184,13 +184,13 @@ onDeleteAnimationClick = ->
     return if ! confirm
 
     for selectedNode in ui.animationsTreeView.selectedNodes
-      socket.emit 'edit:assets', info.assetId, 'deleteAnimation', parseInt(selectedNode.dataset.id), (err) ->
+      socket.emit 'edit:assets', info.assetId, 'deleteAnimation', selectedNode.dataset.id, (err) ->
         alert err if err?; return
     return
   return
 
 onAnimationDrop = (dropInfo, orderedNodes) =>
-  animationIds = ( parseInt(animation.dataset.id) for animation in orderedNodes )
+  animationIds = ( animation.dataset.id for animation in orderedNodes )
 
   index = SupClient.getListViewDropIndex dropInfo, data.asset.animations
 
@@ -203,7 +203,7 @@ onAnimationDrop = (dropInfo, orderedNodes) =>
 updateSelectedAnimation = ->
   selectedAnimElt = ui.animationsTreeView.selectedNodes[0]
   if selectedAnimElt?
-    ui.selectedAnimationId = parseInt selectedAnimElt.dataset.id
+    ui.selectedAnimationId = selectedAnimElt.dataset.id
   else
     ui.selectedAnimationId = null
   data.modelUpdater.config_setProperty "animationId", ui.selectedAnimationId

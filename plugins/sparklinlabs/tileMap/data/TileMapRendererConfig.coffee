@@ -1,14 +1,18 @@
 module.exports = class TileMapRendererConfig extends SupCore.data.base.ComponentConfig
 
   @schema =
-    tileMapAssetId: { type: 'integer?', min: 0, mutable: true }
-    tileSetAssetId: { type: 'integer?', min: 0, mutable: true }
+    tileMapAssetId: { type: 'string?', min: 0, mutable: true }
+    tileSetAssetId: { type: 'string?', min: 0, mutable: true }
 
   @create: ->
     tileMapAssetId: null
     tileSetAssetId: null
 
   constructor: (pub) ->
+    # TODO: Remove these casts at some point, legacy stuff from Superpowers 0.4
+    if typeof pub.tileMapAssetId == 'number' then pub.tileMapAssetId = pub.tileMapAssetId.toString()
+    if typeof pub.tileSetAssetId == 'number' then pub.tileSetAssetId = pub.tileSetAssetId.toString()
+
     super pub, @constructor.schema
 
   restore: ->
