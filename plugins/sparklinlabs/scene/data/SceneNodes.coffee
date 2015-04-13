@@ -60,13 +60,26 @@ module.exports = class SceneNodes extends SupCore.data.base.TreeById
     return
 
   remove: (id, callback) ->
-    super id, (err) =>
-      if err? then callback err; return
+    node = @byId[id]
+    if ! node? then callback("Invalid node id: #{id}"); return
 
-      config.destroy() for componentId, config of @componentsByNodeId[id].configsById
-      delete @componentsByNodeId[id]
+    @walkNode node, null, (node) =>
+      config.destroy() for componentId, config of @componentsByNodeId[node.id].configsById
+      delete @componentsByNodeId[node.id]
+      return
 
-      callback(); return
+    super id, callback
+    return
+
+  client_remove: (id) ->
+    node = @byId[id]
+
+    @walkNode node, null, (node) =>
+      config.destroy() for componentId, config of @componentsByNodeId[node.id].configsById
+      delete @componentsByNodeId[node.id]
+      return
+
+    super id
     return
 
   addComponent: (id, component, index, callback) ->
