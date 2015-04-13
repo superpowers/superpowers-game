@@ -35,7 +35,7 @@ module.exports = class ModelAsset extends SupCore.data.base.Asset
         # TODO: Each map should have filters, etc.
         diffuse: { type: 'buffer?', mutable: true }
 
-    animations: { type: 'listById' }
+    animations: { type: 'array' }
 
   constructor: (id, pub, serverData) ->
     super id, pub, @constructor.schema, serverData

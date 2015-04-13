@@ -15,7 +15,7 @@ module.exports = class TileMapAsset extends SupCore.data.base.Asset
     height: { type: 'integer', min: 1 }
     layerDepthOffset: { type: 'number', mutable: true }
 
-    layers: { type: 'listById' }
+    layers: { type: 'array' }
 
   #             x,  y, flipX, flipY, angle
   @emptyTile: [-1, -1, false, false, 0]

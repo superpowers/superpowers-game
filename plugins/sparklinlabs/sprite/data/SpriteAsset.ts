@@ -34,7 +34,7 @@ class SpriteAsset extends SupCore.data.base.Asset {
       }
     },
 
-    animations: { type: "listById" }
+    animations: { type: "array" }
   }
 
   animations: SpriteAnimations;

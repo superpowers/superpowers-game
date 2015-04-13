@@ -10,7 +10,7 @@ SceneNodes = require './SceneNodes'
 module.exports = class SceneAsset extends SupCore.data.base.Asset
 
   @schema =
-    nodes: { type: 'treeById' }
+    nodes: { type: 'array' }
 
   constructor: (id, pub, serverData) ->
     @componentPathsByDependentAssetId = {}

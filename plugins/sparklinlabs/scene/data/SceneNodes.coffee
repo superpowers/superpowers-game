@@ -4,7 +4,7 @@ module.exports = class SceneNodes extends SupCore.data.base.TreeById
 
   @schema =
     name: { type: 'string', minLength: 1, maxLength: 80, mutable: true }
-    children: { type: 'list' }
+    children: { type: 'array' }
 
     position:
       mutable: true
@@ -31,7 +31,7 @@ module.exports = class SceneNodes extends SupCore.data.base.TreeById
         y: { type: 'number', mutable: true }
         z: { type: 'number', mutable: true }
 
-    components: { type: 'listById' }
+    components: { type: 'array' }
 
   constructor: (pub) ->
     super pub, @constructor.schema
@@ -58,14 +58,14 @@ module.exports = class SceneNodes extends SupCore.data.base.TreeById
     super node, parentId, index
     @componentsByNodeId[node.id] = new SceneComponents node.components
     return
-  
+
   remove: (id, callback) ->
     super id, (err) =>
       if err? then callback err; return
-      
+
       config.destroy() for componentId, config of @componentsByNodeId[id].configsById
       delete @componentsByNodeId[id]
-      
+
       callback(); return
     return
 
