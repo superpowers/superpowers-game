@@ -297,6 +297,9 @@ onNewNodeClick = ->
 
     offset = new THREE.Vector3(0, 0, -5).applyQuaternion ui.cameraActor.getGlobalOrientation()
     position = ui.cameraActor.getGlobalPosition().add offset
+    if options.parentId?
+      parentMatrix = ui.bySceneNodeId[options.parentId].actor.getGlobalMatrix()
+      position.applyMatrix4 parentMatrix.getInverse(parentMatrix)
     options.transform = { position }
 
     socket.emit 'edit:assets', info.assetId, 'addNode', name, options, (err, nodeId) ->
