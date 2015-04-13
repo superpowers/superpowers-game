@@ -150,6 +150,8 @@ module.exports = class ModelRenderer extends SupEngine.ActorComponent
     return
 
   clearPose: ->
+    return if ! @threeMesh?
+
     for bone, i in @threeMesh.skeleton.bones
       bone.matrix.fromArray(@asset.bones[i].matrix)
       bone.matrix.decompose bone.position, bone.quaternion, bone.scale
