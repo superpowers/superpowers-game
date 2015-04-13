@@ -77,9 +77,8 @@ class Camera extends ActorComponent {
   start() { this.actor.gameInstance.renderComponents.push(this); }
 
   render() {
-    //FIX ME: Remove optional parameter (waiting for fix in THREE.d.ts)
-    this.threeCamera.position.copy(this.actor.threeObject.getWorldPosition(null));
-    this.threeCamera.quaternion.copy(this.actor.threeObject.getWorldQuaternion(null));
+    this.threeCamera.position.copy(this.actor.threeObject.getWorldPosition());
+    this.threeCamera.quaternion.copy(this.actor.threeObject.getWorldQuaternion());
 
     if (this.projectionNeedsUpdate) {
       this.projectionNeedsUpdate = false;
