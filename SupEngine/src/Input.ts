@@ -135,7 +135,8 @@ class Input {
     event.preventDefault();
 
     var rect = event.target.getBoundingClientRect();
-    event.changedTouches.forEach((touch: any) => {
+    for (var i = 0; i < event.changedTouches.length; i++) {
+      var touch = event.changedTouches[i];
       this.touches[touch.identifier].position.x = touch.clientX - rect.left;
       this.touches[touch.identifier].position.y = touch.clientY - rect.top;
 
@@ -145,16 +146,17 @@ class Input {
         this.newMousePosition = { x: touch.clientX - rect.left, y: touch.clientY - rect.top };
         this.mouseButtonsDown[0] = true;
       }
-    });
+    }
   }
 
   _onTouchEnd = (event: any) => {
     event.preventDefault();
 
-    event.changedTouches.forEach((touch: any) => {
+    for (var i = 0; i < event.changedTouches.length; i++) {
+      var touch = event.changedTouches[i];
       this.touchesDown[touch.identifier] = false;
       if (touch.identifier == 0) this.mouseButtonsDown[0] = false;
-    });
+    }
   }
 
   _onTouchMove = (event: any) => {
@@ -162,12 +164,13 @@ class Input {
 
     var rect = event.target.getBoundingClientRect();
 
-    event.changedTouches.forEach((touch: any) => {
+    for (var i = 0; i < event.changedTouches.length; i++) {
+      var touch = event.changedTouches[i];
       this.touches[touch.identifier].position.x = touch.clientX - rect.left;
       this.touches[touch.identifier].position.y = touch.clientY - rect.top;
 
       if (touch.identifier == 0) this.newMousePosition = { x: touch.clientX - rect.left, y: touch.clientY - rect.top };
-    });
+    }
   }
 
   // TODO: stop using keyCode when KeyboardEvent.code is supported more widely
