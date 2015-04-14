@@ -21,7 +21,7 @@ interface RuntimeResourcePlugin {
 }
 export var resourcePlugins: {[name: string]: RuntimeResourcePlugin} = {}
 export function registerResource(name: string, plugin: RuntimeResourcePlugin) {
-  if (plugins[name] != null) {
+  if (resourcePlugins[name] != null) {
     console.error(`SupRuntime.registerResource: Tried to register two or more resources named "${name}"`);
     return;
   }
