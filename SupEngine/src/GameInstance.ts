@@ -13,6 +13,7 @@ class GameInstance extends events.EventEmitter {
   static framesPerSecond = 60;
 
   debug: boolean;
+  ratio: number;
   tree = new ActorTree();
   cachedActors: Actor[] = [];
   renderComponents: Camera[] = [];
@@ -91,8 +92,24 @@ class GameInstance extends events.EventEmitter {
   }
 
   draw() {
-    var width = this.threeRenderer.domElement.clientWidth;
-    var height = this.threeRenderer.domElement.clientHeight;
+    var width: number;
+    var height: number;
+
+    if (this.ratio != null) {
+      if (document.body.clientWidth / document.body.clientHeight > this.ratio) {
+        height = document.body.clientHeight;
+        width = Math.min(document.body.clientWidth, height * this.ratio)
+      }
+      else {
+        width = document.body.clientWidth;
+        height = Math.min(document.body.clientHeight, width / this.ratio)
+      }
+    }
+    else {
+      width = this.threeRenderer.domElement.clientWidth;
+      height = this.threeRenderer.domElement.clientHeight;
+    }
+
     if (this.threeRenderer.domElement.width != width || this.threeRenderer.domElement.height != height) {
       this.threeRenderer.setSize(width, height, false);
       this.emit("resize", { width, height });

@@ -27,6 +27,7 @@ declare module SupEngine {
     static framesPerSecond: number;
 
     debug: boolean;
+    ratio: number;
     tree: ActorTree;
     cachedActors: Actor[];
     renderComponents: ActorComponent[];
