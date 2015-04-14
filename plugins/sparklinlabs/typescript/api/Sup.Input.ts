@@ -58,7 +58,7 @@ module Sup {
 
     export function wasTouchEnded(index) {
       if ( player.gameInstance.input.touches[index] == null ) { throw new Error("Invalid touch index") }
-      return player.gameInstance.input.touches[index].wasReleased
+      return player.gameInstance.input.touches[index].wasEnded
     }
 
 
