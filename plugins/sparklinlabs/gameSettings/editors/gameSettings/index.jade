@@ -1,0 +1,27 @@
+doctype html
+html
+  head
+    link(rel="stylesheet",href="/client/styles/reset.css")
+    link(rel="stylesheet",href="/client/styles/dialogs.css")
+    link(rel="stylesheet",href="index.css")
+
+  body
+    h1 Game Settings
+
+    table
+      tr
+        th Frames per Second
+        td(colspan=2)
+          input.framesPerSecond
+
+      tr
+        th Ratio
+        td
+          input.ratioNumerator
+        td
+          input.ratioDenominator
+
+    script(src="/core/SupCore.js")
+    script(src="../../data.js")
+    script(src="/client/SupClient.js")
+    script(src="index.js")
