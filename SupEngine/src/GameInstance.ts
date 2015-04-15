@@ -106,8 +106,8 @@ class GameInstance extends events.EventEmitter {
       }
     }
     else {
-      width = this.threeRenderer.domElement.clientWidth;
-      height = this.threeRenderer.domElement.clientHeight;
+      width = document.body.clientWidth;
+      height = document.body.clientHeight;
     }
 
     if (this.threeRenderer.domElement.width != width || this.threeRenderer.domElement.height != height) {
