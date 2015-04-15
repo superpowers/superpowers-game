@@ -125,8 +125,8 @@ var onConnected = () => {
   data.spriteUpdater = new SpriteRendererUpdater(data.projectClient, spriteRenderer, config, receiveCallbacks, editCallbacks)
 }
 
-var onAssetReceived = (url: string) => {
-  ui.image.src = url;
+var onAssetReceived = (url?: string) => {
+  if (url != null) ui.image.src = url;
 
   ui.allSettings.forEach((setting: string) => {
     var parts = setting.split(".");

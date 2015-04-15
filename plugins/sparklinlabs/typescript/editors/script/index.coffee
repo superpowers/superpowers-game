@@ -5,6 +5,7 @@ require 'codemirror/addon/search/search'
 require 'codemirror/addon/search/searchcursor'
 require 'codemirror/addon/edit/closebrackets'
 require 'codemirror/addon/comment/comment'
+require 'codemirror/addon/hint/show-hint'
 require 'codemirror/keymap/sublime'
 require 'codemirror/mode/javascript/javascript'
 OT = require 'operational-transform'
@@ -47,6 +48,8 @@ start = ->
     'Cmd-S': ->
       socket.emit 'edit:assets', info.assetId, 'saveText', (err) -> if err? then alert err; SupClient.onDisconnected(); return
       return
+    'Ctrl-Space': 'autocomplete'
+    'Cmd-Space': 'autocomplete'
 
   textArea = document.querySelector('.code-editor')
   ui.editor = CodeMirror.fromTextArea textArea,
@@ -72,6 +75,32 @@ start = ->
     return
 
   ui.editor.on 'changes', onEditText
+
+  CodeMirror.registerHelper("hint", "javascript", (editor, options) =>
+    cursor = editor.getCursor()
+    token = editor.getTokenAt(cursor)
+    console.log token
+
+    baseList = ["Math", "Actor", "SpriteRenderer", "loadScene"];
+    if token.string == ""
+      finalList = []
+    else if token.string == "."
+      token.start = token.end
+      finalList = baseList
+    else
+      finalList = []
+      for item in baseList
+        if item.indexOf(token.string) != -1
+          finalList.push item
+
+    return { list: finalList, from: CodeMirror.Pos(cursor.line, token.start), to: CodeMirror.Pos(cursor.line, token.end) }
+  )
+
+  ui.editor.on 'keyup', (editor, event) =>
+    # Ignore Ctrl, Cmd, Escape, Return, Tab, Arrows
+    return if event.ctrlKey or event.metaKey or event.keyCode in [27, 9, 13, 37, 38, 39, 40]
+    editor.showHint({"completeSingle": false})
+    return
 
   ui.errorContainer = document.querySelector('.error-container')
   ui.errorContainer.querySelector('button').addEventListener "click", =>

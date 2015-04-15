@@ -1,0 +1,37 @@
+doctype html
+html
+  head
+    link(rel="stylesheet",href="/client/styles/reset.css")
+    link(rel="stylesheet",href="/client/styles/dialogs.css")
+    link(rel="stylesheet",href="index.css")
+
+  body
+    h1 Sprite Settings
+
+    table
+      tr
+        th Filtering
+        td
+          select.filtering
+            option(value="pixelated") Pixelated
+            option(value="smooth") Smooth
+
+      tr
+        th Frames per Second
+        td
+          input.framesPerSecond
+
+      tr
+        th Pixels per Unit
+        td
+          input.pixelsPerUnit
+
+      tr
+        th Alpha Test
+        td
+          input.alphaTest
+
+    script(src="/core/SupCore.js")
+    script(src="../../data.js")
+    script(src="/client/SupClient.js")
+    script(src="index.js")

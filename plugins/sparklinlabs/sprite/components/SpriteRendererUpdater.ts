@@ -53,23 +53,29 @@ class SpriteRendererUpdater {
       this.url = URL.createObjectURL(blob);
       image.src = this.url
     }
+
     if (! image.complete) {
-      var onImageLoaded = () => {
-        image.removeEventListener("load", onImageLoaded);
-        asset.pub.texture.needsUpdate = true
-        this.spriteRenderer.setSprite(asset.pub);
-        if (this.animationId != null) this._playAnimation()
+      if (asset.pub.image.byteLength === 0) {
+        if (this.receiveAssetCallbacks != null) this.receiveAssetCallbacks.sprite(null);
+      }
+      else {
+        var onImageLoaded = () => {
+          image.removeEventListener("load", onImageLoaded);
+          asset.pub.texture.needsUpdate = true
+          this.spriteRenderer.setSprite(asset.pub);
+          if (this.animationId != null) this._playAnimation()
 
-        if (this.receiveAssetCallbacks != null) this.receiveAssetCallbacks.sprite( this.url );
-      };
+          if (this.receiveAssetCallbacks != null) this.receiveAssetCallbacks.sprite(this.url);
+        };
 
-      image.addEventListener("load", onImageLoaded);
+        image.addEventListener("load", onImageLoaded);
+      }
     }
     else {
       this.spriteRenderer.setSprite(asset.pub);
       if (this.animationId != null) this._playAnimation();
 
-      if (this.receiveAssetCallbacks != null) this.receiveAssetCallbacks.sprite( this.url );
+      if (this.receiveAssetCallbacks != null) this.receiveAssetCallbacks.sprite(this.url);
     }
   }
 
