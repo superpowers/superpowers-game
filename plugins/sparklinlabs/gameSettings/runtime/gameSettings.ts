@@ -1,4 +1,4 @@
-export function start(player: SupRuntime.Player, callback: Function) {
+export function init(player: SupRuntime.Player, callback: Function) {
   SupEngine.GameInstance.framesPerSecond = player.resources.gameSettings.framesPerSecond;
   SupRuntime.Player.updateInterval = 1 / SupEngine.GameInstance.framesPerSecond * 1000;
 
