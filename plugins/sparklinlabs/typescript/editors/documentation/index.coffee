@@ -1,3 +1,4 @@
+SupClient.setupHotkeys()
 async = require 'async'
 
 async.each SupClient.pluginPaths.all, (pluginName, pluginCallback) ->
