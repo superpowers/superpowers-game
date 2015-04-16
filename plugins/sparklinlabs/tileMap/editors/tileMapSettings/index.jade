@@ -1,0 +1,41 @@
+doctype html
+html
+  head
+    link(rel="stylesheet",href="/client/styles/reset.css")
+    link(rel="stylesheet",href="/client/styles/dialogs.css")
+    link(rel="stylesheet",href="index.css")
+
+  body
+    h1 Tile Map Settings
+    table
+      tr
+        th Pixels per Unit
+        td
+          input.pixelsPerUnit
+
+      tr
+        th Width
+        td
+          input.width
+
+      tr
+        th Height
+        td
+          input.height
+
+      tr
+        th Depth Offset
+        td
+          input.layerDepthOffset
+
+    h1 Tile Set Settings
+    table
+      tr
+        th Grid Size
+        td
+          input.gridSize
+
+    script(src="/core/SupCore.js")
+    script(src="../../data.js")
+    script(src="/client/SupClient.js")
+    script(src="index.js")
