@@ -118,7 +118,7 @@ start = ->
 
     document.body.addEventListener 'contextmenu', (event) =>
       event.preventDefault()
-      menu.popup(event.screenX, event.screenY)
+      menu.popup(event.screenX - gui.Window.get().x, event.screenY - gui.Window.get().y)
       return false
 
   ui.errorContainer = document.querySelector('.error-container')
