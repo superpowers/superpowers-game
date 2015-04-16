@@ -41,7 +41,7 @@ class GameInstance extends events.EventEmitter {
       canvas, precision: 'mediump',
       alpha: false, antialias: false, stencil: false
     });
-    this.threeRenderer.setSize(canvas.clientWidth, canvas.clientHeight, false);
+    this.threeRenderer.setSize(0, 0, false);
     this.threeRenderer.autoClearColor = false
     // this.threeRenderer.setFaceCulling(THREE.CullFaceNone);
     // this.threeRenderer.setBlending(THREE.CustomBlending, THREE.AddEquation, THREE.OneFactor, THREE.OneMinusSrcAlphaFactor);
@@ -106,8 +106,8 @@ class GameInstance extends events.EventEmitter {
       }
     }
     else {
-      width = document.body.clientWidth;
-      height = document.body.clientHeight;
+      width = this.threeRenderer.domElement.clientWidth;
+      height = this.threeRenderer.domElement.clientHeight;
     }
 
     if (this.threeRenderer.domElement.width != width || this.threeRenderer.domElement.height != height) {
