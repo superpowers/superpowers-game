@@ -91,6 +91,18 @@ class GameInstance extends events.EventEmitter {
     if (this.skipRendering) { this.skipRendering = false; this.update(); return; }
   }
 
+  setRatio(ratio?: number) {
+    this.ratio = ratio;
+    if (this.ratio != null) {
+      this.threeRenderer.domElement.style.margin = "auto";
+      this.threeRenderer.domElement.style.flex = "none";
+    }
+    else {
+      this.threeRenderer.domElement.style.margin = "0";
+      this.threeRenderer.domElement.style.flex = "1";
+    }
+  }
+
   draw() {
     var width: number;
     var height: number;

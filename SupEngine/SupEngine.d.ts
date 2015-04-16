@@ -45,6 +45,7 @@ declare module SupEngine {
 
     constructor(canvas: HTMLCanvasElement, options?: {debug?: boolean});
     update(): void;
+    setRatio(ratio?: number): void;
     draw(): void;
     clear(): void;
     destroyComponent(component: ActorComponent): void;
