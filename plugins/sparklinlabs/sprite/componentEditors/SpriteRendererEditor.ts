@@ -26,8 +26,8 @@ class SpriteRendererEditor {
     this.animationSelectBox = SupClient.component.createSelectBox(animationRow.valueElt, { "": "(None)" });
     this.animationSelectBox.disabled = true
 
-    this.spriteTextField.addEventListener('input', this._onChangeSpriteAsset);
-    this.animationSelectBox.addEventListener('change', this._onChangeSpriteAnimation);
+    this.spriteTextField.addEventListener('input', this._onChangeSpriteAsset.bind(this));
+    this.animationSelectBox.addEventListener('change', this._onChangeSpriteAnimation.bind(this));
 
     this.projectClient.subEntries(this);
   }
