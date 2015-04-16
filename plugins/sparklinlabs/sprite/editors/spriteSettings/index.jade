@@ -6,7 +6,7 @@ html
     link(rel="stylesheet",href="index.css")
 
   body
-    h1 Sprite Settings
+    h1 Sprite Default Settings
 
     table
       tr
@@ -19,17 +19,17 @@ html
       tr
         th Frames per Second
         td
-          input.framesPerSecond
+          input(type="number").framesPerSecond
 
       tr
         th Pixels per Unit
         td
-          input.pixelsPerUnit
+          input(type="number").pixelsPerUnit
 
       tr
         th Alpha Test
         td
-          input.alphaTest
+          input(type="number",min="0",max="1",step="0.1").alphaTest
 
     script(src="/core/SupCore.js")
     script(src="../../data.js")

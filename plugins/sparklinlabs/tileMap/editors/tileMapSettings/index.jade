@@ -6,34 +6,34 @@ html
     link(rel="stylesheet",href="index.css")
 
   body
-    h1 Tile Map Settings
+    h1 Tile Map Default Settings
     table
       tr
         th Pixels per Unit
         td
-          input.pixelsPerUnit
+          input(type="number").pixelsPerUnit
 
       tr
         th Width
         td
-          input.width
+          input(type="number").width
 
       tr
         th Height
         td
-          input.height
+          input(type="number").height
 
       tr
         th Depth Offset
         td
-          input.layerDepthOffset
+          input(type="number").layerDepthOffset
 
-    h1 Tile Set Settings
+    h1 Tile Set Default Settings
     table
       tr
         th Grid Size
         td
-          input.gridSize
+          input(type="number").gridSize
 
     script(src="/core/SupCore.js")
     script(src="../../data.js")

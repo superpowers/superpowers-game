@@ -12,14 +12,14 @@ html
       tr
         th Frames per Second
         td(colspan=2)
-          input.framesPerSecond
+          input(type="number").framesPerSecond
 
       tr
         th Ratio
         td
-          input.ratioNumerator
+          input(type="number",placeholder="Width").ratioNumerator
         td
-          input.ratioDenominator
+          input(type="number",placeholder="Height").ratioDenominator
 
     script(src="/core/SupCore.js")
     script(src="../../data.js")
