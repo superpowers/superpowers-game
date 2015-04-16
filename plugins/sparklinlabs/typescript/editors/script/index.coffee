@@ -102,6 +102,25 @@ start = ->
     editor.showHint({"completeSingle": false})
     return
 
+  if window.nwDispatcher?
+    gui = window.nwDispatcher.requireNwGui()
+
+    menu = new gui.Menu()
+    menu.append new gui.MenuItem
+      label: 'Cut (Ctrl-X)'
+      click: -> document.execCommand("cut")
+    menu.append new gui.MenuItem
+      label: 'Copy (Ctrl-C)'
+      click: -> document.execCommand("copy")
+    menu.append new gui.MenuItem
+      label: 'Paste (Ctrl-V)'
+      click: -> document.execCommand("paste")
+
+    document.body.addEventListener 'contextmenu', (event) =>
+      event.preventDefault()
+      menu.popup(event.screenX, event.screenY)
+      return false
+
   ui.errorContainer = document.querySelector('.error-container')
   ui.errorContainer.querySelector('button').addEventListener "click", =>
     ui.errorContainer.style.display = "none"
