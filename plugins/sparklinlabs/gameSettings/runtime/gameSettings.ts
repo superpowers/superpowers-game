@@ -3,13 +3,7 @@ export function start(player: SupRuntime.Player, callback: Function) {
   SupRuntime.Player.updateInterval = 1 / SupEngine.GameInstance.framesPerSecond * 1000;
 
   if (player.resources.gameSettings.ratioNumerator != null) {
-    player.gameInstance.ratio = player.resources.gameSettings.ratioNumerator / player.resources.gameSettings.ratioDenominator;
-    player.gameInstance.threeRenderer.domElement.style.margin = "auto";
-    player.gameInstance.threeRenderer.domElement.style.flex = "none";
-  }
-  else {
-    //player.gameInstance.threeRenderer.domElement.style.margin = "0";
-    //player.gameInstance.threeRenderer.domElement.style.flex = "1";
+    player.gameInstance.setRatio(player.resources.gameSettings.ratioNumerator / player.resources.gameSettings.ratioDenominator);
   }
   callback();
 }
