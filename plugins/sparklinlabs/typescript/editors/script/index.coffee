@@ -79,9 +79,9 @@ start = ->
   CodeMirror.registerHelper("hint", "javascript", (editor, options) =>
     cursor = editor.getCursor()
     token = editor.getTokenAt(cursor)
-    console.log token
 
-    baseList = ["Math", "Actor", "SpriteRenderer", "loadScene"];
+    baseList = ["Sup", "Input", "Math", "Vector3", "Actor", "SpriteRenderer", "Camera", "TileMapRenderer", "loadScene",
+      "actor", "spriteRenderer", "camera", "tileMapRenderer", "getLocalPosition", "setLocalPosition"];
     if token.string == ""
       finalList = []
     else if token.string == "."
