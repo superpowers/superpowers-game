@@ -101,9 +101,10 @@ class GameInstance extends events.EventEmitter {
       this.threeRenderer.domElement.style.margin = "0";
       this.threeRenderer.domElement.style.flex = "1";
     }
+    this.resizeRenderer();
   }
 
-  draw() {
+  resizeRenderer() {
     var width: number;
     var height: number;
 
@@ -126,6 +127,10 @@ class GameInstance extends events.EventEmitter {
       this.threeRenderer.setSize(width, height, false);
       this.emit("resize", { width, height });
     }
+  }
+
+  draw() {
+    this.resizeRenderer();
 
     this.threeRenderer.clear();
     this.renderComponents.sort( (a, b) => { return this.cachedActors.indexOf(a.actor) - this.cachedActors.indexOf(b.actor); } );

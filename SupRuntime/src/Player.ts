@@ -50,12 +50,11 @@ class Player {
       var total = this.resourcesToLoad.length + this.assetsToLoad.length;
       progressCallback(progress, total);
     }
-
     async.series([
-      (cb) => { this._initPlugins(cb); },
       (cb) => { this._loadManifest(cb); },
       (cb) => { this._loadResources(innerProgressCallback, cb); },
       (cb) => { this._loadAssets(innerProgressCallback, cb); },
+      (cb) => { this._initPlugins(cb); },
       (cb) => { this._startPlugins(cb); }
     ], callback);
   }
