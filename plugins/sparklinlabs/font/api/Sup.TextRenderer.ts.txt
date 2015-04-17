@@ -1,0 +1,29 @@
+module Sup {
+  export class TextRenderer extends Sup.ActorComponent {
+    constructor(actor, text, font, options={}) {
+      super(actor);
+      this.__inner = new SupEngine.componentClasses.TextRenderer(this.actor.__inner);
+
+      if (text != null) this.__inner.setText(text);
+      if (font != null) this.__inner.setFont(font, options);
+
+      this.__inner.__outer = this;
+      this.actor.textRenderer = this;
+    }
+    destroy() {
+      this.actor.textRenderer = null;
+      super.destroy();
+    }
+
+    getFont() { return this.__inner.font.__outer; }
+    setFont(font: Font) {
+      this.__inner.setFont(font);
+      return this;
+    }
+    getText() { return this.__inner.text; }
+    setText(text: string) {
+      this.__inner.setText(text);
+      return this;
+    }
+  }
+}

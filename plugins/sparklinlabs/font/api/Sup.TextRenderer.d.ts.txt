@@ -1,0 +1,10 @@
+declare module Sup {
+  class TextRenderer extends ActorComponent {
+    constructor(actor: Actor, text?: string, asset?: Font, options?: {align?: string; size?: number; color?: string;});
+
+    getFont(): Font;
+    setFont(font: Font): TextRenderer;
+    getText(): string;
+    setText(text: string): TextRenderer;
+  }
+}

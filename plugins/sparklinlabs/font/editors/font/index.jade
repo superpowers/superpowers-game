@@ -1,0 +1,54 @@
+doctype html
+html
+  head
+    link(rel="stylesheet",href="/client/styles/reset.css")
+    link(rel="stylesheet",href="/client/styles/dialogs.css")
+    link(rel="stylesheet",href="index.css")
+
+  body
+    canvas
+
+    .sidebar
+      table
+        tr
+          th Bitmap
+          td
+            input(type="checkbox").property-isBitmap
+
+        tr
+          th Image
+          td
+            button.upload Upload
+            form(style="display: none")
+              input.file-select(type="file")
+
+            button.download Download
+
+        tr
+          th Rendering
+          td
+            select.property-filtering
+              option(value='pixelated') Pixelated
+              option(value='smooth') Smooth
+
+        tr
+          th Pixels (/unit)
+          td
+            input(type="number").property-pixelsPerUnit
+
+        tr
+          th Size (pixels)
+          td
+            input(type="number").property-size
+
+        tr
+          th Color
+          td
+            input.property-color
+
+    script(src="/core/SupCore.js")
+    script(src="../../data.js")
+    script(src="/system/SupEngine.js")
+    script(src="../../components.js")
+    script(src="/client/SupClient.js")
+    script(src="index.js")
