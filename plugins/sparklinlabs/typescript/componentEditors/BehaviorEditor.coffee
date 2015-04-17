@@ -46,6 +46,7 @@ module.exports = class BehaviorEditor
     for behaviorName of @behaviorPropertiesResource.pub.behaviors
       option = document.createElement('option')
       option.value = behaviorName
+      option.textContent = behaviorName
       @behaviorNamesDataListElt.appendChild option
 
     # Clear old property settings
