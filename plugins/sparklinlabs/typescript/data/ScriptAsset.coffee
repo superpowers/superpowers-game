@@ -198,6 +198,12 @@ module.exports = class ScriptAsset extends SupCore.data.base.Asset
         continue if ! baseTypeNode?
 
         typeSymbol = results.typeChecker.getSymbolAtLocation baseTypeNode.typeName
+        loop
+          break if typeSymbol == supTypeSymbols["Sup.Behavior"]
+          baseTypeNode = ts.getClassBaseTypeNode(typeSymbol.valueDeclaration)
+          break if ! baseTypeNode?
+          typeSymbol = results.typeChecker.getSymbolAtLocation baseTypeNode.typeName
+
         continue if typeSymbol != supTypeSymbols["Sup.Behavior"]
 
         properties = behaviors[symbolName] = []
