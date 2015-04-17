@@ -166,9 +166,9 @@ class GameInstance extends events.EventEmitter {
     while (actor.children.length > 0) this._doActorDestruction(actor.children[0]);
 
     var cachedIndex = this.cachedActors.indexOf(actor);
-    if (cachedIndex != -1) this.cachedActors.splice(cachedIndex, 1)
+    if (cachedIndex != -1) this.cachedActors.splice(cachedIndex, 1);
 
-    actor._destroy()
+    actor._destroy();
   }
 }
 
