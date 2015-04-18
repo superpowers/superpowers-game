@@ -133,6 +133,7 @@ class Actor {
     threeParent.add(this.threeObject);
 
     if (! keepLocal) this.setGlobalMatrix(globalMatrix);
+    else this.threeObject.updateMatrixWorld(false);
   }
 
   rotateGlobal(quaternion: THREE.Quaternion) {
