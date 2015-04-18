@@ -34,7 +34,7 @@ class TextRendererUpdater {
 
     this.fontAssetId = config.fontAssetId;
     this.text = config.text;
-    this.options = {align: config.align}
+    this.options = {align: config.align, size: config.size, color: config.color};
 
     this.fontSubscriber = {
       onAssetReceived: this._onFontAssetReceived,
