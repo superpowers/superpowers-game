@@ -34,7 +34,7 @@ class TextRenderer extends SupEngine.ActorComponent {
     var canvas = document.createElement("canvas");
     var ctx = canvas.getContext("2d");
     ctx.font = `${fontSize}px ${this.font.name}`;
-    var width = ctx.measureText(this.text).width;
+    var width = Math.max(1, ctx.measureText(this.text).width);
     var height = fontSize * 2;
     canvas.width = width;
     canvas.height = height;
