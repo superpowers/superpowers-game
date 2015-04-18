@@ -5,7 +5,7 @@ module Sup {
       this.__inner = new SupEngine.componentClasses.TextRenderer(this.actor.__inner);
 
       if (text != null) this.__inner.setText(text);
-      if (font != null) this.__inner.setFont(font, options);
+      if (font != null) this.__inner.setFont(font.__inner, options);
 
       this.__inner.__outer = this;
       this.actor.textRenderer = this;
@@ -17,7 +17,7 @@ module Sup {
 
     getFont() { return this.__inner.font.__outer; }
     setFont(font: Font) {
-      this.__inner.setFont(font);
+      this.__inner.setFont(font.__inner);
       return this;
     }
     getText() { return this.__inner.text; }
