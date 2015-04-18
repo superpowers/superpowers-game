@@ -65,7 +65,7 @@ class TextRendererUpdater {
       case "size":
       case "color": {
         (<any>this.options)[path] = (value != "") ? value : null;
-        this.textRenderer.setFont(this.fontAsset.pub, this.options);
+        this.textRenderer.setOptions(this.options);
         break;
       }
     }
@@ -75,8 +75,9 @@ class TextRendererUpdater {
     this.fontAsset = asset;
 
     this.textRenderer.setText(this.text);
+    this.textRenderer.setOptions(this.options);
     if (this.font == null && asset.pub.font.byteLength !== 0) this._loadFont();
-    else if (this.font != null) this.textRenderer.setFont(asset.pub, this.options);
+    else if (this.font != null) this.textRenderer.setFont(asset.pub);
 
     if (this.receiveAssetCallbacks != null) this.receiveAssetCallbacks.font(null);
   }
@@ -100,15 +101,15 @@ class TextRendererUpdater {
     this.fontAsset.pub.name = `Font${this.fontAssetId}`;
     this.font = new FontFace(this.fontAsset.pub.name, `url(${this.url})`);
     (<any>document).fonts.add(this.font);
-    this.font.load().then(() => { this.textRenderer.setFont(this.fontAsset.pub, this.options) });
+    this.font.load().then(() => { this.textRenderer.setFont(this.fontAsset.pub) });
   }
 
   _onEditCommand_upload() {
     this._loadFont();
   }
 
-  _onEditCommand_setProperty() {
-    this.textRenderer.setFont(this.fontAsset.pub, this.options);
+  _onEditCommand_setProperty(path: string) {
+    this.textRenderer.setFont(this.fontAsset.pub);
   }
 
   _onFontAssetTrashed = () => {

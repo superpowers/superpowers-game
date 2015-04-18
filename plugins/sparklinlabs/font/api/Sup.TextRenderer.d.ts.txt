@@ -6,5 +6,11 @@ declare module Sup {
     setFont(font: Font): TextRenderer;
     getText(): string;
     setText(text: string): TextRenderer;
+    getColor(): string;
+    setColor(color: string): TextRenderer;
+    getAlign(): string;
+    setAlign(align: string): TextRenderer;
+    getSize(): number;
+    setSize(size: number): TextRenderer;
   }
 }

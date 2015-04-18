@@ -19,8 +19,11 @@ class TextRenderer extends SupEngine.ActorComponent {
     this.text = text;
     this._createMesh();
   }
-  setFont(font: any, options: {align: string; size?: number; color?: string;} ) {
+  setFont(font: any ) {
     this.font = font;
+    this._createMesh();
+  }
+  setOptions(options: {align: string; size?: number; color?: string;}) {
     this.options = options;
     this._createMesh();
   }

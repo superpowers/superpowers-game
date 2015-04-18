@@ -4,8 +4,9 @@ module Sup {
       super(actor);
       this.__inner = new SupEngine.componentClasses.TextRenderer(this.actor.__inner);
 
+      this.__inner.setOptions(options);
       if (text != null) this.__inner.setText(text);
-      if (font != null) this.__inner.setFont(font.__inner, options);
+      if (font != null) this.__inner.setFont(font.__inner);
 
       this.__inner.__outer = this;
       this.actor.textRenderer = this;
@@ -23,6 +24,36 @@ module Sup {
     getText() { return this.__inner.text; }
     setText(text: string) {
       this.__inner.setText(text);
+      return this;
+    }
+    getColor() {
+      var color = (this.__inner.options.color != null) ? this.__inner.options.color : this.__inner.font.color;
+      return color;
+    }
+    setColor(color) {
+      var options = this.__inner.options;
+      options.color = color;
+      this.__inner.setOptions(options);
+      return this;
+    }
+    getAlign() {
+      var align = (this.__inner.options.align != null) ? this.__inner.options.align : this.__inner.font.align;
+      return align;
+    }
+    setAlign(align) {
+      var options = this.__inner.options;
+      options.align = align;
+      this.__inner.setOptions(options);
+      return this;
+    }
+    getSize() {
+      var size = (this.__inner.options.size != null) ? this.__inner.options.size : this.__inner.font.size;
+      return size;
+    }
+    setSize(size) {
+      var options = this.__inner.options;
+      options.size = size;
+      this.__inner.setOptions(options);
       return this;
     }
   }
