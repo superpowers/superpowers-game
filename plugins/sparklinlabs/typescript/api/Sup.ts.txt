@@ -3,12 +3,20 @@ module Sup {
   export function log(message, ...optionalParams) { console.log.apply(console, [ message ].concat(optionalParams)); }
 
   export function exit() {
+    if (player.gameInstance.input.onExit != null) {
+      player.gameInstance.input.onExit();
+      player.gameInstance.input.onExit = null;
+    }
+
     player.gameInstance.destroyAllActors();
     player.gameInstance.exited = true;
 
     // Close window only if running release mode in NW.js
     if (! player.gameInstance.debug && window.nwDispatcher != null)
       window.nwDispatcher.requireNwGui().Window.get().close();
+  }
+  export function onExit(callback) {
+    player.gameInstance.input.onExit = callback;
   }
 
   export class Asset {
