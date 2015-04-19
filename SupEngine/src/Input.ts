@@ -19,6 +19,8 @@ class Input {
   gamepadsButtons: Array<Array<{isDown: boolean; wasJustPressed: boolean; wasJustReleased: boolean;}>> = [];
   gamepadsAxes: Array<number[]> = [];
 
+  onExit: Function;
+
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
 
@@ -43,7 +45,23 @@ class Input {
     for (var i = 0; i < 4; i++) {
       this.gamepadsButtons[i] = [];
       this.gamepadsAxes[i] = [];
-      }
+    }
+
+    // On exit
+    var nwDispatcher = (<any>window).nwDispatcher;
+    if (nwDispatcher != null) {
+      var gui = nwDispatcher.requireNwGui();
+      var nwWindow = gui.Window.get();
+      nwWindow.on("close", (event: any) => {
+        if (this.onExit != null) { this.onExit(); this.onExit = null; }
+        nwWindow.close(true);
+      })
+    }
+    else {
+      window.onbeforeunload = (event: any) => {
+        if (this.onExit != null) { this.onExit(); this.onExit = null; }
+      };
+    }
 
     window.addEventListener("blur", this._onBlur);
     this.reset()
