@@ -50,8 +50,11 @@ start = ->
   ui.gameInstance = new SupEngine.GameInstance canvasElt
   ui.cameraActor = new SupEngine.Actor ui.gameInstance, "Camera"
   ui.cameraActor.setLocalPosition new THREE.Vector3 0, 0, 10
-  cameraComponent = new SupEngine.componentClasses.Camera ui.cameraActor
-  new SupEngine.editorComponentClasses.Camera3DControls ui.cameraActor, cameraComponent
+  ui.cameraMode = "3D"
+  ui.cameraComponent = new SupEngine.componentClasses.Camera ui.cameraActor
+  ui.cameraControls = new SupEngine.editorComponentClasses.Camera3DControls ui.cameraActor, ui.cameraComponent
+  ui.cameraModeButton = document.querySelector('button#toggle-camera-button')
+  ui.cameraModeButton.addEventListener 'click', onChangeCameraMode
 
   ui.bySceneNodeId = {}
 
@@ -439,6 +442,27 @@ onDeleteComponentClick = (event) ->
       if err? then alert err; return
       return
     return
+  return
+
+onChangeCameraMode = (event) ->
+  ui.gameInstance.destroyComponent(ui.cameraControls)
+
+  if ui.cameraMode == "3D"
+    ui.cameraMode = "2D"
+    ui.cameraActor.setLocalOrientation(new SupEngine.THREE.Quaternion().setFromAxisAngle(new SupEngine.THREE.Vector3(0, 1, 0), 0))
+    ui.cameraComponent.setOrthographicMode(true)
+    ui.cameraControls = new SupEngine.editorComponentClasses.Camera2DControls ui.cameraActor, ui.cameraComponent, {
+      zoomSpeed: 1.5
+      zoomMin: 1
+      zoomMax: 100
+    }
+
+  else
+    ui.cameraMode = "3D"
+    ui.cameraComponent.setOrthographicMode(false)
+    ui.cameraControls = new SupEngine.editorComponentClasses.Camera3DControls ui.cameraActor, ui.cameraComponent
+
+  ui.cameraModeButton.textContent = ui.cameraMode
   return
 
 # Engine
