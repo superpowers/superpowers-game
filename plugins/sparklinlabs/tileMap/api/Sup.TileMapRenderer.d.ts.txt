@@ -5,7 +5,7 @@ declare module Sup {
     setTileMap(tileMap: TileMap, replaceTileSet?: boolean); TileMapRenderer;
     getTileSet(): TileSet;
     setTileSet(tileSet: TileSet): TileMapRenderer;
-    getLayerOpacity(layer: number): number
+    getLayerOpacity(layer: number): number;
     setLayerOpacity(layer: number, opacity: number): TileMapRenderer;
   }
 }

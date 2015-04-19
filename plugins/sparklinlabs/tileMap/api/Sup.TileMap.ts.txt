@@ -1,7 +1,7 @@
 module Sup {
   export class TileMap extends Asset {
-    getWidth() { return this.__inner.getWidth() }
-    getHeight() { return this.__inner.getHeight() }
+    getWidth() { return this.__inner.getWidth(); }
+    getHeight() { return this.__inner.getHeight(); }
 
     setTileAt(layer, x, y, value, flipX, flipY, angle) {
       var tileSet = player.getOuterAsset(this.__inner.data.tileSetId);
@@ -24,13 +24,13 @@ module Sup {
 
       var tile = -1;
       if (tileX != -1 && tileY != -1) { tile = tileY * tilesPerRow + tileX; }
-      return tile
+      return tile;
     }
     getTileTransformAt(layer, x, y) {
       var tileSet = player.getOuterAsset(this.__inner.data.tileSetId);
       var tilesPerRow = tileSet.__inner.data.texture.image.width / tileSet.__inner.data.gridSize;
       var transform = this.__inner.getTileAt(layer, x, y);
-      return { "flipX": transform[2], "flipY": transform[3], "angle": transform[4] }
+      return { "flipX": transform[2], "flipY": transform[3], "angle": transform[4] };
     }
   }
 }
