@@ -15,7 +15,7 @@ class TextRendererUpdater {
 
   fontAssetId: string;
   text: string;
-  options: {align: string; size?: number; color?: string;};
+  options: {alignment: string; size?: number; color?: string;};
 
   fontSubscriber: {
     onAssetReceived: (assetId: string, asset: any) => any;
@@ -34,7 +34,7 @@ class TextRendererUpdater {
 
     this.fontAssetId = config.fontAssetId;
     this.text = config.text;
-    this.options = {align: config.align, size: config.size, color: config.color};
+    this.options = {alignment: config.alignment, size: config.size, color: config.color};
 
     this.fontSubscriber = {
       onAssetReceived: this._onFontAssetReceived,
@@ -61,7 +61,7 @@ class TextRendererUpdater {
         this.textRenderer.setText(this.text);
         break;
       }
-      case "align":
+      case "alignment":
       case "size":
       case "color": {
         (<any>this.options)[path] = (value != "") ? value : null;

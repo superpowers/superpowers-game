@@ -36,13 +36,13 @@ module Sup {
       this.__inner.setOptions(options);
       return this;
     }
-    getAlign() {
-      var align = (this.__inner.options.align != null) ? this.__inner.options.align : this.__inner.font.align;
-      return align;
+    getAlignment() {
+      var alignment = (this.__inner.options.alignment != null) ? this.__inner.options.alignment : this.__inner.font.alignment;
+      return alignment;
     }
-    setAlign(align) {
+    setAlignment(alignment) {
       var options = this.__inner.options;
-      options.align = align;
+      options.alignment = alignment;
       this.__inner.setOptions(options);
       return this;
     }

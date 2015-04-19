@@ -63,7 +63,7 @@ var onConnected = () => {
 
   var textActor = new SupEngine.Actor(ui.gameInstance, "Text");
   var textRenderer = new TextRenderer(textActor);
-  var config = { fontAssetId: info.assetId, text: "The quick brown fox jumps over the lazy dog", align: "center" };
+  var config = { fontAssetId: info.assetId, text: "The quick brown fox jumps over the lazy dog", alignment: "center" };
   var receiveCallbacks = { font: onAssetReceived };
   var editCallbacks = { font: onEditCommands };
   data.textUpdater = new TextRendererUpdater(data.projectClient, textRenderer, config, receiveCallbacks, editCallbacks);

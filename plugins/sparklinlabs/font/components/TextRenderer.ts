@@ -1,7 +1,6 @@
 var THREE = SupEngine.THREE;
 
 class TextRenderer extends SupEngine.ActorComponent {
-
   static Updater = require("./TextRendererUpdater");
 
   texture: THREE.Texture;
@@ -9,7 +8,7 @@ class TextRenderer extends SupEngine.ActorComponent {
 
   text: string;
   font: any;
-  options: {align: string; size?: number; color?: string;};
+  options: {alignment: string; size?: number; color?: string;};
 
   constructor(actor: SupEngine.Actor) {
     super(actor, "TextRenderer");
@@ -23,7 +22,8 @@ class TextRenderer extends SupEngine.ActorComponent {
     this.font = font;
     this._createMesh();
   }
-  setOptions(options: {align: string; size?: number; color?: string;}) {
+  setOptions(options: {alignment: string; size?: number; color?: string;}) {
+    if (options.alignment == null) options.alignment = "center";
     this.options = options;
     this._createMesh();
   }
@@ -67,17 +67,10 @@ class TextRenderer extends SupEngine.ActorComponent {
     this.actor.threeObject.add(this.threeMesh);
     var scale = 1 / this.font.pixelsPerUnit;
     this.threeMesh.scale.set(scale, scale, scale);
-    if (this.options.align != null) {
-      switch (this.options.align) {
-        case "left": {
-          this.threeMesh.position.setX(width / 2 * scale);
-          break;
-        }
-        case "right": {
-          this.threeMesh.position.setX(-width / 2 * scale);
-          break;
-        }
-      }
+
+    switch (this.options.alignment) {
+      case "left": this.threeMesh.position.setX(width / 2 * scale); break;
+      case "right": this.threeMesh.position.setX(-width / 2 * scale); break;
     }
     this.threeMesh.updateMatrixWorld(false);
   }

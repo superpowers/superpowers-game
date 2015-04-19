@@ -27,9 +27,9 @@ class TextRendererEditor {
     this.fields["text"] = SupClient.component.createTextField(textRow.valueElt, config.text);
     this.fields["text"].addEventListener('change', (event: any) => { this.editConfig('setProperty', 'text', event.target.value); });
 
-    var alignRow = SupClient.component.createSetting(tbody, 'Align');
-    this.fields["align"] = SupClient.component.createSelectBox(alignRow.valueElt, {"left": "Left", "center": "Center", "right": "Right"}, config.align);
-    this.fields["align"].addEventListener('change', (event: any) => { this.editConfig('setProperty', 'align', event.target.value); });
+    var alignmentRow = SupClient.component.createSetting(tbody, 'Alignment');
+    this.fields["alignment"] = SupClient.component.createSelectBox(alignmentRow.valueElt, {"left": "Left", "center": "Center", "right": "Right"}, config.alignment);
+    this.fields["alignment"].addEventListener('change', (event: any) => { this.editConfig('setProperty', 'alignment', event.target.value); });
 
     var sizeRow = SupClient.component.createSetting(tbody, 'Size');
     this.fields["size"] = SupClient.component.createNumberField(sizeRow.valueElt, config.size, 0);
