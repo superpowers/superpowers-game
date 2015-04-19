@@ -6,13 +6,14 @@ module Sup {
     setTileAt(layer, x, y, value, flipX, flipY, angle) {
       var tileSet = player.getOuterAsset(this.__inner.data.tileSetId);
       var tilesPerRow = tileSet.__inner.data.texture.image.width / tileSet.__inner.data.gridSize;
-      if (value == -1 )
+      if (value == -1) {
         this.__inner.setTileAt(layer, x, y, null);
-      else
+      } else {
         flipX = (flipX) ? flipX : false;
         flipY = (flipY) ? flipY : false;
         angle = (angle) ? angle : 0;
         this.__inner.setTileAt(layer, x, y, [value % tilesPerRow, window.Math.floor(value / tilesPerRow), flipX, flipY, angle]);
+      }
       return this
     }
     getTileAt(layer, x, y) {
