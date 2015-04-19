@@ -20,7 +20,7 @@ class TextRendererConfig extends SupCore.data.base.ComponentConfig {
   }
 
   constructor(pub: any) {
-    // Migrat from old "align" property
+    // Migrate from old "align" property
     if (pub.align != null) {
       pub.alignment = pub.align;
       delete pub.align;

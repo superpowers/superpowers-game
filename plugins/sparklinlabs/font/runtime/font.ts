@@ -3,15 +3,18 @@ declare var FontFace: any;
 
 export function loadAsset(player: SupRuntime.Player, entry: any, callback: (err: string, asset?: any) => any) {
   player.getAssetData(`assets/${entry.id}/asset.json`, "json", (err, data) => {
-    var typedArray = new Uint8Array(data.font);
-    var blob = new Blob([ typedArray ], { type: "font/*" });
-    this.url = URL.createObjectURL(blob);
-
     data.name = `Font${entry.id}`;
-    var font = new FontFace(data.name, `url(${player.dataURL}assets/${entry.id}/font.dat)`);
-    (<any>document).fonts.add(font);
 
-    font.load().then(() => { callback(null, data) });
+    try {
+      var font = new FontFace(data.name, `url(${player.dataURL}assets/${entry.id}/font.dat)`);
+      (<any>document).fonts.add(font);
+    } catch(e) {}
+
+    if (font != null) {
+      font.load().then(() => { callback(null, data); });
+    } else {
+      callback(null, data);
+    }
   });
 }
 
