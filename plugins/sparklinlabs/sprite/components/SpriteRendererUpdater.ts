@@ -42,9 +42,10 @@ class SpriteRendererUpdater {
       image = new Image();
 
       asset.pub.texture = new THREE.Texture(image);
-      if (asset.pub.filtering === "pixelated")
-        asset.pub.texture.magFilter = THREE.NearestFilter
-        asset.pub.texture.minFilter = THREE.NearestFilter
+      if (asset.pub.filtering === "pixelated") {
+        asset.pub.texture.magFilter = THREE.NearestFilter;
+        asset.pub.texture.minFilter = THREE.NearestFilter;
+      }
 
       if (this.url != null) URL.revokeObjectURL(this.url);
 
