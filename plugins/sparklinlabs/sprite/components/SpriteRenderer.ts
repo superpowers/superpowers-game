@@ -104,10 +104,11 @@ class SpriteRenderer extends SupEngine.ActorComponent {
   setAnimation(newAnimationName: string, newAnimationLooping=true) {
     if (newAnimationName != null) {
       if (this.animationsByName[newAnimationName] == null) throw new Error(`Animation ${newAnimationName} doesn't exist`);
+
+      this.animationLooping = newAnimationLooping;
       if (newAnimationName === this.animationName && this.isAnimationPlaying ) return;
 
       this.animationName = newAnimationName;
-      this.animationLooping = newAnimationLooping;
       this.animationTimer = 0;
       this.isAnimationPlaying = true;
       this.updateFrame();
