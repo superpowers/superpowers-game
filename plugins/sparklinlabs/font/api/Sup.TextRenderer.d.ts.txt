@@ -13,5 +13,7 @@ declare module Sup {
     setAlignment(alignment: string): TextRenderer;
     getSize(): number;
     setSize(size: number): TextRenderer;
+    getOpacity(): number;
+    setOpacity(opacity: number): TextRenderer;
   }
 }

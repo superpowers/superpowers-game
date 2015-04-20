@@ -59,8 +59,9 @@ class TextRenderer extends SupEngine.ActorComponent {
     var geometry = new THREE.PlaneBufferGeometry(width, height);
     var material = new THREE.MeshBasicMaterial({
       map: this.texture,
-      alphaTest: 0.1,
-      side: THREE.DoubleSide
+      alphaTest: 0.01,
+      side: THREE.DoubleSide,
+      transparent: true
     });
 
     this.threeMesh = new THREE.Mesh(geometry, material);

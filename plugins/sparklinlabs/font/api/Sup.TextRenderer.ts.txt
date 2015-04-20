@@ -56,5 +56,7 @@ module Sup {
       this.__inner.setOptions(options);
       return this;
     }
+    getOpacity() { return this.__inner.threeMesh.material.opacity; }
+    setOpacity(opacity) { this.__inner.threeMesh.material.opacity = opacity; return this }
   }
 }
