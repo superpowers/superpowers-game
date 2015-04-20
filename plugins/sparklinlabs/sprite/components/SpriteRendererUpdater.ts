@@ -112,8 +112,19 @@ class SpriteRendererUpdater {
   }
 
   _onEditCommand_setProperty(path: string, value: any) {
-    this.spriteRenderer.setSprite(this.spriteAsset.pub);
-    if (this.animationId != null) this._playAnimation();
+    if (path == "filtering") {
+        if (this.spriteAsset.pub.filtering === "pixelated") {
+          this.spriteAsset.pub.texture.magFilter = THREE.NearestFilter;
+          this.spriteAsset.pub.texture.minFilter = THREE.NearestFilter;
+        } else {
+          this.spriteAsset.pub.texture.magFilter = THREE.LinearFilter;
+          this.spriteAsset.pub.texture.minFilter = THREE.LinearMipMapLinearFilter;
+        }
+        this.spriteAsset.pub.texture.needsUpdate = true;
+    } else {
+        this.spriteRenderer.setSprite(this.spriteAsset.pub);
+        if (this.animationId != null) this._playAnimation();
+    }
   }
 
   _onEditCommand_newAnimation() {
