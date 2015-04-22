@@ -1,6 +1,10 @@
 module Sup {
   export module ArcadePhysics2D {
-    export function getAllBodies() { return SupEngine.ArcadePhysics2D.allBodies }
+    export function getAllBodies() {
+      var allBodies = [];
+      for (var body of SupEngine.ArcadePhysics2D.allBodies) allBodies.push(body.__outer);
+      return allBodies;
+    }
     export function setGravity( gravity ) {
       SupEngine.ArcadePhysics2D.gravity.set( gravity.x, gravity.y, 0 );
     }
