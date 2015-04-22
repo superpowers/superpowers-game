@@ -233,7 +233,7 @@ applyOperation = (operation, origin, moveCursor) ->
         ui.editor.setCursor line, cursorPosition if moveCursor
   return
 
-onAssetCommands.saveText = (errors) ->
+onAssetCommands.saveText = (errors, own) ->
   # Remove all previous erros
   for textMarker in ui.editor.getAllMarks()
     continue if textMarker.className != "line-error"
@@ -254,9 +254,9 @@ onAssetCommands.saveText = (errors) ->
   text = ui.errorContainer.querySelector('textarea')
   text.value = ""
   for error in errors
-    #console.log "#{error.file}(#{error.position.line}): #{error.message}"
     text.value += "#{error.file}(#{error.position.line}): #{error.message}\n"
 
+    continue if not own
     line = error.position.line - 1
     textMarker = ui.editor.markText(
       { line , ch: error.position.character-1 },

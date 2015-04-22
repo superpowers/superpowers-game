@@ -161,8 +161,8 @@ module.exports = class ScriptAsset extends SupCore.data.base.Asset
     scripts = {}
     ownScriptName = ""
 
-    finish = (errors) =>
-      callback null, errors
+    finish = (errors, own) =>
+      callback null, errors, own
 
       if @hasDraft
         @hasDraft = false
@@ -173,12 +173,12 @@ module.exports = class ScriptAsset extends SupCore.data.base.Asset
 
     compile = =>
       try results = compileTypeScript scriptNames, scripts, globalDefs, sourceMap: false
-      catch e then finish [ { file: "", position: { line: 1, character: 1 }, message: e.message } ]; return
+      catch e then finish [ { file: "", position: { line: 1, character: 1 }, message: e.message } ], false; return
 
       ownErrors = ( error for error in results.errors when error.file == ownScriptName )
-      if ownErrors.length > 0 then finish ownErrors; return
+      if ownErrors.length > 0 then finish ownErrors, true; return
       # If there were no errors in this script but there are errors in others, report them
-      if results.errors.length > 0 then finish results.errors; return
+      if results.errors.length > 0 then finish results.errors, false; return
 
       libSourceFile = results.program.getSourceFile("lib.d.ts")
       supTypeSymbols =
@@ -234,7 +234,7 @@ module.exports = class ScriptAsset extends SupCore.data.base.Asset
       @serverData.resources.acquire 'behaviorProperties', null, (err, behaviorProperties) =>
         behaviorProperties.setScriptBehaviors @id, behaviors
         @serverData.resources.release 'behaviorProperties', null
-        finish []; return
+        finish [], true; return
       return
 
     remainingAssetsToLoad = Object.keys(@serverData.entries.byId).length
