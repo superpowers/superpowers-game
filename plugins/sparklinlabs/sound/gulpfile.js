@@ -18,6 +18,7 @@ gulp.task("stylus", function() {
 var ts = require('gulp-typescript');
 gulp.task("typescript", function() {
   var tsResult = gulp.src("**/*.ts").pipe(ts({
+    typescript: require("typescript"),
     declarationFiles: false,
     module: "commonjs",
     target: "ES5"
