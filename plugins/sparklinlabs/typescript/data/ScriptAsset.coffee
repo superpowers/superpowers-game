@@ -194,15 +194,15 @@ module.exports = class ScriptAsset extends SupCore.data.base.Asset
       for symbolName, symbol of results.program.getSourceFile(ownScriptName).locals
         continue if (symbol.flags & ts.SymbolFlags.Class) != ts.SymbolFlags.Class
 
-        baseTypeNode = ts.getClassBaseTypeNode(symbol.valueDeclaration)
+        baseTypeNode = ts.getClassExtendsHeritageClauseElement(symbol.valueDeclaration)
         continue if ! baseTypeNode?
 
-        typeSymbol = results.typeChecker.getSymbolAtLocation baseTypeNode.typeName
+        typeSymbol = results.typeChecker.getSymbolAtLocation baseTypeNode.expression
         loop
           break if typeSymbol == supTypeSymbols["Sup.Behavior"]
-          baseTypeNode = ts.getClassBaseTypeNode(typeSymbol.valueDeclaration)
+          baseTypeNode = ts.getClassExtendsHeritageClauseElement(typeSymbol.valueDeclaration)
           break if ! baseTypeNode?
-          typeSymbol = results.typeChecker.getSymbolAtLocation baseTypeNode.typeName
+          typeSymbol = results.typeChecker.getSymbolAtLocation baseTypeNode.expression
 
         continue if typeSymbol != supTypeSymbols["Sup.Behavior"]
 

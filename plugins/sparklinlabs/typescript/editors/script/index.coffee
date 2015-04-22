@@ -254,13 +254,13 @@ onAssetCommands.saveText = (errors, own) ->
   text = ui.errorContainer.querySelector('textarea')
   text.value = ""
   for error in errors
-    text.value += "#{error.file}(#{error.position.line}): #{error.message}\n"
+    text.value += "#{error.file}(#{error.position.line+1}): #{error.message}\n"
 
     continue if not own
-    line = error.position.line - 1
+    line = error.position.line
     textMarker = ui.editor.markText(
-      { line , ch: error.position.character-1 },
-      { line, ch: error.position.character-1 + error.length },
+      { line , ch: error.position.character },
+      { line, ch: error.position.character + error.length },
       { className: 'line-error' } )
 
     gutter = document.createElement("div")

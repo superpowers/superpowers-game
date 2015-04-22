@@ -30,7 +30,7 @@ module.exports = (sourceFileNames, sourceFiles, libSource, compilerOptions={}) -
         files.push { name, text }
         script += "\n#{text}"
 
-    getDefaultLibFilename: () => "lib.d.ts"
+    getDefaultLibFileName: () => "lib.d.ts"
     useCaseSensitiveFileNames: () => false
     getCanonicalFileName: (filename) => filename
     getCurrentDirectory: () => ""
@@ -38,17 +38,16 @@ module.exports = (sourceFileNames, sourceFiles, libSource, compilerOptions={}) -
 
   # Create a program from inputs
   program = ts.createProgram sourceFileNames, compilerOptions, compilerHost
-  # Query for early errors
-  errors = program.getDiagnostics()
+  # Query for earyly errors
+  errors = ts.getPreEmitDiagnostics(program)
   # Do not generate code in the presence of early errors
   if errors.length == 0
     # Type check and get semantic errors
     typeChecker = program.getTypeChecker true
-    errors = typeChecker.getDiagnostics()
     # Generate output
-    typeChecker.emitFiles()
+    errors = program.emit().diagnostics
 
   return {
-    errors: errors.map (e) => { file: e.file.filename, position: e.file.getLineAndCharacterFromPosition(e.start), length: e.length, message: e.messageText}
+    errors: errors.map (e) => {file: e.file.fileName, position: e.file.getLineAndCharacterOfPosition(e.start), length: e.length, message: e.messageText }
     program, typeChecker, script, sourceMaps, files
   }
