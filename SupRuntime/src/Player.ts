@@ -1,5 +1,3 @@
-///<reference path="../../SupEngine/SupEngine.d.ts"/>
-
 import SupRuntime = require("./index");
 import async = require("async");
 

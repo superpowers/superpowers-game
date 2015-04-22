@@ -1,3 +1,5 @@
+///<reference path="../SupEngine/SupEngine.d.ts"/>
+
 declare module SupRuntime {
   interface RuntimePlugin {
     loadAsset(player: Player, entry: any, callback: (err: Error, asset?: any) => any): void;
