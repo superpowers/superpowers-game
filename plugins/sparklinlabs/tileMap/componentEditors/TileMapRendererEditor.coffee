@@ -1,11 +1,11 @@
 module.exports = class TileMapRendererEditor
 
-  constructor: (@SupUI, tbody, config, @projectClient, @editConfig) ->
+  constructor: (tbody, config, @projectClient, @editConfig) ->
     @tileMapAssetId = config.tileMapAssetId
     @tileSetAssetId = config.tileSetAssetId
 
-    tileMapRow = @SupUI.component.createSetting tbody, 'Map'
-    @tileMapTextField = @SupUI.component.createTextField tileMapRow.valueElt, ''
+    tileMapRow = SupClient.component.createSetting tbody, 'Map'
+    @tileMapTextField = SupClient.component.createTextField tileMapRow.valueElt, ''
     @tileMapTextField.disabled = true
 
     @tileMapTextField.addEventListener 'input', @_onChangeTileMapAsset
@@ -59,11 +59,11 @@ module.exports = class TileMapRendererEditor
   ###
 
   _onChangeTileMapAsset: (event) =>
-    entry = @SupUI.findEntryByPath @projectClient.entries.pub, event.target.value
+    entry = SupClient.findEntryByPath @projectClient.entries.pub, event.target.value
     if entry?.type == 'tileMap' then @editConfig 'setProperty', 'tileMapAssetId', entry.id
     return
 
   ###_onChangeTileSetAsset: (event) =>
-    entry = @SupUI.findEntryByPath @projectClient.entries.pub, event.target.value
+    entry = SupClient.findEntryByPath @projectClient.entries.pub, event.target.value
     if entry?.type == 'tileSet' then @editConfig 'setProperty', 'tileSetAssetId', entry.id
     return###

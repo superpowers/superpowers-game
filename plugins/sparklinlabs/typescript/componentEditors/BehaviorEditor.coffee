@@ -2,15 +2,15 @@ behaviorEditorDataListIndex = 0
 
 module.exports = class BehaviorEditor
 
-  constructor: (@SupUI, @tbody, @config, @projectClient, @editConfig) ->
+  constructor: (@tbody, @config, @projectClient, @editConfig) ->
     @behaviorName = @config.behaviorName
 
     @behaviorNamesDataListElt = document.createElement('datalist')
     @behaviorNamesDataListElt.id = "behavior-editor-datalist-#{behaviorEditorDataListIndex++}"
     @tbody.appendChild @behaviorNamesDataListElt
 
-    behaviorNameRow = @SupUI.component.createSetting @tbody, 'Class'
-    @behaviorNameField = @SupUI.component.createTextField behaviorNameRow.valueElt, @config.behaviorName
+    behaviorNameRow = SupClient.component.createSetting @tbody, 'Class'
+    @behaviorNameField = SupClient.component.createTextField behaviorNameRow.valueElt, @config.behaviorName
     @behaviorNameField.setAttribute 'list', @behaviorNamesDataListElt.id
     @behaviorNameField.addEventListener 'change', @_onChangeBehaviorName
 
@@ -65,7 +65,7 @@ module.exports = class BehaviorEditor
     return
 
   _createPropertySetting: (property) ->
-    propertySetting = @SupUI.component.createSetting @tbody, property.name, { checkbox: true, title: "#{property.name} (#{property.type})" }
+    propertySetting = SupClient.component.createSetting @tbody, property.name, { checkbox: true, title: "#{property.name} (#{property.type})" }
     @propertySettingsByName[property.name] = propertySetting
     @_createPropertyField property.name
 
@@ -105,21 +105,21 @@ module.exports = class BehaviorEditor
 
     switch uiType
       when 'incompatibleType'
-        propertyField = @SupUI.component.createTextField propertySetting.valueElt, "(Incompatible type: #{propertyValueInfo.type})"
+        propertyField = SupClient.component.createTextField propertySetting.valueElt, "(Incompatible type: #{propertyValueInfo.type})"
         propertyField.disabled = true
 
       when 'boolean'
-        propertyField = @SupUI.component.createBooleanField propertySetting.valueElt, propertyValue
+        propertyField = SupClient.component.createBooleanField propertySetting.valueElt, propertyValue
         propertyField.disabled = ! propertyValueInfo?
         propertyField.addEventListener 'change', @_onChangePropertyValue
 
       when 'number'
-        propertyField = @SupUI.component.createNumberField propertySetting.valueElt, propertyValue
+        propertyField = SupClient.component.createNumberField propertySetting.valueElt, propertyValue
         propertyField.disabled = ! propertyValueInfo?
         propertyField.addEventListener 'change', @_onChangePropertyValue
 
       when 'string'
-        propertyField = @SupUI.component.createTextField propertySetting.valueElt, propertyValue
+        propertyField = SupClient.component.createTextField propertySetting.valueElt, propertyValue
         propertyField.disabled = ! propertyValueInfo?
         propertyField.addEventListener 'change', @_onChangePropertyValue
 

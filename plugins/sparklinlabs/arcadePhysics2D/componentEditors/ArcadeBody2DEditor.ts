@@ -2,7 +2,7 @@ class ArcadeBody2DEditor {
   fields: {[name: string]: HTMLInputElement};
   editConfig: any;
 
-  constructor(TmpSupClientToBeRemoved: any, tbody: HTMLDivElement, config: any, projectClient: SupClient.ProjectClient, editConfig: any) {
+  constructor(tbody: HTMLDivElement, config: any, projectClient: SupClient.ProjectClient, editConfig: any) {
     this.fields = {};
     this.editConfig = editConfig;
 

@@ -1,6 +1,6 @@
 module.exports = class CameraEditor
 
-  constructor: (@SupUI, tbody, config, @projectClient, @editConfig) ->
+  constructor: (tbody, config, @projectClient, @editConfig) ->
 
     @mode = config.mode
     @fov = config.fov
@@ -9,15 +9,15 @@ module.exports = class CameraEditor
       x: config.viewport.x, y: config.viewport.y
       width: config.viewport.width, height: config.viewport.height
 
-    modeRow = @SupUI.component.createSetting tbody, 'Mode'
-    @modeSelectBox = @SupUI.component.createSelectBox modeRow.valueElt,
+    modeRow = SupClient.component.createSetting tbody, 'Mode'
+    @modeSelectBox = SupClient.component.createSelectBox modeRow.valueElt,
       { perspective: "Perspective", orthographic: "Orthographic" }, config.mode
 
-    @fovRow = @SupUI.component.createSetting tbody, 'Field of view'
-    @fovField = @SupUI.component.createNumberField @fovRow.valueElt, config.fov, 0.1, 179.9
+    @fovRow = SupClient.component.createSetting tbody, 'Field of view'
+    @fovField = SupClient.component.createNumberField @fovRow.valueElt, config.fov, 0.1, 179.9
 
-    @orthographicScaleRow = @SupUI.component.createSetting tbody, 'Orthographic scale'
-    @orthographicScaleField = @SupUI.component.createNumberField @orthographicScaleRow.valueElt, config.orthographicScale, 0.1
+    @orthographicScaleRow = SupClient.component.createSetting tbody, 'Orthographic scale'
+    @orthographicScaleField = SupClient.component.createNumberField @orthographicScaleRow.valueElt, config.orthographicScale, 0.1
 
     @modeSelectBox.addEventListener 'change', @_onChangeMode
     @fovField.addEventListener 'change', @_onChangeFOV

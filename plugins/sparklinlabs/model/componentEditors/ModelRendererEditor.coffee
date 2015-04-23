@@ -1,15 +1,15 @@
 module.exports = class ModelRendererEditor
 
-  constructor: (@SupUI, tbody, config, @projectClient, @editConfig) ->
+  constructor: (tbody, config, @projectClient, @editConfig) ->
     @modelAssetId = config.modelAssetId
     @animationId = config.animationId
 
-    modelRow = @SupUI.component.createSetting tbody, 'Model'
-    @modelTextField = @SupUI.component.createTextField modelRow.valueElt, ''
+    modelRow = SupClient.component.createSetting tbody, 'Model'
+    @modelTextField = SupClient.component.createTextField modelRow.valueElt, ''
     @modelTextField.disabled = true
 
-    animationRow = @SupUI.component.createSetting tbody, 'Animation'
-    @animationSelectBox = @SupUI.component.createSelectBox animationRow.valueElt, { "": "(None)" }
+    animationRow = SupClient.component.createSetting tbody, 'Animation'
+    @animationSelectBox = SupClient.component.createSelectBox animationRow.valueElt, { "": "(None)" }
     @animationSelectBox.disabled = true
 
     @modelTextField.addEventListener 'input', @_onChangeModelAsset
@@ -73,7 +73,7 @@ module.exports = class ModelRendererEditor
       @animationSelectBox.removeChild child
 
     for animation in asset.pub.animations
-      @SupUI.component.createSelectOption @animationSelectBox, animation.id, animation.name
+      SupClient.component.createSelectOption @animationSelectBox, animation.id, animation.name
 
     @animationSelectBox.value = @animationId ? ""
     @animationSelectBox.disabled = false
@@ -91,7 +91,7 @@ module.exports = class ModelRendererEditor
       @animationSelectBox.removeChild child
 
     for animation in @asset.pub.animations
-      @SupUI.component.createSelectOption @animationSelectBox, animation.id, animation.name
+      SupClient.component.createSelectOption @animationSelectBox, animation.id, animation.name
 
     if animationId? and @asset.animations.byId[animationId]?
       @animationSelectBox.value = animationId
@@ -106,7 +106,7 @@ module.exports = class ModelRendererEditor
     @animationSelectBox.disabled = true
 
   _onChangeModelAsset: (event) =>
-    entry = @SupUI.findEntryByPath @projectClient.entries.pub, event.target.value
+    entry = SupClient.findEntryByPath @projectClient.entries.pub, event.target.value
     if entry?.type == 'model'
       @editConfig 'setProperty', 'modelAssetId', entry.id
       @editConfig 'setProperty', 'animationId', null

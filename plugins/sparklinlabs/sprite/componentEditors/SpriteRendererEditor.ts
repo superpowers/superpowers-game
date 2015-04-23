@@ -12,7 +12,7 @@ class SpriteRendererEditor {
 
   asset: SpriteAsset;
 
-  constructor(TmpSupClientToBeRemoved: any, tbody: HTMLDivElement, config: any, projectClient: SupClient.ProjectClient, editConfig: any) {
+  constructor(tbody: HTMLDivElement, config: any, projectClient: SupClient.ProjectClient, editConfig: any) {
     this.projectClient = projectClient;
     this.editConfig = editConfig;
     this.spriteAssetId = config.spriteAssetId;

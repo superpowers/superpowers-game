@@ -401,8 +401,7 @@ createComponentElement = (nodeId, component) ->
     socket.emit 'edit:assets', info.assetId, 'editComponent', nodeId, component.id, command, args..., callback; return
 
   componentEditorPlugin = SupEngine.componentEditorClasses[component.type]
-  # FIXME: Remove SupClient parameter, it's useless?
-  ui.componentEditors[component.id] = new componentEditorPlugin SupClient, table.querySelector('tbody'), component.config, data.projectClient, editConfig
+  ui.componentEditors[component.id] = new componentEditorPlugin table.querySelector('tbody'), component.config, data.projectClient, editConfig
 
   shrinkButton = clone.querySelector('.shrink-component')
   shrinkButton.addEventListener 'click', =>

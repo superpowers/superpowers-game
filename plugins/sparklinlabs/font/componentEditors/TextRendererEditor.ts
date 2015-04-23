@@ -4,7 +4,7 @@ class TextRendererEditor {
 
   fields: {[key: string]: any} = {};
 
-  constructor(TmpSupClientToBeRemoved: any, tbody: HTMLDivElement, config: any, projectClient: SupClient.ProjectClient, editConfig: any) {
+  constructor(tbody: HTMLDivElement, config: any, projectClient: SupClient.ProjectClient, editConfig: any) {
     this.editConfig = editConfig;
     this.projectClient = projectClient;
 
