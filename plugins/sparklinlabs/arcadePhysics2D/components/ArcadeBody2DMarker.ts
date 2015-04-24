@@ -4,6 +4,7 @@ let THREE = SupEngine.THREE;
 class ArcadeBody2DMarker extends SupEngine.ActorComponent {
   static Updater = require("./ArcadeBody2DUpdater");
 
+  offset = new THREE.Vector3(0, 0, 0);
   line: THREE.Line;
 
   constructor(actor: SupEngine.Actor) {
@@ -23,13 +24,14 @@ class ArcadeBody2DMarker extends SupEngine.ActorComponent {
     let material = new THREE.LineBasicMaterial({color: 0xf459e4});
 
     this.line = new THREE.Line(geometry, material);
+    this.line.position.copy(this.offset);
     this.actor.threeObject.add(this.line);
     this.line.updateMatrixWorld(false);
   }
 
   setOffset(x: number, y: number) {
-    this.line.position.setX(x);
-    this.line.position.setY(y);
+    this.offset.set(x, y, 0);
+    this.line.position.copy(this.offset);
     this.line.updateMatrixWorld(false);
   }
 
