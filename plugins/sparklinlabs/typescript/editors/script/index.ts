@@ -279,7 +279,7 @@ onAssetCommands.saveText = (errors: Array<{file: string; position: {line: number
     textMarker.clear();
   }
 
-  for (let line = 0; line < ui.editor.getDoc().lineCount(); line++) ui.editor.setGutterMarker(line, "line-error-gutter", null);
+  ui.editor.clearGutter("line-error-gutter");
 
   // Display new ones
   if (errors.length === 0) {
