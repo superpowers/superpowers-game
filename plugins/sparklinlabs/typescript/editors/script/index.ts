@@ -12,7 +12,7 @@ import * as OT from "operational-transform";
 
 let qs = require("querystring").parse(window.location.search.slice(1));
 let info = { projectId: qs.project, assetId: qs.asset };
-let data: {clientId: number; asset?: ScriptAsset;};
+let data: {clientId: number; projectClient?: SupClient.ProjectClient; asset?: ScriptAsset;};
 let ui: {
   editor?: CodeMirror.EditorFromTextArea,
   tmpCodeMirrorDoc?: CodeMirror.Doc,
@@ -35,8 +35,6 @@ var start = () => {
   socket = SupClient.connect(info.projectId);
   socket.on("welcome", onWelcome);
   socket.on("disconnect", SupClient.onDisconnected);
-  socket.on("edit:assets", onAssetEdited);
-  socket.on("trash:assets", SupClient.onAssetTrashed);
   SupClient.setupHotkeys();
 
   window.addEventListener("message", (event) => {
@@ -156,22 +154,25 @@ var start = () => {
 // Network callbacks
 var onWelcome = (clientId: number) => {
   data = { clientId }
-  socket.emit("sub", "assets", info.assetId, onAssetReceived);
+  data.projectClient = new SupClient.ProjectClient(socket);
+
+  data.projectClient.subAsset(info.assetId, "script", scriptSubscriber)
 }
 
-var onAssetReceived = (err: string, asset: any) => {
-  data.asset = new ScriptAsset(info.assetId, asset);
+var scriptSubscriber = {
+  onAssetReceived: (err: string, asset: ScriptAsset) => {
+    data.asset = asset;
 
-  ui.editor.getDoc().setValue(data.asset.pub.draft);
-  ui.editor.getDoc().clearHistory();
+    ui.editor.getDoc().setValue(data.asset.pub.draft);
+    ui.editor.getDoc().clearHistory();
+  },
+  onAssetEdited: (id: string, command: string, ...args: any[]) => {
+    if (onAssetCommands[command] != null) onAssetCommands[command].apply(data.asset, args);
+  },
+  onAssetTrashed: SupClient.onAssetTrashed
 }
 
-let onAssetCommands: any = {};
-var onAssetEdited = (id: string, command: string, ...args: any[]) => {
-  (<any>data.asset).__proto__[`client_${command}`].apply(data.asset, args);
-  if (onAssetCommands[command] != null) onAssetCommands[command].apply(data.asset, args);
-}
-
+var onAssetCommands: any = {};
 onAssetCommands.editText = (operationData: OT.OperationData) => {
   if (data.clientId === operationData.userId) {
     if (ui.pendingOperation != null) {
