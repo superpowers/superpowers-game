@@ -1,11 +1,12 @@
 var gulp = require("gulp");
 var tasks = [];
 
-// Typescript
-var ts = require('gulp-typescript');
+// TypeScript
+var ts = require("gulp-typescript");
 gulp.task("typescript", function() {
   var tsResult = gulp.src("**/*.ts").pipe(ts({
     typescript: require("typescript"),
+    noImplicitAny: true,
     declarationFiles: false,
     module: "commonjs",
     target: "ES5"
@@ -17,7 +18,7 @@ gulp.task("typescript", function() {
 var browserify = require("browserify");
 var vinylSourceStream = require("vinyl-source-stream");
 function makeBrowserify(source, destination, output) {
-  gulp.task(output + "-browserify", ["typescript"], function() {
+  gulp.task(output + "-browserify", [ "typescript" ], function() {
     var bundler = browserify(source);
     bundler.transform("brfs");
     function bundle() { return bundler.bundle().pipe(vinylSourceStream(output + ".js")).pipe(gulp.dest(destination)); };

@@ -1,4 +1,4 @@
-import fs = require("fs");
+import * as fs from "fs";
 
 SupAPI.registerPlugin("typescript", "EventEmitter", {
   code: null,

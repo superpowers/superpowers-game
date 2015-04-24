@@ -1,4 +1,4 @@
-import fs = require("fs");
+import * as fs from "fs";
 
 SupAPI.registerPlugin("typescript", "Sup.ArcadePhysics2D", {
   code: fs.readFileSync(__dirname + "/Sup.ArcadePhysics2D.ts.txt", { encoding: "utf8" }),

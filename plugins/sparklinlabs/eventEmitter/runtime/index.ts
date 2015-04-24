@@ -1,1 +1,1 @@
-window["EventEmitter"] = require('events').EventEmitter;
+(<any>window)["EventEmitter"] = require('events').EventEmitter;

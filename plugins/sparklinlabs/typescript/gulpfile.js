@@ -15,10 +15,10 @@ gulp.task("stylus", function() {
   return gulp.src("./editors/**/index.styl").pipe(stylus({use: [ nib() ], errors: true})).pipe(cssimport()).pipe(gulp.dest("./public/editors"));
 });
 
-// Typescript
-var ts = require('gulp-typescript');
+// TypeScript
+var ts = require("gulp-typescript");
 gulp.task("typescript", function() {
-  var tsResult = gulp.src(["**/*.ts", "!node_modules/**"]).pipe(ts({
+  var tsResult = gulp.src([ "**/*.ts", "!node_modules/**" ]).pipe(ts({
     typescript: require("typescript"),
     noImplicitAny: true,
     declarationFiles: false,
@@ -32,7 +32,7 @@ gulp.task("typescript", function() {
 var browserify = require("browserify");
 var vinylSourceStream = require("vinyl-source-stream");
 function makeBrowserify(source, destination, output) {
-  gulp.task(output + "-browserify", ["typescript"], function() {
+  gulp.task(output + "-browserify", [ "typescript" ], function() {
     var bundler = browserify(source);
     bundler.transform("brfs");
     function bundle() { return bundler.bundle().pipe(vinylSourceStream(output + ".js")).pipe(gulp.dest(destination)); };

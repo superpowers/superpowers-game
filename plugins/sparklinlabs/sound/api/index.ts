@@ -1,4 +1,4 @@
-import fs = require("fs");
+import * as fs from "fs";
 
 SupAPI.registerPlugin("typescript", "Sup.Sound", {
   code: "module Sup { export class Sound extends Asset {} }",
