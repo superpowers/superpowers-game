@@ -14,8 +14,8 @@ class ArcadeBody2DUpdater {
   config_setProperty(path: string, value: any) {
     (<any>this.config)[path] = value;
 
-    if (path in ['width', 'height']) this.bodyRenderer.setSize(this.config.width, this.config.height);
-    if (path in ['offsetX', 'offsetY']) this.bodyRenderer.setOffset(this.config.offsetX, this.config.offsetY);
+    if (path == "width"   || path == "height")   this.bodyRenderer.setSize(this.config.width, this.config.height);
+    if (path == "offsetX" || path ==  "offsetY") this.bodyRenderer.setOffset(this.config.offsetX, this.config.offsetY);
   }
 }
 export = ArcadeBody2DUpdater;
