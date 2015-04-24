@@ -1,3 +1,7 @@
+import * as async from "async";
+import * as OT from "operational-transform";
+import * as ts from "typescript";
+
 import ScriptAsset from "../../data/ScriptAsset";
 
 (<any>window).CodeMirror = require("codemirror");
@@ -8,17 +12,17 @@ require("codemirror/addon/comment/comment");
 require("codemirror/addon/hint/show-hint");
 require("codemirror/keymap/sublime");
 require("codemirror/mode/javascript/javascript");
-import * as OT from "operational-transform";
 
 let qs = require("querystring").parse(window.location.search.slice(1));
 let info = { projectId: qs.project, assetId: qs.asset };
-let data: {clientId: number; projectClient?: SupClient.ProjectClient; asset?: ScriptAsset;};
+let data: {clientId: number; projectClient?: SupClient.ProjectClient; assetsById?: {[id: string]: ScriptAsset}; asset?: ScriptAsset;};
 let ui: {
   editor?: CodeMirror.EditorFromTextArea,
   tmpCodeMirrorDoc?: CodeMirror.Doc,
   errorContainer?: HTMLDivElement,
 
   undoTimeout?: NodeJS.Timer,
+  compileTimeout?: NodeJS.Timer,
   texts?: string[],
 
   undoStack?: OT.TextOperation[],
@@ -30,6 +34,12 @@ let ui: {
   pendingOperation?: OT.TextOperation;
 } = {};
 let socket: SocketIOClient.Socket;
+
+import createLanguageService from "../../data/createLanguageService";
+let globalDefs = "";
+let scriptNames: string[] = [];
+let scriptNamesById: {[name: string]: string} = {};
+let scripts: {[name: string]: string} = {};
 
 var start = () => {
   socket = SupClient.connect(info.projectId);
@@ -90,31 +100,44 @@ var start = () => {
   (<any>ui.editor).on("changes", onEditText);
 
   (<any>CodeMirror).registerHelper("hint", "javascript", (editor: CodeMirror.Editor, options: any) => {
-    let cursor = editor.getDoc().getCursor()
-    let token = editor.getTokenAt(cursor)
+    let cursor = editor.getDoc().getCursor();
+    let token = editor.getTokenAt(cursor);
 
-    let baseList = ["Sup", "Input", "Math", "Vector3", "Actor", "SpriteRenderer", "Camera", "TileMapRenderer", "loadScene",
-      "actor", "spriteRenderer", "camera", "tileMapRenderer", "getLocalPosition", "setLocalPosition"];
-    let finalList: string[];
+    let start = 0;
+    for (let i = 0; i < cursor.line; i++) start += editor.getDoc().getLine(i).length + 1;
+    start += cursor.ch;
 
-    if (token.string == "") finalList = [];
-    else if (token.string == ".") {
-      token.start = token.end
-      finalList = baseList
-    } else {
-      finalList = []
-      for (let item of baseList) {
-        if (item.indexOf(token.string) !== -1) finalList.push(item);
+    let service = createLanguageService(scriptNames, scripts, globalDefs);
+    let list: string[] = [];
+
+    if (token.string !== "" && token.string !== ";") {
+      if (token.string === ".") token.start = token.end;
+
+      let completions = service.getCompletionsAtPosition(scriptNamesById[info.assetId], start);
+      if (completions != null) {
+        for (let completion of completions.entries) {
+          if (token.string === "." || (token.string !== completion.name &&  completion.name.indexOf(token.string) !== -1)) {
+            list.push(completion.name);
+          }
+        }
       }
     }
-
-    return { list: finalList, from: (<any>CodeMirror).Pos(cursor.line, token.start), to: (<any>CodeMirror).Pos(cursor.line, token.end) };
-  });
+    return { list, from: (<any>CodeMirror).Pos(cursor.line, token.start), to: (<any>CodeMirror).Pos(cursor.line, token.end) };
+    });
 
   (<any>ui.editor).on("keyup", (instance: any, event: any) => {
     // Ignore Ctrl, Cmd, Escape, Return, Tab, Arrows
     if (event.ctrlKey || event.metaKey || [27, 9, 13, 37, 38, 39, 40].indexOf(event.keyCode) !== -1) return;
-    instance.showHint({completeSingle: false});
+    instance.showHint({
+      completeSingle: false,
+      customKeys: {
+        "Up": (cm: any, commands: any) => { commands.moveFocus(-1); },
+        "Down": (cm: any, commands: any) => { commands.moveFocus(1); },
+        "Enter": (cm: any, commands: any) => { commands.pick(); },
+        "Tab": (cm: any, commands: any) => { commands.pick(); },
+        "Esc": (cm: any, commands: any) => { commands.close(); },
+      }
+    });
   });
 
   let nwDispatcher = (<any>window).nwDispatcher;
@@ -153,23 +176,117 @@ var start = () => {
 
 // Network callbacks
 var onWelcome = (clientId: number) => {
-  data = { clientId }
+  data = { clientId, assetsById: {} }
   data.projectClient = new SupClient.ProjectClient(socket);
+  data.projectClient.subEntries(entriesSubscriber);
+}
 
-  data.projectClient.subAsset(info.assetId, "script", scriptSubscriber)
+var entriesSubscriber = {
+  onEntriesReceived: (entries: SupCore.data.Entries) => {
+    entries.walk((entry) => {
+      if (entry["type"] !== "script") return;
+
+      var scriptName = `${data.projectClient.entries.getPathFromId(entry.id)}.ts`;
+      scriptNames.push(scriptName);
+      scriptNamesById[entry.id] = scriptName;
+      data.projectClient.subAsset(entry.id, "script", scriptSubscriber)
+    })
+  },
+
+  onEntryAdded: (newEntry: any, parentId: string, index: number) => {
+    if (newEntry.type !== "script") return;
+
+    let scriptName = `${data.projectClient.entries.getPathFromId(newEntry.id)}.ts`;
+
+    let i = 0;
+    data.projectClient.entries.walk((entry) => {
+      if (entry.id === newEntry.id) scriptNames.splice(i, 0, scriptName);
+      i++;
+    });
+    scriptNamesById[newEntry.id] = scriptName;
+    data.projectClient.subAsset(newEntry.id, "script", scriptSubscriber)
+  },
+
+  onEntryMoved: (id: string, parentId: string, index: number) => {
+    let entry = data.projectClient.entries.byId[id];
+    if (entry.type !== "script") return;
+
+    let oldScriptName = scriptNamesById[id];
+    let newScriptName = `${data.projectClient.entries.getPathFromId(id)}.ts`;
+
+    scriptNames.splice(scriptNames.indexOf(oldScriptName), 1);
+    let i = 0;
+    data.projectClient.entries.walk((entry) => {
+      if (entry.id === id) scriptNames.splice(i, 0, newScriptName);
+      i++;
+    });
+
+    scriptNamesById[id] = newScriptName;
+    scripts[newScriptName] = scripts[oldScriptName];
+    if (newScriptName !== oldScriptName) delete scripts[oldScriptName];
+
+    scheduleCompilation();
+  },
+
+  onSetEntryProperty: (id: string, key: string, value: any) => {
+    let entry = data.projectClient.entries.byId[id];
+    if (entry.type !== "script") return;
+    if (key !== "name") return;
+
+    let oldScriptName = scriptNamesById[id];
+    let newScriptName = `${data.projectClient.entries.getPathFromId(entry.id)}.ts`;
+    if (newScriptName === oldScriptName) return;
+
+    let scriptIndex = scriptNames.indexOf(oldScriptName);
+    scriptNames[scriptIndex] = newScriptName;
+    scriptNamesById[id] = newScriptName;
+    scripts[newScriptName] = scripts[oldScriptName];
+    delete scripts[oldScriptName];
+  },
+
+  onEntryTrashed: (id: string) => {
+    let scriptName = scriptNamesById[id];
+    if (scriptName == null) return;
+
+    scriptNames.splice(scriptNames.indexOf(scriptName), 1);
+    delete scripts[scriptName];
+    delete scriptNamesById[id];
+
+    scheduleCompilation();
+  },
 }
 
 var scriptSubscriber = {
   onAssetReceived: (err: string, asset: ScriptAsset) => {
+    data.assetsById[asset.id] = asset;
+    var scriptName = `${data.projectClient.entries.getPathFromId(asset.id)}.ts`;
+    scripts[scriptName] = asset.pub.text;
+    if (asset.id !== info.assetId) return;
+
     data.asset = asset;
 
     ui.editor.getDoc().setValue(data.asset.pub.draft);
     ui.editor.getDoc().clearHistory();
   },
+
   onAssetEdited: (id: string, command: string, ...args: any[]) => {
+    if (id !== info.assetId && command === "saveText") {
+      var scriptName = `${data.projectClient.entries.getPathFromId(id)}.ts`;
+      scripts[scriptName] = data.assetsById[id].pub.text;
+      scheduleCompilation();
+      return
+    }
+
     if (onAssetCommands[command] != null) onAssetCommands[command].apply(data.asset, args);
   },
-  onAssetTrashed: SupClient.onAssetTrashed
+
+  onAssetTrashed: (id: string) => {
+    if (id !== info.assetId) return;
+
+    if (ui.undoTimeout != null) clearTimeout(ui.undoTimeout);
+    if (ui.compileTimeout != null) clearTimeout(ui.compileTimeout);
+    SupClient.onAssetTrashed();
+  },
 }
 
 var onAssetCommands: any = {};
@@ -271,8 +388,33 @@ var applyOperation = (operation: OT.TextOperation, origin: string, moveCursor: b
   }
 }
 
+var scheduleCompilation = () => {
+  if (ui.compileTimeout != null) clearTimeout(ui.compileTimeout);
+  ui.compileTimeout = <any>setTimeout(() => {
+    let service = createLanguageService(scriptNames, scripts, globalDefs);
+    let errors: ts.Diagnostic[];
+    try { errors = ts.getPreEmitDiagnostics(service.getProgram()); }
+    catch (e) { refreshErrors([ { file: "", position: { line: 0, character: 1 }, length: 0, message: e.message } ]); return; }
 
-onAssetCommands.saveText = (errors: Array<{file: string; position: {line: number; character: number;}; length: number; message: string}>, own: boolean) => {
+    refreshErrors(errors.map((e: any) => {
+      return {
+        file: e.file.fileName,
+        position: e.file.getLineAndCharacterOfPosition(e.start),
+        length: e.length,
+        message: e.messageText
+        }
+      }
+    ));
+
+    ui.compileTimeout == null;
+  }, 200);
+}
+
+onAssetCommands.saveText = (errors: Array<{file: string; position: {line: number; character: number;}; length: number; message: string}>) => {
+  refreshErrors(errors);
+}
+
+var refreshErrors = (errors: Array<{file: string; position: {line: number; character: number;}; length: number; message: string}>) => {
   // Remove all previous erros
   for (let textMarker of ui.editor.getDoc().getAllMarks()) {
     if ((<any>textMarker).className !== "line-error") continue;
@@ -296,7 +438,7 @@ onAssetCommands.saveText = (errors: Array<{file: string; position: {line: number
   for (let error of errors) {
     text.value += `${error.file}(${error.position.line+1}): ${error.message}\n`;
 
-    if (! own) continue;
+    if (error.file !== scriptNamesById[info.assetId]) continue;
 
     let line = error.position.line;
     ui.editor.getDoc().markText(
@@ -314,8 +456,10 @@ onAssetCommands.saveText = (errors: Array<{file: string; position: {line: number
 
 // User interface
 var onEditText = (instance: CodeMirror.Editor, changes: CodeMirror.EditorChange[]) => {
-  let undoRedo = false;
+  scripts[scriptNamesById[info.assetId]] = ui.editor.getDoc().getValue();
+  scheduleCompilation();
 
+  let undoRedo = false;
   let operationToSend: OT.TextOperation;
   for (let changeIndex = 0; changeIndex < changes.length; changeIndex++) {
     let change = changes[changeIndex];
@@ -442,5 +586,24 @@ var onRedo = () => {
   ui.redoQuantityByAction.pop();
 }
 
-// Start
-start();
+// Load plugins
+async.each(SupClient.pluginPaths.all, (pluginName, pluginCallback) => {
+  if (pluginName === "sparklinlabs/typescript") { pluginCallback(); return; }
+
+  let apiScript = document.createElement('script')
+  apiScript.src = `/plugins/${pluginName}/api.js`
+  apiScript.addEventListener('load', () => { pluginCallback(); } );
+  apiScript.addEventListener('error', () => { pluginCallback(); } );
+  document.body.appendChild(apiScript);
+}, (err) => {
+  // Read api definitions
+  let actorComponentAccessors: string[] = [];
+  for (let pluginName in SupAPI.contexts["typescript"].plugins) {
+    let plugin = SupAPI.contexts["typescript"].plugins[pluginName];
+    if (plugin.defs != null) globalDefs += plugin.defs
+    if (plugin.exposeActorComponent != null) actorComponentAccessors.push(`${plugin.exposeActorComponent.propertyName}: ${plugin.exposeActorComponent.className};`);
+  }
+  globalDefs = globalDefs.replace("// INSERT_COMPONENT_ACCESSORS", actorComponentAccessors.join("\n    "));
+  // Start
+  start()
+});

@@ -13,10 +13,9 @@ interface CompilationError {
   message: string;
 }
 
-
 if (global.window == null) {
   let serverRequire = require;
-  var compileTypeScript = serverRequire("../runtime/compileTypeScript");
+  var compileTypeScript = serverRequire("../runtime/compileTypeScript").default;
   var ts = serverRequire("typescript");
   var globalDefs = "";
 
@@ -185,15 +184,15 @@ export default class ScriptAsset extends SupCore.data.base.Asset {
     this.pub.revisionId++;
   }
 
-  server_saveText(client: any, callback: (err: string, errors: CompilationError[], own: boolean) => any) {
+  server_saveText(client: any, callback: (err: string, errors: CompilationError[]) => any) {
     this.pub.text = this.pub.draft;
 
     let scriptNames: string[] = [];
     let scripts: {[name: string]: string} = {};
     let ownScriptName = "";
 
-    let finish = (errors: CompilationError[], own: boolean) => {
-      callback(null, errors, own);
+    let finish = (errors: CompilationError[]) => {
+      callback(null, errors);
 
       if (this.hasDraft) {
         this.hasDraft = false;
@@ -205,13 +204,13 @@ export default class ScriptAsset extends SupCore.data.base.Asset {
 
     let compile = () => {
       try { var results = compileTypeScript(scriptNames, scripts, globalDefs, { sourceMap: false} ); }
-      catch (e) { finish([ { file: "", position: { line: 1, character: 1 }, message: e.message } ], false); return; }
+      catch (e) { finish([ { file: "", position: { line: 1, character: 1 }, message: e.message } ]); return; }
 
       let ownErrors: CompilationError[] = [];
       for (let error of results.errors) if (error.file == ownScriptName) ownErrors.push(error);
-      if (ownErrors.length > 0) { finish(ownErrors, true); return; }
+      if (ownErrors.length > 0) { finish(ownErrors); return; }
       // If there were no errors in this script but there are errors in others, report them
-      if (results.errors.length > 0) { finish(results.errors, false); return; }
+      if (results.errors.length > 0) { finish(results.errors); return; }
 
       let libSourceFile = results.program.getSourceFile("lib.d.ts");
       let supTypeSymbols = {
@@ -273,7 +272,7 @@ export default class ScriptAsset extends SupCore.data.base.Asset {
       this.serverData.resources.acquire("behaviorProperties", null, (err: string, behaviorProperties: BehaviorPropertiesResource) => {
         behaviorProperties.setScriptBehaviors(this.id, behaviors);
         this.serverData.resources.release("behaviorProperties", null);
-        finish([], true);
+        finish([]);
       });
     };
 
