@@ -161,7 +161,7 @@ class BehaviorEditor {
 
       case "string": {
         propertyField = SupClient.component.createTextField(propertySetting.valueElt, propertyValue);
-        propertyField.disabled = propertyValueInfo == null
+        propertyField.disabled = propertyValueInfo == null;
         propertyField.addEventListener("change", this._onChangePropertyValue);
         break;
       }
@@ -196,11 +196,11 @@ class BehaviorEditor {
     this._createPropertyField(name);
   }
 
-  _onChangeBehaviorName(event: any) { this.editConfig("setProperty", "behaviorName", event.target.value); }
+  _onChangeBehaviorName = (event: any) => { this.editConfig("setProperty", "behaviorName", event.target.value); }
 
-  // _onChangePropertySet: (event: any) =>
+  // _onChangePropertySet = (event: any) => {}
 
-  _onChangePropertyValue(event: any) {
+  _onChangePropertyValue = (event: any) => {
     let propertyName = event.target.dataset.behaviorPropertyName;
     let propertyType = event.target.dataset.behaviorPropertyType;
     let propertyValue: any;
