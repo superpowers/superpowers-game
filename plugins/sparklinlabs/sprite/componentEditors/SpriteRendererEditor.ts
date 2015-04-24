@@ -82,7 +82,7 @@ class SpriteRendererEditor {
     if (id !== this.spriteAssetId) return;
     this.spriteTextField.value = this.projectClient.entries.getPathFromId(this.spriteAssetId);
   }
-  onEntryTrashed(entry: any, path: string) {}
+  onEntryTrashed(id: string) {}
 
   onAssetReceived(assetId: string, asset: any) {
     if (assetId != this.spriteAssetId) return;
