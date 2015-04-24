@@ -7,6 +7,7 @@ module.exports = class TileMap extends EventEmitter
 
   getWidth: -> @data.width
   getHeight: -> @data.height
+  getPixelsPerUnit: -> @data.pixelsPerUnit
 
   setTileAt: (layer, x, y, value) ->
     return if x < 0 or y < 0 or x >= @data.width or y >= @data.height

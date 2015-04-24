@@ -2,6 +2,7 @@ declare module Sup {
   class TileMap extends Asset {
     getWidth(): number;
     getHeight(): number;
+    getPixelsPerUnit(): number;
 
     setTileAt(layer: number, x: number, y: number, value: number, flipX?: boolean, flipY?: boolean, angle?: number): TileMap;
     getTileAt(layer: number, x: number, y: number): number;

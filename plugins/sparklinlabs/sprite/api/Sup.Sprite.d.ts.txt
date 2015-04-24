@@ -1,0 +1,12 @@
+declare module Sup {
+  class Sprite extends Asset {
+    dummySpriteMember;
+
+    getPixelsPerUnit(): number;
+    getRendering(): string;
+    getFramesPerSecond(): number;
+    getAlphaTest(): number;
+    getGrid(): {width: number; height: number};
+    getOrigin(): {x: number; y: number;};
+  }
+}

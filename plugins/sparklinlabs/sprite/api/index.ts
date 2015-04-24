@@ -1,8 +1,8 @@
 import fs = require("fs");
 
 SupAPI.registerPlugin("typescript", "Sup.Sprite", {
-  code: "module Sup { export class Sprite extends Asset {} }",
-  defs: "declare module Sup { class Sprite extends Asset { dummySpriteMember; } }"
+  code: fs.readFileSync(__dirname + "/Sup.Sprite.ts.txt", {encoding: "utf8"}),
+  defs: fs.readFileSync(__dirname + "/Sup.Sprite.d.ts.txt", {encoding: "utf8"}),
 });
 
 SupAPI.registerPlugin("typescript", "SpriteRenderer", {
