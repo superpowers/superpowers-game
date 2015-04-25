@@ -1,6 +1,5 @@
 import * as THREE from "three";
-let euler: any = THREE.Euler;
-euler.DefaultOrder = "YXZ";
+(<any>THREE.Euler).DefaultOrder = "YXZ";
 
 import GameInstance from "./GameInstance";
 import ActorTree from "./ActorTree";
