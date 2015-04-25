@@ -128,7 +128,7 @@ class BehaviorEditor {
     // TODO: We probably want to collect and display default values?
     // defaultPropertyValue = behaviorProperty?.value
 
-    let propertyValue: any;
+    let propertyValue: any = null;
     let uiType = property.type;
 
     let propertyValueInfo = this.config.propertyValues[property.name];
@@ -147,14 +147,14 @@ class BehaviorEditor {
 
       case "boolean": {
         propertyField = SupClient.component.createBooleanField(propertySetting.valueElt, propertyValue);
-        propertyField.disabled = propertyValueInfo == null
+        propertyField.disabled = propertyValueInfo == null;
         propertyField.addEventListener("change", this._onChangePropertyValue);
         break;
       }
 
       case "number": {
         propertyField = SupClient.component.createNumberField(propertySetting.valueElt, propertyValue);
-        propertyField.disabled = propertyValueInfo == null
+        propertyField.disabled = propertyValueInfo == null;
         propertyField.addEventListener("change", this._onChangePropertyValue);
         break;
       }
