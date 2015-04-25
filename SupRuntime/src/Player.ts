@@ -1,5 +1,5 @@
-import SupRuntime = require("./index");
-import async = require("async");
+import * as SupRuntime from "./index";
+import * as async from "async";
 
 interface Asset {
   id: string;
