@@ -6,7 +6,7 @@ interface BehaviorProperty {
   type: string;
 }
 
-class BehaviorPropertiesResource extends SupCore.data.base.Resource {
+export default class BehaviorPropertiesResource extends SupCore.data.base.Resource {
 
   static schema = {
     behaviors: {
@@ -102,4 +102,3 @@ class BehaviorPropertiesResource extends SupCore.data.base.Resource {
     delete this.behaviorNamesByScriptId[scriptId];
   }
 }
-export = BehaviorPropertiesResource;

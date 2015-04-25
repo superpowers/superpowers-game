@@ -5,7 +5,7 @@ interface Functions {
   destroy?: Function;
 }
 
-class Behavior extends SupEngine.ActorComponent {
+export default class Behavior extends SupEngine.ActorComponent {
   funcs: Functions;
 
   constructor(actor: SupEngine.Actor, funcs: Functions) {
@@ -23,4 +23,3 @@ class Behavior extends SupEngine.ActorComponent {
     super._destroy();
   }
 }
-export = Behavior;

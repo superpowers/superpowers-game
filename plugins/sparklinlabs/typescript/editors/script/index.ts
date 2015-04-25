@@ -1,4 +1,4 @@
-import ScriptAsset = require("../../data/ScriptAsset");
+import ScriptAsset from "../../data/ScriptAsset";
 
 (<any>window).CodeMirror = require("codemirror");
 require("codemirror/addon/search/search");

@@ -1,3 +1,7 @@
-SupCore.data.registerResource("behaviorProperties", require("./BehaviorPropertiesResource"));
-SupCore.data.registerAssetClass("script", require("./ScriptAsset"));
-SupCore.data.registerComponentConfigClass("Behavior", require("./BehaviorConfig"));
+import BehaviorPropertiesResource from "./BehaviorPropertiesResource";
+import ScriptAsset from "./ScriptAsset";
+import BehaviorConfig from "./BehaviorConfig";
+
+SupCore.data.registerResource("behaviorProperties", BehaviorPropertiesResource);
+SupCore.data.registerAssetClass("script", ScriptAsset);
+SupCore.data.registerComponentConfigClass("Behavior", BehaviorConfig);

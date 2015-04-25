@@ -2,7 +2,7 @@ import * as async from "async"
 import * as convert from "convert-source-map"
 // No definition file for combine-source-map module
 let combine: any = require("combine-source-map");
-import compileTypeScript = require("./compileTypeScript");
+import compileTypeScript from "./compileTypeScript";
 import * as fs from "fs"
 
 let globalNames: string[] = [];
@@ -111,7 +111,7 @@ export function start(player: SupRuntime.Player, callback: Function) {
   callback()
 }
 
-export function loadAsset(player: SupRuntime.Player, entry: any, callback: (err: string, asset?: any) => any) {
+export function loadAsset(player: SupRuntime.Player, entry: any, callback: (err: Error, asset?: any) => any) {
   scriptNames.push(`${entry.name}.ts`);
   player.getAssetData(`assets/${entry.id}/script.txt`, "text", (err, script) => {
     scripts[`${entry.name}.ts`] = `${script}\n`

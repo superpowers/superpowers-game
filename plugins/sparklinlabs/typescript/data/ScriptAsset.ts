@@ -5,7 +5,7 @@ import * as fs from "fs";
 import * as path from "path";
 import * as _ from "lodash";
 
-import BehaviorPropertiesResource = require("./BehaviorPropertiesResource");
+import BehaviorPropertiesResource from "./BehaviorPropertiesResource";
 
 interface CompilationError {
   file: string;
@@ -30,7 +30,7 @@ if (global.window == null) {
   globalDefs = globalDefs.replace("// INSERT_COMPONENT_ACCESSORS", actorComponentAccessors.join("\n    "));
 }
 
-class ScriptAsset extends SupCore.data.base.Asset {
+export default class ScriptAsset extends SupCore.data.base.Asset {
 
   static schema = {
     text: { type: "string" },
@@ -303,4 +303,3 @@ class ScriptAsset extends SupCore.data.base.Asset {
 
   client_saveText() { this.pub.text = this.pub.draft; }
 }
-export = ScriptAsset;

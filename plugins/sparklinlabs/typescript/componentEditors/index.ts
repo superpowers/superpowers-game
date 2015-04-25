@@ -1,1 +1,3 @@
-SupEngine.registerComponentEditorClass("Behavior", require("./BehaviorEditor"));
+import BehaviorEditor from "./BehaviorEditor";
+
+SupEngine.registerComponentEditorClass("Behavior", BehaviorEditor);

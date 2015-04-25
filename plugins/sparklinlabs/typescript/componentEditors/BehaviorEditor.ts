@@ -1,4 +1,4 @@
-import BehaviorPropertiesResource = require("../data/BehaviorPropertiesResource");
+import BehaviorPropertiesResource from "../data/BehaviorPropertiesResource";
 
 let behaviorEditorDataListIndex = 0;
 
@@ -7,7 +7,7 @@ interface Config {
   propertyValues: {[name: string]: {value: any, type: string};}
 }
 
-class BehaviorEditor {
+export default class BehaviorEditor {
   tbody: HTMLDivElement;
   config: Config;
   projectClient: SupClient.ProjectClient;
@@ -217,4 +217,3 @@ class BehaviorEditor {
     });
   }
 }
-export = BehaviorEditor;

@@ -1,6 +1,6 @@
 import * as ts from "typescript";
 
-function compileTypeScript(sourceFileNames: string[], sourceFiles: {[name: string]: string}, libSource: string, compilerOptions: ts.CompilerOptions={}) {
+export default function compileTypeScript(sourceFileNames: string[], sourceFiles: {[name: string]: string}, libSource: string, compilerOptions: ts.CompilerOptions={}) {
   if (compilerOptions.target == null) compilerOptions.target = ts.ScriptTarget.ES5;
 
   let script = "";
@@ -67,4 +67,3 @@ function compileTypeScript(sourceFileNames: string[], sourceFiles: {[name: strin
     program, typeChecker, script, sourceMaps, files
   }
 }
-export = compileTypeScript;
