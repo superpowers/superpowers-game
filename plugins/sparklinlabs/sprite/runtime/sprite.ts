@@ -1,4 +1,4 @@
-export function loadAsset(player: SupRuntime.Player, entry: any, callback: (err: string, asset?: any) => any) {
+export function loadAsset(player: SupRuntime.Player, entry: any, callback: (err: Error, asset?: any) => any) {
   player.getAssetData(`assets/${entry.id}/asset.json`, "json", (err, data) => {
     var img = new Image();
 

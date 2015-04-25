@@ -1,6 +1,6 @@
-import SpriteAsset = require("../data/SpriteAsset");
+import SpriteAsset from "../data/SpriteAsset";
 
-class SpriteRendererEditor {
+export default class SpriteRendererEditor {
   projectClient: SupClient.ProjectClient;
   editConfig: any;
 
@@ -18,16 +18,16 @@ class SpriteRendererEditor {
     this.spriteAssetId = config.spriteAssetId;
     this.animationId = config.animationId;
 
-    var spriteRow = SupClient.component.createSetting(tbody, 'Sprite');
-    this.spriteTextField = SupClient.component.createTextField(spriteRow.valueElt, '');
+    let spriteRow = SupClient.component.createSetting(tbody, "Sprite");
+    this.spriteTextField = SupClient.component.createTextField(spriteRow.valueElt, "");
     this.spriteTextField.disabled = true;
 
-    var animationRow = SupClient.component.createSetting(tbody, 'Animation');
+    let animationRow = SupClient.component.createSetting(tbody, "Animation");
     this.animationSelectBox = SupClient.component.createSelectBox(animationRow.valueElt, { "": "(None)" });
-    this.animationSelectBox.disabled = true
+    this.animationSelectBox.disabled = true;
 
-    this.spriteTextField.addEventListener('input', this._onChangeSpriteAsset.bind(this));
-    this.animationSelectBox.addEventListener('change', this._onChangeSpriteAnimation.bind(this));
+    this.spriteTextField.addEventListener("input", this._onChangeSpriteAsset);
+    this.animationSelectBox.addEventListener("change", this._onChangeSpriteAnimation);
 
     this.projectClient.subEntries(this);
   }
@@ -42,20 +42,20 @@ class SpriteRendererEditor {
     if (this.projectClient.entries == null) return;
 
     switch (path) {
-      case 'spriteAssetId': {
+      case "spriteAssetId": {
         if (this.spriteAssetId != null) this.projectClient.unsubAsset(this.spriteAssetId, this);
         this.spriteAssetId = value;
         this.animationSelectBox.disabled = true;
 
         if (this.spriteAssetId != null) {
           this.spriteTextField.value = this.projectClient.entries.getPathFromId(this.spriteAssetId);
-          this.projectClient.subAsset(this.spriteAssetId, 'sprite', this);
+          this.projectClient.subAsset(this.spriteAssetId, "sprite", this);
         }
         else this.spriteTextField.value = "";
         break;
       }
 
-      case 'animationId': {
+      case "animationId": {
         if (! this.animationSelectBox.disabled) this.animationSelectBox.value = (value != null) ? value : "";
         this.animationId = value;
         break;
@@ -69,7 +69,7 @@ class SpriteRendererEditor {
 
     if (entries.byId[this.spriteAssetId] != null) {
       this.spriteTextField.value = entries.getPathFromId(this.spriteAssetId);
-      this.projectClient.subAsset(this.spriteAssetId, 'sprite', this);
+      this.projectClient.subAsset(this.spriteAssetId, "sprite", this);
     }
   }
 
@@ -90,9 +90,9 @@ class SpriteRendererEditor {
 
     this._clearAnimations();
 
-    this.asset.pub.animations.forEach((animation: any) => {
+    for (let animation of this.asset.pub.animations) {
       SupClient.component.createSelectOption(this.animationSelectBox, animation.id, animation.name);
-    })
+    }
 
     this.animationSelectBox.value = (this.animationId != null) ? this.animationId : "";
     this.animationSelectBox.disabled = false;
@@ -102,16 +102,16 @@ class SpriteRendererEditor {
     if (assetId !== this.spriteAssetId) return;
     if (command.indexOf("Animation") === -1) return;
 
-    var animationId = this.animationSelectBox.value
+    let animationId = this.animationSelectBox.value;
 
     this._clearAnimations();
 
-    this.asset.pub.animations.forEach((animation: any) => {
+    for (let animation of this.asset.pub.animations) {
       SupClient.component.createSelectOption(this.animationSelectBox, animation.id, animation.name);
-    })
+    }
 
     if (animationId != null && this.asset.animations.byId[animationId] != null) this.animationSelectBox.value = animationId;
-    else this.editConfig('setProperty', 'animationId', "");
+    else this.editConfig("setProperty", "animationId", "");
   }
 
   onAssetTrashed() {
@@ -125,30 +125,28 @@ class SpriteRendererEditor {
   // User interface
   _clearAnimations() {
     while (true) {
-      var child = this.animationSelectBox.children[1];
+      let child = this.animationSelectBox.children[1];
       if (child == null) break;
       this.animationSelectBox.removeChild(child);
     }
   }
 
-  _onChangeSpriteAsset(event: any) {
+  _onChangeSpriteAsset = (event: any) => {
     if (event.target.value === "") {
-      this.editConfig('setProperty', 'spriteAssetId', null);
-      this.editConfig('setProperty', 'animationId', null);
+      this.editConfig("setProperty", "spriteAssetId", null);
+      this.editConfig("setProperty", "animationId", null);
     }
     else {
-      var entry = SupClient.findEntryByPath(this.projectClient.entries.pub, event.target.value);
-      if (entry != null && entry.type == 'sprite') {
-        this.editConfig('setProperty', 'spriteAssetId', entry.id);
-        this.editConfig('setProperty', 'animationId', null);
+      let entry = SupClient.findEntryByPath(this.projectClient.entries.pub, event.target.value);
+      if (entry != null && entry.type == "sprite") {
+        this.editConfig("setProperty", "spriteAssetId", entry.id);
+        this.editConfig("setProperty", "animationId", null);
       }
     }
     }
 
-  _onChangeSpriteAnimation(event: any) {
-    var animationId = (event.target.value == '') ? null : event.target.value;
-    this.editConfig('setProperty', 'animationId', animationId);
+  _onChangeSpriteAnimation = (event: any) => {
+    let animationId = (event.target.value == "") ? null : event.target.value;
+    this.editConfig("setProperty", "animationId", animationId);
   }
 }
-
-export = SpriteRendererEditor;

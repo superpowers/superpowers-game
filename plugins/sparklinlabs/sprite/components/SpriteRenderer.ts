@@ -1,13 +1,15 @@
-var THREE = SupEngine.THREE;
+let THREE = SupEngine.THREE;
 interface Animation {
   name: string;
   startFrameIndex: number;
   endFrameIndex: number;
 }
 
-class SpriteRenderer extends SupEngine.ActorComponent {
+import SpriteRendererUpdater from "./SpriteRendererUpdater";
 
-  static Updater = require("./SpriteRendererUpdater");
+export default class SpriteRenderer extends SupEngine.ActorComponent {
+
+  static Updater = SpriteRendererUpdater;
 
   opacity = 1;
   color = { r: 1, g: 1, b: 1 };
@@ -20,7 +22,7 @@ class SpriteRenderer extends SupEngine.ActorComponent {
 
   animationName: string;
   isAnimationPlaying: boolean;
-  animationsByName: {[name: string]: Animation};
+  animationsByName: { [name: string]: Animation };
   animationLooping: boolean;
   animationTimer: number;
 
@@ -51,7 +53,7 @@ class SpriteRenderer extends SupEngine.ActorComponent {
     this.material.color.setRGB(this.color.r, this.color.g, this.color.b);
     this.threeMesh = new THREE.Mesh(this.geometry, this.material);
 
-    var scaleRatio = 1 / this.asset.pixelsPerUnit;
+    let scaleRatio = 1 / this.asset.pixelsPerUnit;
     this.threeMesh.scale.set(scaleRatio, scaleRatio, scaleRatio);
     this.threeMesh.position.setX((0.5 - this.asset.origin.x) * this.asset.grid.width * scaleRatio);
     this.threeMesh.position.setY((0.5 - this.asset.origin.y) * this.asset.grid.height * scaleRatio);
@@ -63,9 +65,9 @@ class SpriteRenderer extends SupEngine.ActorComponent {
 
   updateAnimationsByName() {
     this.animationsByName = {};
-    this.asset.animations.forEach((animation: Animation) => {
+    for(let animation of this.asset.animations) {
       this.animationsByName[animation.name] = animation;
-    });
+    }
   }
 
   _clearMesh() {
@@ -83,16 +85,16 @@ class SpriteRenderer extends SupEngine.ActorComponent {
   }
 
   setFrame(frame: number) {
-    var framesPerRow = Math.floor(this.material.map.image.width / this.asset.grid.width);
-    var frameX = frame % framesPerRow
-    var frameY = Math.floor(frame / framesPerRow)
+    let framesPerRow = Math.floor(this.material.map.image.width / this.asset.grid.width);
+    let frameX = frame % framesPerRow
+    let frameY = Math.floor(frame / framesPerRow)
 
-    var left   = (frameX     * this.asset.grid.width) / this.material.map.image.width
-    var right  = ((frameX+1) * this.asset.grid.width) / this.material.map.image.width
-    var bottom = (this.material.map.image.height - (frameY+1) * this.asset.grid.height) / this.material.map.image.height
-    var top    = (this.material.map.image.height - frameY     * this.asset.grid.height) / this.material.map.image.height
+    let left   = (frameX     * this.asset.grid.width) / this.material.map.image.width
+    let right  = ((frameX+1) * this.asset.grid.width) / this.material.map.image.width
+    let bottom = (this.material.map.image.height - (frameY+1) * this.asset.grid.height) / this.material.map.image.height
+    let top    = (this.material.map.image.height - frameY     * this.asset.grid.height) / this.material.map.image.height
 
-    var uvs = this.geometry.getAttribute("uv")
+    let uvs = this.geometry.getAttribute("uv")
     uvs.needsUpdate = true;
 
     uvs.array[0] = left ; uvs.array[1] = top;
@@ -132,7 +134,7 @@ class SpriteRenderer extends SupEngine.ActorComponent {
 
   getAnimationDuration() {
     if (this.animationName != null) {
-      var animation = this.animationsByName[this.animationName];
+      let animation = this.animationsByName[this.animationName];
       return (animation.endFrameIndex - animation.startFrameIndex + 1) / this.asset.framesPerSecond;
     }
     return 0;
@@ -155,8 +157,8 @@ class SpriteRenderer extends SupEngine.ActorComponent {
   updateFrame() {
     this.hasFrameBeenUpdated = true
 
-    var animation = this.animationsByName[this.animationName]
-    var frame = animation.startFrameIndex + Math.max(1, Math.ceil(this.animationTimer / SupEngine.GameInstance.framesPerSecond * this.asset.framesPerSecond)) - 1
+    let animation = this.animationsByName[this.animationName]
+    let frame = animation.startFrameIndex + Math.max(1, Math.ceil(this.animationTimer / SupEngine.GameInstance.framesPerSecond * this.asset.framesPerSecond)) - 1
     if (frame > animation.endFrameIndex) {
       if (this.animationLooping) {
         frame = animation.startFrameIndex
@@ -188,4 +190,3 @@ class SpriteRenderer extends SupEngine.ActorComponent {
     this.updateFrame();
   }
 }
-export = SpriteRenderer;

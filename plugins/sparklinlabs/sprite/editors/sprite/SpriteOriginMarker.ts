@@ -1,13 +1,13 @@
-var THREE = SupEngine.THREE;
+let THREE = SupEngine.THREE;
 
-class SpriteOriginMarker extends SupEngine.ActorComponent {
+export default class SpriteOriginMarker extends SupEngine.ActorComponent {
 
   line: THREE.Line;
 
   constructor(actor: SupEngine.Actor) {
     super(actor, "SpriteOriginMarker");
 
-    var geometry = new THREE.Geometry();
+    let geometry = new THREE.Geometry();
     geometry.vertices.push(
       new THREE.Vector3( -0.2, 0, 0 ),
       new THREE.Vector3(  0.2, 0, 0 ),
@@ -35,4 +35,3 @@ class SpriteOriginMarker extends SupEngine.ActorComponent {
     super._destroy();
   }
 }
-export = SpriteOriginMarker;

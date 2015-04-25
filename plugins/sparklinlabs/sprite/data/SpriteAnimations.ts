@@ -1,4 +1,4 @@
-class SpriteAnimations extends SupCore.data.base.ListById {
+export default class SpriteAnimations extends SupCore.data.base.ListById {
 
   static schema = {
     name: { type: "string", minLength: 1, maxLength: 80, mutable: true },
@@ -10,4 +10,3 @@ class SpriteAnimations extends SupCore.data.base.ListById {
     super(pub, SpriteAnimations.schema);
   }
 }
-export = SpriteAnimations;

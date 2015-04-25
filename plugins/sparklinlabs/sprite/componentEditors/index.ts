@@ -1,1 +1,3 @@
-SupEngine.registerComponentEditorClass("SpriteRenderer", require("./SpriteRendererEditor"));
+import SpriteRendererEditor from "./SpriteRendererEditor";
+
+SupEngine.registerComponentEditorClass("SpriteRenderer", SpriteRendererEditor);

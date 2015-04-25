@@ -1,7 +1,7 @@
-import path = require("path");
-import fs = require("fs");
+import * as path from "path";
+import * as fs from "fs";
 
-import SpriteAnimations = require("./SpriteAnimations");
+import SpriteAnimations from "./SpriteAnimations";
 interface Animation {
   id?: string;
   name: string;
@@ -9,7 +9,7 @@ interface Animation {
   endFrameIndex: number;
 }
 
-class SpriteAsset extends SupCore.data.base.Asset {
+export default class SpriteAsset extends SupCore.data.base.Asset {
 
   static schema = {
     image: { type: "buffer" },
@@ -80,9 +80,9 @@ class SpriteAsset extends SupCore.data.base.Asset {
   }
 
   save(assetPath: string, callback: Function) {
-    var buffer = this.pub.image;
+    let buffer = this.pub.image;
     delete this.pub.image;
-    var json = JSON.stringify(this.pub, null, 2);
+    let json = JSON.stringify(this.pub, null, 2);
     this.pub.image = buffer;
     fs.writeFile(path.join(assetPath, "asset.json"), json, { encoding: "utf8" }, () => {
       fs.writeFile(path.join(assetPath, "image.dat"), buffer, callback);
@@ -103,7 +103,7 @@ class SpriteAsset extends SupCore.data.base.Asset {
   }
 
   server_newAnimation(client: any, name: string, callback: (err: string, animation?: Animation, actualIndex?: number) => any) {
-    var animation: Animation = { name, startFrameIndex: 0, endFrameIndex: 0 };
+    let animation: Animation = { name, startFrameIndex: 0, endFrameIndex: 0 };
 
     this.animations.add(animation, null, (err, actualIndex) => {
       if (err != null) { callback(err); return }
@@ -168,4 +168,3 @@ class SpriteAsset extends SupCore.data.base.Asset {
     this.animations.client_setProperty(id, key, actualValue);
   }
 }
-export = SpriteAsset;

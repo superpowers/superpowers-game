@@ -1,7 +1,7 @@
-import path = require("path");
-import fs = require("fs");
+import * as path from "path";
+import * as fs from "fs";
 
-class SpriteSettingsResource extends SupCore.data.base.Resource {
+export default class SpriteSettingsResource extends SupCore.data.base.Resource {
 
   static schema = {
     filtering: { type: "enum", items: [ "pixelated", "smooth" ], mutable: true },
@@ -27,4 +27,3 @@ class SpriteSettingsResource extends SupCore.data.base.Resource {
     super.init(callback);
   }
 }
-export = SpriteSettingsResource;

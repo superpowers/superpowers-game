@@ -1,8 +1,8 @@
-var THREE = SupEngine.THREE;
-import SpriteAsset = require("../data/SpriteAsset");
-import SpriteRenderer = require("./SpriteRenderer");
+let THREE = SupEngine.THREE;
+import SpriteAsset from "../data/SpriteAsset";
+import SpriteRenderer from "./SpriteRenderer";
 
-class SpriteRendererUpdater {
+export default class SpriteRendererUpdater {
 
   client: SupClient.ProjectClient;
   spriteRenderer: SpriteRenderer;
@@ -37,7 +37,7 @@ class SpriteRendererUpdater {
   _onSpriteAssetReceived(assetId: string, asset: any) {
     this.spriteAsset = asset;
 
-    var image = (asset.pub.texture != null) ? asset.pub.texture.image : null;
+    let image = (asset.pub.texture != null) ? asset.pub.texture.image : null;
     if (image == null) {
       image = new Image();
 
@@ -49,8 +49,8 @@ class SpriteRendererUpdater {
 
       if (this.url != null) URL.revokeObjectURL(this.url);
 
-      var typedArray = new Uint8Array(asset.pub.image);
-      var blob = new Blob([ typedArray ], { type: "image/*" });
+      let typedArray = new Uint8Array(asset.pub.image);
+      let blob = new Blob([ typedArray ], { type: "image/*" });
       this.url = URL.createObjectURL(blob);
       image.src = this.url
     }
@@ -60,7 +60,7 @@ class SpriteRendererUpdater {
         if (this.receiveAssetCallbacks != null) this.receiveAssetCallbacks.sprite(null);
       }
       else {
-        var onImageLoaded = () => {
+        let onImageLoaded = () => {
           image.removeEventListener("load", onImageLoaded);
           asset.pub.texture.needsUpdate = true
           this.spriteRenderer.setSprite(asset.pub);
@@ -81,15 +81,15 @@ class SpriteRendererUpdater {
   }
 
   _playAnimation() {
-    var animation = this.spriteAsset.animations.byId[this.animationId];
+    let animation = this.spriteAsset.animations.byId[this.animationId];
     if (animation == null) return;
 
     this.spriteRenderer.setAnimation(animation.name);
   }
 
   _onSpriteAssetEdited(id: string, command: string, ...args: any[]) {
-    var callEditCallback = true;
-    var commandFunction = (<any>this)[`_onEditCommand_${command}`];
+    let callEditCallback = true;
+    let commandFunction = (<any>this)[`_onEditCommand_${command}`];
     if (commandFunction != null) {
       if (commandFunction.apply(this, args) === false) callEditCallback = false;
     }
@@ -100,10 +100,10 @@ class SpriteRendererUpdater {
   _onEditCommand_upload() {
     if (this.url != null) URL.revokeObjectURL(this.url);
 
-    var typedArray = new Uint8Array(this.spriteAsset.pub.image);
-    var blob = new Blob([ typedArray ], {type: "image/*"});
+    let typedArray = new Uint8Array(this.spriteAsset.pub.image);
+    let blob = new Blob([ typedArray ], { type: "image/*" });
     this.url = URL.createObjectURL(blob);
-    var image = this.spriteAsset.pub.texture.image;
+    let image = this.spriteAsset.pub.texture.image;
     image.src = this.url;
     image.addEventListener("load", () => { this.spriteAsset.pub.texture.needsUpdate = true; });
 
@@ -151,9 +151,9 @@ class SpriteRendererUpdater {
     switch (path) {
       case "spriteAssetId": {
         if (this.spriteAssetId != null) this.client.unsubAsset(this.spriteAssetId, this.spriteSubscriber);
-        this.spriteAssetId = value
+        this.spriteAssetId = value;
 
-        this.spriteAsset = null
+        this.spriteAsset = null;
         this.spriteRenderer.setSprite(null);
 
         if (this.spriteAssetId != null) this.client.subAsset(this.spriteAssetId, "sprite", this.spriteSubscriber);
@@ -161,7 +161,7 @@ class SpriteRendererUpdater {
       }
 
       case "animationId": {
-        this.animationId = value
+        this.animationId = value;
 
         if (this.spriteAsset != null) {
           if (this.animationId != null) this._playAnimation();
@@ -172,4 +172,3 @@ class SpriteRendererUpdater {
     }
   }
 }
-export = SpriteRendererUpdater;

@@ -1,4 +1,4 @@
-class SpriteRendererConfig extends SupCore.data.base.ComponentConfig {
+export default class SpriteRendererConfig extends SupCore.data.base.ComponentConfig {
 
   static schema = {
     spriteAssetId: { type: "string?", min: 0, mutable: true },
@@ -6,14 +6,14 @@ class SpriteRendererConfig extends SupCore.data.base.ComponentConfig {
   }
 
   static create() {
-    var emptyConfig: {spriteAssetId: string; animationId: string;} = { spriteAssetId: null, animationId: null };
+    let emptyConfig: { spriteAssetId: string; animationId: string; } = { spriteAssetId: null, animationId: null };
     return emptyConfig;
   }
 
   constructor(pub: any) {
     // TODO: Remove these casts at some point, legacy stuff from Superpowers 0.4
-    if (typeof pub.spriteAssetId == 'number') pub.spriteAssetId = pub.spriteAssetId.toString();
-    if (typeof pub.animationId == 'number') pub.animationId = pub.animationId.toString();
+    if (typeof pub.spriteAssetId === "number") pub.spriteAssetId = pub.spriteAssetId.toString();
+    if (typeof pub.animationId === "number") pub.animationId = pub.animationId.toString();
 
     super(pub, SpriteRendererConfig.schema);
   }
@@ -22,7 +22,7 @@ class SpriteRendererConfig extends SupCore.data.base.ComponentConfig {
   destroy() { if (this.pub.spriteAssetId != null) this.emit("removeDependencies", [ this.pub.spriteAssetId ]); }
 
   setProperty(path: string, value: any, callback: (err: string, actualValue?: any) => any) {
-    var oldDepId: string;
+    let oldDepId: string;
     if (path === "spriteAssetId") oldDepId = this.pub[path];
 
     super.setProperty(path, value, (err, actualValue) => {
@@ -37,4 +37,3 @@ class SpriteRendererConfig extends SupCore.data.base.ComponentConfig {
     });
   }
 }
-export = SpriteRendererConfig;

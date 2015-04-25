@@ -1,3 +1,7 @@
-SupCore.data.registerResource("spriteSettings", require("./SpriteSettingsResource"));
-SupCore.data.registerAssetClass("sprite", require("./SpriteAsset"));
-SupCore.data.registerComponentConfigClass("SpriteRenderer", require("./SpriteRendererConfig"));
+import SpriteSettingsResource from "./SpriteSettingsResource";
+import SpriteAsset from "./SpriteAsset";
+import SpriteRendererConfig from "./SpriteRendererConfig";
+
+SupCore.data.registerResource("spriteSettings", SpriteSettingsResource);
+SupCore.data.registerAssetClass("sprite", SpriteAsset);
+SupCore.data.registerComponentConfigClass("SpriteRenderer", SpriteRendererConfig);
