@@ -15,7 +15,7 @@ gulp.task("stylus", function() { return gulp.src("./src/index.styl").pipe(stylus
 // TypeScript
 var ts = require("gulp-typescript");
 gulp.task("typescript", function() {
-  var tsResult = gulp.src("**/*.ts").pipe(ts({
+  var tsResult = gulp.src([ "**/*.ts", "!node_modules/**" ]).pipe(ts({
     typescript: require("typescript"),
     declarationFiles: false,
     module: "commonjs",
