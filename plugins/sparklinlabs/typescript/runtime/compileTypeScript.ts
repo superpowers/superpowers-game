@@ -10,10 +10,10 @@ export default function compileTypeScript(sourceFileNames: string[], sourceFiles
   let compilerHost = {
     getSourceFile: (filename: string, languageVersion: any) => {
       if (sourceFiles[filename] != null) {
-        return ts.createSourceFile(filename, sourceFiles[filename], compilerOptions.target, "0");
+        return ts.createSourceFile(filename, sourceFiles[filename], compilerOptions.target);
       }
       if (filename == "lib.d.ts") {
-        return ts.createSourceFile(filename, libSource, compilerOptions.target, "0");
+        return ts.createSourceFile(filename, libSource, compilerOptions.target);
       }
       return null;
     },
@@ -37,7 +37,6 @@ export default function compileTypeScript(sourceFileNames: string[], sourceFiles
     },
 
     getDefaultLibFileName: () => { return "lib.d.ts"; },
-    getDefaultLibFilename: () => { return "lib.d.ts"; }, // typescript.d.ts no updated yet
     useCaseSensitiveFileNames: () => { return false; },
     getCanonicalFileName: (filename: string) => { return filename; },
     getCurrentDirectory: () => { return ""; },
@@ -47,14 +46,14 @@ export default function compileTypeScript(sourceFileNames: string[], sourceFiles
   // Create a program from inputs
   let program = ts.createProgram(sourceFileNames, compilerOptions, compilerHost);
   // Query for earyly errors
-  let errors = (<any>ts).getPreEmitDiagnostics(program)     // typescript.d.ts no updated yet
+  let errors = ts.getPreEmitDiagnostics(program)
   let typeChecker: ts.TypeChecker;
   // Do not generate code in the presence of early errors
   if (errors.length == 0) {
     // Type check and get semantic errors
-    typeChecker = program.getTypeChecker(true);
+    typeChecker = program.getTypeChecker();
     // Generate output
-    errors = (<any>program).emit().diagnostics     // typescript.d.ts no updated yet
+    errors = program.emit().diagnostics
   }
 
   return {
