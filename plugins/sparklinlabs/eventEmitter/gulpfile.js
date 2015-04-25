@@ -4,7 +4,7 @@ var tasks = [];
 // TypeScript
 var ts = require("gulp-typescript");
 gulp.task("typescript", function() {
-  var tsResult = gulp.src("**/*.ts").pipe(ts({
+  var tsResult = gulp.src([ "**/*.ts", "!node_modules/**" ]).pipe(ts({
     typescript: require("typescript"),
     noImplicitAny: true,
     declarationFiles: false,
