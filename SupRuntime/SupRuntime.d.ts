@@ -2,8 +2,9 @@
 
 declare module SupRuntime {
   interface RuntimePlugin {
-    loadAsset(player: Player, entry: any, callback: (err: Error, asset?: any) => any): void;
-    createOuterAsset(player: Player, asset: any): any;
+    loadAsset?(player: Player, entry: any, callback: (err: Error, asset?: any) => any): void;
+    createOuterAsset?(player: Player, asset: any): any;
+    setupComponent?(player: SupRuntime.Player, component: any, config: any): void;
     init?(player: Player, callback: Function): void;
     start?(player: Player, callback: Function): void;
   }
