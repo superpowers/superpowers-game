@@ -1,8 +1,8 @@
-import THREE = require("three");
-import Actor = require("../Actor");
-import ActorComponent = require("../ActorComponent");
+import * as THREE from "three";
+import Actor from "../Actor";
+import ActorComponent from "../ActorComponent";
 
-class Camera extends ActorComponent {
+export default class Camera extends ActorComponent {
   fov = 45;
   orthographicScale = 10;
   halfPixelTranslationMatrix = new THREE.Matrix4();
@@ -15,18 +15,18 @@ class Camera extends ActorComponent {
   projectionNeedsUpdate: boolean;
 
   constructor(actor: Actor) {
-    super(actor, 'Camera');
+    super(actor, "Camera");
 
     this.setOrthographicMode(false);
 
     this._computeAspectRatio()
-    this.actor.gameInstance.on('resize', this._computeAspectRatio);
+    this.actor.gameInstance.on("resize", this._computeAspectRatio);
   }
 
   _destroy() {
-    this.actor.gameInstance.removeListener('resize', this._computeAspectRatio);
+    this.actor.gameInstance.removeListener("resize", this._computeAspectRatio);
 
-    var index = this.actor.gameInstance.renderComponents.indexOf(this);
+    let index = this.actor.gameInstance.renderComponents.indexOf(this);
     if (index != -1) this.actor.gameInstance.renderComponents.splice(index, 1);
 
     this.threeCamera = null;
@@ -35,15 +35,15 @@ class Camera extends ActorComponent {
   }
 
   _computeAspectRatio = () => {
-    var canvas = this.actor.gameInstance.threeRenderer.domElement;
+    let canvas = this.actor.gameInstance.threeRenderer.domElement;
     this.cachedRatio = (canvas.width * this.viewport.width) / (canvas.height * this.viewport.height)
     this.projectionNeedsUpdate = true;
   }
 
   setOrthographicMode(isOrthographic: boolean) {
     this.isOrthographic = isOrthographic;
-    var nearClippingPlane = 0.1;
-    var farClippingPlane = 1000;
+    let nearClippingPlane = 0.1;
+    let farClippingPlane = 1000;
 
     if (this.isOrthographic) {
       this.threeCamera = new THREE.OrthographicCamera(-this.orthographicScale * this.cachedRatio / 2,
@@ -85,7 +85,7 @@ class Camera extends ActorComponent {
       this.threeCamera.updateProjectionMatrix();
 
       if (this.isOrthographic) {
-        var orthographicCamera = <THREE.OrthographicCamera>this.threeCamera;
+        let orthographicCamera = <THREE.OrthographicCamera>this.threeCamera;
         orthographicCamera.left = -this.orthographicScale * this.cachedRatio / 2;
         orthographicCamera.right = this.orthographicScale * this.cachedRatio / 2;
         orthographicCamera.top = this.orthographicScale / 2;
@@ -97,14 +97,14 @@ class Camera extends ActorComponent {
         // orthographicCamera.projectionMatrix.multiplyMatrices this.halfPixelTranslationMatrix, this.threeCamera.projectionMatrix
       }
       else {
-        var perspectiveCamera = <THREE.PerspectiveCamera>this.threeCamera;
+        let perspectiveCamera = <THREE.PerspectiveCamera>this.threeCamera;
         perspectiveCamera.fov = this.fov;
         perspectiveCamera.aspect = this.cachedRatio;
         perspectiveCamera.updateProjectionMatrix();
       }
     }
 
-    var canvas = this.actor.gameInstance.threeRenderer.domElement;
+    let canvas = this.actor.gameInstance.threeRenderer.domElement;
     this.actor.gameInstance.threeRenderer.setViewport(
       this.viewport.x * canvas.width    , ( 1 - this.viewport.y - this.viewport.height ) * canvas.height,
       this.viewport.width * canvas.width, this.viewport.height * canvas.height
@@ -112,5 +112,3 @@ class Camera extends ActorComponent {
     this.actor.gameInstance.threeRenderer.render(this.actor.gameInstance.threeScene, this.threeCamera);
   }
 }
-
-export = Camera;

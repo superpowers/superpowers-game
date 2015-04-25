@@ -1,6 +1,6 @@
 enum SoundStates {playing, paused, stopped};
 
-class SoundInstance {
+export default class SoundInstance {
   audioCtx: AudioContext;
   audioMasterGain: GainNode;
   buffer: string|AudioBuffer;
@@ -34,8 +34,8 @@ class SoundInstance {
     if (this.source != null) this.stop();
 
     // if this.buffer instanceof HTMLAudioElement
-    if (typeof this.buffer == 'string') {
-      var audio = new Audio();
+    if (typeof this.buffer == "string") {
+      let audio = new Audio();
       audio.src = <string>this.buffer;
       this.source = <any>this.audioCtx.createMediaElementSource(audio);
       // FIXME: Very new so not included in d.ts file just yet
@@ -157,5 +157,3 @@ class SoundInstance {
     if (this.source != null && this.source.playbackRate != null) this.source.playbackRate.value = Math.pow( 2, this.pitch )
   }
 }
-
-export = SoundInstance;

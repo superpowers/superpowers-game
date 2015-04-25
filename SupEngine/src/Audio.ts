@@ -1,4 +1,4 @@
-class Audio {
+export default class Audio {
   _ctx: AudioContext;
   masterGain: GainNode;
 
@@ -15,5 +15,3 @@ class Audio {
     return this._ctx;
   }
 }
-
-export = Audio;

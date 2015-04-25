@@ -1,4 +1,4 @@
-class Input {
+export default class Input {
   static maxTouches = 10;
 
   canvas: HTMLCanvasElement;
@@ -42,16 +42,16 @@ class Input {
     document.addEventListener("keyup", this._onKeyUp);
 
     // Gamepad
-    for (var i = 0; i < 4; i++) {
+    for (let i = 0; i < 4; i++) {
       this.gamepadsButtons[i] = [];
       this.gamepadsAxes[i] = [];
     }
 
     // On exit
-    var nwDispatcher = (<any>window).nwDispatcher;
+    let nwDispatcher = (<any>window).nwDispatcher;
     if (nwDispatcher != null) {
-      var gui = nwDispatcher.requireNwGui();
-      var nwWindow = gui.Window.get();
+      let gui = nwDispatcher.requireNwGui();
+      let nwWindow = gui.Window.get();
       nwWindow.on("close", (event: any) => {
         if (this.onExit != null) { this.onExit(); this.onExit = null; }
         nwWindow.close(true);
@@ -88,7 +88,7 @@ class Input {
   reset() {
     // Mouse
     this.newScrollDelta = 0;
-    for (var i = 0; i <= 6; i++) {
+    for (let i = 0; i <= 6; i++) {
       this.mouseButtons[i] = { isDown: false, wasJustPressed: false, wasJustReleased: false };
       this.mouseButtonsDown[i] = false;
     }
@@ -101,21 +101,21 @@ class Input {
     this.mouseDelta.y = 0;
 
     // Touch
-    for (var i = 0; i < Input.maxTouches; i++) {
+    for (let i = 0; i < Input.maxTouches; i++) {
       this.touches[i] = { isDown: false, wasStarted: false, wasEnded: false, position: { x: 0, y: 0} };
       this.touchesDown[i] = false;
     }
 
     // Keyboard
-    for (var i = 0; i <= 255; i++) {
+    for (let i = 0; i <= 255; i++) {
       this.keyboardButtons[i] = { isDown: false, wasJustPressed: false, wasJustReleased: false };
       this.keyboardButtonsDown[i] = false;
     }
 
     // Gamepads
-    for (var i = 0; i < 4; i++) {
-      for (var button = 0; button < 16; button++) this.gamepadsButtons[i][button] = { isDown: false, wasJustPressed: false, wasJustReleased: false };
-      for (var axes = 0; axes < 4; axes++) this.gamepadsAxes[i][axes] = 0;
+    for (let i = 0; i < 4; i++) {
+      for (let button = 0; button < 16; button++) this.gamepadsButtons[i][button] = { isDown: false, wasJustPressed: false, wasJustReleased: false };
+      for (let axes = 0; axes < 4; axes++) this.gamepadsAxes[i][axes] = 0;
     }
   }
 
@@ -124,7 +124,7 @@ class Input {
   _onMouseMove = (event: any) => {
     event.preventDefault();
 
-    var rect = event.target.getBoundingClientRect()
+    let rect = event.target.getBoundingClientRect()
     this.newMousePosition = { x: event.clientX - rect.left, y: event.clientY - rect.top };
   }
 
@@ -152,9 +152,9 @@ class Input {
   _onTouchStart = (event: any) => {
     event.preventDefault();
 
-    var rect = event.target.getBoundingClientRect();
-    for (var i = 0; i < event.changedTouches.length; i++) {
-      var touch = event.changedTouches[i];
+    let rect = event.target.getBoundingClientRect();
+    for (let i = 0; i < event.changedTouches.length; i++) {
+      let touch = event.changedTouches[i];
       this.touches[touch.identifier].position.x = touch.clientX - rect.left;
       this.touches[touch.identifier].position.y = touch.clientY - rect.top;
 
@@ -170,8 +170,8 @@ class Input {
   _onTouchEnd = (event: any) => {
     event.preventDefault();
 
-    for (var i = 0; i < event.changedTouches.length; i++) {
-      var touch = event.changedTouches[i];
+    for (let i = 0; i < event.changedTouches.length; i++) {
+      let touch = event.changedTouches[i];
       this.touchesDown[touch.identifier] = false;
       if (touch.identifier == 0) this.mouseButtonsDown[0] = false;
     }
@@ -180,10 +180,10 @@ class Input {
   _onTouchMove = (event: any) => {
     event.preventDefault();
 
-    var rect = event.target.getBoundingClientRect();
+    let rect = event.target.getBoundingClientRect();
 
-    for (var i = 0; i < event.changedTouches.length; i++) {
-      var touch = event.changedTouches[i];
+    for (let i = 0; i < event.changedTouches.length; i++) {
+      let touch = event.changedTouches[i];
       this.touches[touch.identifier].position.x = touch.clientX - rect.left;
       this.touches[touch.identifier].position.y = touch.clientY - rect.top;
 
@@ -221,48 +221,52 @@ class Input {
       this.mouseDelta.y = 0;
     }
 
-    this.mouseButtons.forEach((mouseButton, mouseButtonIndex) => {
-      var wasDown = mouseButton.isDown;
-      mouseButton.isDown = this.mouseButtonsDown[mouseButtonIndex];
+    for (let i = 0; i < this.mouseButtons.length; i++) {
+      let mouseButton = this.mouseButtons[i];
+      let wasDown = mouseButton.isDown;
+      mouseButton.isDown = this.mouseButtonsDown[i];
 
       mouseButton.wasJustPressed = ! wasDown && mouseButton.isDown;
       mouseButton.wasJustReleased = wasDown && ! mouseButton.isDown;
-    });
+    }
 
-    this.touches.forEach((touch, touchIndex) => {
-      var wasDown = touch.isDown;
-      touch.isDown = this.touchesDown[touchIndex];
+    for (let i = 0; i < this.touches.length; i++) {
+      let touch = this.touches[i];
+      let wasDown = touch.isDown;
+      touch.isDown = this.touchesDown[i];
 
       touch.wasStarted = ! wasDown && touch.isDown;
       touch.wasEnded = wasDown && ! touch.isDown;
-    });
+    }
 
-    this.keyboardButtons.forEach((keyboardButton, keyboardButtonIndex) => {
-      var wasDown = keyboardButton.isDown;
-      keyboardButton.isDown = this.keyboardButtonsDown[keyboardButtonIndex];
+    for (let i = 0; i < this.keyboardButtons.length; i++) {
+      let keyboardButton = this.keyboardButtons[i];
+      let wasDown = keyboardButton.isDown;
+      keyboardButton.isDown = this.keyboardButtonsDown[i];
 
       keyboardButton.wasJustPressed = ! wasDown && keyboardButton.isDown;
       keyboardButton.wasJustReleased = wasDown && ! keyboardButton.isDown;
-    })
+    }
 
-    var nav: any = navigator;
-    var gamepads = nav.getGamepads();
+    let nav: any = navigator;
+    let gamepads = nav.getGamepads();
     if (gamepads == null) return;
 
-    for (var index = 0; index < 4; index++) {
-      var gamepad = gamepads[index];
+    for (let index = 0; index < 4; index++) {
+      let gamepad = gamepads[index];
       if (gamepad == null) continue;
 
-      this.gamepadsButtons[index].forEach((button, buttonIndex) => {
-        var wasDown = button.isDown;
-        button.isDown = gamepad.buttons[buttonIndex].pressed;
+      for (let i = 0; i < this.gamepadsButtons[index].length; i++) {
+        let button = this.gamepadsButtons[index][i];
+        let wasDown = button.isDown;
+        button.isDown = gamepad.buttons[i].pressed;
 
         button.wasJustPressed = ! wasDown && button.isDown;
         button.wasJustReleased = wasDown && ! button.isDown;
-      });
+      }
 
-      for (var stick = 0; stick < 2; stick++) {
-        var axisLength = Math.sqrt( Math.pow(Math.abs(gamepad.axes[2*stick]), 2) + Math.pow(Math.abs(gamepad.axes[2*stick+1]), 2) );
+      for (let stick = 0; stick < 2; stick++) {
+        let axisLength = Math.sqrt( Math.pow(Math.abs(gamepad.axes[2*stick]), 2) + Math.pow(Math.abs(gamepad.axes[2*stick+1]), 2) );
         if (axisLength < 0.25) {
           this.gamepadsAxes[index][2*stick] = 0;
           this.gamepadsAxes[index][2*stick+1] = 0;
@@ -275,8 +279,6 @@ class Input {
     }
   }
 }
-
-export = Input;
 
 // FIXME: KeyEvent isn't in lib.d.ts yet
 if (global.window != null && (<any>window)["KeyEvent"] == null) {

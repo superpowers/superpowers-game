@@ -1,4 +1,5 @@
-export import Player = require("./Player")
+import Player from "./Player";
+export { Player };
 
 interface RuntimePlugin {
   loadAsset(player: Player, entry: any, callback: (err: Error, asset?: any) => any): void;
@@ -6,7 +7,7 @@ interface RuntimePlugin {
   init?(player: Player, callback: Function): void;
   start?(player: Player, callback: Function): void;
 }
-export var plugins: {[name: string]: RuntimePlugin} = {}
+export let plugins: { [name: string]: RuntimePlugin } = {}
 export function registerPlugin(name: string, plugin: RuntimePlugin) {
   if (plugins[name] != null) {
     console.error(`SupRuntime.register: Tried to register two or more plugins named "${name}"`);
@@ -19,7 +20,7 @@ export function registerPlugin(name: string, plugin: RuntimePlugin) {
 interface RuntimeResourcePlugin {
   loadResource(player: Player, resourceName: string, callback: (err: Error, resource?: any) => any): void;
 }
-export var resourcePlugins: {[name: string]: RuntimeResourcePlugin} = {}
+export let resourcePlugins: { [name: string]: RuntimeResourcePlugin } = {}
 export function registerResource(name: string, plugin: RuntimeResourcePlugin) {
   if (resourcePlugins[name] != null) {
     console.error(`SupRuntime.registerResource: Tried to register two or more resources named "${name}"`);

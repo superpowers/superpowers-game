@@ -1,7 +1,7 @@
-import THREE = require("three");
-import ActorComponent = require("../ActorComponent");
-import Actor = require("../Actor");
-import Camera = require("./Camera");
+import * as THREE from "three";
+import ActorComponent from "../ActorComponent";
+import Actor from "../Actor";
+import Camera from "./Camera";
 
 interface options {
   zoomMin: number;
@@ -9,7 +9,7 @@ interface options {
   zoomSpeed: number;
 }
 
-class Camera2DControls extends ActorComponent {
+export default class Camera2DControls extends ActorComponent {
   actor: Actor;
   camera: Camera;
   options: options;
@@ -17,7 +17,7 @@ class Camera2DControls extends ActorComponent {
   multiplier = 1;
 
   constructor(actor: Actor, camera: Camera, options: options, zoomCallback?: Function) {
-    super(actor, 'Camera2DControls');
+    super(actor, "Camera2DControls");
 
     this.actor = actor;
     this.camera = camera;
@@ -26,18 +26,18 @@ class Camera2DControls extends ActorComponent {
   }
 
   setMultiplier(newMultiplier: number) {
-    var newOrthographicScale = this.camera.orthographicScale * this.multiplier;
+    let newOrthographicScale = this.camera.orthographicScale * this.multiplier;
     this.multiplier = newMultiplier / 10;
 
-    var cameraPosition = this.camera.actor.getLocalPosition();
-    var screenPosition = this.getScreenPosition(cameraPosition.x, cameraPosition.y);
+    let cameraPosition = this.camera.actor.getLocalPosition();
+    let screenPosition = this.getScreenPosition(cameraPosition.x, cameraPosition.y);
     this.changeOrthographicScale(newOrthographicScale, screenPosition[0], screenPosition[1]);
   }
 
   changeOrthographicScale(newOrthographicScale: number, x: number, y: number) {
-    var startPosition = this.getScenePosition(x, y);
+    let startPosition = this.getScenePosition(x, y);
     this.camera.setOrthographicScale(newOrthographicScale / this.multiplier);
-    var endPosition = this.getScenePosition(x, y);
+    let endPosition = this.getScenePosition(x, y);
 
     this.camera.actor.moveLocal(new THREE.Vector3(startPosition[0] - endPosition[0], endPosition[1] - startPosition[1], 0));
     if (this.zoomCallback != null) this.zoomCallback();
@@ -45,7 +45,7 @@ class Camera2DControls extends ActorComponent {
 
   update() {
     // Zoom
-    var newOrthographicScale: number;
+    let newOrthographicScale: number;
     if (this.actor.gameInstance.input.mouseButtons[5].isDown) {
       newOrthographicScale = Math.max(this.options.zoomMin, this.camera.orthographicScale * this.multiplier / this.options.zoomSpeed);
     }
@@ -55,13 +55,13 @@ class Camera2DControls extends ActorComponent {
     }
 
     if (newOrthographicScale != null && newOrthographicScale != this.camera.orthographicScale) {
-      var mousePosition = this.actor.gameInstance.input.mousePosition;
+      let mousePosition = this.actor.gameInstance.input.mousePosition;
       this.changeOrthographicScale(newOrthographicScale, mousePosition.x, mousePosition.y);
     }
 
     // Move
     if (this.actor.gameInstance.input.mouseButtons[1].isDown) {
-      var mouseDelta = this.actor.gameInstance.input.mouseDelta;
+      let mouseDelta = this.actor.gameInstance.input.mouseDelta;
       mouseDelta.x /= this.actor.gameInstance.threeRenderer.domElement.width;
       mouseDelta.x *= this.camera.orthographicScale * this.camera.cachedRatio;
 
@@ -84,7 +84,7 @@ class Camera2DControls extends ActorComponent {
   }
 
   getScenePosition(x: number, y: number): number[]  {
-    var cameraPosition = this.camera.actor.getLocalPosition();
+    let cameraPosition = this.camera.actor.getLocalPosition();
 
     x /= this.actor.gameInstance.threeRenderer.domElement.width;
     x = x * 2 - 1;
@@ -98,5 +98,3 @@ class Camera2DControls extends ActorComponent {
     return [x, y];
   }
 }
-
-export = Camera2DControls;

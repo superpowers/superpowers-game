@@ -1,15 +1,15 @@
 ///<reference path="../../typings/tsd.d.ts"/>
 /// <reference path="./typings/threejs/three.d.ts"/>
 
-declare var __tmpTHREE: typeof THREE;
+declare let __tmpTHREE: typeof THREE;
 
 declare module SupEngine {
-  var THREE: typeof __tmpTHREE;
+  let THREE: typeof __tmpTHREE;
 
-  var editorComponentClasses: {[name: string]: any};
+  let editorComponentClasses: {[name: string]: any};
   function registerEditorComponentClass(name: string, component: any): void;
 
-  var componentClasses: {[name: string]: any};
+  let componentClasses: {[name: string]: any};
   function registerComponentClass(name: string, plugin: any): void;
 
   interface ComponentEditorClass {
@@ -18,10 +18,10 @@ declare module SupEngine {
       config_setProperty(path: string, value: any): void;
     };
   }
-  var componentEditorClasses: {[name: string]: ComponentEditorClass};
+  let componentEditorClasses: {[name: string]: ComponentEditorClass};
   function registerComponentEditorClass(name: string, plugin: ComponentEditorClass): void;
 
-  var earlyUpdateFunctions: any;
+  let earlyUpdateFunctions: any;
   function registerEarlyUpdateFunction(name: string, callback: Function): void;
 
   class GameInstance extends EventEmitter {

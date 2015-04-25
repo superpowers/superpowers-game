@@ -8,7 +8,7 @@ interface Asset {
   children?: any[];
 }
 
-class Player {
+export default class Player {
 
   static updateInterval = 1 / SupEngine.GameInstance.framesPerSecond * 1000;
   static maxAccumulatedTime = 5 * Player.updateInterval;
@@ -41,11 +41,11 @@ class Player {
   }
 
   load(progressCallback: (progress: number, total: number) => any, callback: any) {
-    var progress = 0;
+    let progress = 0;
 
-    var innerProgressCallback = () => {
+    let innerProgressCallback = () => {
       progress++;
-      var total = this.resourcesToLoad.length + this.assetsToLoad.length;
+      let total = this.resourcesToLoad.length + this.assetsToLoad.length;
       progressCallback(progress, total);
     }
     async.series([
@@ -59,7 +59,7 @@ class Player {
 
   _initPlugins(callback: any) {
     async.each(Object.keys(SupRuntime.plugins), (name: string, cb: Function) => {
-      var plugin = SupRuntime.plugins[name];
+      let plugin = SupRuntime.plugins[name];
       if (plugin.init != null) plugin.init(this, cb);
       else cb();
     }, callback);
@@ -74,18 +74,18 @@ class Player {
       this.resourcesToLoad = Object.keys(SupRuntime.resourcePlugins);
 
       this.assetsToLoad = [];
-      var walk = (asset: Asset, parent="") => {
-        var children: string[];
+      let walk = (asset: Asset, parent="") => {
+        let children: string[];
         if (asset.children != null) {
           children = [];
-          asset.children.forEach((child) => { children.push(child.name); });
+          for (let child of asset.children) { children.push(child.name); }
         }
         this.assetsToLoad.push({ id: asset.id, name: `${parent}${asset.name}`, type: asset.type, children: children });
         parent += `${asset.name}/`;
         if (asset.children == null) return;
-        asset.children.forEach((child) => { walk(child, parent); });
+        for (let child of asset.children) { walk(child, parent); }
       }
-      gameData.assets.forEach((asset) => { walk(asset); });
+      for (let asset of gameData.assets) { walk(asset); }
 
       callback();
     });
@@ -93,9 +93,9 @@ class Player {
 
   _loadResources(progressCallback: Function, callback: any) {
     if (this.resourcesToLoad.length === 0) { callback(); return; }
-    var resourcesLoaded = 0;
+    let resourcesLoaded = 0;
 
-    var onResourceLoaded = (err: any, resourceName: string, resource: any) => {
+    let onResourceLoaded = (err: any, resourceName: string, resource: any) => {
       if (err != null) { callback(new Error(`Failed to load resource ${resourceName}: ${err.message}`)); return; }
 
       this.resources[resourceName] = resource
@@ -105,8 +105,9 @@ class Player {
       if (resourcesLoaded === this.resourcesToLoad.length) callback();
     }
 
+    // NOTE: Have to use .forEach because of TS4091 (closure references block-scoped variable)
     this.resourcesToLoad.forEach((resourceName) => {
-      var plugin = SupRuntime.resourcePlugins[resourceName];
+      let plugin = SupRuntime.resourcePlugins[resourceName];
       if (plugin == null) {
         // This resource isn't meant to be loaded at runtime, skip
         onResourceLoaded(null, resourceName, null);
@@ -119,9 +120,9 @@ class Player {
 
   _loadAssets(progressCallback: Function, callback: any) {
     if (this.assetsToLoad.length === 0 ) { callback(); return; }
-    var assetsLoaded = 0;
+    let assetsLoaded = 0;
 
-    var onAssetLoaded = (err: any, entry: any, asset: any) => {
+    let onAssetLoaded = (err: any, entry: any, asset: any) => {
       if (err != null) { callback(new Error(`Failed to load asset ${entry.name}: ${err.message}`)); return; }
 
       this.entriesById[entry.id] = entry;
@@ -133,13 +134,14 @@ class Player {
       if (assetsLoaded === this.assetsToLoad.length) callback();
     }
 
+    // NOTE: Have to use .forEach because of TS4091 (closure references block-scoped variable)
     this.assetsToLoad.forEach((entry) => {
       if (entry.children != null) {
         onAssetLoaded(null, entry, {});
         return;
       }
 
-      var plugin = SupRuntime.plugins[entry.type];
+      let plugin = SupRuntime.plugins[entry.type];
       if (plugin == null || plugin.loadAsset == null) {
         console.warn(`Don't know how to load assets of type '${entry.type}'`);
         onAssetLoaded(null, entry, {});
@@ -152,7 +154,7 @@ class Player {
 
   _startPlugins(callback: any) {
     async.each(Object.keys(SupRuntime.plugins), (name, cb) => {
-      var plugin = SupRuntime.plugins[name];
+      let plugin = SupRuntime.plugins[name];
       if (plugin.start != null) plugin.start(this, cb);
       else cb();
     }, callback);
@@ -174,7 +176,7 @@ class Player {
     if (this.accumulatedTime > Player.maxAccumulatedTime) this.accumulatedTime = Player.maxAccumulatedTime;
 
     // Update
-    var gameUpdated = false;
+    let gameUpdated = false;
     while (this.accumulatedTime >= Player.updateInterval) {
       this.gameInstance.update();
       if (this.gameInstance.exited) return;
@@ -190,7 +192,7 @@ class Player {
   }
 
   getAssetData(path: string, responseType: string, callback: (err: Error, data?: any) => any) {
-    var xhr = new XMLHttpRequest()
+    let xhr = new XMLHttpRequest()
     xhr.open("GET", `${this.dataURL}${path}`, true);
     xhr.responseType = responseType;
 
@@ -199,7 +201,7 @@ class Player {
       if (xhr.status !== 200 && xhr.status !== 0) { callback(new Error(`Could not get ${path}`)); return; }
 
       // WORKAROUND: IE <= 11 does not support responseType = 'json'
-      var response = xhr.response;
+      let response = xhr.response;
       if (xhr.responseType != 'json') {
         try { response = JSON.parse(response); }
         catch (e) {}
@@ -210,16 +212,16 @@ class Player {
   }
 
   getOuterAsset(assetId: number) {
-    var outerAsset = this.outerAssetsById[assetId];
-    var asset = this._assetsById[assetId];
-    var entry = this.entriesById[assetId];
+    let outerAsset = this.outerAssetsById[assetId];
+    let asset = this._assetsById[assetId];
+    let entry = this.entriesById[assetId];
 
     if (outerAsset == null && asset != null) {
       if (entry.type == null) {
         outerAsset = { name: entry.name, type: "folder", children: entry.children };
       }
       else {
-        var plugin = SupRuntime.plugins[this.entriesById[assetId].type];
+        let plugin = SupRuntime.plugins[this.entriesById[assetId].type];
         outerAsset = this.outerAssetsById[assetId] =
           // Temporary check until every asset is correctly handled
           (plugin.createOuterAsset != null) ? plugin.createOuterAsset(this, asset) : asset;
@@ -235,5 +237,3 @@ class Player {
   createActor() { throw new Error("Player.createActor should be defined by a scripting plugin"); }
   createComponent() { throw new Error("Player.createComponent should be defined by a scripting plugin"); }
 }
-
-export = Player;

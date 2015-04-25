@@ -1,13 +1,13 @@
-import THREE = require("three");
-import ActorComponent = require("../ActorComponent");
-import Actor = require("../Actor");
-import Camera = require("./Camera");
+import * as THREE from "three";
+import ActorComponent from "../ActorComponent";
+import Actor from "../Actor";
+import Camera from "./Camera";
 
-var tmpMovement = new THREE.Vector3();
-var tmpQuaternion = new THREE.Quaternion();
-var forwardVector = new THREE.Vector3(0, 1, 0);
+let tmpMovement = new THREE.Vector3();
+let tmpQuaternion = new THREE.Quaternion();
+let forwardVector = new THREE.Vector3(0, 1, 0);
 
-class Camera3DControls extends ActorComponent {
+export default class Camera3DControls extends ActorComponent {
   camera: Camera;
   rotation: THREE.Euler;
 
@@ -19,10 +19,10 @@ class Camera3DControls extends ActorComponent {
   }
 
   update() {
-    var movementSpeed = 0.1;
+    let movementSpeed = 0.1;
 
-    var keyButtons = this.actor.gameInstance.input.keyboardButtons;
-    var keyEvent = (<any>window).KeyEvent; // Workaround for unknown KeyEvent property on window object
+    let keyButtons = this.actor.gameInstance.input.keyboardButtons;
+    let keyEvent = (<any>window).KeyEvent; // Workaround for unknown KeyEvent property on window object
 
     tmpMovement.setX(
       (keyButtons[keyEvent.DOM_VK_A].isDown || keyButtons[keyEvent.DOM_VK_Q].isDown) ? -movementSpeed :
@@ -51,5 +51,3 @@ class Camera3DControls extends ActorComponent {
     }
   }
 }
-
-export = Camera3DControls;

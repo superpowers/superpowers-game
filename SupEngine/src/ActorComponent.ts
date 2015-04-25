@@ -1,6 +1,6 @@
-import Actor = require("./Actor");
+import Actor from "./Actor";
 
-class ActorComponent {
+export default class ActorComponent {
   actor: Actor;
   typeName: string;
 
@@ -12,10 +12,10 @@ class ActorComponent {
   }
 
   _destroy() {
-    var startIndex = this.actor.gameInstance.componentsToBeStarted.indexOf(this);
+    let startIndex = this.actor.gameInstance.componentsToBeStarted.indexOf(this);
     if (startIndex != -1) this.actor.gameInstance.componentsToBeStarted.splice(startIndex, 1);
 
-    var index = this.actor.components.indexOf(this);
+    let index = this.actor.components.indexOf(this);
     if (index != -1) this.actor.components.splice(index, 1);
     this.actor = null;
   }
@@ -24,5 +24,3 @@ class ActorComponent {
   start() {}
   update() {}
 }
-
-export = ActorComponent;

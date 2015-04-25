@@ -1,8 +1,8 @@
-import THREE = require("three");
-import ActorComponent = require("../ActorComponent");
-import Actor = require("../Actor");
+import * as THREE from "three";
+import ActorComponent from "../ActorComponent";
+import Actor from "../Actor";
 
-class FlatColorRenderer extends ActorComponent {
+export default class FlatColorRenderer extends ActorComponent {
   color: string;
   width: number;
   height: number;
@@ -11,7 +11,7 @@ class FlatColorRenderer extends ActorComponent {
   texture: THREE.Texture;
 
   constructor(actor: Actor, color: string, scaleRatio: number, width: number, height: number) {
-    super(actor, 'GridRenderer');
+    super(actor, "GridRenderer");
 
     this.setup(color, scaleRatio, width, height);
   }
@@ -23,18 +23,18 @@ class FlatColorRenderer extends ActorComponent {
     this.width = width;
     this.height = (height) ? height : this.width;
 
-    var canvas = document.createElement("canvas");
+    let canvas = document.createElement("canvas");
     canvas.width = this.width;
     canvas.height = this.height;
-    var ctx = canvas.getContext("2d");
+    let ctx = canvas.getContext("2d");
     ctx.fillStyle = color;
     ctx.fillRect(0, 0, this.width, this.height);
 
     this.texture = new THREE.Texture(canvas);
     this.texture.needsUpdate = true;
 
-    var geometry = new THREE.PlaneBufferGeometry(this.width, this.height);
-    var material = new THREE.MeshBasicMaterial({
+    let geometry = new THREE.PlaneBufferGeometry(this.width, this.height);
+    let material = new THREE.MeshBasicMaterial({
       map: this.texture,
       alphaTest: 0.1,
       side: THREE.DoubleSide,
@@ -68,5 +68,3 @@ class FlatColorRenderer extends ActorComponent {
     super._destroy();
   }
 }
-
-export = FlatColorRenderer;

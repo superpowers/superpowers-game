@@ -1,21 +1,21 @@
-import Actor = require("./Actor");
+import Actor from "./Actor";
 
-class ActorTree {
+export default class ActorTree {
   root: Actor[] = [];
 
   constructor() {}
 
   _walkRecurseTopDown(node: Actor, parentNode: Actor, callback: (node: Actor, parentNode?: Actor) => any) {
     callback(node, parentNode);
-    node.children.forEach((child: Actor) => { this._walkRecurseTopDown(child, node, callback); });
+    for (let child of node.children) this._walkRecurseTopDown(child, node, callback);
   }
 
   walkTopDown(callback: (node: Actor, parentNode?: Actor) => any) {
-    this.root.forEach((child: Actor) => { this._walkRecurseTopDown(child, null, callback); });
+    for (let child of this.root) this._walkRecurseTopDown(child, null, callback);
   }
 
   walkDown(rootNode: Actor, callback: (node: Actor, parentNode?: Actor) => any) {
-    rootNode.children.forEach((child: Actor) => { this._walkRecurseTopDown(child, rootNode, callback); });
+    for (let child of rootNode.children) this._walkRecurseTopDown(child, rootNode, callback);
   }
 
   /*
@@ -29,5 +29,3 @@ class ActorTree {
     return
   */
 }
-
-export = ActorTree;

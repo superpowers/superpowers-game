@@ -8,13 +8,13 @@ declare module SupRuntime {
     init?(player: Player, callback: Function): void;
     start?(player: Player, callback: Function): void;
   }
-  var plugins: {[name: string]: RuntimePlugin};
+  let plugins: { [name: string]: RuntimePlugin };
   function registerPlugin(name: string, plugin: RuntimePlugin): void;
 
   interface RuntimeResourcePlugin {
     loadResource(player: Player, resourceName: string, callback: (err: Error, resource?: any) => any): void;
   }
-  var resourcePlugins: {[name: string]: RuntimeResourcePlugin};
+  let resourcePlugins: { [name: string]: RuntimeResourcePlugin };
   function registerResource(name: string, plugin: RuntimeResourcePlugin): void;
 
   class Player {
@@ -37,7 +37,7 @@ declare module SupRuntime {
     lastTimestamp: number;
     tickAnimationFrameId: number;
 
-    constructor(canvas: HTMLCanvasElement, dataURL: string, options: {debug?: boolean;});
+    constructor(canvas: HTMLCanvasElement, dataURL: string, options: { debug?: boolean; });
     load(progressCallback: (progress: number, total: number) => any, callback: any): void;
     run(): void;
     getAssetData(path: string, responseType: string, callback: (err: Error, data?: any) => any): any;

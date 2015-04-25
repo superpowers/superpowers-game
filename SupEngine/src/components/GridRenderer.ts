@@ -1,6 +1,6 @@
-import THREE = require("three");
-import ActorComponent = require("../ActorComponent");
-import Actor = require("../Actor");
+import * as THREE from "three";
+import ActorComponent from "../ActorComponent";
+import Actor from "../Actor";
 
 interface data {
   width: number;
@@ -10,7 +10,7 @@ interface data {
   ratio: number;
 }
 
-class GridRenderer extends ActorComponent {
+export default class GridRenderer extends ActorComponent {
   width: number;
   height: number;
   direction: number;
@@ -20,7 +20,7 @@ class GridRenderer extends ActorComponent {
   mesh: THREE.Line;
 
   constructor(actor: Actor, data?: data) {
-    super(actor, 'GridRenderer');
+    super(actor, "GridRenderer");
 
     if (data != null) this.setGrid(data);
   }
@@ -58,10 +58,10 @@ class GridRenderer extends ActorComponent {
   }
 
   _createMesh() {
-    var geometry = new THREE.Geometry();
+    let geometry = new THREE.Geometry();
 
     // Vertical lines
-    var x = 0;
+    let x = 0;
     while(x <= this.width ) {
       geometry.vertices.push(new THREE.Vector3(x / this.ratio, 0, 0));
       geometry.vertices.push(new THREE.Vector3(x / this.ratio, this.direction * this.height / this.ratio, 0));
@@ -69,7 +69,7 @@ class GridRenderer extends ActorComponent {
     }
 
     // Horizontal lines
-    var y = 0;
+    let y = 0;
     while(y <= this.height) {
       geometry.vertices.push(new THREE.Vector3(0, this.direction * y / this.ratio, 0));
       geometry.vertices.push(new THREE.Vector3(this.width / this.ratio, this.direction * y / this.ratio, 0));
@@ -78,7 +78,7 @@ class GridRenderer extends ActorComponent {
 
     geometry.computeLineDistances();
 
-    var material = new THREE.LineDashedMaterial({
+    let material = new THREE.LineDashedMaterial({
       color: 0x000000, transparent: true, opacity: 0.4,
       dashSize: 5/1000, gapSize: 5/1000, scale: 1 / this.orthographicScale
     });
@@ -102,5 +102,3 @@ class GridRenderer extends ActorComponent {
     super._destroy();
   }
 }
-
-export = GridRenderer;

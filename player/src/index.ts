@@ -1,7 +1,7 @@
-import async = require("async");
+import * as async from "async";
 
 // In NW.js, open links in a browser window
-let nwDispatcher = (<any>window).nwDispatcher
+let nwDispatcher = (<any>window).nwDispatcher;
 let gui: any;
 if (nwDispatcher != null) {
   gui = nwDispatcher.requireNwGui();
@@ -17,7 +17,8 @@ let progressBar = <HTMLProgressElement>document.querySelector("progress");
 let loadingElt = document.getElementById("loading");
 let canvas = <HTMLCanvasElement>document.querySelector("canvas");
 
-let qs = require("querystring").parse(window.location.search.slice(1));
+import * as querystring from "querystring";
+let qs = querystring.parse(window.location.search.slice(1));
 if (qs.debug != null && gui != null) gui.Window.get().showDevTools();
 
 let player: SupRuntime.Player;
@@ -57,6 +58,7 @@ let pluginPaths = JSON.parse(pluginsXHR.responseText);
 
 async.each(pluginPaths.all, (pluginName, pluginCallback) => {
   async.series([
+
     (cb) => {
       let apiScript = document.createElement("script");
       apiScript.src = `../plugins/${pluginName}/api.js`;
@@ -64,6 +66,7 @@ async.each(pluginPaths.all, (pluginName, pluginCallback) => {
       apiScript.addEventListener("error", (err) => cb(null, null));
       document.body.appendChild(apiScript);
     },
+
     (cb) => {
       let componentsScript = document.createElement("script");
       componentsScript.src = `../plugins/${pluginName}/components.js`;
@@ -71,6 +74,7 @@ async.each(pluginPaths.all, (pluginName, pluginCallback) => {
       componentsScript.addEventListener("error", () => cb(null, null));
       document.body.appendChild(componentsScript);
     },
+
     (cb) => {
       let runtimeScript = document.createElement("script");
       runtimeScript.src = `../plugins/${pluginName}/runtime.js`;
@@ -78,6 +82,7 @@ async.each(pluginPaths.all, (pluginName, pluginCallback) => {
       runtimeScript.addEventListener("error", () => cb(null, null));
       document.body.appendChild(runtimeScript);
     }
+
   ], pluginCallback);
 }, (err) => {
   if (err != null) console.log(err);

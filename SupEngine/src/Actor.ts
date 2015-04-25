@@ -1,10 +1,10 @@
-import THREE = require("three");
-import GameInstance = require("./GameInstance");
-import ActorComponent = require("./ActorComponent");
+import * as THREE from "three";
+import GameInstance from "./GameInstance";
+import ActorComponent from "./ActorComponent";
 
-var tmpMatrix = new THREE.Matrix4();
+let tmpMatrix = new THREE.Matrix4();
 
-class Actor {
+export default class Actor {
   gameInstance: GameInstance;
   name: string;
   parent: Actor;
@@ -31,11 +31,11 @@ class Actor {
     }
   }
 
-  awake() { this.components.slice().forEach((component) => { component.awake() }); }
+  awake() { for (let component of this.components.slice()) { component.awake(); } }
 
   update() {
     if (this.pendingForDestruction) return;
-    this.components.slice().forEach((component) => { component.update() });
+    for (let component of this.components.slice()) { component.update(); }
   }
 
   // Transform
@@ -49,8 +49,8 @@ class Actor {
   getLocalScale() { return this.threeObject.scale.clone(); }
 
   getParentGlobalOrientation() {
-    var ancestorOrientation = new THREE.Quaternion();
-    var ancestorActor = this.threeObject;
+    let ancestorOrientation = new THREE.Quaternion();
+    let ancestorActor = this.threeObject;
     while (ancestorActor.parent != null) {
       ancestorActor = ancestorActor.parent;
       ancestorOrientation.multiplyQuaternions(ancestorActor.quaternion, ancestorOrientation);
@@ -76,7 +76,7 @@ class Actor {
   }
 
   lookAt(target: THREE.Vector3, up = this.threeObject.up) {
-    var m = new THREE.Matrix4();
+    let m = new THREE.Matrix4();
     m.lookAt(this.getGlobalPosition(), target, up );
     this.setGlobalOrientation(new THREE.Quaternion().setFromRotationMatrix(m));
   }
@@ -91,7 +91,7 @@ class Actor {
   }
 
   setGlobalOrientation(quaternion: THREE.Quaternion) {
-    var inverseParentQuaternion = new THREE.Quaternion().setFromRotationMatrix(tmpMatrix.extractRotation(this.threeObject.parent.matrixWorld)).inverse();
+    let inverseParentQuaternion = new THREE.Quaternion().setFromRotationMatrix(tmpMatrix.extractRotation(this.threeObject.parent.matrixWorld)).inverse();
     quaternion.multiplyQuaternions(inverseParentQuaternion, quaternion);
     this.threeObject.quaternion.copy(quaternion);
     this.threeObject.updateMatrixWorld(false);
@@ -103,8 +103,8 @@ class Actor {
   }
 
   setGlobalEulerAngles(eulerAngles: THREE.Euler) {
-    var globalQuaternion = new THREE.Quaternion().setFromEuler(eulerAngles);
-    var inverseParentQuaternion = new THREE.Quaternion().setFromRotationMatrix(tmpMatrix.extractRotation(this.threeObject.parent.matrixWorld)).inverse();
+    let globalQuaternion = new THREE.Quaternion().setFromEuler(eulerAngles);
+    let inverseParentQuaternion = new THREE.Quaternion().setFromRotationMatrix(tmpMatrix.extractRotation(this.threeObject.parent.matrixWorld)).inverse();
     globalQuaternion.multiplyQuaternions(inverseParentQuaternion, globalQuaternion);
     this.threeObject.quaternion.copy(globalQuaternion);
     this.threeObject.updateMatrixWorld(false);
@@ -118,18 +118,18 @@ class Actor {
   setParent(newParent: Actor, keepLocal=false) {
     if (this.pendingForDestruction || newParent != null && newParent.pendingForDestruction) return;
 
-    var globalMatrix: THREE.Matrix4;
+    let globalMatrix: THREE.Matrix4;
     if (! keepLocal) globalMatrix = this.getGlobalMatrix();
 
-    var oldSiblings = (this.parent != null) ? this.parent.children : this.gameInstance.tree.root;
+    let oldSiblings = (this.parent != null) ? this.parent.children : this.gameInstance.tree.root;
     oldSiblings.splice(oldSiblings.indexOf(this), 1);
     this.threeObject.parent.remove(this.threeObject);
 
     this.parent = newParent;
 
-    var siblings = (newParent != null) ? newParent.children : this.gameInstance.tree.root;
+    let siblings = (newParent != null) ? newParent.children : this.gameInstance.tree.root;
     siblings.push(this);
-    var threeParent = (newParent != null) ? newParent.threeObject : this.gameInstance.threeScene;
+    let threeParent = (newParent != null) ? newParent.threeObject : this.gameInstance.threeScene;
     threeParent.add(this.threeObject);
 
     if (! keepLocal) this.setGlobalMatrix(globalMatrix);
@@ -137,7 +137,7 @@ class Actor {
   }
 
   rotateGlobal(quaternion: THREE.Quaternion) {
-    var globalOrientation = this.getGlobalOrientation();
+    let globalOrientation = this.getGlobalOrientation();
     globalOrientation.multiplyQuaternions(quaternion, globalOrientation);
     this.setGlobalOrientation(globalOrientation);
   }
@@ -148,12 +148,12 @@ class Actor {
   }
 
   rotateGlobalEulerAngles(eulerAngles: THREE.Euler) {
-    var quaternion = new THREE.Quaternion().setFromEuler(eulerAngles);
+    let quaternion = new THREE.Quaternion().setFromEuler(eulerAngles);
     this.rotateGlobal(quaternion);
   }
 
   rotateLocalEulerAngles(eulerAngles: THREE.Euler) {
-    var quaternion = new THREE.Quaternion().setFromEuler(eulerAngles);
+    let quaternion = new THREE.Quaternion().setFromEuler(eulerAngles);
     this.threeObject.quaternion.multiplyQuaternions(quaternion, this.threeObject.quaternion);
     this.threeObject.updateMatrixWorld(false);
   }
@@ -189,7 +189,7 @@ class Actor {
     }
     this.threeObject = null;
 
-    var outer = (<any>this).__outer;
+    let outer = (<any>this).__outer;
     if (outer != null) {
       outer.__inner = null;
       outer = null;
@@ -200,8 +200,6 @@ class Actor {
 
   _markDestructionPending() {
     this.pendingForDestruction = true;
-    this.children.forEach((child) => { child._markDestructionPending(); })
+    for (let child of this.children) { child._markDestructionPending(); }
   }
 }
-
-export = Actor;

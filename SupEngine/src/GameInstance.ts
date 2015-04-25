@@ -1,15 +1,14 @@
-import events = require("events");
-import THREE = require("three");
+import { EventEmitter } from "events";
+import * as THREE from "three";
 
-import ActorTree = require("./ActorTree");
-import Actor = require("./Actor");
-import ActorComponent = require("./ActorComponent");
-import Input = require("./Input");
-import Audio = require("./Audio");
-import Camera = require("./components/Camera");
+import ActorTree from "./ActorTree";
+import Actor from "./Actor";
+import ActorComponent from "./ActorComponent";
+import Input from "./Input";
+import Audio from "./Audio";
+import Camera from "./components/Camera";
 
-
-class GameInstance extends events.EventEmitter {
+export default class GameInstance extends EventEmitter {
   static framesPerSecond = 60;
 
   debug: boolean;
@@ -38,7 +37,7 @@ class GameInstance extends events.EventEmitter {
     this.input = new Input(canvas);
 
     this.threeRenderer = new THREE.WebGLRenderer({
-      canvas, precision: 'mediump',
+      canvas, precision: "mediump",
       alpha: false, antialias: false, stencil: false
     });
     this.threeRenderer.setSize(0, 0, false);
@@ -60,9 +59,9 @@ class GameInstance extends events.EventEmitter {
     this.tree.walkTopDown( (actor) => { this.cachedActors.push(actor); });
 
     // Start newly-added components
-    var index = 0;
+    let index = 0;
     while (index < this.componentsToBeStarted.length) {
-      var component = this.componentsToBeStarted[index];
+      let component = this.componentsToBeStarted[index];
 
       // If the component to be started is part of an actor
       // which will not be updated, skip it until next loop
@@ -75,7 +74,7 @@ class GameInstance extends events.EventEmitter {
       this.componentsToBeStarted.splice(index, 1);
     }
 
-    for (var pluginName in SupEngine.earlyUpdateFunctions) { SupEngine.earlyUpdateFunctions[pluginName](); }
+    for (let pluginName in SupEngine.earlyUpdateFunctions) { SupEngine.earlyUpdateFunctions[pluginName](); }
 
     // Update all actors
     this.cachedActors.forEach((actor) => { actor.update(); });
@@ -105,8 +104,8 @@ class GameInstance extends events.EventEmitter {
   }
 
   resizeRenderer() {
-    var width: number;
-    var height: number;
+    let width: number;
+    let height: number;
 
     if (this.ratio != null) {
       if (document.body.clientWidth / document.body.clientHeight > this.ratio) {
@@ -144,7 +143,7 @@ class GameInstance extends events.EventEmitter {
 
     this.componentsToBeDestroyed.push(component);
 
-    var index = this.componentsToBeStarted.indexOf(component);
+    let index = this.componentsToBeStarted.indexOf(component);
     if (index != -1) this.componentsToBeStarted.splice(index, 1);
   }
 
@@ -165,11 +164,9 @@ class GameInstance extends events.EventEmitter {
   _doActorDestruction(actor: Actor) {
     while (actor.children.length > 0) this._doActorDestruction(actor.children[0]);
 
-    var cachedIndex = this.cachedActors.indexOf(actor);
+    let cachedIndex = this.cachedActors.indexOf(actor);
     if (cachedIndex != -1) this.cachedActors.splice(cachedIndex, 1);
 
     actor._destroy();
   }
 }
-
-export = GameInstance;
