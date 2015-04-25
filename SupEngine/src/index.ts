@@ -40,9 +40,10 @@ export function registerComponentClass(name: string, plugin: ActorComponent) {
 };
 
 interface ComponentEditorClass {
-  new (SupUI: any, tbody: HTMLDivElement, config: any, projectClient: any, editConfig: any): any;
-  destroy(): void;
-  config_setProperty(path: string, value: any): void;
+  new (tbody: HTMLDivElement, config: any, projectClient: any, editConfig: any): {
+    destroy(): void;
+    config_setProperty(path: string, value: any): void;
+  }
 }
 export var componentEditorClasses: {[name: string]: ComponentEditorClass} = {};
 export function registerComponentEditorClass(name: string, plugin: ComponentEditorClass) {
