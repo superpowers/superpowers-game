@@ -12,8 +12,8 @@ var stylus = require("gulp-stylus");
 var nib = require("nib");
 gulp.task("stylus", function() { return gulp.src("./src/index.styl").pipe(stylus({use: [ nib() ], errors: true})).pipe(gulp.dest("../../public/player")); });
 
-// Typescript
-var ts = require('gulp-typescript');
+// TypeScript
+var ts = require("gulp-typescript");
 gulp.task("typescript", function() {
   var tsResult = gulp.src("**/*.ts").pipe(ts({
     typescript: require("typescript"),
