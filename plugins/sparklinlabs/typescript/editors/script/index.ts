@@ -1,6 +1,7 @@
 import * as async from "async";
 import * as OT from "operational-transform";
 import * as ts from "typescript";
+let fuzzy = require("fuzzy");
 
 import ScriptAsset from "../../data/ScriptAsset";
 
@@ -115,13 +116,20 @@ var start = () => {
 
       let completions = service.getCompletionsAtPosition(scriptNamesById[info.assetId], start);
       if (completions != null) {
+        let rawList: string[] = [];
         for (let completion of completions.entries) {
-          if (token.string === "." || (token.string !== completion.name &&  completion.name.indexOf(token.string) !== -1)) {
-            list.push(completion.name);
+          //if (token.string === "." || (token.string !== completion.name &&  completion.name.indexOf(token.string) !== -1)) {
+          if (true) {
+            rawList.push(completion.name);
           }
         }
+        rawList.sort();
+        let tokenString = (token.string !== ".") ? token.string : "";
+        let results = fuzzy.filter(tokenString, rawList);
+        for (let result of results) list.push(result.original);
       }
     }
+
     return { list, from: (<any>CodeMirror).Pos(cursor.line, token.start), to: (<any>CodeMirror).Pos(cursor.line, token.end) };
     });
 
