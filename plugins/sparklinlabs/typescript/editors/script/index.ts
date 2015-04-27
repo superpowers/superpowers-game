@@ -278,10 +278,12 @@ var scriptSubscriber = {
   },
 
   onAssetEdited: (id: string, command: string, ...args: any[]) => {
-    if (id !== info.assetId && command === "saveText") {
-      var scriptName = `${data.projectClient.entries.getPathFromId(id)}.ts`;
-      scripts[scriptName] = data.assetsById[id].pub.text;
-      scheduleCompilation();
+    if (id !== info.assetId) {
+      if (command === "saveText") {
+        var scriptName = `${data.projectClient.entries.getPathFromId(id)}.ts`;
+        scripts[scriptName] = data.assetsById[id].pub.text;
+        scheduleCompilation();
+      }
       return
     }
 
