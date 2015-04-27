@@ -94,7 +94,10 @@ export default class SpriteRendererUpdater {
       if (commandFunction.apply(this, args) === false) callEditCallback = false;
     }
 
-    if (callEditCallback && this.editAssetCallbacks != null) this.editAssetCallbacks.sprite[command].apply(null, args);
+    if (callEditCallback && this.editAssetCallbacks != null) {
+      let editCallback = this.editAssetCallbacks.sprite[command];
+      if (editCallback != null) editCallback.apply(null, args);
+    }
   }
 
   _onEditCommand_upload() {
@@ -144,6 +147,7 @@ export default class SpriteRendererUpdater {
 
   _onSpriteAssetTrashed() {
     this.spriteRenderer.setSprite(null);
+    // FIXME: the updater shouldn't be dealing with SupClient.onAssetTrashed directly
     if (this.editAssetCallbacks != null) SupClient.onAssetTrashed();
   }
 

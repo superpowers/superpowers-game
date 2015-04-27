@@ -30,7 +30,7 @@ var start = () => {
   });
 
   // Sidebar
-  var fileSelect = <HTMLSelectElement>document.querySelector("input.file-select");
+  var fileSelect = <HTMLInputElement>document.querySelector("input.file-select");
   fileSelect.addEventListener("change", onFileSelectChange);
   document.querySelector("button.upload").addEventListener("click", () => { fileSelect.click(); });
 

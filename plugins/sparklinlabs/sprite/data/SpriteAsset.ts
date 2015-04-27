@@ -35,16 +35,12 @@ export default class SpriteAsset extends SupCore.data.base.Asset {
     },
 
     animations: { type: "array" }
-  }
+  };
 
   animations: SpriteAnimations;
 
   constructor(id: string, pub: any, serverData: any) {
     super(id, pub, SpriteAsset.schema, serverData);
-  }
-
-  setup() {
-    this.animations = new SpriteAnimations(this.pub.animations);
   }
 
   init(options: any, callback: Function) {
@@ -65,6 +61,10 @@ export default class SpriteAsset extends SupCore.data.base.Asset {
       this.serverData.resources.release("spriteSettings", null);
       super.init(options, callback);
     });
+  }
+
+  setup() {
+    this.animations = new SpriteAnimations(this.pub.animations);
   }
 
   load(assetPath: string) {

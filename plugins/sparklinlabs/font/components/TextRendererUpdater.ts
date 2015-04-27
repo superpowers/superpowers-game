@@ -86,8 +86,9 @@ class TextRendererUpdater {
     var commandFunction = (<any>this)[`_onEditCommand_${command}`];
     if (commandFunction != null) commandFunction.apply(this, args);
 
-    if (this.editAssetCallbacks != null && this.editAssetCallbacks.font[command] != null) {
-      this.editAssetCallbacks.font[command].apply(null, args);
+    if (this.editAssetCallbacks != null) {
+      let editCallback = this.editAssetCallbacks.font[command];
+      if (editCallback != null) editCallback.apply(null, args);
     }
   }
 

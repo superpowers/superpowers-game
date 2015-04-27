@@ -50,7 +50,7 @@ function start() {
   ui.animationArea.animationSlider.addEventListener("input", onChangeAnimationTime);
 
   // Sidebar
-  let fileSelect = <HTMLSelectElement>document.querySelector("input.file-select");
+  let fileSelect = <HTMLInputElement>document.querySelector("input.file-select");
   fileSelect.addEventListener("change", onFileSelectChange);
   document.querySelector("button.upload").addEventListener("click", () => { fileSelect.click(); });
 
