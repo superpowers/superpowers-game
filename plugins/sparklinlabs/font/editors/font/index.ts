@@ -1,13 +1,13 @@
-import TextRenderer = require("../../components/TextRenderer");
-import TextRendererUpdater = require("../../components/TextRendererUpdater");
+import TextRenderer from "../../components/TextRenderer";
+import TextRendererUpdater from "../../components/TextRendererUpdater";
 
-var qs = require("querystring").parse(window.location.search.slice(1));
-var info = { projectId: qs.project, assetId: qs.asset };
-var data: {projectClient?: SupClient.ProjectClient; textUpdater?: TextRendererUpdater};
-var ui: any = {};
-var socket: SocketIOClient.Socket;
+let qs = require("querystring").parse(window.location.search.slice(1));
+let info = { projectId: qs.project, assetId: qs.asset };
+let data: {projectClient?: SupClient.ProjectClient; textUpdater?: TextRendererUpdater};
+let ui: any = {};
+let socket: SocketIOClient.Socket;
 
-var start = () => {
+function start() {
   socket = SupClient.connect(info.projectId);
   socket.on("connect", onConnected);
   socket.on("disconnect", SupClient.onDisconnected);
@@ -18,9 +18,9 @@ var start = () => {
   ui.gameInstance.update();
   ui.gameInstance.draw();
 
-  var cameraActor = new SupEngine.Actor(ui.gameInstance, "Camera");
+  let cameraActor = new SupEngine.Actor(ui.gameInstance, "Camera");
   cameraActor.setLocalPosition(new SupEngine.THREE.Vector3(0, 0, 1));
-  var cameraComponent = new SupEngine.componentClasses["Camera"](cameraActor);
+  let cameraComponent = new SupEngine.componentClasses["Camera"](cameraActor);
   cameraComponent.setOrthographicMode(true);
   cameraComponent.setOrthographicScale(5);
   new SupEngine.editorComponentClasses["Camera2DControls"](cameraActor, cameraComponent, {
@@ -30,14 +30,14 @@ var start = () => {
   });
 
   // Sidebar
-  var fileSelect = <HTMLInputElement>document.querySelector("input.file-select");
+  let fileSelect = <HTMLInputElement>document.querySelector("input.file-select");
   fileSelect.addEventListener("change", onFileSelectChange);
   document.querySelector("button.upload").addEventListener("click", () => { fileSelect.click(); });
 
   ui.allSettings = ["isBitmap", "filtering", "pixelsPerUnit", "size", "color"]
   ui.settings = {};
   ui.allSettings.forEach((setting: string) => {
-    var settingObj: any = ui.settings[setting] = document.querySelector(`.property-${setting}`);
+    let settingObj: any = ui.settings[setting] = document.querySelector(`.property-${setting}`);
     settingObj.dataset.name = setting;
 
     if (setting === "filtering" || setting === "color") {
@@ -59,20 +59,20 @@ var start = () => {
 }
 
 // Network callbacks
-var onEditCommands: any =  {};
-var onConnected = () => {
+let onEditCommands: any =  {};
+function onConnected() {
   data = {};
   data.projectClient = new SupClient.ProjectClient(socket);
 
-  var textActor = new SupEngine.Actor(ui.gameInstance, "Text");
-  var textRenderer = new TextRenderer(textActor);
-  var config = { fontAssetId: info.assetId, text: "The quick brown fox jumps over the lazy dog", alignment: "center" };
-  var receiveCallbacks = { font: onAssetReceived };
-  var editCallbacks = { font: onEditCommands };
+  let textActor = new SupEngine.Actor(ui.gameInstance, "Text");
+  let textRenderer = new TextRenderer(textActor);
+  let config = { fontAssetId: info.assetId, text: "The quick brown fox jumps over the lazy dog", alignment: "center" };
+  let receiveCallbacks = { font: onAssetReceived };
+  let editCallbacks = { font: onEditCommands };
   data.textUpdater = new TextRendererUpdater(data.projectClient, textRenderer, config, receiveCallbacks, editCallbacks);
 }
 
-var onAssetReceived = () => {
+function onAssetReceived() {
   ui.allSettings.forEach((setting: string) => {
     if(setting === "isBitmap") {
       ui.settings[setting].checked = data.textUpdater.fontAsset.pub[setting];
@@ -90,10 +90,10 @@ onEditCommands.setProperty = (path: string, value: any) => {
 }
 
 // User interface
-var onFileSelectChange = (event: any) => {
+function onFileSelectChange(event: any) {
   if (event.target.files.length === 0) return;
 
-  var reader = new FileReader();
+  let reader = new FileReader();
   reader.onload = (event: any) => {
     socket.emit("edit:assets", info.assetId, "upload", event.target.result, (err: string) => {
       if (err != null) alert(err);
@@ -104,7 +104,7 @@ var onFileSelectChange = (event: any) => {
   event.target.parentElement.reset();
 }
 
-var draw = () => {
+function draw() {
   requestAnimationFrame(draw);
 
   ui.gameInstance.update();

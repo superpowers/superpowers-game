@@ -1,1 +1,3 @@
-SupEngine.registerComponentClass("TextRenderer", require("./TextRenderer"));
+import TextRenderer from "./TextRenderer";
+
+SupEngine.registerComponentClass("TextRenderer", TextRenderer);

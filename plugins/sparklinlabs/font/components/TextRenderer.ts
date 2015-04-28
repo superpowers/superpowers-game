@@ -1,6 +1,6 @@
-var THREE = SupEngine.THREE;
+let THREE = SupEngine.THREE;
 
-class TextRenderer extends SupEngine.ActorComponent {
+export default class TextRenderer extends SupEngine.ActorComponent {
   static Updater = require("./TextRendererUpdater");
 
   texture: THREE.Texture;
@@ -32,13 +32,13 @@ class TextRenderer extends SupEngine.ActorComponent {
     if (this.threeMesh != null) this.clearMesh();
     if (this.text == null || this.font == null) return;
 
-    var fontSize = (this.options.size != null) ? this.options.size : this.font.size;
+    let fontSize = (this.options.size != null) ? this.options.size : this.font.size;
 
-    var canvas = document.createElement("canvas");
-    var ctx = canvas.getContext("2d");
+    let canvas = document.createElement("canvas");
+    let ctx = canvas.getContext("2d");
     ctx.font = `${fontSize}px ${this.font.name}`;
-    var width = Math.max(1, ctx.measureText(this.text).width);
-    var height = fontSize * 2;
+    let width = Math.max(1, ctx.measureText(this.text).width);
+    let height = fontSize * 2;
     canvas.width = width;
     canvas.height = height;
 
@@ -56,8 +56,8 @@ class TextRenderer extends SupEngine.ActorComponent {
     }
     this.texture.needsUpdate = true;
 
-    var geometry = new THREE.PlaneBufferGeometry(width, height);
-    var material = new THREE.MeshBasicMaterial({
+    let geometry = new THREE.PlaneBufferGeometry(width, height);
+    let material = new THREE.MeshBasicMaterial({
       map: this.texture,
       alphaTest: 0.01,
       side: THREE.DoubleSide,
@@ -66,7 +66,7 @@ class TextRenderer extends SupEngine.ActorComponent {
 
     this.threeMesh = new THREE.Mesh(geometry, material);
     this.actor.threeObject.add(this.threeMesh);
-    var scale = 1 / this.font.pixelsPerUnit;
+    let scale = 1 / this.font.pixelsPerUnit;
     this.threeMesh.scale.set(scale, scale, scale);
 
     switch (this.options.alignment) {
@@ -91,4 +91,3 @@ class TextRenderer extends SupEngine.ActorComponent {
     super._destroy();
   }
 }
-export = TextRenderer;

@@ -6,7 +6,7 @@ SupAPI.registerPlugin("typescript", "Sup.Font", {
 });
 
 SupAPI.registerPlugin("typescript", "TextRenderer", {
-  code: fs.readFileSync(__dirname + "/Sup.TextRenderer.ts.txt", { encoding: "utf8" }),
-  defs: fs.readFileSync(__dirname + "/Sup.TextRenderer.d.ts.txt", { encoding: "utf8" }),
+  code: fs.readFileSync(`${__dirname}/Sup.TextRenderer.ts.txt`, { encoding: "utf8" }),
+  defs: fs.readFileSync(`${__dirname}/Sup.TextRenderer.d.ts.txt`, { encoding: "utf8" }),
   exposeActorComponent: { propertyName: "textRenderer", className: "Sup.TextRenderer" }
 });

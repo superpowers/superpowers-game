@@ -1,1 +1,3 @@
-SupEngine.registerComponentEditorClass("TextRenderer", require("./TextRendererEditor"));
+import TextRendererEditor from "./TextRendererEditor";
+
+SupEngine.registerComponentEditorClass("TextRenderer", TextRendererEditor);

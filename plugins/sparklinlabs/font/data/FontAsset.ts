@@ -1,7 +1,7 @@
-import path = require("path");
-import fs = require("fs");
+import * as path from "path";
+import * as fs from "fs";
 
-class FontAsset extends SupCore.data.base.Asset {
+export default class FontAsset extends SupCore.data.base.Asset {
 
   static schema = {
     isBitmap: { type: "boolean", mutable: true},
@@ -45,9 +45,9 @@ class FontAsset extends SupCore.data.base.Asset {
   }
 
   save(assetPath: string, callback: Function) {
-    var buffer = this.pub.font;
+    let buffer = this.pub.font;
     delete this.pub.font;
-    var json = JSON.stringify(this.pub, null, 2);
+    let json = JSON.stringify(this.pub, null, 2);
     this.pub.font = buffer;
     fs.writeFile(path.join(assetPath, "asset.json"), json, { encoding: "utf8" }, () => {
       fs.writeFile(path.join(assetPath, "font.dat"), buffer, callback);
@@ -67,4 +67,3 @@ class FontAsset extends SupCore.data.base.Asset {
     this.pub.font = font;
   }
 }
-export = FontAsset;

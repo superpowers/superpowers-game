@@ -1,4 +1,4 @@
-class TextRendererConfig extends SupCore.data.base.ComponentConfig {
+export default class TextRendererConfig extends SupCore.data.base.ComponentConfig {
 
   static schema = {
     fontAssetId: { type: "string?", min: 0, mutable: true },
@@ -9,7 +9,7 @@ class TextRendererConfig extends SupCore.data.base.ComponentConfig {
   }
 
   static create() {
-    var emptyConfig: any = {
+    let emptyConfig: any = {
       fontAssetId: null,
       text: "Text",
       alignment: "center",
@@ -29,4 +29,3 @@ class TextRendererConfig extends SupCore.data.base.ComponentConfig {
     super(pub, TextRendererConfig.schema);
   }
 }
-export = TextRendererConfig;

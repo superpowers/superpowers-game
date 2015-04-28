@@ -1,11 +1,11 @@
-var THREE = SupEngine.THREE;
-import FontAsset = require("../data/FontAsset");
-import TextRenderer = require("./TextRenderer");
+let THREE = SupEngine.THREE;
+import FontAsset from "../data/FontAsset";
+import TextRenderer from "./TextRenderer";
 
 // FontFace is a very new feature (supported in Chrome only). Not available in lib.d.ts just yet
-declare var FontFace: any;
+declare let FontFace: any;
 
-class TextRendererUpdater {
+export default class TextRendererUpdater {
 
   client: SupClient.ProjectClient;
   textRenderer: TextRenderer;
@@ -87,7 +87,7 @@ class TextRendererUpdater {
   }
 
   _onFontAssetEdited = (id: string, command: string, ...args: any[]) => {
-    var commandFunction = (<any>this)[`_onEditCommand_${command}`];
+    let commandFunction = (<any>this)[`_onEditCommand_${command}`];
     if (commandFunction != null) commandFunction.apply(this, args);
 
     if (this.editAssetCallbacks != null) {
@@ -100,8 +100,8 @@ class TextRendererUpdater {
     if (this.url != null) URL.revokeObjectURL(this.url);
     if (this.font != null) delete this.font;
 
-    var typedArray = new Uint8Array(this.fontAsset.pub.font);
-    var blob = new Blob([ typedArray ], { type: "font/*" });
+    let typedArray = new Uint8Array(this.fontAsset.pub.font);
+    let blob = new Blob([ typedArray ], { type: "font/*" });
     this.url = URL.createObjectURL(blob);
     this.fontAsset.pub.name = `Font${this.fontAssetId}`;
     this.font = new FontFace(this.fontAsset.pub.name, `url(${this.url})`);
@@ -122,4 +122,3 @@ class TextRendererUpdater {
     if (this.editAssetCallbacks != null) SupClient.onAssetTrashed();
   }
 }
-export = TextRendererUpdater;

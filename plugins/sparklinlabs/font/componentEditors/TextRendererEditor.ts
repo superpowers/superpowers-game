@@ -1,4 +1,4 @@
-class TextRendererEditor {
+export default class TextRendererEditor {
   projectClient: SupClient.ProjectClient
   editConfig: any;
 
@@ -51,5 +51,3 @@ class TextRendererEditor {
     else this.fields[path].value = value;
   }
 }
-
-export = TextRendererEditor;
