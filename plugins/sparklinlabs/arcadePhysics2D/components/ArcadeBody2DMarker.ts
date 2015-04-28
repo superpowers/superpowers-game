@@ -1,7 +1,7 @@
 import ArcadeBody2D from "./ArcadeBody2D";
 let THREE = SupEngine.THREE;
 
-import ArcadeBody2DUpdater from "./ArcadeBody2DUpdater"
+import ArcadeBody2DUpdater from "./ArcadeBody2DUpdater";
 
 export default class ArcadeBody2DMarker extends SupEngine.ActorComponent {
   static Updater = ArcadeBody2DUpdater;
