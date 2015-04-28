@@ -75,8 +75,7 @@ export default class ArcadeBody2D extends SupEngine.ActorComponent {
   refreshActorPosition() {
     this.actorPosition.x = this.position.x - this.offsetX;
     this.actorPosition.y = this.position.y - this.offsetY;
-    console.log(this.actorPosition);
-    this.actor.setGlobalPosition(this.actorPosition);
+    this.actor.setGlobalPosition(this.actorPosition.clone());
   }
 
   _destroy() {
