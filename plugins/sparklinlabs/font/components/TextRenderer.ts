@@ -1,7 +1,9 @@
 let THREE = SupEngine.THREE;
 
+import TextRendererUpdater from "./TextRendererUpdater";
+
 export default class TextRenderer extends SupEngine.ActorComponent {
-  static Updater = require("./TextRendererUpdater");
+  static Updater = TextRendererUpdater;
 
   texture: THREE.Texture;
   threeMesh: THREE.Mesh;
