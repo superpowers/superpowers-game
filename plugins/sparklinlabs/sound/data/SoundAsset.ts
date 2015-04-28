@@ -1,7 +1,7 @@
-import path = require("path");
-import fs = require("fs");
+import * as path from "path";
+import * as fs from "fs";
 
-class SoundAsset extends SupCore.data.base.Asset {
+export default class SoundAsset extends SupCore.data.base.Asset {
   static schema = {
     sound: { type: "buffer" },
     streaming: { type: "boolean", mutable: true }
@@ -29,9 +29,9 @@ class SoundAsset extends SupCore.data.base.Asset {
   }
 
   save(assetPath: string, callback: Function) {
-    var buffer = this.pub.sound;
+    let buffer = this.pub.sound;
     delete this.pub.sound;
-    var json = JSON.stringify(this.pub, null, 2);
+    let json = JSON.stringify(this.pub, null, 2);
     this.pub.sound = buffer;
     fs.writeFile(path.join(assetPath, "asset.json"), json, { encoding: "utf8" }, () => {
       fs.writeFile(path.join(assetPath, "sound.dat"), buffer, callback);
@@ -51,5 +51,3 @@ class SoundAsset extends SupCore.data.base.Asset {
     this.pub.sound = sound;
   }
 }
-
-export = SoundAsset;

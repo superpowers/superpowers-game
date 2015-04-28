@@ -112,7 +112,7 @@ function start() {
 }
 
 // Network callbacks
-let onEditCommands: any =  {};
+let onEditCommands: any = {};
 function onConnected() {
   data = {};
   data.projectClient = new SupClient.ProjectClient(socket);

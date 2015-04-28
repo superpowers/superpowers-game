@@ -1,13 +1,13 @@
-import SoundAsset = require("../../data/SoundAsset");
-import querystring = require("querystring");
+import SoundAsset from "../../data/SoundAsset";
+import * as querystring from "querystring";
 
-var qs = querystring.parse(window.location.search.slice(1));
-var info = { projectId: qs.project, assetId: qs.asset };
-var data = null;
-var ui: {streamingSelect?: HTMLSelectElement; audioElt?: HTMLAudioElement;} = {};
-var socket = null;
+let qs = querystring.parse(window.location.search.slice(1));
+let info = { projectId: qs.project, assetId: qs.asset };
+let data: any = null;
+let ui: {streamingSelect?: HTMLSelectElement; audioElt?: HTMLAudioElement;} = {};
+let socket: SocketIOClient.Socket = null;
 
-var start = () => {
+function start() {
   socket = SupClient.connect(info.projectId);
   socket.on("connect", onConnected);
   socket.on("disconnect", SupClient.onDisconnected);
@@ -19,7 +19,7 @@ var start = () => {
   ui.audioElt = <HTMLAudioElement>document.querySelector("audio");
 
   // Upload
-  var fileSelect = <HTMLInputElement>document.querySelector("input.file-select");
+  let fileSelect = <HTMLInputElement>document.querySelector("input.file-select");
   fileSelect.addEventListener("change", onFileSelectChange);
   document.querySelector("button.upload").addEventListener("click", () => { fileSelect.click(); } );
   document.querySelector("button.download").addEventListener("click", onDownloadSound);
@@ -27,37 +27,41 @@ var start = () => {
   // Sidebar
   ui.streamingSelect = <HTMLSelectElement>document.querySelector(".property-streaming");
   ui.streamingSelect.addEventListener("change", (event) => {
-    socket.emit("edit:assets", info.assetId, "setProperty", "streaming", event.target["value"] == "true", (err) => {
+    socket.emit("edit:assets", info.assetId, "setProperty", "streaming", ui.streamingSelect.value == "true", (err: string) => {
       if (err != null) alert(err);
     });
   });
 }
 
 // Network callbacks
-var onConnected = () => {
+let onAssetCommands: any = {};
+
+function onConnected() {
   data = {};
   socket.emit("sub", "assets", info.assetId, onAssetReceived);
 }
 
-var onAssetReceived = (err, asset) => {
+function onAssetReceived(err: string, asset: any) {
   data.asset = new SoundAsset(info.assetId, asset);
 
   setupSound();
   setupProperty("streaming", data.asset.pub.streaming);
 }
 
-var onAssetEdited = (id, command, ...args) => {
+function onAssetEdited(id: string, command: string, ...args: any[]) {
   data.asset.__proto__[`client_${command}`].apply(data.asset, args);
   if (onAssetCommands[command] != null) onAssetCommands[command].apply(data.asset, args);
 }
 
 // User interface
-var onFileSelectChange = (event) => {
+let objectURL: string;
+
+function onFileSelectChange(event: any) {
   if (event.target.files.length === 0) return;
 
-  var reader = new FileReader();
+  let reader = new FileReader();
   reader.onload = (event) => {
-    socket.emit("edit:assets", info.assetId, "upload", event.target["result"], (err) => {
+    socket.emit("edit:assets", info.assetId, "upload", reader.result, (err: string) => {
       if (err != null) alert(err);
     });
   }
@@ -65,42 +69,39 @@ var onFileSelectChange = (event) => {
   event.target.parentElement.reset();
 }
 
-var onDownloadSound = () => {
+function onDownloadSound() {
   SupClient.dialogs.prompt("Enter the name of the sound", null, "Sound.wav", "OK", (name) => {
     if (name == null) return;
 
-    var a = document.createElement("a");
+    let a = document.createElement("a");
     document.body.appendChild(a);
     a.style.display = "none";
     a.href = objectURL;
 
-    // Not supported in IE and Safari
-    a["download"] = name;
+    // Not yet supported in IE and Safari (http://caniuse.com/#feat=download)
+    (<any>a).download = name;
     a.click();
     document.body.removeChild(a);
   });
 }
 
-var objectURL: string;
-var setupSound = () => {
+function setupSound() {
   if (objectURL != null) URL.revokeObjectURL(objectURL);
 
-  var typedArray = new Uint8Array(data.asset.pub.sound);
-  var blob = new Blob([ typedArray ], {type: "audio"});
+  let typedArray = new Uint8Array(data.asset.pub.sound);
+  let blob = new Blob([ typedArray ], {type: "audio"});
   objectURL = URL.createObjectURL(blob);
   ui.audioElt.src = objectURL;
 }
 
-var setupProperty = (path, value) => {
+function setupProperty(path: string, value: any) {
   switch(path) {
     case "streaming": ui.streamingSelect.value = value; break;
   }
 }
 
-var onAssetCommands = {
-  upload: setupSound,
-  setProperty: setupProperty
-};
+onAssetCommands.upload = setupSound;
+onAssetCommands.setProperty = setupProperty;
 
 // Start
-start()
+start();
