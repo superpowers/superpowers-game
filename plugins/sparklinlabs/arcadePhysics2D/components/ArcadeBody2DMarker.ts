@@ -1,8 +1,10 @@
 import ArcadeBody2D from "./ArcadeBody2D";
 let THREE = SupEngine.THREE;
 
+import ArcadeBody2DUpdater from "./ArcadeBody2DUpdater"
+
 export default class ArcadeBody2DMarker extends SupEngine.ActorComponent {
-  static Updater = require("./ArcadeBody2DUpdater");
+  static Updater = ArcadeBody2DUpdater;
 
   offset = new THREE.Vector3(0, 0, 0);
   line: THREE.Line;

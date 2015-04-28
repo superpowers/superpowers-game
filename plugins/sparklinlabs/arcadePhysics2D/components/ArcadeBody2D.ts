@@ -1,5 +1,4 @@
 let THREE = SupEngine.THREE;
-let ArcadePhysics2D = (<any>SupEngine).ArcadePhysics2D;
 
 export default class ArcadeBody2D extends SupEngine.ActorComponent {
   movable: boolean;
@@ -25,7 +24,7 @@ export default class ArcadeBody2D extends SupEngine.ActorComponent {
     super(actor, "ArcadeBody2D");
 
     this.setup(config);
-    ArcadePhysics2D.allBodies.push( this );
+    (<any>SupEngine).ArcadePhysics2D.allBodies.push( this );
   }
 
   setup(config: any) {
@@ -54,10 +53,10 @@ export default class ArcadeBody2D extends SupEngine.ActorComponent {
 
     this.previousPosition.copy(this.position);
 
-    this.velocity.x += ArcadePhysics2D.gravity.x * 1 / SupEngine.GameInstance.framesPerSecond;
+    this.velocity.x += (<any>SupEngine).ArcadePhysics2D.gravity.x * 1 / SupEngine.GameInstance.framesPerSecond;
     this.velocity.x *= 1 + this.velocityMultiplier.x / 100;
 
-    this.velocity.y += ArcadePhysics2D.gravity.y * 1 / SupEngine.GameInstance.framesPerSecond;
+    this.velocity.y += (<any>SupEngine).ArcadePhysics2D.gravity.y * 1 / SupEngine.GameInstance.framesPerSecond;
     this.velocity.y *= 1 + this.velocityMultiplier.y / 100;
     if (this.velocity.length() !== 0) {
       this.velocity.x = Math.min( Math.max( this.velocity.x, this.velocityMin.x ), this.velocityMax.x );
@@ -76,11 +75,12 @@ export default class ArcadeBody2D extends SupEngine.ActorComponent {
   refreshActorPosition() {
     this.actorPosition.x = this.position.x - this.offsetX;
     this.actorPosition.y = this.position.y - this.offsetY;
+    console.log(this.actorPosition);
     this.actor.setGlobalPosition(this.actorPosition);
   }
 
   _destroy() {
-    ArcadePhysics2D.allBodies.splice( ArcadePhysics2D.allBodies.indexOf( this ), 1 );
+    (<any>SupEngine).ArcadePhysics2D.allBodies.splice( (<any>SupEngine).ArcadePhysics2D.allBodies.indexOf( this ), 1 );
     super._destroy();
   }
 
