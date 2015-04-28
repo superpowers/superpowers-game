@@ -1,7 +1,6 @@
 import * as async from "async";
 import * as OT from "operational-transform";
 import * as ts from "typescript";
-let fuzzy = require("fuzzy");
 
 import ScriptAsset from "../../data/ScriptAsset";
 
@@ -24,6 +23,7 @@ let ui: {
 
   undoTimeout?: NodeJS.Timer,
   compileTimeout?: NodeJS.Timer,
+  completionsTimeout?: NodeJS.Timer,
   texts?: string[],
 
   undoStack?: OT.TextOperation[],
@@ -99,53 +99,10 @@ var start = () => {
   });
 
   (<any>ui.editor).on("changes", onEditText);
-
-  (<any>CodeMirror).registerHelper("hint", "javascript", (editor: CodeMirror.Editor, options: any) => {
-    let cursor = editor.getDoc().getCursor();
-    let token = editor.getTokenAt(cursor);
-
-    let start = 0;
-    for (let i = 0; i < cursor.line; i++) start += editor.getDoc().getLine(i).length + 1;
-    start += cursor.ch;
-
-    let service = createLanguageService(scriptNames, scripts, globalDefs);
-    let list: string[] = [];
-
-    if (token.string !== "" && token.string !== ";") {
-      if (token.string === ".") token.start = token.end;
-
-      let completions = service.getCompletionsAtPosition(scriptNamesById[info.assetId], start);
-      if (completions != null) {
-        let rawList: string[] = [];
-        for (let completion of completions.entries) {
-          //if (token.string === "." || (token.string !== completion.name &&  completion.name.indexOf(token.string) !== -1)) {
-          if (true) {
-            rawList.push(completion.name);
-          }
-        }
-        rawList.sort();
-        let tokenString = (token.string !== ".") ? token.string : "";
-        let results = fuzzy.filter(tokenString, rawList);
-        for (let result of results) list.push(result.original);
-      }
-    }
-
-    return { list, from: (<any>CodeMirror).Pos(cursor.line, token.start), to: (<any>CodeMirror).Pos(cursor.line, token.end) };
-    });
-
   (<any>ui.editor).on("keyup", (instance: any, event: any) => {
     // Ignore Ctrl, Cmd, Escape, Return, Tab, Arrows
     if (event.ctrlKey || event.metaKey || [27, 9, 13, 37, 38, 39, 40].indexOf(event.keyCode) !== -1) return;
-    instance.showHint({
-      completeSingle: false,
-      customKeys: {
-        "Up": (cm: any, commands: any) => { commands.moveFocus(-1); },
-        "Down": (cm: any, commands: any) => { commands.moveFocus(1); },
-        "Enter": (cm: any, commands: any) => { commands.pick(); },
-        "Tab": (cm: any, commands: any) => { commands.pick(); },
-        "Esc": (cm: any, commands: any) => { commands.close(); },
-      }
-    });
+    scheduleCompletions();
   });
 
   let nwDispatcher = (<any>window).nwDispatcher;
@@ -401,20 +358,12 @@ var applyOperation = (operation: OT.TextOperation, origin: string, moveCursor: b
 var scheduleCompilation = () => {
   if (ui.compileTimeout != null) clearTimeout(ui.compileTimeout);
   ui.compileTimeout = <any>setTimeout(() => {
-    let service = createLanguageService(scriptNames, scripts, globalDefs);
-    let errors: ts.Diagnostic[];
-    try { errors = ts.getPreEmitDiagnostics(service.getProgram()); }
-    catch (e) { refreshErrors([ { file: "", position: { line: 0, character: 1 }, length: 0, message: e.message } ]); return; }
-
-    refreshErrors(errors.map((e: any) => {
-      return {
-        file: e.file.fileName,
-        position: e.file.getLineAndCharacterOfPosition(e.start),
-        length: e.length,
-        message: e.messageText
-        }
-      }
-    ));
+    let errorsWorker = new Worker("errors.js");
+    errorsWorker.postMessage({scriptNames, scripts, globalDefs});
+    errorsWorker.onmessage = (event) => {
+      refreshErrors(event.data);
+      errorsWorker.terminate();
+    };
 
     ui.compileTimeout == null;
   }, 200);
@@ -547,6 +496,45 @@ var onEditText = (instance: CodeMirror.Editor, changes: CodeMirror.EditorChange[
     if (ui.pendingOperation != null) ui.pendingOperation = ui.pendingOperation.compose(operationToSend);
     else ui.pendingOperation = operationToSend;
   }
+}
+
+let hint = (instance: any, callback: any) => {
+  let cursor = ui.editor.getDoc().getCursor();
+  let token = ui.editor.getTokenAt(cursor);
+  if (token.string === ".") token.start = token.end;
+
+  let start = 0;
+  for (let i = 0; i < cursor.line; i++) start += ui.editor.getDoc().getLine(i).length + 1;
+  start += cursor.ch;
+
+  let completionsWorker: Worker;
+  completionsWorker = new Worker("completions.js");
+  completionsWorker.postMessage({scriptNames, scripts, globalDefs, tokenString: token.string, start, name: scriptNamesById[info.assetId]});
+  completionsWorker.onmessage = (event) => {
+    console.log(event.data);
+    callback(({ list: event.data, from: (<any>CodeMirror).Pos(cursor.line, token.start), to: (<any>CodeMirror).Pos(cursor.line, token.end) }));
+    completionsWorker.terminate();
+  };
+
+}
+(<any>hint).async = true;
+
+var scheduleCompletions = () => {
+  if (ui.completionsTimeout != null) clearTimeout(ui.completionsTimeout);
+  ui.completionsTimeout = <any>setTimeout(() => {
+    (<any>ui.editor).showHint({
+      completeSingle: false,
+      customKeys: {
+        "Up": (cm: any, commands: any) => { commands.moveFocus(-1); },
+        "Down": (cm: any, commands: any) => { commands.moveFocus(1); },
+        "Enter": (cm: any, commands: any) => { commands.pick(); },
+        "Tab": (cm: any, commands: any) => { commands.pick(); },
+        "Esc": (cm: any, commands: any) => { commands.close(); },
+      },
+      hint
+    });
+    ui.completionsTimeout == null;
+  }, 200);
 }
 
 var onUndo = () => {
