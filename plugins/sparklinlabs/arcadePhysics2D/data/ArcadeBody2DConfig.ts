@@ -1,11 +1,11 @@
-class ArcadeBody2DConfig extends SupCore.data.base.ComponentConfig {
+export default class ArcadeBody2DConfig extends SupCore.data.base.ComponentConfig {
 
   static schema = {
-    width: { type: 'number', mutable: true },
-    height: { type: 'number', mutable: true },
-    offsetX: { type: 'number', mutable: true },
-    offsetY: { type: 'number', mutable: true },
-    movable: { type: 'boolean', mutable: true },
+    width: { type: "number", mutable: true },
+    height: { type: "number", mutable: true },
+    offsetX: { type: "number", mutable: true },
+    offsetY: { type: "number", mutable: true },
+    movable: { type: "boolean", mutable: true },
   }
 
   static create() {
@@ -25,4 +25,3 @@ class ArcadeBody2DConfig extends SupCore.data.base.ComponentConfig {
     if (this.pub.offsetY == null) this.pub.offsetY = 0;
   }
 }
-export = ArcadeBody2DConfig;

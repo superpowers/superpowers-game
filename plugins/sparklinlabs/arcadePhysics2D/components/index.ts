@@ -1,9 +1,10 @@
 let THREE = SupEngine.THREE;
-import ArcadeBody2D = require("./ArcadeBody2D");
+import ArcadeBody2D from "./ArcadeBody2D";
+import ArcadeBody2DMarker from "./ArcadeBody2DMarker";
 
 module ArcadePhysics2D {
-  export var allBodies: ArcadeBody2D[] = [];
-  export var gravity = new THREE.Vector3( 0, -0.1, 0 );
+  export let allBodies: ArcadeBody2D[] = [];
+  export let gravity = new THREE.Vector3( 0, -0.1, 0 );
 
   export function intersects( body1: ArcadeBody2D, body2: ArcadeBody2D ) {
     if (body1.right() < body2.left()) return false;
@@ -65,5 +66,5 @@ SupEngine.registerEarlyUpdateFunction("ArcadePhysics2D", () => {
   for (let body of ArcadePhysics2D.allBodies) body.earlyUpdate();
 });
 
-SupEngine.registerComponentClass("ArcadeBody2D", require("./ArcadeBody2D"));
-SupEngine.registerEditorComponentClass("ArcadeBody2DMarker", require("./ArcadeBody2DMarker"));
+SupEngine.registerComponentClass("ArcadeBody2D", ArcadeBody2D);
+SupEngine.registerEditorComponentClass("ArcadeBody2DMarker", ArcadeBody2DMarker);

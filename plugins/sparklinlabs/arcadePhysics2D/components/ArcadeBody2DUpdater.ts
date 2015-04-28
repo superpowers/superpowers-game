@@ -1,8 +1,8 @@
-import ArcadeBody2DMarker = require("./ArcadeBody2DMarker");
+import ArcadeBody2DMarker from "./ArcadeBody2DMarker";
 
-class ArcadeBody2DUpdater {
+export default class ArcadeBody2DUpdater {
   bodyRenderer: ArcadeBody2DMarker;
-  config: {width: number; height: number; offsetX: number; offsetY: number}
+  config: { width: number; height: number; offsetX: number; offsetY: number };
 
   constructor(client: any, bodyRenderer: ArcadeBody2DMarker, config: {width: number; height: number; offsetX: number; offsetY: number}) {
     this.bodyRenderer = bodyRenderer;
@@ -18,4 +18,3 @@ class ArcadeBody2DUpdater {
     if (path == "offsetX" || path ==  "offsetY") this.bodyRenderer.setOffset(this.config.offsetX, this.config.offsetY);
   }
 }
-export = ArcadeBody2DUpdater;

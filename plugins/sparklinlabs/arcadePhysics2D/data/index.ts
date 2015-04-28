@@ -1,1 +1,3 @@
-SupCore.data.registerComponentConfigClass("ArcadeBody2D", require("./ArcadeBody2DConfig"));
+import ArcadeBody2DConfig from "./ArcadeBody2DConfig";
+
+SupCore.data.registerComponentConfigClass("ArcadeBody2D", ArcadeBody2DConfig);

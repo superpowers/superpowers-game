@@ -1,7 +1,7 @@
 let THREE = SupEngine.THREE;
 let ArcadePhysics2D = (<any>SupEngine).ArcadePhysics2D;
 
-class ArcadeBody2D extends SupEngine.ActorComponent {
+export default class ArcadeBody2D extends SupEngine.ActorComponent {
   movable: boolean;
   width: number;
   height: number;
@@ -91,4 +91,3 @@ class ArcadeBody2D extends SupEngine.ActorComponent {
   deltaX() { return this.position.x - this.previousPosition.x; }
   deltaY() { return this.position.y - this.previousPosition.y; }
 }
-export = ArcadeBody2D;

@@ -1,5 +1,5 @@
-class ArcadeBody2DEditor {
-  fields: {[name: string]: HTMLInputElement};
+export default class ArcadeBody2DEditor {
+  fields: { [name: string]: HTMLInputElement };
   editConfig: any;
 
   constructor(tbody: HTMLDivElement, config: any, projectClient: SupClient.ProjectClient, editConfig: any) {
@@ -43,4 +43,3 @@ class ArcadeBody2DEditor {
     else this.fields[path].value = value;
   }
 }
-export = ArcadeBody2DEditor;
