@@ -1,8 +1,5 @@
 syntax: glob
 node_modules/
 player/**.js
-player/typings/*
 SupEngine/**.js
-SupEngine/typings/*
 SupRuntime/**.js
-SupRuntime/typings/*
