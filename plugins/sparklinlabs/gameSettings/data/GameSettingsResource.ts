@@ -1,4 +1,4 @@
-class GameSettingsResource extends SupCore.data.base.Resource {
+export default class GameSettingsResource extends SupCore.data.base.Resource {
   static schema = {
     framesPerSecond: { type: "integer", mutable: true },
     ratioNumerator: { type: "integer?", mutable: true },
@@ -14,4 +14,3 @@ class GameSettingsResource extends SupCore.data.base.Resource {
     super.init(callback);
   }
 }
-export = GameSettingsResource;

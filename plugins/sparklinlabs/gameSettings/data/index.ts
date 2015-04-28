@@ -1,1 +1,3 @@
-SupCore.data.registerResource("gameSettings", require("./GameSettingsResource"));
+import GameSettingsResource from "./GameSettingsResource";
+
+SupCore.data.registerResource("gameSettings", GameSettingsResource);

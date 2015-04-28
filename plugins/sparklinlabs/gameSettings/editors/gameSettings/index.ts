@@ -1,12 +1,12 @@
-import GameSettingsResource = require("../../data/GameSettingsResource");
+import GameSettingsResource from "../../data/GameSettingsResource";
 
-var qs = require("querystring").parse(window.location.search.slice(1));
-var info = { projectId: qs.project, assetId: qs.asset };
-var data: {projectClient?: SupClient.ProjectClient; resource?: GameSettingsResource};
-var ui: {[key: string]: HTMLInputElement} = {};
-var socket: SocketIOClient.Socket;
+let qs = require("querystring").parse(window.location.search.slice(1));
+let info = { projectId: qs.project, assetId: qs.asset };
+let data: {projectClient?: SupClient.ProjectClient; resource?: GameSettingsResource};
+let ui: {[key: string]: HTMLInputElement} = {};
+let socket: SocketIOClient.Socket;
 
-var start = () => {
+function start() {
   socket = SupClient.connect(info.projectId);
   socket.on("connect", onConnected);
   socket.on("disconnect", SupClient.onDisconnected);
@@ -27,22 +27,22 @@ var start = () => {
 }
 
 // Network callbacks
-var onConnected = () => {
-  data = {};
-  data.projectClient = new SupClient.ProjectClient(socket);
-  data.projectClient.subResource("gameSettings", resourceSubscriver)
-}
-
-var resourceSubscriver = {
+let resourceSubscriber = {
   onResourceReceived: (resourceId: string, resource: any) => {
     data.resource = resource;
-    for (var setting in resource.pub) {
+    for (let setting in resource.pub) {
       ui[`${setting}`].value = resource.pub[setting];
     }
   },
   onResourceEdited: (resourceId: string, command: string, propertyName: string) => {
     ui[`${propertyName}`].value = data.resource.pub[propertyName];
   }
+}
+
+function onConnected() {
+  data = {};
+  data.projectClient = new SupClient.ProjectClient(socket);
+  data.projectClient.subResource("gameSettings", resourceSubscriber);
 }
 
 start();
