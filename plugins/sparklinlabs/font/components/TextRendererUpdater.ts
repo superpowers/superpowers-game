@@ -81,7 +81,7 @@ export default class TextRendererUpdater {
     this.textRenderer.setText(this.text);
     this.textRenderer.setOptions(this.options);
     if (this.font == null && asset.pub.font.byteLength !== 0) this._loadFont();
-    else if (this.font != null) this.textRenderer.setFont(asset.pub);
+    else this.textRenderer.setFont(asset.pub);
 
     if (this.receiveAssetCallbacks != null) this.receiveAssetCallbacks.font(null);
   }
