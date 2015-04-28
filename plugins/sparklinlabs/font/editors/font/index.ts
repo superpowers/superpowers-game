@@ -40,12 +40,15 @@ var start = () => {
     var settingObj: any = ui.settings[setting] = document.querySelector(`.property-${setting}`);
     settingObj.dataset.name = setting;
 
-    if (setting === "isBitmap" || setting === "filtering" || setting === "color") {
+    if (setting === "filtering" || setting === "color") {
       settingObj.addEventListener("change", (event: any) => {
         socket.emit("edit:assets", info.assetId, "setProperty", event.target.dataset.name, event.target.value, (err: string) => { if (err != null) alert(err); });
       });
-    }
-    else {
+    } else if (setting === "isBitmap") {
+      settingObj.addEventListener("change", (event: any) => {
+        socket.emit("edit:assets", info.assetId, "setProperty", event.target.dataset.name, event.target.checked, (err: string) => { if (err != null) alert(err); });
+      });
+    } else {
       settingObj.addEventListener("change", (event: any) => {
         socket.emit("edit:assets", info.assetId, "setProperty", event.target.dataset.name, parseInt(event.target.value), (err: string) => { if (err != null) alert(err); });
       });
@@ -71,11 +74,19 @@ var onConnected = () => {
 
 var onAssetReceived = () => {
   ui.allSettings.forEach((setting: string) => {
-    ui.settings[setting].value = data.textUpdater.fontAsset.pub[setting];
+    if(setting === "isBitmap") {
+      ui.settings[setting].checked = data.textUpdater.fontAsset.pub[setting];
+    } else {
+      ui.settings[setting].value = data.textUpdater.fontAsset.pub[setting];
+    }
   });
 }
 onEditCommands.setProperty = (path: string, value: any) => {
-  ui.settings[path].value = value;
+  if(path == "isBitmap") {
+    ui.settings[path].checked = value;
+  } else {
+    ui.settings[path].value = value;
+  }
 }
 
 // User interface
