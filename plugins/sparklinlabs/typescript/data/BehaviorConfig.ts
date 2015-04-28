@@ -1,6 +1,6 @@
 interface Pub {
   behaviorName: string;
-  propertyValues: {[name: string]: {type: string; value: any}}
+  propertyValues: { [name: string]: { type: string; value: any } };
 }
 
 export default class BehaviorConfig extends SupCore.data.base.ComponentConfig {

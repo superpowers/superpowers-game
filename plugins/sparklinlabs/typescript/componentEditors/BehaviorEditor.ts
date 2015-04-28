@@ -4,7 +4,7 @@ let behaviorEditorDataListIndex = 0;
 
 interface Config {
   behaviorName: string;
-  propertyValues: {[name: string]: {value: any, type: string};}
+  propertyValues: { [name: string]: { value: any, type: string }; }
 }
 
 export default class BehaviorEditor {
@@ -206,10 +206,10 @@ export default class BehaviorEditor {
     let propertyValue: any;
 
     switch (propertyType) {
-      case "boolean": { propertyValue = event.target.checked; break }
+      case "boolean": { propertyValue = event.target.checked; break; }
       case "number": { propertyValue = parseFloat(event.target.value); break }
       case "string": { propertyValue = event.target.value; break }
-      default: { console.error `Unsupported property type: ${propertyType}`; break }
+      default: { console.error(`Unsupported property type: ${propertyType}`); break }
     }
 
     this.editConfig("setBehaviorPropertyValue", propertyName, propertyType, propertyValue, (err: string) => {

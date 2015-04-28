@@ -1,4 +1,4 @@
-import * as async from "async"
+import * as async from "async";
 SupClient.setupHotkeys();
 
 async.each(SupClient.pluginPaths.all, (pluginName, pluginCallback) => {
@@ -16,12 +16,12 @@ async.each(SupClient.pluginPaths.all, (pluginName, pluginCallback) => {
   let navListElt = document.querySelector("nav ul");
   let mainElt = document.querySelector("main");
 
-  let allDefs: {[pluginName: string]: string} = {};
+  let allDefs: { [pluginName: string]: string } = {};
 
   let actorComponentAccessors: string[] = [];
   for (let pluginName in SupAPI.contexts["typescript"].plugins) {
     let plugin = SupAPI.contexts["typescript"].plugins[pluginName];
-    name = pluginName
+    name = pluginName;
 
     if (plugin.exposeActorComponent != null) {
       name = plugin.exposeActorComponent.className;
@@ -40,48 +40,48 @@ async.each(SupClient.pluginPaths.all, (pluginName, pluginCallback) => {
     let defs = allDefs[name];
     if (name === "lib") name = "Built-ins";
 
-    let liElt = document.createElement("li")
-    let anchorElt = document.createElement("a")
-    anchorElt.id = `link-${name}`
-    anchorElt.href = `#${name}`
-    anchorElt.textContent = name
+    let liElt = document.createElement("li");
+    let anchorElt = document.createElement("a");
+    anchorElt.id = `link-${name}`;
+    anchorElt.href = `#${name}`;
+    anchorElt.textContent = name;
     liElt.appendChild(anchorElt);
     navListElt.appendChild(liElt);
 
-    let sectionElt = document.createElement("section")
-    sectionElt.id = `doc-${name}`
+    let sectionElt = document.createElement("section");
+    sectionElt.id = `doc-${name}`;
     mainElt.appendChild(sectionElt);
 
-    let headerElt = document.createElement("header")
-    headerElt.textContent = name
+    let headerElt = document.createElement("header");
+    headerElt.textContent = name;
     sectionElt.appendChild(headerElt);
 
-    let preElt = document.createElement("pre")
-    preElt.textContent = defs
+    let preElt = document.createElement("pre");
+    preElt.textContent = defs;
     sectionElt.appendChild(preElt);
   }
 
   navListElt.addEventListener("click", (event: any) => {
     if (event.target.tagName !== "A") return;
 
-    (<any>navListElt.querySelector("li a.active")).classList.remove("active");
-    (<any>mainElt.querySelector("section.active")).classList.remove("active");
+    (<HTMLAnchorElement>navListElt.querySelector("li a.active")).classList.remove("active");
+    (<HTMLElement>mainElt.querySelector("section.active")).classList.remove("active");
     event.target.classList.add("active");
     document.getElementById(`doc-${event.target.textContent}`).classList.add("active");
   });
 
   if (window.location.hash.length > 1) {
     let hash = window.location.hash.substring(1);
-    let sectionElt = document.getElementById(`doc-${hash}`)
+    let sectionElt = document.getElementById(`doc-${hash}`);
     if (sectionElt != null) {
-      sectionElt.classList.add("active")
+      sectionElt.classList.add("active");
       document.getElementById(`link-${hash}`).classList.add("active");
       return;
     }
 
-    window.location.hash = ""
+    window.location.hash = "";
   }
 
-  (<any>navListElt.querySelector("li a")).classList.add("active");
-  (<any>mainElt.querySelector("section")).classList.add("active");
+  (<HTMLAnchorElement>navListElt.querySelector("li a")).classList.add("active");
+  (<HTMLElement>mainElt.querySelector("section")).classList.add("active");
 });

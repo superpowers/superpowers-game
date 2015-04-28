@@ -22,7 +22,7 @@ if (global.window == null) {
   let actorComponentAccessors: string[] = [];
   for (let pluginName in SupAPI.contexts["typescript"].plugins) {
     let plugin = SupAPI.contexts["typescript"].plugins[pluginName];
-    if (plugin.defs != null) globalDefs += plugin.defs
+    if (plugin.defs != null) globalDefs += plugin.defs;
     if (plugin.exposeActorComponent != null) actorComponentAccessors.push(`${plugin.exposeActorComponent.propertyName}: ${plugin.exposeActorComponent.className};`);
   }
 
@@ -220,7 +220,7 @@ export default class ScriptAsset extends SupCore.data.base.Asset {
         "Sup.Asset": libSourceFile.locals.Sup.exports.Asset,
       };
 
-      let supTypeSymbolsList: any[] = []
+      let supTypeSymbolsList: any[] = [];
       for (let value in supTypeSymbols) supTypeSymbolsList.push(value);
 
       let behaviors: {[behaviorName: string]: Array<{ name: string, type: string }>} = {};
@@ -258,7 +258,7 @@ export default class ScriptAsset extends SupCore.data.base.Asset {
 
           let type = results.typeChecker.getTypeAtLocation(member.valueDeclaration);
           let typeName: any; // "unknown"
-          let typeSymbol = type.getSymbol()
+          let typeSymbol = type.getSymbol();
           if (typeSymbol in supTypeSymbolsList) {
             // TODO: Get full name
             // Until then, we only support intrinsic types
