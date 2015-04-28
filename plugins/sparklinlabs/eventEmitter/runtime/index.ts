@@ -1,1 +1,3 @@
-(<any>window)["EventEmitter"] = require('events').EventEmitter;
+import { EventEmitter } from "events";
+
+(<any>window)["EventEmitter"] = EventEmitter;
