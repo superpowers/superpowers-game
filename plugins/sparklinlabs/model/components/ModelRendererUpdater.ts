@@ -37,6 +37,12 @@ export default class ModelRendererUpdater {
     }
   }
 
+  destroy() {
+    if (this.modelAssetId != null) {
+      this.client.unsubAsset(this.modelAssetId, this.modelSubscriber);
+    }
+  }
+
   _onModelAssetReceived(assetId: string, asset: ModelAsset) {
     this.modelAsset = asset;
     this._prepareMaps(() => {

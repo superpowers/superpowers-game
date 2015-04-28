@@ -44,6 +44,10 @@ class TextRendererUpdater {
     if (this.fontAssetId != null) this.client.subAsset(this.fontAssetId, "font", this.fontSubscriber);
   }
 
+  destroy() {
+    if (this.fontAssetId != null) this.client.unsubAsset(this.fontAssetId, this.fontSubscriber);
+  }
+
   config_setProperty(path: string, value: any) {
     switch (path) {
       case "fontAssetId": {

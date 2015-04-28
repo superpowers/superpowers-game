@@ -174,8 +174,21 @@ onAssetCommands.removeNode = (id) ->
   ui.nodesTreeView.remove nodeElt
   if isInspected then onNodeSelect()
 
-  ui.gameInstance.destroyActor ui.bySceneNodeId[id].actor
-  delete ui.bySceneNodeId[id]
+  actorToBeDestroyed = ui.bySceneNodeId[id].actor
+  recurseClearActorUIs id
+  ui.gameInstance.destroyActor actorToBeDestroyed
+  return
+
+recurseClearActorUIs = (nodeId) ->
+  actor = ui.bySceneNodeId[nodeId].actor
+  
+  for childActor in actor.children
+  	if childActor.sceneNodeId? then recurseClearActorUIs(childActor.sceneNodeId)
+
+  for componentId, componentUIStuff of ui.bySceneNodeId[nodeId].bySceneComponentId
+    componentUIStuff.componentUpdater.destroy()
+
+  delete ui.bySceneNodeId[nodeId]
   return
 
 onAssetCommands.addComponent = (nodeId, nodeComponent, index) ->
@@ -210,6 +223,8 @@ onAssetCommands.removeComponent = (nodeId, componentId) ->
     componentElt.parentElement.removeChild componentElt
 
   ui.gameInstance.destroyComponent ui.bySceneNodeId[nodeId].bySceneComponentId[componentId].component
+
+  ui.bySceneNodeId[nodeId].bySceneComponentId[componentId].componentUpdater.destroy()
   delete ui.bySceneNodeId[nodeId].bySceneComponentId[componentId]
   return
 
@@ -474,6 +489,7 @@ createNodeActor = (node) ->
   nodeActor.threeObject.quaternion.copy node.orientation
   nodeActor.threeObject.scale.copy node.scale
   nodeActor.threeObject.updateMatrixWorld()
+  nodeActor.sceneNodeId = node.id
   new TransformMarker nodeActor
 
   ui.bySceneNodeId[node.id] = { actor: nodeActor, bySceneComponentId: {} }

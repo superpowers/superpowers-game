@@ -225,13 +225,13 @@ function updateSelectedAnimation() {
   if (selectedAnimElt != null) ui.selectedAnimationId = selectedAnimElt.dataset.id;
   else ui.selectedAnimationId = null;
 
-  data.modelUpdater.config_setProperty("animationId", ui.selectedAnimationId);
-
   let buttons = document.querySelectorAll(".animations-buttons button");
   for (let i = 0; i < buttons.length; i++) {
     let button = <HTMLButtonElement>buttons[i];
     button.disabled = ui.selectedAnimationId == null && button.className !== "new-animation";
   }
+  
+  data.modelUpdater.config_setProperty("animationId", ui.selectedAnimationId);
 }
 
 function setupAnimation(animation: any, index: number) {

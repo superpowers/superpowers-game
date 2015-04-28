@@ -34,6 +34,10 @@ export default class SpriteRendererUpdater {
     if (this.spriteAssetId != null) this.client.subAsset(this.spriteAssetId, "sprite", this.spriteSubscriber);
   }
 
+  destroy() {
+    if (this.spriteAssetId != null) this.client.unsubAsset(this.spriteAssetId, this.spriteSubscriber);
+  }
+
   _onSpriteAssetReceived(assetId: string, asset: any) {
     this.spriteAsset = asset;
 
