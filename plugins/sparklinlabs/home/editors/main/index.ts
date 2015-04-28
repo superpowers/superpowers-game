@@ -1,4 +1,4 @@
-require("./links");
+import "./links";
 
 let qs = require("querystring").parse(window.location.search.slice(1));
 let info = { projectId: qs.project };
@@ -6,7 +6,7 @@ let data: {room?: SupCore.data.Room;};
 let ui: {chatHistoryContainer: HTMLDivElement; chatHistory: HTMLOListElement; roomUsers: HTMLUListElement;};
 let socket: SocketIOClient.Socket;
 
-let start = () => {
+function start() {
   socket = SupClient.connect(info.projectId);
   socket.on("connect", onConnected);
   socket.on("disconnect", SupClient.onDisconnected);
@@ -23,14 +23,14 @@ let start = () => {
   };
 };
 
-var onConnected = () => {
+function onConnected() {
   data = {};
   // FIXME Add support in ProjectClient?
   socket.emit("sub", "rooms", "home", onRoomReceived);
   socket.on("edit:rooms", onRoomEdited);
 };
 
-var onRoomReceived = (err: string, room: any) => {
+function onRoomReceived(err: string, room: any) {
   data.room = new SupCore.data.Room(room);
 
   for (let roomUser of data.room.pub.users) appendRoomUser(roomUser);
@@ -40,16 +40,16 @@ var onRoomReceived = (err: string, room: any) => {
 };
 
 let onRoomCommands: any = {};
-var onRoomEdited = (id: string, command: string, ...args: any[]) => {
+function onRoomEdited(id: string, command: string, ...args: any[]) {
   (<any>data.room).__proto__[`client_${command}`].apply(data.room, args);
   if (onRoomCommands[command] != null) onRoomCommands[command].apply(data.room, args);
 };
 
-var scrollToBottom = () => {
+function scrollToBottom() {
   setTimeout( () => { ui.chatHistoryContainer.scrollTop = ui.chatHistoryContainer.scrollHeight; }, 0);
 };
 
-var appendDaySeparator = (date: Date) => {
+let appendDaySeparator = (date: Date) => {
   let separatorElt = document.createElement("li");
   separatorElt.className = "day-separator";
 
@@ -72,7 +72,7 @@ interface Entry {
   timestamp: number;
 }
 
-var appendHistoryEntry = (entry: Entry) => {
+function appendHistoryEntry(entry: Entry) {
   let date = new Date(entry.timestamp);
   let day = date.toDateString();
   if (previousDay != day) {
@@ -107,7 +107,7 @@ onRoomCommands.appendMessage = (entry: Entry) => {
   scrollToBottom();
 };
 
-var appendRoomUser = (roomUser: {id: string, connectionCount: number;}) => {
+function appendRoomUser(roomUser: {id: string, connectionCount: number;}) {
   let roomUserElt = document.createElement("li");
   (<any>roomUserElt.dataset).userId = roomUser.id;
   roomUserElt.textContent = roomUser.id;
@@ -125,7 +125,7 @@ onRoomCommands.leave = (roomUserId: string) => {
   }
 };
 
-var onChatInputKeyDown = (event: any) => {
+function onChatInputKeyDown(event: any) {
   if (event.keyCode != 13 || event.shiftKey) return;
   event.preventDefault();
   if (! socket.connected) return;
