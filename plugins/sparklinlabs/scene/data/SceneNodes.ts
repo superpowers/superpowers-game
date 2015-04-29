@@ -1,4 +1,4 @@
-import { SceneComponents, Component } from "./SceneComponents";
+import SceneComponents, { Component } from "./SceneComponents";
 
 export interface Node extends SupCore.data.base.TreeNode {
   children: Node[];
@@ -9,7 +9,7 @@ export interface Node extends SupCore.data.base.TreeNode {
   scale: { x: number; y: number; z: number };
 }
 
-export class SceneNodes extends SupCore.data.base.TreeById {
+export default class SceneNodes extends SupCore.data.base.TreeById {
 
   static schema = {
     name: { type: "string", minLength: 1, maxLength: 80, mutable: true },

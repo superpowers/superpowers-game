@@ -1,4 +1,4 @@
-import { SceneAsset } from "./SceneAsset";
+import SceneAsset from "./SceneAsset";
 import CameraConfig from "./CameraConfig";
 
 SupCore.data.registerAssetClass("scene", SceneAsset);

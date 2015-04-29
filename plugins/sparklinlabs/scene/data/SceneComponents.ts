@@ -4,7 +4,7 @@ export interface Component {
   config: any;
 }
 
-export class SceneComponents extends SupCore.data.base.ListById {
+export default class SceneComponents extends SupCore.data.base.ListById {
 
   static schema = {
     type: { type: "string" },

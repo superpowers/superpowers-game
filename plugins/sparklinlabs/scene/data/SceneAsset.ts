@@ -7,7 +7,7 @@ import * as fs from "fs";
 import * as _ from "lodash";
 
 import { Component } from "./SceneComponents";
-import { SceneNodes, Node } from "./SceneNodes";
+import SceneNodes, { Node } from "./SceneNodes";
 
 export interface DuplicatedNode {
   node: Node;
@@ -15,7 +15,7 @@ export interface DuplicatedNode {
   index: number;
 }
 
-export class SceneAsset extends SupCore.data.base.Asset {
+export default class SceneAsset extends SupCore.data.base.Asset {
 
   static schema = {
     nodes: { type: "array" },
