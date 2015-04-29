@@ -511,7 +511,6 @@ let hint = (instance: any, callback: any) => {
   completionsWorker = new Worker("completions.js");
   completionsWorker.postMessage({scriptNames, scripts, globalDefs, tokenString: token.string, start, name: scriptNamesById[info.assetId]});
   completionsWorker.onmessage = (event) => {
-    console.log(event.data);
     callback(({ list: event.data, from: (<any>CodeMirror).Pos(cursor.line, token.start), to: (<any>CodeMirror).Pos(cursor.line, token.end) }));
     completionsWorker.terminate();
   };
