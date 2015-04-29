@@ -87,9 +87,9 @@ export default class ScriptAsset extends SupCore.data.base.Asset {
       revisionId: 0
     }
 
-    this.serverData.resources.acquire("behaviorProperties", null, (err: string, behaviorProperties: BehaviorPropertiesResource) => {
+    this.serverData.resources.acquire("behaviorProperties", null, (err: Error, behaviorProperties: BehaviorPropertiesResource) => {
       if (behaviorProperties.pub.behaviors[behaviorName] == null) {
-        let behaviors: {[behaviorName: string]: Array<{name: string; type: string}>} = {};
+        let behaviors: { [behaviorName: string]: Array<{name: string; type: string}> } = {};
         behaviors[behaviorName] = [];
         behaviorProperties.setScriptBehaviors(this.id, behaviors);
       }
@@ -111,7 +111,7 @@ export default class ScriptAsset extends SupCore.data.base.Asset {
   }
 
   destroy(callback: Function) {
-    this.serverData.resources.acquire("behaviorProperties", null, (err: string, behaviorProperties: BehaviorPropertiesResource) => {
+    this.serverData.resources.acquire("behaviorProperties", null, (err: Error, behaviorProperties: BehaviorPropertiesResource) => {
       behaviorProperties.clearScriptBehaviors(this.id);
       this.serverData.resources.release("behaviorProperties", null);
       callback();
@@ -269,7 +269,7 @@ export default class ScriptAsset extends SupCore.data.base.Asset {
           if (typeName != null) properties.push({ name: memberName, type: typeName });
         }
       }
-      this.serverData.resources.acquire("behaviorProperties", null, (err: string, behaviorProperties: BehaviorPropertiesResource) => {
+      this.serverData.resources.acquire("behaviorProperties", null, (err: Error, behaviorProperties: BehaviorPropertiesResource) => {
         behaviorProperties.setScriptBehaviors(this.id, behaviors);
         this.serverData.resources.release("behaviorProperties", null);
         finish([]);
@@ -288,11 +288,11 @@ export default class ScriptAsset extends SupCore.data.base.Asset {
       let name = `${this.serverData.entries.getPathFromId(entry.id)}.ts`;
       scriptNames.push(name);
       assetsLoading++;
-      this.serverData.assets.acquire(entry.id, null, (err: string, asset: ScriptAsset) => {
+      this.serverData.assets.acquire(entry.id, null, (err: Error, asset: ScriptAsset) => {
         scripts[name] = asset.pub.text;
         if (asset == this) ownScriptName = name;
 
-        this.serverData.assets.release(entry.id);
+        this.serverData.assets.release(entry.id, null);
         assetsLoading--;
 
         if (remainingAssetsToLoad == 0 && assetsLoading == 0) compile();
