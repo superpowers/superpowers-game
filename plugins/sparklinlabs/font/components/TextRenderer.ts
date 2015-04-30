@@ -1,6 +1,8 @@
 let THREE = SupEngine.THREE;
 
 import TextRendererUpdater from "./TextRendererUpdater";
+import TextRendererGeometry from "./TextRendererGeometry";
+import { FontPub } from "../data/FontAsset";
 
 export default class TextRenderer extends SupEngine.ActorComponent {
   static Updater = TextRendererUpdater;
@@ -9,7 +11,7 @@ export default class TextRenderer extends SupEngine.ActorComponent {
   threeMesh: THREE.Mesh;
 
   text: string;
-  font: any;
+  font: FontPub;
   options: {alignment: string; size?: number; color?: string;};
 
   constructor(actor: SupEngine.Actor) {
@@ -20,7 +22,7 @@ export default class TextRenderer extends SupEngine.ActorComponent {
     this.text = text;
     this._createMesh();
   }
-  setFont(font: any ) {
+  setFont(font: FontPub ) {
     this.font = font;
     this._createMesh();
   }
@@ -34,10 +36,20 @@ export default class TextRenderer extends SupEngine.ActorComponent {
     if (this.threeMesh != null) this.clearMesh();
     if (this.text == null || this.font == null) return;
 
+    if (this.font.isBitmap) this._createBitmapMesh();
+    else this._createFontMesh();
+
+    this.actor.threeObject.add(this.threeMesh);
+    let scale = 1 / this.font.pixelsPerUnit;
+    this.threeMesh.scale.set(scale, scale, scale);
+    this.threeMesh.updateMatrixWorld(false);
+  }
+
+  _createFontMesh() {
     let fontSize = (this.options.size != null) ? this.options.size : this.font.size;
 
     let canvas = document.createElement("canvas");
-    let ctx = canvas.getContext("2d");
+    let ctx = <CanvasRenderingContext2D>canvas.getContext("2d");
     ctx.font = `${fontSize}px ${this.font.name}`;
     let width = Math.max(1, ctx.measureText(this.text).width);
     let height = fontSize * 2;
@@ -67,25 +79,69 @@ export default class TextRenderer extends SupEngine.ActorComponent {
     });
 
     this.threeMesh = new THREE.Mesh(geometry, material);
-    this.actor.threeObject.add(this.threeMesh);
-    let scale = 1 / this.font.pixelsPerUnit;
-    this.threeMesh.scale.set(scale, scale, scale);
-
     switch (this.options.alignment) {
-      case "left": this.threeMesh.position.setX(width / 2 * scale); break;
-      case "right": this.threeMesh.position.setX(-width / 2 * scale); break;
+      case "left":  this.threeMesh.position.setX( (<any>this.threeMesh.geometry).width / 2 / this.font.pixelsPerUnit); break;
+      case "right": this.threeMesh.position.setX(-(<any>this.threeMesh.geometry).width / 2 / this.font.pixelsPerUnit); break;
     }
-    this.threeMesh.updateMatrixWorld(false);
+  }
+
+  _createBitmapMesh() {
+    let geometry = new TextRendererGeometry(this.font.gridWidth * this.text.length, this.font.gridHeight, this.text.length, 1);
+    let material = new THREE.MeshBasicMaterial({
+      map: this.font.texture,
+      alphaTest: 0.1,
+      side: THREE.DoubleSide,
+    });
+    this.threeMesh = new THREE.Mesh(geometry, material);
+    switch (this.options.alignment) {
+      case "center":  this.threeMesh.position.setX(-geometry.width / 2 / this.font.pixelsPerUnit); break;
+      case "right":   this.threeMesh.position.setX(-geometry.width / this.font.pixelsPerUnit); break;
+    }
+
+    let uvs = geometry.getAttribute("uv");
+    uvs.needsUpdate = true;
+
+    let charsByRow = this.font.texture.image.width / this.font.gridWidth;
+    let y = 0;
+    for (let x = 0; x < this.text.length; x++) {
+      let index: number;
+      if (this.font.charset == null) index = this.text.charCodeAt(x) - this.font.charsetOffset;
+      else index = this.font.charset.indexOf(this.text[x]);
+
+      let tileX = index % charsByRow;
+      let tileY = Math.floor(index / charsByRow);
+
+      let left   = ((tileX)     * this.font.gridWidth + 0.2) / this.font.texture.image.width;
+      let right  = ((tileX + 1) * this.font.gridWidth - 0.2) / this.font.texture.image.width;
+      let bottom = 1 - ((tileY+1) * this.font.gridHeight - 0.2) / this.font.texture.image.height;
+      let top    = 1 - (tileY     * this.font.gridHeight + 0.2) / this.font.texture.image.height;
+
+      let quadIndex = (x + y * this.text.length);
+      uvs.array[quadIndex * 8 + 0] = left
+      uvs.array[quadIndex * 8 + 1] = bottom
+
+      uvs.array[quadIndex * 8 + 2] = right
+      uvs.array[quadIndex * 8 + 3] = bottom
+
+      uvs.array[quadIndex * 8 + 4] = right
+      uvs.array[quadIndex * 8 + 5] = top
+
+      uvs.array[quadIndex * 8 + 6] = left
+      uvs.array[quadIndex * 8 + 7] = top
+    }
   }
 
   clearMesh() {
     if (this.threeMesh == null) return;
+
     this.actor.threeObject.remove(this.threeMesh);
     this.threeMesh.geometry.dispose();
     this.threeMesh.material.dispose();
     this.threeMesh = null;
-    this.texture.dispose();
-    this.texture = null;
+    if (this.texture != null) {
+      this.texture.dispose();
+      this.texture = null;
+    }
   }
 
   _destroy() {

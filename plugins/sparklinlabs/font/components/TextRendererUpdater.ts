@@ -25,6 +25,7 @@ export default class TextRendererUpdater {
   fontAsset: FontAsset;
   url: string;
   font: any;
+  texture: THREE.Texture;
 
   constructor(client: SupClient.ProjectClient, textRenderer: TextRenderer, config: any, receiveAssetCallbacks?: any, editAssetCallbacks?: any) {
     this.client = client;
@@ -75,13 +76,12 @@ export default class TextRendererUpdater {
     }
   }
 
-  _onFontAssetReceived = (assetId: string, asset: any) => {
+  _onFontAssetReceived = (assetId: string, asset: FontAsset) => {
     this.fontAsset = asset;
 
     this.textRenderer.setText(this.text);
     this.textRenderer.setOptions(this.options);
-    if (this.font == null && asset.pub.font.byteLength !== 0) this._loadFont();
-    else this.textRenderer.setFont(asset.pub);
+    this._setupFont();
 
     if (this.receiveAssetCallbacks != null) this.receiveAssetCallbacks.font(null);
   }
@@ -96,11 +96,28 @@ export default class TextRendererUpdater {
     }
   }
 
+  _setupFont() {
+    this.textRenderer.clearMesh();
+
+    if (this.fontAsset.pub.isBitmap) {
+      if ((<any>this.fontAsset.pub.bitmap).byteLength !== 0) {
+        if (this.fontAsset.pub.texture == null) this._loadBitmapFont();
+        else this.textRenderer.setFont(this.fontAsset.pub);
+      }
+
+    } else {
+      console.log(this.fontAsset.pub);
+      console.log((<any>this.fontAsset.pub.font).byteLength);
+      if (this.font == null && (<any>this.fontAsset.pub.font).byteLength !== 0) this._loadFont();
+      else this.textRenderer.setFont(this.fontAsset.pub);
+    }
+  }
+
   _loadFont() {
     if (this.url != null) URL.revokeObjectURL(this.url);
     if (this.font != null) delete this.font;
 
-    let typedArray = new Uint8Array(this.fontAsset.pub.font);
+    let typedArray = new Uint8Array(<any>this.fontAsset.pub.font);
     let blob = new Blob([ typedArray ], { type: "font/*" });
     this.url = URL.createObjectURL(blob);
     this.fontAsset.pub.name = `Font${this.fontAssetId}`;
@@ -109,12 +126,52 @@ export default class TextRendererUpdater {
     this.font.load().then(() => { this.textRenderer.setFont(this.fontAsset.pub) });
   }
 
+  _loadBitmapFont() {
+    let image = (this.fontAsset.pub.texture != null) ? this.fontAsset.pub.texture.bitmap : null;
+    if (image == null) {
+      if (this.url != null) URL.revokeObjectURL(this.url);
+
+      image = new Image();
+      let typedArray = new Uint8Array(<any>this.fontAsset.pub.bitmap);
+      let blob = new Blob([ typedArray ], { type: "image/*" });
+      this.url = URL.createObjectURL(blob);
+      image.src = this.url;
+
+      this.fontAsset.pub.texture = new THREE.Texture(image);
+      this._setupFiltering();
+    }
+
+    if (! image.complete) {
+      let onImageLoaded = () => {
+        image.removeEventListener("load", onImageLoaded);
+        this.fontAsset.pub.texture.needsUpdate = true
+        this.textRenderer.setFont(this.fontAsset.pub);
+      };
+
+      image.addEventListener("load", onImageLoaded);
+    }
+  }
+
+  _setupFiltering() {
+    if (this.fontAsset.pub.filtering === "pixelated") {
+      this.fontAsset.pub.texture.magFilter = THREE.NearestFilter;
+      this.fontAsset.pub.texture.minFilter = THREE.NearestFilter;
+    } else {
+      this.fontAsset.pub.texture.magFilter = THREE.LinearFilter;
+      this.fontAsset.pub.texture.minFilter = THREE.LinearFilter;
+    }
+    this.fontAsset.pub.texture.needsUpdate = true;
+  }
+
   _onEditCommand_upload() {
-    this._loadFont();
+    if (this.fontAsset.pub.isBitmap) this._loadBitmapFont();
+    else this._loadFont();
   }
 
   _onEditCommand_setProperty(path: string) {
-    this.textRenderer.setFont(this.fontAsset.pub);
+    if (path === "isBitmap") this._setupFont();
+    else if (path === "filtering" && this.fontAsset.pub.isBitmap) this._setupFiltering();
+    else this.textRenderer.setFont(this.fontAsset.pub);
   }
 
   _onFontAssetTrashed = () => {

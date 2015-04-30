@@ -36,6 +36,7 @@ html
           td
             input(type="number").property-pixelsPerUnit
 
+      table.font
         tr
           th Size (pixels)
           td
@@ -45,6 +46,27 @@ html
           th Color
           td
             input.property-color
+
+      table.bitmap
+        tr
+          th Grid Width
+          td
+            input(type="number").property-gridWidth
+
+        tr
+          th Grid Height
+          td
+            input(type="number").property-gridHeight
+
+        tr
+          th Charset
+          td
+            input.property-charset
+
+        tr
+          th Charset Offset
+          td
+            input(type="number").property-charsetOffset
 
     script(src="/core/SupCore.js")
     script(src="../../data.js")

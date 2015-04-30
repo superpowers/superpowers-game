@@ -34,7 +34,7 @@ function start() {
   fileSelect.addEventListener("change", onFileSelectChange);
   document.querySelector("button.upload").addEventListener("click", () => { fileSelect.click(); });
 
-  ui.allSettings = ["isBitmap", "filtering", "pixelsPerUnit", "size", "color"]
+  ui.allSettings = ["isBitmap", "filtering", "pixelsPerUnit", "size", "color", "gridWidth", "gridHeight", "charset", "charsetOffset"];
   ui.settings = {};
   ui.allSettings.forEach((setting: string) => {
     let settingObj: any = ui.settings[setting] = document.querySelector(`.property-${setting}`);
@@ -44,8 +44,13 @@ function start() {
       settingObj.addEventListener("change", (event: any) => {
         socket.emit("edit:assets", info.assetId, "setProperty", event.target.dataset.name, event.target.value, (err: string) => { if (err != null) alert(err); });
       });
-    } else if (setting === "isBitmap") {
+    } else if (setting === "charset") {
       settingObj.addEventListener("change", (event: any) => {
+        let charset = (event.target.value != "") ? event.target.value : null;
+        socket.emit("edit:assets", info.assetId, "setProperty", event.target.dataset.name, charset, (err: string) => { if (err != null) alert(err); });
+      });
+    } else if (setting === "isBitmap") {
+      settingObj.addEventListener("click", (event: any) => {
         socket.emit("edit:assets", info.assetId, "setProperty", event.target.dataset.name, event.target.checked, (err: string) => { if (err != null) alert(err); });
       });
     } else {
@@ -54,6 +59,9 @@ function start() {
       });
     }
   });
+
+  ui.fontTable = document.querySelector("table.font");
+  ui.bitmapTable = document.querySelector("table.bitmap");
 
   requestAnimationFrame(draw);
 }
@@ -75,17 +83,30 @@ function onConnected() {
 function onAssetReceived() {
   ui.allSettings.forEach((setting: string) => {
     if(setting === "isBitmap") {
-      ui.settings[setting].checked = data.textUpdater.fontAsset.pub[setting];
+      ui.settings[setting].checked = data.textUpdater.fontAsset.pub.isBitmap;
+      refreshTables();
     } else {
-      ui.settings[setting].value = data.textUpdater.fontAsset.pub[setting];
+      ui.settings[setting].value = (<any>data.textUpdater.fontAsset.pub)[setting];
     }
   });
 }
 onEditCommands.setProperty = (path: string, value: any) => {
   if(path == "isBitmap") {
     ui.settings[path].checked = value;
+    refreshTables();
   } else {
     ui.settings[path].value = value;
+  }
+}
+
+function refreshTables() {
+  if (data.textUpdater.fontAsset.pub.isBitmap) {
+    ui.fontTable.style.display = "none";
+    ui.bitmapTable.style.display = "";
+  }
+  else {
+    ui.bitmapTable.style.display = "none";
+    ui.fontTable.style.display = "";
   }
 }
 

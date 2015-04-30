@@ -3,18 +3,36 @@ declare let FontFace: any;
 
 export function loadAsset(player: SupRuntime.Player, entry: any, callback: (err: Error, asset?: any) => any) {
   player.getAssetData(`assets/${entry.id}/asset.json`, "json", (err, data) => {
-    data.name = `Font${entry.id}`;
+    if (data.isBitmap) {
+      let img = new Image();
 
-    let font: any /* FontFace */;
-    try {
-      font = new FontFace(data.name, `url(${player.dataURL}assets/${entry.id}/font.dat)`);
-      (<any>document).fonts.add(font);
-    } catch(e) {}
+      img.onload = () => {
+        data.texture = new SupEngine.THREE.Texture(img);
+        data.texture.needsUpdate = true;
 
-    if (font != null) {
-      font.load().then(() => { callback(null, data); });
+        if (data.filtering === "pixelated") {
+          data.texture.magFilter = SupEngine.THREE.NearestFilter;
+          data.texture.minFilter = SupEngine.THREE.NearestFilter;
+        }
+
+        callback(null, data);
+      };
+
+      img.onerror = () => { callback(null, data); };
+      img.src = `${player.dataURL}assets/${entry.id}/bitmap.dat`;
+
     } else {
-      callback(null, data);
+      data.name = `Font${entry.id}`;
+
+      let font: any /* FontFace */;
+      try {
+        font = new FontFace(data.name, `url(${player.dataURL}assets/${entry.id}/font.dat)`);
+        (<any>document).fonts.add(font);
+      } catch(e) {}
+
+      if (font != null) font.load().then(() => { callback(null, data); });
+      else callback(null, data);
+
     }
   });
 }
