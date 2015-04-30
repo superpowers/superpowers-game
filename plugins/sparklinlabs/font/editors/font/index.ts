@@ -89,13 +89,17 @@ function onAssetReceived() {
       ui.settings[setting].value = (<any>data.textUpdater.fontAsset.pub)[setting];
     }
   });
+
+  ui.settings["charsetOffset"].disabled = data.textUpdater.fontAsset.pub.isBitmap && data.textUpdater.fontAsset.pub.charset != null;
 }
 onEditCommands.setProperty = (path: string, value: any) => {
-  if(path == "isBitmap") {
+  if(path === "isBitmap") {
     ui.settings[path].checked = value;
     refreshTables();
-  } else {
-    ui.settings[path].value = value;
+  } else ui.settings[path].value = value;
+
+  if (path === "charset") {
+    ui.settings["charsetOffset"].disabled = data.textUpdater.fontAsset.pub.isBitmap && data.textUpdater.fontAsset.pub.charset != null;
   }
 }
 

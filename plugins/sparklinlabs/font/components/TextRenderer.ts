@@ -97,6 +97,7 @@ export default class TextRenderer extends SupEngine.ActorComponent {
       case "center":  this.threeMesh.position.setX(-geometry.width / 2 / this.font.pixelsPerUnit); break;
       case "right":   this.threeMesh.position.setX(-geometry.width / this.font.pixelsPerUnit); break;
     }
+    this.threeMesh.position.setY(-geometry.height / 2 / this.font.pixelsPerUnit);
 
     let uvs = geometry.getAttribute("uv");
     uvs.needsUpdate = true;

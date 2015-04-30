@@ -104,10 +104,7 @@ export default class TextRendererUpdater {
         if (this.fontAsset.pub.texture == null) this._loadBitmapFont();
         else this.textRenderer.setFont(this.fontAsset.pub);
       }
-
     } else {
-      console.log(this.fontAsset.pub);
-      console.log((<any>this.fontAsset.pub.font).byteLength);
       if (this.font == null && (<any>this.fontAsset.pub.font).byteLength !== 0) this._loadFont();
       else this.textRenderer.setFont(this.fontAsset.pub);
     }
