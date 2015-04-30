@@ -411,7 +411,7 @@ function drawSpritesheet() {
   let patternCanvas = document.createElement("canvas");
   let size = Math.max(1, ui.image.width / 50);
   patternCanvas.height = patternCanvas.width = size * 2;
-  let patternCanvasCtx = patternCanvas.getContext("2d");
+  let patternCanvasCtx = <CanvasRenderingContext2D>patternCanvas.getContext("2d");
   patternCanvasCtx.fillStyle = "#888888";
   patternCanvasCtx.fillRect(0, 0, size, size);
   patternCanvasCtx.fillRect(size, size, size, size);
