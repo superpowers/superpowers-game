@@ -63,7 +63,7 @@ export default class SceneAsset extends SupCore.data.base.Asset {
 
   server_addNode(client: any, name: string, options: any, callback: (err: string, node: Node, parentId: string, index: number) => any) {
     let sceneNode: Node = {
-      name: name, children: <Node[]>[], components: <Component[]>[],
+      id: null, name: name, children: <Node[]>[], components: <Component[]>[],
       position: (options != null && options.transform != null && options.transform.position != null) ? options.transform.position : { x: 0, y: 0, z: 0 },
       orientation: (options != null && options.transform != null && options.transform.orientation != null) ? options.transform.orientation : { x: 0, y: 0, z: 0, w: 1 },
       scale: (options != null && options.transform != null && options.transform.scale != null) ? options.transform.scale : { x: 1, y: 1, z: 1 },
@@ -157,7 +157,7 @@ export default class SceneAsset extends SupCore.data.base.Asset {
     walk(referenceNode);
 
     let rootNode: Node = {
-      name: newName, children: [],
+      id: null, name: newName, children: [],
       components: _.cloneDeep(referenceNode.components),
       position: _.cloneDeep(referenceNode.position),
       orientation: _.cloneDeep(referenceNode.orientation),
@@ -192,7 +192,7 @@ export default class SceneAsset extends SupCore.data.base.Asset {
         for (let childIndex = 0; childIndex < children.length; childIndex++) {
           let childNode = children[childIndex];
           let node: Node = {
-            name: childNode.name, children: [],
+            id: null, name: childNode.name, children: [],
             components: _.cloneDeep(childNode.components),
             position: _.cloneDeep(childNode.position),
             orientation: _.cloneDeep(childNode.orientation),

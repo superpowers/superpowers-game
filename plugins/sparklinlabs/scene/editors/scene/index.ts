@@ -2,7 +2,7 @@ let TreeView = require("dnd-tree-view");
 import * as async from "async"
 let THREE = SupEngine.THREE;
 
-import { SceneAsset, DuplicatedNode } from "../../data/SceneAsset";
+import SceneAsset, { DuplicatedNode } from "../../data/SceneAsset";
 import { Node } from "../../data/SceneNodes";
 import { Component } from "../../data/SceneComponents";
 import TransformMarker from "./TransformMarker";
