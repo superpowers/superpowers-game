@@ -1,6 +1,9 @@
 let serverRequire = require;
 let THREE: any;
-if (global.window == null) THREE = serverRequire("../../../../system/SupEngine").THREE;
+// NOTE: It is important that we require THREE through SupEngine
+// so that we inherit any settings, like the global Euler order
+// (or, alternatively, we could duplicate those settings...)
+if ((<any>global).window == null) THREE = serverRequire("../../../../system/SupEngine").THREE;
 
 import * as path from "path";
 import * as fs from "fs";
