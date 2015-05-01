@@ -44,7 +44,7 @@ export default class SpriteAsset extends SupCore.data.base.Asset {
   }
 
   init(options: any, callback: Function) {
-    this.serverData.resources.acquire("spriteSettings", null, (err: string, spriteSettings: any) => {
+    this.serverData.resources.acquire("spriteSettings", null, (err: Error, spriteSettings: any) => {
       this.pub = {
         image: new Buffer(0),
         filtering: spriteSettings.pub.filtering,
@@ -56,7 +56,7 @@ export default class SpriteAsset extends SupCore.data.base.Asset {
         origin: { x: 0.5, y: 0.5 },
 
         animations: []
-      }
+      };
 
       this.serverData.resources.release("spriteSettings", null);
       super.init(options, callback);
@@ -92,7 +92,7 @@ export default class SpriteAsset extends SupCore.data.base.Asset {
   server_upload(client: any, image: any, callback: (err: string, image?: any) => any) {
     if (! (image instanceof Buffer)) { callback("Image must be an ArrayBuffer"); return; }
 
-    this.pub.image = image
+    this.pub.image = image;
 
     callback(null, image);
     this.emit("change");
