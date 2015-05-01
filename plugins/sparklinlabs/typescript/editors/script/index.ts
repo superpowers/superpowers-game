@@ -101,7 +101,7 @@ var start = () => {
   (<any>ui.editor).on("changes", onEditText);
   (<any>ui.editor).on("keyup", (instance: any, event: any) => {
     // Ignore Ctrl, Cmd, Escape, Return, Tab, Arrows
-    if (event.ctrlKey || event.metaKey || [27, 9, 13, 37, 38, 39, 40].indexOf(event.keyCode) !== -1) return;
+    if (event.ctrlKey || event.metaKey || [27, 9, 13, 37, 38, 39, 40, 16].indexOf(event.keyCode) !== -1) return;
     scheduleCompletions();
   });
 
@@ -356,21 +356,29 @@ var applyOperation = (operation: OT.TextOperation, origin: string, moveCursor: b
   }
 }
 
-let errorsWorker: Worker;
+let compilationWorker = new Worker("errors.js")
+let activeCompilation: { dummy: boolean; };
+let nextCompilation: { dummy: boolean; };
+
+compilationWorker.onmessage = (event) => {
+  refreshErrors(event.data);
+
+  activeCompilation = null;
+  if(nextCompilation != null) startCompilationWorker();
+};
+
+function startCompilationWorker() {
+  if(activeCompilation != null || nextCompilation == null) return;
+
+  activeCompilation = nextCompilation;
+  nextCompilation = null;
+
+  compilationWorker.postMessage({ scriptNames, scripts, globalDefs });
+}
+
 function scheduleCompilation() {
-  if (ui.compileTimeout != null) clearTimeout(ui.compileTimeout);
-
-  ui.compileTimeout = window.setTimeout(() => {
-    if(errorsWorker != null) errorsWorker.terminate();
-    errorsWorker = new Worker("errors.js");
-    errorsWorker.onmessage = (event) => {
-      refreshErrors(event.data);
-      errorsWorker.terminate();
-    };
-
-    errorsWorker.postMessage({ scriptNames, scripts, globalDefs });
-    ui.compileTimeout = null;
-  }, 200);
+  nextCompilation = { dummy: true };
+  if (activeCompilation == null) startCompilationWorker();
 }
 
 onAssetCommands.saveText = (errors: Array<{file: string; position: {line: number; character: number;}; length: number; message: string}>) => {
@@ -502,7 +510,34 @@ var onEditText = (instance: CodeMirror.Editor, changes: CodeMirror.EditorChange[
   }
 }
 
-let completionsWorker: Worker;
+let completionsWorker = new Worker("completions.js")
+let activeCompletion: { callback: any; cursor: any; token: any, start: any };
+let nextCompletion: { callback: any; cursor: any; token: any, start: any };
+
+completionsWorker.onmessage = (event) => {
+  activeCompletion.callback({
+    list: event.data,
+    from: (<any>CodeMirror).Pos(activeCompletion.cursor.line, activeCompletion.token.start),
+    to: (<any>CodeMirror).Pos(activeCompletion.cursor.line, activeCompletion.token.end)
+  });
+
+  activeCompletion = null;
+  if(nextCompletion != null) startCompletionWorker();
+};
+
+function startCompletionWorker() {
+  if(activeCompletion != null || nextCompletion == null) return;
+
+  activeCompletion = nextCompletion;
+  nextCompletion = null;
+
+  completionsWorker.postMessage({
+    scriptNames, scripts, globalDefs,
+    tokenString: activeCompletion.token.string,
+    start: activeCompletion.start,
+    name: scriptNamesById[info.assetId]
+  });
+}
 
 let hint = (instance: any, callback: any) => {
   let cursor = ui.editor.getDoc().getCursor();
@@ -513,14 +548,8 @@ let hint = (instance: any, callback: any) => {
   for (let i = 0; i < cursor.line; i++) start += ui.editor.getDoc().getLine(i).length + 1;
   start += cursor.ch;
 
-  if(completionsWorker != null) completionsWorker.terminate();
-  completionsWorker = new Worker("completions.js");
-  completionsWorker.postMessage({scriptNames, scripts, globalDefs, tokenString: token.string, start, name: scriptNamesById[info.assetId]});
-  completionsWorker.onmessage = (event) => {
-    callback(({ list: event.data, from: (<any>CodeMirror).Pos(cursor.line, token.start), to: (<any>CodeMirror).Pos(cursor.line, token.end) }));
-    completionsWorker.terminate();
-  };
-
+  nextCompletion = { callback, cursor, token, start };
+  if(activeCompletion == null) startCompletionWorker();
 }
 (<any>hint).async = true;
 
