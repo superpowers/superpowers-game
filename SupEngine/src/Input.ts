@@ -281,7 +281,7 @@ export default class Input {
 }
 
 // FIXME: KeyEvent isn't in lib.d.ts yet
-if (window != null && (<any>window).KeyEvent == null) {
+if ((<any>global).window != null && (<any>window).KeyEvent == null) {
   (<any>window).KeyEvent = {
     DOM_VK_CANCEL: 3,
     DOM_VK_HELP: 6,
