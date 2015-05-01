@@ -21,9 +21,9 @@ let ui: {
   tmpCodeMirrorDoc?: CodeMirror.Doc,
   errorContainer?: HTMLDivElement,
 
-  undoTimeout?: NodeJS.Timer,
-  compileTimeout?: NodeJS.Timer,
-  completionsTimeout?: NodeJS.Timer,
+  undoTimeout?: number,
+  compileTimeout?: number,
+  completionsTimeout?: number,
   texts?: string[],
 
   undoStack?: OT.TextOperation[],
@@ -130,6 +130,7 @@ var start = () => {
     });
   }
 
+  // Error pane
   ui.errorContainer = <HTMLDivElement>document.querySelector(".error-container");
   ui.errorContainer.querySelector("button").addEventListener("click", () => {
     ui.errorContainer.style.display = "none";
@@ -355,17 +356,20 @@ var applyOperation = (operation: OT.TextOperation, origin: string, moveCursor: b
   }
 }
 
-var scheduleCompilation = () => {
+let errorsWorker: Worker;
+function scheduleCompilation() {
   if (ui.compileTimeout != null) clearTimeout(ui.compileTimeout);
-  ui.compileTimeout = <any>setTimeout(() => {
-    let errorsWorker = new Worker("errors.js");
-    errorsWorker.postMessage({scriptNames, scripts, globalDefs});
+
+  ui.compileTimeout = window.setTimeout(() => {
+    if(errorsWorker != null) errorsWorker.terminate();
+    errorsWorker = new Worker("errors.js");
     errorsWorker.onmessage = (event) => {
       refreshErrors(event.data);
       errorsWorker.terminate();
     };
 
-    ui.compileTimeout == null;
+    errorsWorker.postMessage({ scriptNames, scripts, globalDefs });
+    ui.compileTimeout = null;
   }, 200);
 }
 
@@ -476,7 +480,7 @@ var onEditText = (instance: CodeMirror.Editor, changes: CodeMirror.EditorChange[
     ui.undoQuantityByAction[ui.undoQuantityByAction.length-1] += 1;
     if (ui.undoQuantityByAction[ui.undoQuantityByAction.length-1] > 20) ui.undoQuantityByAction.push(0);
     else {
-      ui.undoTimeout = <any>setTimeout( () => {
+      ui.undoTimeout = window.setTimeout(() => {
         ui.undoTimeout = null;
         ui.undoQuantityByAction.push(0);
       }, 500);
@@ -498,6 +502,8 @@ var onEditText = (instance: CodeMirror.Editor, changes: CodeMirror.EditorChange[
   }
 }
 
+let completionsWorker: Worker;
+
 let hint = (instance: any, callback: any) => {
   let cursor = ui.editor.getDoc().getCursor();
   let token = ui.editor.getTokenAt(cursor);
@@ -507,7 +513,7 @@ let hint = (instance: any, callback: any) => {
   for (let i = 0; i < cursor.line; i++) start += ui.editor.getDoc().getLine(i).length + 1;
   start += cursor.ch;
 
-  let completionsWorker: Worker;
+  if(completionsWorker != null) completionsWorker.terminate();
   completionsWorker = new Worker("completions.js");
   completionsWorker.postMessage({scriptNames, scripts, globalDefs, tokenString: token.string, start, name: scriptNamesById[info.assetId]});
   completionsWorker.onmessage = (event) => {
@@ -518,9 +524,9 @@ let hint = (instance: any, callback: any) => {
 }
 (<any>hint).async = true;
 
-var scheduleCompletions = () => {
+function scheduleCompletions() {
   if (ui.completionsTimeout != null) clearTimeout(ui.completionsTimeout);
-  ui.completionsTimeout = <any>setTimeout(() => {
+  ui.completionsTimeout = window.setTimeout(() => {
     (<any>ui.editor).showHint({
       completeSingle: false,
       customKeys: {
@@ -532,7 +538,7 @@ var scheduleCompletions = () => {
       },
       hint
     });
-    ui.completionsTimeout == null;
+    ui.completionsTimeout = null;
   }, 200);
 }
 
