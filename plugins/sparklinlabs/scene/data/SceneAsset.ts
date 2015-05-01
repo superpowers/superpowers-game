@@ -22,7 +22,7 @@ export default class SceneAsset extends SupCore.data.base.Asset {
   }
 
   pub: { nodes: Node[] };
-  componentPathsByDependentAssetId: { [assetId: string]: string[] } = {};
+  componentPathsByDependentAssetId: { [assetId: string]: string[] };
   nodes: SceneNodes;
 
   constructor(id: string, pub: any, serverData: any) {
@@ -35,6 +35,7 @@ export default class SceneAsset extends SupCore.data.base.Asset {
   }
 
   setup() {
+    this.componentPathsByDependentAssetId = {};
     this.nodes = new SceneNodes(this.pub.nodes);
 
     for (let nodeId in this.nodes.componentsByNodeId) {
@@ -240,7 +241,7 @@ export default class SceneAsset extends SupCore.data.base.Asset {
     }
 
     if (addedDepIds.length > 0) this.emit("addDependencies", addedDepIds);
-    }
+  }
 
   _onRemoveComponentDependencies(componentPath: string, depIds: string[]) {
     //console.log `Removing component dependencies: ${componentPath} - ${depIds}`
@@ -260,7 +261,7 @@ export default class SceneAsset extends SupCore.data.base.Asset {
     }
 
     if (removedDepIds.length > 0) this.emit("removeDependencies", removedDepIds);
-  }
+  };
 
   server_addComponent(client: any, nodeId: string, componentType: string, index: number,
   callback: (err: string, nodeId: string, component: Component, index: number) => any) {
