@@ -13,7 +13,7 @@ interface CompilationError {
   message: string;
 }
 
-if (global.window == null) {
+if ((<any>global).window == null) {
   let serverRequire = require;
   var compileTypeScript = serverRequire("../runtime/compileTypeScript").default;
   var ts = serverRequire("typescript");
