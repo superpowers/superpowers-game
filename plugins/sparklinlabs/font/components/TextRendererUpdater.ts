@@ -120,7 +120,7 @@ export default class TextRendererUpdater {
     this.fontAsset.pub.name = `Font${this.fontAssetId}`;
     this.font = new FontFace(this.fontAsset.pub.name, `url(${this.url})`);
     (<any>document).fonts.add(this.font);
-    this.font.load().then(() => { this.textRenderer.setFont(this.fontAsset.pub) });
+    this.font.load().then(() => { this.textRenderer.setFont(this.fontAsset.pub) }, () => { this.textRenderer.setFont(this.fontAsset.pub) });
   }
 
   _loadBitmapFont() {

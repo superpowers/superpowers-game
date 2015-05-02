@@ -30,7 +30,7 @@ export function loadAsset(player: SupRuntime.Player, entry: any, callback: (err:
         (<any>document).fonts.add(font);
       } catch(e) {}
 
-      if (font != null) font.load().then(() => { callback(null, data); });
+      if (font != null) font.load().then(() => { callback(null, data); }, () => { callback(null, data); });
       else callback(null, data);
 
     }
