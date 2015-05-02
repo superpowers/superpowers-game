@@ -80,8 +80,8 @@ export default class TextRenderer extends SupEngine.ActorComponent {
 
     this.threeMesh = new THREE.Mesh(geometry, material);
     switch (this.options.alignment) {
-      case "left":  this.threeMesh.position.setX( (<any>this.threeMesh.geometry).width / 2 / this.font.pixelsPerUnit); break;
-      case "right": this.threeMesh.position.setX(-(<any>this.threeMesh.geometry).width / 2 / this.font.pixelsPerUnit); break;
+      case "left":  this.threeMesh.position.setX( width / 2 / this.font.pixelsPerUnit); break;
+      case "right": this.threeMesh.position.setX(-width / 2 / this.font.pixelsPerUnit); break;
     }
   }
 
