@@ -129,7 +129,7 @@ export default class SceneAsset extends SupCore.data.base.Asset {
 
   applyGlobalMatrix(node: Node, matrix: THREE.Matrix4) {
     let parentNode = this.nodes.parentNodesById[node.id]
-    if (parentNode == null) {
+    if (parentNode != null) {
       let parentGlobalMatrix = this.computeGlobalMatrix(parentNode);
       matrix.multiplyMatrices(new THREE.Matrix4().getInverse(parentGlobalMatrix), matrix);
     }
