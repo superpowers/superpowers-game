@@ -24,6 +24,11 @@ module.exports = class TileMapRendererUpdater
     if @tileMapAssetId?
       @client.subAsset @tileMapAssetId, 'tileMap', @tileMapSubscriber
 
+  destroy: ->
+    if @tileMapAssetId? then @client.unsubAsset @tileMapAssetId, @tileMapSubscriber
+    if @tileSetAssetId? then @client.unsubAsset @tileSetAssetId, @tileSetSubscriber
+    return
+
   _onTileMapAssetReceived: (assetId, asset) =>
     @tileMapAsset = asset
     @tileMapRenderer.setTileMap new TileMap @tileMapAsset.pub
