@@ -91,6 +91,7 @@ export default class TextRenderer extends SupEngine.ActorComponent {
       map: this.font.texture,
       alphaTest: 0.1,
       side: THREE.DoubleSide,
+      transparent: true
     });
     this.threeMesh = new THREE.Mesh(geometry, material);
     switch (this.options.alignment) {
