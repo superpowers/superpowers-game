@@ -33,10 +33,11 @@ export default class Player {
   lastTimestamp: number;
   tickAnimationFrameId: number;
 
-  constructor(canvas: HTMLCanvasElement, dataURL: string, options: {debug?: boolean;}) {
+  constructor(canvas: HTMLCanvasElement, dataURL: string, options: {debug?: boolean; enableOnExit?: boolean;}) {
     this.canvas = canvas;
     this.dataURL = dataURL;
 
+    options.enableOnExit = true;
     this.gameInstance = new SupEngine.GameInstance(this.canvas, options);
   }
 
