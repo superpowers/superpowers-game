@@ -28,13 +28,14 @@ export default class GameInstance extends EventEmitter {
   threeRenderer: THREE.WebGLRenderer;
   threeScene = new THREE.Scene();
 
-  constructor(canvas: HTMLCanvasElement, options: {debug?: boolean} = {}) {
+  constructor(canvas: HTMLCanvasElement, options: {debug?: boolean; enableOnExit?: boolean;} = {}) {
     super()
 
     // Used to know whether or not we have to close the window at exit when using NW.js
     this.debug = options.debug == true;
 
-    this.input = new Input(canvas);
+    let enableOnExit = (options.enableOnExit != null) ? options.enableOnExit : false;
+    this.input = new Input(canvas, enableOnExit);
 
     this.threeRenderer = new THREE.WebGLRenderer({
       canvas, precision: "mediump",

@@ -2,6 +2,7 @@ export default class Input {
   static maxTouches = 10;
 
   canvas: HTMLCanvasElement;
+  enableOnExit: boolean;
 
   mouseButtons: Array<{isDown: boolean; wasJustPressed: boolean; wasJustReleased: boolean;}> = [];
   mouseButtonsDown: boolean[] = [];
@@ -21,8 +22,9 @@ export default class Input {
 
   onExit: Function;
 
-  constructor(canvas: HTMLCanvasElement) {
+  constructor(canvas: HTMLCanvasElement, enableOnExit: boolean) {
     this.canvas = canvas;
+    this.enableOnExit = enableOnExit;
 
     // Mouse
     this.canvas.addEventListener("mousemove", this._onMouseMove);
@@ -48,19 +50,16 @@ export default class Input {
     }
 
     // On exit
-    let nwDispatcher = (<any>window).nwDispatcher;
-    if (nwDispatcher != null) {
-      let gui = nwDispatcher.requireNwGui();
-      let nwWindow = gui.Window.get();
-      nwWindow.on("close", (event: any) => {
-        if (this.onExit != null) { this.onExit(); this.onExit = null; }
-        nwWindow.close(true);
-      })
-    }
-    else {
-      window.onbeforeunload = (event: any) => {
-        if (this.onExit != null) { this.onExit(); this.onExit = null; }
-      };
+    if (this.enableOnExit) {
+      let nwDispatcher = (<any>window).nwDispatcher;
+      if (nwDispatcher != null) {
+        let gui = nwDispatcher.requireNwGui();
+        gui.Window.get().on("close", this._onExit);
+      } else {
+        window.onbeforeunload = (event: any) => {
+          if (this.onExit != null) { this.onExit(); this.onExit = null; }
+        };
+      }
     }
 
     window.addEventListener("blur", this._onBlur);
@@ -81,6 +80,14 @@ export default class Input {
 
     this.canvas.removeEventListener("keydown", this._onKeyDown);
     document.removeEventListener("keyup", this._onKeyUp);
+
+    if (this.enableOnExit) {
+      let nwDispatcher = (<any>window).nwDispatcher;
+      if (nwDispatcher != null) {
+        let gui = nwDispatcher.requireNwGui();
+        gui.Window.get().removeListener("close", this._onExit);
+      }
+    }
 
     window.removeEventListener("blur", this._onBlur);
   }
@@ -201,6 +208,12 @@ export default class Input {
 
   _onKeyUp = (event: KeyboardEvent) => {
     this.keyboardButtonsDown[event.keyCode] = false;
+  }
+
+  _onExit = (event: any) => {
+    if (this.onExit != null) { this.onExit(); this.onExit = null; }
+    let gui = (<any>window).nwDispatcher.requireNwGui();
+    gui.Window.get().close(true);
   }
 
   update() {

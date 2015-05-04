@@ -44,7 +44,7 @@ declare module SupEngine {
     threeRenderer: THREE.WebGLRenderer;
     threeScene: THREE.Scene;
 
-    constructor(canvas: HTMLCanvasElement, options?: {debug?: boolean});
+    constructor(canvas: HTMLCanvasElement, options?: {debug?: boolean; enableOnExit?: boolean});
     update(): void;
     setRatio(ratio?: number): void;
     draw(): void;
