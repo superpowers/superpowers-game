@@ -1,13 +1,21 @@
 let THREE = SupEngine.THREE;
 
 export default class ArcadeBody2D extends SupEngine.ActorComponent {
-  movable: boolean;
-  width: number;
-  height: number;
-  offsetX: number;
-  offsetY: number;
-  bounceX: number;
-  bounceY: number;
+  type: string;
+
+  movable = false;
+  width = 1;
+  height = 1;
+  offsetX = 0;
+  offsetY = 0;
+  bounceX = 0;
+  bounceY = 0;
+
+  tileMapAsset: any;
+  tileSetAsset: any;
+  tileSetPropertyName: string;
+  mapToSceneFactor: number;
+  layersIndex: number[] = [];
 
   actorPosition: THREE.Vector3;
   position: THREE.Vector3;
@@ -20,21 +28,24 @@ export default class ArcadeBody2D extends SupEngine.ActorComponent {
 
   touches = { top: false, bottom: false, right: false, left: false };
 
-  constructor(actor: SupEngine.Actor, config={}) {
+  constructor(actor: SupEngine.Actor, type: string, config: any) {
     super(actor, "ArcadeBody2D");
 
-    this.setup(config);
+    if (type === "box") this.setupBox(config);
+    else if (type === "tileMap") this.setupTileMap(config);
     (<any>SupEngine).ArcadePhysics2D.allBodies.push( this );
   }
 
-  setup(config: any) {
-    this.movable = (config.movable != null) ? config.movable : true;
-    this.width = (config.width != null) ? config.width : 1;
-    this.height = (config.height != null) ? config.height : 1;
-    this.offsetX = (config.offsetX != null) ? config.offsetX : 0;
-    this.offsetY = (config.offsetY != null) ? config.offsetY : 0;
-    this.bounceX = (config.bounceX != null) ? config.bounceX : 0;
-    this.bounceY = (config.bounceY != null) ? config.bounceY : 0;
+  setupBox(config: any) {
+    this.type = "box";
+
+    this.movable = config.movable;
+    this.width = config.width;
+    this.height = config.height;
+    if (config.offsetX != null) this.offsetX = config.offsetX;
+    if (config.offsetY != null) this.offsetY = config.offsetY;
+    if (config.bounceX != null) this.bounceX = config.bounceX;
+    if (config.bounceY != null) this.bounceY = config.bounceY;
 
     this.actorPosition = this.actor.getGlobalPosition();
     this.position = this.actorPosition.clone();
@@ -46,6 +57,20 @@ export default class ArcadeBody2D extends SupEngine.ActorComponent {
     this.velocityMin = new THREE.Vector3(-Infinity, -Infinity, 0);
     this.velocityMax = new THREE.Vector3(Infinity, Infinity, 0);
     this.velocityMultiplier = new THREE.Vector3(1, 1, 0);
+  }
+
+  setupTileMap(config: any) {
+    this.type = "tileMap";
+    this.tileMapAsset = config.tileMapAsset;
+    this.tileSetAsset = config.tileSetAsset;
+    this.mapToSceneFactor = this.tileSetAsset.__inner.data.gridSize / this.tileMapAsset.__inner.data.pixelsPerUnit;
+    this.tileSetPropertyName = config.tileSetPropertyName;
+    if (config.layersIndex != null) {
+      let layers = config.layersIndex.split(",");
+      for (let layer in layers) this.layersIndex.push(parseInt(layer));
+    } else {
+      for (let i = 0; i < this.tileMapAsset.__inner.data.layers.length; i++) this.layersIndex.push(i);
+    }
   }
 
   earlyUpdate() {

@@ -13,7 +13,7 @@ export default class ArcadeBody2DMarker extends SupEngine.ActorComponent {
     super(actor, "ArcadeBody2DMarker");
   }
 
-  setSize(width: number, height: number) {
+  setBox(width: number, height: number) {
     if (this.line != null) this._clearRenderer();
 
     let geometry = new THREE.Geometry();
@@ -35,6 +35,11 @@ export default class ArcadeBody2DMarker extends SupEngine.ActorComponent {
     this.offset.set(x, y, 0);
     this.line.position.copy(this.offset);
     this.line.updateMatrixWorld(false);
+  }
+
+  setTileMap() {
+    if (this.line != null) this._clearRenderer();
+    // TODO ?
   }
 
   _clearRenderer() {

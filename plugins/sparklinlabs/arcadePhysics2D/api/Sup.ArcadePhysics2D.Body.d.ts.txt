@@ -1,7 +1,24 @@
+interface BoxOptions {
+  movable: boolean;
+  width: number;
+  height: number;
+  bounceX?: number;
+  bounceY?: number
+}
+
+interface TileMapOptions {
+  tileMapAsset: Sup.TileMap;
+  tileSetPropertyName: string;
+  tileSetAsset?: Sup.TileSet;
+  layersIndex?: string;
+}
+
 declare module Sup {
   module ArcadePhysics2D {
+    enum BodyType { Box, TileMap }
+
     class Body extends ActorComponent {
-      constructor( actor: Sup.Actor, options?: {movable?: boolean; width?: number; height?: number; bounceX?: number; bounceY?: number} );
+      constructor( actor: Sup.Actor, type: BodyType, options: BoxOptions|TileMapOptions );
       setMovable( movable: boolean ): Body;
       getMovable(): boolean;
       setSize( width: number, height: number ): Body;

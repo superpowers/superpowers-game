@@ -1,9 +1,18 @@
 module Sup {
   export module ArcadePhysics2D {
+    export enum BodyType { Box, TileMap };
+
     export class Body extends ActorComponent {
-      constructor( actor, options ) {
+      constructor( actor, type, options ) {
         super( actor );
-        this.__inner = new SupEngine.componentClasses.ArcadeBody2D( actor.__inner, options );
+
+        let stringType: string;
+        if (type === Sup.ArcadePhysics2D.BodyType.Box) stringType = "box";
+        if (type === Sup.ArcadePhysics2D.BodyType.TileMap) {
+          stringType = "tileMap";
+          if (options.tileSetAsset == null) options.tileSetAsset = player.getOuterAsset(options.tileMapAsset.__inner.data.tileSetId);
+        }
+        this.__inner = new SupEngine.componentClasses.ArcadeBody2D( actor.__inner, stringType, options );
         this.__inner.__outer = this;
         this.actor.arcadeBody2D = this;
       }
