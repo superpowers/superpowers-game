@@ -10,6 +10,7 @@ require("codemirror/addon/search/searchcursor");
 require("codemirror/addon/edit/closebrackets");
 require("codemirror/addon/comment/comment");
 require("codemirror/addon/hint/show-hint");
+require("codemirror/addon/selection/active-line");
 require("codemirror/keymap/sublime");
 require("codemirror/mode/javascript/javascript");
 
