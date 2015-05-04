@@ -109,8 +109,10 @@ module.exports = class TileMapRendererUpdater
     @tileSetThreeTexture.minFilter = SupEngine.THREE.NearestFilter
 
     if asset.pub.domImage.complete
+      @tileSetThreeTexture.needsUpdate = true
       @tileMapRenderer.setTileSet new TileSet(asset.pub), @tileSetThreeTexture
-      @receiveAssetCallbacks?.tileSet(); return
+      @receiveAssetCallbacks?.tileSet();
+      return
 
     onImageLoaded = =>
       asset.pub.domImage.removeEventListener 'load', onImageLoaded
