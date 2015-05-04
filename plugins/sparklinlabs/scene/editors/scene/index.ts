@@ -54,11 +54,16 @@ function start() {
   ui.gameInstance = new SupEngine.GameInstance(canvasElt);
   ui.cameraActor = new SupEngine.Actor(ui.gameInstance, "Camera");
   ui.cameraActor.setLocalPosition(new THREE.Vector3(0, 0, 10));
-  ui.cameraMode = "3D"
+  ui.cameraMode = "3D";
+
+  ui.cameraModeButton = document.querySelector("button.toggle-camera-button");
+  ui.cameraModeButton.addEventListener("click", onChangeCameraMode);
+  ui.cameraSpeedSlider = document.querySelector("input.camera-speed-slider");
+  ui.cameraSpeedSlider.addEventListener("input", onChangeCameraSpeed);
+
   ui.cameraComponent = new SupEngine.componentClasses["Camera"](ui.cameraActor);
   ui.cameraControls = new SupEngine.editorComponentClasses["Camera3DControls"](ui.cameraActor, ui.cameraComponent);
-  ui.cameraModeButton = document.querySelector("button#toggle-camera-button")
-  ui.cameraModeButton.addEventListener("click", onChangeCameraMode);
+  ui.cameraSpeedSlider.value = ui.cameraControls.movementSpeed;
 
   ui.bySceneNodeId = {}
 
@@ -522,7 +527,8 @@ function onChangeCameraMode(event: any) {
   ui.gameInstance.destroyComponent(ui.cameraControls);
 
   if (ui.cameraMode === "3D") {
-    ui.cameraMode = "2D"
+    ui.cameraMode = "2D";
+    ui.cameraSpeedSlider.style.display = "none";
     ui.cameraActor.setLocalOrientation(new SupEngine.THREE.Quaternion().setFromAxisAngle(new SupEngine.THREE.Vector3(0, 1, 0), 0))
     ui.cameraComponent.setOrthographicMode(true)
     ui.cameraControls = new SupEngine.editorComponentClasses["Camera2DControls"](ui.cameraActor, ui.cameraComponent, {
@@ -533,11 +539,17 @@ function onChangeCameraMode(event: any) {
 
   } else {
     ui.cameraMode = "3D";
+    ui.cameraSpeedSlider.style.display = "";
     ui.cameraComponent.setOrthographicMode(false);
     ui.cameraControls = new SupEngine.editorComponentClasses["Camera3DControls"](ui.cameraActor, ui.cameraComponent);
+    ui.cameraControls.movementSpeed = ui.cameraSpeedSlider.value;
   }
 
   ui.cameraModeButton.textContent = ui.cameraMode;
+}
+
+function onChangeCameraSpeed() {
+  ui.cameraControls.movementSpeed = ui.cameraSpeedSlider.value;
 }
 
 // Engine
@@ -575,6 +587,18 @@ function createNodeActorComponent(sceneNode: Node, sceneComponent: Component, no
 function tick() {
   // FIXME: decouple update interval from render interval
   ui.gameInstance.update();
+
+  if (ui.cameraMode === "3D" && ui.gameInstance.input.keyboardButtons[(<any>window).KeyEvent.DOM_VK_CONTROL].isDown) {
+    if (ui.gameInstance.input.mouseButtons[5].isDown) {
+      ui.cameraSpeedSlider.value = parseFloat(ui.cameraSpeedSlider.value) + 2 * parseFloat(ui.cameraSpeedSlider.step);
+      ui.cameraControls.movementSpeed = ui.cameraSpeedSlider.value;
+    } else if (ui.gameInstance.input.mouseButtons[6].isDown) {
+      ui.cameraSpeedSlider.value = parseFloat(ui.cameraSpeedSlider.value) - 2 * parseFloat(ui.cameraSpeedSlider.step);
+      ui.cameraControls.movementSpeed = ui.cameraSpeedSlider.value;
+    }
+  }
+
+
   ui.gameInstance.draw();
   ui.tickAnimationFrameId = requestAnimationFrame(tick);
 }
