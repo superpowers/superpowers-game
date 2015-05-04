@@ -59,6 +59,9 @@ var start = () => {
       if (cm.getSelection() != "") cm.execCommand("indentMore");
       else cm.replaceSelection(Array(cm.getOption("indentUnit") + 1).join(" "));
     },
+    "Cmd-X": () => { document.execCommand("cut"); },
+    "Cmd-C": () => { document.execCommand("copy"); },
+    "Cmd-V": () => { document.execCommand("paste"); },
     "Ctrl-Z": () => { onUndo(); },
     "Cmd-Z": () => { onUndo(); },
     "Shift-Ctrl-Z": () => { onRedo(); },
