@@ -162,6 +162,13 @@ module.exports = class TileMapRendererUpdater
         @tileMapAsset = null
         @tileMapRenderer.setTileMap null
 
+        @client.unsubAsset @tileSetAssetId, @tileSetSubscriber if @tileSetAssetId?
+        @tileSetAsset = null
+        @tileMapRenderer.setTileSet null
+        if @tileSetThreeTexture?
+          @tileSetThreeTexture.dispose()
+          @tileSetThreeTexture = null
+
         if @tileMapAssetId?
           @client.subAsset @tileMapAssetId, 'tileMap', @tileMapSubscriber
 
