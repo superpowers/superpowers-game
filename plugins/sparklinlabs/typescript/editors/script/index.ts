@@ -155,7 +155,7 @@ var entriesSubscriber = {
       var scriptName = `${data.projectClient.entries.getPathFromId(entry.id)}.ts`;
       scriptNames.push(scriptName);
       scriptNamesById[entry.id] = scriptName;
-      data.projectClient.subAsset(entry.id, "script", scriptSubscriber)
+      data.projectClient.subAsset(entry.id, "script", scriptSubscriber);
     })
   },
 
@@ -166,11 +166,12 @@ var entriesSubscriber = {
 
     let i = 0;
     data.projectClient.entries.walk((entry) => {
+      if (entry.type !== "script") return;
       if (entry.id === newEntry.id) scriptNames.splice(i, 0, scriptName);
       i++;
     });
     scriptNamesById[newEntry.id] = scriptName;
-    data.projectClient.subAsset(newEntry.id, "script", scriptSubscriber)
+    data.projectClient.subAsset(newEntry.id, "script", scriptSubscriber);
   },
 
   onEntryMoved: (id: string, parentId: string, index: number) => {
@@ -183,6 +184,7 @@ var entriesSubscriber = {
     scriptNames.splice(scriptNames.indexOf(oldScriptName), 1);
     let i = 0;
     data.projectClient.entries.walk((entry) => {
+      if (entry.type !== "script") return;
       if (entry.id === id) scriptNames.splice(i, 0, newScriptName);
       i++;
     });
