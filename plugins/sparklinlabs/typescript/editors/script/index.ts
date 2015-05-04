@@ -388,8 +388,12 @@ function startCompilationWorker() {
 }
 
 function scheduleCompilation() {
-  nextCompilation = { dummy: true };
-  if (activeCompilation == null) startCompilationWorker();
+  if (ui.compileTimeout != null) clearTimeout(ui.compileTimeout);
+
+  ui.compileTimeout = window.setTimeout(() => {
+    nextCompilation = { dummy: true };
+    if (activeCompilation == null) startCompilationWorker();
+  }, 500);
 }
 
 onAssetCommands.saveText = (errors: Array<{file: string; position: {line: number; character: number;}; length: number; message: string}>) => {
