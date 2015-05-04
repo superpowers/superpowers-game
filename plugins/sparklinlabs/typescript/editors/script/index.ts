@@ -358,7 +358,7 @@ var applyOperation = (operation: OT.TextOperation, origin: string, moveCursor: b
   }
 }
 
-let compilationWorker = new Worker("errors.js")
+let compilationWorker = new Worker("compilationWorker.js")
 let activeCompilation: { dummy: boolean; };
 let nextCompilation: { dummy: boolean; };
 
@@ -512,7 +512,7 @@ var onEditText = (instance: CodeMirror.Editor, changes: CodeMirror.EditorChange[
   }
 }
 
-let completionsWorker = new Worker("completions.js")
+let completionsWorker = new Worker("completionWorker.js")
 let activeCompletion: { callback: any; cursor: any; token: any, start: any };
 let nextCompletion: { callback: any; cursor: any; token: any, start: any };
 
