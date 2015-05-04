@@ -126,7 +126,7 @@ onEditCommands.moveNode = (id: string, parentId: string, index: number) => {
   nodeActor.setParent(parentNodeActor);
 
   // Update data.asset.nodes with new local transform
-  let node = data.asset.nodes.byId[id]
+  let node = data.asset.nodes.byId[id];
   node.position = {
     x: nodeActor.threeObject.position.x,
     y: nodeActor.threeObject.position.y,
@@ -313,22 +313,50 @@ function onNodeSelect() {
 function roundForInspector(number: number) { return parseFloat(number.toFixed(3)); }
 
 function setInspectorPosition(position: THREE.Vector3) {
-  ui.transform.positionElts[0].value = roundForInspector(position.x);
-  ui.transform.positionElts[1].value = roundForInspector(position.y);
-  ui.transform.positionElts[2].value = roundForInspector(position.z);
+  let values = [
+    roundForInspector(position.x).toString(),
+    roundForInspector(position.y).toString(),
+    roundForInspector(position.z).toString()
+  ];
+
+  for (let i = 0; i < 3; i++) {
+    // NOTE: This helps avoid clearing selection when possible
+    if (ui.transform.positionElts[i].value !== values[i]) {
+      ui.transform.positionElts[i].value = values[i];
+    }
+  }
 }
 
 function setInspectorOrientation(orientation: THREE.Quaternion) {
-  let euler = new THREE.Euler().setFromQuaternion(orientation)
-  ui.transform.orientationElts[0].value = roundForInspector(THREE.Math.radToDeg(euler.x));
-  ui.transform.orientationElts[1].value = roundForInspector(THREE.Math.radToDeg(euler.y));
-  ui.transform.orientationElts[2].value = roundForInspector(THREE.Math.radToDeg(euler.z));
+  let euler = new THREE.Euler().setFromQuaternion(orientation);
+
+  let values = [
+    roundForInspector(THREE.Math.radToDeg(euler.x)).toString(),
+    roundForInspector(THREE.Math.radToDeg(euler.y)).toString(),
+    roundForInspector(THREE.Math.radToDeg(euler.z)).toString()
+  ];
+
+  for (let i = 0; i < 3; i++) {
+    // NOTE: This helps avoid clearing selection when possible
+    if (ui.transform.orientationElts[i].value !== values[i]) {
+      ui.transform.orientationElts[i].value = values[i];
+    }
+  }
 }
 
 function setInspectorScale(scale: THREE.Vector3) {
-  ui.transform.scaleElts[0].value = roundForInspector(scale.x);
-  ui.transform.scaleElts[1].value = roundForInspector(scale.y);
-  ui.transform.scaleElts[2].value = roundForInspector(scale.z);
+  let values = [
+    roundForInspector(scale.x).toString(),
+    roundForInspector(scale.y).toString(),
+    roundForInspector(scale.z).toString()
+  ];
+
+  for (let i = 0; i < 3; i++) {
+    // NOTE: This helps avoid clearing selection when possible
+    if (ui.transform.scaleElts[i].value !== values[i]) {
+      ui.transform.scaleElts[i].value = values[i];
+    }
+  }
 }
 
 function onNewNodeClick() {
