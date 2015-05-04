@@ -17,16 +17,16 @@ let qs = require("querystring").parse(window.location.search.slice(1));
 let info = { projectId: qs.project, assetId: qs.asset };
 let data: {clientId: number; projectClient?: SupClient.ProjectClient; assetsById?: {[id: string]: ScriptAsset}; asset?: ScriptAsset;};
 let ui: {
-  editor?: CodeMirror.EditorFromTextArea,
-  tmpCodeMirrorDoc?: CodeMirror.Doc,
-  errorContainer?: HTMLDivElement,
+  editor?: CodeMirror.EditorFromTextArea;
+  tmpCodeMirrorDoc?: CodeMirror.Doc;
+  errorContainer?: HTMLDivElement;
 
-  undoTimeout?: number,
-  compileTimeout?: number,
-  completionsTimeout?: number,
-  texts?: string[],
+  undoTimeout?: number;
+  compileTimeout?: number;
+  completionsTimeout?: number;
+  texts?: string[];
 
-  undoStack?: OT.TextOperation[],
+  undoStack?: OT.TextOperation[];
   undoQuantityByAction?: number[];
   redoStack?: OT.TextOperation[];
   redoQuantityByAction?: number[];
