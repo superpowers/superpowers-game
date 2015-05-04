@@ -224,17 +224,25 @@ var entriesSubscriber = {
   },
 }
 
+let allScriptsReceived = false;
+
 var scriptSubscriber = {
   onAssetReceived: (err: string, asset: ScriptAsset) => {
     data.assetsById[asset.id] = asset;
     var scriptName = `${data.projectClient.entries.getPathFromId(asset.id)}.ts`;
     scripts[scriptName] = asset.pub.text;
-    if (asset.id !== info.assetId) return;
 
-    data.asset = asset;
+    if (asset.id === info.assetId) {
+      data.asset = asset;
 
-    ui.editor.getDoc().setValue(data.asset.pub.draft);
-    ui.editor.getDoc().clearHistory();
+      ui.editor.getDoc().setValue(data.asset.pub.draft);
+      ui.editor.getDoc().clearHistory();
+    }
+
+    if(!allScriptsReceived && Object.keys(scripts).length == scriptNames.length) {
+      allScriptsReceived = true;
+      scheduleCompilation();
+    }
   },
 
   onAssetEdited: (id: string, command: string, ...args: any[]) => {
@@ -430,7 +438,9 @@ var refreshErrors = (errors: Array<{file: string; position: {line: number; chara
 // User interface
 var onEditText = (instance: CodeMirror.Editor, changes: CodeMirror.EditorChange[]) => {
   scripts[scriptNamesById[info.assetId]] = ui.editor.getDoc().getValue();
-  scheduleCompilation();
+
+  // We ignore the initial setValue
+  if ((<any>changes[0]).origin !== "setValue") scheduleCompilation();
 
   let undoRedo = false;
   let operationToSend: OT.TextOperation;
