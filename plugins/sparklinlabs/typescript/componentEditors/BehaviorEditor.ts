@@ -123,7 +123,6 @@ export default class BehaviorEditor {
   _createPropertyField(propertyName: string) {
     let property = this.behaviorPropertiesResource.propertiesByNameByBehavior[this.config.behaviorName][propertyName];
     let propertySetting = this.propertySettingsByName[propertyName];
-    propertySetting.valueElt.innerHTML = "";
 
     // TODO: We probably want to collect and display default values?
     // defaultPropertyValue = behaviorProperty?.value
@@ -140,34 +139,60 @@ export default class BehaviorEditor {
     let propertyField: HTMLInputElement;
     switch (uiType) {
       case "incompatibleType": {
-        propertyField = SupClient.component.createTextField(propertySetting.valueElt, `(Incompatible type: ${propertyValueInfo.type})`);
+        propertyField = <HTMLInputElement>propertySetting.valueElt.querySelector("input[type=text]");
+        if (propertyField == null) {
+          propertySetting.valueElt.innerHTML = "";
+          propertyField = SupClient.component.createTextField(propertySetting.valueElt, "");
+          propertyField.addEventListener("change", this._onChangePropertyValue);
+        }
+
+        propertyField.value = `(Incompatible type: ${propertyValueInfo.type})`;
         propertyField.disabled = true;
         break;
       }
 
       case "boolean": {
-        propertyField = SupClient.component.createBooleanField(propertySetting.valueElt, propertyValue);
+        propertyField = <HTMLInputElement>propertySetting.valueElt.querySelector("input[type=checkbox]");
+        if (propertyField == null) {
+          propertySetting.valueElt.innerHTML = "";
+          propertyField = SupClient.component.createBooleanField(propertySetting.valueElt, false);
+          propertyField.addEventListener("change", this._onChangePropertyValue);
+        }
+
+        propertyField.checked = propertyValue;
         propertyField.disabled = propertyValueInfo == null;
-        propertyField.addEventListener("change", this._onChangePropertyValue);
         break;
       }
 
       case "number": {
-        propertyField = SupClient.component.createNumberField(propertySetting.valueElt, propertyValue);
+        propertyField = <HTMLInputElement>propertySetting.valueElt.querySelector("input[type=number]");
+        if (propertyField == null) {
+          propertySetting.valueElt.innerHTML = "";
+          propertyField = SupClient.component.createNumberField(propertySetting.valueElt, 0);
+          propertyField.addEventListener("change", this._onChangePropertyValue);
+        }
+
+        propertyField.value = propertyValue;
         propertyField.disabled = propertyValueInfo == null;
-        propertyField.addEventListener("change", this._onChangePropertyValue);
         break;
       }
 
       case "string": {
-        propertyField = SupClient.component.createTextField(propertySetting.valueElt, propertyValue);
+        propertyField = <HTMLInputElement>propertySetting.valueElt.querySelector("input[type=text]");
+        if (propertyField == null) {
+          propertySetting.valueElt.innerHTML = "";
+          propertyField = SupClient.component.createTextField(propertySetting.valueElt, "");
+          propertyField.addEventListener("change", this._onChangePropertyValue);
+        }
+
+        propertyField.value = propertyValue;
         propertyField.disabled = propertyValueInfo == null;
-        propertyField.addEventListener("change", this._onChangePropertyValue);
         break;
       }
 
       // TODO: Support more types
       default: {
+        propertySetting.valueElt.innerHTML = "";
         console.error(`Unsupported property type: ${property.type}`);
         return;
       }
@@ -188,6 +213,7 @@ export default class BehaviorEditor {
 
   config_setBehaviorPropertyValue(name: string, type: string, value: any) {
     this.propertySettingsByName[name].checkboxElt.checked = true;
+
     this._createPropertyField(name);
   }
 
