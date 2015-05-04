@@ -258,6 +258,16 @@ function createNodeElement(node: Node) {
   nameSpan.textContent = node.name;
   liElt.appendChild(nameSpan);
 
+  let visibleButton = document.createElement("button");
+  visibleButton.textContent = "Hide";
+  visibleButton.addEventListener("click", (event: any) => {
+    event.stopPropagation();
+    let actor = ui.bySceneNodeId[event.target.parentElement.dataset["id"]].actor;
+    actor.threeObject.visible = ! actor.threeObject.visible;
+    visibleButton.textContent = (actor.threeObject.visible) ? "Hide" : "Show";
+  })
+  liElt.appendChild(visibleButton);
+
   return liElt;
 }
 
