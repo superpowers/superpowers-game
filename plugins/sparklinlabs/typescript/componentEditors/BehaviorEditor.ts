@@ -1,4 +1,4 @@
-import BehaviorPropertiesResource from "../data/BehaviorPropertiesResource";
+import BehaviorPropertiesResource, { BehaviorProperty } from "../data/BehaviorPropertiesResource";
 
 let behaviorEditorDataListIndex = 0;
 
@@ -13,8 +13,7 @@ export default class BehaviorEditor {
   projectClient: SupClient.ProjectClient;
   editConfig: any;
 
-  behaviorName: string;
-  behaviorPropertiesResource: BehaviorPropertiesResource
+  behaviorPropertiesResource: BehaviorPropertiesResource;
 
   behaviorNamesDataListElt: HTMLDataListElement;
   behaviorNameField: HTMLInputElement;
@@ -32,8 +31,6 @@ export default class BehaviorEditor {
     this.config = config;
     this.projectClient = projectClient;
     this.editConfig = editConfig;
-
-    this.behaviorName = this.config.behaviorName;
 
     this.behaviorNamesDataListElt = document.createElement("datalist");
     this.behaviorNamesDataListElt.id = `behavior-editor-datalist-${behaviorEditorDataListIndex++}`;
@@ -86,10 +83,20 @@ export default class BehaviorEditor {
     this.propertySettingsByName = {};
 
     // Setup new property settings
-    let behavior = this.behaviorPropertiesResource.pub.behaviors[this.config.behaviorName]
-    if (behavior == null) return;
+    let behaviorName = this.config.behaviorName;
 
-    for (let property of behavior.properties) this._createPropertySetting(property);
+    let listedProperties: string[] = [];
+
+    while (behaviorName != null) {
+      let behavior = this.behaviorPropertiesResource.pub.behaviors[behaviorName];
+      for (let property of behavior.properties) {
+        if(listedProperties.indexOf(property.name) != -1) continue;
+
+        listedProperties.push(property.name);
+        this._createPropertySetting(property);
+      }
+      behaviorName = behavior.parentBehavior;
+    }
 
     // TODO: Display and allow cleaning up left-over property values
   }
@@ -121,7 +128,17 @@ export default class BehaviorEditor {
   }
 
   _createPropertyField(propertyName: string) {
-    let property = this.behaviorPropertiesResource.propertiesByNameByBehavior[this.config.behaviorName][propertyName];
+    let behaviorName = this.config.behaviorName;
+    let property: BehaviorProperty;
+    while (behaviorName != null) {
+      let behavior = this.behaviorPropertiesResource.pub.behaviors[behaviorName];
+
+      property = this.behaviorPropertiesResource.propertiesByNameByBehavior[behaviorName][propertyName];
+      if (property != null) break;
+
+      behaviorName = behavior.parentBehavior;
+    }
+
     let propertySetting = this.propertySettingsByName[propertyName];
 
     // TODO: We probably want to collect and display default values?

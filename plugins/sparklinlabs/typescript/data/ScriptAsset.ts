@@ -1,4 +1,5 @@
 ///<reference path="./operational-transform.d.ts"/>
+///<reference path="../node_modules/typescript/bin/typescriptServices.d.ts"/>
 
 import * as OT from "operational-transform";
 import * as fs from "fs";
@@ -13,10 +14,20 @@ interface CompilationError {
   message: string;
 }
 
+interface CompileTypeScriptResults {
+  errors: any;
+  program: ts.Program;
+  typeChecker: ts.TypeChecker;
+  script: string;
+  sourceMaps: { [name: string]: any };
+  files: Array<{name: string; text: string}>;
+}
+
 if ((<any>global).window == null) {
   let serverRequire = require;
-  var compileTypeScript = serverRequire("../runtime/compileTypeScript").default;
   var ts = serverRequire("typescript");
+
+  var compileTypeScript: (sourceFileNames: string[], sourceFiles: { [name: string]: string }, libSource: string, compilerOptions: ts.CompilerOptions) => CompileTypeScriptResults = serverRequire("../runtime/compileTypeScript").default;
   var globalDefs = "";
 
   let actorComponentAccessors: string[] = [];
@@ -89,8 +100,8 @@ export default class ScriptAsset extends SupCore.data.base.Asset {
 
     this.serverData.resources.acquire("behaviorProperties", null, (err: Error, behaviorProperties: BehaviorPropertiesResource) => {
       if (behaviorProperties.pub.behaviors[behaviorName] == null) {
-        let behaviors: { [behaviorName: string]: Array<{name: string; type: string}> } = {};
-        behaviors[behaviorName] = [];
+        let behaviors: { [behaviorName: string]: { properties: Array<{name: string; type: string}>; parentBehavior: string; } } = {};
+        behaviors[behaviorName] = { properties: [], parentBehavior: null };
         behaviorProperties.setScriptBehaviors(this.id, behaviors);
       }
 
@@ -214,35 +225,41 @@ export default class ScriptAsset extends SupCore.data.base.Asset {
 
       let libSourceFile = results.program.getSourceFile("lib.d.ts");
       let supTypeSymbols = {
-        "Sup.Actor": libSourceFile.locals.Sup.exports.Actor,
-        "Sup.Behavior": libSourceFile.locals.Sup.exports.Behavior,
-        "Sup.Math.Vector3": libSourceFile.locals.Sup.exports.Math.exports.Vector3,
-        "Sup.Asset": libSourceFile.locals.Sup.exports.Asset,
+        "Sup.Actor": libSourceFile.locals["Sup"].exports["Actor"],
+        "Sup.Behavior": libSourceFile.locals["Sup"].exports["Behavior"],
+        "Sup.Math.Vector3": libSourceFile.locals["Sup"].exports["Math"].exports["Vector3"],
+        "Sup.Asset": libSourceFile.locals["Sup"].exports["Asset"],
       };
 
-      let supTypeSymbolsList: any[] = [];
+      let supTypeSymbolsList: ts.Symbol[] = [];
       for (let value in supTypeSymbols) supTypeSymbolsList.push(value);
 
-      let behaviors: {[behaviorName: string]: Array<{ name: string, type: string }>} = {};
+      let behaviors: {[behaviorName: string]: { properties: Array<{ name: string, type: string }>; parentBehavior: string } } = {};
 
       for (let symbolName in results.program.getSourceFile(ownScriptName).locals) {
-        let symbol = results.program.getSourceFile(ownScriptName).locals[symbolName];
+        let symbol = <ts.Symbol>results.program.getSourceFile(ownScriptName).locals[symbolName];
         if ((symbol.flags & ts.SymbolFlags.Class) != ts.SymbolFlags.Class) continue;
 
-        let baseTypeNode = ts.getClassExtendsHeritageClauseElement(symbol.valueDeclaration);
-        if (baseTypeNode == null) continue;
+        let parentTypeNode = ts.getClassExtendsHeritageClauseElement(symbol.valueDeclaration);
+        let parentTypeSymbol = results.typeChecker.getSymbolAtLocation(parentTypeNode.expression);
+        if (parentTypeNode == null) continue;
 
-        let typeSymbol = results.typeChecker.getSymbolAtLocation(baseTypeNode.expression);
+        let baseTypeNode = parentTypeNode;
+        let baseTypeSymbol = parentTypeSymbol;
         while (true) {
-          if (typeSymbol == supTypeSymbols["Sup.Behavior"]) break;
-          baseTypeNode = ts.getClassExtendsHeritageClauseElement(typeSymbol.valueDeclaration);
+          if (baseTypeSymbol === supTypeSymbols["Sup.Behavior"]) break;
+          baseTypeNode = ts.getClassExtendsHeritageClauseElement(baseTypeSymbol.valueDeclaration);
           if (baseTypeNode == null) break;
-          typeSymbol = results.typeChecker.getSymbolAtLocation(baseTypeNode.expression);
+          baseTypeSymbol = results.typeChecker.getSymbolAtLocation(baseTypeNode.expression);
         }
 
-        if (typeSymbol != supTypeSymbols["Sup.Behavior"]) continue;
+        if (baseTypeSymbol !== supTypeSymbols["Sup.Behavior"]) continue;
 
-        let properties: Array<{ name: string, type: string }> = behaviors[symbolName] = [];
+        let properties: Array<{ name: string, type: string }> = [];
+
+        let parentBehavior: string = null;
+        if (parentTypeSymbol !== supTypeSymbols["Sup.Behavior"]) parentBehavior = results.typeChecker.getFullyQualifiedName(parentTypeSymbol);
+        behaviors[symbolName] = { properties, parentBehavior };
 
         for (let memberName in symbol.members) {
           let member = symbol.members[memberName];
@@ -259,14 +276,14 @@ export default class ScriptAsset extends SupCore.data.base.Asset {
           let type = results.typeChecker.getTypeAtLocation(member.valueDeclaration);
           let typeName: any; // "unknown"
           let typeSymbol = type.getSymbol();
-          if (typeSymbol in supTypeSymbolsList) {
+          if (supTypeSymbolsList.indexOf(typeSymbol) != -1) {
             // TODO: Get full name
             // Until then, we only support intrinsic types
             // typeName = typeSymbol.getName()
           }
-          else if (type.intrinsicName != null) typeName = type.intrinsicName;
+          else if ((<ts.IntrinsicType>type).intrinsicName != null) typeName = (<ts.IntrinsicType>type).intrinsicName;
 
-          if (typeName != null) properties.push({ name: memberName, type: typeName });
+          if (typeName != null) properties.push({ name: member.name, type: typeName });
         }
       }
       this.serverData.resources.acquire("behaviorProperties", null, (err: Error, behaviorProperties: BehaviorPropertiesResource) => {
