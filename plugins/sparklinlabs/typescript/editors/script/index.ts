@@ -24,7 +24,7 @@ let ui: {
 
   undoTimeout?: number;
   compileTimeout?: number;
-  completionsTimeout?: number;
+  completionTimeout?: number;
   texts?: string[];
 
   undoStack?: OT.TextOperation[];
@@ -103,7 +103,7 @@ var start = () => {
   (<any>ui.editor).on("keyup", (instance: any, event: any) => {
     // Ignore Ctrl, Cmd, Escape, Return, Tab, Arrows
     if (event.ctrlKey || event.metaKey || [27, 9, 13, 37, 38, 39, 40, 16].indexOf(event.keyCode) !== -1) return;
-    scheduleCompletions();
+    scheduleCompletion();
   });
 
   let nwDispatcher = (<any>window).nwDispatcher;
@@ -527,11 +527,11 @@ var onEditText = (instance: CodeMirror.Editor, changes: CodeMirror.EditorChange[
   }
 }
 
-let completionsWorker = new Worker("completionWorker.js")
+let completionWorker = new Worker("completionWorker.js")
 let activeCompletion: { callback: any; cursor: any; token: any, start: any };
 let nextCompletion: { callback: any; cursor: any; token: any, start: any };
 
-completionsWorker.onmessage = (event) => {
+completionWorker.onmessage = (event) => {
   activeCompletion.callback({
     list: event.data,
     from: (<any>CodeMirror).Pos(activeCompletion.cursor.line, activeCompletion.token.start),
@@ -548,7 +548,7 @@ function startCompletionWorker() {
   activeCompletion = nextCompletion;
   nextCompletion = null;
 
-  completionsWorker.postMessage({
+  completionWorker.postMessage({
     scriptNames, scripts, globalDefs,
     tokenString: activeCompletion.token.string,
     start: activeCompletion.start,
@@ -570,9 +570,10 @@ let hint = (instance: any, callback: any) => {
 }
 (<any>hint).async = true;
 
-function scheduleCompletions() {
-  if (ui.completionsTimeout != null) clearTimeout(ui.completionsTimeout);
-  ui.completionsTimeout = window.setTimeout(() => {
+function scheduleCompletion() {
+  if (ui.completionTimeout != null) clearTimeout(ui.completionTimeout);
+
+  ui.completionTimeout = window.setTimeout(() => {
     (<any>ui.editor).showHint({
       completeSingle: false,
       customKeys: {
@@ -584,8 +585,8 @@ function scheduleCompletions() {
       },
       hint
     });
-    ui.completionsTimeout = null;
-  }, 200);
+    ui.completionTimeout = null;
+  }, 500);
 }
 
 var onUndo = () => {
