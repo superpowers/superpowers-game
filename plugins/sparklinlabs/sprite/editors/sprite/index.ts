@@ -30,7 +30,7 @@ function start() {
   ui.animationArea.gameInstance.draw();
 
   let cameraActor = new SupEngine.Actor(ui.animationArea.gameInstance, "Camera");
-  cameraActor.setLocalPosition(new SupEngine.THREE.Vector3(0, 0, 1));
+  cameraActor.setLocalPosition(new SupEngine.THREE.Vector3(0, 0, 10));
   let cameraComponent = new SupEngine.componentClasses["Camera"](cameraActor);
   cameraComponent.setOrthographicMode(true);
   cameraComponent.setOrthographicScale(5);
@@ -41,6 +41,7 @@ function start() {
   });
 
   let originActor = new SupEngine.Actor(ui.animationArea.gameInstance, "Origin");
+  originActor.setLocalPosition(new SupEngine.THREE.Vector3(0, 0, 1));
   ui.originMakerComponent = new SpriteOriginMarker(originActor);
 
   ui.animationArea.animationPlay = document.querySelector("button.animation-play");
