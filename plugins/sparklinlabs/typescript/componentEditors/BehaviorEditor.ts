@@ -8,7 +8,7 @@ interface Config {
 }
 
 export default class BehaviorEditor {
-  tbody: HTMLDivElement;
+  tbody: HTMLTableSectionElement;
   config: Config;
   projectClient: SupClient.ProjectClient;
   editConfig: any;
@@ -19,14 +19,9 @@ export default class BehaviorEditor {
   behaviorNameField: HTMLInputElement;
   behaviorPropertiesHeaderRow: HTMLTableRowElement;
 
-  propertySettingsByName: {[name: string]: {
-    rowElt: HTMLTableRowElement;
-    keyElt: HTMLTableHeaderCellElement;
-    valueElt: HTMLTableDataCellElement;
-    checkboxElt: HTMLInputElement;
-  }};
+  propertySettingsByName: { [name: string]: SupClient.table.RowParts };
 
-  constructor(tbody: HTMLDivElement, config: Config, projectClient: SupClient.ProjectClient, editConfig: any) {
+  constructor(tbody: HTMLTableSectionElement, config: Config, projectClient: SupClient.ProjectClient, editConfig: any) {
     this.tbody = tbody;
     this.config = config;
     this.projectClient = projectClient;
@@ -36,8 +31,8 @@ export default class BehaviorEditor {
     this.behaviorNamesDataListElt.id = `behavior-editor-datalist-${behaviorEditorDataListIndex++}`;
     this.tbody.appendChild(this.behaviorNamesDataListElt);
 
-    let behaviorNameRow = SupClient.component.createSetting(this.tbody, "Class");
-    this.behaviorNameField = SupClient.component.createTextField(behaviorNameRow.valueElt, this.config.behaviorName);
+    let behaviorNameRow = SupClient.table.appendRow(this.tbody, "Class");
+    this.behaviorNameField = SupClient.table.appendTextField(behaviorNameRow.valueCell, this.config.behaviorName);
     this.behaviorNameField.setAttribute("list", this.behaviorNamesDataListElt.id);
     this.behaviorNameField.addEventListener("change", this._onChangeBehaviorName);
 
@@ -77,7 +72,7 @@ export default class BehaviorEditor {
     // Clear old property settings
     for (let name in this.propertySettingsByName) {
       let propertySetting = this.propertySettingsByName[name];
-      propertySetting.rowElt.parentElement.removeChild(propertySetting.rowElt);
+      propertySetting.row.parentElement.removeChild(propertySetting.row);
     }
 
     this.propertySettingsByName = {};
@@ -102,12 +97,12 @@ export default class BehaviorEditor {
   }
 
   _createPropertySetting(property: {name: string; type: string}) {
-    let propertySetting = SupClient.component.createSetting(this.tbody, property.name, { checkbox: true, title: `${property.name} (${property.type})` });
+    let propertySetting = SupClient.table.appendRow(this.tbody, property.name, { checkbox: true, title: `${property.name} (${property.type})` });
     this.propertySettingsByName[property.name] = propertySetting;
     this._createPropertyField(property.name);
 
-    propertySetting.checkboxElt.checked = this.config.propertyValues[property.name] != null;
-    propertySetting.checkboxElt.addEventListener("change", (event: any) => {
+    propertySetting.checkbox.checked = this.config.propertyValues[property.name] != null;
+    propertySetting.checkbox.addEventListener("change", (event: any) => {
       if (! event.target.checked) {
         this.editConfig("clearBehaviorPropertyValue", property.name);
         return;
@@ -156,10 +151,10 @@ export default class BehaviorEditor {
     let propertyField: HTMLInputElement;
     switch (uiType) {
       case "incompatibleType": {
-        propertyField = <HTMLInputElement>propertySetting.valueElt.querySelector("input[type=text]");
+        propertyField = <HTMLInputElement>propertySetting.valueCell.querySelector("input[type=text]");
         if (propertyField == null) {
-          propertySetting.valueElt.innerHTML = "";
-          propertyField = SupClient.component.createTextField(propertySetting.valueElt, "");
+          propertySetting.valueCell.innerHTML = "";
+          propertyField = SupClient.table.appendTextField(propertySetting.valueCell, "");
           propertyField.addEventListener("change", this._onChangePropertyValue);
         }
 
@@ -169,10 +164,10 @@ export default class BehaviorEditor {
       }
 
       case "boolean": {
-        propertyField = <HTMLInputElement>propertySetting.valueElt.querySelector("input[type=checkbox]");
+        propertyField = <HTMLInputElement>propertySetting.valueCell.querySelector("input[type=checkbox]");
         if (propertyField == null) {
-          propertySetting.valueElt.innerHTML = "";
-          propertyField = SupClient.component.createBooleanField(propertySetting.valueElt, false);
+          propertySetting.valueCell.innerHTML = "";
+          propertyField = SupClient.table.appendBooleanField(propertySetting.valueCell, false);
           propertyField.addEventListener("change", this._onChangePropertyValue);
         }
 
@@ -182,10 +177,10 @@ export default class BehaviorEditor {
       }
 
       case "number": {
-        propertyField = <HTMLInputElement>propertySetting.valueElt.querySelector("input[type=number]");
+        propertyField = <HTMLInputElement>propertySetting.valueCell.querySelector("input[type=number]");
         if (propertyField == null) {
-          propertySetting.valueElt.innerHTML = "";
-          propertyField = SupClient.component.createNumberField(propertySetting.valueElt, 0);
+          propertySetting.valueCell.innerHTML = "";
+          propertyField = SupClient.table.appendNumberField(propertySetting.valueCell, 0);
           propertyField.addEventListener("change", this._onChangePropertyValue);
         }
 
@@ -195,10 +190,10 @@ export default class BehaviorEditor {
       }
 
       case "string": {
-        propertyField = <HTMLInputElement>propertySetting.valueElt.querySelector("input[type=text]");
+        propertyField = <HTMLInputElement>propertySetting.valueCell.querySelector("input[type=text]");
         if (propertyField == null) {
-          propertySetting.valueElt.innerHTML = "";
-          propertyField = SupClient.component.createTextField(propertySetting.valueElt, "");
+          propertySetting.valueCell.innerHTML = "";
+          propertyField = SupClient.table.appendTextField(propertySetting.valueCell, "");
           propertyField.addEventListener("change", this._onChangePropertyValue);
         }
 
@@ -209,7 +204,7 @@ export default class BehaviorEditor {
 
       // TODO: Support more types
       default: {
-        propertySetting.valueElt.innerHTML = "";
+        propertySetting.valueCell.innerHTML = "";
         console.error(`Unsupported property type: ${property.type}`);
         return;
       }
@@ -229,13 +224,13 @@ export default class BehaviorEditor {
   }
 
   config_setBehaviorPropertyValue(name: string, type: string, value: any) {
-    this.propertySettingsByName[name].checkboxElt.checked = true;
+    this.propertySettingsByName[name].checkbox.checked = true;
 
     this._createPropertyField(name);
   }
 
   config_clearBehaviorPropertyValue(name: string) {
-    this.propertySettingsByName[name].checkboxElt.checked = false;
+    this.propertySettingsByName[name].checkbox.checked = false;
     this._createPropertyField(name);
   }
 

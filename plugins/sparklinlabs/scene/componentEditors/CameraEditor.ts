@@ -11,7 +11,7 @@ export default class CameraEditor {
   fovField: HTMLInputElement;
   orthographicScaleField: HTMLInputElement;
 
-  constructor(tbody: HTMLDivElement, config: any, projectClient: SupClient.ProjectClient, editConfig: any) {
+  constructor(tbody: HTMLTableSectionElement, config: any, projectClient: SupClient.ProjectClient, editConfig: any) {
     this.projectClient = projectClient;
     this.editConfig = editConfig;
 
@@ -23,15 +23,15 @@ export default class CameraEditor {
       width: config.viewport.width, height: config.viewport.height,
     };
 
-    let modeRow = SupClient.component.createSetting(tbody, 'Mode');
-    this.modeSelectBox = SupClient.component.createSelectBox(modeRow.valueElt,
+    let modeRow = SupClient.table.appendRow(tbody, 'Mode');
+    this.modeSelectBox = SupClient.table.appendSelectBox(modeRow.valueCell,
       { perspective: "Perspective", orthographic: "Orthographic" }, config.mode);
 
-    let fovRow = SupClient.component.createSetting(tbody, 'Field of view');
-    this.fovField = SupClient.component.createNumberField(fovRow.valueElt, config.fov, 0.1, 179.9);
+    let fovRow = SupClient.table.appendRow(tbody, 'Field of view');
+    this.fovField = SupClient.table.appendNumberField(fovRow.valueCell, config.fov, 0.1, 179.9);
 
-    let orthographicScaleRow = SupClient.component.createSetting(tbody, 'Orthographic scale');
-    this.orthographicScaleField = SupClient.component.createNumberField(orthographicScaleRow.valueElt, config.orthographicScale, 0.1);
+    let orthographicScaleRow = SupClient.table.appendRow(tbody, 'Orthographic scale');
+    this.orthographicScaleField = SupClient.table.appendNumberField(orthographicScaleRow.valueCell, config.orthographicScale, 0.1);
 
     this.modeSelectBox.addEventListener('change', this._onChangeMode);
     this.fovField.addEventListener('change', this._onChangeFOV);

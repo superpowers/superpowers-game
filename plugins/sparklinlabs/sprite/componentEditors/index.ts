@@ -1,3 +1,3 @@
 import SpriteRendererEditor from "./SpriteRendererEditor";
 
-SupEngine.registerComponentEditorClass("SpriteRenderer", SpriteRendererEditor);
+SupClient.registerComponentEditorClass("SpriteRenderer", SpriteRendererEditor);

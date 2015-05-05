@@ -1,3 +1,3 @@
 import BehaviorEditor from "./BehaviorEditor";
 
-SupEngine.registerComponentEditorClass("Behavior", BehaviorEditor);
+SupClient.registerComponentEditorClass("Behavior", BehaviorEditor);

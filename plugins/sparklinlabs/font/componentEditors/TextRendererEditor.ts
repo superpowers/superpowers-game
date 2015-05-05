@@ -5,30 +5,30 @@ export default class TextRendererEditor {
   fields: {[key: string]: any} = {};
   fontAssetId: string;
 
-  constructor(tbody: HTMLDivElement, config: any, projectClient: SupClient.ProjectClient, editConfig: any) {
+  constructor(tbody: HTMLTableSectionElement, config: any, projectClient: SupClient.ProjectClient, editConfig: any) {
     this.editConfig = editConfig;
     this.projectClient = projectClient;
     this.fontAssetId = config.fontAssetId;
 
-    var fontRow = SupClient.component.createSetting(tbody, 'Font');
+    var fontRow = SupClient.table.appendRow(tbody, 'Font');
     var fontName = (config.fontAssetId != null) ? this.projectClient.entries.getPathFromId(this.fontAssetId) : ""
-    this.fields["fontAssetId"] = SupClient.component.createTextField(fontRow.valueElt, fontName);
+    this.fields["fontAssetId"] = SupClient.table.appendTextField(fontRow.valueCell, fontName);
     this.fields["fontAssetId"].addEventListener('input', this._onChangeFontAsset);
 
-    var textRow = SupClient.component.createSetting(tbody, 'Text');
-    this.fields["text"] = SupClient.component.createTextField(textRow.valueElt, config.text);
+    var textRow = SupClient.table.appendRow(tbody, 'Text');
+    this.fields["text"] = SupClient.table.appendTextField(textRow.valueCell, config.text);
     this.fields["text"].addEventListener('change', (event: any) => { this.editConfig('setProperty', 'text', event.target.value); });
 
-    var alignmentRow = SupClient.component.createSetting(tbody, 'Alignment');
-    this.fields["alignment"] = SupClient.component.createSelectBox(alignmentRow.valueElt, {"left": "Left", "center": "Center", "right": "Right"}, config.alignment);
+    var alignmentRow = SupClient.table.appendRow(tbody, 'Alignment');
+    this.fields["alignment"] = SupClient.table.appendSelectBox(alignmentRow.valueCell, {"left": "Left", "center": "Center", "right": "Right"}, config.alignment);
     this.fields["alignment"].addEventListener('change', (event: any) => { this.editConfig('setProperty', 'alignment', event.target.value); });
 
-    var sizeRow = SupClient.component.createSetting(tbody, 'Size');
-    this.fields["size"] = SupClient.component.createNumberField(sizeRow.valueElt, config.size, 0);
+    var sizeRow = SupClient.table.appendRow(tbody, 'Size');
+    this.fields["size"] = SupClient.table.appendNumberField(sizeRow.valueCell, config.size, 0);
     this.fields["size"].addEventListener('change', (event: any) => { this.editConfig('setProperty', 'size', parseInt(event.target.value)); });
 
-    var colorRow = SupClient.component.createSetting(tbody, 'Color');
-    this.fields["color"] = SupClient.component.createTextField(colorRow.valueElt, config.color);
+    var colorRow = SupClient.table.appendRow(tbody, 'Color');
+    this.fields["color"] = SupClient.table.appendTextField(colorRow.valueCell, config.color);
     this.fields["color"].addEventListener('change', (event: any) => { this.editConfig('setProperty', 'color', event.target.value); });
 
     this.projectClient.subEntries(this);

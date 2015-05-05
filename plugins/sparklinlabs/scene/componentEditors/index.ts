@@ -1,3 +1,3 @@
 import CameraEditor from "./CameraEditor";
 
-SupEngine.registerComponentEditorClass("Camera", CameraEditor)
+SupClient.registerComponentEditorClass("Camera", CameraEditor)

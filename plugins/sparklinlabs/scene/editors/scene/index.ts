@@ -44,7 +44,7 @@ function start() {
   }
 
   ui.componentEditorClasses = {};
-  for (let componentName in SupEngine.componentEditorClasses) ui.componentEditorClasses[componentName] = componentName;
+  for (let componentName in SupClient.componentEditorClasses) ui.componentEditorClasses[componentName] = componentName;
 
   document.querySelector("button.new-component").addEventListener("click", onNewComponentClick);
 
@@ -482,7 +482,7 @@ function createComponentElement(nodeId: string, component: Component) {
 
     socket.emit("edit:assets", info.assetId, "editComponent", nodeId, component.id, command, ...args, callback);
   }
-  let componentEditorPlugin = SupEngine.componentEditorClasses[component.type];
+  let componentEditorPlugin = SupClient.componentEditorClasses[component.type];
   ui.componentEditors[component.id] = new componentEditorPlugin(table.querySelector("tbody"), component.config, data.projectClient, editConfig);
 
   let shrinkButton = clone.querySelector(".shrink-component");

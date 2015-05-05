@@ -1,22 +1,22 @@
 import { ConfigPub } from '../data/ArcadeBody2DConfig';
 
 export default class ArcadeBody2DEditor {
-  tbody: HTMLDivElement;
+  tbody: HTMLTableSectionElement;
   typeField: HTMLSelectElement;
   boxFields: { [name: string]: HTMLInputElement };
   tileMapFields: { [name: string]: HTMLInputElement };
 
-  projectClient: SupClient.ProjectClient
+  projectClient: SupClient.ProjectClient;
   editConfig: any;
 
-  constructor(tbody: HTMLDivElement, config: ConfigPub, projectClient: SupClient.ProjectClient, editConfig: any) {
+  constructor(tbody: HTMLTableSectionElement, config: ConfigPub, projectClient: SupClient.ProjectClient, editConfig: any) {
     this.tbody = tbody;
     this.projectClient = projectClient;
     this.editConfig = editConfig;
 
     // Type
-    let typeRow = SupClient.component.createSetting(this.tbody, "Type");
-    this.typeField = SupClient.component.createSelectBox(typeRow.valueElt, {
+    let typeRow = SupClient.table.appendRow(this.tbody, "Type");
+    this.typeField = SupClient.table.appendSelectBox(typeRow.valueCell, {
       "box": "Box",
       "tileMap": "Tile Map"
     });
@@ -28,32 +28,32 @@ export default class ArcadeBody2DEditor {
     // Box boxFields
     this.boxFields = {};
 
-    let movableRow = SupClient.component.createSetting(this.tbody, "Movable");
-    this.boxFields["movable"] = SupClient.component.createBooleanField(movableRow.valueElt, config.movable);
+    let movableRow = SupClient.table.appendRow(this.tbody, "Movable");
+    this.boxFields["movable"] = SupClient.table.appendBooleanField(movableRow.valueCell, config.movable);
     this.boxFields["movable"].addEventListener("click", (event: any) => {
       this.editConfig("setProperty", "movable", event.target.checked);
     });
 
-    let widthRow = SupClient.component.createSetting(this.tbody, "Width");
-    this.boxFields["width"] = SupClient.component.createNumberField(widthRow.valueElt, config.width, 0);
+    let widthRow = SupClient.table.appendRow(this.tbody, "Width");
+    this.boxFields["width"] = SupClient.table.appendNumberField(widthRow.valueCell, config.width, 0);
     this.boxFields["width"].addEventListener("change", (event: any) => {
       this.editConfig("setProperty", "width", parseFloat(event.target.value));
     });
 
-    let heightRow = SupClient.component.createSetting(this.tbody, "Height");
-    this.boxFields["height"] = SupClient.component.createNumberField(heightRow.valueElt, config.height, 0);
+    let heightRow = SupClient.table.appendRow(this.tbody, "Height");
+    this.boxFields["height"] = SupClient.table.appendNumberField(heightRow.valueCell, config.height, 0);
     this.boxFields["height"].addEventListener("change", (event: any) => {
       this.editConfig("setProperty", "height", parseFloat(event.target.value));
     });
 
-    let offsetX = SupClient.component.createSetting(this.tbody, "Offset X");
-    this.boxFields["offsetX"] = SupClient.component.createNumberField(offsetX.valueElt, config.offsetX, 0);
+    let offsetX = SupClient.table.appendRow(this.tbody, "Offset X");
+    this.boxFields["offsetX"] = SupClient.table.appendNumberField(offsetX.valueCell, config.offsetX, 0);
     this.boxFields["offsetX"].addEventListener("change", (event: any) => {
       this.editConfig("setProperty", "offsetX", parseFloat(event.target.value));
     });
 
-    let offsetY = SupClient.component.createSetting(this.tbody, "Offset Y");
-    this.boxFields["offsetY"] = SupClient.component.createNumberField(offsetY.valueElt, config.offsetY, 0);
+    let offsetY = SupClient.table.appendRow(this.tbody, "Offset Y");
+    this.boxFields["offsetY"] = SupClient.table.appendNumberField(offsetY.valueCell, config.offsetY, 0);
     this.boxFields["offsetY"].addEventListener("change", (event: any) => {
       this.editConfig("setProperty", "offsetY", parseFloat(event.target.value));
     });
@@ -61,9 +61,9 @@ export default class ArcadeBody2DEditor {
     // Tile Map boxFields
     this.tileMapFields = {};
 
-    let tileMapRow = SupClient.component.createSetting(this.tbody, "Tile Map");
+    let tileMapRow = SupClient.table.appendRow(this.tbody, "Tile Map");
     let tileMapName = (config.tileMapAssetId != "") ? this.projectClient.entries.getPathFromId(config.tileMapAssetId) : "";
-    this.tileMapFields["tileMapAssetId"] = SupClient.component.createTextField(tileMapRow.valueElt, tileMapName);
+    this.tileMapFields["tileMapAssetId"] = SupClient.table.appendTextField(tileMapRow.valueCell, tileMapName);
     this.tileMapFields["tileMapAssetId"].addEventListener("input", (event: any) => {
       if (event.target.value === "") this.editConfig("setProperty", "tileMapAssetId", event.target.value);
       else {
@@ -72,14 +72,14 @@ export default class ArcadeBody2DEditor {
       }
     });
 
-    let tileSetPropertyNameRow = SupClient.component.createSetting(this.tbody, "Tile Set Property");
-    this.tileMapFields["tileSetPropertyName"] = SupClient.component.createTextField(tileSetPropertyNameRow.valueElt, config.tileSetPropertyName);
+    let tileSetPropertyNameRow = SupClient.table.appendRow(this.tbody, "Tile Set Property");
+    this.tileMapFields["tileSetPropertyName"] = SupClient.table.appendTextField(tileSetPropertyNameRow.valueCell, config.tileSetPropertyName);
     this.tileMapFields["tileSetPropertyName"].addEventListener("change", (event: any) => {
       this.editConfig("setProperty", "tileSetPropertyName", event.target.value);
     });
 
-    let layersIndexRow = SupClient.component.createSetting(this.tbody, "Layers");
-    this.tileMapFields["layersIndex"] = SupClient.component.createTextField(layersIndexRow.valueElt, config.layersIndex);
+    let layersIndexRow = SupClient.table.appendRow(this.tbody, "Layers");
+    this.tileMapFields["layersIndex"] = SupClient.table.appendTextField(layersIndexRow.valueCell, config.layersIndex);
     this.tileMapFields["layersIndex"].addEventListener("change", (event: any) => {
       let layersIndex = (event.target.value !== "") ? event.target.value : null
       this.editConfig("setProperty", "layersIndex", layersIndex);

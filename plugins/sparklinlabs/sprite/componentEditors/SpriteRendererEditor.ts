@@ -12,18 +12,18 @@ export default class SpriteRendererEditor {
 
   asset: SpriteAsset;
 
-  constructor(tbody: HTMLDivElement, config: any, projectClient: SupClient.ProjectClient, editConfig: any) {
+  constructor(tbody: HTMLTableSectionElement, config: any, projectClient: SupClient.ProjectClient, editConfig: any) {
     this.projectClient = projectClient;
     this.editConfig = editConfig;
     this.spriteAssetId = config.spriteAssetId;
     this.animationId = config.animationId;
 
-    let spriteRow = SupClient.component.createSetting(tbody, "Sprite");
-    this.spriteTextField = SupClient.component.createTextField(spriteRow.valueElt, "");
+    let spriteRow = SupClient.table.appendRow(tbody, "Sprite");
+    this.spriteTextField = SupClient.table.appendTextField(spriteRow.valueCell, "");
     this.spriteTextField.disabled = true;
 
-    let animationRow = SupClient.component.createSetting(tbody, "Animation");
-    this.animationSelectBox = SupClient.component.createSelectBox(animationRow.valueElt, { "": "(None)" });
+    let animationRow = SupClient.table.appendRow(tbody, "Animation");
+    this.animationSelectBox = SupClient.table.appendSelectBox(animationRow.valueCell, { "": "(None)" });
     this.animationSelectBox.disabled = true;
 
     this.spriteTextField.addEventListener("input", this._onChangeSpriteAsset);
@@ -91,7 +91,7 @@ export default class SpriteRendererEditor {
     this._clearAnimations();
 
     for (let animation of this.asset.pub.animations) {
-      SupClient.component.createSelectOption(this.animationSelectBox, animation.id, animation.name);
+      SupClient.table.appendSelectOption(this.animationSelectBox, animation.id, animation.name);
     }
 
     this.animationSelectBox.value = (this.animationId != null) ? this.animationId : "";
@@ -107,7 +107,7 @@ export default class SpriteRendererEditor {
     this._clearAnimations();
 
     for (let animation of this.asset.pub.animations) {
-      SupClient.component.createSelectOption(this.animationSelectBox, animation.id, animation.name);
+      SupClient.table.appendSelectOption(this.animationSelectBox, animation.id, animation.name);
     }
 
     if (animationId != null && this.asset.animations.byId[animationId] != null) this.animationSelectBox.value = animationId;
