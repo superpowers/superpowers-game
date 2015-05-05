@@ -43,4 +43,9 @@ export default class ArcadeBody2DMarker extends SupEngine.ActorComponent {
     this.line.material.dispose();
     this.line = null;
   }
+
+  _destroy() {
+    if (this.line != null) this._clearRenderer();
+    super._destroy();
+  }
 }
