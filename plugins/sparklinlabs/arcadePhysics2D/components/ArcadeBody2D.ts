@@ -54,10 +54,10 @@ export default class ArcadeBody2D extends SupEngine.ActorComponent {
     this.previousPosition.copy(this.position);
 
     this.velocity.x += (<any>SupEngine).ArcadePhysics2D.gravity.x * 1 / SupEngine.GameInstance.framesPerSecond;
-    this.velocity.x *= 1 + this.velocityMultiplier.x / 100;
+    this.velocity.x *= this.velocityMultiplier.x;
 
     this.velocity.y += (<any>SupEngine).ArcadePhysics2D.gravity.y * 1 / SupEngine.GameInstance.framesPerSecond;
-    this.velocity.y *= 1 + this.velocityMultiplier.y / 100;
+    this.velocity.y *= this.velocityMultiplier.y;
     if (this.velocity.length() !== 0) {
       this.velocity.x = Math.min( Math.max( this.velocity.x, this.velocityMin.x ), this.velocityMax.x );
       this.velocity.y = Math.min( Math.max( this.velocity.y, this.velocityMin.y ), this.velocityMax.y );
