@@ -242,8 +242,8 @@ export default class ScriptAsset extends SupCore.data.base.Asset {
         if ((symbol.flags & ts.SymbolFlags.Class) != ts.SymbolFlags.Class) continue;
 
         let parentTypeNode = ts.getClassExtendsHeritageClauseElement(symbol.valueDeclaration);
-        let parentTypeSymbol = results.typeChecker.getSymbolAtLocation(parentTypeNode.expression);
         if (parentTypeNode == null) continue;
+        let parentTypeSymbol = results.typeChecker.getSymbolAtLocation(parentTypeNode.expression);
 
         let baseTypeNode = parentTypeNode;
         let baseTypeSymbol = parentTypeSymbol;
