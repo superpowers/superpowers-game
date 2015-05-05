@@ -4,7 +4,7 @@ import ArcadeBody2DMarker from "./ArcadeBody2DMarker";
 
 module ArcadePhysics2D {
   export let allBodies: ArcadeBody2D[] = [];
-  export let gravity = new THREE.Vector3( 0, -0.1, 0 );
+  export let gravity = new THREE.Vector3( 0, 0, 0 );
 
   export function intersects( body1: ArcadeBody2D, body2: ArcadeBody2D ) {
     if (body1.right() < body2.left()) return false;

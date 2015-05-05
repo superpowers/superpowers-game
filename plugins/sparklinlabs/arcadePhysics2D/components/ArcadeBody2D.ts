@@ -43,9 +43,9 @@ export default class ArcadeBody2D extends SupEngine.ActorComponent {
     this.previousPosition = this.position.clone();
 
     this.velocity = new THREE.Vector3(0, 0, 0);
-    this.velocityMin = new THREE.Vector3(-0.5, -0.5, 0);
-    this.velocityMax = new THREE.Vector3(0.5, 0.5, 0);
-    this.velocityMultiplier = new THREE.Vector3(0, 0, 0);
+    this.velocityMin = new THREE.Vector3(-Infinity, -Infinity, 0);
+    this.velocityMax = new THREE.Vector3(Infinity, Infinity, 0);
+    this.velocityMultiplier = new THREE.Vector3(1, 1, 0);
   }
 
   earlyUpdate() {
@@ -53,10 +53,10 @@ export default class ArcadeBody2D extends SupEngine.ActorComponent {
 
     this.previousPosition.copy(this.position);
 
-    this.velocity.x += (<any>SupEngine).ArcadePhysics2D.gravity.x * 1 / SupEngine.GameInstance.framesPerSecond;
+    this.velocity.x += (<any>SupEngine).ArcadePhysics2D.gravity.x;
     this.velocity.x *= this.velocityMultiplier.x;
 
-    this.velocity.y += (<any>SupEngine).ArcadePhysics2D.gravity.y * 1 / SupEngine.GameInstance.framesPerSecond;
+    this.velocity.y += (<any>SupEngine).ArcadePhysics2D.gravity.y;
     this.velocity.y *= this.velocityMultiplier.y;
     if (this.velocity.length() !== 0) {
       this.velocity.x = Math.min( Math.max( this.velocity.x, this.velocityMin.x ), this.velocityMax.x );
