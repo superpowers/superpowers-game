@@ -4,8 +4,8 @@ module.exports = class TileMapRendererEditor
     @tileMapAssetId = config.tileMapAssetId
     @tileSetAssetId = config.tileSetAssetId
 
-    tileMapRow = SupClient.component.createSetting tbody, 'Map'
-    @tileMapTextField = SupClient.component.createTextField tileMapRow.valueElt, ''
+    tileMapRow = SupClient.table.appendRow tbody, 'Map'
+    @tileMapTextField = SupClient.table.appendTextField tileMapRow.valueCell, ''
     @tileMapTextField.disabled = true
 
     @tileMapTextField.addEventListener 'input', @_onChangeTileMapAsset
