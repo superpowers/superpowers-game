@@ -84,6 +84,7 @@ export default class ScriptAsset extends SupCore.data.base.Asset {
       "  awake() {",
       "    ",
       "  }",
+      "",
       "  update() {",
       "    ",
       "  }",
