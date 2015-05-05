@@ -49,22 +49,6 @@ export function registerComponentClass(name: string, plugin: new(...args: any[])
   componentClasses[name] = plugin;
 };
 
-interface ComponentEditorClass {
-  new (tbody: HTMLDivElement, config: any, projectClient: any, editConfig: any): {
-    destroy(): void;
-    config_setProperty(path: string, value: any): void;
-  }
-}
-export let componentEditorClasses: {[name: string]: ComponentEditorClass} = {};
-export function registerComponentEditorClass(name: string, plugin: ComponentEditorClass) {
-  if (componentEditorClasses[name] != null) {
-    console.error(`SupEngine.registerComponentEditorClass: Tried to register two or more classes named "${name}"`);
-    return;
-  }
-
-  componentEditorClasses[name] = plugin;
-};
-
 export let earlyUpdateFunctions: {[name: string]: Function} = {};
 export function registerEarlyUpdateFunction(name: string, callback: Function) {
   if (earlyUpdateFunctions[name] != null) {

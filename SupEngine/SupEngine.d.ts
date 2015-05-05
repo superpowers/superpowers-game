@@ -12,15 +12,6 @@ declare module SupEngine {
   let componentClasses: {[name: string]: any};
   function registerComponentClass(name: string, plugin: any): void;
 
-  interface ComponentEditorClass {
-    new (tbody: HTMLDivElement, config: any, projectClient: any, editConfig: any): {
-      destroy(): void;
-      config_setProperty(path: string, value: any): void;
-    };
-  }
-  let componentEditorClasses: {[name: string]: ComponentEditorClass};
-  function registerComponentEditorClass(name: string, plugin: ComponentEditorClass): void;
-
   let earlyUpdateFunctions: any;
   function registerEarlyUpdateFunction(name: string, callback: Function): void;
 
