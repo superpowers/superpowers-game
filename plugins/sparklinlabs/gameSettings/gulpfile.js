@@ -1,18 +1,5 @@
 var gulp = require("gulp");
-var tasks = [ "jade", "stylus" ];
-
-// Jade
-var jade = require("gulp-jade");
-gulp.task("jade", function() {
-  return gulp.src("./editors/**/index.jade").pipe(jade()).pipe(gulp.dest("./public/editors"));
-});
-
-// Stylus
-var stylus = require("gulp-stylus");
-var nib = require("nib");
-gulp.task("stylus", function() {
-  return gulp.src("./editors/**/index.styl").pipe(stylus({use: [ nib() ], errors: true})).pipe(gulp.dest("./public/editors"));
-});
+var tasks = [];
 
 // TypeScript
 var ts = require("gulp-typescript");
@@ -41,10 +28,7 @@ function makeBrowserify(source, destination, output) {
 
 makeBrowserify("./data/index.js", "./public", "data");
 makeBrowserify("./runtime/index.js", "./public", "runtime");
-var editors = require("fs").readdirSync("./editors");
-editors.forEach(function(editor) {
-  makeBrowserify("./editors/" + editor + "/index.js", "./public/editors", editor + "/index");
-})
+makeBrowserify("./settingsEditors/index.js", "./public", "settingsEditors");
 
 // All
 gulp.task("default", tasks);

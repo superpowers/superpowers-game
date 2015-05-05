@@ -6,20 +6,10 @@ html
     link(rel="stylesheet",href="index.css")
 
   body
-    h1 Game Settings
+    nav
+      ul
 
-    table
-      tr
-        th Frames per Second
-        td(colspan=2)
-          input(type="number").framesPerSecond
-
-      tr
-        th Ratio
-        td
-          input(type="number",placeholder="Width").ratioNumerator
-        td
-          input(type="number",placeholder="Height").ratioDenominator
+    main
 
     script(src="/core/SupCore.js")
     script(src="../../data.js")

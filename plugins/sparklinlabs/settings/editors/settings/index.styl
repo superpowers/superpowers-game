@@ -1,0 +1,72 @@
+@import 'nib'
+
+body
+  display flex
+
+nav
+  width 250px
+  overflow-y auto
+  position fixed
+  top 0
+  background #ddd
+  bottom 0
+
+  ul
+    list-style none
+    margin 0
+    padding 0.5em
+
+  li
+    padding 0
+    margin 0
+
+  a
+    display block
+    color #444
+    padding 0.25em 0.5em
+    text-decoration none
+
+    &:hover
+      background #ccc
+
+    &.active
+      background #444
+      color #eee
+
+main
+  margin-left 250px
+  padding 1em
+  flex 1
+
+section
+  display none
+
+  &.active
+    display initial
+
+section header
+  font-size 24pt
+
+section table
+  margin 1em 0
+  width 500px
+  border-collapse collapse
+  font-size 12px
+
+  th, td
+    border 1px solid #ccc
+
+  th
+    text-align left
+    white-space nowrap
+    overflow-x hidden
+    text-overflow ellipsis
+    font-weight normal
+    background #eee
+    padding 0 0.5em
+
+  td input, td select
+    width 100%
+    margin 0
+    padding 0.5em 0.25em
+    border none
