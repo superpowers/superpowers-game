@@ -8,7 +8,7 @@ export default class TextRenderer extends SupEngine.ActorComponent {
   static Updater = TextRendererUpdater;
 
   texture: THREE.Texture;
-  threeMesh: THREE.Mesh;
+  threeMeshes: THREE.Mesh[] = [];
 
   text: string;
   font: FontPub;
@@ -33,35 +33,47 @@ export default class TextRenderer extends SupEngine.ActorComponent {
   }
 
   _createMesh() {
-    if (this.threeMesh != null) this.clearMesh();
+    this.clearMesh();
     if (this.text == null || this.font == null) return;
 
     if (this.font.isBitmap) this._createBitmapMesh();
     else this._createFontMesh();
 
-    this.actor.threeObject.add(this.threeMesh);
-    let scale = 1 / this.font.pixelsPerUnit;
-    this.threeMesh.scale.set(scale, scale, scale);
-    this.threeMesh.updateMatrixWorld(false);
+    for (let threeMesh of this.threeMeshes) {
+      this.actor.threeObject.add(threeMesh);
+      let scale = 1 / this.font.pixelsPerUnit;
+      threeMesh.scale.set(scale, scale, scale);
+      threeMesh.updateMatrixWorld(false);
+    }
   }
 
   _createFontMesh() {
     let fontSize = (this.options.size != null) ? this.options.size : this.font.size;
+    let texts = this.text.split("\n");
 
     let canvas = document.createElement("canvas");
     let ctx = <CanvasRenderingContext2D>canvas.getContext("2d");
     ctx.font = `${fontSize}px ${this.font.name}`;
-    let width = Math.max(1, ctx.measureText(this.text).width);
-    let height = fontSize * 2;
+    let width = 1;
+    for (let text in texts) width = Math.max(width, ctx.measureText(this.text).width);
+    let height = fontSize * 2 * texts.length;
     canvas.width = width;
     canvas.height = height;
 
     ctx.fillStyle = (this.options.color != null && this.options.color !== "") ? this.options.color : this.font.color;
     ctx.font = `${fontSize}px ${this.font.name}`;
-    ctx.textAlign = "center";
     ctx.textBaseline = "middle";
 
-    ctx.fillText(this.text, width / 2, height / 2);
+    ctx.textAlign = this.options.alignment;
+    let x = width / 2;
+    switch (this.options.alignment) {
+      case "left" : x = 0; break;
+      case "right": x = width; break;
+    }
+
+    for (let index in texts) {
+      ctx.fillText(texts[index], x, (0.5 + (index - (texts.length - 1) / 2 ) / texts.length / 2) * height);
+    }
 
     this.texture = new THREE.Texture(canvas);
     if (this.font.filtering === "pixelated") {
@@ -78,68 +90,74 @@ export default class TextRenderer extends SupEngine.ActorComponent {
       transparent: true
     });
 
-    this.threeMesh = new THREE.Mesh(geometry, material);
+    this.threeMeshes[0] = new THREE.Mesh(geometry, material);
     switch (this.options.alignment) {
-      case "left":  this.threeMesh.position.setX( width / 2 / this.font.pixelsPerUnit); break;
-      case "right": this.threeMesh.position.setX(-width / 2 / this.font.pixelsPerUnit); break;
+      case "left":  this.threeMeshes[0].position.setX( width / 2 / this.font.pixelsPerUnit); break;
+      case "right": this.threeMeshes[0].position.setX(-width / 2 / this.font.pixelsPerUnit); break;
     }
   }
 
   _createBitmapMesh() {
-    let geometry = new TextRendererGeometry(this.font.gridWidth * this.text.length, this.font.gridHeight, this.text.length, 1);
-    let material = new THREE.MeshBasicMaterial({
-      map: this.font.texture,
-      alphaTest: 0.1,
-      side: THREE.DoubleSide,
-      transparent: true
-    });
-    this.threeMesh = new THREE.Mesh(geometry, material);
-    switch (this.options.alignment) {
-      case "center":  this.threeMesh.position.setX(-geometry.width / 2 / this.font.pixelsPerUnit); break;
-      case "right":   this.threeMesh.position.setX(-geometry.width / this.font.pixelsPerUnit); break;
-    }
-    this.threeMesh.position.setY(-geometry.height / 2 / this.font.pixelsPerUnit);
+    let texts = this.text.split("\n");
+    for (let index in texts) {
+      let text = texts[index];
 
-    let uvs = geometry.getAttribute("uv");
-    uvs.needsUpdate = true;
+      let geometry = new TextRendererGeometry(this.font.gridWidth * text.length, this.font.gridHeight, text.length, 1);
+      let material = new THREE.MeshBasicMaterial({
+        map: this.font.texture,
+        alphaTest: 0.1,
+        side: THREE.DoubleSide,
+        transparent: true
+      });
+      this.threeMeshes[index] = new THREE.Mesh(geometry, material);
+      switch (this.options.alignment) {
+        case "center":  this.threeMeshes[index].position.setX(-geometry.width / 2 / this.font.pixelsPerUnit); break;
+        case "right":   this.threeMeshes[index].position.setX(-geometry.width / this.font.pixelsPerUnit); break;
+      }
+      let y = (0.5 + (index - (texts.length - 1) / 2 )) * this.font.gridHeight / this.font.pixelsPerUnit;
+      this.threeMeshes[index].position.setY(-y);
 
-    let charsByRow = this.font.texture.image.width / this.font.gridWidth;
-    let y = 0;
-    for (let x = 0; x < this.text.length; x++) {
-      let index: number;
-      if (this.font.charset == null) index = this.text.charCodeAt(x) - this.font.charsetOffset;
-      else index = this.font.charset.indexOf(this.text[x]);
+      let uvs = geometry.getAttribute("uv");
+      uvs.needsUpdate = true;
 
-      let tileX = index % charsByRow;
-      let tileY = Math.floor(index / charsByRow);
+      let charsByRow = this.font.texture.image.width / this.font.gridWidth;
+      for (let x = 0; x < text.length; x++) {
+        let index: number;
+        if (this.font.charset == null) index = text.charCodeAt(x) - this.font.charsetOffset;
+        else index = this.font.charset.indexOf(text[x]);
 
-      let left   = ((tileX)     * this.font.gridWidth + 0.2) / this.font.texture.image.width;
-      let right  = ((tileX + 1) * this.font.gridWidth - 0.2) / this.font.texture.image.width;
-      let bottom = 1 - ((tileY+1) * this.font.gridHeight - 0.2) / this.font.texture.image.height;
-      let top    = 1 - (tileY     * this.font.gridHeight + 0.2) / this.font.texture.image.height;
+        let tileX = index % charsByRow;
+        let tileY = Math.floor(index / charsByRow);
 
-      let quadIndex = (x + y * this.text.length);
-      uvs.array[quadIndex * 8 + 0] = left
-      uvs.array[quadIndex * 8 + 1] = bottom
+        let left   = ((tileX)     * this.font.gridWidth + 0.2) / this.font.texture.image.width;
+        let right  = ((tileX + 1) * this.font.gridWidth - 0.2) / this.font.texture.image.width;
+        let bottom = 1 - ((tileY+1) * this.font.gridHeight - 0.2) / this.font.texture.image.height;
+        let top    = 1 - (tileY     * this.font.gridHeight + 0.2) / this.font.texture.image.height;
 
-      uvs.array[quadIndex * 8 + 2] = right
-      uvs.array[quadIndex * 8 + 3] = bottom
+        uvs.array[x * 8 + 0] = left
+        uvs.array[x * 8 + 1] = bottom
 
-      uvs.array[quadIndex * 8 + 4] = right
-      uvs.array[quadIndex * 8 + 5] = top
+        uvs.array[x * 8 + 2] = right
+        uvs.array[x * 8 + 3] = bottom
 
-      uvs.array[quadIndex * 8 + 6] = left
-      uvs.array[quadIndex * 8 + 7] = top
+        uvs.array[x * 8 + 4] = right
+        uvs.array[x * 8 + 5] = top
+
+        uvs.array[x * 8 + 6] = left
+        uvs.array[x * 8 + 7] = top
+      }
     }
   }
 
   clearMesh() {
-    if (this.threeMesh == null) return;
+    for (let threeMesh of this.threeMeshes) {
+      this.actor.threeObject.remove(threeMesh);
+      threeMesh.geometry.dispose();
+      threeMesh.material.dispose();
+      threeMesh = null;
+    }
+    this.threeMeshes.length = 0;
 
-    this.actor.threeObject.remove(this.threeMesh);
-    this.threeMesh.geometry.dispose();
-    this.threeMesh.material.dispose();
-    this.threeMesh = null;
     if (this.texture != null) {
       this.texture.dispose();
       this.texture = null;

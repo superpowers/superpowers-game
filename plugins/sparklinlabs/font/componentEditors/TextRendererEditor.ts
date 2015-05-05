@@ -16,8 +16,8 @@ export default class TextRendererEditor {
     this.fields["fontAssetId"].addEventListener('input', this._onChangeFontAsset);
 
     var textRow = SupClient.table.appendRow(tbody, 'Text');
-    this.fields["text"] = SupClient.table.appendTextField(textRow.valueCell, config.text);
-    this.fields["text"].addEventListener('change', (event: any) => { this.editConfig('setProperty', 'text', event.target.value); });
+    this.fields["text"] = SupClient.table.appendTextAreaField(textRow.valueCell, config.text);
+    this.fields["text"].addEventListener('input', (event: any) => { this.editConfig('setProperty', 'text', event.target.value); });
 
     var alignmentRow = SupClient.table.appendRow(tbody, 'Alignment');
     this.fields["alignment"] = SupClient.table.appendSelectBox(alignmentRow.valueCell, {"left": "Left", "center": "Center", "right": "Right"}, config.alignment);
@@ -40,7 +40,6 @@ export default class TextRendererEditor {
     if (path === "fontAssetId") {
       if (value != null) this.fields["fontAssetId"].value = this.projectClient.entries.getPathFromId(value);
       else this.fields["fontAssetId"].value = "";
-
     }
     else this.fields[path].value = value;
   }
