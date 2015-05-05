@@ -10,6 +10,7 @@ let forwardVector = new THREE.Vector3(0, 1, 0);
 export default class Camera3DControls extends ActorComponent {
   camera: Camera;
   rotation: THREE.Euler;
+  movementSpeed = 0.2;
 
   constructor(actor: Actor, camera: Camera) {
     super(actor, "Camera3DControls");
@@ -19,24 +20,22 @@ export default class Camera3DControls extends ActorComponent {
   }
 
   update() {
-    let movementSpeed = 0.1;
-
     let keyButtons = this.actor.gameInstance.input.keyboardButtons;
     let keyEvent = (<any>window).KeyEvent; // Workaround for unknown KeyEvent property on window object
 
     tmpMovement.setX(
-      (keyButtons[keyEvent.DOM_VK_A].isDown || keyButtons[keyEvent.DOM_VK_Q].isDown) ? -movementSpeed :
-      ((keyButtons[keyEvent.DOM_VK_D].isDown) ? movementSpeed :
+      (keyButtons[keyEvent.DOM_VK_A].isDown || keyButtons[keyEvent.DOM_VK_Q].isDown) ? -this.movementSpeed :
+      ((keyButtons[keyEvent.DOM_VK_D].isDown) ? this.movementSpeed :
       0));
 
     tmpMovement.setZ(
-      (keyButtons[keyEvent.DOM_VK_W].isDown || keyButtons[keyEvent.DOM_VK_Z].isDown) ? -movementSpeed :
-      ((keyButtons[keyEvent.DOM_VK_S].isDown) ? movementSpeed :
+      (keyButtons[keyEvent.DOM_VK_W].isDown || keyButtons[keyEvent.DOM_VK_Z].isDown) ? -this.movementSpeed :
+      ((keyButtons[keyEvent.DOM_VK_S].isDown) ? this.movementSpeed :
       0 ));
 
     tmpMovement.setY(
-      (keyButtons[keyEvent.DOM_VK_SPACE].isDown) ? movementSpeed :
-      ((keyButtons[keyEvent.DOM_VK_SHIFT].isDown) ? -movementSpeed :
+      (keyButtons[keyEvent.DOM_VK_SPACE].isDown) ? this.movementSpeed :
+      ((keyButtons[keyEvent.DOM_VK_SHIFT].isDown) ? -this.movementSpeed :
       0 ));
 
     tmpMovement.applyQuaternion(tmpQuaternion.setFromAxisAngle(forwardVector, this.rotation.y));
