@@ -202,7 +202,12 @@ export default class Input {
   // See https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent.code
 
   _onKeyDown = (event: KeyboardEvent) => {
-    if (event.keyCode !== (<any>window)["KeyEvent"].DOM_VK_F12 && event.keyCode !== (<any>window)["KeyEvent"].DOM_VK_F5) event.preventDefault();
+    if (event.keyCode !== (<any>window)["KeyEvent"].DOM_VK_F12 &&
+        event.keyCode !== (<any>window)["KeyEvent"].DOM_VK_F4 &&
+        event.keyCode !== (<any>window)["KeyEvent"].DOM_VK_F5)
+
+      event.preventDefault();
+
     this.keyboardButtonsDown[event.keyCode] = true;
   }
 
