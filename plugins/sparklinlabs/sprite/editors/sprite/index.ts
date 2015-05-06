@@ -313,7 +313,7 @@ function updateSelectedAnimation() {
   let buttons = document.querySelectorAll(".animations-buttons button");
   for (let index = 0; index < buttons.length; index ++) {
     let button: any = buttons.item(index)
-    button.disabled = ui.selectedAnimationId == null && button.className != "new-animation"
+    button.disabled = ui.selectedAnimationId == null && button.className !== "new-animation"
   }
 }
 

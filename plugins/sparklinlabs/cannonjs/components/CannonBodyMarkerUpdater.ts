@@ -46,17 +46,15 @@ class CannonBodyMarkerUpdater {
     if (["offsetX", "offsetY", "offsetZ"].indexOf(path) !== -1)
       this.bodyRenderer.setOffset({x: this.config.offsetX, y: this.config.offsetY, z: this.config.offsetZ});
 
-    if ((path == "radius" && this.config.shape == "cylinder") || (path === "shape" && value === "cylinder") || path === "height") {
+    if ((path === "radius" && this.config.shape === "cylinder") || (path === "shape" && value === "cylinder") || path === "height") {
       this.bodyRenderer.setCylinder(this.config.radius, this.config.height);
       this.bodyRenderer.setOffset({x: this.config.offsetX, y: this.config.offsetY, z: this.config.offsetZ});
     }
 
-    if ((path == "radius" && this.config.shape == "sphere") || (path === "shape" && value === "sphere")) {
+    if ((path === "radius" && this.config.shape === "sphere") || (path === "shape" && value === "sphere")) {
       this.bodyRenderer.setSphere(this.config.radius);
       this.bodyRenderer.setOffset({x: this.config.offsetX, y: this.config.offsetY, z: this.config.offsetZ});
     }
 
   }
-
 }
-        

@@ -20,14 +20,14 @@ function parse(text: string) {
 
   for (let line of text.split("\n")) {
     // Ignore empty lines and comments
-    if (line.length == 0 || line[0] == "#") continue;
+    if (line.length === 0 || line[0] === "#") continue;
 
     let command = line.substring(0, line.indexOf(" "));
     let valueStrings = line.substring(line.indexOf(" ") + 1).split(" ");
 
     switch (command) {
       case "v": {
-        if (valueStrings.length != 3) throw new Error(`Invalid v command: found ${valueStrings.length} values, expected 3`);
+        if (valueStrings.length !== 3) throw new Error(`Invalid v command: found ${valueStrings.length} values, expected 3`);
         let values: number[] = [];
         for (let valueString of valueStrings) values.push(+valueString);
         positionsByIndex.push(values);
@@ -35,7 +35,7 @@ function parse(text: string) {
       }
 
       case "vt": {
-        if (valueStrings.length != 2) throw new Error(`Invalid vt command: found ${valueStrings.length} values, expected 2`);
+        if (valueStrings.length !== 2) throw new Error(`Invalid vt command: found ${valueStrings.length} values, expected 2`);
         let values: number[] = [];
         for (let valueString of valueStrings) values.push(+valueString);
         uvsByIndex.push(values);
@@ -43,7 +43,7 @@ function parse(text: string) {
       }
 
       case "vn": {
-        if (valueStrings.length != 3) throw new Error(`Invalid vn command: found ${valueStrings.length} values, expected 3`);
+        if (valueStrings.length !== 3) throw new Error(`Invalid vn command: found ${valueStrings.length} values, expected 3`);
         let values: number[] = [];
         for (let valueString of valueStrings) values.push(+valueString);
         normalsByIndex.push(values);
@@ -51,7 +51,7 @@ function parse(text: string) {
       }
 
       case "f":
-        if (valueStrings.length != 3 && valueStrings.length != 4) {
+        if (valueStrings.length !== 3 && valueStrings.length !== 4) {
           console.warn(`Ignoring unsupported face with ${valueStrings.length} vertices, only 3 or 4 are supported`);
           return;
         }
@@ -86,7 +86,7 @@ function parse(text: string) {
           }
         }
 
-        if (valueStrings.length == 3) {
+        if (valueStrings.length === 3) {
           // Triangle
           arrays.position.push(positions[0][0], positions[0][1], positions[0][2]);
           arrays.position.push(positions[1][0], positions[1][1], positions[1][2]);

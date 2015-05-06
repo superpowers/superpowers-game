@@ -75,7 +75,7 @@ interface Entry {
 function appendHistoryEntry(entry: Entry) {
   let date = new Date(entry.timestamp);
   let day = date.toDateString();
-  if (previousDay != day) {
+  if (previousDay !== day) {
     appendDaySeparator(date);
     previousDay = day;
   }
@@ -115,7 +115,7 @@ function appendRoomUser(roomUser: {id: string, connectionCount: number;}) {
 };
 
 onRoomCommands.join = (roomUser: {id: string, connectionCount: number;}) => {
-  if (roomUser.connectionCount == 1) appendRoomUser(roomUser);
+  if (roomUser.connectionCount === 1) appendRoomUser(roomUser);
 };
 
 onRoomCommands.leave = (roomUserId: string) => {
@@ -126,7 +126,7 @@ onRoomCommands.leave = (roomUserId: string) => {
 };
 
 function onChatInputKeyDown(event: any) {
-  if (event.keyCode != 13 || event.shiftKey) return;
+  if (event.keyCode !== 13 || event.shiftKey) return;
   event.preventDefault();
   if (! socket.connected) return;
 

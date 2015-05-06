@@ -69,7 +69,7 @@ export default class TextRendererUpdater {
       case "alignment":
       case "size":
       case "color": {
-        (<any>this.options)[path] = (value != "") ? value : null;
+        (<any>this.options)[path] = (value !== "") ? value : null;
         this.textRenderer.setOptions(this.options);
         break;
       }

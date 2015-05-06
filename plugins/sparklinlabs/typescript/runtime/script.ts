@@ -21,7 +21,7 @@ export function init(player: any, callback: Function) {
   player.createActor = (name: string, parentActor: any) => { return new (<any>window).Sup.Actor(name, parentActor); };
 
   player.createComponent = (type: string, actor: any, config: any) => {
-    if (type == "Behavior") {
+    if (type === "Behavior") {
       let behaviorClass = player.behaviorClasses[config.behaviorName];
       if (behaviorClass == null) {
         throw new Error(`Could not find a behavior class named "${config.behaviorName}" for actor "${actor.getName()}". Make sure you're using the class name, not the script's name and that the class is declared before the behavior component is created (or before the scene is loaded).`);

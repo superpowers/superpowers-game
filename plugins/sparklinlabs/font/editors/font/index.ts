@@ -46,7 +46,7 @@ function start() {
       });
     } else if (setting === "charset") {
       settingObj.addEventListener("change", (event: any) => {
-        let charset = (event.target.value != "") ? event.target.value : null;
+        let charset = (event.target.value !== "") ? event.target.value : null;
         socket.emit("edit:assets", info.assetId, "setProperty", event.target.dataset.name, charset, (err: string) => { if (err != null) alert(err); });
       });
     } else if (setting === "isBitmap") {

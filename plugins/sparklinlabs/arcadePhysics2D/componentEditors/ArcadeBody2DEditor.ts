@@ -62,13 +62,13 @@ export default class ArcadeBody2DEditor {
     this.tileMapFields = {};
 
     let tileMapRow = SupClient.table.appendRow(this.tbody, "Tile Map");
-    let tileMapName = (config.tileMapAssetId != "") ? this.projectClient.entries.getPathFromId(config.tileMapAssetId) : "";
+    let tileMapName = (config.tileMapAssetId !== "") ? this.projectClient.entries.getPathFromId(config.tileMapAssetId) : "";
     this.tileMapFields["tileMapAssetId"] = SupClient.table.appendTextField(tileMapRow.valueCell, tileMapName);
     this.tileMapFields["tileMapAssetId"].addEventListener("input", (event: any) => {
       if (event.target.value === "") this.editConfig("setProperty", "tileMapAssetId", event.target.value);
       else {
         let entry = SupClient.findEntryByPath(this.projectClient.entries.pub, event.target.value);
-        if (entry != null && entry.type == "tileMap") this.editConfig("setProperty", "tileMapAssetId", entry.id);
+        if (entry != null && entry.type === "tileMap") this.editConfig("setProperty", "tileMapAssetId", entry.id);
       }
     });
 
@@ -96,7 +96,7 @@ export default class ArcadeBody2DEditor {
 
     } else if (path === "movable") this.boxFields["movable"].checked = value;
     else if (path === "tileMapAssetId") {
-      let tileMapName = (value != "") ? this.projectClient.entries.getPathFromId(value) : "";
+      let tileMapName = (value !== "") ? this.projectClient.entries.getPathFromId(value) : "";
       this.tileMapFields["tileMapAssetId"].value = tileMapName;
 
     } else {

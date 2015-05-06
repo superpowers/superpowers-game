@@ -50,13 +50,13 @@ var start = () => {
   SupClient.setupHotkeys();
 
   window.addEventListener("message", (event) => {
-    if (event.data.type == "activate") ui.editor.focus();
+    if (event.data.type === "activate") ui.editor.focus();
   });
 
   let extraKeys = {
     "F9": () => {},
     "Tab": (cm: any) => {
-      if (cm.getSelection() != "") cm.execCommand("indentMore");
+      if (cm.getSelection() !== "") cm.execCommand("indentMore");
       else cm.replaceSelection(Array(cm.getOption("indentUnit") + 1).join(" "));
     },
     "Cmd-X": () => { document.execCommand("cut"); },
@@ -99,7 +99,7 @@ var start = () => {
   ui.editor.on("beforeChange", (instance: CodeMirror.Editor, change: any) => {
     if (change.origin === "setValue" || change.origin === "network") return;
     let lastText = instance.getDoc().getValue();
-    if (lastText != ui.texts[ui.texts.length-1]) ui.texts.push(lastText);
+    if (lastText !== ui.texts[ui.texts.length-1]) ui.texts.push(lastText);
   });
 
   (<any>ui.editor).on("changes", onEditText);
@@ -243,7 +243,7 @@ var scriptSubscriber = {
       ui.editor.getDoc().clearHistory();
     }
 
-    if(!allScriptsReceived && Object.keys(scripts).length == scriptNames.length) {
+    if(!allScriptsReceived && Object.keys(scripts).length === scriptNames.length) {
       allScriptsReceived = true;
       scheduleCompilation();
     }
@@ -301,7 +301,7 @@ onAssetCommands.editText = (operationData: OT.OperationData) => {
 }
 
 var transformStack = (stack: OT.TextOperation[], operation: OT.TextOperation) => {
-  if (stack.length == 0) return stack;
+  if (stack.length === 0) return stack;
 
   let newStack: OT.TextOperation[] = [];
   for (let i = stack.length-1; i > 0; i--) {
@@ -339,7 +339,7 @@ var applyOperation = (operation: OT.TextOperation, origin: string, moveCursor: b
           (<any>ui.editor).replaceRange(text, { line, ch: cursorPosition }, null, origin);
           cursorPosition += text.length;
 
-          if (textIndex != texts.length - 1) {
+          if (textIndex !== texts.length - 1) {
             cursorPosition = 0;
             line++;
           }
@@ -593,7 +593,7 @@ function scheduleCompletion() {
 }
 
 var onUndo = () => {
-  if (ui.undoStack.length == 0) return;
+  if (ui.undoStack.length === 0) return;
 
   if (ui.undoQuantityByAction[ui.undoQuantityByAction.length-1] === 0) ui.undoQuantityByAction.pop();
   let undoQuantityByAction = ui.undoQuantityByAction[ui.undoQuantityByAction.length-1];

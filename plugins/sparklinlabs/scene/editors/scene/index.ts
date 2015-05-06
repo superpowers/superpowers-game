@@ -119,7 +119,7 @@ onEditCommands.addNode = (node: Node, parentId: string, index: number) => {
 onEditCommands.moveNode = (id: string, parentId: string, index: number) => {
   // Reparent tree node
   let nodeElt = ui.nodesTreeView.treeRoot.querySelector(`[data-id='${id}']`);
-  let isInspected = ui.nodesTreeView.selectedNodes.length == 1 && nodeElt == ui.nodesTreeView.selectedNodes[0];
+  let isInspected = ui.nodesTreeView.selectedNodes.length === 1 && nodeElt === ui.nodesTreeView.selectedNodes[0];
 
   let parentElt: HTMLLIElement;
   if (parentId != null) parentElt = ui.nodesTreeView.treeRoot.querySelector(`[data-id='${parentId}']`)
@@ -161,7 +161,7 @@ onEditCommands.moveNode = (id: string, parentId: string, index: number) => {
 
 onEditCommands.setNodeProperty = (id: string, path: string, value: any) => {
   let nodeElt = ui.nodesTreeView.treeRoot.querySelector(`[data-id='${id}']`);
-  let isInspected = ui.nodesTreeView.selectedNodes.length == 1 && nodeElt == ui.nodesTreeView.selectedNodes[0];
+  let isInspected = ui.nodesTreeView.selectedNodes.length === 1 && nodeElt === ui.nodesTreeView.selectedNodes[0];
 
   switch (path) {
     case "name": { nodeElt.querySelector(".name").textContent = value; break; }
@@ -189,7 +189,7 @@ onEditCommands.duplicateNode = (rootNode: Node, newNodes: DuplicatedNode[]) => {
 
 onEditCommands.removeNode = (id: string) => {
   let nodeElt = ui.nodesTreeView.treeRoot.querySelector(`[data-id='${id}']`);
-  let isInspected = ui.nodesTreeView.selectedNodes.length == 1 && nodeElt == ui.nodesTreeView.selectedNodes[0];
+  let isInspected = ui.nodesTreeView.selectedNodes.length === 1 && nodeElt === ui.nodesTreeView.selectedNodes[0];
 
   ui.nodesTreeView.remove(nodeElt);
   if (isInspected) onNodeSelect();
@@ -214,7 +214,7 @@ function recurseClearActorUIs(nodeId: string) {
 }
 
 onEditCommands.addComponent = (nodeId: string, nodeComponent: Component, index: number) => {
-  let isInspected = ui.nodesTreeView.selectedNodes.length == 1 && nodeId == ui.nodesTreeView.selectedNodes[0].dataset.id;
+  let isInspected = ui.nodesTreeView.selectedNodes.length === 1 && nodeId === ui.nodesTreeView.selectedNodes[0].dataset.id;
 
   if (isInspected) {
     let componentElt = createComponentElement(nodeId, nodeComponent);
@@ -229,7 +229,7 @@ onEditCommands.editComponent = (nodeId: string, componentId: string, command: st
   let componentUpdater = ui.bySceneNodeId[nodeId].bySceneComponentId[componentId].componentUpdater;
   if (componentUpdater[`config_${command}`] != null) componentUpdater[`config_${command}`].call(componentUpdater, ...args);
 
-  let isInspected = ui.nodesTreeView.selectedNodes.length == 1 && nodeId == ui.nodesTreeView.selectedNodes[0].dataset.id;
+  let isInspected = ui.nodesTreeView.selectedNodes.length === 1 && nodeId === ui.nodesTreeView.selectedNodes[0].dataset.id;
   if (isInspected) {
     let componentEditor = ui.componentEditors[componentId];
     if (componentEditor[`config_${command}`] != null) componentEditor[`config_${command}`].call(componentEditor, ...args);
@@ -237,7 +237,7 @@ onEditCommands.editComponent = (nodeId: string, componentId: string, command: st
 }
 
 onEditCommands.removeComponent = (nodeId: string, componentId: string) => {
-  let isInspected = ui.nodesTreeView.selectedNodes.length == 1 && nodeId == ui.nodesTreeView.selectedNodes[0].dataset.id;
+  let isInspected = ui.nodesTreeView.selectedNodes.length === 1 && nodeId === ui.nodesTreeView.selectedNodes[0].dataset.id;
 
   if (isInspected) {
     ui.componentEditors[componentId].destroy();
@@ -605,7 +605,7 @@ function tick() {
 
 // Load plugins
 async.each(SupClient.pluginPaths.all, (pluginName, pluginCallback) => {
-  if (pluginName == "sparklinlabs/scene") { pluginCallback(); return; }
+  if (pluginName === "sparklinlabs/scene") { pluginCallback(); return; }
 
   async.series([
 

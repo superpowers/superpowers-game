@@ -30,7 +30,7 @@ function getInterpolationData(keyFrames: any[], time: number) {
     prevKeyFrame = keyFrame;
   }
 
-  if (prevKeyFrame == nextKeyFrame) nextKeyFrame = keyFrames[0];
+  if (prevKeyFrame === nextKeyFrame) nextKeyFrame = keyFrames[0];
 
   let timeSpan = nextKeyFrame.time - prevKeyFrame.time;
   let timeProgress = time - prevKeyFrame.time;
@@ -180,7 +180,7 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
     if (newAnimationName != null) {
       let newAnimation = this.animationsByName[newAnimationName];
       if (newAnimation == null) throw new Error(`Animation ${newAnimationName} doesn't exist`);
-      if (newAnimation == this.animation && this.isAnimationPlaying) return;
+      if (newAnimation === this.animation && this.isAnimationPlaying) return;
 
       this.animation = newAnimation;
       this.animationLooping = newAnimationLooping;
@@ -196,7 +196,7 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
   getAnimation(): string { return (this.animation != null) ? this.animation.name : null; }
 
   setAnimationTime(time: number) {
-    if (typeof time != "number" || time < 0 || time > this.getAnimationDuration()) throw new Error("Invalid time");
+    if (typeof time !== "number" || time < 0 || time > this.getAnimationDuration()) throw new Error("Invalid time");
     this.animationTimer = time * SupEngine.GameInstance.framesPerSecond;
     this.updatePose();
   }
@@ -311,7 +311,7 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
 
   _tickAnimation() {
     if (this.threeMesh == null || (<THREE.SkinnedMesh>this.threeMesh).skeleton == null) return;
-    if (this.animation == null || this.animation.duration == 0 || !this.isAnimationPlaying) return;
+    if (this.animation == null || this.animation.duration === 0 || !this.isAnimationPlaying) return;
 
     this.animationTimer += 1;
     this.updatePose();

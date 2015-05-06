@@ -63,7 +63,7 @@ export function importModel(files: File[], callback: (err: Error, result: any) =
     let rootNode = gltf.nodes[ gltf.scenes[gltf.scene].nodes[0] ];
 
     // Check if the model has its up-axis pointing in the wrong direction
-    if(rootNode.name == "Y_UP_Transform") {
+    if(rootNode.name === "Y_UP_Transform") {
       upAxisMatrix.fromArray(rootNode.matrix);
       upAxisMatrix.getInverse(upAxisMatrix);
     }
@@ -87,16 +87,16 @@ export function importModel(files: File[], callback: (err: Error, result: any) =
     if (meshName == null) { callback(new Error("Couldn't find a mesh"), null); return; }
 
     let meshInfo = gltf.meshes[meshName];
-    if (meshInfo.primitives.length != 1) { callback(new Error("Only a single primitive is supported"), null); return; }
-    if (meshInfo.primitives[0].primitive != 4) { callback(new Error("Only triangles are supported"), null); return; }
+    if (meshInfo.primitives.length !== 1) { callback(new Error("Only a single primitive is supported"), null); return; }
+    if (meshInfo.primitives[0].primitive !== 4) { callback(new Error("Only triangles are supported"), null); return; }
 
     async.each(Object.keys(gltf.buffers), (name, cb) => {
       let bufferInfo = gltf.buffers[name];
 
       // Remove path info from the URI
       let filename = bufferInfo.uri;
-      if (filename.indexOf("/") != -1) filename = filename.substring(filename.lastIndexOf("/") + 1);
-      else if (filename.indexOf("\\") != -1) filename = filename.substring(filename.lastIndexOf("\\") + 1);
+      if (filename.indexOf("/") !== -1) filename = filename.substring(filename.lastIndexOf("/") + 1);
+      else if (filename.indexOf("\\") !== -1) filename = filename.substring(filename.lastIndexOf("\\") + 1);
 
       let bufferFile = bufferFiles[filename];
       if (bufferFile == null) { cb(new Error("Missing buffer file: #{filename}")); return; }
@@ -114,7 +114,7 @@ export function importModel(files: File[], callback: (err: Error, result: any) =
 
       // Indices
       let indexAccessor = gltf.accessors[primitive.indices];
-      if (indexAccessor.componentType != gltfConst.UNSIGNED_SHORT) {
+      if (indexAccessor.componentType !== gltfConst.UNSIGNED_SHORT) {
         callback(new Error(`Unsupported component type for index accessor: ${indexAccessor.componentType}`), null);
         return;
       }
@@ -127,7 +127,7 @@ export function importModel(files: File[], callback: (err: Error, result: any) =
 
       // Position
       let positionAccessor = gltf.accessors[primitive.attributes.POSITION];
-      if (positionAccessor.componentType != gltfConst.FLOAT) {
+      if (positionAccessor.componentType !== gltfConst.FLOAT) {
         callback(new Error(`Unsupported component type for position accessor: ${positionAccessor.componentType}`), null);
         return
       }
@@ -151,7 +151,7 @@ export function importModel(files: File[], callback: (err: Error, result: any) =
       // Normal
       let normalAccessor = gltf.accessors[primitive.attributes.NORMAL];
       if (normalAccessor != null) {
-        if(normalAccessor.componentType != gltfConst.FLOAT) {
+        if(normalAccessor.componentType !== gltfConst.FLOAT) {
           callback(new Error(`Unsupported component type for normal accessor: ${normalAccessor.componentType}`), null);
           return;
         }
@@ -164,7 +164,7 @@ export function importModel(files: File[], callback: (err: Error, result: any) =
       // UV
       let uvAccessor = gltf.accessors[primitive.attributes.TEXCOORD_0];
       if (uvAccessor != null) {
-        if (uvAccessor.componentType != gltfConst.FLOAT) {
+        if (uvAccessor.componentType !== gltfConst.FLOAT) {
           callback(new Error(`Unsupported component type for UV accessor: ${uvAccessor.componentType}`), null);
           return;
         }
@@ -185,7 +185,7 @@ export function importModel(files: File[], callback: (err: Error, result: any) =
       // Skin indices
       let skinIndexAccessor = gltf.accessors[primitive.attributes.JOINT];
       if (skinIndexAccessor != null) {
-        if (skinIndexAccessor.componentType != gltfConst.FLOAT) {
+        if (skinIndexAccessor.componentType !== gltfConst.FLOAT) {
           callback(new Error(`Unsupported component type for skin index accessor: ${skinIndexAccessor.componentType}`), null);
           return;
         }
@@ -198,7 +198,7 @@ export function importModel(files: File[], callback: (err: Error, result: any) =
       // Skin weights
       let skinWeightAccessor = gltf.accessors[primitive.attributes.WEIGHT];
       if (skinWeightAccessor != null) {
-        if (skinWeightAccessor.componentType != gltfConst.FLOAT) {
+        if (skinWeightAccessor.componentType !== gltfConst.FLOAT) {
           callback(new Error(`Unsupported component type for skin weight accessor: ${skinWeightAccessor.componentType}`), null);
           return;
         }
@@ -275,7 +275,7 @@ export function importModel(files: File[], callback: (err: Error, result: any) =
 
             let inputParameterName = gltfAnim.samplers[gltfChannel.sampler].input;
             let timeAccessor = gltf.accessors[gltfAnim.parameters[inputParameterName]];
-            if (timeAccessor.componentType != gltfConst.FLOAT) {
+            if (timeAccessor.componentType !== gltfConst.FLOAT) {
               callback(new Error(`Unsupported component type for animation time accessor: ${timeAccessor.componentType}`), null);
               return;
             }
@@ -285,7 +285,7 @@ export function importModel(files: File[], callback: (err: Error, result: any) =
 
             let outputParameterName = gltfAnim.samplers[gltfChannel.sampler].output;
             let outputAccessor = gltf.accessors[gltfAnim.parameters[outputParameterName]];
-            if (outputAccessor.componentType != gltfConst.FLOAT) {
+            if (outputAccessor.componentType !== gltfConst.FLOAT) {
               callback(new Error(`Unsupported component type for animation output accessor: ${outputAccessor.componentType}`), null);
               return;
             }
@@ -314,7 +314,7 @@ export function importModel(files: File[], callback: (err: Error, result: any) =
       // Maps
       let maps: { [name: string]: ArrayBuffer } = {};
 
-      if(Object.keys(imageFiles).length == 0) {
+      if(Object.keys(imageFiles).length === 0) {
         callback(null, { attributes, bones, maps, animation });
         return;
       }

@@ -88,7 +88,7 @@ onEditCommands.newAnimation = (animation: any, index: number) => {
 onEditCommands.deleteAnimation = (id: string) => {
   let animationElt = ui.animationsTreeView.treeRoot.querySelector(`[data-id="${id}"]`);
   ui.animationsTreeView.remove(animationElt);
-  if (ui.selectedAnimationId == id) updateSelectedAnimation();
+  if (ui.selectedAnimationId === id) updateSelectedAnimation();
 };
 
 onEditCommands.moveAnimation = (id: string, index: number) => {

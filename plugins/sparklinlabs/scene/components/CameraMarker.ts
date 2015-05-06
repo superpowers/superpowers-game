@@ -31,7 +31,7 @@ export default  class CameraMarker extends SupEngine.ActorComponent {
   }
 
   setConfig(config: any) {
-    this.setOrthographicMode(config.mode == "orthographic");
+    this.setOrthographicMode(config.mode === "orthographic");
     this.setFOV(config.fov);
     this.setOrthographicScale(config.orthographicScale);
     this.setViewport(config.viewport.x, config.viewport.y, config.viewport.width, config.viewport.height);

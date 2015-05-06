@@ -115,7 +115,7 @@ export default class ScriptAsset extends SupCore.data.base.Asset {
     this.document.text = this.pub.draft;
     for (let i = 0; i < this.pub.revisionId; i++) (<any>this.document.operations).push(0);
 
-    this.hasDraft = this.pub.text != this.pub.draft
+    this.hasDraft = this.pub.text !== this.pub.draft;
   }
 
   restore() {
@@ -219,7 +219,7 @@ export default class ScriptAsset extends SupCore.data.base.Asset {
       catch (e) { finish([ { file: "", position: { line: 1, character: 1 }, message: e.message } ]); return; }
 
       let ownErrors: CompilationError[] = [];
-      for (let error of results.errors) if (error.file == ownScriptName) ownErrors.push(error);
+      for (let error of results.errors) if (error.file === ownScriptName) ownErrors.push(error);
       if (ownErrors.length > 0) { finish(ownErrors); return; }
       // If there were no errors in this script but there are errors in others, report them
       if (results.errors.length > 0) { finish(results.errors); return; }
@@ -239,7 +239,7 @@ export default class ScriptAsset extends SupCore.data.base.Asset {
 
       for (let symbolName in results.program.getSourceFile(ownScriptName).locals) {
         let symbol = <ts.Symbol>results.program.getSourceFile(ownScriptName).locals[symbolName];
-        if ((symbol.flags & ts.SymbolFlags.Class) != ts.SymbolFlags.Class) continue;
+        if ((symbol.flags & ts.SymbolFlags.Class) !== ts.SymbolFlags.Class) continue;
 
         let parentTypeNode = ts.getClassExtendsHeritageClauseElement(symbol.valueDeclaration);
         if (parentTypeNode == null) continue;
@@ -266,18 +266,18 @@ export default class ScriptAsset extends SupCore.data.base.Asset {
           let member = symbol.members[memberName];
 
           // Skip non-properties
-          if ((member.flags & ts.SymbolFlags.Property) != ts.SymbolFlags.Property) continue;
+          if ((member.flags & ts.SymbolFlags.Property) !== ts.SymbolFlags.Property) continue;
 
           // Skip static, private and protected members
           let modifierFlags = (member.valueDeclaration.modifiers != null) ? member.valueDeclaration.modifiers.flags : null;
-          if (modifierFlags != null && (modifierFlags & (ts.NodeFlags.Private | ts.NodeFlags.Protected | ts.NodeFlags.Static)) != 0) continue;
+          if (modifierFlags != null && (modifierFlags & (ts.NodeFlags.Private | ts.NodeFlags.Protected | ts.NodeFlags.Static)) !== 0) continue;
 
           // TODO: skip members annotated as "non-customizable"
 
           let type = results.typeChecker.getTypeAtLocation(member.valueDeclaration);
           let typeName: any; // "unknown"
           let typeSymbol = type.getSymbol();
-          if (supTypeSymbolsList.indexOf(typeSymbol) != -1) {
+          if (supTypeSymbolsList.indexOf(typeSymbol) !== -1) {
             // TODO: Get full name
             // Until then, we only support intrinsic types
             // typeName = typeSymbol.getName()
@@ -298,8 +298,8 @@ export default class ScriptAsset extends SupCore.data.base.Asset {
     let assetsLoading = 0;
     this.serverData.entries.walk((entry: any) => {
       remainingAssetsToLoad--;
-      if (entry.type != "script") {
-        if (remainingAssetsToLoad == 0 && assetsLoading == 0) compile();
+      if (entry.type !== "script") {
+        if (remainingAssetsToLoad === 0 && assetsLoading === 0) compile();
         return;
       }
 
@@ -308,12 +308,12 @@ export default class ScriptAsset extends SupCore.data.base.Asset {
       assetsLoading++;
       this.serverData.assets.acquire(entry.id, null, (err: Error, asset: ScriptAsset) => {
         scripts[name] = asset.pub.text;
-        if (asset == this) ownScriptName = name;
+        if (asset === this) ownScriptName = name;
 
         this.serverData.assets.release(entry.id, null);
         assetsLoading--;
 
-        if (remainingAssetsToLoad == 0 && assetsLoading == 0) compile();
+        if (remainingAssetsToLoad === 0 && assetsLoading === 0) compile();
       });
     });
   }

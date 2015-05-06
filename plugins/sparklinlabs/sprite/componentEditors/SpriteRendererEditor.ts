@@ -85,7 +85,7 @@ export default class SpriteRendererEditor {
   onEntryTrashed(id: string) {}
 
   onAssetReceived(assetId: string, asset: any) {
-    if (assetId != this.spriteAssetId) return;
+    if (assetId !== this.spriteAssetId) return;
     this.asset = asset;
 
     this._clearAnimations();
@@ -138,7 +138,7 @@ export default class SpriteRendererEditor {
     }
     else {
       let entry = SupClient.findEntryByPath(this.projectClient.entries.pub, event.target.value);
-      if (entry != null && entry.type == "sprite") {
+      if (entry != null && entry.type === "sprite") {
         this.editConfig("setProperty", "spriteAssetId", entry.id);
         this.editConfig("setProperty", "animationId", null);
       }
@@ -146,7 +146,7 @@ export default class SpriteRendererEditor {
     }
 
   _onChangeSpriteAnimation = (event: any) => {
-    let animationId = (event.target.value == "") ? null : event.target.value;
+    let animationId = (event.target.value === "") ? null : event.target.value;
     this.editConfig("setProperty", "animationId", animationId);
   }
 }

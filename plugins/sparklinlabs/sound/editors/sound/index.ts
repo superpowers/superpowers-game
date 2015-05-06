@@ -27,7 +27,7 @@ function start() {
   // Sidebar
   ui.streamingSelect = <HTMLSelectElement>document.querySelector(".property-streaming");
   ui.streamingSelect.addEventListener("change", (event) => {
-    socket.emit("edit:assets", info.assetId, "setProperty", "streaming", ui.streamingSelect.value == "true", (err: string) => {
+    socket.emit("edit:assets", info.assetId, "setProperty", "streaming", ui.streamingSelect.value === "true", (err: string) => {
       if (err != null) alert(err);
     });
   });

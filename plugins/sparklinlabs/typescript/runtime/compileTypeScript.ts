@@ -12,7 +12,7 @@ export default function compileTypeScript(sourceFileNames: string[], sourceFiles
       if (sourceFiles[filename] != null) {
         return ts.createSourceFile(filename, sourceFiles[filename], compilerOptions.target);
       }
-      if (filename == "lib.d.ts") {
+      if (filename === "lib.d.ts") {
         return ts.createSourceFile(filename, libSource, compilerOptions.target);
       }
       return null;
@@ -49,7 +49,7 @@ export default function compileTypeScript(sourceFileNames: string[], sourceFiles
   let errors = ts.getPreEmitDiagnostics(program)
   let typeChecker: ts.TypeChecker;
   // Do not generate code in the presence of early errors
-  if (errors.length == 0) {
+  if (errors.length === 0) {
     // Type check and get semantic errors
     typeChecker = program.getTypeChecker();
     // Generate output

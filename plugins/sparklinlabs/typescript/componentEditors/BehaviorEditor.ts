@@ -85,7 +85,7 @@ export default class BehaviorEditor {
     while (behaviorName != null) {
       let behavior = this.behaviorPropertiesResource.pub.behaviors[behaviorName];
       for (let property of behavior.properties) {
-        if(listedProperties.indexOf(property.name) != -1) continue;
+        if(listedProperties.indexOf(property.name) !== -1) continue;
 
         listedProperties.push(property.name);
         this._createPropertySetting(property);
@@ -145,7 +145,7 @@ export default class BehaviorEditor {
     let propertyValueInfo = this.config.propertyValues[property.name];
     if (propertyValueInfo != null) {
       propertyValue = propertyValueInfo.value;
-      if (propertyValueInfo.type != property.type) uiType = "incompatibleType";
+      if (propertyValueInfo.type !== property.type) uiType = "incompatibleType";
     }
 
     let propertyField: HTMLInputElement;

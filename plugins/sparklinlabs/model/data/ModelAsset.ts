@@ -142,7 +142,7 @@ export default class ModelAsset extends SupCore.data.base.Asset {
 
           if (value == null) {
             fs.unlink(path.join(assetPath, `attr-${key}.dat`), (err) => {
-              if (err != null && err.code != "ENOENT") { cb(err); return; }
+              if (err != null && err.code !== "ENOENT") { cb(err); return; }
               cb();
             });
             return;
@@ -158,7 +158,7 @@ export default class ModelAsset extends SupCore.data.base.Asset {
 
           if (value == null) {
             fs.unlink(path.join(assetPath, `map-${key}.dat`), (err) => {
-              if (err != null && err.code != "ENOENT") { cb(err); return; }
+              if (err != null && err.code !== "ENOENT") { cb(err); return; }
               cb();
             });
             return;
@@ -279,8 +279,8 @@ export default class ModelAsset extends SupCore.data.base.Asset {
   }
 
   server_setAnimationProperty(client: any, id: string, key: string, value: any, callback: (err: string, id?: string, key?: string, actualValue?: any) => any) {
-    if (key == "name") {
-      if (typeof value != "string") { callback("Invalid value"); return; }
+    if (key === "name") {
+      if (typeof value !== "string") { callback("Invalid value"); return; }
       value = value.trim();
 
       if (SupCore.data.hasDuplicateName(id, value, this.animations.pub)) {

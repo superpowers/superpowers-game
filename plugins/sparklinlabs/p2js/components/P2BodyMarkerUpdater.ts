@@ -18,11 +18,11 @@ export default class P2BodyMarkerUpdater {
   config_setProperty(path: string, value: any) {
     this.config[path] = value;
 
-    if (path === "width" || path === "height" || (path === "shape" && value == "rectangle")) {
+    if (path === "width" || path === "height" || (path === "shape" && value === "rectangle")) {
       this.bodyRenderer.setRectangle(this.config.width, this.config.height);
     }
 
-    if (path === "radius" || (path == "shape" && value == "circle")) {
+    if (path === "radius" || (path === "shape" && value === "circle")) {
       this.bodyRenderer.setCircle(this.config.radius);
     }
 

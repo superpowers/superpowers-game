@@ -39,7 +39,7 @@ class CannonBody extends SupEngine.ActorComponent {
     this.actorOrientation = this.actor.getGlobalOrientation();
 
     this.body.mass = this.mass;
-    this.body.type = this.mass == 0 ? (<any>window).CANNON.Body.STATIC : (<any>window).CANNON.Body.DYNAMIC;
+    this.body.type = this.mass === 0 ? (<any>window).CANNON.Body.STATIC : (<any>window).CANNON.Body.DYNAMIC;
 
     this.body.material = (<any>SupEngine).Cannon.World.defaultMaterial;
     this.body.fixedRotation = this.fixedRotation;

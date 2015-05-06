@@ -68,7 +68,7 @@ export default class ModelRendererEditor {
   onEntriesReceived(entries: SupCore.data.Entries) {
     this.modelTextField.disabled = false;
 
-    if (entries.byId[this.modelAssetId] !=  null) {
+    if (entries.byId[this.modelAssetId] != null) {
       this.modelTextField.value = entries.getPathFromId(this.modelAssetId);
     }
 
@@ -77,17 +77,17 @@ export default class ModelRendererEditor {
 
   onEntryAdded(entry: any, parentId: string, index: number) {}
   onEntryMoved(id: string, parentId: string, index: number) {
-    if (id != this.modelAssetId) return;
+    if (id !== this.modelAssetId) return;
     this.modelTextField.value = this.projectClient.entries.getPathFromId(this.modelAssetId);
   }
   onSetEntryProperty(id: string, key: string, value: any) {
-    if (id != this.modelAssetId) return;
+    if (id !== this.modelAssetId) return;
     this.modelTextField.value = this.projectClient.entries.getPathFromId(this.modelAssetId);
   }
   onEntryTrashed(id: string) {}
 
   onAssetReceived(assetId: string, asset: any) {
-    if (assetId != this.modelAssetId) return;
+    if (assetId !== this.modelAssetId) return;
     this.asset = asset;
 
     this._clearAnimations();
@@ -135,14 +135,14 @@ export default class ModelRendererEditor {
 
   _onChangeModelAsset = (event: any) => {
     let entry = SupClient.findEntryByPath(this.projectClient.entries.pub, event.target.value);
-    if (entry != null && entry.type == "model") {
+    if (entry != null && entry.type === "model") {
       this.editConfig("setProperty", "modelAssetId", entry.id);
       this.editConfig("setProperty", "animationId", null);
     }
   }
 
   _onChangeModelAnimation = (event: any) => {
-    let animationId = (event.target.value == "") ? null : event.target.value;
+    let animationId = (event.target.value === "") ? null : event.target.value;
     this.editConfig("setProperty", "animationId", animationId);
   }
 }

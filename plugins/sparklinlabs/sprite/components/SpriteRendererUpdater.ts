@@ -119,7 +119,7 @@ export default class SpriteRendererUpdater {
   }
 
   _onEditCommand_setProperty(path: string, value: any) {
-    if (path == "filtering") {
+    if (path === "filtering") {
         if (this.spriteAsset.pub.filtering === "pixelated") {
           this.spriteAsset.pub.texture.magFilter = THREE.NearestFilter;
           this.spriteAsset.pub.texture.minFilter = THREE.NearestFilter;
