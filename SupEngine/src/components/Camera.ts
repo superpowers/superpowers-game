@@ -36,7 +36,7 @@ export default class Camera extends ActorComponent {
 
   _computeAspectRatio = () => {
     let canvas = this.actor.gameInstance.threeRenderer.domElement;
-    this.cachedRatio = (canvas.width * this.viewport.width) / (canvas.height * this.viewport.height)
+    this.cachedRatio = (canvas.clientWidth * this.viewport.width) / (canvas.clientHeight * this.viewport.height)
     this.projectionNeedsUpdate = true;
   }
 
