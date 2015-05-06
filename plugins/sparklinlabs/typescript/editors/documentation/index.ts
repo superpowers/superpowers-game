@@ -78,8 +78,6 @@ async.each(SupClient.pluginPaths.all, (pluginName, pluginCallback) => {
       document.getElementById(`link-${hash}`).classList.add("active");
       return;
     }
-
-    window.location.hash = "";
   }
 
   (<HTMLAnchorElement>navListElt.querySelector("li a")).classList.add("active");
