@@ -71,6 +71,8 @@ export default class ArcadeBody2D extends SupEngine.ActorComponent {
     } else {
       for (let i = 0; i < this.tileMapAsset.__inner.data.layers.length; i++) this.layersIndex.push(i);
     }
+
+    this.position = this.actor.getGlobalPosition();
   }
 
   earlyUpdate() {
