@@ -7,7 +7,7 @@ if (nwDispatcher != null) {
   gui = nwDispatcher.requireNwGui();
 
   document.body.addEventListener("click", (event: any) => {
-    if (event.target.tagName != "A") return;
+    if (event.target.tagName !== "A") return;
     event.preventDefault();
     gui.Shell.openExternal(event.target.href);
   });

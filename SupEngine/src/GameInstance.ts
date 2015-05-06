@@ -32,7 +32,7 @@ export default class GameInstance extends EventEmitter {
     super()
 
     // Used to know whether or not we have to close the window at exit when using NW.js
-    this.debug = options.debug == true;
+    this.debug = options.debug === true;
 
     let enableOnExit = (options.enableOnExit != null) ? options.enableOnExit : false;
     this.input = new Input(canvas, enableOnExit);
@@ -66,7 +66,7 @@ export default class GameInstance extends EventEmitter {
 
       // If the component to be started is part of an actor
       // which will not be updated, skip it until next loop
-      if (this.cachedActors.indexOf(component.actor) == -1) {
+      if (this.cachedActors.indexOf(component.actor) === -1) {
         index++;
         continue;
       }
@@ -123,7 +123,7 @@ export default class GameInstance extends EventEmitter {
       height = this.threeRenderer.domElement.clientHeight;
     }
 
-    if (this.threeRenderer.domElement.width != width || this.threeRenderer.domElement.height != height) {
+    if (this.threeRenderer.domElement.width !== width || this.threeRenderer.domElement.height !== height) {
       this.threeRenderer.setSize(width, height, false);
       this.emit("resize", { width, height });
     }
@@ -140,12 +140,12 @@ export default class GameInstance extends EventEmitter {
   clear() { this.threeRenderer.clear(); }
 
   destroyComponent(component: ActorComponent) {
-    if (this.componentsToBeDestroyed.indexOf(component) != -1) return;
+    if (this.componentsToBeDestroyed.indexOf(component) !== -1) return;
 
     this.componentsToBeDestroyed.push(component);
 
     let index = this.componentsToBeStarted.indexOf(component);
-    if (index != -1) this.componentsToBeStarted.splice(index, 1);
+    if (index !== -1) this.componentsToBeStarted.splice(index, 1);
   }
 
   destroyActor(actor: Actor) {
@@ -166,7 +166,7 @@ export default class GameInstance extends EventEmitter {
     while (actor.children.length > 0) this._doActorDestruction(actor.children[0]);
 
     let cachedIndex = this.cachedActors.indexOf(actor);
-    if (cachedIndex != -1) this.cachedActors.splice(cachedIndex, 1);
+    if (cachedIndex !== -1) this.cachedActors.splice(cachedIndex, 1);
 
     actor._destroy();
   }

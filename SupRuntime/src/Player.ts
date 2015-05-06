@@ -203,7 +203,7 @@ export default class Player {
 
       // WORKAROUND: IE <= 11 does not support responseType = 'json'
       let response = xhr.response;
-      if (xhr.responseType != 'json') {
+      if (xhr.responseType !== 'json') {
         try { response = JSON.parse(response); }
         catch (e) {}
       }

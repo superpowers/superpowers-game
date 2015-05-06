@@ -13,10 +13,10 @@ export default class ActorComponent {
 
   _destroy() {
     let startIndex = this.actor.gameInstance.componentsToBeStarted.indexOf(this);
-    if (startIndex != -1) this.actor.gameInstance.componentsToBeStarted.splice(startIndex, 1);
+    if (startIndex !== -1) this.actor.gameInstance.componentsToBeStarted.splice(startIndex, 1);
 
     let index = this.actor.components.indexOf(this);
-    if (index != -1) this.actor.components.splice(index, 1);
+    if (index !== -1) this.actor.components.splice(index, 1);
     this.actor = null;
   }
 

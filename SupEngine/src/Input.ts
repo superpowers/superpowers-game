@@ -167,7 +167,7 @@ export default class Input {
 
       this.touchesDown[touch.identifier] = true;
 
-      if (touch.identifier == 0) {
+      if (touch.identifier === 0) {
         this.newMousePosition = { x: touch.clientX - rect.left, y: touch.clientY - rect.top };
         this.mouseButtonsDown[0] = true;
       }
@@ -180,7 +180,7 @@ export default class Input {
     for (let i = 0; i < event.changedTouches.length; i++) {
       let touch = event.changedTouches[i];
       this.touchesDown[touch.identifier] = false;
-      if (touch.identifier == 0) this.mouseButtonsDown[0] = false;
+      if (touch.identifier === 0) this.mouseButtonsDown[0] = false;
     }
   }
 
@@ -194,7 +194,7 @@ export default class Input {
       this.touches[touch.identifier].position.x = touch.clientX - rect.left;
       this.touches[touch.identifier].position.y = touch.clientY - rect.top;
 
-      if (touch.identifier == 0) this.newMousePosition = { x: touch.clientX - rect.left, y: touch.clientY - rect.top };
+      if (touch.identifier === 0) this.newMousePosition = { x: touch.clientX - rect.left, y: touch.clientY - rect.top };
     }
   }
 
@@ -224,7 +224,7 @@ export default class Input {
   update() {
     this.mouseButtonsDown[5] = this.newScrollDelta > 0;
     this.mouseButtonsDown[6] = this.newScrollDelta < 0;
-    if (this.newScrollDelta != 0) this.newScrollDelta = 0;
+    if (this.newScrollDelta !== 0) this.newScrollDelta = 0;
 
     if (this.newMousePosition != null) {
       this.mouseDelta.x = this.newMousePosition.x - this.mousePosition.x;

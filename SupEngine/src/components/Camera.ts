@@ -27,7 +27,7 @@ export default class Camera extends ActorComponent {
     this.actor.gameInstance.removeListener("resize", this._computeAspectRatio);
 
     let index = this.actor.gameInstance.renderComponents.indexOf(this);
-    if (index != -1) this.actor.gameInstance.renderComponents.splice(index, 1);
+    if (index !== -1) this.actor.gameInstance.renderComponents.splice(index, 1);
 
     this.threeCamera = null;
 

@@ -54,7 +54,7 @@ export default class Camera2DControls extends ActorComponent {
       newOrthographicScale = Math.min(this.options.zoomMax, this.camera.orthographicScale * this.multiplier * this.options.zoomSpeed);
     }
 
-    if (newOrthographicScale != null && newOrthographicScale != this.camera.orthographicScale) {
+    if (newOrthographicScale != null && newOrthographicScale !== this.camera.orthographicScale) {
       let mousePosition = this.actor.gameInstance.input.mousePosition;
       this.changeOrthographicScale(newOrthographicScale, mousePosition.x, mousePosition.y);
     }
@@ -68,7 +68,7 @@ export default class Camera2DControls extends ActorComponent {
       mouseDelta.y /= this.actor.gameInstance.threeRenderer.domElement.height;
       mouseDelta.y *= this.camera.orthographicScale;
 
-      if (mouseDelta.x != 0 || mouseDelta.y != 0) this.camera.actor.moveLocal(new THREE.Vector3(-mouseDelta.x, mouseDelta.y, 0));
+      if (mouseDelta.x !== 0 || mouseDelta.y !== 0) this.camera.actor.moveLocal(new THREE.Vector3(-mouseDelta.x, mouseDelta.y, 0));
     }
   }
 

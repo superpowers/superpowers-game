@@ -30,11 +30,11 @@ export default class SoundInstance {
 
   play() {
     if (this.audioCtx == null || this.buffer == null) return;
-    if (this.state == SoundStates.playing) return;
+    if (this.state === SoundStates.playing) return;
     if (this.source != null) this.stop();
 
     // if this.buffer instanceof HTMLAudioElement
-    if (typeof this.buffer == "string") {
+    if (typeof this.buffer === "string") {
       let audio = new Audio();
       audio.src = <string>this.buffer;
       this.source = <any>this.audioCtx.createMediaElementSource(audio);
@@ -124,9 +124,9 @@ export default class SoundInstance {
 
   getState(): SoundStates {
     // Workaround Webkit audio's lack of support for the onended callback
-    if (this.state == SoundStates.playing) {
+    if (this.state === SoundStates.playing) {
       // FIXME: Very new so not included in d.ts file just yet
-      if ((<any>this.source)["playbackState"] != null && (<any>this.source)["playbackState"] == (<any>this.source)["FINISHED_STATE"]) this.state = SoundStates.stopped;
+      if ((<any>this.source)["playbackState"] != null && (<any>this.source)["playbackState"] === (<any>this.source)["FINISHED_STATE"]) this.state = SoundStates.stopped;
       else if ((<any>this.source)["mediaElement"] != null && (<any>this.source)["mediaElement"].paused) this.state = SoundStates.stopped;
     }
 
