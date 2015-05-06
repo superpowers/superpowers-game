@@ -1,6 +1,5 @@
 syntax: glob
-*/**.js
+*/*/**.js
 public/**.css
 public/**.html
 node_modules/
-tsconfig.json
