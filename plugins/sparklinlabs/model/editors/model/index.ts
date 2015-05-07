@@ -206,7 +206,7 @@ function onDeleteAnimationClick() {
 
 function onAnimationDrop(dropInfo: any, orderedNodes: HTMLLIElement[]) {
   let animationIds: string[] = [];
-  for (let animation of orderedNodes) animationIds.push(animation.dataset["id"]);
+  for (let animation of orderedNodes) animationIds.push((<any>animation.dataset).id);
 
   let index = SupClient.getListViewDropIndex(dropInfo, data.modelUpdater.modelAsset.animations);
 
@@ -236,7 +236,7 @@ function updateSelectedAnimation() {
 
 function setupAnimation(animation: any, index: number) {
   let liElt = document.createElement("li");
-  liElt.dataset["id"] = animation.id;
+  (<any>liElt.dataset).id = animation.id;
 
   let nameSpan = document.createElement("span");
   nameSpan.className = "name";

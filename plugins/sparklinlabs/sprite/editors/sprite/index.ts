@@ -74,29 +74,30 @@ function start() {
     queryName += parts[parts.length - 1];
     let settingObj = obj[parts[parts.length - 1]] = document.querySelector(queryName);
 
-    let setupSetting = (setting: string) => {
-      if (setting === "filtering") {
+    switch (setting) {
+      case "filtering":
         settingObj.addEventListener("change", (event: any) => {
           socket.emit("edit:assets", info.assetId, "setProperty", setting, event.target.value, (err: string) => { if (err != null) alert(err); });
         });
-      }
-      else if (setting.indexOf("origin") !== -1) {
-        settingObj.addEventListener("change", (event: any) => {
-          socket.emit("edit:assets", info.assetId, "setProperty", setting, event.target.value / 100, (err: string) => { if (err != null) alert(err); });
-        });
-      }
-      else if (setting === "alphaTest") {
+        break;
+
+      case "alphaTest":
         settingObj.addEventListener("change", (event: any) => {
           socket.emit("edit:assets", info.assetId, "setProperty", setting, parseFloat(event.target.value), (err: string) => { if (err != null) alert(err); });
         });
-      }
-      else {
-        settingObj.addEventListener("change", (event: any) => {
-          socket.emit("edit:assets", info.assetId, "setProperty", setting, parseInt(event.target.value), (err: string) => { if (err != null) alert(err); });
-        });
-      }
+        break;
+
+      default:
+        if (setting.indexOf("origin") !== -1) {
+          settingObj.addEventListener("change", (event: any) => {
+            socket.emit("edit:assets", info.assetId, "setProperty", setting, event.target.value / 100, (err: string) => { if (err != null) alert(err); });
+          });
+        } else {
+          settingObj.addEventListener("change", (event: any) => {
+            socket.emit("edit:assets", info.assetId, "setProperty", setting, parseInt(event.target.value), (err: string) => { if (err != null) alert(err); });
+          });
+        }
     }
-    setupSetting(setting);
   });
   document.querySelector("button.set-grid-width").addEventListener("click", onSetGridWidth);
   document.querySelector("button.set-grid-height").addEventListener("click", onSetGridHeight);
@@ -132,14 +133,14 @@ function onAssetReceived(url?: string) {
 
   ui.allSettings.forEach((setting: string) => {
     let parts = setting.split(".");
-    let obj = data.spriteUpdater.spriteAsset.pub
+    let obj = data.spriteUpdater.spriteAsset.pub;
     parts.slice(0, parts.length - 1).forEach((part) => { obj = obj[part]; })
     setupProperty(setting, obj[parts[parts.length - 1]]);
-  })
+  });
 
   data.spriteUpdater.spriteAsset.pub.animations.forEach((animation: any, index: number) => {
     setupAnimation(animation, index);
-  })
+  });
 }
 
 onEditCommands.upload = (url: string) => {
@@ -278,7 +279,7 @@ function onDeleteAnimationClick() {
   });
 }
 
-function onAnimationDrop(dropInfo: any, orderedNodes: any) {
+function onAnimationDrop(dropInfo: any, orderedNodes: any[]) {
   let animationIds: number[] = [];
   orderedNodes.forEach((animation: any) => { animationIds.push(animation.dataset.id); });
 

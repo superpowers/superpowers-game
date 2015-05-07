@@ -209,7 +209,7 @@ export function importModel(files: File[], callback: (err: Error, result: any) =
       }
 
       // Bones
-      let bones = null;
+      let bones: { name: string; matrix: number[]; parentIndex: number }[] = null;
       if (skin != null) {
         bones = [];
 
@@ -228,7 +228,7 @@ export function importModel(files: File[], callback: (err: Error, result: any) =
             ).toArray();
           }
 
-          let bone = { name: boneNodeInfo.jointName, matrix: boneNodeInfo.matrix };
+          let bone = { name: boneNodeInfo.jointName, matrix: boneNodeInfo.matrix, parentIndex: <number>null };
           bones.push(bone);
         }
 
@@ -247,7 +247,7 @@ export function importModel(files: File[], callback: (err: Error, result: any) =
       }
 
       // Animation
-      let animation = null;
+      let animation: { duration: number; keyFrames: { [jointName: string]: any } } = null;
       if (Object.keys(gltf.animations).length > 0) {
         animation = { duration: 0, keyFrames: {} };
 
@@ -302,7 +302,7 @@ export function importModel(files: File[], callback: (err: Error, result: any) =
             for (let i = 0; i < timeArray.length; i++) {
               let time = timeArray[i];
 
-              let value = [];
+              let value: number[] = [];
               for (let j = 0; j < componentsCount; j++) value.push(outputArray[i * componentsCount + j]);
               boneTransformAnim.push({ time, value });
               animation.duration = Math.max(animation.duration, time);

@@ -21,7 +21,8 @@ gulp.task("typescript", function() {
     typescript: require("typescript"),
     declarationFiles: false,
     module: "commonjs",
-    target: "ES5"
+    target: "ES5",
+    noImplicitAny: true
   }));
   return tsResult.js.pipe(gulp.dest("./"));
 });

@@ -256,7 +256,7 @@ onEditCommands.removeComponent = (nodeId: string, componentId: string) => {
 // User interface
 function createNodeElement(node: Node) {
   let liElt = document.createElement("li");
-  liElt.dataset["id"] = node.id;
+  (<any>liElt.dataset).id = node.id;
 
   let nameSpan = document.createElement("span");
   nameSpan.className = "name";
@@ -466,7 +466,7 @@ function onTransformInputChange(event: any) {
 
 function createComponentElement(nodeId: string, component: Component) {
   let componentElt = document.createElement("div");
-  componentElt.dataset["componentId"] = component.id;
+  (<any>componentElt.dataset).componentId = component.id;
 
   let template = <any>document.getElementById("component-cartridge-template");
   let clone = <any>document.importNode(template.content, true);;
