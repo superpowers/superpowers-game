@@ -51,12 +51,12 @@ export default class BehaviorEditor {
   destroy() { this.projectClient.unsubResource("behaviorProperties", this); }
 
   onResourceReceived = (resourceId: string, resource: BehaviorPropertiesResource) => {
-    this.behaviorPropertiesResource = resource
-    this._buildBehaviorPropertiesUI()
+    this.behaviorPropertiesResource = resource;
+    this._buildBehaviorPropertiesUI();
   }
 
   onResourceEdited = (resourceId: string, command: string, ...args: any[]) => {
-    if (command === "setScriptBehaviors" || command === "clearScriptBehaviors") this._buildBehaviorPropertiesUI()
+    if (command === "setScriptBehaviors" || command === "clearScriptBehaviors") this._buildBehaviorPropertiesUI();
   }
 
   _buildBehaviorPropertiesUI() {
@@ -84,6 +84,8 @@ export default class BehaviorEditor {
 
     while (behaviorName != null) {
       let behavior = this.behaviorPropertiesResource.pub.behaviors[behaviorName];
+      if(behavior == null) break;
+
       for (let property of behavior.properties) {
         if(listedProperties.indexOf(property.name) !== -1) continue;
 
