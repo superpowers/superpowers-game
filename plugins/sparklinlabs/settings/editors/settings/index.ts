@@ -26,7 +26,10 @@ function onConnected() {
   let navListElt = document.querySelector("nav ul");
   let mainElt = document.querySelector("main");
 
-  for (let name in SupClient.settingsEditorClasses) {
+  let sortedNames = Object.keys(SupClient.settingsEditorClasses);
+  sortedNames.sort((a, b) => { return (a.toLowerCase() < b.toLowerCase()) ? -1 : 1 });
+
+  for (let name of sortedNames) {
      let settingEditorClass = SupClient.settingsEditorClasses[name];
 
     let liElt = document.createElement("li");
