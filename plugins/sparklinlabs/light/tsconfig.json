@@ -1,0 +1,25 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "es5",
+        "noImplicitAny": true
+    },
+    "filesGlob": [
+        "./**/*.ts",
+        "!./node_modules/**/*.ts"
+    ],
+    "files": [
+        "./api/index.ts",
+        "./componentEditors/LightEditor.ts",
+        "./componentEditors/index.ts",
+        "./components/Light.ts",
+        "./components/LightMarker.ts",
+        "./components/LightUpdater.ts",
+        "./components/index.ts",
+        "./data/LightConfig.ts",
+        "./data/index.ts",
+        "./index.d.ts",
+        "./runtime/Light.ts",
+        "./runtime/index.ts"
+    ]
+}

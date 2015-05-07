@@ -1,0 +1,5 @@
+declare module Sup {
+  class Light {
+    constructor(actor: Actor);
+  }
+}

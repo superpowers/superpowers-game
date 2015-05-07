@@ -1,0 +1,45 @@
+import Light from "./Light";
+import { LightConfigPub } from "../data/LightConfig";
+
+export default class LightUpdater {
+
+  light: Light;
+
+  constructor(client: SupClient.ProjectClient, light: Light, config: LightConfigPub) {
+    this.light = light;
+
+    this.light.setType(config.type);
+    this.light.setColor(config.color);
+    this.light.setIntensity(config.intensity);
+    this.light.setDistance(config.distance);
+    this.light.setTarget(config.target.x, config.target.y, config.target.z);
+  }
+
+  destroy() {}
+
+  config_setProperty(path: string, value: any) {
+    switch(path) {
+      case "type":
+        this.light.setType(value);
+        break;
+      case "color":
+        this.light.setColor(value);
+        break;
+      case "intensity":
+        this.light.setIntensity(value);
+        break;
+      case "distance":
+        this.light.setDistance(value);
+        break;
+      case "target.x":
+        this.light.setTarget(value, null, null);
+        break;
+      case "target.y":
+        this.light.setTarget(null, value, null);
+        break;
+      case "target.z":
+        this.light.setTarget(null, null, value);
+        break;
+    }
+  }
+}

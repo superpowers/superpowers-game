@@ -1,0 +1,14 @@
+module Sup {
+  export class Light extends Sup.ActorComponent {
+    constructor(actor) {
+      super(actor);
+      this.__inner = new SupEngine.componentClasses.Light(this.actor.__inner);
+      this.__inner.__outer = this;
+      this.actor.light = this;
+    }
+    destroy() {
+      this.actor.light = null;
+      super.destroy();
+    }
+  }
+}
