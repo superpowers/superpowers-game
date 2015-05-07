@@ -10,6 +10,7 @@ export default  class CameraMarker extends SupEngine.ActorComponent {
   isOrthographic: boolean;
   fov: number;
   orthographicScale: number;
+  ratio: number;
 
   projectionNeedsUpdate: boolean;
   line: THREE.Line;
@@ -53,11 +54,16 @@ export default  class CameraMarker extends SupEngine.ActorComponent {
   }
 
   setViewport(x: number, y: number, width: number, height: number) {
-    this.viewport.x = x
-    this.viewport.y = y
-    this.viewport.width = width
-    this.viewport.height = height
-    this.projectionNeedsUpdate = true
+    this.viewport.x = x;
+    this.viewport.y = y;
+    this.viewport.width = width;
+    this.viewport.height = height;
+    this.projectionNeedsUpdate = true;
+  }
+
+  setRatio(ratio: number) {
+    this.ratio = ratio;
+    this.projectionNeedsUpdate = true;
   }
 
   _resetGeometry() {
@@ -68,8 +74,10 @@ export default  class CameraMarker extends SupEngine.ActorComponent {
     let nearTopRight: THREE.Vector3;
 
     if (this.isOrthographic) {
-      farTopRight = new THREE.Vector3(this.orthographicScale / 2, this.orthographicScale / 2, far);
-      nearTopRight = new THREE.Vector3(this.orthographicScale / 2, this.orthographicScale / 2, near);
+      let right = this.orthographicScale / 2;
+      if (this.ratio != null) right *= this.ratio;
+      farTopRight = new THREE.Vector3(right, this.orthographicScale / 2, far);
+      nearTopRight = new THREE.Vector3(right, this.orthographicScale / 2, near);
     }
     else {
       let tan = Math.tan(THREE.Math.degToRad(this.fov / 2));
@@ -122,7 +130,7 @@ export default  class CameraMarker extends SupEngine.ActorComponent {
   update() {
     if (this.projectionNeedsUpdate) {
       this.projectionNeedsUpdate = false;
-      this._resetGeometry()
+      this._resetGeometry();
     }
   }
 }
