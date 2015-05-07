@@ -13,6 +13,7 @@ export default class TextRenderer extends SupEngine.ActorComponent {
   text: string;
   font: FontPub;
   options: {alignment: string; size?: number; color?: string;};
+  opacity = 1;
 
   constructor(actor: SupEngine.Actor) {
     super(actor, "TextRenderer");
@@ -30,6 +31,11 @@ export default class TextRenderer extends SupEngine.ActorComponent {
     if (options.alignment == null) options.alignment = "center";
     this.options = options;
     this._createMesh();
+  }
+
+  setOpacity(opacity: number) {
+    this.opacity = opacity;
+    for (let mesh of this.threeMeshes) mesh.material.opacity = this.opacity;
   }
 
   _createMesh() {
@@ -87,7 +93,8 @@ export default class TextRenderer extends SupEngine.ActorComponent {
       map: this.texture,
       alphaTest: 0.01,
       side: THREE.DoubleSide,
-      transparent: true
+      transparent: true,
+      opacity: this.opacity
     });
 
     this.threeMeshes[0] = new THREE.Mesh(geometry, material);
@@ -107,7 +114,8 @@ export default class TextRenderer extends SupEngine.ActorComponent {
         map: this.font.texture,
         alphaTest: 0.1,
         side: THREE.DoubleSide,
-        transparent: true
+        transparent: true,
+        opacity: this.opacity
       });
       this.threeMeshes[index] = new THREE.Mesh(geometry, material);
       switch (this.options.alignment) {
