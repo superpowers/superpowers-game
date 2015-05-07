@@ -60,7 +60,8 @@ export default class Camera2DControls extends ActorComponent {
     }
 
     // Move
-    if (this.actor.gameInstance.input.mouseButtons[1].isDown) {
+    if (this.actor.gameInstance.input.mouseButtons[1].isDown ||
+    (this.actor.gameInstance.input.mouseButtons[0].isDown && this.actor.gameInstance.input.keyboardButtons[(<any>window).KeyEvent.DOM_VK_ALT].isDown)) {
       let mouseDelta = this.actor.gameInstance.input.mouseDelta;
       mouseDelta.x /= this.actor.gameInstance.threeRenderer.domElement.width;
       mouseDelta.x *= this.camera.orthographicScale * this.camera.cachedRatio;
