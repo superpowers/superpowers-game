@@ -12,8 +12,10 @@ export default class SpriteSettingsEditor {
 
   fields: { [name: string]: HTMLInputElement|HTMLSelectElement } = {};
 
-  constructor(tbody: HTMLTableSectionElement, projectClient: SupClient.ProjectClient) {
+  constructor(container: HTMLDivElement, projectClient: SupClient.ProjectClient) {
     this.projectClient = projectClient;
+
+    let { tbody } = SupClient.table.createTable(container);
 
     this.filteringRow = SupClient.table.appendRow(tbody, "Filtering");
     this.fields["filtering"] = SupClient.table.appendSelectBox(this.filteringRow.valueCell, { pixelated: "Pixelated", smooth: "Smooth" });

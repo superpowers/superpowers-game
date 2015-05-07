@@ -45,13 +45,10 @@ function onConnected() {
     headerElt.textContent = name;
     sectionElt.appendChild(headerElt);
 
-    let tableElt = document.createElement("table");
-    sectionElt.appendChild(tableElt);
+    let divElt = document.createElement("div");
+    sectionElt.appendChild(divElt);
 
-    let tbodyElt = document.createElement("tbody");
-    tableElt.appendChild(tbodyElt);
-
-    new settingEditorClass(tbodyElt, data.projectClient);
+    new settingEditorClass(divElt, data.projectClient);
   }
 
   navListElt.addEventListener("click", (event: any) => {

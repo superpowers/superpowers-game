@@ -10,8 +10,10 @@ export default class GameSettingsEditor {
 
   fields: { [name: string]: HTMLInputElement } = {};
 
-  constructor(tbody: HTMLTableSectionElement, projectClient: SupClient.ProjectClient) {
+  constructor(container: HTMLDivElement, projectClient: SupClient.ProjectClient) {
     this.projectClient = projectClient;
+
+    let { tbody } = SupClient.table.createTable(container);
 
     this.fpsRow = SupClient.table.appendRow(tbody, "Frames per second");
     this.fields["framesPerSecond"] = SupClient.table.appendNumberField(this.fpsRow.valueCell, "");
