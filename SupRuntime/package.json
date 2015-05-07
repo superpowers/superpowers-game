@@ -1,5 +1,5 @@
 {
   "name": "superpowers-runtime",
   "version": "1.0.0",
-  "main": "SupRuntime.coffee"
+  "main": "SupRuntime.js"
 }
