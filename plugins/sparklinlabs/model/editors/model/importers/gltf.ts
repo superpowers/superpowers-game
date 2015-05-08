@@ -49,7 +49,7 @@ export function importModel(files: File[], callback: (err: Error, result: any) =
         break;
 
       default:
-        callback(new Error("Unsupported file type: #{filename}"), null);
+        callback(new Error(`Unsupported file type: ${filename}`), null);
         return;
     }
   }
@@ -99,7 +99,7 @@ export function importModel(files: File[], callback: (err: Error, result: any) =
       else if (filename.indexOf("\\") !== -1) filename = filename.substring(filename.lastIndexOf("\\") + 1);
 
       let bufferFile = bufferFiles[filename];
-      if (bufferFile == null) { cb(new Error("Missing buffer file: #{filename}")); return; }
+      if (bufferFile == null) { cb(new Error(`Missing buffer file: ${filename}`)); return; }
 
       readFile(bufferFile, "arraybuffer", (err: Error, buffer: ArrayBuffer) => {
         if (err != null) { cb(err); return; }
