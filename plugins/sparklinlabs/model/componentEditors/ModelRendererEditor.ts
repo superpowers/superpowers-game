@@ -49,9 +49,11 @@ export default class ModelRendererEditor {
         this.modelAssetId = value;
         this.animationSelectBox.disabled = true;
 
-        this.projectClient.subAsset(this.modelAssetId, "model", this);
-
-        this.modelTextField.value = this.projectClient.entries.getPathFromId(this.modelAssetId);
+        if (this.modelAssetId != null) {
+          this.projectClient.subAsset(this.modelAssetId, "model", this);
+          this.modelTextField.value = this.projectClient.entries.getPathFromId(this.modelAssetId);
+        }
+        else this.modelTextField.value = "";
         break;
 
       case "animationId":
@@ -70,9 +72,8 @@ export default class ModelRendererEditor {
 
     if (entries.byId[this.modelAssetId] != null) {
       this.modelTextField.value = entries.getPathFromId(this.modelAssetId);
+      this.projectClient.subAsset(this.modelAssetId, "model", this);
     }
-
-    this.projectClient.subAsset(this.modelAssetId, "model", this);
   }
 
   onEntryAdded(entry: any, parentId: string, index: number) {}
