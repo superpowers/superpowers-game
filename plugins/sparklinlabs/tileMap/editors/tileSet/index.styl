@@ -1,55 +1,57 @@
+@import "nib"
+
 body
   display flex
 
 .main
   flex 1
   display flex
-  
+
   canvas
     flex 1
-  
+
 .sidebar
   display flex
   flex-flow column
   width 250px
   border-left 1px solid #aaa
-    
+
   table
     padding 10px
-    
+
     tr
       padding-bottom 10px
-  
+
     th
       width 90px
       text-align left
-      
+
     input, button
       width 65px
-      
+
   // Properties tab
   .properties-buttons
     display flex
-    
+
     button
       flex 1
       font-size smaller
       white-space nowrap
-  
+
   .properties-tree-view
     border-top 1px solid #aaa
     flex 1
     position relative
     background #fff
     overflow-y auto
-    
+
     .tree
       position absolute
-    
+
     .name
       white-space pre
       width 100px
-      
+
     input
       width 150px
       margin-right 5px
