@@ -12,9 +12,13 @@ export default class Light extends SupEngine.ActorComponent {
   intensity = 1;
   distance = 0;
   target = new THREE.Vector3(0, 0, 0);
+  castShadow = false;
 
   constructor(actor: SupEngine.Actor) {
     super(actor, "Light");
+
+    this.actor.gameInstance.threeRenderer.shadowMapEnabled = true;
+    this.actor.gameInstance.threeRenderer.shadowMapType = THREE.BasicShadowMap;
   }
 
   setType(type: string) {
@@ -34,12 +38,20 @@ export default class Light extends SupEngine.ActorComponent {
         spotLight.target.updateMatrixWorld(false);
         spotLight.shadowCameraNear = 0.1;
         this.light = spotLight;
+        this.setCastShadow(this.castShadow);
         break;
       case "directional":
         let directionalLight = new THREE.DirectionalLight(parseInt(`0x${this.color}`), this.intensity);
         directionalLight.target.position.copy(this.target);
         directionalLight.target.updateMatrixWorld(false);
+        directionalLight.shadowCameraNear = 0.1;
+        directionalLight.shadowCameraFar = 100;
+        directionalLight.shadowCameraLeft = -100;
+        directionalLight.shadowCameraRight = 100;
+        directionalLight.shadowCameraTop = 100;
+        directionalLight.shadowCameraBottom = -100;
         this.light = directionalLight;
+        this.setCastShadow(this.castShadow);
         break;
     }
     this.actor.threeObject.add(this.light);
@@ -73,6 +85,17 @@ export default class Light extends SupEngine.ActorComponent {
     if (this.type === "spot" || this.type === "directional") {
       (<THREE.SpotLight>this.light).target.position.copy(this.target);
       (<THREE.SpotLight>this.light).target.updateMatrixWorld(true);
+    }
+  }
+
+  setCastShadow(castShadow: boolean) {
+    this.castShadow = castShadow;
+    if (this.type === "spot" || this.type === "directional") {
+      (<THREE.SpotLight>this.light).castShadow = this.castShadow;
+      this.actor.gameInstance.threeScene.traverse((object: any) => {
+        let material: THREE.Material = object.material;
+        if (material != null) material.needsUpdate = true;
+      })
     }
   }
 

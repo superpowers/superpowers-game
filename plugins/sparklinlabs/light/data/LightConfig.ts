@@ -7,7 +7,8 @@ export interface LightConfigPub {
     x: number;
     y: number;
     z: number;
-  }
+  };
+  castShadow: boolean;
 }
 
 export default class LightConfig extends SupCore.data.base.ComponentConfig {
@@ -24,11 +25,12 @@ export default class LightConfig extends SupCore.data.base.ComponentConfig {
         y: { type: "number", mutable: true },
         z: { type: "number", mutable: true }
       }
-    }
+    },
+    castShadow: { type: "boolean", mutable: true},
   }
 
   static create() {
-    let emptyConfig: LightConfigPub = { type: "ambient", color: "ffffff", intensity: 1, distance: 0, target: { x: 0, y: 0, z: 0} };
+    let emptyConfig: LightConfigPub = { type: "ambient", color: "ffffff", intensity: 1, distance: 0, target: { x: 0, y: 0, z: 0}, castShadow: false };
     return emptyConfig;
   }
 

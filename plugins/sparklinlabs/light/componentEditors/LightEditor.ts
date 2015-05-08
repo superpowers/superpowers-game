@@ -12,7 +12,8 @@ export default class LightEditor {
     x: HTMLInputElement;
     y: HTMLInputElement;
     z: HTMLInputElement;
-  }
+  };
+  castShadowField: HTMLInputElement;
 
   constructor(tbody: HTMLTableSectionElement, config: LightConfigPub, projectClient: SupClient.ProjectClient, editConfig: any) {
     this.tbody = tbody;
@@ -55,6 +56,12 @@ export default class LightEditor {
       this.editConfig("setProperty", "target.z", parseFloat(event.target.value));
     });
 
+    let castShadowRow = SupClient.table.appendRow(tbody, "Cast Shadow");
+    this.castShadowField = SupClient.table.appendBooleanField(castShadowRow.valueCell, config.castShadow);
+    this.castShadowField.addEventListener("change", (event: any) => {
+      this.editConfig("setProperty", "castShadow", event.target.checked);
+    });
+
     this.updateFields();
   }
 
@@ -84,6 +91,9 @@ export default class LightEditor {
       case "target.z":
         this.targetFields.z.value = value;
         break;
+      case "castShadow":
+        this.castShadowField.value = value;
+        break;
     }
   }
 
@@ -97,6 +107,9 @@ export default class LightEditor {
 
       let targetRow = this.targetFields.x.parentElement.parentElement.parentElement;
       if (targetRow.parentElement != null) targetRow.parentElement.removeChild(targetRow);
+
+      let castShadowRow = this.castShadowField.parentElement.parentElement;
+      if (castShadowRow.parentElement != null) castShadowRow.parentElement.removeChild(castShadowRow);
     }
     else {
       let intensityRow = this.intensityField.parentElement.parentElement;
@@ -108,9 +121,14 @@ export default class LightEditor {
       } else if (distanceRow.parentElement == null) this.tbody.appendChild(distanceRow);
 
       let targetRow = this.targetFields.x.parentElement.parentElement.parentElement;
+      let castShadowRow = this.castShadowField.parentElement.parentElement;
       if (this.typeSelectBox.value === "spot" || this.typeSelectBox.value === "directional") {
         if (targetRow.parentElement == null) this.tbody.appendChild(targetRow);
-      } else if (targetRow.parentElement != null) targetRow.parentElement.removeChild(targetRow);
+        if (castShadowRow.parentElement == null) this.tbody.appendChild(castShadowRow);
+      } else {
+        if (targetRow.parentElement != null) targetRow.parentElement.removeChild(targetRow);
+        if (castShadowRow.parentElement != null) castShadowRow.parentElement.removeChild(castShadowRow);
+      }
     }
   }
 }

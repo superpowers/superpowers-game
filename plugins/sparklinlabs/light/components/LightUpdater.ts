@@ -13,6 +13,7 @@ export default class LightUpdater {
     this.light.setIntensity(config.intensity);
     this.light.setDistance(config.distance);
     this.light.setTarget(config.target.x, config.target.y, config.target.z);
+    this.light.setCastShadow(config.castShadow);
   }
 
   destroy() {}
@@ -39,6 +40,9 @@ export default class LightUpdater {
         break;
       case "target.z":
         this.light.setTarget(null, null, value);
+        break;
+      case "castShadow":
+        this.light.setCastShadow(value);
         break;
     }
   }
