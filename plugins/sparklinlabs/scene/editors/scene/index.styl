@@ -43,6 +43,18 @@ body
   .tree
     position absolute
 
+  .name
+    white-space pre
+    flex 1
+
+  button
+    font-size smaller
+    border none
+    margin-right 0.25em
+
+  li:not(:hover)
+    button { visibility: hidden; }
+
 .inspector
   overflow-y auto
   flex 1
