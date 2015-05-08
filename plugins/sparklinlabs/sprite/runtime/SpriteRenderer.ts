@@ -1,6 +1,8 @@
 export function setupComponent(player: SupRuntime.Player, component: any, config: any) {
   if (config.spriteAssetId != null) {
     let sprite = player.getOuterAsset(config.spriteAssetId).__inner;
+    component.castShadow = config.castShadow;
+    component.receiveShadow = config.receiveShadow;
     component.setSprite(sprite);
 
     if (config.animationId != null) {

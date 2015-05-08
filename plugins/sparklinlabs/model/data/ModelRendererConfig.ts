@@ -1,16 +1,29 @@
+export interface ModelRendererConfigPub {
+  modelAssetId: string;
+  animationId: string;
+  castShadow: boolean;
+  receiveShadow: boolean;
+}
+
 export default class ModelRendererConfig extends SupCore.data.base.ComponentConfig {
 
   static schema = {
     modelAssetId: { type: "string?", min: 0, mutable: true },
-    animationId: { type: "string?", min: 0, mutable: true }
+    animationId: { type: "string?", min: 0, mutable: true },
+    castShadow: { type: "boolean", mutable: true },
+    receiveShadow: { type: "boolean", mutable: true }
   }
 
   static create() {
-    let emptyConfig: { modelAssetId: string; animationId: string; } = { modelAssetId: null, animationId: null };
+    let emptyConfig: ModelRendererConfigPub = { modelAssetId: null, animationId: null, castShadow: false, receiveShadow: false };
     return emptyConfig;
   }
 
-  constructor(pub: any) {
+  constructor(pub: ModelRendererConfigPub) {
+    // TODO: Remove these at some point, new config setting introduced in Superpowers 0.6
+    if (pub.castShadow == null) pub.castShadow = false;
+    if (pub.receiveShadow == null) pub.receiveShadow = false;
+
     // TODO: Remove these casts at some point, legacy stuff from Superpowers 0.4
     if (typeof pub.modelAssetId === "number") pub.modelAssetId = pub.modelAssetId.toString();
     if (typeof pub.animationId === "number") pub.animationId = pub.animationId.toString();

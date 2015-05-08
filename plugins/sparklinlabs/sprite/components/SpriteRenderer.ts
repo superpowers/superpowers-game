@@ -19,6 +19,8 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
   geometry: THREE.PlaneBufferGeometry;
   material: THREE.MeshBasicMaterial;
   threeMesh: THREE.Mesh;
+  castShadow = false;
+  receiveShadow = false;
 
   animationName: string;
   isAnimationPlaying: boolean;
@@ -52,6 +54,8 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
     });
     this.material.color.setRGB(this.color.r, this.color.g, this.color.b);
     this.threeMesh = new THREE.Mesh(this.geometry, this.material);
+    this.setCastShadow(this.castShadow);
+    this.threeMesh.receiveShadow = this.receiveShadow;
 
     let scaleRatio = 1 / this.asset.pixelsPerUnit;
     this.threeMesh.scale.set(scaleRatio, scaleRatio, scaleRatio);
@@ -76,6 +80,17 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
     this.geometry.dispose();
     this.material.dispose();
     this.threeMesh = null;
+  }
+
+  setCastShadow(castShadow: boolean) {
+    this.castShadow = castShadow;
+    this.threeMesh.castShadow = castShadow;
+    if (! castShadow) return;
+
+    this.actor.gameInstance.threeScene.traverse((object: any) => {
+      let material: THREE.Material = object.material;
+      if (material != null) material.needsUpdate = true;
+    })
   }
 
   _destroy() {

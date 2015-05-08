@@ -32,6 +32,9 @@ export default class ModelRendererUpdater {
     this.modelAssetId = config.modelAssetId;
     this.animationId = config.animationId;
 
+    this.modelRenderer.castShadow = config.castShadow;
+    this.modelRenderer.receiveShadow = config.receiveShadow;
+
     if (this.modelAssetId != null) {
       this.client.subAsset(this.modelAssetId, "model", this.modelSubscriber);
     }
@@ -142,7 +145,7 @@ export default class ModelRendererUpdater {
 
   config_setProperty(path: string, value: any) {
     switch(path) {
-      case "modelAssetId": {
+      case "modelAssetId":
         if (this.modelAssetId != null) this.client.unsubAsset(this.modelAssetId, this.modelSubscriber);
         this.modelAssetId = value;
 
@@ -151,9 +154,8 @@ export default class ModelRendererUpdater {
 
         if (this.modelAssetId != null) this.client.subAsset(this.modelAssetId, "model", this.modelSubscriber);
         break;
-      }
 
-      case "animationId": {
+      case "animationId":
         this.animationId = value;
 
         if (this.modelAsset != null) {
@@ -161,7 +163,15 @@ export default class ModelRendererUpdater {
           else this.modelRenderer.setAnimation(null);
         }
         break;
-      }
+
+      case "castShadow":
+        this.modelRenderer.setCastShadow(value);
+        break;
+
+      case "receiveShadow":
+        this.modelRenderer.threeMesh.receiveShadow = value;
+        this.modelRenderer.threeMesh.material.needsUpdate = true;
+        break;
     }
   }
 }

@@ -1,16 +1,29 @@
+export interface SpriteRendererConfigPub {
+  spriteAssetId: string;
+  animationId: string;
+  castShadow: boolean;
+  receiveShadow: boolean;
+}
+
 export default class SpriteRendererConfig extends SupCore.data.base.ComponentConfig {
 
   static schema = {
     spriteAssetId: { type: "string?", min: 0, mutable: true },
-    animationId: { type: "string?", min: 0, mutable: true }
+    animationId: { type: "string?", min: 0, mutable: true },
+    castShadow: { type: "boolean", mutable: true },
+    receiveShadow: { type: "boolean", mutable: true }
   }
 
   static create() {
-    let emptyConfig: { spriteAssetId: string; animationId: string; } = { spriteAssetId: null, animationId: null };
+    let emptyConfig: SpriteRendererConfigPub = { spriteAssetId: null, animationId: null, castShadow: false, receiveShadow: false };
     return emptyConfig;
   }
 
-  constructor(pub: any) {
+  constructor(pub: SpriteRendererConfigPub) {
+    // TODO: Remove these at some point, new config setting introduced in Superpowers 0.6
+    if (pub.castShadow == null) pub.castShadow = false;
+    if (pub.receiveShadow == null) pub.receiveShadow = false;
+
     // TODO: Remove these casts at some point, legacy stuff from Superpowers 0.4
     if (typeof pub.spriteAssetId === "number") pub.spriteAssetId = pub.spriteAssetId.toString();
     if (typeof pub.animationId === "number") pub.animationId = pub.animationId.toString();

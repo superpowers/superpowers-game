@@ -1,3 +1,4 @@
+import { SpriteRendererConfigPub } from "../data/SpriteRendererConfig";
 import SpriteAsset from "../data/SpriteAsset";
 
 export default class SpriteRendererEditor {
@@ -9,10 +10,12 @@ export default class SpriteRendererEditor {
 
   spriteTextField: HTMLInputElement;
   animationSelectBox: HTMLSelectElement;
+  castShadowField: HTMLInputElement;
+  receiveShadowField: HTMLInputElement;
 
   asset: SpriteAsset;
 
-  constructor(tbody: HTMLTableSectionElement, config: any, projectClient: SupClient.ProjectClient, editConfig: any) {
+  constructor(tbody: HTMLTableSectionElement, config: SpriteRendererConfigPub, projectClient: SupClient.ProjectClient, editConfig: any) {
     this.projectClient = projectClient;
     this.editConfig = editConfig;
     this.spriteAssetId = config.spriteAssetId;
@@ -25,6 +28,20 @@ export default class SpriteRendererEditor {
     let animationRow = SupClient.table.appendRow(tbody, "Animation");
     this.animationSelectBox = SupClient.table.appendSelectBox(animationRow.valueCell, { "": "(None)" });
     this.animationSelectBox.disabled = true;
+
+    let castShadowRow = SupClient.table.appendRow(tbody, "Cast Shadow");
+    this.castShadowField = SupClient.table.appendBooleanField(castShadowRow.valueCell, config.castShadow);
+    this.castShadowField.addEventListener("change", (event: any) => {
+      this.editConfig("setProperty", "castShadow", event.target.checked);
+    })
+    this.castShadowField.disabled = true;
+
+    let receiveShadowRow = SupClient.table.appendRow(tbody, "Receive Shadow");
+    this.receiveShadowField = SupClient.table.appendBooleanField(receiveShadowRow.valueCell, config.receiveShadow);
+    this.receiveShadowField.addEventListener("change", (event: any) => {
+      this.editConfig("setProperty", "receiveShadow", event.target.checked);
+    })
+    this.receiveShadowField.disabled = true;
 
     this.spriteTextField.addEventListener("input", this._onChangeSpriteAsset);
     this.animationSelectBox.addEventListener("change", this._onChangeSpriteAnimation);
@@ -42,7 +59,7 @@ export default class SpriteRendererEditor {
     if (this.projectClient.entries == null) return;
 
     switch (path) {
-      case "spriteAssetId": {
+      case "spriteAssetId":
         if (this.spriteAssetId != null) this.projectClient.unsubAsset(this.spriteAssetId, this);
         this.spriteAssetId = value;
         this.animationSelectBox.disabled = true;
@@ -53,19 +70,27 @@ export default class SpriteRendererEditor {
         }
         else this.spriteTextField.value = "";
         break;
-      }
 
-      case "animationId": {
+      case "animationId":
         if (! this.animationSelectBox.disabled) this.animationSelectBox.value = (value != null) ? value : "";
         this.animationId = value;
         break;
-      }
+
+      case "castShadow":
+        this.castShadowField.value = value;
+        break;
+
+      case "receiveShadow":
+        this.receiveShadowField.value = value;
+        break;
     }
   }
 
   // Network callbacks
   onEntriesReceived(entries: SupCore.data.Entries) {
     this.spriteTextField.disabled = false;
+    this.castShadowField.disabled = false;
+    this.receiveShadowField.disabled = false;
 
     if (entries.byId[this.spriteAssetId] != null) {
       this.spriteTextField.value = entries.getPathFromId(this.spriteAssetId);

@@ -27,9 +27,12 @@ export default class SpriteRendererUpdater {
     this.receiveAssetCallbacks = receiveAssetCallbacks;
     this.editAssetCallbacks = editAssetCallbacks;
 
-    this.spriteAssetId = config.spriteAssetId
-    this.animationId = config.animationId
-    this.spriteAsset = null
+    this.spriteAssetId = config.spriteAssetId;
+    this.animationId = config.animationId;
+    this.spriteAsset = null;
+
+    this.spriteRenderer.castShadow = config.castShadow;
+    this.spriteRenderer.receiveShadow = config.receiveShadow;
 
     if (this.spriteAssetId != null) this.client.subAsset(this.spriteAssetId, "sprite", this.spriteSubscriber);
   }
@@ -157,7 +160,7 @@ export default class SpriteRendererUpdater {
 
   config_setProperty(path: string, value: any) {
     switch (path) {
-      case "spriteAssetId": {
+      case "spriteAssetId":
         if (this.spriteAssetId != null) this.client.unsubAsset(this.spriteAssetId, this.spriteSubscriber);
         this.spriteAssetId = value;
 
@@ -166,9 +169,8 @@ export default class SpriteRendererUpdater {
 
         if (this.spriteAssetId != null) this.client.subAsset(this.spriteAssetId, "sprite", this.spriteSubscriber);
         break;
-      }
 
-      case "animationId": {
+      case "animationId":
         this.animationId = value;
 
         if (this.spriteAsset != null) {
@@ -176,7 +178,15 @@ export default class SpriteRendererUpdater {
           else this.spriteRenderer.setAnimation(null);
         }
         break;
-      }
+
+      case "castShadow":
+        this.spriteRenderer.setCastShadow(value);
+        break;
+
+      case "receiveShadow":
+        this.spriteRenderer.threeMesh.receiveShadow = value;
+        this.spriteRenderer.threeMesh.material.needsUpdate = true;
+        break;
     }
   }
 }

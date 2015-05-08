@@ -9,6 +9,8 @@ export default class ModelRendererEditor {
 
   modelTextField: HTMLInputElement;
   animationSelectBox: HTMLSelectElement;
+  castShadowField: HTMLInputElement;
+  receiveShadowField: HTMLInputElement;
 
   asset: ModelAsset;
 
@@ -25,6 +27,20 @@ export default class ModelRendererEditor {
     let animationRow = SupClient.table.appendRow(tbody, "Animation");
     this.animationSelectBox = SupClient.table.appendSelectBox(animationRow.valueCell, { "": "(None)" });
     this.animationSelectBox.disabled = true;
+
+    let castShadowRow = SupClient.table.appendRow(tbody, "Cast Shadow");
+    this.castShadowField = SupClient.table.appendBooleanField(castShadowRow.valueCell, config.castShadow);
+    this.castShadowField.addEventListener("change", (event: any) => {
+      this.editConfig("setProperty", "castShadow", event.target.checked);
+    })
+    this.castShadowField.disabled = true;
+
+    let receiveShadowRow = SupClient.table.appendRow(tbody, "Receive Shadow");
+    this.receiveShadowField = SupClient.table.appendBooleanField(receiveShadowRow.valueCell, config.receiveShadow);
+    this.receiveShadowField.addEventListener("change", (event: any) => {
+      this.editConfig("setProperty", "receiveShadow", event.target.checked);
+    })
+    this.receiveShadowField.disabled = true;
 
     this.modelTextField.addEventListener("input", this._onChangeModelAsset);
     this.animationSelectBox.addEventListener("change", this._onChangeModelAnimation);
@@ -63,12 +79,22 @@ export default class ModelRendererEditor {
 
         this.animationId = value;
         break;
+
+      case "castShadow":
+        this.castShadowField.value = value;
+        break;
+
+      case "receiveShadow":
+        this.receiveShadowField.value = value;
+        break;
     }
   }
 
   // Network callbacks
   onEntriesReceived(entries: SupCore.data.Entries) {
     this.modelTextField.disabled = false;
+    this.castShadowField.disabled = false;
+    this.receiveShadowField.disabled = false;
 
     if (entries.byId[this.modelAssetId] != null) {
       this.modelTextField.value = entries.getPathFromId(this.modelAssetId);

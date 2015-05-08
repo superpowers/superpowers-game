@@ -50,6 +50,8 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
   geometry: THREE.PlaneBufferGeometry;
   material: THREE.MeshBasicMaterial;
   threeMesh: THREE.Mesh|THREE.SkinnedMesh;
+  castShadow = false;
+  receiveShadow = false;
 
   animation: Animation;
   isAnimationPlaying: boolean;
@@ -159,16 +161,31 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
       this.threeMesh.add(this.skeletonHelper);
       this.skeletonHelper.updateMatrixWorld();
       */
-      
       this.updateAnimationsByName();
     } else {
       this.threeMesh = new THREE.Mesh(geometry, material);
     }
 
+    this.setCastShadow(this.castShadow);
+    this.threeMesh.receiveShadow = this.receiveShadow;
+
     this.actor.threeObject.add(this.threeMesh);
+    this.threeMesh.geometry.computeVertexNormals();
+    this.threeMesh.geometry.computeFaceNormals();
     this.threeMesh.updateMatrixWorld(false);
   }
-  
+
+  setCastShadow(castShadow: boolean) {
+    this.castShadow = castShadow;
+    this.threeMesh.castShadow = castShadow;
+    if (! castShadow) return;
+
+    this.actor.gameInstance.threeScene.traverse((object: any) => {
+      let material: THREE.Material = object.material;
+      if (material != null) material.needsUpdate = true;
+    })
+  }
+
   updateAnimationsByName() {
     this.animationsByName = {};
     for (let animation of this.asset.animations) {
