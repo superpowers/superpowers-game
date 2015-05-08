@@ -267,7 +267,7 @@ export default class Input {
     }
 
     let nav: any = navigator;
-    let gamepads = nav.getGamepads();
+    let gamepads = (nav.getGamepads != null) ? nav.getGamepads() : null;
     if (gamepads == null) return;
 
     for (let index = 0; index < 4; index++) {
