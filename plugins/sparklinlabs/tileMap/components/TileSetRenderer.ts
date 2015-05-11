@@ -59,7 +59,6 @@ export default class TileSetRenderer extends SupEngine.ActorComponent {
 
     this.mesh.geometry.dispose();
     this.mesh.material.dispose();
-    (<THREE.MeshBasicMaterial>this.mesh.material).map.dispose();
     this.actor.threeObject.remove(this.mesh);
     this.mesh = null;
   }

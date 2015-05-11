@@ -40,7 +40,10 @@ export default class TileSetRendererUpdater {
   }
 
   destroy() {
-    if (this.tileSetAssetId != null) this.client.unsubAsset(this.tileSetAssetId, this.tileSetSubscriber);
+    if (this.tileSetAssetId != null) {
+      this.client.unsubAsset(this.tileSetAssetId, this.tileSetSubscriber);
+      this.tileSetThreeTexture.dispose();
+    }
   }
 
   changeTileSetId(tileSetId: string) {
@@ -74,6 +77,7 @@ export default class TileSetRendererUpdater {
     this.tileSetThreeTexture.minFilter = THREE.NearestFilter;
 
     let setupTileSetTexture = () => {
+      this.tileSetThreeTexture.needsUpdate = true;
       this.tileSetRenderer.setTileSet(new TileSet(asset.pub), this.tileSetThreeTexture);
       this.tileSetRenderer.gridRenderer.setGrid({
         width: asset.pub.domImage.width / asset.pub.gridSize,
@@ -86,11 +90,11 @@ export default class TileSetRendererUpdater {
       if (this.receiveAssetCallbacks != null) this.receiveAssetCallbacks.tileSet();
     }
 
+    console.log(asset.pub.domImage.complete);
     if (asset.pub.domImage.complete) { setupTileSetTexture(); return; }
 
     let onImageLoaded = () => {
       asset.pub.domImage.removeEventListener("load", onImageLoaded);
-      this.tileSetThreeTexture.needsUpdate = true;
       setupTileSetTexture();
     }
 

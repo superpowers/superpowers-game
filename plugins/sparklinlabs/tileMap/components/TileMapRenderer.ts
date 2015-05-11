@@ -42,7 +42,7 @@ export default class TileMapRenderer extends SupEngine.ActorComponent {
 
   setTileSet(asset: TileSet, overrideTexture: THREE.Texture) {
     if (this.tileSetTexture != null) {
-      this._clearTexture();
+      this.tileSetTexture = null;
       if (this.tileMap != null) this._clearLayerMeshes();
     }
 
@@ -68,6 +68,7 @@ export default class TileMapRenderer extends SupEngine.ActorComponent {
   _clearLayerMeshes() {
     for (let layerMesh of this.layerMeshes) {
       layerMesh.geometry.dispose();
+      layerMesh.material.dispose();
       this.actor.threeObject.remove(layerMesh);
     }
 
@@ -83,15 +84,10 @@ export default class TileMapRenderer extends SupEngine.ActorComponent {
     this.tilesPerColumn = this.tileSetTexture.image.height / this.tileSet.data.gridSize;
   }
 
-  _clearTexture() {
-    this.tileSetTexture.dispose();
-    this.tileSetTexture = null;
-  }
-
   _destroy() {
     if (this.tileSetTexture != null) {
       if (this.layerMeshes != null) this._clearLayerMeshes();
-      this._clearTexture();
+      this.tileSetTexture = null;
     }
 
     this.tileMap = null;

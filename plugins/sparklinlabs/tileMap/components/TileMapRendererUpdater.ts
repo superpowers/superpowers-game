@@ -62,7 +62,10 @@ export default class TileMapRendererUpdater {
 
   destroy() {
     if (this.tileMapAssetId != null) this.client.unsubAsset(this.tileMapAssetId, this.tileMapSubscriber);
-    if (this.tileSetAssetId != null) this.client.unsubAsset(this.tileSetAssetId, this.tileSetSubscriber);
+    if (this.tileSetAssetId != null) {
+      this.client.unsubAsset(this.tileSetAssetId, this.tileSetSubscriber);
+      this.tileSetThreeTexture.dispose();
+    }
   }
 
   _onTileMapAssetReceived = (assetId: string, asset: TileMapAsset) => {
@@ -85,8 +88,12 @@ export default class TileMapRendererUpdater {
   }
 
   _onEditCommand_changeTileSet() {
-    if (this.tileSetAssetId != null) this.client.unsubAsset(this.tileSetAssetId, this.tileSetSubscriber);
-    this.tileSetAsset = null;
+    if (this.tileSetAssetId != null) {
+      this.client.unsubAsset(this.tileSetAssetId, this.tileSetSubscriber);
+      this.tileSetThreeTexture.dispose();
+      this.tileSetThreeTexture = null;
+      this.tileSetAsset = null;
+    }
     this.tileMapRenderer.setTileSet(null, null);
 
     this.tileSetAssetId = this.tileMapAsset.pub.tileSetId;
@@ -155,6 +162,7 @@ export default class TileMapRendererUpdater {
       this.tileSetThreeTexture.needsUpdate = true;
       this.tileMapRenderer.setTileSet(new TileSet(asset.pub), this.tileSetThreeTexture);
       if (this.receiveAssetCallbacks != null) this.receiveAssetCallbacks.tileSet();
+      return;
     }
 
     let onImageLoaded = () => {
