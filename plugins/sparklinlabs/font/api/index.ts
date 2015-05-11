@@ -1,8 +1,8 @@
 import * as fs from "fs";
 
 SupAPI.registerPlugin("typescript", "Sup.Font", {
-  code: "module Sup { export class Font extends Asset {} }",
-  defs: "declare module Sup { class Font extends Asset { dummyFontMember; } }",
+  code: fs.readFileSync(`${__dirname}/Sup.Font.ts.txt`, { encoding: "utf8" }),
+  defs: fs.readFileSync(`${__dirname}/Sup.Font.d.ts.txt`, { encoding: "utf8" }),
 });
 
 SupAPI.registerPlugin("typescript", "TextRenderer", {
