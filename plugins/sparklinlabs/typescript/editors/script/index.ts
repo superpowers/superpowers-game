@@ -43,7 +43,7 @@ let scriptNames: string[] = [];
 let scriptNamesById: {[name: string]: string} = {};
 let scripts: {[name: string]: string} = {};
 
-var start = () => {
+function start() {
   socket = SupClient.connect(info.projectId);
   socket.on("welcome", onWelcome);
   socket.on("disconnect", SupClient.onDisconnected);
@@ -99,33 +99,24 @@ var start = () => {
   ui.editor.on("beforeChange", (instance: CodeMirror.Editor, change: any) => {
     if (change.origin === "setValue" || change.origin === "network") return;
     let lastText = instance.getDoc().getValue();
-    if (lastText !== ui.texts[ui.texts.length-1]) ui.texts.push(lastText);
+    if (lastText !== ui.texts[ui.texts.length - 1]) ui.texts.push(lastText);
   });
 
   (<any>ui.editor).on("changes", onEditText);
   (<any>ui.editor).on("keyup", (instance: any, event: any) => {
-    // Ignore Ctrl, Cmd, Escape, Return, Tab, Arrows
+    // Ignore Ctrl, Cmd, Escape, Return, Tab, arrow keys
     if (event.ctrlKey || event.metaKey || [27, 9, 13, 37, 38, 39, 40, 16].indexOf(event.keyCode) !== -1) return;
     scheduleCompletion();
   });
 
   let nwDispatcher = (<any>window).nwDispatcher;
   if (nwDispatcher != null) {
-    let gui = nwDispatcher.requireNwGui()
+    let gui = nwDispatcher.requireNwGui();
 
-    let menu = new gui.Menu()
-    menu.append(new gui.MenuItem({
-      label: "Cut (Ctrl-X)",
-      click: () => { document.execCommand("cut"); }
-    }));
-    menu.append(new gui.MenuItem({
-      label: "Copy (Ctrl-C)",
-      click: () => { document.execCommand("copy"); }
-    }));
-    menu.append(new gui.MenuItem({
-      label: "Paste (Ctrl-V)",
-      click: () => { document.execCommand("paste"); }
-    }));
+    let menu = new gui.Menu();
+    menu.append(new gui.MenuItem({ label: "Cut (Ctrl-X)", click: () => { document.execCommand("cut"); } }));
+    menu.append(new gui.MenuItem({ label: "Copy (Ctrl-C)", click: () => { document.execCommand("copy"); } }));
+    menu.append(new gui.MenuItem({ label: "Paste (Ctrl-V)", click: () => { document.execCommand("paste"); } }));
 
     document.body.addEventListener("contextmenu", (event) => {
       event.preventDefault();
@@ -145,7 +136,7 @@ var start = () => {
 }
 
 // Network callbacks
-var onWelcome = (clientId: number) => {
+function onWelcome(clientId: number) {
   data = { clientId, assetsById: {} }
   data.projectClient = new SupClient.ProjectClient(socket);
   data.projectClient.subEntries(entriesSubscriber);
@@ -300,11 +291,11 @@ onAssetCommands.editText = (operationData: OT.OperationData) => {
   applyOperation(operation.clone(), "network", false);
 }
 
-var transformStack = (stack: OT.TextOperation[], operation: OT.TextOperation) => {
+function transformStack(stack: OT.TextOperation[], operation: OT.TextOperation) {
   if (stack.length === 0) return stack;
 
   let newStack: OT.TextOperation[] = [];
-  for (let i = stack.length-1; i > 0; i--) {
+  for (let i = stack.length - 1; i > 0; i--) {
     let pair = stack[i].transform(operation);
     newStack.push(pair[0]);
     operation = pair[1];
@@ -312,7 +303,7 @@ var transformStack = (stack: OT.TextOperation[], operation: OT.TextOperation) =>
   return newStack.reverse();
 }
 
-var applyOperation = (operation: OT.TextOperation, origin: string, moveCursor: boolean) => {
+function applyOperation(operation: OT.TextOperation, origin: string, moveCursor: boolean) {
   let cursorPosition = 0;
   let line = 0;
   for (let op of operation.ops) {
@@ -403,7 +394,7 @@ onAssetCommands.saveText = (errors: Array<{file: string; position: {line: number
   refreshErrors(errors);
 }
 
-var refreshErrors = (errors: Array<{file: string; position: {line: number; character: number;}; length: number; message: string}>) => {
+function refreshErrors(errors: Array<{file: string; position: {line: number; character: number;}; length: number; message: string}>) {
   // Remove all previous erros
   for (let textMarker of ui.editor.getDoc().getAllMarks()) {
     if ((<any>textMarker).className !== "line-error") continue;
@@ -505,8 +496,8 @@ var onEditText = (instance: CodeMirror.Editor, changes: CodeMirror.EditorChange[
     }
 
     ui.undoStack.push(operationToSend.clone().invert());
-    ui.undoQuantityByAction[ui.undoQuantityByAction.length-1] += 1;
-    if (ui.undoQuantityByAction[ui.undoQuantityByAction.length-1] > 20) ui.undoQuantityByAction.push(0);
+    ui.undoQuantityByAction[ui.undoQuantityByAction.length - 1] += 1;
+    if (ui.undoQuantityByAction[ui.undoQuantityByAction.length - 1] > 20) ui.undoQuantityByAction.push(0);
     else {
       ui.undoTimeout = window.setTimeout(() => {
         ui.undoTimeout = null;
@@ -559,7 +550,7 @@ function startCompletionWorker() {
   });
 }
 
-let hint = (instance: any, callback: any) => {
+function hint(instance: any, callback: any) {
   let cursor = ui.editor.getDoc().getCursor();
   let token = ui.editor.getTokenAt(cursor);
   if (token.string === ".") token.start = token.end;
@@ -592,14 +583,14 @@ function scheduleCompletion() {
   }, 500);
 }
 
-var onUndo = () => {
+function onUndo() {
   if (ui.undoStack.length === 0) return;
 
-  if (ui.undoQuantityByAction[ui.undoQuantityByAction.length-1] === 0) ui.undoQuantityByAction.pop();
-  let undoQuantityByAction = ui.undoQuantityByAction[ui.undoQuantityByAction.length-1];
+  if (ui.undoQuantityByAction[ui.undoQuantityByAction.length - 1] === 0) ui.undoQuantityByAction.pop();
+  let undoQuantityByAction = ui.undoQuantityByAction[ui.undoQuantityByAction.length - 1];
 
   for (let i = 0; i < undoQuantityByAction; i++) {
-    let operationToUndo = ui.undoStack[ui.undoStack.length-1];
+    let operationToUndo = ui.undoStack[ui.undoStack.length - 1];
     applyOperation(operationToUndo.clone(), "undo", true);
 
     ui.undoStack.pop()
@@ -611,16 +602,16 @@ var onUndo = () => {
     ui.undoTimeout = null;
   }
 
-  ui.redoQuantityByAction.push(ui.undoQuantityByAction[ui.undoQuantityByAction.length-1]);
-  ui.undoQuantityByAction[ui.undoQuantityByAction.length-1] = 0;
+  ui.redoQuantityByAction.push(ui.undoQuantityByAction[ui.undoQuantityByAction.length - 1]);
+  ui.undoQuantityByAction[ui.undoQuantityByAction.length - 1] = 0;
 }
 
-var onRedo = () => {
+function onRedo() {
   if (ui.redoStack.length === 0) return;
 
-  let redoQuantityByAction = ui.redoQuantityByAction[ui.redoQuantityByAction.length-1]
+  let redoQuantityByAction = ui.redoQuantityByAction[ui.redoQuantityByAction.length - 1]
   for (let i = 0; i < redoQuantityByAction; i++) {
-    let operationToRedo = ui.redoStack[ui.redoStack.length-1];
+    let operationToRedo = ui.redoStack[ui.redoStack.length - 1];
     applyOperation(operationToRedo.clone(), "undo", true);
 
     ui.redoStack.pop()
@@ -631,9 +622,9 @@ var onRedo = () => {
     clearTimeout(ui.undoTimeout);
     ui.undoTimeout = null;
 
-    ui.undoQuantityByAction.push(ui.redoQuantityByAction[ui.redoQuantityByAction.length-1]);
+    ui.undoQuantityByAction.push(ui.redoQuantityByAction[ui.redoQuantityByAction.length - 1]);
   }
-  else ui.undoQuantityByAction[ui.undoQuantityByAction.length-1] = ui.redoQuantityByAction[ui.redoQuantityByAction.length-1];
+  else ui.undoQuantityByAction[ui.undoQuantityByAction.length - 1] = ui.redoQuantityByAction[ui.redoQuantityByAction.length - 1];
 
   ui.undoQuantityByAction.push(0);
   ui.redoQuantityByAction.pop();
@@ -643,20 +634,21 @@ var onRedo = () => {
 async.each(SupClient.pluginPaths.all, (pluginName, pluginCallback) => {
   if (pluginName === "sparklinlabs/typescript") { pluginCallback(); return; }
 
-  let apiScript = document.createElement('script')
-  apiScript.src = `/plugins/${pluginName}/api.js`
+  let apiScript = document.createElement('script');
+  apiScript.src = `/plugins/${pluginName}/api.js`;
   apiScript.addEventListener('load', () => { pluginCallback(); } );
   apiScript.addEventListener('error', () => { pluginCallback(); } );
   document.body.appendChild(apiScript);
 }, (err) => {
-  // Read api definitions
+  // Read API definitions
   let actorComponentAccessors: string[] = [];
   for (let pluginName in SupAPI.contexts["typescript"].plugins) {
     let plugin = SupAPI.contexts["typescript"].plugins[pluginName];
-    if (plugin.defs != null) globalDefs += plugin.defs
+    if (plugin.defs != null) globalDefs += plugin.defs;
     if (plugin.exposeActorComponent != null) actorComponentAccessors.push(`${plugin.exposeActorComponent.propertyName}: ${plugin.exposeActorComponent.className};`);
   }
   globalDefs = globalDefs.replace("// INSERT_COMPONENT_ACCESSORS", actorComponentAccessors.join("\n    "));
+
   // Start
-  start()
+  start();
 });
