@@ -571,7 +571,8 @@ function rotateTiles() {
     }
   }
 
-  setupPattern(layerData, width);
+  setupPattern(layerData, height);
+  ui.mapArea.patternBackgroundActor.setLocalScale(new SupEngine.THREE.Vector3(height, width, 1));
 }
 
 function handleMapArea() {
