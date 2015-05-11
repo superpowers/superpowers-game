@@ -173,34 +173,41 @@ export default class TileMapAsset extends SupCore.data.base.Asset {
     }
   }
 
-  server_editMap(client: any, layerId: string, x: number, y: number, values: (number|boolean)[],
-  callback: (err: string, layerId: string, x: number, y: number, values: (number|boolean)[]) => any) {
+  server_editMap(client: any, layerId: string, edits: {x: number, y: number, tileValue: (number|boolean)[]}[],
+  callback: (err: string, layerId: string, edits: {x: number, y: number, tileValue: (number|boolean)[]}[]) => any) {
+    if (typeof layerId !== "string" || this.layers.byId[layerId] == null) { callback("no such layer", null, null); return; }
+    if (! Array.isArray(edits)) { callback("edits must be an array", null, null); return; }
 
-    if (typeof layerId !== "string" || this.layers.byId[layerId] == null) { callback("no such layer", null, null, null, null); return; }
-    if (typeof x != "number" || x < 0 || x >= this.pub.width) { callback(`x must be an integer between 0 && ${this.pub.width-1}`, null, null, null, null); return; }
-    if (typeof y != "number" || y < 0 || y >= this.pub.height) { callback(`y must be an integer between 0 && ${this.pub.height-1}`, null, null, null, null); return; }
-    if (values != null) {
-      if (! Array.isArray(values) || values.length != 5) { callback("values must be an array with 5 items", null, null, null, null); return; }
-      if (typeof values[0] != "number" || values[0] < -1) { callback("tileX must be an integer greater than -1", null, null, null, null); return; }
-      if (typeof values[1] != "number" || values[1] < -1) { callback("tileY must be an integer greater than -1", null, null, null, null); return; }
-      if (typeof values[2] != "boolean") { callback("flipX must be a boolean", null, null, null, null); return; }
-      if (typeof values[3] != "boolean") { callback("flipY must be a boolean", null, null, null, null); return; }
-      if (typeof values[4] != "number" || [0, 90, 180, 270].indexOf(<number>values[4]) == -1) {
-        callback("angle must be an integer in [0, 90, 180, 270]", null, null, null, null);
+    for (let edit of edits) {
+      let x = edit.x;
+      let y = edit.y;
+      let tileValue = edit.tileValue;
+
+      if (x == null || typeof x != "number" || x < 0 || x >= this.pub.width) { callback(`x must be an integer between 0 && ${this.pub.width-1}`, null, null); return; }
+      if (y == null || typeof y != "number" || y < 0 || y >= this.pub.height) { callback(`y must be an integer between 0 && ${this.pub.height-1}`, null, null); return; }
+      if (! Array.isArray(tileValue) || tileValue.length != 5) { callback("tileValue must be an array with 5 items", null, null); return; }
+      if (typeof tileValue[0] != "number" || tileValue[0] < -1) { callback("tileX must be an integer greater than -1", null, null); return; }
+      if (typeof tileValue[1] != "number" || tileValue[1] < -1) { callback("tileY must be an integer greater than -1", null, null); return; }
+      if (typeof tileValue[2] != "boolean") { callback("flipX must be a boolean", null, null); return; }
+      if (typeof tileValue[3] != "boolean") { callback("flipY must be a boolean", null, null); return; }
+      if (typeof tileValue[4] != "number" || [0, 90, 180, 270].indexOf(<number>tileValue[4]) == -1) {
+        callback("angle must be an integer in [0, 90, 180, 270]", null, null);
         return;
       }
     }
 
-    let index = y * this.pub.width + x;
-    if (values == null) values = _.cloneDeep(TileMapAsset.emptyTile);
-    this.layers.byId[layerId].data[index] = values;
-    callback(null, layerId, x, y, values);
+    this.client_editMap(layerId, edits);
+    callback(null, layerId, edits);
     this.emit("change");
   }
 
-  client_editMap(layerId: string, x: number, y: number, values: (number|boolean)[]) {
-    let index = y * this.pub.width + x;
-    this.layers.byId[layerId].data[index] = values;
+  client_editMap(layerId: string, edits: {x: number, y: number, tileValue: (number|boolean)[]}[]) {
+    for (let edit of edits) {
+      let index = edit.y * this.pub.width + edit.x;
+      let tileValue = edit.tileValue;
+      if (tileValue == null) tileValue = _.cloneDeep(TileMapAsset.emptyTile);
+      this.layers.byId[layerId].data[index] = tileValue;
+    }
   }
 
   createEmptyLayer(layerName: string) {

@@ -115,9 +115,9 @@ export default class TileMapRendererUpdater {
     }
   }
 
-  _onEditCommand_editMap(layerId: string, x: number, y: number) {
+  _onEditCommand_editMap(layerId: string, edits: { x: number, y: number }[]) {
     let index = this.tileMapAsset.pub.layers.indexOf(this.tileMapAsset.layers.byId[layerId]);
-    this.tileMapRenderer.refreshTileAt(index, x, y);
+    for (let edit of edits) this.tileMapRenderer.refreshTileAt(index, edit.x, edit.y);
   }
 
   _onEditCommand_newLayer(layer: TileMapLayerPub, index: number) {

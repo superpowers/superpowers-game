@@ -1,4 +1,5 @@
 import TileMap from "../../components/TileMap";
+import TileMapAsset from "../../data/TileMapAsset";
 import TileMapRenderer from "../../components/TileMapRenderer";
 import TileMapRendererUpdater from "../../components/TileMapRendererUpdater";
 import { TileMapLayerPub } from "../../data/TileMapLayers";
@@ -499,25 +500,36 @@ function draw() {
   handleTileSetArea();
 }
 
-function editMap(x: number, y: number, tileValue: (number|boolean)[]) {
-  if (x >= 0 && x < data.tileMapUpdater.tileMapAsset.pub.width && y >= 0 && y < data.tileMapUpdater.tileMapAsset.pub.height) {
-    let layer = data.tileMapUpdater.tileMapAsset.layers.byId[ui.tileSetArea.selectedLayerId];
-    let index = y * data.tileMapUpdater.tileMapAsset.pub.width + x;
+interface Edits {
+  x: number;
+  y: number;
+  tileValue: (number|boolean)[];
+}
 
-    if (tileValue != null) {
+function editMap(edits: Edits[]) {
+  let actualEdits: Edits[] = [];
+  let layer = data.tileMapUpdater.tileMapAsset.layers.byId[ui.tileSetArea.selectedLayerId];
+
+  for (let edit of edits) {
+    if (edit.x >= 0 && edit.x < data.tileMapUpdater.tileMapAsset.pub.width && edit.y >= 0 && edit.y < data.tileMapUpdater.tileMapAsset.pub.height) {
+
+      let index = edit.y * data.tileMapUpdater.tileMapAsset.pub.width + edit.x;
+
       let sameTile = true;
-      for (let i = 0; i < tileValue.length; i++) {
-        if (layer.data[index][i] !== tileValue[i]) {
+      for (let i = 0; i < edit.tileValue.length; i++) {
+        if (layer.data[index][i] !== edit.tileValue[i]) {
           sameTile = false;
           break;
         }
       }
-
-      if (sameTile) return;
+      if (! sameTile) actualEdits.push(edit);
     }
-
-    socket.emit("edit:assets", info.assetId, "editMap", layer.id, x, y, tileValue, (err: string) => { if (err != null) { alert(err); return; } });
   }
+
+  if (actualEdits.length === 0) return;
+  socket.emit("edit:assets", info.assetId, "editMap", layer.id, actualEdits, (err: string) => {
+    if (err != null) { alert(err); return; }
+  });
 }
 
 function flipTilesHorizontally() {
@@ -585,16 +597,18 @@ function handleMapArea() {
   // Edit tiles
   if (ui.mapArea.gameInstance.input.mouseButtons[0].isDown) {
     if (ui.eraserToolButton.checked) {
-      editMap(mouseX, mouseY, null);
+      editMap([{ x: mouseX, y: mouseY, tileValue: TileMapAsset.emptyTile }]);
     } else if (ui.mapArea.patternActor.threeObject.visible) {
 
+      let edits: Edits[] = [];
       for (let tileIndex = 0; tileIndex < ui.mapArea.patternRenderer.tileMap.data.layers[0].data.length; tileIndex++) {
         let tileValue = ui.mapArea.patternRenderer.tileMap.data.layers[0].data[tileIndex];
         let x = mouseX + tileIndex % ui.mapArea.patternRenderer.tileMap.data.width;
         let y = mouseY + Math.floor(tileIndex / ui.mapArea.patternRenderer.tileMap.data.width);
 
-        editMap(x, y, tileValue);
+        edits.push({ x, y, tileValue });
       }
+      editMap(edits);
 
       if (ui.selectionToolButton.checked && ! ui.mapArea.duplicatingSelection) {
         ui.mapArea.patternActor.threeObject.visible = false;
@@ -675,11 +689,13 @@ function handleMapArea() {
 
       // Delete selection
       else if (ui.mapArea.gameInstance.input.keyboardButtons[(<any>window).KeyEvent.DOM_VK_DELETE].wasJustReleased) {
+        let edits: Edits[] = [];
         for (let y = 0; y < height; y++) {
           for (let x = 0; x < width; x++) {
-            editMap(startX + x, startY + y, null);
+            edits.push({ x: startX + x, y: startY + y, tileValue: TileMapAsset.emptyTile });
           }
         }
+        editMap(edits);
 
         ui.mapArea.patternBackgroundActor.threeObject.visible = false;
         ui.mapArea.selectionStartPoint = null;
@@ -691,15 +707,17 @@ function handleMapArea() {
         let layerData: (number|boolean)[][] = [];
         let layer = data.tileMapUpdater.tileMapAsset.layers.byId[ui.tileSetArea.selectedLayerId];
 
+        let edits: Edits[] = [];
         for (let y = 0; y < height; y++) {
           for (let x = 0; x < width; x++) {
             let tile = layer.data[(startY + y) * data.tileMapUpdater.tileMapAsset.pub.width + startX + x];
             layerData.push(tile);
 
             if (!ui.mapArea.gameInstance.input.keyboardButtons[(<any>window).KeyEvent.DOM_VK_D].wasJustReleased)
-              editMap(startX + x, startY + y, null);
+              edits.push({ x: startX + x, y: startY + y, tileValue: TileMapAsset.emptyTile });
           }
         }
+        editMap(edits);
 
         setupPattern(layerData, width);
         ui.mapArea.patternActor.threeObject.visible = true;
