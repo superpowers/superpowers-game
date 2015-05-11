@@ -12,7 +12,7 @@ export default class TextRenderer extends SupEngine.ActorComponent {
 
   text: string;
   font: FontPub;
-  options: {alignment: string; size?: number; color?: string;};
+  options: {alignment: string; verticalAlignment: string; size?: number; color?: string;};
   opacity = 1;
 
   constructor(actor: SupEngine.Actor) {
@@ -27,8 +27,9 @@ export default class TextRenderer extends SupEngine.ActorComponent {
     this.font = font;
     this._createMesh();
   }
-  setOptions(options: {alignment: string; size?: number; color?: string;}) {
+  setOptions(options: {alignment: string; verticalAlignment: string; size?: number; color?: string;}) {
     if (options.alignment == null) options.alignment = "center";
+    if (options.verticalAlignment == null) options.verticalAlignment = "center";
     this.options = options;
     this._createMesh();
   }
@@ -102,6 +103,10 @@ export default class TextRenderer extends SupEngine.ActorComponent {
       case "left":  this.threeMeshes[0].position.setX( width / 2 / this.font.pixelsPerUnit); break;
       case "right": this.threeMeshes[0].position.setX(-width / 2 / this.font.pixelsPerUnit); break;
     }
+    switch (this.options.verticalAlignment) {
+      case "top":    this.threeMeshes[0].position.setY(-height / 4 / this.font.pixelsPerUnit); break;
+      case "bottom": this.threeMeshes[0].position.setY( height / 4 / this.font.pixelsPerUnit); break;
+    }
   }
 
   _createBitmapMesh() {
@@ -123,6 +128,11 @@ export default class TextRenderer extends SupEngine.ActorComponent {
         case "right":   this.threeMeshes[index].position.setX(-geometry.width / this.font.pixelsPerUnit); break;
       }
       let y = (0.5 + (index - (texts.length - 1) / 2 )) * this.font.gridHeight / this.font.pixelsPerUnit;
+      let offset = (texts.length - 1.5) * this.font.gridHeight / this.font.pixelsPerUnit;
+      switch (this.options.verticalAlignment) {
+        case "top":    y += offset; break;
+        case "bottom": y -= offset; break;
+      }
       this.threeMeshes[index].position.setY(-y);
 
       let uvs = geometry.getAttribute("uv");

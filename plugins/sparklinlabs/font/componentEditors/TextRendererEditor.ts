@@ -23,6 +23,10 @@ export default class TextRendererEditor {
     this.fields["alignment"] = SupClient.table.appendSelectBox(alignmentRow.valueCell, {"left": "Left", "center": "Center", "right": "Right"}, config.alignment);
     this.fields["alignment"].addEventListener('change', (event: any) => { this.editConfig('setProperty', 'alignment', event.target.value); });
 
+    var alignmentRow = SupClient.table.appendRow(tbody, 'Vertical Align');
+    this.fields["verticalAlignment"] = SupClient.table.appendSelectBox(alignmentRow.valueCell, {"top": "Top", "center": "Center", "bottom": "Bottom"}, config.verticalAlignment);
+    this.fields["verticalAlignment"].addEventListener('change', (event: any) => { this.editConfig('setProperty', 'verticalAlignment', event.target.value); });
+
     var sizeRow = SupClient.table.appendRow(tbody, 'Size');
     this.fields["size"] = SupClient.table.appendNumberField(sizeRow.valueCell, config.size, 0);
     this.fields["size"].addEventListener('change', (event: any) => { this.editConfig('setProperty', 'size', parseInt(event.target.value)); });

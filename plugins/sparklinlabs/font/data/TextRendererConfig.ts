@@ -4,6 +4,7 @@ export default class TextRendererConfig extends SupCore.data.base.ComponentConfi
     fontAssetId: { type: "string?", min: 0, mutable: true },
     text: { type: "string", min: 0, mutable: true },
     alignment: { type: "enum", items: [ "left", "center", "right" ], mutable: true },
+    verticalAlignment: { type: "enum", items: [ "top", "center", "bottom" ], mutable: true },
     size: { type: "integer?", min: 0, mutable: true },
     color: { type: "string?", min: 0, mutable: true }
   }
@@ -25,6 +26,7 @@ export default class TextRendererConfig extends SupCore.data.base.ComponentConfi
       pub.alignment = pub.align;
       delete pub.align;
     }
+    if (pub.verticalAlignment == null) pub.verticalAlignment = "center";
 
     super(pub, TextRendererConfig.schema);
   }
