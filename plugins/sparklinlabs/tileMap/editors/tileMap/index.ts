@@ -648,6 +648,18 @@ function handleMapArea() {
     ui.mapArea.patternBackgroundActor.setLocalPosition(patternPosition);
   }
 
+  // Select all
+  if (ui.mapArea.gameInstance.input.keyboardButtons[(<any>window).KeyEvent.DOM_VK_CONTROL].isDown &&
+  ui.mapArea.gameInstance.input.keyboardButtons[(<any>window).KeyEvent.DOM_VK_A].wasJustPressed) {
+    selectSelection();
+    ui.mapArea.patternBackgroundActor.threeObject.visible = true;
+    ui.mapArea.selectionStartPoint = { x: 0, y: 0 };
+    ui.mapArea.selectionEndPoint = {
+      x: data.tileMapUpdater.tileMapAsset.pub.width - 1,
+      y: data.tileMapUpdater.tileMapAsset.pub.height - 1
+    };
+  }
+
   // Selection
   if (ui.selectionToolButton.checked) {
 
@@ -680,15 +692,13 @@ function handleMapArea() {
       let width = Math.abs(ui.mapArea.selectionEndPoint.x - ui.mapArea.selectionStartPoint.x) + 1;
       let height = Math.abs(ui.mapArea.selectionEndPoint.y - ui.mapArea.selectionStartPoint.y) + 1;
 
-      if (ui.mapArea.gameInstance.input.mouseButtons[0].isDown) {
-        let ratio = data.tileMapUpdater.tileMapAsset.pub.pixelsPerUnit / data.tileMapUpdater.tileSetAsset.pub.gridSize;
-        let patternPosition = new SupEngine.THREE.Vector3(startX/ratio, startY/ratio, data.tileMapUpdater.tileMapAsset.layers.pub.length * data.tileMapUpdater.tileMapAsset.pub.layerDepthOffset);
-        ui.mapArea.patternBackgroundActor.setLocalPosition(patternPosition);
-        ui.mapArea.patternBackgroundActor.setLocalScale(new SupEngine.THREE.Vector3(width, height, 1));
-      }
+      let ratio = data.tileMapUpdater.tileMapAsset.pub.pixelsPerUnit / data.tileMapUpdater.tileSetAsset.pub.gridSize;
+      let patternPosition = new SupEngine.THREE.Vector3(startX/ratio, startY/ratio, data.tileMapUpdater.tileMapAsset.layers.pub.length * data.tileMapUpdater.tileMapAsset.pub.layerDepthOffset);
+      ui.mapArea.patternBackgroundActor.setLocalPosition(patternPosition);
+      ui.mapArea.patternBackgroundActor.setLocalScale(new SupEngine.THREE.Vector3(width, height, 1));
 
       // Delete selection
-      else if (ui.mapArea.gameInstance.input.keyboardButtons[(<any>window).KeyEvent.DOM_VK_DELETE].wasJustReleased) {
+      if (ui.mapArea.gameInstance.input.keyboardButtons[(<any>window).KeyEvent.DOM_VK_DELETE].wasJustReleased) {
         let edits: Edits[] = [];
         for (let y = 0; y < height; y++) {
           for (let x = 0; x < width; x++) {
