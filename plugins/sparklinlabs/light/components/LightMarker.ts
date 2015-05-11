@@ -57,4 +57,9 @@ export default class LightMarker extends Light {
       this.lightMarker.update();
     }
   }
+
+  _destroy() {
+    if (this.lightMarker != null) this.actor.gameInstance.threeScene.remove(this.lightMarker);
+    super._destroy();
+  }
 }
