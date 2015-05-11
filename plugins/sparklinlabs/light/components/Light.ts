@@ -27,13 +27,13 @@ export default class Light extends SupEngine.ActorComponent {
 
     switch (type) {
       case "ambient":
-        this.light = new THREE.AmbientLight(parseInt(`0x${this.color}`));
+        this.light = new THREE.AmbientLight(parseInt(this.color, 16));
         break;
       case "point":
-        this.light = new THREE.PointLight(parseInt(`0x${this.color}`), this.intensity, this.distance);
+        this.light = new THREE.PointLight(parseInt(this.color, 16), this.intensity, this.distance);
         break;
       case "spot":
-        let spotLight = new THREE.SpotLight(parseInt(`0x${this.color}`), this.intensity, this.distance);
+        let spotLight = new THREE.SpotLight(parseInt(this.color, 16), this.intensity, this.distance);
         spotLight.target.position.copy(this.target);
         spotLight.target.updateMatrixWorld(false);
         spotLight.shadowCameraNear = 0.1;
@@ -41,7 +41,7 @@ export default class Light extends SupEngine.ActorComponent {
         this.setCastShadow(this.castShadow);
         break;
       case "directional":
-        let directionalLight = new THREE.DirectionalLight(parseInt(`0x${this.color}`), this.intensity);
+        let directionalLight = new THREE.DirectionalLight(parseInt(this.color, 16), this.intensity);
         directionalLight.target.position.copy(this.target);
         directionalLight.target.updateMatrixWorld(false);
         directionalLight.shadowCameraNear = 0.1;

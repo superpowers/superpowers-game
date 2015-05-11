@@ -67,7 +67,9 @@ export default class TextRenderer extends SupEngine.ActorComponent {
     canvas.width = width;
     canvas.height = height;
 
-    ctx.fillStyle = (this.options.color != null && this.options.color !== "") ? this.options.color : this.font.color;
+    let color = (this.options.color != null && this.options.color !== "") ? this.options.color : this.font.color;
+    if (! isNaN(parseInt(color, 16))) color = `#${this.options.color}`;
+    ctx.fillStyle = color;
     ctx.font = `${fontSize}px ${this.font.name}`;
     ctx.textBaseline = "middle";
 
