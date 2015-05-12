@@ -209,24 +209,19 @@ function onChangeHighlight() {
 }
 
 export function selectBrush(x?: number, y?: number, width=1, height=1) {
-  let ratio = data.tileMapUpdater.tileMapAsset.pub.pixelsPerUnit / data.tileMapUpdater.tileSetAsset.pub.gridSize;
   if (x != null && y != null) {
     data.tileSetUpdater.tileSetRenderer.select(x, y, width, height);
-  } else {
-    let position = data.tileSetUpdater.tileSetRenderer.selectedTileActor.getLocalPosition();
-    let startX = position.x * ratio;
-    let startY = -position.y * ratio;
-
-    let scale = data.tileSetUpdater.tileSetRenderer.selectedTileActor.getLocalScale();
-    let layerData: (number|boolean)[][] = [];
-    for (let y = scale.y - 1; y >= 0; y--) {
-      for (let x = 0; x < scale.x; x++) {
-        layerData.push([ startX + x, startY + y, false, false, 0 ]);
-      }
-    }
-
-    setupPattern(layerData, scale.x);
   }
+
+  let position = data.tileSetUpdater.tileSetRenderer.selectedTileActor.getLocalPosition();
+  let scale = data.tileSetUpdater.tileSetRenderer.selectedTileActor.getLocalScale();
+  let layerData: (number|boolean)[][] = [];
+  for (let y = -scale.y - 1; y >= 0; y--) {
+    for (let x = 0; x < scale.x; x++) {
+      layerData.push([ position.x + x, -position.y + y, false, false, 0 ]);
+    }
+  }
+  setupPattern(layerData, scale.x);
 
   ui.brushToolButton.checked = true;
   mapArea.patternActor.threeObject.visible = true;

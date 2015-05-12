@@ -52,8 +52,6 @@ function onTileMapAssetReceived() {
 
   tileSetArea.selectedLayerId = pub.layers[0].id.toString();
   ui.layersTreeView.addToSelection(ui.layersTreeView.treeRoot.querySelector(`li[data-id="${pub.layers[0].id}"]`));
-
-  setupPattern([ [0, 0, false, false, 0] ]);
 }
 
 function updateTileSetInput() {
@@ -121,14 +119,13 @@ function onTileSetAssetReceived() {
   mapArea.gridRenderer.setRatio(tileMapPub.pixelsPerUnit / tileSetPub.gridSize);
   mapArea.patternRenderer.setTileSet(new TileSet(tileSetPub), data.tileMapUpdater.tileSetThreeTexture);
   mapArea.patternBackgroundRenderer.setup("#900090", 1 / tileMapPub.pixelsPerUnit, tileSetPub.gridSize);
+
+  selectBrush(0, 0);
 };
 
 onTileSetEditCommands.upload = () => {
   mapArea.patternRenderer.setTileSet(new TileSet(data.tileMapUpdater.tileSetAsset.pub), data.tileMapUpdater.tileSetThreeTexture);
-  if (ui.brushToolButton.checked) {
-    selectBrush(0, 0);
-    setupPattern([ [ 0, 0, false, false, 0 ] ]);
-  }
+  if (ui.brushToolButton.checked) selectBrush(0, 0);
 };
 
 onTileSetEditCommands.setProperty = () => {
@@ -140,8 +137,5 @@ onTileSetEditCommands.setProperty = () => {
   mapArea.patternRenderer.setTileSet(new TileSet(tileSetPub), data.tileMapUpdater.tileSetThreeTexture);
   mapArea.patternBackgroundRenderer.setup("#900090", 1 / tileMapPub.pixelsPerUnit, tileSetPub.gridSize);
 
-  if (ui.brushToolButton.checked) {
-    selectBrush(0, 0);
-    setupPattern([ [ 0, 0, false, false, 0 ] ]);
-  }
+  if (ui.brushToolButton.checked) selectBrush(0, 0);
 };
