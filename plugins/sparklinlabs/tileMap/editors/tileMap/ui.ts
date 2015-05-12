@@ -1,6 +1,6 @@
 import info from "./info";
 import { socket, data } from "./network";
-import { mapArea, tileSetArea, setupPattern, flipTilesVertically, flipTilesHorizontally, rotateTiles } from "./engine";
+import { mapArea, tileSetArea, setupPattern, setupFillPattern, flipTilesVertically, flipTilesHorizontally, rotateTiles } from "./engine";
 
 let TreeView = require("dnd-tree-view");
 
@@ -19,6 +19,7 @@ let ui: {
   highlightSlider?: HTMLInputElement;
 
   brushToolButton?: HTMLInputElement;
+  fillToolButton?: HTMLInputElement;
   selectionToolButton?: HTMLInputElement;
   eraserToolButton?: HTMLInputElement;
 
@@ -55,6 +56,8 @@ ui.highlightSlider.addEventListener("input", onChangeHighlight);
 
 ui.brushToolButton = <HTMLInputElement>document.querySelector("input#Brush");
 ui.brushToolButton.addEventListener("change", () => { selectBrush(); });
+ui.fillToolButton = <HTMLInputElement>document.querySelector("input#Fill");
+ui.fillToolButton.addEventListener("change", () => { selectFill(); });
 ui.selectionToolButton = <HTMLInputElement>document.querySelector("input#Selection");
 ui.selectionToolButton.addEventListener("change", () => { selectSelection(); });
 ui.eraserToolButton = <HTMLInputElement>document.querySelector("input#Eraser");
@@ -209,9 +212,7 @@ function onChangeHighlight() {
 }
 
 export function selectBrush(x?: number, y?: number, width=1, height=1) {
-  if (x != null && y != null) {
-    data.tileSetUpdater.tileSetRenderer.select(x, y, width, height);
-  }
+  if (x != null && y != null) data.tileSetUpdater.tileSetRenderer.select(x, y, width, height);
 
   let position = data.tileSetUpdater.tileSetRenderer.selectedTileActor.getLocalPosition();
   let scale = data.tileSetUpdater.tileSetRenderer.selectedTileActor.getLocalScale();
@@ -228,6 +229,18 @@ export function selectBrush(x?: number, y?: number, width=1, height=1) {
   data.tileSetUpdater.tileSetRenderer.selectedTileActor.threeObject.visible = true;
   mapArea.patternBackgroundActor.threeObject.visible = true;
   mapArea.patternBackgroundActor.setLocalScale(new SupEngine.THREE.Vector3(width, height, 1));
+}
+
+export function selectFill(x?: number, y?: number) {
+  if (x != null && y != null) data.tileSetUpdater.tileSetRenderer.select(x, y);
+
+  let position = data.tileSetUpdater.tileSetRenderer.selectedTileActor.getLocalPosition();
+  setupFillPattern([ position.x, -position.y, false, false, 0 ]);
+
+  ui.fillToolButton.checked = true;
+  mapArea.patternActor.threeObject.visible = true;
+  data.tileSetUpdater.tileSetRenderer.selectedTileActor.threeObject.visible = true;
+  mapArea.patternBackgroundActor.threeObject.visible = false;
 }
 
 export function selectSelection() {

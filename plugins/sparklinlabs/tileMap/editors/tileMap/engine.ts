@@ -1,6 +1,8 @@
 import info from "./info";
-import ui, { selectBrush, selectEraser, selectSelection } from "./ui";
+import ui, { selectBrush, selectFill, selectEraser, selectSelection } from "./ui";
 import { socket, data } from "./network";
+
+import * as _ from "lodash";
 
 import TileMapAsset from "../../data/TileMapAsset";
 import TileMap from "../../components/TileMap";
@@ -103,6 +105,56 @@ export function setupPattern(layerData: (number|boolean)[][], width=1) {
       else patternLayerData.push(layerData[localY * width + localX]);
     }
   }
+
+  let patternData = {
+    tileSetId: <string>null,
+    width: pub.width, height: pub.height,
+    pixelsPerUnit: pub.pixelsPerUnit,
+    layerDepthOffset: pub.layerDepthOffset,
+    layers: [ { id: "0", name: "pattern", data: patternLayerData } ]
+  };
+
+  mapArea.patternRenderer.setTileMap(new TileMap(patternData));
+}
+
+export function setupFillPattern(newTileData: (number|boolean)[]) {
+  let pub = data.tileMapUpdater.tileMapAsset.pub;
+  let layerData = data.tileMapUpdater.tileMapAsset.layers.byId[tileSetArea.selectedLayerId].data
+
+  let patternLayerData: (number|boolean)[][] = [];
+  for (let y = 0; y < pub.height; y++) {
+    for (let x = 0; x < pub.width; x++) {
+      patternLayerData.push(TileMapAsset.emptyTile);
+    }
+  }
+
+  let refTileData = layerData[mapArea.cursorPoint.y * pub.width + mapArea.cursorPoint.x];
+  function checkTile(x: number, y: number) {
+    if (x < 0 || x >= pub.width || y < 0 || y >= pub.height) return;
+
+    let index = y * pub.width + x;
+    // Skip if target tile on pattern isn't empty
+    let patternTile = patternLayerData[index];
+    for (let i = 0; i < TileMapAsset.emptyTile.length; i++) {
+      if (patternTile[i] !== TileMapAsset.emptyTile[i]) return;
+    }
+
+    // Skip if taget tile on layer is different from the base tile
+    let layerTile = layerData[index];
+    for (let i = 0; i < layerTile.length; i++) {
+      if (layerTile[i] !== refTileData[i]) return;
+    }
+
+    patternLayerData[index] = _.cloneDeep(newTileData);
+
+    checkTile(x-1, y);
+    checkTile(x+1, y);
+    checkTile(x, y-1);
+    checkTile(x, y+1);
+  }
+
+  if (mapArea.cursorPoint.x >= 0 && mapArea.cursorPoint.x < pub.width && mapArea.cursorPoint.y >= 0 && mapArea.cursorPoint.y < pub.height)
+    checkTile(mapArea.cursorPoint.x, mapArea.cursorPoint.y)
 
   let patternData = {
     tileSetId: <string>null,
@@ -248,13 +300,40 @@ function handleMapArea() {
     mapArea.cursorPoint.x = mouseX;
     mapArea.cursorPoint.y = mouseY;
 
-    if (mapArea.patternActor.threeObject.visible) setupPattern(mapArea.patternData, mapArea.patternDataWidth);
+    if (ui.fillToolButton.checked) {
+      let position = data.tileSetUpdater.tileSetRenderer.selectedTileActor.getLocalPosition();
+      setupFillPattern([ position.x, -position.y, false, false, 0 ]);
+    }
+    else if (mapArea.patternActor.threeObject.visible) setupPattern(mapArea.patternData, mapArea.patternDataWidth);
   }
 
   // Edit tiles
   if (mapArea.gameInstance.input.mouseButtons[0].isDown) {
     if (ui.eraserToolButton.checked) {
       editMap([{ x: mouseX, y: mouseY, tileValue: TileMapAsset.emptyTile }]);
+
+    } else if (ui.fillToolButton.checked) {
+      let edits: Edits[] = [];
+      let layerData = mapArea.patternRenderer.tileMap.data.layers[0].data;
+
+      for (let y = 0; y < pub.height; y++) {
+        for (let x = 0; x < pub.width; x++) {
+          let index = y * pub.width + x;
+          let tileValue = layerData[index];
+
+          let emptyTile = true;
+          for (let i = 0; i < TileMapAsset.emptyTile.length; i++) {
+            if (tileValue[i] !== TileMapAsset.emptyTile[i]) {
+              emptyTile = false;
+              break;
+            }
+          }
+
+          if (! emptyTile) edits.push({ x, y, tileValue });
+        }
+      }
+      editMap(edits);
+
     } else if (mapArea.patternActor.threeObject.visible) {
 
       let edits: Edits[] = [];
@@ -424,8 +503,12 @@ function handleTileSetArea() {
   if (tileSetArea.gameInstance.input.mouseButtons[0].wasJustPressed) {
 
     if (mouseX >= 0 && mouseX < tilesPerRow && mouseY >= 0 && mouseY < tilesPerColumn) {
-      tileSetArea.selectionStartPoint = { x: mouseX, y: mouseY };
-      selectBrush(mouseX, mouseY);
+      if (ui.fillToolButton.checked) {
+        selectFill(mouseX, mouseY);
+      } else {
+        tileSetArea.selectionStartPoint = { x: mouseX, y: mouseY };
+        selectBrush(mouseX, mouseY);
+      }
     }
 
   } else if (tileSetArea.gameInstance.input.mouseButtons[0].wasJustReleased && tileSetArea.selectionStartPoint != null) {
