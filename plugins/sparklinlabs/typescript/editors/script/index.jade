@@ -9,12 +9,19 @@ html
     .code-editor-container
       textarea(disabled).code-editor
 
-    .error-pane
+    .error-pane(style="height: 200px")
       .status
         .info Loading...
         button.toggle –
 
-      textarea.errors(disabled)
+      .errors(disabled)
+        table
+          thead
+            tr
+              th Line
+              th Message
+              th Script
+          tbody
 
     script(src="/core/SupCore.js")
     script(src="../../data.js")

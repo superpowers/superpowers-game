@@ -155,8 +155,8 @@ export default class ScriptAsset extends SupCore.data.base.Asset {
 
     let json = JSON.stringify(this.pub, null, 2);
 
-    this.pub.text = text
-    this.pub.draft = draft
+    this.pub.text = text;
+    this.pub.draft = draft;
 
     fs.writeFile(path.join(assetPath, "asset.json"), json, { encoding: "utf8" }, (err) => {
       if (err != null) { callback(err); return; }
@@ -181,7 +181,7 @@ export default class ScriptAsset extends SupCore.data.base.Asset {
 
     callback(null, operation.serialize(), this.document.operations.length - 1);
 
-    if (! this.hasDraft) {
+    if (!this.hasDraft) {
       this.hasDraft = true;
       this.emit("setDiagnostic", "draft", "info");
     }
@@ -231,7 +231,7 @@ export default class ScriptAsset extends SupCore.data.base.Asset {
       let supTypeSymbolsList: ts.Symbol[] = [];
       for (let value in supTypeSymbols) supTypeSymbolsList.push(value);
 
-      let behaviors: {[behaviorName: string]: { properties: Array<{ name: string, type: string }>; parentBehavior: string } } = {};
+      let behaviors: { [behaviorName: string]: { properties: Array<{ name: string, type: string }>; parentBehavior: string } } = {};
 
       for (let symbolName in results.program.getSourceFile(ownScriptName).locals) {
         let symbol = <ts.Symbol>results.program.getSourceFile(ownScriptName).locals[symbolName];

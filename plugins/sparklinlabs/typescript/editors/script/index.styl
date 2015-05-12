@@ -39,7 +39,7 @@ body
 .error-pane
   display flex
   flex-flow column
-  min-height 100px
+  min-height 200px
 
   .status
     cursor pointer
@@ -79,6 +79,38 @@ body
 
   .errors
     flex 1
+    overflow-y scroll
+
+    table
+      width 100%
+      border-collapse collapse
+
+    tbody tr.self
+      cursor pointer
+
+      &:hover { background: #eee; }
+      &:active { background-color: #444; color: #ccc; }
+
+    tbody tr:not(.self)
+      color #888
+
+    th
+      font-weight normal
+      color #666
+
+    td, th
+      text-align left
+      border 1px solid #ccc
+      padding 0.4em
+
+    td:first-child, th:first-child
+      text-align right
+
+    td:nth-child(2), th:nth-child(2)
+      width 100%
+
+    td:last-child
+      white-space nowrap
 
   &.collapsed
     min-height 0

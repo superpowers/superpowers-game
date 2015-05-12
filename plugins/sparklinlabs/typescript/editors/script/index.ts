@@ -26,6 +26,7 @@ let ui: {
   errorPaneStatus?: HTMLDivElement;
   errorPaneInfo?: HTMLDivElement;
   errorsList?: HTMLDivElement;
+  errorsTBody?: HTMLTableSectionElement;
 
   undoTimeout?: number;
   compileTimeout?: number;
@@ -45,7 +46,7 @@ let socket: SocketIOClient.Socket;
 let globalDefs = "";
 let scriptNames: string[] = [];
 let scriptNamesById: { [name: string]: string } = {};
-let scripts: { [name: string]: string } = {};
+let scripts: { [name: string]: { id: string, text: string } } = {};
 
 function start() {
   socket = SupClient.connect(info.projectId);
@@ -135,6 +136,9 @@ function start() {
   ui.errorPaneStatus = <HTMLDivElement>ui.errorPane.querySelector(".status");
   ui.errorPaneInfo = <HTMLDivElement>ui.errorPaneStatus.querySelector(".info");
   ui.errorsList = <HTMLDivElement>ui.errorPane.querySelector(".errors");
+  ui.errorsTBody = <HTMLTableSectionElement>ui.errorsList.querySelector("tbody");
+
+  ui.errorsTBody.addEventListener("click", onErrorTBodyClick);
 
   let errorPaneResizeHandle = new PerfectResize(ui.errorPane, "bottom");
   errorPaneResizeHandle.on("drag", () => { ui.editor.refresh(); });
@@ -241,7 +245,7 @@ var scriptSubscriber = {
   onAssetReceived: (err: string, asset: ScriptAsset) => {
     data.assetsById[asset.id] = asset;
     var scriptName = `${data.projectClient.entries.getPathFromId(asset.id)}.ts`;
-    scripts[scriptName] = asset.pub.text;
+    scripts[scriptName] =  { id: asset.id, text: asset.pub.text };
 
     if (asset.id === info.assetId) {
       data.asset = asset;
@@ -261,7 +265,7 @@ var scriptSubscriber = {
     if (id !== info.assetId) {
       if (command === "saveText") {
         var scriptName = `${data.projectClient.entries.getPathFromId(id)}.ts`;
-        scripts[scriptName] = data.assetsById[id].pub.text;
+        scripts[scriptName] = { id, text: data.assetsById[id].pub.text };
         scheduleCompilation();
       }
       return
@@ -407,13 +411,7 @@ function scheduleCompilation() {
   }, 500);
 }
 
-// Unnecessary since we're compiling locally anyway
-/*
-onAssetCommands.saveText = (errors: Array<{file: string; position: {line: number; character: number;}; length: number; message: string}>) => {
-  refreshErrors(errors);
-}
-*/
-
+// User interface
 function refreshErrors(errors: Array<{file: string; position: {line: number; character: number;}; length: number; message: string}>) {
   // Remove all previous erros
   for (let textMarker of ui.editor.getDoc().getAllMarks()) {
@@ -423,8 +421,7 @@ function refreshErrors(errors: Array<{file: string; position: {line: number; cha
 
   ui.editor.clearGutter("line-error-gutter");
 
-  let text = <HTMLTextAreaElement><any>ui.errorsList;
-  text.value = "";
+  ui.errorsTBody.innerHTML = "";
 
   if (errors.length === 0) {
     ui.errorPaneInfo.textContent = "No errors";
@@ -435,12 +432,35 @@ function refreshErrors(errors: Array<{file: string; position: {line: number; cha
   ui.errorPaneStatus.classList.add("has-errors");
 
   let selfErrorsCount = 0;
+  let lastSelfErrowRow: HTMLTableRowElement = null;
 
   // Display new ones
   for (let error of errors) {
-    text.value += `${error.file}(${error.position.line+1}): ${error.message}\n`;
+    let errorRow = document.createElement("tr");
+    (<any>errorRow.dataset).assetId = scripts[error.file].id;
+    (<any>errorRow.dataset).line = error.position.line;
+    (<any>errorRow.dataset).character = error.position.character;
 
-    if (error.file !== scriptNamesById[info.assetId]) continue;
+    let positionCell = document.createElement("td");
+    positionCell.textContent = (error.position.line + 1).toString();
+    errorRow.appendChild(positionCell);
+
+    let messageCell = document.createElement("td");
+    messageCell.textContent = error.message;
+    errorRow.appendChild(messageCell);
+
+    let scriptCell = document.createElement("td");
+    scriptCell.textContent = error.file.substring(0, error.file.length - 3);
+    errorRow.appendChild(scriptCell);
+
+    if (error.file !== scriptNamesById[info.assetId]) {
+      ui.errorsTBody.appendChild(errorRow);
+      continue;
+    }
+
+    errorRow.classList.add("self");
+    ui.errorsTBody.insertBefore(errorRow, (lastSelfErrowRow != null) ? lastSelfErrowRow.nextElementSibling : ui.errorsTBody.firstChild);
+    lastSelfErrowRow = errorRow;
     selfErrorsCount++;
 
     let line = error.position.line;
@@ -465,9 +485,28 @@ function refreshErrors(errors: Array<{file: string; position: {line: number; cha
   }
 }
 
-// User interface
+function onErrorTBodyClick(event: MouseEvent) {
+  let target = <HTMLElement>event.target;
+  while (true) {
+    if (target.tagName === "TBODY") return;
+    if (target.tagName === "TR") break;
+    target = target.parentElement;
+  }
+
+  let assetId: string = (<any>target.dataset).assetId;
+  let line: string = (<any>target.dataset).line;
+  let character: string = (<any>target.dataset).character;
+
+  if (assetId === info.assetId) {
+    ui.editor.getDoc().setCursor({ line: parseInt(line), ch: parseInt(character) });
+    ui.editor.focus();
+  } else {
+    // TODO: Post message to parent and switch to correct tab
+  }
+}
+
 function onEditText(instance: CodeMirror.Editor, changes: CodeMirror.EditorChange[]) {
-  scripts[scriptNamesById[info.assetId]] = ui.editor.getDoc().getValue();
+  scripts[scriptNamesById[info.assetId]].text = ui.editor.getDoc().getValue();
 
   // We ignore the initial setValue
   if ((<any>changes[0]).origin !== "setValue") scheduleCompilation();
