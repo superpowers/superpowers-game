@@ -14,13 +14,18 @@ require("codemirror/addon/selection/active-line");
 require("codemirror/keymap/sublime");
 require("codemirror/mode/javascript/javascript");
 
+let PerfectResize = require("perfect-resize");
+
 let qs = require("querystring").parse(window.location.search.slice(1));
 let info = { projectId: qs.project, assetId: qs.asset };
-let data: {clientId: number; projectClient?: SupClient.ProjectClient; assetsById?: {[id: string]: ScriptAsset}; asset?: ScriptAsset;};
+let data: { clientId: number; projectClient?: SupClient.ProjectClient; assetsById?: {[id: string]: ScriptAsset}; asset?: ScriptAsset; };
 let ui: {
   editor?: CodeMirror.EditorFromTextArea;
   tmpCodeMirrorDoc?: CodeMirror.Doc;
-  errorContainer?: HTMLDivElement;
+  errorPane?: HTMLDivElement;
+  errorPaneStatus?: HTMLDivElement;
+  errorPaneInfo?: HTMLDivElement;
+  errorsList?: HTMLDivElement;
 
   undoTimeout?: number;
   compileTimeout?: number;
@@ -40,8 +45,8 @@ let socket: SocketIOClient.Socket;
 import createLanguageService from "../../data/createLanguageService";
 let globalDefs = "";
 let scriptNames: string[] = [];
-let scriptNamesById: {[name: string]: string} = {};
-let scripts: {[name: string]: string} = {};
+let scriptNamesById: { [name: string]: string } = {};
+let scripts: { [name: string]: string } = {};
 
 function start() {
   socket = SupClient.connect(info.projectId);
@@ -126,9 +131,20 @@ function start() {
   }
 
   // Error pane
-  ui.errorContainer = <HTMLDivElement>document.querySelector(".error-container");
-  ui.errorContainer.querySelector("button").addEventListener("click", () => {
-    ui.errorContainer.style.display = "none";
+  ui.errorPane = <HTMLDivElement>document.querySelector(".error-pane");
+  ui.errorPaneStatus = <HTMLDivElement>ui.errorPane.querySelector(".status");
+  ui.errorPaneInfo = <HTMLDivElement>ui.errorPaneStatus.querySelector(".info");
+  ui.errorsList = <HTMLDivElement>ui.errorPane.querySelector(".errors");
+
+  let errorPaneResizeHandle = new PerfectResize(ui.errorPane, "bottom");
+  errorPaneResizeHandle.on("drag", () => { ui.editor.refresh(); });
+
+  let errorPaneToggleButton = ui.errorPane.querySelector("button.toggle")
+
+  ui.errorPaneStatus.addEventListener("click", () => {
+    let collapsed = ui.errorPane.classList.toggle("collapsed");
+    errorPaneToggleButton.textContent = collapsed ? "+" : "–";
+    errorPaneResizeHandle.handleElt.classList.toggle("disabled", collapsed);
     ui.editor.refresh();
   });
 
@@ -403,22 +419,25 @@ function refreshErrors(errors: Array<{file: string; position: {line: number; cha
 
   ui.editor.clearGutter("line-error-gutter");
 
-  // Display new ones
+  let text = <HTMLTextAreaElement><any>ui.errorsList;
+  text.value = "";
+
   if (errors.length === 0) {
-    ui.errorContainer.style.display = "none";
-    ui.editor.refresh();
+    ui.errorPaneInfo.textContent = "No errors";
+    ui.errorPaneStatus.classList.remove("has-errors");
     return;
   }
 
-  ui.errorContainer.style.display = "flex";
-  ui.editor.refresh();
+  ui.errorPaneStatus.classList.add("has-errors");
 
-  let text = <HTMLTextAreaElement>ui.errorContainer.querySelector("textarea");
-  text.value = "";
+  let selfErrorsCount = 0;
+
+  // Display new ones
   for (let error of errors) {
     text.value += `${error.file}(${error.position.line+1}): ${error.message}\n`;
 
     if (error.file !== scriptNamesById[info.assetId]) continue;
+    selfErrorsCount++;
 
     let line = error.position.line;
     ui.editor.getDoc().markText(
@@ -432,10 +451,18 @@ function refreshErrors(errors: Array<{file: string; position: {line: number; cha
     gutter.innerHTML = "●";
     ui.editor.setGutterMarker(line, "line-error-gutter", gutter);
   }
+
+  let otherErrorsCount = errors.length - selfErrorsCount;
+  if (selfErrorsCount > 0) {
+    if (otherErrorsCount == 0) ui.errorPaneInfo.textContent = `${selfErrorsCount} error${selfErrorsCount > 1 ? "s" : ""}`;
+    else ui.errorPaneInfo.textContent = `${selfErrorsCount} error${selfErrorsCount > 1 ? "s" : ""} in this script, ${otherErrorsCount} in other scripts`;
+  } else {
+    ui.errorPaneInfo.textContent = `${errors.length} error${errors.length > 1 ? "s" : ""} in other scripts`;
+  }
 }
 
 // User interface
-var onEditText = (instance: CodeMirror.Editor, changes: CodeMirror.EditorChange[]) => {
+function onEditText(instance: CodeMirror.Editor, changes: CodeMirror.EditorChange[]) {
   scripts[scriptNamesById[info.assetId]] = ui.editor.getDoc().getValue();
 
   // We ignore the initial setValue

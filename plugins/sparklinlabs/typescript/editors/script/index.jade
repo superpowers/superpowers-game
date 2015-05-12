@@ -2,17 +2,19 @@ doctype html
 html
   head
     link(rel="stylesheet",href="/client/styles/reset.css")
+    link(rel="stylesheet",href="/client/styles/perfectResize.css")
     link(rel="stylesheet",href="index.css")
 
   body
     .code-editor-container
       textarea.code-editor
 
-    .error-container
-      div
-        button Close
+    .error-pane
+      .status
+        .info
+        button.toggle –
 
-      textarea(disabled)
+      textarea.errors(disabled)
 
     script(src="/core/SupCore.js")
     script(src="../../data.js")
