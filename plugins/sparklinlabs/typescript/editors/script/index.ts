@@ -42,7 +42,6 @@ let ui: {
 } = {};
 let socket: SocketIOClient.Socket;
 
-import createLanguageService from "../../data/createLanguageService";
 let globalDefs = "";
 let scriptNames: string[] = [];
 let scriptNamesById: { [name: string]: string } = {};
