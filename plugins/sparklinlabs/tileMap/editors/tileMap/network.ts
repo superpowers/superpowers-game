@@ -1,6 +1,7 @@
 import info from "./info";
 import ui, { setupLayer, selectBrush } from "./ui";
-import { mapArea, tileSetArea, setupPattern } from "./engine";
+import mapArea, { setupPattern } from "./mapArea";
+import tileSetArea from "./tileSetArea";
 
 import { TileMapLayerPub } from "../../data/TileMapLayers";
 import TileMapRenderer from "../../components/TileMapRenderer";

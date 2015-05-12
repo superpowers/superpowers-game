@@ -1,6 +1,7 @@
 import info from "./info";
 import { socket, data } from "./network";
-import { mapArea, tileSetArea, setupPattern, setupFillPattern, flipTilesVertically, flipTilesHorizontally, rotateTiles } from "./engine";
+import mapArea, { setupPattern, setupFillPattern, flipTilesVertically, flipTilesHorizontally, rotateTiles } from "./mapArea";
+import tileSetArea from "./tileSetArea";
 
 let TreeView = require("dnd-tree-view");
 
