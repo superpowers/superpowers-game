@@ -194,6 +194,11 @@ function onLayerSelect() {
   }
 
   onChangeHighlight();
+
+  let pub = data.tileMapUpdater.tileMapAsset.pub;
+  let layer = data.tileMapUpdater.tileMapAsset.layers.byId[tileSetArea.selectedLayerId];
+  let z = (pub.layers.indexOf(layer) + 0.5) * pub.layerDepthOffset
+  mapArea.patternActor.setLocalPosition(new SupEngine.THREE.Vector3(0, 0, z));
 }
 
 function onChangeGridDisplay() {

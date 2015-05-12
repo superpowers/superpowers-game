@@ -55,7 +55,6 @@ mapArea.gridRenderer = new SupEngine.editorComponentClasses["GridRenderer"](mapA
 mapArea.patternData = [];
 mapArea.patternDataWidth = 1;
 mapArea.patternActor = new SupEngine.Actor(mapArea.gameInstance, "Pattern");
-mapArea.patternActor.setLocalPosition(new SupEngine.THREE.Vector3(0, 0, 80))
 mapArea.patternRenderer = new TileMapRenderer(mapArea.patternActor, null, null);
 mapArea.patternBackgroundActor = new SupEngine.Actor(mapArea.gameInstance, "Pattern Background");
 mapArea.patternBackgroundRenderer = new SupEngine.editorComponentClasses["FlatColorRenderer"](mapArea.patternBackgroundActor);
@@ -376,7 +375,9 @@ function handleMapArea() {
 
   if (mapArea.patternActor.threeObject.visible || ui.eraserToolButton.checked) {
     let ratio = pub.pixelsPerUnit / data.tileMapUpdater.tileSetAsset.pub.gridSize;
-    let patternPosition = new SupEngine.THREE.Vector3(mouseX/ratio, mouseY/ratio, data.tileMapUpdater.tileMapAsset.layers.pub.length * pub.layerDepthOffset);
+    let layer = data.tileMapUpdater.tileMapAsset.layers.byId[tileSetArea.selectedLayerId];
+    let z = (pub.layers.indexOf(layer) + 0.5) * pub.layerDepthOffset
+    let patternPosition = new SupEngine.THREE.Vector3(mouseX/ratio, mouseY/ratio, z);
     mapArea.patternBackgroundActor.setLocalPosition(patternPosition);
   }
 

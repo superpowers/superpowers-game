@@ -45,13 +45,11 @@ function onTileMapAssetReceived() {
   onEditCommands.resizeMap();
 
   for (let setting in ui.settings) onEditCommands.setProperty(setting, (<any>pub)[setting]);
-
-  for (let index = 0; index < pub.layers.length; index++) {
-    setupLayer(pub.layers[index], index);
-  }
+  for (let index = 0; index < pub.layers.length; index++) setupLayer(pub.layers[index], index);
 
   tileSetArea.selectedLayerId = pub.layers[0].id.toString();
   ui.layersTreeView.addToSelection(ui.layersTreeView.treeRoot.querySelector(`li[data-id="${pub.layers[0].id}"]`));
+  mapArea.patternActor.setLocalPosition(new SupEngine.THREE.Vector3(0, 0, pub.layerDepthOffset / 2));
 }
 
 function updateTileSetInput() {
@@ -84,8 +82,13 @@ onEditCommands.setProperty = (path: string, value: any) => {
   }
 };
 
-onEditCommands.newLayer = (layer: TileMapLayerPub, index: number) => {
-  setupLayer(layer, index);
+onEditCommands.newLayer = (layerPub: TileMapLayerPub, index: number) => {
+  setupLayer(layerPub, index);
+
+  let pub = data.tileMapUpdater.tileMapAsset.pub;
+  let layer = data.tileMapUpdater.tileMapAsset.layers.byId[tileSetArea.selectedLayerId];
+  let z = (pub.layers.indexOf(layer) + 0.5) * pub.layerDepthOffset
+  mapArea.patternActor.setLocalPosition(new SupEngine.THREE.Vector3(0, 0, z));
 };
 
 onEditCommands.renameLayer = (id: string, newName: string) => {
@@ -103,11 +106,21 @@ onEditCommands.deleteLayer = (id: string, index: number) => {
     ui.layersTreeView.clearSelection();
     ui.layersTreeView.addToSelection(ui.layersTreeView.treeRoot.querySelector(`li[data-id="${tileSetArea.selectedLayerId}"]`));
   }
+
+  let pub = data.tileMapUpdater.tileMapAsset.pub;
+  let layer = data.tileMapUpdater.tileMapAsset.layers.byId[tileSetArea.selectedLayerId];
+  let z = (pub.layers.indexOf(layer) + 0.5) * pub.layerDepthOffset
+  mapArea.patternActor.setLocalPosition(new SupEngine.THREE.Vector3(0, 0, z));
 };
 
 onEditCommands.moveLayer = (id: string, newIndex: number) => {
   let layerElt = ui.layersTreeView.treeRoot.querySelector(`[data-id="${id}"]`);
   ui.layersTreeView.insertAt(layerElt, "item", newIndex);
+
+  let pub = data.tileMapUpdater.tileMapAsset.pub;
+  let layer = data.tileMapUpdater.tileMapAsset.layers.byId[tileSetArea.selectedLayerId];
+  let z = (pub.layers.indexOf(layer) + 0.5) * pub.layerDepthOffset
+  mapArea.patternActor.setLocalPosition(new SupEngine.THREE.Vector3(0, 0, z));
 };
 
 // Tile Set
