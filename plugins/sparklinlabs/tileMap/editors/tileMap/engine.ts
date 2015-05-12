@@ -170,12 +170,12 @@ export function setupFillPattern(newTileData: (number|boolean)[]) {
 export function flipTilesHorizontally() {
   if (!mapArea.patternActor.threeObject.visible) return;
 
-  let width = mapArea.patternRenderer.tileMap.data.width;
-  let height = mapArea.patternRenderer.tileMap.data.height;
+  let width = mapArea.patternDataWidth;
+  let height = mapArea.patternData.length / mapArea.patternDataWidth;
   let layerData: (number|boolean)[][] = [];
   for (let y = 0; y < height; y++) {
     for (let x = width - 1; x >= 0; x--) {
-      let tileValue = mapArea.patternRenderer.tileMap.data.layers[0].data[y * width + x];
+      let tileValue = mapArea.patternData[y * width + x];
       tileValue[2] = !tileValue[2];
       layerData.push(tileValue);
     }
@@ -187,12 +187,12 @@ export function flipTilesHorizontally() {
 export function flipTilesVertically() {
   if (!mapArea.patternActor.threeObject.visible) return;
 
-  let width = mapArea.patternRenderer.tileMap.data.width;
-  let height = mapArea.patternRenderer.tileMap.data.height;
+  let width = mapArea.patternDataWidth;
+  let height = mapArea.patternData.length / mapArea.patternDataWidth;
   let layerData: (number|boolean)[][] = [];
   for (let y = height - 1; y >= 0; y--) {
     for (let x = 0; x < width; x++) {
-      let tileValue = mapArea.patternRenderer.tileMap.data.layers[0].data[y * width + x];
+      let tileValue = mapArea.patternData[y * width + x];
       tileValue[3] = !tileValue[3];
 
       layerData.push(tileValue);
@@ -205,12 +205,12 @@ export function flipTilesVertically() {
 export function rotateTiles() {
   if (!mapArea.patternActor.threeObject.visible) return;
 
-  let width = mapArea.patternRenderer.tileMap.data.width;
-  let height = mapArea.patternRenderer.tileMap.data.height;
+  let width = mapArea.patternDataWidth;
+  let height = mapArea.patternData.length / mapArea.patternDataWidth;
   let layerData: (number|boolean)[][] = [];
   for (let x = 0; x < width; x++) {
     for (let y = height - 1; y >= 0; y--) {
-      let tileValue = mapArea.patternRenderer.tileMap.data.layers[0].data[y * width + x];
+      let tileValue = mapArea.patternData[y * width + x];
       (<any>tileValue)[4] += 90;
       if (tileValue[4] === 360) tileValue[4] = 0;
 
