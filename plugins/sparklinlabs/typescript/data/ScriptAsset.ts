@@ -196,15 +196,15 @@ export default class ScriptAsset extends SupCore.data.base.Asset {
     this.pub.revisionId++;
   }
 
-  server_saveText(client: any, callback: (err: string, errors: CompilationError[]) => any) {
+  server_saveText(client: any, callback: (err: string) => any) {
     this.pub.text = this.pub.draft;
 
     let scriptNames: string[] = [];
-    let scripts: {[name: string]: string} = {};
+    let scripts: { [name: string]: string } = {};
     let ownScriptName = "";
 
-    let finish = (errors: CompilationError[]) => {
-      callback(null, errors);
+    let finish = () => {
+      callback(null);
 
       if (this.hasDraft) {
         this.hasDraft = false;
@@ -215,14 +215,10 @@ export default class ScriptAsset extends SupCore.data.base.Asset {
     };
 
     let compile = () => {
-      try { var results = compileTypeScript(scriptNames, scripts, globalDefs, { sourceMap: false} ); }
-      catch (e) { finish([ { file: "", position: { line: 1, character: 1 }, message: e.message } ]); return; }
+      try { var results = compileTypeScript(scriptNames, scripts, globalDefs, { sourceMap: false }); }
+      catch (e) { finish(); return; }
 
-      let ownErrors: CompilationError[] = [];
-      for (let error of results.errors) if (error.file === ownScriptName) ownErrors.push(error);
-      if (ownErrors.length > 0) { finish(ownErrors); return; }
-      // If there were no errors in this script but there are errors in others, report them
-      if (results.errors.length > 0) { finish(results.errors); return; }
+      if(results.errors.length > 0) { finish(); return; }
 
       let libSourceFile = results.program.getSourceFile("lib.d.ts");
       let supTypeSymbols = {
@@ -290,7 +286,7 @@ export default class ScriptAsset extends SupCore.data.base.Asset {
       this.serverData.resources.acquire("behaviorProperties", null, (err: Error, behaviorProperties: BehaviorPropertiesResource) => {
         behaviorProperties.setScriptBehaviors(this.id, behaviors);
         this.serverData.resources.release("behaviorProperties", null);
-        finish([]);
+        finish();
       });
     };
 

@@ -408,9 +408,12 @@ function scheduleCompilation() {
   }, 500);
 }
 
+// Unnecessary since we're compiling locally anyway
+/*
 onAssetCommands.saveText = (errors: Array<{file: string; position: {line: number; character: number;}; length: number; message: string}>) => {
   refreshErrors(errors);
 }
+*/
 
 function refreshErrors(errors: Array<{file: string; position: {line: number; character: number;}; length: number; message: string}>) {
   // Remove all previous erros
