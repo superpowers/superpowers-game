@@ -90,7 +90,8 @@ function start() {
     tabSize: 2, keyMap: "sublime", // , theme: "monokai"
     extraKeys: extraKeys,
     viewportMargin: Infinity,
-    mode: "text/typescript"
+    mode: "text/typescript",
+    readOnly: true
   });
 
   ui.tmpCodeMirrorDoc = new CodeMirror.Doc("");
@@ -248,6 +249,7 @@ var scriptSubscriber = {
 
       ui.editor.getDoc().setValue(data.asset.pub.draft);
       ui.editor.getDoc().clearHistory();
+      ui.editor.setOption("readOnly", false);
     }
 
     if(!allScriptsReceived && Object.keys(scripts).length === scriptNames.length) {
