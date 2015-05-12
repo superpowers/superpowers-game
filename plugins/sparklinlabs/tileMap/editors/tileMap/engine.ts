@@ -354,7 +354,7 @@ function handleMapArea() {
   }
 
   // Quick switch to Brush or Eraser
-  if (mapArea.gameInstance.input.mouseButtons[2].wasJustReleased) {
+  if (mapArea.gameInstance.input.mouseButtons[2].wasJustReleased && !ui.fillToolButton.checked)  {
     if (!ui.selectionToolButton.checked || !mapArea.patternBackgroundActor.threeObject.visible) {
       if (mouseX >= 0 && mouseX < pub.width && mouseY >= 0 && mouseY < pub.height) {
         let layer = data.tileMapUpdater.tileMapAsset.layers.byId[tileSetArea.selectedLayerId];
