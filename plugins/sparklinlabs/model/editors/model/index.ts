@@ -6,6 +6,8 @@ import ModelRendererUpdater from "../../components/ModelRendererUpdater";
 
 import importModel from "./importers/index";
 
+let PerfectResize = require("perfect-resize");
+
 let TreeView = require("dnd-tree-view");
 let THREE = SupEngine.THREE;
 
@@ -57,6 +59,23 @@ function start() {
   ui.modelRenderer = new ModelRenderer(ui.modelActor);
 
   ui.tickAnimationFrameId = requestAnimationFrame(tick);
+
+  // Error pane
+  ui.errorPane = <HTMLDivElement>document.querySelector(".error-pane");
+  ui.errorPaneStatus = <HTMLDivElement>ui.errorPane.querySelector(".status");
+  ui.errorPaneInfo = <HTMLDivElement>ui.errorPaneStatus.querySelector(".info");
+  ui.errorsTBody = <HTMLTableSectionElement>ui.errorPane.querySelector(".errors tbody");
+
+  let errorPaneResizeHandle = new PerfectResize(ui.errorPane, "bottom");
+  errorPaneResizeHandle.handleElt.classList.add("disabled");
+
+  let errorPaneToggleButton = ui.errorPane.querySelector("button.toggle");
+
+  ui.errorPaneStatus.addEventListener("click", () => {
+    let collapsed = ui.errorPane.classList.toggle("collapsed");
+    errorPaneToggleButton.textContent = collapsed ? "+" : "–";
+    errorPaneResizeHandle.handleElt.classList.toggle("disabled", collapsed);
+  });
 }
 
 // Network callbacks
@@ -108,10 +127,65 @@ onEditCommands.setAnimationProperty = (id: string, key: string, value: any) => {
 function onModelFileSelectChange(event: any) {
   if (event.target.files.length === 0) return;
 
-  importModel(event.target.files, (err, data) => {
+  ui.errorsTBody.innerHTML = "";
+
+  importModel(event.target.files, (log, data) => {
     event.target.parentElement.reset();
 
-    if (err != null) { alert(`Could not import files: ${err.message}`); return; }
+    let errorsCount = 0;
+    let warningsCount = 0;
+    let lastErrorRow: HTMLTableRowElement = null;
+
+    for (let entry of log) {
+      // console.log(entry.file, entry.line, entry.type, entry.message);
+
+      let logRow = document.createElement("tr");
+
+      let positionCell = document.createElement("td");
+      positionCell.textContent = (entry.line != null) ? (entry.line + 1).toString() : "";
+      logRow.appendChild(positionCell);
+
+      let typeCell = document.createElement("td");
+      typeCell.textContent = entry.type;
+      logRow.appendChild(typeCell);
+
+      let messageCell = document.createElement("td");
+      messageCell.textContent = entry.message;
+      logRow.appendChild(messageCell);
+
+      let fileCell = document.createElement("td");
+      fileCell.textContent = entry.file;
+      logRow.appendChild(fileCell);
+
+      if (entry.type == "warning") warningsCount++;
+
+      if (entry.type !== "error") {
+        ui.errorsTBody.appendChild(logRow);
+        continue;
+      }
+
+      ui.errorsTBody.insertBefore(logRow, (lastErrorRow != null) ? lastErrorRow.nextElementSibling : ui.errorsTBody.firstChild);
+      lastErrorRow = logRow;
+      errorsCount++;
+    }
+
+    let errorsAndWarningsInfo: string[] = [];
+    if (errorsCount > 1) errorsAndWarningsInfo.push(`${errorsCount} errors`);
+    else if (errorsCount > 0) errorsAndWarningsInfo.push(`1 error`);
+    else errorsAndWarningsInfo.push("No errors");
+
+    if (warningsCount > 1) errorsAndWarningsInfo.push(`${warningsCount} warnings`);
+    else if (warningsCount > 0) errorsAndWarningsInfo.push(`${warningsCount} warnings`);
+
+    if (data == null || errorsCount > 0) {
+      let info = (data == null) ? `Import failed — ` : "";
+      ui.errorPaneInfo.textContent = info + errorsAndWarningsInfo.join(", ");
+      ui.errorPaneStatus.classList.add("has-errors");
+      return;
+    }
+
+    ui.errorPaneInfo.textContent = errorsAndWarningsInfo.join(", ");
+    ui.errorPaneStatus.classList.remove("has-errors");
 
     socket.emit("edit:assets", info.assetId, "setAttributes", data.attributes, (err: string) => {
       if (err != null) { alert(err); return; }
@@ -130,8 +204,15 @@ function onModelFileSelectChange(event: any) {
 }
 
 function onDiffuseMapFileSelectChange(event: any) {
+  ui.errorsTBody.innerHTML = "";
+  ui.errorPaneInfo.textContent = "No errors";
+  ui.errorPaneStatus.classList.remove("has-errors");
+
   let reader = new FileReader;
   reader.onload = (event) => {
+
+
+
     socket.emit("edit:assets", info.assetId, "setMaps", { diffuse: reader.result }, (err: string) => {
       if (err != null) { alert(err); return; }
     });
@@ -161,10 +242,14 @@ function onAnimationFileSelectChange(event: any) {
 
   let animationId: string = ui.selectedAnimationId;
 
-  importModel(event.target.files, (err: Error, data: any) => {
+  importModel(event.target.files, (log, data) => {
     event.target.parentElement.reset();
 
-    if (err != null) { alert(`Could not import files: ${err.message}`); return; }
+    for(let entry in log) {
+      console.log(entry.file, entry.line, entry.type, entry.message);
+    }
+
+    if (data == null) { alert("Import failed. See console for details."); return; }
     if (data.animation == null) { alert("No animation found in imported files"); return; }
 
     // TODO: Check if bones are compatible

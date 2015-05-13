@@ -2,6 +2,7 @@ doctype html
 html
   head
     link(rel="stylesheet",href="/client/styles/reset.css")
+    link(rel="stylesheet",href="/client/styles/perfectResize.css")
     link(rel="stylesheet",href="/client/styles/treeView.css")
     link(rel="stylesheet",href="/client/styles/dialogs.css")
     link(rel="stylesheet",href="index.css")
@@ -9,6 +10,21 @@ html
   body
     .main
       canvas(tabindex="0")
+
+      .error-pane.collapsed(style="height: 200px")
+        .status
+          .info No errors
+          button.toggle +
+
+        .errors(disabled)
+          table
+            thead
+              tr
+                th Line
+                th Type
+                th Message
+                th File
+            tbody
 
     .sidebar
       table

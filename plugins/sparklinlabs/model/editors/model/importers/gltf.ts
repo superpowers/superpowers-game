@@ -1,5 +1,7 @@
 import readFile from "./readFile";
 import * as async from "async";
+import { ImportCallback, ImportLogEntry, createLogError, createLogWarning, createLogInfo } from "./index";
+
 let THREE = SupEngine.THREE;
 
 let gltfConst = {
@@ -23,7 +25,7 @@ function convertAxisAngleToQuaternion(rotations: Float32Array, count: number) {
   }
 }
 
-export function importModel(files: File[], callback: (err: Error, result: any) => any) {
+export function importModel(files: File[], callback: ImportCallback) {
   let gltfFile: File = null;
   let bufferFiles: { [name: string]: File } = {};
   let imageFiles: { [name: string]: File } = {};
@@ -35,7 +37,7 @@ export function importModel(files: File[], callback: (err: Error, result: any) =
 
     switch(extension) {
       case "gltf":
-        if (gltfFile != null) { callback(new Error("Cannot import multiple GLTF files at once"), null); return; }
+        if (gltfFile != null) { callback([ createLogError(`Cannot import multiple GLTF files at once, already found ${gltfFile.name}`, filename) ]); return; }
         gltfFile = file;
         break;
 
@@ -49,14 +51,14 @@ export function importModel(files: File[], callback: (err: Error, result: any) =
         break;
 
       default:
-        callback(new Error(`Unsupported file type: ${filename}`), null);
+        callback([ createLogError(`Unsupported file type`, filename) ]);
         return;
     }
   }
 
   let onGLTFRead = (err: Error, gltf: any) => {
-    if (err != null) { callback(new Error("Could not parse GLTF file as JSON"), null); return; }
-    if(Object.keys(gltf.meshes).length > 1) { callback(new Error("Only a single mesh is supported"), null); return; }
+    if (err != null) { callback([ createLogError("Could not parse as JSON.", gltfFile.name) ]); return; }
+    if(Object.keys(gltf.meshes).length > 1) { callback([ createLogError("Only a single mesh is supported") ], gltfFile.name); return; }
 
     let upAxisMatrix = new THREE.Matrix4;
 
@@ -84,11 +86,11 @@ export function importModel(files: File[], callback: (err: Error, result: any) =
       }
     }
 
-    if (meshName == null) { callback(new Error("Couldn't find a mesh"), null); return; }
+    if (meshName == null) { callback([ createLogError("No mesh found.", gltfFile.name) ]); return; }
 
     let meshInfo = gltf.meshes[meshName];
-    if (meshInfo.primitives.length !== 1) { callback(new Error("Only a single primitive is supported"), null); return; }
-    if (meshInfo.primitives[0].primitive !== 4) { callback(new Error("Only triangles are supported"), null); return; }
+    if (meshInfo.primitives.length !== 1) { callback([ createLogError("Only a single primitive is supported", gltfFile.name) ]); return; }
+    if (meshInfo.primitives[0].primitive !== 4) { callback([ createLogError("Only triangles are supported", gltfFile.name) ]); return; }
 
     async.each(Object.keys(gltf.buffers), (name, cb) => {
       let bufferInfo = gltf.buffers[name];
@@ -102,12 +104,12 @@ export function importModel(files: File[], callback: (err: Error, result: any) =
       if (bufferFile == null) { cb(new Error(`Missing buffer file: ${filename}`)); return; }
 
       readFile(bufferFile, "arraybuffer", (err: Error, buffer: ArrayBuffer) => {
-        if (err != null) { cb(err); return; }
+        if (err != null) { cb(new Error(`Could not read buffer file: ${filename}`)); return; }
         buffers[name] = buffer;
-        cb();
+        cb(null);
       });
-    }, (err: Error) => {
-      if (err != null) { callback(err, null); return; }
+    }, (err) => {
+      if (err != null) { callback([ createLogError(err.message) ]); return; }
 
       let primitive = meshInfo.primitives[0];
       let attributes: { [name: string]: ArrayBuffer } = {};
@@ -115,7 +117,7 @@ export function importModel(files: File[], callback: (err: Error, result: any) =
       // Indices
       let indexAccessor = gltf.accessors[primitive.indices];
       if (indexAccessor.componentType !== gltfConst.UNSIGNED_SHORT) {
-        callback(new Error(`Unsupported component type for index accessor: ${indexAccessor.componentType}`), null);
+        callback([ createLogError(`Unsupported component type for index accessor: ${indexAccessor.componentType}`) ]);
         return;
       }
 
@@ -128,7 +130,7 @@ export function importModel(files: File[], callback: (err: Error, result: any) =
       // Position
       let positionAccessor = gltf.accessors[primitive.attributes.POSITION];
       if (positionAccessor.componentType !== gltfConst.FLOAT) {
-        callback(new Error(`Unsupported component type for position accessor: ${positionAccessor.componentType}`), null);
+        callback([ createLogError(`Unsupported component type for position accessor: ${positionAccessor.componentType}`) ]);
         return
       }
 
@@ -152,7 +154,7 @@ export function importModel(files: File[], callback: (err: Error, result: any) =
       let normalAccessor = gltf.accessors[primitive.attributes.NORMAL];
       if (normalAccessor != null) {
         if(normalAccessor.componentType !== gltfConst.FLOAT) {
-          callback(new Error(`Unsupported component type for normal accessor: ${normalAccessor.componentType}`), null);
+          callback([ createLogError(`Unsupported component type for normal accessor: ${normalAccessor.componentType}`) ]);
           return;
         }
 
@@ -165,7 +167,7 @@ export function importModel(files: File[], callback: (err: Error, result: any) =
       let uvAccessor = gltf.accessors[primitive.attributes.TEXCOORD_0];
       if (uvAccessor != null) {
         if (uvAccessor.componentType !== gltfConst.FLOAT) {
-          callback(new Error(`Unsupported component type for UV accessor: ${uvAccessor.componentType}`), null);
+          callback([ createLogError(`Unsupported component type for UV accessor: ${uvAccessor.componentType}`) ]);
           return;
         }
 
@@ -186,7 +188,7 @@ export function importModel(files: File[], callback: (err: Error, result: any) =
       let skinIndexAccessor = gltf.accessors[primitive.attributes.JOINT];
       if (skinIndexAccessor != null) {
         if (skinIndexAccessor.componentType !== gltfConst.FLOAT) {
-          callback(new Error(`Unsupported component type for skin index accessor: ${skinIndexAccessor.componentType}`), null);
+          callback([ createLogError(`Unsupported component type for skin index accessor: ${skinIndexAccessor.componentType}`) ]);
           return;
         }
 
@@ -199,7 +201,7 @@ export function importModel(files: File[], callback: (err: Error, result: any) =
       let skinWeightAccessor = gltf.accessors[primitive.attributes.WEIGHT];
       if (skinWeightAccessor != null) {
         if (skinWeightAccessor.componentType !== gltfConst.FLOAT) {
-          callback(new Error(`Unsupported component type for skin weight accessor: ${skinWeightAccessor.componentType}`), null);
+          callback([ createLogError(`Unsupported component type for skin weight accessor: ${skinWeightAccessor.componentType}`) ]);
           return;
         }
 
@@ -266,7 +268,7 @@ export function importModel(files: File[], callback: (err: Error, result: any) =
             if (boneAnim == null) boneAnim = animation.keyFrames[jointName] = {};
 
             if (boneAnim[gltfChannel.target.path] != null) {
-              callback(new Error(`Found multiple animations for ${gltfChannel.target.path} of ${jointName} bone`), null);
+              callback([ createLogError(`Found multiple animations for ${gltfChannel.target.path} of ${jointName} bone`) ]);
               return;
             }
 
@@ -276,7 +278,7 @@ export function importModel(files: File[], callback: (err: Error, result: any) =
             let inputParameterName = gltfAnim.samplers[gltfChannel.sampler].input;
             let timeAccessor = gltf.accessors[gltfAnim.parameters[inputParameterName]];
             if (timeAccessor.componentType !== gltfConst.FLOAT) {
-              callback(new Error(`Unsupported component type for animation time accessor: ${timeAccessor.componentType}`), null);
+              callback([ createLogError(`Unsupported component type for animation time accessor: ${timeAccessor.componentType}`) ]);
               return;
             }
 
@@ -286,7 +288,7 @@ export function importModel(files: File[], callback: (err: Error, result: any) =
             let outputParameterName = gltfAnim.samplers[gltfChannel.sampler].output;
             let outputAccessor = gltf.accessors[gltfAnim.parameters[outputParameterName]];
             if (outputAccessor.componentType !== gltfConst.FLOAT) {
-              callback(new Error(`Unsupported component type for animation output accessor: ${outputAccessor.componentType}`), null);
+              callback([ createLogError(`Unsupported component type for animation output accessor: ${outputAccessor.componentType}`) ]);
               return;
             }
 

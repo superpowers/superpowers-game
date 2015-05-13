@@ -1,24 +1,31 @@
+import { ImportCallback, ImportLogEntry, createLogError, createLogWarning, createLogInfo } from "./index";
+
 export let mode = "text";
 
-export function importModel(files: File[], callback: (err: Error, result: any) => any) {
+export function importModel(files: File[], callback: ImportCallback) {
   if (files.length > 1) {
-    callback(new Error("OBJ importer can only accept one file at a time"), null);
+    callback([ createLogError("The OBJ importer only accepts one file at a time") ]);
     return;
   }
 
   let reader = new FileReader;
-  reader.onload = (event) => { callback(null, parse((<FileReader>event.target).result)); }
+  reader.onload = (event) => { parse(files[0].name, (<FileReader>event.target).result, callback); };
   reader.readAsText(files[0]);
 }
 
-function parse(text: string) {
+function parse(filename: string, text: string, callback: ImportCallback) {
+  let log: ImportLogEntry[] = [];
+
   let arrays: { position: number[]; uv: number[]; normal: number[] } = { position: [], uv: [], normal: [] };
 
   let positionsByIndex: number[][] = [];
   let uvsByIndex: number[][] = [];
   let normalsByIndex: number[][] = [];
 
-  for (let line of text.split("\n")) {
+  let lines = text.split("\n");
+  for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
+    let line = lines[lineIndex];
+
     // Ignore empty lines and comments
     if (line.length === 0 || line[0] === "#") continue;
 
@@ -52,7 +59,7 @@ function parse(text: string) {
 
       case "f":
         if (valueStrings.length !== 3 && valueStrings.length !== 4) {
-          console.warn(`Ignoring unsupported face with ${valueStrings.length} vertices, only 3 or 4 are supported`);
+          log.push(createLogWarning(`Ignoring unsupported face with ${valueStrings.length} vertices, only triangles and quads are supported.`, filename, lineIndex));
           break;
         }
 
@@ -136,7 +143,7 @@ function parse(text: string) {
         break;
 
       default:
-        console.warn(`Ignoring unsupported OBJ command: ${command}`);
+        log.push(createLogWarning(`Ignoring unsupported OBJ command: ${command}`, filename, lineIndex));
     }
   }
 
@@ -145,8 +152,19 @@ function parse(text: string) {
     uv: undefined, normal: undefined
   };
 
-  if (arrays.uv.length > 0) buffers.uv = new Float32Array(arrays.uv).buffer;
-  if (arrays.normal.length > 0) buffers.normal = new Float32Array(arrays.normal).buffer;
+  let importedAttributes: string[] = [];
+  if (arrays.uv.length > 0) {
+    importedAttributes.push("texture coordinates");
+    buffers.uv = new Float32Array(arrays.uv).buffer;
+  }
 
-  return { attributes: buffers };
+  if (arrays.normal.length > 0) {
+    importedAttributes.push("normals");
+    buffers.normal = new Float32Array(arrays.normal).buffer;
+  }
+
+  let importInfo = (importedAttributes.length > 0) ? ` with ${importedAttributes.join(", ")}` : "";
+  log.push(createLogInfo(`Imported ${arrays.position.length / 3} vertices${importInfo}.`, filename));
+
+  callback(log, { attributes: buffers });
 }

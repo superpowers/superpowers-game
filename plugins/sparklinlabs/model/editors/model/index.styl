@@ -6,9 +6,11 @@ body
 .main
   flex 1
   display flex
+  flex-flow column
 
   canvas
     flex 1
+    min-height 100px
 
 .sidebar
   width 250px
@@ -56,3 +58,81 @@ body
     input
       width 50px
       margin-right 5px
+
+.error-pane
+  display flex
+  flex-flow column
+  min-height 200px
+
+  .status
+    cursor pointer
+    background-color #444
+    color #fff
+    display flex
+    align-items center
+
+    &.has-errors
+      background-color #a44
+
+    .info
+      flex 1
+      padding 0.5em
+
+    button
+      width 30px
+      background transparent
+      border none
+      opacity 0.5
+      font-size 20px
+      font-weight bold
+      cursor pointer
+      color #fff
+
+      &:hover
+        opacity 1
+        background-color rgba(0,0,0,0.1)
+
+      &:active
+        background-color #fff
+        color #444
+
+      &:disabled
+        opacity 0.2
+        cursor default
+
+  .errors
+    flex 1
+    overflow-y scroll
+
+    table
+      width 100%
+      border-collapse collapse
+
+    tbody tr
+      // cursor pointer
+
+      &:hover { background: #eee; }
+      // &:active { background-color: #444; color: #ccc; }
+
+    th
+      font-weight normal
+      color #666
+
+    td, th
+      text-align left
+      border 1px solid #ccc
+      padding 0.4em
+
+    td:first-child, th:first-child
+      text-align right
+
+    td:nth-child(3), th:nth-child(3)
+      width 100%
+
+    td:last-child
+      white-space nowrap
+
+  &.collapsed
+    min-height 0 !important
+    height auto !important
+    .errors { display: none; }
