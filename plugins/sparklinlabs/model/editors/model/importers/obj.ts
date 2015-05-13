@@ -53,7 +53,7 @@ function parse(text: string) {
       case "f":
         if (valueStrings.length !== 3 && valueStrings.length !== 4) {
           console.warn(`Ignoring unsupported face with ${valueStrings.length} vertices, only 3 or 4 are supported`);
-          return;
+          break;
         }
 
         let positions: number[][] = [];
