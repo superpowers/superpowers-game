@@ -17,7 +17,7 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
 
   asset: any;
   geometry: THREE.PlaneBufferGeometry;
-  material: THREE.MeshBasicMaterial;
+  material: THREE.MeshBasicMaterial|THREE.MeshPhongMaterial;
   threeMesh: THREE.Mesh;
   castShadow = false;
   receiveShadow = false;
@@ -28,13 +28,13 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
   animationLooping: boolean;
   animationTimer: number;
 
-  constructor(actor: SupEngine.Actor, spriteAsset?: any) {
+  constructor(actor: SupEngine.Actor, spriteAsset?: any, materialType = "basic") {
     super(actor, "SpriteRenderer");
 
-    if (spriteAsset != null) this.setSprite(spriteAsset);
+    if (spriteAsset != null) this.setSprite(spriteAsset, materialType);
   }
 
-  setSprite(asset: any) {
+  setSprite(asset: any, materialType: string) {
     this._clearMesh();
 
     this.asset = asset;
@@ -45,14 +45,16 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
     this.updateAnimationsByName();
 
     this.geometry = new THREE.PlaneBufferGeometry(this.asset.grid.width, this.asset.grid.height);
-    this.material = new THREE.MeshBasicMaterial({
-      map: this.asset.texture,
-      alphaTest: this.asset.alphaTest,
-      side: THREE.DoubleSide,
-      transparent: true,
-      opacity: this.opacity
-    });
+
+    if (materialType === "basic") this.material = new THREE.MeshBasicMaterial();
+    else if (materialType === "phong") this.material = new THREE.MeshPhongMaterial();
+    this.material.map = this.asset.texture;
+    this.material.alphaTest = this.asset.alphaTest;
+    this.material.side = THREE.DoubleSide;
+    this.material.transparent = true,
+    this.material.opacity = this.opacity;
     this.material.color.setRGB(this.color.r, this.color.g, this.color.b);
+
     this.threeMesh = new THREE.Mesh(this.geometry, this.material);
     this.setCastShadow(this.castShadow);
     this.threeMesh.receiveShadow = this.receiveShadow;
@@ -77,8 +79,8 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
   _clearMesh() {
     if (this.threeMesh == null) return;
     this.actor.threeObject.remove(this.threeMesh);
-    this.geometry.dispose();
-    this.material.dispose();
+    this.threeMesh.geometry.dispose();
+    this.threeMesh.material.dispose();
     this.threeMesh = null;
   }
 

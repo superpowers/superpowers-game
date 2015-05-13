@@ -3,6 +3,7 @@ export interface ModelRendererConfigPub {
   animationId: string;
   castShadow: boolean;
   receiveShadow: boolean;
+  materialType: string;
 }
 
 export default class ModelRendererConfig extends SupCore.data.base.ComponentConfig {
@@ -11,18 +12,25 @@ export default class ModelRendererConfig extends SupCore.data.base.ComponentConf
     modelAssetId: { type: "string?", min: 0, mutable: true },
     animationId: { type: "string?", min: 0, mutable: true },
     castShadow: { type: "boolean", mutable: true },
-    receiveShadow: { type: "boolean", mutable: true }
+    receiveShadow: { type: "boolean", mutable: true },
+    materialType: { type: "enum", items: ["basic", "phong", "shader"], mutable: true }
   }
 
   static create() {
-    let emptyConfig: ModelRendererConfigPub = { modelAssetId: null, animationId: null, castShadow: false, receiveShadow: false };
+    let emptyConfig: ModelRendererConfigPub = {
+      modelAssetId: null,
+      animationId: null,
+      castShadow: false,
+      receiveShadow: false,
+      materialType: "basic" };
     return emptyConfig;
   }
 
   constructor(pub: ModelRendererConfigPub) {
-    // TODO: Remove these at some point, new config setting introduced in Superpowers 0.6
+    // TODO: Remove these at some point, new config setting introduced in Superpowers 0.7
     if (pub.castShadow == null) pub.castShadow = false;
     if (pub.receiveShadow == null) pub.receiveShadow = false;
+    if (pub.materialType == null) pub.materialType = "basic";
 
     // TODO: Remove these casts at some point, legacy stuff from Superpowers 0.4
     if (typeof pub.modelAssetId === "number") pub.modelAssetId = pub.modelAssetId.toString();

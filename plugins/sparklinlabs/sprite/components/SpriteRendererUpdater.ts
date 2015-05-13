@@ -12,6 +12,7 @@ export default class SpriteRendererUpdater {
 
   spriteAssetId: string;
   animationId: string;
+  materialType: string;
   spriteAsset: SpriteAsset;
   url: string;
 
@@ -29,6 +30,7 @@ export default class SpriteRendererUpdater {
 
     this.spriteAssetId = config.spriteAssetId;
     this.animationId = config.animationId;
+    this.materialType = config.materialType;
     this.spriteAsset = null;
 
     this.spriteRenderer.castShadow = config.castShadow;
@@ -70,7 +72,7 @@ export default class SpriteRendererUpdater {
         let onImageLoaded = () => {
           image.removeEventListener("load", onImageLoaded);
           asset.pub.texture.needsUpdate = true
-          this.spriteRenderer.setSprite(asset.pub);
+          this.spriteRenderer.setSprite(asset.pub, this.materialType);
           if (this.animationId != null) this._playAnimation()
 
           if (this.receiveAssetCallbacks != null) this.receiveAssetCallbacks.sprite(this.url);
@@ -80,7 +82,7 @@ export default class SpriteRendererUpdater {
       }
     }
     else {
-      this.spriteRenderer.setSprite(asset.pub);
+      this.spriteRenderer.setSprite(asset.pub, this.materialType);
       if (this.animationId != null) this._playAnimation();
 
       if (this.receiveAssetCallbacks != null) this.receiveAssetCallbacks.sprite(this.url);
@@ -132,7 +134,7 @@ export default class SpriteRendererUpdater {
         }
         this.spriteAsset.pub.texture.needsUpdate = true;
     } else {
-        this.spriteRenderer.setSprite(this.spriteAsset.pub);
+        this.spriteRenderer.setSprite(this.spriteAsset.pub, this.materialType);
         if (this.animationId != null) this._playAnimation();
     }
   }
@@ -153,7 +155,7 @@ export default class SpriteRendererUpdater {
   }
 
   _onSpriteAssetTrashed() {
-    this.spriteRenderer.setSprite(null);
+    this.spriteRenderer.setSprite(null, null);
     // FIXME: the updater shouldn't be dealing with SupClient.onAssetTrashed directly
     if (this.editAssetCallbacks != null) SupClient.onAssetTrashed();
   }
@@ -165,7 +167,7 @@ export default class SpriteRendererUpdater {
         this.spriteAssetId = value;
 
         this.spriteAsset = null;
-        this.spriteRenderer.setSprite(null);
+        this.spriteRenderer.setSprite(null, null);
 
         if (this.spriteAssetId != null) this.client.subAsset(this.spriteAssetId, "sprite", this.spriteSubscriber);
         break;
@@ -186,6 +188,11 @@ export default class SpriteRendererUpdater {
       case "receiveShadow":
         this.spriteRenderer.threeMesh.receiveShadow = value;
         this.spriteRenderer.threeMesh.material.needsUpdate = true;
+        break;
+
+      case "materialType":
+        this.materialType = value;
+        if (this.spriteAsset != null) this.spriteRenderer.setSprite(this.spriteAsset.pub, this.materialType);
         break;
     }
   }

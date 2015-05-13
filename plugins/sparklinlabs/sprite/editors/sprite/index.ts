@@ -121,7 +121,7 @@ function onConnected() {
 
   let spriteActor = new SupEngine.Actor(ui.animationArea.gameInstance, "Sprite");
   let spriteRenderer = new SpriteRenderer(spriteActor);
-  let config = { spriteAssetId: info.assetId };
+  let config = { spriteAssetId: info.assetId, materialType: "basic" };
   let receiveCallbacks = { sprite: onAssetReceived };
   let editCallbacks = { sprite: onEditCommands };
 

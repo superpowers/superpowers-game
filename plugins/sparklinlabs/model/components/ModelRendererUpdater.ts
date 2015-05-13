@@ -14,6 +14,7 @@ export default class ModelRendererUpdater {
   modelAssetId: string;
   animationId: string;
   modelAsset: ModelAsset = null;
+  materialType: string;
 
   mapObjectURLs: { [mapName: string]: string } = {};
 
@@ -31,6 +32,7 @@ export default class ModelRendererUpdater {
 
     this.modelAssetId = config.modelAssetId;
     this.animationId = config.animationId;
+    this.materialType = config.materialType;
 
     this.modelRenderer.castShadow = config.castShadow;
     this.modelRenderer.receiveShadow = config.receiveShadow;
@@ -49,7 +51,7 @@ export default class ModelRendererUpdater {
   _onModelAssetReceived(assetId: string, asset: ModelAsset) {
     this.modelAsset = asset;
     this._prepareMaps(() => {
-      this.modelRenderer.setModel(this.modelAsset.pub);
+      this.modelRenderer.setModel(this.modelAsset.pub, this.materialType);
       if (this.animationId != null) this._playAnimation();
 
       if (this.receiveAssetCallbacks != null) this.receiveAssetCallbacks.model();
@@ -110,14 +112,14 @@ export default class ModelRendererUpdater {
   }
 
   _onEditCommand_setAttributes() {
-    this.modelRenderer.setModel(this.modelAsset.pub);
+    this.modelRenderer.setModel(this.modelAsset.pub, this.materialType);
     if (this.animationId != null) this._playAnimation();
   }
 
   _onEditCommand_setMaps(maps: any) {
     // TODO: Only update the maps that changed, don"t recreate the whole model
     this._prepareMaps(() => {
-      this.modelRenderer.setModel(this.modelAsset.pub);
+      this.modelRenderer.setModel(this.modelAsset.pub, this.materialType);
       if (this.animationId != null) this._playAnimation();
     });
   }
@@ -138,7 +140,7 @@ export default class ModelRendererUpdater {
   }
 
   _onModelAssetTrashed() {
-    this.modelRenderer.setModel(null);
+    this.modelRenderer.setModel(null, null);
     // FIXME: the updater shouldn't be dealing with SupClient.onAssetTrashed directly
     if (this.editAssetCallbacks != null) SupClient.onAssetTrashed();
   }
@@ -150,7 +152,7 @@ export default class ModelRendererUpdater {
         this.modelAssetId = value;
 
         this.modelAsset = null;
-        this.modelRenderer.setModel(null);
+        this.modelRenderer.setModel(null, null);
 
         if (this.modelAssetId != null) this.client.subAsset(this.modelAssetId, "model", this.modelSubscriber);
         break;
@@ -171,6 +173,11 @@ export default class ModelRendererUpdater {
       case "receiveShadow":
         this.modelRenderer.threeMesh.receiveShadow = value;
         this.modelRenderer.threeMesh.material.needsUpdate = true;
+        break;
+
+      case "materialType":
+        this.materialType = value;
+        if (this.modelAsset != null) this.modelRenderer.setModel(this.modelAsset.pub, this.materialType);
         break;
     }
   }

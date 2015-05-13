@@ -67,7 +67,7 @@ function onConnected() {
 
   let modelActor = new SupEngine.Actor(ui.gameInstance, "Model");
   let modelRenderer = new ModelRenderer(modelActor);
-  let config: { modelAssetId: string; animationId: string } = { modelAssetId: info.assetId, animationId: null };
+  let config: any = { modelAssetId: info.assetId, animationId: null, materialType: "basic" };
   let receiveCallbacks = { model: onAssetReceived };
   let editCallbacks = { model: onEditCommands };
 
@@ -230,7 +230,7 @@ function updateSelectedAnimation() {
     let button = <HTMLButtonElement>buttons[i];
     button.disabled = ui.selectedAnimationId == null && button.className !== "new-animation";
   }
-  
+
   data.modelUpdater.config_setProperty("animationId", ui.selectedAnimationId);
 }
 

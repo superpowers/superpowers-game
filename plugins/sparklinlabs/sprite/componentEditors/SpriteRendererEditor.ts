@@ -12,6 +12,7 @@ export default class SpriteRendererEditor {
   animationSelectBox: HTMLSelectElement;
   castShadowField: HTMLInputElement;
   receiveShadowField: HTMLInputElement;
+  materialSelectBox: HTMLSelectElement;
 
   asset: SpriteAsset;
 
@@ -42,6 +43,13 @@ export default class SpriteRendererEditor {
       this.editConfig("setProperty", "receiveShadow", event.target.checked);
     })
     this.receiveShadowField.disabled = true;
+
+    let materialRow = SupClient.table.appendRow(tbody, "Material");
+    this.materialSelectBox = SupClient.table.appendSelectBox(materialRow.valueCell, { "basic": "Basic", "phong": "Phong" }, config.materialType);
+    this.materialSelectBox.addEventListener("change", (event: any) => {
+      this.editConfig("setProperty", "materialType", event.target.value);
+    })
+    this.materialSelectBox.disabled = true;
 
     this.spriteTextField.addEventListener("input", this._onChangeSpriteAsset);
     this.animationSelectBox.addEventListener("change", this._onChangeSpriteAnimation);
@@ -83,6 +91,10 @@ export default class SpriteRendererEditor {
       case "receiveShadow":
         this.receiveShadowField.value = value;
         break;
+
+      case "materialType":
+        this.materialSelectBox.value = value;
+        break;
     }
   }
 
@@ -91,6 +103,7 @@ export default class SpriteRendererEditor {
     this.spriteTextField.disabled = false;
     this.castShadowField.disabled = false;
     this.receiveShadowField.disabled = false;
+    this.materialSelectBox.disabled = false;
 
     if (entries.byId[this.spriteAssetId] != null) {
       this.spriteTextField.value = entries.getPathFromId(this.spriteAssetId);

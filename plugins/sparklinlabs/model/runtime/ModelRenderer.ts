@@ -3,7 +3,7 @@ export function setupComponent(player: SupRuntime.Player, component: any, config
     let model = player.getOuterAsset(config.modelAssetId).__inner;
     component.castShadow = config.castShadow;
     component.receiveShadow = config.receiveShadow;
-    component.setModel(model);
+    component.setModel(model, config.materialType);
 
     if (config.animationId != null) {
       // FIXME: should we load model with SupCore.data?

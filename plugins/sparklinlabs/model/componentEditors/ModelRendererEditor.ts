@@ -1,3 +1,4 @@
+import { ModelRendererConfigPub } from "../data/ModelRendererConfig";
 import ModelAsset from "../data/ModelAsset";
 
 export default class ModelRendererEditor {
@@ -11,10 +12,11 @@ export default class ModelRendererEditor {
   animationSelectBox: HTMLSelectElement;
   castShadowField: HTMLInputElement;
   receiveShadowField: HTMLInputElement;
+  materialSelectBox: HTMLSelectElement;
 
   asset: ModelAsset;
 
-  constructor(tbody: HTMLTableSectionElement, config: any, projectClient: SupClient.ProjectClient, editConfig: any) {
+  constructor(tbody: HTMLTableSectionElement, config: ModelRendererConfigPub, projectClient: SupClient.ProjectClient, editConfig: any) {
     this.projectClient = projectClient;
     this.editConfig = editConfig;
     this.modelAssetId = config.modelAssetId;
@@ -41,6 +43,13 @@ export default class ModelRendererEditor {
       this.editConfig("setProperty", "receiveShadow", event.target.checked);
     })
     this.receiveShadowField.disabled = true;
+
+    let materialRow = SupClient.table.appendRow(tbody, "Material");
+    this.materialSelectBox = SupClient.table.appendSelectBox(materialRow.valueCell, { "basic": "Basic", "phong": "Phong" }, config.materialType);
+    this.materialSelectBox.addEventListener("change", (event: any) => {
+      this.editConfig("setProperty", "materialType", event.target.value);
+    })
+    this.materialSelectBox.disabled = true;
 
     this.modelTextField.addEventListener("input", this._onChangeModelAsset);
     this.animationSelectBox.addEventListener("change", this._onChangeModelAnimation);
@@ -87,12 +96,17 @@ export default class ModelRendererEditor {
       case "receiveShadow":
         this.receiveShadowField.value = value;
         break;
+
+      case "materialType":
+        this.materialSelectBox.value = value;
+        break;
     }
   }
 
   // Network callbacks
   onEntriesReceived(entries: SupCore.data.Entries) {
     this.modelTextField.disabled = false;
+    this.materialSelectBox.disabled = false;
     this.castShadowField.disabled = false;
     this.receiveShadowField.disabled = false;
 

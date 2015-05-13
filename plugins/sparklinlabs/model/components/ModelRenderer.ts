@@ -47,8 +47,6 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
   hasPoseBeenUpdated = false;
 
   asset: any;
-  geometry: THREE.PlaneBufferGeometry;
-  material: THREE.MeshBasicMaterial;
   threeMesh: THREE.Mesh|THREE.SkinnedMesh;
   castShadow = false;
   receiveShadow = false;
@@ -63,10 +61,10 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
 
   skeletonHelper: THREE.SkeletonHelper;
 
-  constructor(actor: SupEngine.Actor, modelAsset?: any) {
+  constructor(actor: SupEngine.Actor, modelAsset?: any, materialType = "basic") {
     super(actor, "ModelRenderer");
 
-    if (modelAsset != null) this.setModel(modelAsset);
+    if (modelAsset != null) this.setModel(modelAsset, materialType);
   }
 
   _clearMesh() {
@@ -81,7 +79,7 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
     super._destroy();
   }
 
-  setModel(asset: any) {
+  setModel(asset: any, materialType: string) {
     if (this.asset != null) this._clearMesh();
     this.asset = null;
     this.animation = null;
@@ -122,7 +120,9 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
       geometry.addAttribute("skinWeight", new THREE.BufferAttribute(buffer, 4));
     }
 
-    let material = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide, alphaTest: 0.1 });
+    let material: THREE.MeshBasicMaterial|THREE.MeshPhongMaterial;
+    if (materialType === "basic") material = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide, alphaTest: 0.1 });
+    else if (materialType === "phong") material = new THREE.MeshPhongMaterial({ side: THREE.DoubleSide, alphaTest: 0.1 });
     material.color.setRGB(this.color.r, this.color.g, this.color.b);
 
     if(this.asset.textures.diffuse != null) {
