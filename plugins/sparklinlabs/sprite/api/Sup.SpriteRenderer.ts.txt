@@ -23,9 +23,9 @@ module Sup {
       return this
     }
 
-    setAnimation(animationName, looping) { this.__inner.setAnimation(animationName, looping); return this }
+    setAnimation(animationName, looping) { this.__inner.setAnimation(animationName, looping); return this; }
     getAnimation() { return this.__inner.getAnimation() }
-    setAnimationTime(time) { this.__inner.setAnimationTime(time); return this }
+    setAnimationTime(time) { this.__inner.setAnimationTime(time); return this; }
     getAnimationTime() { return this.__inner.getAnimationTime() }
     getAnimationDuration() { return this.__inner.getAnimationDuration() }
 

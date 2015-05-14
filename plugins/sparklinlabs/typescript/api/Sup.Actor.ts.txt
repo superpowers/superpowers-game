@@ -24,8 +24,8 @@ module Sup {
 
     getName() { return this.__inner.name; }
     setName(name) { this.__inner.name = name; return this; }
-    getVisible() { return this.__inner.threeObject.visible; return this; }
-    setVisible(visible: boolean) { this.__inner.threeObject.visible = visible; }
+    getVisible() { return this.__inner.threeObject.visible; }
+    setVisible(visible: boolean) { this.__inner.threeObject.visible = visible; return this; }
     getParent() { return (this.__inner.parent) ? this. __inner.parent.__outer : null; }
     setParent(parent, options={ keepLocalTransform: false }) {
       var innerParent = (parent) ? parent.__inner : null;
