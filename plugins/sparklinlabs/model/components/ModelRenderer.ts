@@ -61,7 +61,7 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
 
   skeletonHelper: THREE.SkeletonHelper;
 
-  constructor(actor: SupEngine.Actor, modelAsset?: any, materialType = "basic") {
+  constructor(actor: SupEngine.Actor, modelAsset?: any, materialType="basic") {
     super(actor, "ModelRenderer");
 
     if (modelAsset != null) this.setModel(modelAsset, materialType);
@@ -79,7 +79,7 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
     super._destroy();
   }
 
-  setModel(asset: any, materialType: string) {
+  setModel(asset: any, materialType="basic") {
     if (this.asset != null) this._clearMesh();
     this.asset = null;
     this.animation = null;
