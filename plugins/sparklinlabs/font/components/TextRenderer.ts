@@ -88,6 +88,9 @@ export default class TextRenderer extends SupEngine.ActorComponent {
     if (this.font.filtering === "pixelated") {
       this.texture.magFilter = SupEngine.THREE.NearestFilter;
       this.texture.minFilter = SupEngine.THREE.NearestFilter;
+    } else {
+      // See https://github.com/mrdoob/three.js/blob/4582bf1276c30c238e415cb79f4871e8560d102d/src/renderers/WebGLRenderer.js#L5664
+      this.texture.minFilter = SupEngine.THREE.LinearFilter;
     }
     this.texture.needsUpdate = true;
 
