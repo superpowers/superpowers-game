@@ -23,7 +23,7 @@ export default class TextRenderer extends SupEngine.ActorComponent {
     this.text = text;
     this._createMesh();
   }
-  setFont(font: FontPub ) {
+  setFont(font: FontPub) {
     this.font = font;
     this._createMesh();
   }
@@ -158,17 +158,17 @@ export default class TextRenderer extends SupEngine.ActorComponent {
         let bottom = 1 - ((tileY+1) * this.font.gridHeight - 0.2) / this.font.texture.image.height;
         let top    = 1 - (tileY     * this.font.gridHeight + 0.2) / this.font.texture.image.height;
 
-        uvs.array[x * 8 + 0] = left
-        uvs.array[x * 8 + 1] = bottom
+        uvs.array[x * 8 + 0] = left;
+        uvs.array[x * 8 + 1] = bottom;
 
-        uvs.array[x * 8 + 2] = right
-        uvs.array[x * 8 + 3] = bottom
+        uvs.array[x * 8 + 2] = right;
+        uvs.array[x * 8 + 3] = bottom;
 
-        uvs.array[x * 8 + 4] = right
-        uvs.array[x * 8 + 5] = top
+        uvs.array[x * 8 + 4] = right;
+        uvs.array[x * 8 + 5] = top;
 
-        uvs.array[x * 8 + 6] = left
-        uvs.array[x * 8 + 7] = top
+        uvs.array[x * 8 + 6] = left;
+        uvs.array[x * 8 + 7] = top;
       }
     }
   }

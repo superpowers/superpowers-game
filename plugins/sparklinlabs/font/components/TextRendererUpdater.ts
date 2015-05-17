@@ -139,7 +139,7 @@ export default class TextRendererUpdater {
     if (! image.complete) {
       let onImageLoaded = () => {
         image.removeEventListener("load", onImageLoaded);
-        this.fontAsset.pub.texture.needsUpdate = true
+        this.fontAsset.pub.texture.needsUpdate = true;
         this.textRenderer.setFont(this.fontAsset.pub);
       };
 
