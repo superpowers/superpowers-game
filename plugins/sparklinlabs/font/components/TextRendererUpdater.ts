@@ -101,10 +101,7 @@ export default class TextRendererUpdater {
     this.textRenderer.clearMesh();
 
     if (this.fontAsset.pub.isBitmap) {
-      if ((<any>this.fontAsset.pub.bitmap).byteLength !== 0) {
-        if (this.fontAsset.pub.texture == null) this._loadBitmapFont();
-        else this.textRenderer.setFont(this.fontAsset.pub);
-      }
+      if ((<any>this.fontAsset.pub.bitmap).byteLength !== 0) this._loadBitmapFont();
     } else {
       if (this.font == null && (<any>this.fontAsset.pub.font).byteLength !== 0) this._loadFont();
       else this.textRenderer.setFont(this.fontAsset.pub);
@@ -147,6 +144,8 @@ export default class TextRendererUpdater {
       };
 
       image.addEventListener("load", onImageLoaded);
+    } else {
+      this.textRenderer.setFont(this.fontAsset.pub);
     }
   }
 
