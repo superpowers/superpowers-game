@@ -10,6 +10,9 @@ export default class Camera extends ActorComponent {
   threeCamera: THREE.OrthographicCamera|THREE.PerspectiveCamera;
   viewport = { x: 0, y: 0, width: 1, height: 1 };
 
+  nearClippingPlane = 0.1;
+  farClippingPlane = 1000;
+
   cachedRatio: number;
   isOrthographic: boolean;
   projectionNeedsUpdate: boolean;
@@ -42,16 +45,14 @@ export default class Camera extends ActorComponent {
 
   setOrthographicMode(isOrthographic: boolean) {
     this.isOrthographic = isOrthographic;
-    let nearClippingPlane = 0.1;
-    let farClippingPlane = 1000;
 
     if (this.isOrthographic) {
       this.threeCamera = new THREE.OrthographicCamera(-this.orthographicScale * this.cachedRatio / 2,
         this.orthographicScale * this.cachedRatio / 2,
         this.orthographicScale / 2, -this.orthographicScale / 2,
-        nearClippingPlane, farClippingPlane);
+        this.nearClippingPlane, this.farClippingPlane);
     }
-    else this.threeCamera = new THREE.PerspectiveCamera(this.fov, this.cachedRatio, nearClippingPlane, farClippingPlane);
+    else this.threeCamera = new THREE.PerspectiveCamera(this.fov, this.cachedRatio, this.nearClippingPlane, this.farClippingPlane);
 
     this.projectionNeedsUpdate = true;
   }
@@ -71,6 +72,18 @@ export default class Camera extends ActorComponent {
     this.viewport.y = y;
     this.viewport.width = width;
     this.viewport.height = height;
+    this.projectionNeedsUpdate = true;
+  }
+
+  setNearClippingPlane(nearClippingPlane: number) {
+    this.nearClippingPlane = nearClippingPlane;
+    this.threeCamera.near = this.nearClippingPlane;
+    this.projectionNeedsUpdate = true;
+  }
+
+  setFarClippingPlane(farClippingPlane: number) {
+    this.farClippingPlane = farClippingPlane;
+    this.threeCamera.far = this.farClippingPlane;
     this.projectionNeedsUpdate = true;
   }
 
