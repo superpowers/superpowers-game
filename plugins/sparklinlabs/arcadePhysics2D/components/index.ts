@@ -71,8 +71,14 @@ module ArcadePhysics2D {
             for (let point = 0; point <= totalPoints; point++) {
               for (let layer in mapBody.layersIndex) {
                 let tile = mapBody.tileMapAsset.getTileAt(layer, Math.floor((x + point * testedWidth / totalPoints) / mapBody.mapToSceneFactor), y);
-                let solidProperty = mapBody.tileSetAsset.getTileProperties(tile)[mapBody.tileSetPropertyName]
-                if (solidProperty != null) {
+
+                let collide = false;
+                if (mapBody.tileSetPropertyName != null) {
+                  let solidProperty = mapBody.tileSetAsset.getTileProperties(tile)[mapBody.tileSetPropertyName]
+                  if (solidProperty != null) collide = true;
+                } else if (tile !== -1) collide = true;
+
+                if (collide) {
                   gotCollision = true;
                   body1.velocity.y = -body1.velocity.y * body1.bounceY;
                   body1.position.y = (y + 1) * mapBody.mapToSceneFactor + mapBody.position.y + body1.height / 2;
@@ -89,8 +95,14 @@ module ArcadePhysics2D {
             for (let point = 0; point <= totalPoints; point++) {
               for (let layer in mapBody.layersIndex) {
                 let tile = mapBody.tileMapAsset.getTileAt(layer, Math.floor((x + point * testedWidth / totalPoints) / mapBody.mapToSceneFactor), y);
-                let solidProperty = mapBody.tileSetAsset.getTileProperties(tile)[mapBody.tileSetPropertyName]
-                if (solidProperty != null) {
+
+                let collide = false;
+                if (mapBody.tileSetPropertyName != null) {
+                  let solidProperty = mapBody.tileSetAsset.getTileProperties(tile)[mapBody.tileSetPropertyName]
+                  if (solidProperty != null) collide = true;
+                } else if (tile !== -1) collide = true;
+
+                if (collide) {
                   gotCollision = true;
                   body1.velocity.y = -body1.velocity.y * body1.bounceY;
                   body1.position.y = y * mapBody.mapToSceneFactor + mapBody.position.y - body1.height / 2;
@@ -111,8 +123,14 @@ module ArcadePhysics2D {
             for (let point = 0; point <= totalPoints; point++) {
               for (let layer in mapBody.layersIndex) {
                 let tile = mapBody.tileMapAsset.getTileAt(layer, x, Math.floor((y + point * testedHeight / totalPoints) / mapBody.mapToSceneFactor));
-                let solidProperty = mapBody.tileSetAsset.getTileProperties(tile)[mapBody.tileSetPropertyName]
-                if (solidProperty != null) {
+
+                let collide = false;
+                if (mapBody.tileSetPropertyName != null) {
+                  let solidProperty = mapBody.tileSetAsset.getTileProperties(tile)[mapBody.tileSetPropertyName]
+                  if (solidProperty != null) collide = true;
+                } else if (tile !== -1) collide = true;
+
+                if (collide) {
                   gotCollision = true;
                   body1.velocity.x = -body1.velocity.x * body1.bounceX;
                   body1.position.x = (x + 1) * mapBody.mapToSceneFactor + mapBody.position.x + body1.width / 2;
@@ -130,8 +148,14 @@ module ArcadePhysics2D {
             for (let point = 0; point <= totalPoints; point++) {
               for (let layer in mapBody.layersIndex) {
                 let tile = mapBody.tileMapAsset.getTileAt(layer, x, Math.floor((y + point * testedHeight / totalPoints) / mapBody.mapToSceneFactor));
-                let solidProperty = mapBody.tileSetAsset.getTileProperties(tile)[mapBody.tileSetPropertyName]
-                if (solidProperty != null) {
+
+                let collide = false;
+                if (mapBody.tileSetPropertyName != null) {
+                  let solidProperty = mapBody.tileSetAsset.getTileProperties(tile)[mapBody.tileSetPropertyName]
+                  if (solidProperty != null) collide = true;
+                } else if (tile !== -1) collide = true;
+
+                if (collide) {
                   gotCollision = true;
                   body1.velocity.x = -body1.velocity.x * body1.bounceX;
                   body1.position.x = x * mapBody.mapToSceneFactor + mapBody.position.x - body1.width / 2;

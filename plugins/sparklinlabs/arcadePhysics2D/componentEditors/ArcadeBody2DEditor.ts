@@ -75,7 +75,8 @@ export default class ArcadeBody2DEditor {
     let tileSetPropertyNameRow = SupClient.table.appendRow(this.tbody, "Tile Set Property");
     this.tileMapFields["tileSetPropertyName"] = SupClient.table.appendTextField(tileSetPropertyNameRow.valueCell, config.tileSetPropertyName);
     this.tileMapFields["tileSetPropertyName"].addEventListener("change", (event: any) => {
-      this.editConfig("setProperty", "tileSetPropertyName", event.target.value);
+      let tileSetPropertyName = (event.target.value !== "") ? event.target.value : null
+      this.editConfig("setProperty", "tileSetPropertyName", tileSetPropertyName);
     });
 
     let layersIndexRow = SupClient.table.appendRow(this.tbody, "Layers");

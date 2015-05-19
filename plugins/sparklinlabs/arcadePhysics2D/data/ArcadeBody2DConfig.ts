@@ -26,7 +26,7 @@ export default class ArcadeBody2DConfig extends SupCore.data.base.ComponentConfi
 
     // TileMap
     tileMapAssetId: { type: "string", mutable: true },
-    tileSetPropertyName: { type: "string", mutable: true },
+    tileSetPropertyName: { type: "string?", mutable: true },
     layersIndex: { type: "string?", min: 0, mutable: true },
   }
 
@@ -41,7 +41,7 @@ export default class ArcadeBody2DConfig extends SupCore.data.base.ComponentConfi
       offsetY: 0,
 
       tileMapAssetId: "",
-      tileSetPropertyName: "solid",
+      tileSetPropertyName: null,
       layersIndex: null,
     }
     return newConfig;
@@ -56,7 +56,7 @@ export default class ArcadeBody2DConfig extends SupCore.data.base.ComponentConfi
     if (this.pub.type == null) {
       this.pub.type = "box";
       this.pub.tileMapAssetId = "";
-      this.pub.tileSetPropertyName = "solid";
+      this.pub.tileSetPropertyName = null;
       this.pub.layersIndex = null;
     }
   }
