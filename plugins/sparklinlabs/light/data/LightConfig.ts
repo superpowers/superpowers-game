@@ -14,7 +14,7 @@ export interface LightConfigPub {
 export default class LightConfig extends SupCore.data.base.ComponentConfig {
 
   static schema = {
-    type: { type: "enum", items: ["ambient", "point", "spot", 'directional'], mutable: true },
+    type: { type: "enum", items: ["ambient", "point", "spot", "directional"], mutable: true },
     color: { type: "string", mutable: true },
     intensity: { type: "number", min: 0, mutable: true},
     distance: { type: "number", min: 0, mutable: true},

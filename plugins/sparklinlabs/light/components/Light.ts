@@ -101,6 +101,12 @@ export default class Light extends SupEngine.ActorComponent {
 
   _destroy() {
     this.actor.threeObject.remove(this.light);
+    if (this.castShadow) {
+      this.actor.gameInstance.threeScene.traverse((object: any) => {
+        let material: THREE.Material = object.material;
+        if (material != null) material.needsUpdate = true;
+      })
+    }
     super._destroy();
   }
 }

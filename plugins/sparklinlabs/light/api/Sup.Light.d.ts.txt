@@ -1,5 +1,22 @@
+interface LightOptions {
+  type: Sup.Light.Type;
+  color: string;
+  intensity?: number;
+  distance?: number;
+  target?: {
+    x: number;
+    y: number;
+    z: number;
+  };
+  castShadow?: boolean;
+}
+
 declare module Sup {
-  class Light {
-    constructor(actor: Actor);
+  class Light extends Sup.ActorComponent {
+    constructor(actor: Actor, options: LightOptions);
+  }
+
+  module Light {
+    enum Type { Ambient, Point, Spot, Directional }
   }
 }

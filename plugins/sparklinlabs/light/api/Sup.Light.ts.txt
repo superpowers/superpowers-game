@@ -1,14 +1,27 @@
 module Sup {
   export class Light extends Sup.ActorComponent {
-    constructor(actor) {
+    constructor(actor, options) {
       super(actor);
       this.__inner = new SupEngine.componentClasses.Light(this.actor.__inner);
       this.__inner.__outer = this;
       this.actor.light = this;
+
+      if (options == null) return;
+      let types = ["ambient", "point", "spot", "directional"];
+      this.__inner.setType(types[options.type]);
+      this.__inner.setColor(options.color);
+      if (options.intensity != null) this.__inner.setIntensity(options.intensity);
+      if (options.distance != null) this.__inner.setDistance(options.distance);
+      if (options.target != null) this.__inner.setTarget(options.target.x, options.target.y, options.target.z);
+      if (options.castShadow != null) this.__inner.setCastShadow(options.castShadow);
     }
     destroy() {
       this.actor.light = null;
       super.destroy();
     }
+  }
+
+  export module Light {
+    export enum Type { Ambient, Point, Spot, Directional };
   }
 }
