@@ -12,5 +12,9 @@ declare module Sup {
     getWidthToHeightRatio(): number;
     setViewport(x: number, y: number, width: number, height: number): Camera;
     getViewport(): { x: number; y: number; width: number; height: number; };
+    setNearClippingPlane(nearClippingPlane: number) : Camera;
+    getNearClippingPlane(): number;
+    setFarClippingPlane(farClippingPlane: number): Camera;
+    getFarClippingPlane(): number;
   }
 }

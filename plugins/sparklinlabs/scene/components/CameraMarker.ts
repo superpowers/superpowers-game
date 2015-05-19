@@ -7,6 +7,8 @@ export default  class CameraMarker extends SupEngine.ActorComponent {
   static Updater = CameraUpdater;
 
   viewport: { x: number; y: number; width: number; height: number; };
+  nearClippingPlane: number;
+  farClippingPlane: number;
   isOrthographic: boolean;
   fov: number;
   orthographicScale: number;
@@ -36,6 +38,8 @@ export default  class CameraMarker extends SupEngine.ActorComponent {
     this.setFOV(config.fov);
     this.setOrthographicScale(config.orthographicScale);
     this.setViewport(config.viewport.x, config.viewport.y, config.viewport.width, config.viewport.height);
+    this.setNearClippingPlane(config.nearClippingPlane);
+    this.setFarClippingPlane(config.farClippingPlane);
   }
 
   setOrthographicMode(isOrthographic: boolean) {
@@ -61,14 +65,24 @@ export default  class CameraMarker extends SupEngine.ActorComponent {
     this.projectionNeedsUpdate = true;
   }
 
+  setNearClippingPlane(nearClippingPlane: number) {
+    this.nearClippingPlane = nearClippingPlane;
+    this.projectionNeedsUpdate = true;
+  }
+
+  setFarClippingPlane(farClippingPlane: number) {
+    this.farClippingPlane = farClippingPlane;
+    this.projectionNeedsUpdate = true;
+  }
+
   setRatio(ratio: number) {
     this.ratio = ratio;
     this.projectionNeedsUpdate = true;
   }
 
   _resetGeometry() {
-    let near = 0.1;
-    let far = 500;
+    let near = this.nearClippingPlane;
+    let far = this.farClippingPlane;
 
     let farTopRight: THREE.Vector3;
     let nearTopRight: THREE.Vector3;

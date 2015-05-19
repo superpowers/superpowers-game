@@ -10,6 +10,8 @@ export default class CameraEditor {
   modeSelectBox: HTMLSelectElement;
   fovField: HTMLInputElement;
   orthographicScaleField: HTMLInputElement;
+  nearClippingPlaneField: HTMLInputElement;
+  farClippingPlaneField: HTMLInputElement;
   viewportFields: { x: HTMLInputElement; y: HTMLInputElement; width: HTMLInputElement; height: HTMLInputElement } =
     { x: null, y: null, width: null, height: null };
 
@@ -34,6 +36,12 @@ export default class CameraEditor {
 
     let orthographicScaleRow = SupClient.table.appendRow(tbody, 'Orthographic scale');
     this.orthographicScaleField = SupClient.table.appendNumberField(orthographicScaleRow.valueCell, config.orthographicScale, 0.1);
+
+    let nearClippingPlaneRow = SupClient.table.appendRow(tbody, 'Near plane');
+    this.nearClippingPlaneField = SupClient.table.appendNumberField(nearClippingPlaneRow.valueCell, config.nearClippingPlane, 0.1);
+
+    let farClippingPlaneRow = SupClient.table.appendRow(tbody, 'Far plane');
+    this.farClippingPlaneField = SupClient.table.appendNumberField(farClippingPlaneRow.valueCell, config.farClippingPlane, 0.1);
 
     let viewportHeaderRow = document.createElement("tr");
     let headerTh = document.createElement("th");
@@ -61,6 +69,8 @@ export default class CameraEditor {
     this.modeSelectBox.addEventListener('change', this._onChangeMode);
     this.fovField.addEventListener('input', this._onChangeFOV);
     this.orthographicScaleField.addEventListener('input', this._onChangeOrthographicScale);
+    this.nearClippingPlaneField.addEventListener('change', this._onChangeNearClippingPlane);
+    this.farClippingPlaneField.addEventListener('change', this._onChangeFarClippingPlane);
     this.viewportFields.x.addEventListener('input', this._onChangeViewportX);
     this.viewportFields.y.addEventListener('input', this._onChangeViewportY);
     this.viewportFields.width.addEventListener('input', this._onChangeViewportWidth);
@@ -74,6 +84,8 @@ export default class CameraEditor {
       case 'mode': { this.modeSelectBox.value = value; break; }
       case 'fov': { this.fovField.value = value; break; }
       case 'orthographicScale': { this.orthographicScaleField.value = value; break; }
+      case 'nearClippingPlane': { this.nearClippingPlaneField.value = value; break; }
+      case 'farClippingPlane': { this.farClippingPlaneField.value = value; break; }
       case 'viewport.x': { this.viewportFields.x.value = value; break; }
       case 'viewport.y': { this.viewportFields.y.value = value; break; }
       case 'viewport.width': { this.viewportFields.width.value = value; break; }
@@ -84,6 +96,8 @@ export default class CameraEditor {
   _onChangeMode = (event: any) => { this.editConfig('setProperty', 'mode', event.target.value); }
   _onChangeFOV = (event: any) => { this.editConfig('setProperty', 'fov', parseFloat(event.target.value)); }
   _onChangeOrthographicScale = (event: any) => { this.editConfig('setProperty', 'orthographicScale', parseFloat(event.target.value)); }
+  _onChangeNearClippingPlane = (event: any) => { this.editConfig('setProperty', 'nearClippingPlane', parseFloat(event.target.value)); }
+  _onChangeFarClippingPlane = (event: any) => { this.editConfig('setProperty', 'farClippingPlane', parseFloat(event.target.value)); }
   _onChangeViewportX = (event: any) => { this.editConfig('setProperty', 'viewport.x', parseFloat(event.target.value)); }
   _onChangeViewportY = (event: any) => { this.editConfig('setProperty', 'viewport.y', parseFloat(event.target.value)); }
   _onChangeViewportWidth = (event: any) => { this.editConfig('setProperty', 'viewport.width', parseFloat(event.target.value)); }

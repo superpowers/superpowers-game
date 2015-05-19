@@ -38,5 +38,10 @@ module Sup {
         height: this.__inner.viewport.height
       };
     }
+
+    setNearClippingPlane(nearClippingPlane) { this.__inner.setNearClippingPlane(nearClippingPlane); return this; }
+    getNearClippingPlane() { return this.__inner.nearClippingPlane; }
+    setFarClippingPlane(farClippingPlane) { this.__inner.setFarClippingPlane(farClippingPlane); return this; }
+    getFarClippingPlane() { return this.__inner.farClippingPlane; }
   }
 }

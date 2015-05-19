@@ -12,7 +12,9 @@ export default class CameraConfig extends SupCore.data.base.ComponentConfig {
         width: { type: "number", min: 0, max: 1, mutable: true },
         height: { type: "number", min: 0, max: 1, mutable: true },
       }
-    }
+    },
+    nearClippingPlane: { type: "number", min: 0.1, mutable: true },
+    farClippingPlane: { type: "number", min: 0.1, mutable: true }
   };
 
   static create() {
@@ -21,10 +23,16 @@ export default class CameraConfig extends SupCore.data.base.ComponentConfig {
       fov: 45,
       orthographicScale: 10,
       viewport: { x: 0, y: 0, width: 1, height: 1 },
+      nearClippingPlane: 0.1,
+      farClippingPlane: 1000
     };
   };
 
   constructor(pub: any) {
+    // New setting introduced in v0.7
+    if (pub.nearClippingPlane == null) pub.nearClippingPlane = 0.1;
+    if (pub.farClippingPlane == null) pub.farClippingPlane = 1000;
+
     super(pub, CameraConfig.schema);
   }
 }
