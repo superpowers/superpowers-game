@@ -74,7 +74,7 @@ export default  class CameraMarker extends SupEngine.ActorComponent {
     let nearTopRight: THREE.Vector3;
 
     if (this.isOrthographic) {
-      let right = this.orthographicScale / 2;
+      let right = this.orthographicScale / 2 * this.viewport.width / this.viewport.height;
       if (this.ratio != null) right *= this.ratio;
       farTopRight = new THREE.Vector3(right, this.orthographicScale / 2, far);
       nearTopRight = new THREE.Vector3(right, this.orthographicScale / 2, near);
