@@ -116,7 +116,7 @@ export default class TextRenderer extends SupEngine.ActorComponent {
 
   _createBitmapMesh() {
     let texts = this.text.split("\n");
-    for (let index in texts) {
+    for (let index = 0; index < texts.length; index++) {
       let text = texts[index];
 
       let geometry = new TextRendererGeometry(this.font.gridWidth * text.length, this.font.gridHeight, text.length, 1);
@@ -132,11 +132,12 @@ export default class TextRenderer extends SupEngine.ActorComponent {
         case "center":  this.threeMeshes[index].position.setX(-geometry.width / 2 / this.font.pixelsPerUnit); break;
         case "right":   this.threeMeshes[index].position.setX(-geometry.width / this.font.pixelsPerUnit); break;
       }
-      let y = (0.5 + (index - (texts.length - 1) / 2 )) * this.font.gridHeight / this.font.pixelsPerUnit;
-      let offset = (texts.length - 1.5) * this.font.gridHeight / this.font.pixelsPerUnit;
+
+      let y: number;
       switch (this.options.verticalAlignment) {
-        case "top":    y += offset; break;
-        case "bottom": y -= offset; break;
+        case "center": y = (0.5 + (index - (texts.length - 1) / 2 )) * this.font.gridHeight / this.font.pixelsPerUnit; break;
+        case "top":    y = (1 + index) * this.font.gridHeight / this.font.pixelsPerUnit; break;
+        case "bottom": y = (index - texts.length + 1) * this.font.gridHeight / this.font.pixelsPerUnit; break;
       }
       this.threeMeshes[index].position.setY(-y);
 
