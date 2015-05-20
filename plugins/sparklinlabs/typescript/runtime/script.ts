@@ -92,6 +92,13 @@ export function start(player: SupRuntime.Player, callback: Function) {
     return count;
   }
 
+  jsGlobals.script =
+    `(function() {
+    var player = _player; _player = undefined;
+    ${jsGlobals.script}
+    })();
+    `;
+
   let line = getLineCounts(jsGlobals.script);
   let combinedSourceMap = combine.create("bundle.js");
   for (let file of results.files) {
@@ -102,10 +109,12 @@ export function start(player: SupRuntime.Player, callback: Function) {
 
   let convertedSourceMap = convert.fromBase64(combinedSourceMap.base64()).toObject();
   let url = URL.createObjectURL(new Blob([ JSON.stringify(convertedSourceMap) ]));
-  let code = jsGlobals.script + results.script + `\n//# sourceMappingURL=${url}`;
+  let code =
+    `${jsGlobals.script}${results.script}
+    //# sourceMappingURL=${url}`;
 
   // Execute the generated code
-  let scriptFunction = new Function("player", code);
+  let scriptFunction = new Function("_player", code);
   scriptFunction(player);
 
   callback()
