@@ -17,7 +17,7 @@ require("codemirror/mode/javascript/javascript");
 let PerfectResize = require("perfect-resize");
 
 let qs = require("querystring").parse(window.location.search.slice(1));
-let info = { projectId: qs.project, assetId: qs.asset };
+let info = { projectId: qs.project, assetId: qs.asset, line: qs.line, ch: qs.ch };
 let data: { clientId: number; projectClient?: SupClient.ProjectClient; assetsById?: {[id: string]: ScriptAsset}; asset?: ScriptAsset; };
 let ui: {
   editor?: CodeMirror.EditorFromTextArea;
@@ -56,6 +56,9 @@ function start() {
 
   window.addEventListener("message", (event) => {
     if (event.data.type === "activate") ui.editor.focus();
+
+    if (event.data.line != null && event.data.ch != null)
+      ui.editor.getDoc().setCursor({ line: parseInt(event.data.line), ch: parseInt(event.data.ch) });
   });
 
   let extraKeys = {
@@ -253,6 +256,7 @@ var scriptSubscriber = {
       ui.editor.getDoc().setValue(data.asset.pub.draft);
       ui.editor.getDoc().clearHistory();
       ui.editor.setOption("readOnly", false);
+      if (info.line != null) ui.editor.getDoc().setCursor({ line: parseInt(info.line), ch: parseInt(info.ch) });
     }
 
     if(!allScriptsReceived && Object.keys(scripts).length === scriptNames.length) {
@@ -458,7 +462,6 @@ function refreshErrors(errors: Array<{file: string; position: {line: number; cha
       continue;
     }
 
-    errorRow.classList.add("self");
     ui.errorsTBody.insertBefore(errorRow, (lastSelfErrowRow != null) ? lastSelfErrowRow.nextElementSibling : ui.errorsTBody.firstChild);
     lastSelfErrowRow = errorRow;
     selfErrorsCount++;
@@ -502,6 +505,8 @@ function onErrorTBodyClick(event: MouseEvent) {
     ui.editor.focus();
   } else {
     // TODO: Post message to parent and switch to correct tab
+    let origin: string = (<any>window.location).origin;
+    if (window.parent != null) window.parent.postMessage({ type: "openEntry", id: assetId, options: { line, ch: character } }, origin);
   }
 }
 
