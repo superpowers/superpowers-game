@@ -2,11 +2,13 @@ import { ModelRendererConfigPub } from "../data/ModelRendererConfig";
 import ModelAsset from "../data/ModelAsset";
 
 export default class ModelRendererEditor {
+  tbody: HTMLTableSectionElement
   projectClient: SupClient.ProjectClient;
   editConfig: any;
 
   modelAssetId: string;
   animationId: string;
+  shaderAssetId: string;
 
   modelTextField: HTMLInputElement;
   animationSelectBox: HTMLSelectElement;
@@ -21,14 +23,17 @@ export default class ModelRendererEditor {
   opacityField: HTMLInputElement;
 
   materialSelectBox: HTMLSelectElement;
+  shaderTextField: HTMLInputElement;
 
   asset: ModelAsset;
 
   constructor(tbody: HTMLTableSectionElement, config: ModelRendererConfigPub, projectClient: SupClient.ProjectClient, editConfig: any) {
+    this.tbody = tbody;
     this.projectClient = projectClient;
     this.editConfig = editConfig;
     this.modelAssetId = config.modelAssetId;
     this.animationId = config.animationId;
+    this.shaderAssetId = config.shaderAssetId;
 
     let modelRow = SupClient.table.appendRow(tbody, "Model");
     this.modelTextField = SupClient.table.appendTextField(modelRow.valueCell, "");
@@ -98,11 +103,17 @@ export default class ModelRendererEditor {
     this.opacityField.disabled = ! config.overrideOpacity;
 
     let materialRow = SupClient.table.appendRow(tbody, "Material");
-    this.materialSelectBox = SupClient.table.appendSelectBox(materialRow.valueCell, { "basic": "Basic", "phong": "Phong" }, config.materialType);
+    this.materialSelectBox = SupClient.table.appendSelectBox(materialRow.valueCell, { "basic": "Basic", "phong": "Phong", "shader": "Shader" }, config.materialType);
     this.materialSelectBox.addEventListener("change", (event: any) => {
       this.editConfig("setProperty", "materialType", event.target.value);
     })
     this.materialSelectBox.disabled = true;
+    
+    let shaderRow = SupClient.table.appendRow(tbody, "Shader");
+    this.shaderTextField = SupClient.table.appendTextField(shaderRow.valueCell, "");
+    this.shaderTextField.addEventListener("input", this._onChangeShaderAsset);
+    this.shaderTextField.disabled = true;
+    this._updateShaderField(config.materialType);
 
     this.projectClient.subEntries(this);
   }
@@ -168,6 +179,13 @@ export default class ModelRendererEditor {
 
       case "materialType":
         this.materialSelectBox.value = value;
+        this._updateShaderField(value);
+        break;
+
+      case "shader":
+        this.shaderAssetId = value;
+        if (value != null) this.shaderTextField.value = this.projectClient.entries.getPathFromId(value);
+        else this.shaderTextField.value = "";
         break;
     }
   }
@@ -180,21 +198,34 @@ export default class ModelRendererEditor {
     this.receiveShadowField.disabled = false;
     this.colorField.disabled = false;
     this.colorPicker.disabled = false;
+    this.shaderTextField.disabled = false;
 
     if (entries.byId[this.modelAssetId] != null) {
       this.modelTextField.value = entries.getPathFromId(this.modelAssetId);
       this.projectClient.subAsset(this.modelAssetId, "model", this);
     }
+
+    if (entries.byId[this.shaderAssetId] != null) {
+      this.shaderTextField.value = entries.getPathFromId(this.shaderAssetId);
+    }
   }
 
   onEntryAdded(entry: any, parentId: string, index: number) {}
   onEntryMoved(id: string, parentId: string, index: number) {
-    if (id !== this.modelAssetId) return;
-    this.modelTextField.value = this.projectClient.entries.getPathFromId(this.modelAssetId);
+    if (id === this.modelAssetId) {
+      this.modelTextField.value = this.projectClient.entries.getPathFromId(this.modelAssetId);
+    } else if (id === this.shaderAssetId) {
+      this.shaderTextField.value = this.projectClient.entries.getPathFromId(this.shaderAssetId);
+    }
   }
   onSetEntryProperty(id: string, key: string, value: any) {
-    if (id !== this.modelAssetId) return;
-    this.modelTextField.value = this.projectClient.entries.getPathFromId(this.modelAssetId);
+    if (key !== "name") return;
+
+    if (id === this.modelAssetId) {
+      this.modelTextField.value = this.projectClient.entries.getPathFromId(this.modelAssetId);
+    } else if (id === this.shaderAssetId) {
+      this.shaderTextField.value = this.projectClient.entries.getPathFromId(this.shaderAssetId);
+    }
   }
   onEntryTrashed(id: string) {}
 
@@ -245,6 +276,13 @@ export default class ModelRendererEditor {
     }
   }
 
+  _updateShaderField(materialType: string) {
+    let shaderRow = this.shaderTextField.parentElement.parentElement;
+    if (materialType === "shader") {
+      if (shaderRow.parentElement == null) this.tbody.appendChild(shaderRow);
+    } else if (shaderRow.parentElement != null) shaderRow.parentElement.removeChild(shaderRow);
+  }
+
   _onChangeModelAsset = (event: any) => {
     if (event.target.value === "") {
       this.editConfig("setProperty", "modelAssetId", null);
@@ -262,5 +300,13 @@ export default class ModelRendererEditor {
   _onChangeModelAnimation = (event: any) => {
     let animationId = (event.target.value === "") ? null : event.target.value;
     this.editConfig("setProperty", "animationId", animationId);
+  }
+
+  _onChangeShaderAsset = (event: any) => {
+    if (event.target.value === "") this.editConfig("setProperty", "shaderAssetId", null);
+    else {
+      let entry = SupClient.findEntryByPath(this.projectClient.entries.pub, event.target.value);
+      if (entry != null && entry.type === "shader") this.editConfig("setProperty", "shaderAssetId", entry.id);
+    }
   }
 }

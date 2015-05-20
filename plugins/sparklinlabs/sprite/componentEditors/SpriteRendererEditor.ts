@@ -2,11 +2,13 @@ import { SpriteRendererConfigPub } from "../data/SpriteRendererConfig";
 import SpriteAsset from "../data/SpriteAsset";
 
 export default class SpriteRendererEditor {
+  tbody: HTMLTableSectionElement
   projectClient: SupClient.ProjectClient;
   editConfig: any;
 
   spriteAssetId: string;
   animationId: string;
+  shaderAssetId: string;
 
   spriteTextField: HTMLInputElement;
   animationSelectBox: HTMLSelectElement;
@@ -20,21 +22,26 @@ export default class SpriteRendererEditor {
   transparentField: HTMLInputElement;
   opacityField: HTMLInputElement;
   materialSelectBox: HTMLSelectElement;
+  shaderTextField: HTMLInputElement;
 
   asset: SpriteAsset;
 
   constructor(tbody: HTMLTableSectionElement, config: SpriteRendererConfigPub, projectClient: SupClient.ProjectClient, editConfig: any) {
+    this.tbody = tbody;
     this.projectClient = projectClient;
     this.editConfig = editConfig;
     this.spriteAssetId = config.spriteAssetId;
     this.animationId = config.animationId;
+    this.shaderAssetId = config.shaderAssetId;
 
     let spriteRow = SupClient.table.appendRow(tbody, "Sprite");
     this.spriteTextField = SupClient.table.appendTextField(spriteRow.valueCell, "");
+    this.spriteTextField.addEventListener("input", this._onChangeSpriteAsset);
     this.spriteTextField.disabled = true;
 
     let animationRow = SupClient.table.appendRow(tbody, "Animation");
     this.animationSelectBox = SupClient.table.appendSelectBox(animationRow.valueCell, { "": "(None)" });
+    this.animationSelectBox.addEventListener("change", this._onChangeSpriteAnimation);
     this.animationSelectBox.disabled = true;
     
     let flipRow = SupClient.table.appendRow(tbody, "Flip");
@@ -118,14 +125,17 @@ export default class SpriteRendererEditor {
     this.opacityField.disabled = ! config.overrideOpacity;
 
     let materialRow = SupClient.table.appendRow(tbody, "Material");
-    this.materialSelectBox = SupClient.table.appendSelectBox(materialRow.valueCell, { "basic": "Basic", "phong": "Phong" }, config.materialType);
+    this.materialSelectBox = SupClient.table.appendSelectBox(materialRow.valueCell, { "basic": "Basic", "phong": "Phong", "shader": "Shader" }, config.materialType);
     this.materialSelectBox.addEventListener("change", (event: any) => {
       this.editConfig("setProperty", "materialType", event.target.value);
     })
     this.materialSelectBox.disabled = true;
-
-    this.spriteTextField.addEventListener("input", this._onChangeSpriteAsset);
-    this.animationSelectBox.addEventListener("change", this._onChangeSpriteAnimation);
+    
+    let shaderRow = SupClient.table.appendRow(tbody, "Shader");
+    this.shaderTextField = SupClient.table.appendTextField(shaderRow.valueCell, "");
+    this.shaderTextField.addEventListener("input", this._onChangeShaderAsset);
+    this.shaderTextField.disabled = true;
+    this._updateShaderField(config.materialType);
 
     this.projectClient.subEntries(this);
   }
@@ -194,6 +204,13 @@ export default class SpriteRendererEditor {
 
       case "materialType":
         this.materialSelectBox.value = value;
+        this._updateShaderField(value);
+        break;
+        
+      case "shader":
+        this.shaderAssetId = value;
+        if (value != null) this.shaderTextField.value = this.projectClient.entries.getPathFromId(value);
+        else this.shaderTextField.value = "";
         break;
     }
   }
@@ -206,21 +223,34 @@ export default class SpriteRendererEditor {
     this.colorField.disabled = false;
     this.colorPicker.disabled = false;
     this.materialSelectBox.disabled = false;
+    this.shaderTextField.disabled = false;
 
     if (entries.byId[this.spriteAssetId] != null) {
       this.spriteTextField.value = entries.getPathFromId(this.spriteAssetId);
       this.projectClient.subAsset(this.spriteAssetId, "sprite", this);
     }
+    
+    if (entries.byId[this.shaderAssetId] != null) {
+      this.shaderTextField.value = entries.getPathFromId(this.shaderAssetId);
+    }
   }
 
   onEntryAdded(entry: any, parentId: string, index: number) {}
   onEntryMoved(id: string, parentId: string, index: number) {
-    if (id !== this.spriteAssetId) return;
-    this.spriteTextField.value = this.projectClient.entries.getPathFromId(this.spriteAssetId);
+    if (id === this.spriteAssetId) {
+      this.spriteTextField.value = this.projectClient.entries.getPathFromId(this.spriteAssetId);
+    } else if (id === this.shaderAssetId) {
+      this.shaderTextField.value = this.projectClient.entries.getPathFromId(this.shaderAssetId);
+    }
   }
   onSetEntryProperty(id: string, key: string, value: any) {
-    if (id !== this.spriteAssetId) return;
-    this.spriteTextField.value = this.projectClient.entries.getPathFromId(this.spriteAssetId);
+    if (key !== "name") return;
+    
+    if (id === this.spriteAssetId) {
+      this.spriteTextField.value = this.projectClient.entries.getPathFromId(this.spriteAssetId);
+    } else if (id === this.shaderAssetId) {
+      this.shaderTextField.value = this.projectClient.entries.getPathFromId(this.shaderAssetId);
+    }
   }
   onEntryTrashed(id: string) {}
 
@@ -270,6 +300,13 @@ export default class SpriteRendererEditor {
       this.animationSelectBox.removeChild(child);
     }
   }
+  
+  _updateShaderField(materialType: string) {
+    let shaderRow = this.shaderTextField.parentElement.parentElement;
+    if (materialType === "shader") {
+      if (shaderRow.parentElement == null) this.tbody.appendChild(shaderRow);
+    } else if (shaderRow.parentElement != null) shaderRow.parentElement.removeChild(shaderRow);
+  }
 
   _onChangeSpriteAsset = (event: any) => {
     if (event.target.value === "") {
@@ -283,10 +320,18 @@ export default class SpriteRendererEditor {
         this.editConfig("setProperty", "animationId", null);
       }
     }
-    }
+  }
 
   _onChangeSpriteAnimation = (event: any) => {
     let animationId = (event.target.value === "") ? null : event.target.value;
     this.editConfig("setProperty", "animationId", animationId);
+  }
+  
+  _onChangeShaderAsset = (event: any) => {
+    if (event.target.value === "") this.editConfig("setProperty", "shaderAssetId", null);
+    else {
+      let entry = SupClient.findEntryByPath(this.projectClient.entries.pub, event.target.value);
+      if (entry != null && entry.type === "shader") this.editConfig("setProperty", "shaderAssetId", entry.id);
+    }
   }
 }

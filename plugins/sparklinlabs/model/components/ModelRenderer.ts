@@ -50,6 +50,7 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
   hasPoseBeenUpdated = false;
 
   asset: any;
+  material: THREE.MeshBasicMaterial|THREE.MeshPhongMaterial|THREE.ShaderMaterial;
   threeMesh: THREE.Mesh|THREE.SkinnedMesh;
   materialType = "basic";
   castShadow = false;
@@ -77,6 +78,7 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
     this.actor.threeObject.remove(this.threeMesh);
     this.threeMesh.traverse((obj: any) => { if (obj.dispose != null) obj.dispose() });
     this.threeMesh = null;
+    this.material = null;
   }
 
   _destroy() {
@@ -85,7 +87,7 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
     super._destroy();
   }
 
-  setModel(asset: any, materialType?: string) {
+  setModel(asset: any, materialType?: string, customShader?: any) {
     if (this.asset != null) this._clearMesh();
     this.asset = null;
     this.animation = null;
@@ -127,17 +129,28 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
       geometry.addAttribute("skinWeight", new THREE.BufferAttribute(buffer, 4));
     }
 
-    let material: THREE.MeshBasicMaterial|THREE.MeshPhongMaterial;
-    if (this.materialType === "basic") material = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide, alphaTest: 0.1 });
-    else if (this.materialType === "phong") material = new THREE.MeshPhongMaterial({ side: THREE.DoubleSide, alphaTest: 0.1 });
-    material.color.setRGB(this.color.r, this.color.g, this.color.b);
+    if (this.materialType === "shader")
+      this.material = SupEngine.componentClasses["Shader"].createShaderMaterial(
+        customShader,
+        this.asset.textures.diffuse,
+        geometry
+      );
 
-    if(this.asset.textures.diffuse != null) {
+    else {
+      let material: THREE.MeshBasicMaterial|THREE.MeshPhongMaterial
+      if (this.materialType === "basic") material = new THREE.MeshBasicMaterial();
+      else if (this.materialType === "phong") material = new THREE.MeshPhongMaterial();
+
       material.map = this.asset.textures.diffuse;
+      material.alphaTest = 0.1;
+      material.side = THREE.DoubleSide;
+      material.color.setRGB(this.color.r, this.color.g, this.color.b);
+      this.material = material;
+      this.setOpacity(this.opacity);
     }
 
     if(this.asset.bones != null) {
-      this.threeMesh = new THREE.SkinnedMesh(geometry, material);
+      this.threeMesh = new THREE.SkinnedMesh(geometry, this.material);
 
       if (this.asset.upAxisMatrix != null) {
         let upAxisMatrix = new THREE.Matrix4().fromArray(this.asset.upAxisMatrix);
@@ -165,15 +178,14 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
 
       let useVertexTexture = false;
       (<THREE.SkinnedMesh>this.threeMesh).bind(new THREE.Skeleton(bones, undefined, useVertexTexture));
-      material.skinning = true;
+      this.material.skinning = true;
 
       this.updateAnimationsByName();
     } else {
-      this.threeMesh = new THREE.Mesh(geometry, material);
+      this.threeMesh = new THREE.Mesh(geometry, this.material);
     }
 
     this.setCastShadow(this.castShadow);
-    this.setOpacity(this.opacity);
     this.threeMesh.receiveShadow = this.receiveShadow;
 
     this.actor.threeObject.add(this.threeMesh);
@@ -195,15 +207,14 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
   
   setOpacity(opacity: number) {
     this.opacity = opacity;
-    let material = this.threeMesh.material;
     if (this.opacity != null) {
-      material.transparent = true;
-      material.opacity = this.opacity;
+      this.material.transparent = true;
+      this.material.opacity = this.opacity;
     } else {
-      material.transparent = false;
-      material.opacity = 1;
+      this.material.transparent = false;
+      this.material.opacity = 1;
     }
-    material.needsUpdate = true;
+    this.material.needsUpdate = true;
    }
 
   setShowSkeleton(show: boolean) {
@@ -351,6 +362,11 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
   }
 
   update() {
+    if (this.material != null) {
+      let uniforms = (<THREE.ShaderMaterial>this.material).uniforms;
+      if (uniforms != null) uniforms.time.value += 1 / this.actor.gameInstance.framesPerSecond;
+    }
+    
     if (this.hasPoseBeenUpdated) {
       this.hasPoseBeenUpdated = false;
       return;

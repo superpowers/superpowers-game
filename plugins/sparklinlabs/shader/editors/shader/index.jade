@@ -1,0 +1,66 @@
+doctype html
+html
+  head
+    link(rel="stylesheet",href="/client/styles/reset.css")
+    link(rel="stylesheet",href="/client/styles/perfectResize.css")
+    link(rel="stylesheet",href="/client/styles/treeView.css")
+    link(rel="stylesheet",href="/client/styles/dialogs.css")
+    link(rel="stylesheet",href="index.css")
+
+  body
+    .top
+      .left
+        .uniforms
+          span Uniforms
+          .list
+            table
+              tr.grey
+                td Name
+                td Type
+                td Value
+              tr.grey
+                td map
+                td t
+                td "Your sprite/model texture"
+              tr.grey
+                td time
+                td f
+                td 0
+
+          .new-uniform
+            input(placeholder="New uniform")
+
+        .attributes
+          span Attributes
+          .list
+            table
+              tr.grey
+                td Name
+                td Type
+                td Value
+
+          .new-attribute
+            input(placeholder="New attribute")
+
+      .preview
+        .title
+          span Preview
+          select
+            option Plane
+            option Box
+            option Sphere
+        canvas(tabindex="0")
+
+    .shaders
+      .vertex
+        span Vertex Shader
+        textarea
+      .fragment
+        span Fragment Shader
+        textarea
+
+    script(src="/core/SupCore.js")
+    script(src="../../data.js")
+    script(src="/system/SupEngine.js")
+    script(src="/client/SupClient.js")
+    script(src="index.js")

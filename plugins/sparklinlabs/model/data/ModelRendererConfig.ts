@@ -1,12 +1,9 @@
 export interface ModelRendererConfigPub {
-  modelAssetId: string;
-  animationId: string;
-  castShadow: boolean;
-  receiveShadow: boolean;
+  modelAssetId: string; animationId: string;
+  castShadow: boolean; receiveShadow: boolean;
   color: string;
-  overrideOpacity: boolean;
-  opacity: number;
-  materialType: string;
+  overrideOpacity: boolean; opacity: number;
+  materialType: string; shaderAssetId: string;
 }
 
 export default class ModelRendererConfig extends SupCore.data.base.ComponentConfig {
@@ -19,7 +16,8 @@ export default class ModelRendererConfig extends SupCore.data.base.ComponentConf
     color: { type: "string", length: 6, mutable: true },
     overrideOpacity: { type: "boolean", mutable: true },
     opacity: { type: "number?", min: 0, max: 1, mutable: true },
-    materialType: { type: "enum", items: ["basic", "phong", "shader"], mutable: true }
+    materialType: { type: "enum", items: ["basic", "phong", "shader"], mutable: true },
+    shaderAssetId: { type: "string?", min: 0, mutable: true }
   }
 
   static create() {
@@ -31,7 +29,9 @@ export default class ModelRendererConfig extends SupCore.data.base.ComponentConf
       color: "ffffff",
       overrideOpacity: false,
       opacity: null,
-      materialType: "basic" };
+      materialType: "basic",
+      shaderAssetId: null
+    };
     return emptyConfig;
   }
 
@@ -52,17 +52,24 @@ export default class ModelRendererConfig extends SupCore.data.base.ComponentConf
     super(pub, ModelRendererConfig.schema);
   }
 
-  restore() { if (this.pub.modelAssetId != null) this.emit("addDependencies", [ this.pub.modelAssetId ]); }
-  destroy() { if (this.pub.modelAssetId != null) this.emit("removeDependencies", [ this.pub.modelAssetId ]); }
+  restore() {
+    if (this.pub.modelAssetId != null) this.emit("addDependencies", [ this.pub.modelAssetId ]);
+    if (this.pub.shaderAssetId != null) this.emit("addDependencies", [ this.pub.shaderAssetId ]);
+  }
+  destroy() {
+    if (this.pub.modelAssetId != null) this.emit("removeDependencies", [ this.pub.modelAssetId ]);
+    if (this.pub.shaderAssetId != null) this.emit("removeDependencies", [ this.pub.shaderAssetId ]);
+  }
 
   setProperty(path: string, value: any, callback: (err: string, actualValue?: any) => any) {
     let oldDepId: string;
     if (path === "modelAssetId") oldDepId = this.pub[path];
+    if (path === "shaderAssetId") oldDepId = this.pub.shaderAssetId;
 
     super.setProperty(path, value, (err, actualValue) => {
       if (err != null) { callback(err); return; }
 
-      if (path === "modelAssetId") {
+      if (path === "modelAssetId" || path === "shaderAssetId") {
         if (oldDepId != null) this.emit("removeDependencies", [ oldDepId ]);
         if (actualValue != null) this.emit("addDependencies", [ actualValue ]);
       }

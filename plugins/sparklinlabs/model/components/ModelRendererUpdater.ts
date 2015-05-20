@@ -16,6 +16,8 @@ export default class ModelRendererUpdater {
   overrideOpacity = false;
   modelAsset: ModelAsset = null;
   materialType: string;
+  shaderAssetId: string;
+  shaderPub: any;
 
   mapObjectURLs: { [mapName: string]: string } = {};
 
@@ -23,6 +25,12 @@ export default class ModelRendererUpdater {
     onAssetReceived: this._onModelAssetReceived.bind(this),
     onAssetEdited: this._onModelAssetEdited.bind(this),
     onAssetTrashed: this._onModelAssetTrashed.bind(this)
+  };
+
+  shaderSubscriber = {
+    onAssetReceived: this._onShaderAssetReceived.bind(this),
+    onAssetEdited: this._onShaderAssetEdited.bind(this),
+    onAssetTrashed: this._onShaderAssetTrashed.bind(this)
   };
 
   constructor(client: SupClient.ProjectClient, modelRenderer: ModelRenderer, config: any, receiveAssetCallbacks: any, editAssetCallbacks: any) {
@@ -34,6 +42,7 @@ export default class ModelRendererUpdater {
     this.modelAssetId = config.modelAssetId;
     this.animationId = config.animationId;
     this.materialType = config.materialType;
+    this.shaderAssetId = config.shaderAssetId;
     if (config.overrideOpacity != null) this.overrideOpacity = config.overrideOpacity;
 
     this.modelRenderer.castShadow = config.castShadow;
@@ -46,24 +55,20 @@ export default class ModelRendererUpdater {
       this.modelRenderer.color.b = (hex & 255) / 255;
     }
 
-    if (this.modelAssetId != null) {
-      this.client.subAsset(this.modelAssetId, "model", this.modelSubscriber);
-    }
+    if (this.modelAssetId != null) this.client.subAsset(this.modelAssetId, "model", this.modelSubscriber);
+    if (this.shaderAssetId != null) this.client.subAsset(this.shaderAssetId, "shader", this.shaderSubscriber);
   }
 
   destroy() {
-    if (this.modelAssetId != null) {
-      this.client.unsubAsset(this.modelAssetId, this.modelSubscriber);
-    }
+    if (this.modelAssetId != null) this.client.unsubAsset(this.modelAssetId, this.modelSubscriber);
+    if (this.shaderAssetId != null) this.client.unsubAsset(this.shaderAssetId, this.shaderSubscriber);
   }
 
   _onModelAssetReceived(assetId: string, asset: ModelAsset) {
     if (this.modelRenderer.opacity == null) this.modelRenderer.opacity = asset.pub.opacity;
     this.modelAsset = asset;
     this._prepareMaps(() => {
-      this.modelRenderer.setModel(this.modelAsset.pub, this.materialType);
-      if (this.animationId != null) this._playAnimation();
-
+      this._setModel();
       if (this.receiveAssetCallbacks != null) this.receiveAssetCallbacks.model();
     });
   }
@@ -104,6 +109,16 @@ export default class ModelRendererUpdater {
     }, callback);
   }
 
+  _setModel() {
+    if (this.modelAsset == null || (this.materialType === "shader" && this.shaderPub == null)) {
+      this.modelRenderer.setModel(null);
+      return;
+    }
+    
+    this.modelRenderer.setModel(this.modelAsset.pub, this.materialType, this.shaderPub);
+    if (this.animationId != null) this._playAnimation();
+  }
+
   _playAnimation() {
     let animation = this.modelAsset.animations.byId[this.animationId];
     if (animation == null) return;
@@ -122,15 +137,13 @@ export default class ModelRendererUpdater {
   }
 
   _onEditCommand_setAttributes() {
-    this.modelRenderer.setModel(this.modelAsset.pub, this.materialType);
-    if (this.animationId != null) this._playAnimation();
+    this._setModel();
   }
 
   _onEditCommand_setMaps(maps: any) {
     // TODO: Only update the maps that changed, don't recreate the whole model
     this._prepareMaps(() => {
-      this.modelRenderer.setModel(this.modelAsset.pub, this.materialType);
-      if (this.animationId != null) this._playAnimation();
+      this._setModel();
     });
   }
 
@@ -158,9 +171,24 @@ export default class ModelRendererUpdater {
   }
 
   _onModelAssetTrashed() {
-    this.modelRenderer.setModel(null, null);
+    this.modelAsset = null;
+    this.modelRenderer.setModel(null);
     // FIXME: the updater shouldn't be dealing with SupClient.onAssetTrashed directly
     if (this.editAssetCallbacks != null) SupClient.onAssetTrashed();
+  }
+
+  _onShaderAssetReceived(assetId: string, asset: { pub: any} ) {
+    this.shaderPub = asset.pub;
+    this._setModel();
+  }
+
+  _onShaderAssetEdited(id: string, command: string, ...args: any[]) {
+    this._setModel();
+  }
+
+  _onShaderAssetTrashed() {
+    this.shaderPub = null;
+    this._setModel();
   }
 
   config_setProperty(path: string, value: any) {
@@ -216,6 +244,16 @@ export default class ModelRendererUpdater {
         this.materialType = value;
         if (this.modelAsset != null) this.modelRenderer.setModel(this.modelAsset.pub, this.materialType);
         if (this.animationId != null) this._playAnimation();
+        break;
+
+      case "shaderAssetId":
+        if (this.shaderAssetId != null) this.client.unsubAsset(this.shaderAssetId, this.shaderSubscriber);
+        this.shaderAssetId = value;
+
+        this.shaderPub = null;
+        this.modelRenderer.setModel(null);
+
+        if (this.shaderAssetId != null) this.client.subAsset(this.shaderAssetId, "shader", this.shaderSubscriber);
         break;
     }
   }

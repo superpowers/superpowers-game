@@ -22,6 +22,8 @@ declare module Sup {
     playAnimation(looping?: boolean): ModelRenderer;
     pauseAnimation(): ModelRenderer;
     stopAnimation(): ModelRenderer;
+
+    getUniforms(): { [name: string]: { type: string; value: any; } };
   }
 
   module ModelRenderer {

@@ -1,0 +1,92 @@
+@import "nib"
+
+body
+  display flex
+  flex-flow column
+  
+  span
+    text-align center
+    padding 4px
+  
+  .top
+    flex 1
+    padding 5px
+    display flex
+    flex-flow row
+    border-bottom 1px solid #ccc
+  
+  .left
+    flex 1
+    display flex
+    flex-flow column
+
+  .uniforms, .attributes
+    flex 1
+    display flex
+    flex-flow column
+
+    .list
+      overflow-y auto
+      margin-bottom 10px
+
+    table
+      width 100%
+      border-collapse collapse
+
+    tr
+      height 2em
+
+      &.grey td
+        color #666
+
+      &:first-child td
+        text-align center
+
+    td
+      text-align left
+      border 1px solid #ccc
+      width 45%
+
+      &:nth-child(2)
+        width 10%
+
+      .value
+        display flex
+
+        input:not(:last-child)
+          border-right 1px solid #ccc
+
+      input, select
+        width 100%
+        height 100%
+        border none
+
+  .preview
+    flex 1
+    display flex
+    flex-flow column
+    
+    .title
+      display flex
+      padding-bottom 5px
+      
+      span
+        margin 0 5% 0 40%
+
+    canvas
+      flex 1
+      background-color black
+
+  .shaders
+    flex 1
+    padding 5px
+    display flex
+
+    .vertex, .fragment
+      flex 1
+      display flex
+      flex-flow column
+      margin 0 2px 0 2px
+
+    textarea
+      flex 1

@@ -1,14 +1,10 @@
 export interface SpriteRendererConfigPub {
-  spriteAssetId: string;
-  animationId: string;
-  horizontalFlip: boolean;
-  verticalFlip: boolean;
-  castShadow: boolean;
-  receiveShadow: boolean;
+  spriteAssetId: string; animationId: string;
+  horizontalFlip: boolean; verticalFlip: boolean;
+  castShadow: boolean; receiveShadow: boolean;
   color: string;
-  overrideOpacity: boolean;
-  opacity: number;
-  materialType: string;
+  overrideOpacity: boolean; opacity: number;
+  materialType: string; shaderAssetId: string;
 }
 
 export default class SpriteRendererConfig extends SupCore.data.base.ComponentConfig {
@@ -23,24 +19,23 @@ export default class SpriteRendererConfig extends SupCore.data.base.ComponentCon
     color: { type: "string?", length: 6, mutable: true },
     overrideOpacity: { type: "boolean", mutable: true },
     opacity: { type: "number?", min: 0, max: 1, mutable: true },
-    materialType: { type: "enum", items: ["basic", "phong", "shader"], mutable: true }
+    materialType: { type: "enum", items: ["basic", "phong", "shader"], mutable: true },
+    shaderAssetId: { type: "string?", min: 0, mutable: true }
   }
 
   static create() {
     let emptyConfig: SpriteRendererConfigPub = {
-      spriteAssetId: null,
-      animationId: null,
-      horizontalFlip: false,
-      verticalFlip: false,
-      castShadow: false,
-      receiveShadow: false,
-      overrideOpacity: false,
-      opacity: null,
+      spriteAssetId: null, animationId: null,
+      horizontalFlip: false, verticalFlip: false,
+      castShadow: false, receiveShadow: false,
       color: "ffffff",
-      materialType: "basic"
+      overrideOpacity: false, opacity: null,
+      materialType: "basic", shaderAssetId: null
     };
     return emptyConfig;
   }
+  
+  pub: SpriteRendererConfigPub;
 
   constructor(pub: SpriteRendererConfigPub) {
     // TODO: Remove these at some point, new config setting introduced in Superpowers 0.8
@@ -61,17 +56,24 @@ export default class SpriteRendererConfig extends SupCore.data.base.ComponentCon
     super(pub, SpriteRendererConfig.schema);
   }
 
-  restore() { if (this.pub.spriteAssetId != null) this.emit("addDependencies", [ this.pub.spriteAssetId ]); }
-  destroy() { if (this.pub.spriteAssetId != null) this.emit("removeDependencies", [ this.pub.spriteAssetId ]); }
+  restore() {
+    if (this.pub.spriteAssetId != null) this.emit("addDependencies", [ this.pub.spriteAssetId ]);
+    if (this.pub.shaderAssetId != null) this.emit("addDependencies", [ this.pub.shaderAssetId ]);
+  }
+  destroy() {
+    if (this.pub.spriteAssetId != null) this.emit("removeDependencies", [ this.pub.spriteAssetId ]);
+    if (this.pub.shaderAssetId != null) this.emit("removeDependencies", [ this.pub.shaderAssetId ]);
+  }
 
   setProperty(path: string, value: any, callback: (err: string, actualValue?: any) => any) {
     let oldDepId: string;
-    if (path === "spriteAssetId") oldDepId = this.pub[path];
+    if (path === "spriteAssetId") oldDepId = this.pub.spriteAssetId;
+    if (path === "shaderAssetId") oldDepId = this.pub.shaderAssetId;
 
     super.setProperty(path, value, (err, actualValue) => {
       if (err != null) { callback(err); return; }
 
-      if (path === "spriteAssetId") {
+      if (path === "spriteAssetId" || path === "shaderAssetId") {
         if (oldDepId != null) this.emit("removeDependencies", [ oldDepId ]);
         if (actualValue != null) this.emit("addDependencies", [ actualValue ]);
       }

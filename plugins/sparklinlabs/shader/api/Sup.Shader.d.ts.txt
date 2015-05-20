@@ -1,0 +1,5 @@
+declare module Sup {
+  class Shader extends Asset {
+    dummyShaderMember;
+  }
+}

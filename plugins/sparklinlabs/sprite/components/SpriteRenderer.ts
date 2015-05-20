@@ -17,7 +17,7 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
 
   asset: any;
   geometry: THREE.PlaneBufferGeometry;
-  material: THREE.MeshBasicMaterial|THREE.MeshPhongMaterial;
+  material: THREE.MeshBasicMaterial|THREE.MeshPhongMaterial|THREE.ShaderMaterial;
   materialType = "basic";
   threeMesh: THREE.Mesh;
   horizontalFlip = false;
@@ -35,7 +35,7 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
     super(actor, "SpriteRenderer");
   }
 
-  setSprite(asset: any, materialType?: string) {
+  setSprite(asset: any, materialType?: string, customShader?: any) {
     this._clearMesh();
 
     this.asset = asset;
@@ -48,13 +48,25 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
 
     this.geometry = new THREE.PlaneBufferGeometry(this.asset.grid.width, this.asset.grid.height);
 
-    if (this.materialType === "basic") this.material = new THREE.MeshBasicMaterial();
-    else if (this.materialType === "phong") this.material = new THREE.MeshPhongMaterial();
-    this.material.map = this.asset.texture;
-    this.material.alphaTest = this.asset.alphaTest;
-    this.material.side = THREE.DoubleSide;
-    this.setOpacity(this.opacity);
-    this.material.color.setRGB(this.color.r, this.color.g, this.color.b);
+    if (this.materialType === "shader")
+      this.material = SupEngine.componentClasses["Shader"].createShaderMaterial(
+        customShader,
+        this.asset.texture,
+        this.geometry
+      );
+
+    else {
+      let material: THREE.MeshBasicMaterial|THREE.MeshPhongMaterial
+      if (this.materialType === "basic") material = new THREE.MeshBasicMaterial();
+      else if (this.materialType === "phong") material = new THREE.MeshPhongMaterial();
+
+      material.map = this.asset.texture;
+      material.alphaTest = this.asset.alphaTest;
+      material.side = THREE.DoubleSide;
+      material.color.setRGB(this.color.r, this.color.g, this.color.b);
+      this.material = material;
+      this.setOpacity(this.opacity);
+    }
 
     this.threeMesh = new THREE.Mesh(this.geometry, this.material);
     this.setCastShadow(this.castShadow);
@@ -118,6 +130,7 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
     this.threeMesh.geometry.dispose();
     this.threeMesh.material.dispose();
     this.threeMesh = null;
+    this.material = null;
   }
 
   setCastShadow(castShadow: boolean) {
@@ -138,14 +151,16 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
   }
 
   setFrame(frame: number) {
-    let framesPerRow = Math.floor(this.material.map.image.width / this.asset.grid.width);
+    let map: THREE.Texture = (<any>this.material).map;
+
+    let framesPerRow = Math.floor(map.image.width / this.asset.grid.width);
     let frameX = frame % framesPerRow
     let frameY = Math.floor(frame / framesPerRow)
 
-    let left   = (frameX     * this.asset.grid.width) / this.material.map.image.width;
-    let right  = ((frameX+1) * this.asset.grid.width) / this.material.map.image.width;
-    let bottom = (this.material.map.image.height - (frameY+1) * this.asset.grid.height) / this.material.map.image.height;
-    let top    = (this.material.map.image.height - frameY     * this.asset.grid.height) / this.material.map.image.height;
+    let left   = (frameX     * this.asset.grid.width) / map.image.width;
+    let right  = ((frameX+1) * this.asset.grid.width) / map.image.width;
+    let bottom = (map.image.height - (frameY+1) * this.asset.grid.height) / map.image.height;
+    let top    = (map.image.height - frameY     * this.asset.grid.height) / map.image.height;
 
     let tmp: number;
     if (this.horizontalFlip) {
@@ -243,6 +258,11 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
   }
 
   update() {
+    if (this.material != null) {
+      let uniforms = (<THREE.ShaderMaterial>this.material).uniforms;
+      if (uniforms != null) uniforms.time.value += 1 / this.actor.gameInstance.framesPerSecond;
+    }
+    
     if (this.hasFrameBeenUpdated) {
       this.hasFrameBeenUpdated = false;
       return;

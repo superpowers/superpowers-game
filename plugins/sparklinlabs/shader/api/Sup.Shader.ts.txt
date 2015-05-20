@@ -1,0 +1,4 @@
+module Sup {
+  export class Shader extends Asset {
+  }
+}

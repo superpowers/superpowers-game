@@ -11,17 +11,25 @@ export default class SpriteRendererUpdater {
   editAssetCallbacks: any;
 
   spriteAssetId: string;
+  spriteAsset: SpriteAsset;
   animationId: string;
   looping = true;
   materialType: string;
+  shaderAssetId: string;
+  shaderPub: any;
   overrideOpacity = false;
-  spriteAsset: SpriteAsset;
   url: string;
 
   spriteSubscriber = {
     onAssetReceived: this._onSpriteAssetReceived.bind(this),
     onAssetEdited: this._onSpriteAssetEdited.bind(this),
     onAssetTrashed: this._onSpriteAssetTrashed.bind(this)
+  };
+  
+  shaderSubscriber = {
+    onAssetReceived: this._onShaderAssetReceived.bind(this),
+    onAssetEdited: this._onShaderAssetEdited.bind(this),
+    onAssetTrashed: this._onShaderAssetTrashed.bind(this)
   };
 
   constructor(client: SupClient.ProjectClient, spriteRenderer: SpriteRenderer, config: any, receiveAssetCallbacks: any, editAssetCallbacks: any) {
@@ -33,6 +41,7 @@ export default class SpriteRendererUpdater {
     this.spriteAssetId = config.spriteAssetId;
     this.animationId = config.animationId;
     this.materialType = config.materialType;
+    this.shaderAssetId = config.shaderAssetId;
     if (config.overrideOpacity != null) this.overrideOpacity = config.overrideOpacity;
     this.spriteAsset = null;
 
@@ -49,10 +58,12 @@ export default class SpriteRendererUpdater {
     }
 
     if (this.spriteAssetId != null) this.client.subAsset(this.spriteAssetId, "sprite", this.spriteSubscriber);
+    if (this.shaderAssetId != null) this.client.subAsset(this.shaderAssetId, "shader", this.shaderSubscriber);
   }
 
   destroy() {
     if (this.spriteAssetId != null) this.client.unsubAsset(this.spriteAssetId, this.spriteSubscriber);
+    if (this.shaderAssetId != null) this.client.unsubAsset(this.shaderAssetId, this.shaderSubscriber);
   }
 
   _onSpriteAssetReceived(assetId: string, asset: SpriteAsset) {
@@ -85,9 +96,7 @@ export default class SpriteRendererUpdater {
         let onImageLoaded = () => {
           image.removeEventListener("load", onImageLoaded);
           asset.pub.texture.needsUpdate = true;
-          this.spriteRenderer.setSprite(asset.pub, this.materialType);
-          if (this.animationId != null) this._playAnimation();
-
+          this._setSprite();
           if (this.receiveAssetCallbacks != null) this.receiveAssetCallbacks.sprite();
         };
 
@@ -95,11 +104,19 @@ export default class SpriteRendererUpdater {
       }
     }
     else {
-      this.spriteRenderer.setSprite(asset.pub, this.materialType);
-      if (this.animationId != null) this._playAnimation();
-
+      this._setSprite();
       if (this.receiveAssetCallbacks != null) this.receiveAssetCallbacks.sprite();
     }
+  }
+  
+  _setSprite() {
+    if (this.spriteAsset == null || (this.materialType === "shader" && this.shaderPub == null)) {
+      this.spriteRenderer.setSprite(null);
+      return;
+    }
+    
+    this.spriteRenderer.setSprite(this.spriteAsset.pub, this.materialType, this.shaderPub);
+    if (this.animationId != null) this._playAnimation();
   }
 
   _playAnimation() {
@@ -167,10 +184,7 @@ export default class SpriteRendererUpdater {
         this.spriteRenderer.updateShape();
         break;
 
-      default:
-        this.spriteRenderer.setSprite(this.spriteAsset.pub, this.materialType);
-        if (this.animationId != null) this._playAnimation();
-        break;
+      default: this._setSprite(); break;
     }
   }
 
@@ -190,9 +204,24 @@ export default class SpriteRendererUpdater {
   }
 
   _onSpriteAssetTrashed() {
-    this.spriteRenderer.setSprite(null, null);
+    this.spriteAsset = null;
+    this.spriteRenderer.setSprite(null);
     // FIXME: the updater shouldn't be dealing with SupClient.onAssetTrashed directly
     if (this.editAssetCallbacks != null) SupClient.onAssetTrashed();
+  }
+  
+  _onShaderAssetReceived(assetId: string, asset: { pub: any} ) {
+    this.shaderPub = asset.pub;
+    this._setSprite();
+  }
+  
+  _onShaderAssetEdited(id: string, command: string, ...args: any[]) {
+    this._setSprite();
+  }
+
+  _onShaderAssetTrashed() {
+    this.shaderPub = null;
+    this._setSprite();
   }
 
   config_setProperty(path: string, value: any) {
@@ -202,7 +231,7 @@ export default class SpriteRendererUpdater {
         this.spriteAssetId = value;
 
         this.spriteAsset = null;
-        this.spriteRenderer.setSprite(null, null);
+        this.spriteRenderer.setSprite(null);
 
         if (this.spriteAssetId != null) this.client.subAsset(this.spriteAssetId, "sprite", this.spriteSubscriber);
         break;
@@ -260,8 +289,17 @@ export default class SpriteRendererUpdater {
 
       case "materialType":
         this.materialType = value;
-        if (this.spriteAsset != null) this.spriteRenderer.setSprite(this.spriteAsset.pub, this.materialType);
-        if (this.animationId != null) this._playAnimation();
+        this._setSprite();
+        break;
+        
+      case "shaderAssetId":
+        if (this.shaderAssetId != null) this.client.unsubAsset(this.shaderAssetId, this.shaderSubscriber);
+        this.shaderAssetId = value;
+
+        this.shaderPub = null;
+        this.spriteRenderer.setSprite(null);
+
+        if (this.shaderAssetId != null) this.client.subAsset(this.shaderAssetId, "shader", this.shaderSubscriber);
         break;
     }
   }

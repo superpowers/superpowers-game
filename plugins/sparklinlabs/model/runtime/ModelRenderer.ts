@@ -10,7 +10,10 @@ export function setupComponent(player: SupRuntime.Player, component: any, config
   if (config.modelAssetId != null) {
     let model = player.getOuterAsset(config.modelAssetId).__inner;
     if (! config.overrideOpacity) component.opacity = model.opacity;
-    component.setModel(model, config.materialType);
+    
+    let shader: any;
+    if (config.shaderAssetId != null) shader = player.getOuterAsset(config.shaderAssetId).__inner;
+    component.setModel(model, config.materialType, shader);
 
     if (config.animationId != null) {
       // FIXME: should we load model with SupCore.data?

@@ -65,6 +65,8 @@ module Sup {
     playAnimation(looping) { this.__inner.playAnimation(looping); return this }
     pauseAnimation() { this.__inner.pauseAnimation(); return this }
     stopAnimation() { this.__inner.stopAnimation(); return this }
+
+    getUniforms() { return this.__inner.material.uniforms; }
   }
 
   export module ModelRenderer {
