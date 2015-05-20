@@ -1,4 +1,5 @@
 import * as async from "async";
+import * as querystring from "querystring";
 
 // In NW.js, open links in a browser window
 let nwDispatcher = (<any>window).nwDispatcher;
@@ -17,7 +18,6 @@ let progressBar = <HTMLProgressElement>document.querySelector("progress");
 let loadingElt = document.getElementById("loading");
 let canvas = <HTMLCanvasElement>document.querySelector("canvas");
 
-import * as querystring from "querystring";
 let qs = querystring.parse(window.location.search.slice(1));
 if (qs.debug != null && gui != null) gui.Window.get().showDevTools();
 
