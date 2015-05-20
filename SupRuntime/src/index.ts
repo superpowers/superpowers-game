@@ -6,6 +6,7 @@ interface RuntimePlugin {
   createOuterAsset(player: Player, asset: any): any;
   init?(player: Player, callback: Function): void;
   start?(player: Player, callback: Function): void;
+  lateStart?(player: Player, callback: Function): void;
 }
 export let plugins: { [name: string]: RuntimePlugin } = {}
 export function registerPlugin(name: string, plugin: RuntimePlugin) {

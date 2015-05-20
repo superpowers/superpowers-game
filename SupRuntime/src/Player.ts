@@ -54,16 +54,9 @@ export default class Player {
       (cb) => { this._loadResources(innerProgressCallback, cb); },
       (cb) => { this._loadAssets(innerProgressCallback, cb); },
       (cb) => { this._initPlugins(cb); },
-      (cb) => { this._startPlugins(cb); }
+      (cb) => { this._startPlugins(cb); },
+      (cb) => { this._lateStartPlugins(cb); }
     ], callback);
-  }
-
-  _initPlugins(callback: any) {
-    async.each(Object.keys(SupRuntime.plugins), (name: string, cb: Function) => {
-      let plugin = SupRuntime.plugins[name];
-      if (plugin.init != null) plugin.init(this, cb);
-      else cb();
-    }, callback);
   }
 
   _loadManifest(callback: any) {
@@ -153,10 +146,26 @@ export default class Player {
     });
   }
 
+  _initPlugins(callback: any) {
+    async.each(Object.keys(SupRuntime.plugins), (name: string, cb: Function) => {
+      let plugin = SupRuntime.plugins[name];
+      if (plugin.init != null) plugin.init(this, cb);
+      else cb();
+    }, callback);
+  }
+
   _startPlugins(callback: any) {
     async.each(Object.keys(SupRuntime.plugins), (name, cb) => {
       let plugin = SupRuntime.plugins[name];
       if (plugin.start != null) plugin.start(this, cb);
+      else cb();
+    }, callback);
+  }
+
+  _lateStartPlugins(callback: any) {
+    async.each(Object.keys(SupRuntime.plugins), (name, cb) => {
+      let plugin = SupRuntime.plugins[name];
+      if (plugin.lateStart != null) plugin.lateStart(this, cb);
       else cb();
     }, callback);
   }

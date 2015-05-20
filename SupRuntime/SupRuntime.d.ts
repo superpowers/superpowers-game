@@ -7,6 +7,7 @@ declare module SupRuntime {
     setupComponent?(player: SupRuntime.Player, component: any, config: any): void;
     init?(player: Player, callback: Function): void;
     start?(player: Player, callback: Function): void;
+    lateStart?(player: Player, callback: Function): void;
   }
   let plugins: { [name: string]: RuntimePlugin };
   function registerPlugin(name: string, plugin: RuntimePlugin): void;
