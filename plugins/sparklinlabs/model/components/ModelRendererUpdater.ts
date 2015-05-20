@@ -178,6 +178,7 @@ export default class ModelRendererUpdater {
       case "materialType":
         this.materialType = value;
         if (this.modelAsset != null) this.modelRenderer.setModel(this.modelAsset.pub, this.materialType);
+        if (this.animationId != null) this._playAnimation();
         break;
     }
   }

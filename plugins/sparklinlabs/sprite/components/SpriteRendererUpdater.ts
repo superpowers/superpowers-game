@@ -193,6 +193,7 @@ export default class SpriteRendererUpdater {
       case "materialType":
         this.materialType = value;
         if (this.spriteAsset != null) this.spriteRenderer.setSprite(this.spriteAsset.pub, this.materialType);
+        if (this.animationId != null) this._playAnimation();
         break;
     }
   }
