@@ -62,7 +62,7 @@ export function start(player: SupRuntime.Player, callback: Function) {
   globalNames.unshift(globalNames.splice(globalNames.indexOf("Sup.ts"), 1)[0]);
 
   // Compile plugin globals
-  let jsGlobals = compileTypeScript(globalNames, globals, `${globalDefs["lib.d.ts"]}\ndeclare var console, window, localStorage, player, SupEngine, SupRuntime;`, {sourceMap: false});
+  let jsGlobals = compileTypeScript(globalNames, globals, `${globalDefs["lib.d.ts"]}\ndeclare var console, window, localStorage, player, SupEngine, SupRuntime;`, { sourceMap: false });
   if (jsGlobals.errors.length > 0) {
     for (let error of jsGlobals.errors) console.log(`${error.file}(${error.position.line}): ${error.message}`);
     callback();
@@ -72,7 +72,7 @@ export function start(player: SupRuntime.Player, callback: Function) {
   // Compile game scripts
   let concatenatedGlobalDefs = "";
   for (let name in globalDefs) concatenatedGlobalDefs += globalDefs[name];
-  let results = compileTypeScript(scriptNames, scripts, concatenatedGlobalDefs, {sourceMap: true});
+  let results = compileTypeScript(scriptNames, scripts, concatenatedGlobalDefs, { sourceMap: true });
   if (results.errors.length > 0) {
     for (let error of results.errors) console.log(`${error.file}(${error.position.line}): ${error.message}`);
     callback();
