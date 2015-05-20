@@ -5,6 +5,7 @@ export default class GameSettingsEditor {
   projectClient: SupClient.ProjectClient;
   resource: GameSettingsResource;
 
+  startupSceneRow: SupClient.table.RowParts;
   fpsRow: SupClient.table.RowParts;
   ratioRow: SupClient.table.RowParts;
 
@@ -14,6 +15,10 @@ export default class GameSettingsEditor {
     this.projectClient = projectClient;
 
     let { tbody } = SupClient.table.createTable(container);
+
+    this.startupSceneRow = SupClient.table.appendRow(tbody, "Startup scene");
+    this.fields["startupScene"] = SupClient.table.appendTextField(this.startupSceneRow.valueCell, "");
+    this.startupSceneRow.valueCell.colSpan = 2;
 
     this.fpsRow = SupClient.table.appendRow(tbody, "Frames per second");
     this.fields["framesPerSecond"] = SupClient.table.appendNumberField(this.fpsRow.valueCell, "");
@@ -26,6 +31,11 @@ export default class GameSettingsEditor {
     let heightValueCell = <HTMLTableDataCellElement>this.ratioRow.row.appendChild(document.createElement("td"));
     this.fields["ratioDenominator"] = SupClient.table.appendNumberField(heightValueCell, "");
     this.fields["ratioDenominator"].placeholder = "Height";
+
+    this.fields["startupScene"].addEventListener("change", (event: any) => {
+      let scene = (event.target.value !== "") ? event.target.value : null;
+      this.projectClient.socket.emit("edit:resources", "gameSettings", "setProperty", "startupScene", scene, (err: string) => { if (err != null) alert(err); });
+    });
 
     this.fields["framesPerSecond"].addEventListener("change", (event: any) => {
       this.projectClient.socket.emit("edit:resources", "gameSettings", "setProperty", "framesPerSecond", parseInt(event.target.value), (err: string) => { if (err != null) alert(err); });

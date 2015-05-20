@@ -7,3 +7,9 @@ export function init(player: SupRuntime.Player, callback: Function) {
   }
   callback();
 }
+
+export function lateStart(player: SupRuntime.Player, callback: Function) {
+  let scene = player.resources.gameSettings.startupScene;
+  if (scene != null) (<any>window).Sup.loadScene(scene);
+  callback();
+}
