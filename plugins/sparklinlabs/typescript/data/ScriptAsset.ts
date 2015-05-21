@@ -64,11 +64,11 @@ export default class ScriptAsset extends SupCore.data.base.Asset {
 
   init(options: any, callback: Function) {
     // Transform "script asset name" into "ScriptAssetNameBehavior"
-    let behaviorName = options.name.trim();
+    let behaviorName = options.name.trim().replace(/[()[\]{}-]/g, "");
     behaviorName = behaviorName.slice(0, 1).toUpperCase() + behaviorName.slice(1);
 
     while (true) {
-      let index = behaviorName.indexOf(" ")
+      let index = behaviorName.indexOf(" ");
       if (index === -1) break;
 
       behaviorName =
