@@ -117,7 +117,10 @@ export default class SpriteRendererUpdater {
     this.url = URL.createObjectURL(blob);
     let image = this.spriteAsset.pub.texture.image;
     image.src = this.url;
-    image.addEventListener("load", () => { this.spriteAsset.pub.texture.needsUpdate = true; });
+    image.addEventListener("load", () => {
+      this.spriteAsset.pub.texture.needsUpdate = true;
+      if (this.animationId == null) this.spriteRenderer.setFrame(0);
+    });
 
     if (this.editAssetCallbacks != null) this.editAssetCallbacks.sprite.upload(this.url);
     return false
