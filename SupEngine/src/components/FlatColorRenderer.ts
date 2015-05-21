@@ -10,32 +10,22 @@ export default class FlatColorRenderer extends ActorComponent {
   mesh: THREE.Mesh;
   texture: THREE.Texture;
 
-  constructor(actor: Actor, color: string, scaleRatio: number, width: number, height: number) {
+  constructor(actor: Actor, color: number, scaleRatio: number, width: number, height: number) {
     super(actor, "GridRenderer");
 
     this.setup(color, scaleRatio, width, height);
   }
 
-  setup(color: string, scaleRatio: number, width: number, height: number) {
+  setup(color: number, scaleRatio: number, width: number, height: number) {
     if (color == null || scaleRatio == null || width == null) return;
     this._clearMesh();
 
     this.width = width;
     this.height = (height) ? height : this.width;
 
-    let canvas = document.createElement("canvas");
-    canvas.width = this.width;
-    canvas.height = this.height;
-    let ctx = canvas.getContext("2d");
-    ctx.fillStyle = color;
-    ctx.fillRect(0, 0, this.width, this.height);
-
-    this.texture = new THREE.Texture(canvas);
-    this.texture.needsUpdate = true;
-
     let geometry = new THREE.PlaneBufferGeometry(this.width, this.height);
     let material = new THREE.MeshBasicMaterial({
-      map: this.texture,
+      color: color,
       alphaTest: 0.1,
       side: THREE.DoubleSide,
       transparent: true,
@@ -57,7 +47,6 @@ export default class FlatColorRenderer extends ActorComponent {
     if (this.mesh == null) return
 
     this.mesh.geometry.dispose();
-    this.texture.dispose();
     this.mesh.material.dispose();
     this.actor.threeObject.remove(this.mesh);
     this.mesh = null;
