@@ -22,7 +22,7 @@ export default class SpriteSettingsResource extends SupCore.data.base.Resource {
       pixelsPerUnit: 100,
       framesPerSecond: 10,
       alphaTest: 0.1
-    }
+    };
 
     super.init(callback);
   }

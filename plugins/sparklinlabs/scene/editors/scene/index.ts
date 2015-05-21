@@ -6,6 +6,7 @@ import SceneAsset, { DuplicatedNode } from "../../data/SceneAsset";
 import { Node } from "../../data/SceneNodes";
 import { Component } from "../../data/SceneComponents";
 import TransformMarker from "./TransformMarker";
+import SceneSettingsResource from "../../data/SceneSettingsResource";
 
 let qs = require("querystring").parse(window.location.search.slice(1));
 let info = { projectId: qs.project, assetId: qs.asset };
@@ -73,7 +74,17 @@ function start() {
 // Network callbacks
 function onConnected() {
   data = { projectClient: new SupClient.ProjectClient(socket, { subEntries: true }) };
-  data.projectClient.subAsset(info.assetId, "scene", sceneSubscriber);
+
+  data.projectClient.subResource("sceneSettings", sceneSettingSubscriber);
+}
+
+var sceneSettingSubscriber = {
+  onResourceReceived: (resourceId: string, resource: SceneSettingsResource) => {
+    setCameraMode(resource.pub.defaultCameraMode);
+    data.projectClient.subAsset(info.assetId, "scene", sceneSubscriber);
+  },
+
+  onResourceEdited: (resourceId: string, command: string, propertyName: string) => {}
 }
 
 var sceneSubscriber = {
@@ -523,11 +534,16 @@ function onDeleteComponentClick(event: any) {
   });
 }
 
-function onChangeCameraMode(event: any) {
+function setCameraMode(mode: string) {
   ui.gameInstance.destroyComponent(ui.cameraControls);
+  ui.cameraMode = mode;
 
   if (ui.cameraMode === "3D") {
-    ui.cameraMode = "2D";
+    ui.cameraSpeedSlider.style.display = "";
+    ui.cameraComponent.setOrthographicMode(false);
+    ui.cameraControls = new SupEngine.editorComponentClasses["Camera3DControls"](ui.cameraActor, ui.cameraComponent);
+    ui.cameraControls.movementSpeed = ui.cameraSpeedSlider.value;
+  } else {
     ui.cameraSpeedSlider.style.display = "none";
     ui.cameraActor.setLocalOrientation(new SupEngine.THREE.Quaternion().setFromAxisAngle(new SupEngine.THREE.Vector3(0, 1, 0), 0))
     ui.cameraComponent.setOrthographicMode(true)
@@ -536,16 +552,13 @@ function onChangeCameraMode(event: any) {
       zoomMin: 1,
       zoomMax: 100,
     });
-
-  } else {
-    ui.cameraMode = "3D";
-    ui.cameraSpeedSlider.style.display = "";
-    ui.cameraComponent.setOrthographicMode(false);
-    ui.cameraControls = new SupEngine.editorComponentClasses["Camera3DControls"](ui.cameraActor, ui.cameraComponent);
-    ui.cameraControls.movementSpeed = ui.cameraSpeedSlider.value;
   }
 
   ui.cameraModeButton.textContent = ui.cameraMode;
+}
+
+function onChangeCameraMode(event: any) {
+  setCameraMode(ui.cameraMode === "3D" ? "2D" : "3D");
 }
 
 function onChangeCameraSpeed() {
