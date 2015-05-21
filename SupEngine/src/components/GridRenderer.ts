@@ -7,7 +7,7 @@ interface data {
   height: number;
   direction?: number;
   orthographicScale: number;
-  ratio: number;
+  ratio: { x: number; y: number; };
 }
 
 export default class GridRenderer extends ActorComponent {
@@ -15,7 +15,7 @@ export default class GridRenderer extends ActorComponent {
   height: number;
   direction: number;
   orthographicScale: number;
-  ratio: number;
+  ratio: { x: number; y: number; };
 
   mesh: THREE.Line;
 
@@ -51,7 +51,7 @@ export default class GridRenderer extends ActorComponent {
     this._createMesh();
   }
 
-  setRatio(ratio: number) {
+  setRatio(ratio: { x: number; y: number; }) {
     this.ratio = ratio;
     this._clearMesh();
     this._createMesh();
@@ -63,16 +63,16 @@ export default class GridRenderer extends ActorComponent {
     // Vertical lines
     let x = 0;
     while(x <= this.width ) {
-      geometry.vertices.push(new THREE.Vector3(x / this.ratio, 0, 0));
-      geometry.vertices.push(new THREE.Vector3(x / this.ratio, this.direction * this.height / this.ratio, 0));
+      geometry.vertices.push(new THREE.Vector3(x / this.ratio.x, 0, 0));
+      geometry.vertices.push(new THREE.Vector3(x / this.ratio.x, this.direction * this.height / this.ratio.y, 0));
       x += 1;
     }
 
     // Horizontal lines
     let y = 0;
     while(y <= this.height) {
-      geometry.vertices.push(new THREE.Vector3(0, this.direction * y / this.ratio, 0));
-      geometry.vertices.push(new THREE.Vector3(this.width / this.ratio, this.direction * y / this.ratio, 0));
+      geometry.vertices.push(new THREE.Vector3(0, this.direction * y / this.ratio.y, 0));
+      geometry.vertices.push(new THREE.Vector3(this.width / this.ratio.x, this.direction * y / this.ratio.y, 0));
       y += 1;
     }
 
