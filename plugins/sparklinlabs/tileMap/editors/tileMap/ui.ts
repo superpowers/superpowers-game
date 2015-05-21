@@ -72,6 +72,7 @@ document.querySelector("button.rename-layer").addEventListener("click", onRename
 document.querySelector("button.delete-layer").addEventListener("click", onDeleteLayerClick);
 
 // Keybindings
+SupClient.setupHotkeys();
 document.addEventListener("keyup", (event) => {
   switch (event.keyCode) {
     case (<any>window).KeyEvent.DOM_VK_B: selectBrush(); break;

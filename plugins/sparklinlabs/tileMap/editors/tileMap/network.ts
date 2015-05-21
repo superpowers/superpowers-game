@@ -16,7 +16,6 @@ export let data: { projectClient?: SupClient.ProjectClient; tileMapUpdater?: Til
 export let socket = SupClient.connect(info.projectId);
 socket.on("connect", onConnected);
 socket.on("disconnect", SupClient.onDisconnected);
-SupClient.setupHotkeys();
 
 let onEditCommands: any = {};
 let onTileSetEditCommands: any = {};
