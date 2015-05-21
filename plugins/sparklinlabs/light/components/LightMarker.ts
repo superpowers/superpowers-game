@@ -45,6 +45,11 @@ export default class LightMarker extends Light {
     if (this.lightMarker != null) this.lightMarker.update();
   }
 
+  setAngle(angle: number) {
+    super.setAngle(angle);
+    if (this.lightMarker != null) this.lightMarker.update();
+  }
+
   setTarget(x: number, y: number, z: number) {
     super.setTarget(x, y, z);
     if (this.lightMarker != null) this.lightMarker.update();

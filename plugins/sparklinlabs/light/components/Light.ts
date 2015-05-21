@@ -11,6 +11,7 @@ export default class Light extends SupEngine.ActorComponent {
   color = "ffffff";
   intensity = 1;
   distance = 0;
+  angle = Math.PI / 3;
   target = new THREE.Vector3(0, 0, 0);
   castShadow = false;
 
@@ -33,7 +34,7 @@ export default class Light extends SupEngine.ActorComponent {
         this.light = new THREE.PointLight(parseInt(this.color, 16), this.intensity, this.distance);
         break;
       case "spot":
-        let spotLight = new THREE.SpotLight(parseInt(this.color, 16), this.intensity, this.distance);
+        let spotLight = new THREE.SpotLight(parseInt(this.color, 16), this.intensity, this.distance, this.angle);
         spotLight.target.position.copy(this.target);
         spotLight.target.updateMatrixWorld(false);
         spotLight.shadowCameraNear = 0.1;
@@ -76,6 +77,11 @@ export default class Light extends SupEngine.ActorComponent {
   setDistance(distance: number) {
     this.distance = distance;
     if (this.type === "point" || this.type === "spot") (<THREE.PointLight>this.light).distance = distance;
+  }
+
+  setAngle(angle: number) {
+    this.angle = angle * Math.PI / 180;
+    if (this.type === "spot") (<THREE.SpotLight>this.light).angle = this.angle;
   }
 
   setTarget(x: number, y: number, z: number) {

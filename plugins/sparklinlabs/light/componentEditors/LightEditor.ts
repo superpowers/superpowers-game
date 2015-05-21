@@ -8,6 +8,7 @@ export default class LightEditor {
   colorField: HTMLInputElement;
   intensityField: HTMLInputElement;
   distanceField: HTMLInputElement;
+  angleField: HTMLInputElement;
   targetFields: {
     x: HTMLInputElement;
     y: HTMLInputElement;
@@ -42,6 +43,12 @@ export default class LightEditor {
     this.distanceField = SupClient.table.appendNumberField(distanceRow.valueCell, config.distance, 0);
     this.distanceField.addEventListener("change", (event: any) => {
       this.editConfig("setProperty", "distance", parseFloat(event.target.value));
+    });
+
+    let angleRow = SupClient.table.appendRow(tbody, "Angle");
+    this.angleField = SupClient.table.appendNumberField(angleRow.valueCell, config.angle, 0, 90);
+    this.angleField.addEventListener("change", (event: any) => {
+      this.editConfig("setProperty", "angle", parseFloat(event.target.value));
     });
 
     let targetRow = SupClient.table.appendRow(tbody, "Target");
@@ -105,6 +112,9 @@ export default class LightEditor {
       let distanceRow = this.distanceField.parentElement.parentElement;
       if (distanceRow.parentElement != null) distanceRow.parentElement.removeChild(distanceRow);
 
+      let angleRow = this.angleField.parentElement.parentElement;
+      if (angleRow.parentElement != null) angleRow.parentElement.removeChild(angleRow);
+
       let targetRow = this.targetFields.x.parentElement.parentElement.parentElement;
       if (targetRow.parentElement != null) targetRow.parentElement.removeChild(targetRow);
 
@@ -119,6 +129,11 @@ export default class LightEditor {
       if (this.typeSelectBox.value === "directional") {
         if (distanceRow.parentElement != null) distanceRow.parentElement.removeChild(distanceRow);
       } else if (distanceRow.parentElement == null) this.tbody.appendChild(distanceRow);
+
+      let angleRow = this.angleField.parentElement.parentElement;
+      if (this.typeSelectBox.value === "spot") {
+        if (angleRow.parentElement == null) this.tbody.appendChild(angleRow);
+      } else if (angleRow.parentElement != null) angleRow.parentElement.removeChild(angleRow);
 
       let targetRow = this.targetFields.x.parentElement.parentElement.parentElement;
       let castShadowRow = this.castShadowField.parentElement.parentElement;

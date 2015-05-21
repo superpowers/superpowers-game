@@ -3,6 +3,7 @@ export interface LightConfigPub {
   color: string;
   intensity: number;
   distance: number;
+  angle: number;
   target: {
     x: number;
     y: number;
@@ -18,6 +19,7 @@ export default class LightConfig extends SupCore.data.base.ComponentConfig {
     color: { type: "string", mutable: true },
     intensity: { type: "number", min: 0, mutable: true},
     distance: { type: "number", min: 0, mutable: true},
+    angle: { type: "number", min: 0, max: 90, mutable: true},
     target: {
       type: "hash",
       properties: {
@@ -30,7 +32,15 @@ export default class LightConfig extends SupCore.data.base.ComponentConfig {
   }
 
   static create() {
-    let emptyConfig: LightConfigPub = { type: "ambient", color: "ffffff", intensity: 1, distance: 0, target: { x: 0, y: 0, z: 0}, castShadow: false };
+    let emptyConfig: LightConfigPub = {
+      type: "ambient",
+      color: "ffffff",
+      intensity: 1,
+      distance: 0,
+      angle: 60,
+      target: { x: 0, y: 0, z: 0},
+      castShadow: false
+    };
     return emptyConfig;
   }
 

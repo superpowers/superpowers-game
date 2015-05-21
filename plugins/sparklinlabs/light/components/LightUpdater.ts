@@ -12,6 +12,7 @@ export default class LightUpdater {
     this.light.setColor(config.color);
     this.light.setIntensity(config.intensity);
     this.light.setDistance(config.distance);
+    this.light.setAngle(config.angle);
     this.light.setTarget(config.target.x, config.target.y, config.target.z);
     this.light.setCastShadow(config.castShadow);
   }
@@ -31,6 +32,9 @@ export default class LightUpdater {
         break;
       case "distance":
         this.light.setDistance(value);
+        break;
+      case "angle":
+        this.light.setAngle(value);
         break;
       case "target.x":
         this.light.setTarget(value, null, null);

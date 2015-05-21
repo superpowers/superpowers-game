@@ -3,6 +3,7 @@ export function setupComponent(player: SupRuntime.Player, component: any, config
   component.setColor(config.color);
   component.setIntensity(config.intensity);
   component.setDistance(config.distance);
+  component.setAngle(config.angle);
   component.setTarget(config.target.x, config.target.y, config.target.z);
   component.setCastShadow(config.castShadow);
 }
