@@ -3,6 +3,7 @@ interface LightOptions {
   color: string;
   intensity?: number;
   distance?: number;
+  angle?: number;
   target?: {
     x: number;
     y: number;
@@ -14,6 +15,20 @@ interface LightOptions {
 declare module Sup {
   class Light extends Sup.ActorComponent {
     constructor(actor: Actor, options: LightOptions);
+
+    getType(): Sup.Light.Type;
+    setColor(color: number): Light;
+    getColor(): number;
+    setIntensity(intensity: number): Light;
+    getIntensity(): number;
+    setDistance(distance: number): Light;
+    getDistance(): number;
+    setAngle(angle: number): Light;
+    getAngle(): number;
+    setTarget(target: Math.Vector3): Light;
+    getTarget(): Math.Vector3;
+    setCastShadow(castShadow: boolean): Light;
+    getCastShadow(): boolean;
   }
 
   module Light {
