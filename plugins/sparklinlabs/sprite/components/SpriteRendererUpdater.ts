@@ -66,7 +66,7 @@ export default class SpriteRendererUpdater {
 
     if (! image.complete) {
       if (asset.pub.image.byteLength === 0) {
-        if (this.receiveAssetCallbacks != null) this.receiveAssetCallbacks.sprite(null);
+        if (this.receiveAssetCallbacks != null) this.receiveAssetCallbacks.sprite();
       }
       else {
         let onImageLoaded = () => {
@@ -75,7 +75,7 @@ export default class SpriteRendererUpdater {
           this.spriteRenderer.setSprite(asset.pub, this.materialType);
           if (this.animationId != null) this._playAnimation()
 
-          if (this.receiveAssetCallbacks != null) this.receiveAssetCallbacks.sprite(this.url);
+          if (this.receiveAssetCallbacks != null) this.receiveAssetCallbacks.sprite();
         };
 
         image.addEventListener("load", onImageLoaded);
@@ -85,7 +85,7 @@ export default class SpriteRendererUpdater {
       this.spriteRenderer.setSprite(asset.pub, this.materialType);
       if (this.animationId != null) this._playAnimation();
 
-      if (this.receiveAssetCallbacks != null) this.receiveAssetCallbacks.sprite(this.url);
+      if (this.receiveAssetCallbacks != null) this.receiveAssetCallbacks.sprite();
     }
   }
 
@@ -120,9 +120,9 @@ export default class SpriteRendererUpdater {
     image.addEventListener("load", () => {
       this.spriteAsset.pub.texture.needsUpdate = true;
       if (this.animationId == null) this.spriteRenderer.setFrame(0);
-    });
 
-    if (this.editAssetCallbacks != null) this.editAssetCallbacks.sprite.upload(this.url);
+      if (this.editAssetCallbacks != null) this.editAssetCallbacks.sprite.upload();
+    });
     return false
   }
 

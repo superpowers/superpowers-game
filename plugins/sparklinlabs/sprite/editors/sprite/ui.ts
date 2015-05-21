@@ -113,7 +113,8 @@ function onDownloadSpritesheet(event: any) {
 }
 
 function onSetGridWidth(event: any) {
-  if (spritesheetArea.image.src === "") return;
+  let texture = data.spriteUpdater.spriteAsset.pub.texture;
+  if (texture == null) return;
 
   SupClient.dialogs.prompt("How many frames per row?", null, "1", "Set grid width", (framesPerRow) => {
     if (framesPerRow == null) return;
@@ -121,14 +122,15 @@ function onSetGridWidth(event: any) {
     let framesPerRowNum = parseInt(framesPerRow);
     if (isNaN(framesPerRowNum)) return;
 
-    socket.emit("edit:assets", info.assetId, "setProperty", "grid.width", Math.floor(spritesheetArea.image.width / framesPerRowNum), (err: string) => {
+    socket.emit("edit:assets", info.assetId, "setProperty", "grid.width", Math.floor(texture.image.width / framesPerRowNum), (err: string) => {
       if (err != null) alert(err);
     });
   });
 }
 
 function onSetGridHeight(event: any) {
-  if (spritesheetArea.image.src === "") return;
+  let texture = data.spriteUpdater.spriteAsset.pub.texture;
+  if (texture == null) return;
 
   SupClient.dialogs.prompt("How many frames per column?", null, "1", "Set grid height", (framesPerColumn) => {
     if (framesPerColumn == null) return;
@@ -136,7 +138,7 @@ function onSetGridHeight(event: any) {
     let framesPerColumnNum = parseInt(framesPerColumn);
     if (isNaN(framesPerColumnNum)) return;
 
-    socket.emit("edit:assets", info.assetId, "setProperty", "grid.height", Math.floor(spritesheetArea.image.height / framesPerColumnNum), (err: string) => {
+    socket.emit("edit:assets", info.assetId, "setProperty", "grid.height", Math.floor(texture.image.height / framesPerColumnNum), (err: string) => {
       if (err != null) alert(err);
     });
   });

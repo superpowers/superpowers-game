@@ -1,16 +1,38 @@
 import ui from "./ui";
 import { data } from "./network";
 
+import SpriteRenderer from "../../components/SpriteRenderer";
+
 let spritesheetArea: {
-  image?: HTMLImageElement;
-  ctx?: CanvasRenderingContext2D;
+  gameInstance?: SupEngine.GameInstance;
+  spriteRenderer?: SpriteRenderer;
 } = {};
 export default spritesheetArea;
 
-spritesheetArea.image = new Image();
-spritesheetArea.ctx = (<HTMLCanvasElement>document.querySelector("canvas.spritesheet-canvas")).getContext("2d");
+spritesheetArea.gameInstance = new SupEngine.GameInstance(<HTMLCanvasElement>document.querySelector("canvas.spritesheet-canvas"));
+spritesheetArea.gameInstance.threeRenderer.setClearColor(0xbbbbbb);
+
+let cameraActor = new SupEngine.Actor(spritesheetArea.gameInstance, "Camera");
+cameraActor.setLocalPosition(new SupEngine.THREE.Vector3(0, 0, 10));
+let cameraComponent = new SupEngine.componentClasses["Camera"](cameraActor);
+cameraComponent.setOrthographicMode(true);
+cameraComponent.setOrthographicScale(5);
+new SupEngine.editorComponentClasses["Camera2DControls"](cameraActor, cameraComponent, {
+  zoomSpeed: 1.5,
+  zoomMin: 1,
+  zoomMax: 60
+});
+
+let spriteActor = new SupEngine.Actor(spritesheetArea.gameInstance, "Sprite");
+spritesheetArea.spriteRenderer = new SpriteRenderer(spriteActor);
+
+//spritesheetArea.image = new Image();
+//spritesheetArea.ctx = (<HTMLCanvasElement>document.querySelector("canvas.spritesheet-canvas")).getContext("2d");
 
 export function handleSpritesheetArea() {
+  spritesheetArea.gameInstance.update();
+  spritesheetArea.gameInstance.draw();
+  /*
   if (spritesheetArea.image.width === 0) return;
 
   spritesheetArea.ctx.clearRect(0, 0, spritesheetArea.ctx.canvas.width, spritesheetArea.ctx.canvas.height);
@@ -72,5 +94,5 @@ export function handleSpritesheetArea() {
     spritesheetArea.ctx.stroke();
   }
 
-  spritesheetArea.ctx.restore();
+  spritesheetArea.ctx.restore();*/
 }

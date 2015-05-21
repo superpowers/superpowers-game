@@ -12,8 +12,6 @@ export default animationArea;
 
 animationArea.gameInstance = new SupEngine.GameInstance(<HTMLCanvasElement>document.querySelector("canvas.animation-canvas"));
 animationArea.gameInstance.threeRenderer.setClearColor(0xbbbbbb);
-animationArea.gameInstance.update();
-animationArea.gameInstance.draw();
 
 let cameraActor = new SupEngine.Actor(animationArea.gameInstance, "Camera");
 cameraActor.setLocalPosition(new SupEngine.THREE.Vector3(0, 0, 10));

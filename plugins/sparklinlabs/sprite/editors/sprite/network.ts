@@ -26,23 +26,46 @@ function onConnected() {
   data.spriteUpdater = new SpriteRendererUpdater(data.projectClient, spriteRenderer, config, receiveCallbacks, editCallbacks)
 }
 
-function onAssetReceived(url?: string) {
-  if (url != null) spritesheetArea.image.src = url;
+function onAssetReceived() {
+  let pub = data.spriteUpdater.spriteAsset.pub;
+  if (pub.texture != null) {
+    let asset = {
+      texture: pub.texture.clone(),
+      filtering: pub.filtering,
+      pixelsPerUnit: pub.pixelsPerUnit,
+      framesPerSecond: pub.framesPerSecond,
+      alphaTest: pub.alphaTest,
+
+      grid: { width: pub.texture.image.width, height: pub.texture.image.height },
+      origin: { x: 0.5, y: 0.5 },
+      animations: <any>[]
+    };
+    asset.texture.needsUpdate = true;
+    spritesheetArea.spriteRenderer.setSprite(asset);
+  }
 
   ui.allSettings.forEach((setting: string) => {
     let parts = setting.split(".");
-    let obj = data.spriteUpdater.spriteAsset.pub;
+    let obj = pub;
     parts.slice(0, parts.length - 1).forEach((part) => { obj = obj[part]; })
     setupProperty(setting, obj[parts[parts.length - 1]]);
   });
 
-  data.spriteUpdater.spriteAsset.pub.animations.forEach((animation: any, index: number) => {
+  pub.animations.forEach((animation: any, index: number) => {
     setupAnimation(animation, index);
   });
 }
 
-onEditCommands.upload = (url: string) => {
-  spritesheetArea.image.src = url;
+onEditCommands.upload = () => {
+  let pub = data.spriteUpdater.spriteAsset.pub;
+
+  let asset = spritesheetArea.spriteRenderer.asset;
+  asset.texture = pub.texture.clone();
+  asset.texture.needsUpdate = true;
+  asset.grid.width = pub.texture.image.width;
+  asset.grid.height = pub.texture.image.height;
+
+  spritesheetArea.spriteRenderer.setSprite(asset);
 }
 
 onEditCommands.setProperty = (path: string, value: any) => {
