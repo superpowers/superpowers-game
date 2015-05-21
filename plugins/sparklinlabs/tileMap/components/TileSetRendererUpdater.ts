@@ -84,7 +84,7 @@ export default class TileSetRendererUpdater {
         height: asset.pub.domImage.height / asset.pub.gridSize,
         direction: -1,
         orthographicScale: 10,
-        ratio: 1
+        ratio: { x: 1, y: 1 }
       });
 
       if (this.receiveAssetCallbacks != null) this.receiveAssetCallbacks.tileSet();

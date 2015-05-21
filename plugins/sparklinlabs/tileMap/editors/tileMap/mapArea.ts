@@ -50,7 +50,7 @@ mapArea.cameraControls = new SupEngine.editorComponentClasses["Camera2DControls"
 mapArea.gridActor = new SupEngine.Actor(mapArea.gameInstance, "Grid");
 mapArea.gridActor.setLocalPosition(new SupEngine.THREE.Vector3(0, 0, 90));
 mapArea.gridRenderer = new SupEngine.editorComponentClasses["GridRenderer"](mapArea.gridActor, {
-  width: 1, height: 1, ratio: 1,
+  width: 1, height: 1, ratio: { x: 1, y: 1 },
   orthographicScale: mapArea.cameraComponent.orthographicScale
 });
 

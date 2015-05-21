@@ -19,7 +19,7 @@ export default class TileSetRenderer extends SupEngine.ActorComponent {
     this.gridRenderer = new SupEngine.editorComponentClasses["GridRenderer"](gridActor);
 
     this.selectedTileActor = new SupEngine.Actor(this.actor.gameInstance, "Selection");
-    new SupEngine.editorComponentClasses["FlatColorRenderer"](this.selectedTileActor, "#900090", 1, 1);
+    new SupEngine.editorComponentClasses["FlatColorRenderer"](this.selectedTileActor, 0x900090, 1, 1);
 
     let texture = (overrideTexture != null) ? overrideTexture : (asset != null) ? asset.data.texture : null;
     this.setTileSet(asset, texture);
