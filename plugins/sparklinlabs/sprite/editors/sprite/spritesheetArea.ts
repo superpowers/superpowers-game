@@ -6,6 +6,7 @@ import SpriteRenderer from "../../components/SpriteRenderer";
 let spritesheetArea: {
   gameInstance?: SupEngine.GameInstance;
   spriteRenderer?: SpriteRenderer;
+  gridRenderer?: any;
 } = {};
 export default spritesheetArea;
 
@@ -21,13 +22,15 @@ new SupEngine.editorComponentClasses["Camera2DControls"](cameraActor, cameraComp
   zoomSpeed: 1.5,
   zoomMin: 1,
   zoomMax: 60
-});
+},() => { spritesheetArea.gridRenderer.setOrthgraphicScale(cameraComponent.orthographicScale); }
+);
 
 let spriteActor = new SupEngine.Actor(spritesheetArea.gameInstance, "Sprite");
 spritesheetArea.spriteRenderer = new SpriteRenderer(spriteActor);
 
-//spritesheetArea.image = new Image();
-//spritesheetArea.ctx = (<HTMLCanvasElement>document.querySelector("canvas.spritesheet-canvas")).getContext("2d");
+let gridActor = new SupEngine.Actor(spritesheetArea.gameInstance, "Grid");
+gridActor.setLocalPosition(new SupEngine.THREE.Vector3(0, 0, 1));
+spritesheetArea.gridRenderer = new SupEngine.editorComponentClasses["GridRenderer"](gridActor);
 
 export function handleSpritesheetArea() {
   spritesheetArea.gameInstance.update();

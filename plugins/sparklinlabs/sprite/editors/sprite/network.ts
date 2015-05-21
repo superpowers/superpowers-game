@@ -37,11 +37,19 @@ function onAssetReceived() {
       alphaTest: pub.alphaTest,
 
       grid: { width: pub.texture.image.width, height: pub.texture.image.height },
-      origin: { x: 0.5, y: 0.5 },
+      origin: { x: 0, y: 1 },
       animations: <any>[]
     };
     asset.texture.needsUpdate = true;
     spritesheetArea.spriteRenderer.setSprite(asset);
+
+    spritesheetArea.gridRenderer.setGrid({
+      width: pub.texture.image.width / pub.grid.width,
+      height: pub.texture.image.height / pub.grid.height,
+      orthographicScale: 5,
+      direction: -1,
+      ratio: { x: pub.pixelsPerUnit / pub.grid.width, y: pub.pixelsPerUnit / pub.grid.height }
+    });
   }
 
   ui.allSettings.forEach((setting: string) => {
@@ -64,12 +72,18 @@ onEditCommands.upload = () => {
   asset.texture.needsUpdate = true;
   asset.grid.width = pub.texture.image.width;
   asset.grid.height = pub.texture.image.height;
-
   spritesheetArea.spriteRenderer.setSprite(asset);
+
+  spritesheetArea.gridRenderer.resize(pub.texture.image.width / pub.grid.width, pub.texture.image.height / pub.grid.height);
 }
 
 onEditCommands.setProperty = (path: string, value: any) => {
   setupProperty(path, value);
+
+  let pub = data.spriteUpdater.spriteAsset.pub;
+  if (path === "grid.width" || path === "grid.height")
+    spritesheetArea.gridRenderer.setRatio({ x: pub.pixelsPerUnit / pub.grid.width, y: pub.pixelsPerUnit / pub.grid.height });
+    spritesheetArea.gridRenderer.resize(pub.texture.image.width / pub.grid.width, pub.texture.image.height / pub.grid.height);
 }
 
 onEditCommands.newAnimation = (animation: any, index: number) => {
