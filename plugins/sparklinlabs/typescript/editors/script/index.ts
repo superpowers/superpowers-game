@@ -504,7 +504,6 @@ function onErrorTBodyClick(event: MouseEvent) {
     ui.editor.getDoc().setCursor({ line: parseInt(line), ch: parseInt(character) });
     ui.editor.focus();
   } else {
-    // TODO: Post message to parent and switch to correct tab
     let origin: string = (<any>window.location).origin;
     if (window.parent != null) window.parent.postMessage({ type: "openEntry", id: assetId, options: { line, ch: character } }, origin);
   }
