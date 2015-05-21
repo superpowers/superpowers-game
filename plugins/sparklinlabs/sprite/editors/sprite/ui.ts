@@ -1,7 +1,7 @@
 import info from "./info";
 import { socket, data } from "./network";
 import animationArea from "./animationArea";
-import spritesheetArea from "./spritesheetArea";
+import spritesheetArea, { updateSelection } from "./spritesheetArea";
 
 let TreeView = require("dnd-tree-view");
 
@@ -207,6 +207,8 @@ export function updateSelectedAnimation() {
     data.spriteUpdater.config_setProperty("animationId", ui.selectedAnimationId);
     ui.animationPlay.disabled = false;
     ui.animationSlider.disabled = false;
+
+    updateSelection();
   }
   else {
     ui.selectedAnimationId = null
@@ -214,6 +216,8 @@ export function updateSelectedAnimation() {
     ui.animationPlay.disabled = true;
     ui.animationSlider.disabled = true;
     ui.animationSlider.value = "0";
+
+    spritesheetArea.selectionRenderer.clearMesh();
   }
 
   ui.animationPlay.textContent = "Pause";

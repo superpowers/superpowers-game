@@ -1,7 +1,7 @@
 import info from "./info";
 import ui, { setupProperty, setupAnimation, updateSelectedAnimation } from "./ui";
 import animationArea from "./animationArea";
-import spritesheetArea from "./spritesheetArea";
+import spritesheetArea, { updateSelection } from "./spritesheetArea";
 
 import SpriteRenderer from "../../components/SpriteRenderer";
 import SpriteRendererUpdater from "../../components/SpriteRendererUpdater";
@@ -84,6 +84,7 @@ onEditCommands.setProperty = (path: string, value: any) => {
   if (path === "grid.width" || path === "grid.height")
     spritesheetArea.gridRenderer.setRatio({ x: pub.pixelsPerUnit / pub.grid.width, y: pub.pixelsPerUnit / pub.grid.height });
     spritesheetArea.gridRenderer.resize(pub.texture.image.width / pub.grid.width, pub.texture.image.height / pub.grid.height);
+    updateSelection();
 }
 
 onEditCommands.newAnimation = (animation: any, index: number) => {
@@ -106,8 +107,14 @@ onEditCommands.setAnimationProperty = (id: string, key: string, value: any) => {
   let animationElt = ui.animationsTreeView.treeRoot.querySelector(`[data-id='${id}']`);
 
   switch (key) {
-    case "name": { animationElt.querySelector(".name").textContent = value; break; }
-    case "startFrameIndex": { animationElt.querySelector(".start-frame-index").value = value; break; }
-    case "endFrameIndex": { animationElt.querySelector(".end-frame-index").value = value; break }
+    case "name": animationElt.querySelector(".name").textContent = value; break;
+    case "startFrameIndex":
+      animationElt.querySelector(".start-frame-index").value = value;
+      if (id == ui.selectedAnimationId) updateSelection();
+      break;
+    case "endFrameIndex":
+      animationElt.querySelector(".end-frame-index").value = value;
+      if (id == ui.selectedAnimationId) updateSelection();
+      break;
   }
 }
