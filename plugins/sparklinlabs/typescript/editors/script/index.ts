@@ -25,7 +25,6 @@ let ui: {
   errorPane?: HTMLDivElement;
   errorPaneStatus?: HTMLDivElement;
   errorPaneInfo?: HTMLDivElement;
-  errorsList?: HTMLDivElement;
   errorsTBody?: HTMLTableSectionElement;
 
   undoTimeout?: number;
@@ -138,15 +137,14 @@ function start() {
   ui.errorPane = <HTMLDivElement>document.querySelector(".error-pane");
   ui.errorPaneStatus = <HTMLDivElement>ui.errorPane.querySelector(".status");
   ui.errorPaneInfo = <HTMLDivElement>ui.errorPaneStatus.querySelector(".info");
-  ui.errorsList = <HTMLDivElement>ui.errorPane.querySelector(".errors");
-  ui.errorsTBody = <HTMLTableSectionElement>ui.errorsList.querySelector("tbody");
 
+  ui.errorsTBody = <HTMLTableSectionElement>ui.errorPane.querySelector(".errors tbody");
   ui.errorsTBody.addEventListener("click", onErrorTBodyClick);
 
   let errorPaneResizeHandle = new PerfectResize(ui.errorPane, "bottom");
   errorPaneResizeHandle.on("drag", () => { ui.editor.refresh(); });
 
-  let errorPaneToggleButton = ui.errorPane.querySelector("button.toggle")
+  let errorPaneToggleButton = ui.errorPane.querySelector("button.toggle");
 
   ui.errorPaneStatus.addEventListener("click", () => {
     let collapsed = ui.errorPane.classList.toggle("collapsed");
@@ -436,7 +434,7 @@ function refreshErrors(errors: Array<{file: string; position: {line: number; cha
   ui.errorPaneStatus.classList.add("has-errors");
 
   let selfErrorsCount = 0;
-  let lastSelfErrowRow: HTMLTableRowElement = null;
+  let lastSelfErrorRow: HTMLTableRowElement = null;
 
   // Display new ones
   for (let error of errors) {
@@ -462,8 +460,8 @@ function refreshErrors(errors: Array<{file: string; position: {line: number; cha
       continue;
     }
 
-    ui.errorsTBody.insertBefore(errorRow, (lastSelfErrowRow != null) ? lastSelfErrowRow.nextElementSibling : ui.errorsTBody.firstChild);
-    lastSelfErrowRow = errorRow;
+    ui.errorsTBody.insertBefore(errorRow, (lastSelfErrorRow != null) ? lastSelfErrorRow.nextElementSibling : ui.errorsTBody.firstChild);
+    lastSelfErrorRow = errorRow;
     selfErrorsCount++;
 
     let line = error.position.line;
