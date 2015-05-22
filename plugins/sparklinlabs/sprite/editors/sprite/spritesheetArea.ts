@@ -39,6 +39,8 @@ selectionActor.setLocalPosition(new SupEngine.THREE.Vector3(0, 0, 2));
 spritesheetArea.selectionRenderer = new SelectionRenderer(selectionActor);
 
 export function updateSelection() {
+  if (ui.selectedAnimationId == null) return;
+
   let pub = data.spriteUpdater.spriteAsset.pub;
   let animation = data.spriteUpdater.spriteAsset.animations.byId[ui.selectedAnimationId];
   let width = pub.grid.width / pub.pixelsPerUnit;
