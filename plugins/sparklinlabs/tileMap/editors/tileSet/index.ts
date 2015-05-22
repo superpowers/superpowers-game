@@ -44,6 +44,8 @@ function start() {
     });
   });
 
+  ui.selectedTileLabel = document.querySelector("label.selected-tile-number");
+
   // Tile properties
   ui.propertiesTreeView = new TreeView(document.querySelector(".properties-tree-view"), () => { return false; });
   ui.propertiesTreeView.on("selectionChange", onPropertySelect);
@@ -71,19 +73,16 @@ function onConnected() {
 
 function onAssetReceived(err: string, asset: any) {
   setupProperty("gridSize", data.tileSetUpdater.tileSetAsset.pub.gridSize);
-  data.selectedTile = { x: 0, y: 0 };
-  setupTileProperties(data.selectedTile);
+  selectTile({ x: 0, y: 0 });
 }
 
 onEditCommands.upload = () => {
-  data.selectedTile = { x: 0, y: 0 };
-  setupTileProperties(data.selectedTile);
+  selectTile({ x: 0, y: 0 });
 };
 
 onEditCommands.setProperty = (key: string, value: any) => {
   setupProperty(key, value);
-  data.selectedTile = { x: 0, y: 0 };
-  setupTileProperties(data.selectedTile);
+  selectTile({ x: 0, y: 0 });
 };
 
 onEditCommands.addTileProperty = (tile: { x: number; y: number; }, name: string) => {
@@ -129,7 +128,15 @@ function setupProperty(key: string, value: any) {
   }
 }
 
-function setupTileProperties(tile: { x: number; y: number; }) {
+function selectTile(tile: { x: number; y: number; }) {
+  data.selectedTile = tile;
+
+  let tilePerRow = Math.floor(data.tileSetUpdater.tileSetAsset.pub.domImage.width / data.tileSetUpdater.tileSetAsset.pub.gridSize);
+  let tilePerColumn = Math.floor(data.tileSetUpdater.tileSetAsset.pub.domImage.height / data.tileSetUpdater.tileSetAsset.pub.gridSize);
+
+  let tileIndex = (tile.x === tilePerRow - 1 && tile.y === tilePerColumn - 1) ? -1 : tile.x + tile.y * tilePerRow;
+  ui.selectedTileLabel.textContent = tileIndex;
+
   while (ui.propertiesTreeView.treeRoot.children.length !== 0) {
     ui.propertiesTreeView.remove(ui.propertiesTreeView.treeRoot.children[0]);
   }
@@ -255,10 +262,8 @@ function draw() {
     if (x >= 0 && x < data.tileSetUpdater.tileSetAsset.pub.domImage.width / data.tileSetUpdater.tileSetAsset.pub.gridSize &&
     y >= 0 && y < data.tileSetUpdater.tileSetAsset.pub.domImage.height / data.tileSetUpdater.tileSetAsset.pub.gridSize &&
     (x !== data.selectedTile.x || y !== data.selectedTile.y)) {
-      data.selectedTile.x = x;
-      data.selectedTile.y = y;
       data.tileSetUpdater.tileSetRenderer.select(x, y);
-      setupTileProperties(data.selectedTile);
+      selectTile({ x, y });
     }
   }
 
