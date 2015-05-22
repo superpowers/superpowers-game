@@ -9,6 +9,12 @@ import { Component } from "../../data/SceneComponents";
 
 let ui: {
   nodesTreeView?: any;
+
+  newNodeButton?: HTMLButtonElement;
+  renameNodeButton?: HTMLButtonElement;
+  duplicateNodeButton?: HTMLButtonElement;
+  deleteNodeButton?: HTMLButtonElement;
+
   inspectorElt?: HTMLDivElement;
 
   transform?: {
@@ -33,10 +39,14 @@ ui.nodesTreeView = new TreeView(document.querySelector(".nodes-tree-view"), onNo
 ui.nodesTreeView.on("activate", onNodeActivate);
 ui.nodesTreeView.on("selectionChange", onNodeSelect);
 
-document.querySelector("button.new-node").addEventListener("click", onNewNodeClick);
-document.querySelector("button.rename-node").addEventListener("click", onRenameNodeClick);
-document.querySelector("button.duplicate-node").addEventListener("click", onDuplicateNodeClick);
-document.querySelector("button.delete-node").addEventListener("click", onDeleteNodeClick);
+ui.newNodeButton = <HTMLButtonElement>document.querySelector("button.new-node");
+ui.newNodeButton.addEventListener("click", onNewNodeClick);
+ui.renameNodeButton = <HTMLButtonElement>document.querySelector("button.rename-node");
+ui.renameNodeButton.addEventListener("click", onRenameNodeClick);
+ui.duplicateNodeButton = <HTMLButtonElement>document.querySelector("button.duplicate-node");
+ui.duplicateNodeButton.addEventListener("click", onDuplicateNodeClick);
+ui.deleteNodeButton = <HTMLButtonElement>document.querySelector("button.delete-node");
+ui.deleteNodeButton.addEventListener("click", onDeleteNodeClick);
 
 // Inspector
 ui.inspectorElt = <HTMLDivElement>document.querySelector(".inspector");
@@ -117,10 +127,19 @@ export function onNodeSelect() {
   let nodeElt = ui.nodesTreeView.selectedNodes[0];
   if (nodeElt == null || ui.nodesTreeView.selectedNodes.length !== 1) {
     ui.inspectorElt.classList.add("noSelection");
+
+    ui.newNodeButton.disabled = false;
+    ui.renameNodeButton.disabled = true;
+    ui.duplicateNodeButton.disabled = true;
+    ui.deleteNodeButton.disabled = true;
     return;
   }
 
   ui.inspectorElt.classList.remove("noSelection");
+  ui.newNodeButton.disabled = false;
+  ui.renameNodeButton.disabled = false;
+  ui.duplicateNodeButton.disabled = false;
+  ui.deleteNodeButton.disabled = false;
 
   let node = data.asset.nodes.byId[nodeElt.dataset.id];
   setInspectorPosition(<THREE.Vector3>node.position);
