@@ -71,10 +71,10 @@ export default class CameraEditor {
     this.orthographicScaleField.addEventListener('input', this._onChangeOrthographicScale);
     this.nearClippingPlaneField.addEventListener('change', this._onChangeNearClippingPlane);
     this.farClippingPlaneField.addEventListener('change', this._onChangeFarClippingPlane);
-    this.viewportFields.x.addEventListener('input', this._onChangeViewportX);
-    this.viewportFields.y.addEventListener('input', this._onChangeViewportY);
-    this.viewportFields.width.addEventListener('input', this._onChangeViewportWidth);
-    this.viewportFields.height.addEventListener('input', this._onChangeViewportHeight);
+    this.viewportFields.x.addEventListener('change', this._onChangeViewportX);
+    this.viewportFields.y.addEventListener('change', this._onChangeViewportY);
+    this.viewportFields.width.addEventListener('change', this._onChangeViewportWidth);
+    this.viewportFields.height.addEventListener('change', this._onChangeViewportHeight);
   }
 
   destroy() {}
