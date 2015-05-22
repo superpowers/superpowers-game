@@ -87,11 +87,14 @@ export function createNodeElement(node: Node) {
 
   let visibleButton = document.createElement("button");
   visibleButton.textContent = "Hide";
+  visibleButton.classList.add("show");
   visibleButton.addEventListener("click", (event: any) => {
     event.stopPropagation();
     let actor = engine.bySceneNodeId[event.target.parentElement.dataset["id"]].actor;
     actor.threeObject.visible = ! actor.threeObject.visible;
     visibleButton.textContent = (actor.threeObject.visible) ? "Hide" : "Show";
+    if (actor.threeObject.visible) visibleButton.classList.add("show");
+    else visibleButton.classList.remove("show");
   })
   liElt.appendChild(visibleButton);
 

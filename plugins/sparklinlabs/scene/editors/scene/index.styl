@@ -53,7 +53,8 @@ body
     margin-right 0.25em
 
   li:not(:hover)
-    button { visibility: hidden; }
+    button
+      &.show { visibility: hidden; }
 
 .inspector
   overflow-y auto
