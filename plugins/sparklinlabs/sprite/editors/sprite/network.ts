@@ -44,6 +44,9 @@ function onAssetReceived() {
   if (pub.image.byteLength !== 0) {
     spritesheetArea.spritesheet.texture.needsUpdate = true;
     spritesheetArea.spriteRenderer.setSprite(spritesheetArea.spritesheet);
+
+    ui.imageLabel.width.textContent = pub.texture.image.width;
+    ui.imageLabel.height.textContent = pub.texture.image.height;
   }
 
   spritesheetArea.gridRenderer.setGrid({
@@ -83,6 +86,9 @@ onEditCommands.upload = () => {
   spritesheetArea.gridRenderer.resize(pub.texture.image.width / pub.grid.width, pub.texture.image.height / pub.grid.height);
 
   updateSelectedAnimation();
+
+  ui.imageLabel.width.textContent = pub.texture.image.width;
+  ui.imageLabel.height.textContent = pub.texture.image.height;
 };
 
 onEditCommands.setProperty = (path: string, value: any) => { setupProperty(path, value); };

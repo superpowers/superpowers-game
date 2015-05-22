@@ -9,6 +9,8 @@ let ui: {
   allSettings?: string[];
   settings?: { [name: string]: any; };
 
+  imageLabel?: { width: HTMLLabelElement; height: HTMLLabelElement; };
+
   animationsTreeView?: any;
   selectedAnimationId?: string;
   animationPlay?: HTMLButtonElement;
@@ -68,6 +70,11 @@ ui.allSettings.forEach((setting: string) => {
 });
 document.querySelector("button.set-grid-width").addEventListener("click", onSetGridWidth);
 document.querySelector("button.set-grid-height").addEventListener("click", onSetGridHeight);
+
+ui.imageLabel = {
+  width: <HTMLLabelElement>document.querySelector("label.image-width"),
+  height: <HTMLLabelElement>document.querySelector("label.image-height")
+}
 
 // Animations
 ui.animationsTreeView = new TreeView(document.querySelector(".animations-tree-view"), onAnimationDrop);
