@@ -81,6 +81,8 @@ onEditCommands.upload = () => {
   spritesheetArea.spriteRenderer.setSprite(asset);
 
   spritesheetArea.gridRenderer.resize(pub.texture.image.width / pub.grid.width, pub.texture.image.height / pub.grid.height);
+
+  updateSelectedAnimation();
 };
 
 onEditCommands.setProperty = (path: string, value: any) => { setupProperty(path, value); };

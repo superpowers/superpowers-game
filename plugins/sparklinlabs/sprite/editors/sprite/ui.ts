@@ -209,8 +209,7 @@ export function updateSelectedAnimation() {
     ui.animationSlider.disabled = false;
 
     updateSelection();
-  }
-  else {
+  } else {
     ui.selectedAnimationId = null;
     data.spriteUpdater.config_setProperty("animationId", null);
     ui.animationPlay.disabled = true;
@@ -219,7 +218,6 @@ export function updateSelectedAnimation() {
 
     spritesheetArea.selectionRenderer.clearMesh();
   }
-
 
   ui.animationPlay.textContent = "▐ ▌";
 
