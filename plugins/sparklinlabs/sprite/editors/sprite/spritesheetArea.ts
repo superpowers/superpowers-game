@@ -38,6 +38,16 @@ let selectionActor = new SupEngine.Actor(spritesheetArea.gameInstance, "Selectio
 selectionActor.setLocalPosition(new SupEngine.THREE.Vector3(0, 0, 2));
 spritesheetArea.selectionRenderer = new SelectionRenderer(selectionActor);
 
+export function centerCamera() {
+  let pub = data.spriteUpdater.spriteAsset.pub;
+  let scaleRatio = 1 / cameraComponent.orthographicScale;
+
+  cameraActor.setLocalPosition(new SupEngine.THREE.Vector3(
+    0.5 * pub.grid.width * scaleRatio,
+    -0.5 * pub.grid.height * scaleRatio, 10
+  ));
+}
+
 export function updateSelection() {
   if (ui.selectedAnimationId == null) return;
 

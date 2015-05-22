@@ -1,7 +1,7 @@
 import info from "./info";
 import ui, { setupProperty, setupAnimation, updateSelectedAnimation } from "./ui";
-import animationArea from "./animationArea";
-import spritesheetArea, { updateSelection } from "./spritesheetArea";
+import animationArea, { centerCamera as centerAnimationCamera } from "./animationArea";
+import spritesheetArea, { updateSelection, centerCamera as centerSpritesheetCamera } from "./spritesheetArea";
 
 import SpriteRenderer from "../../components/SpriteRenderer";
 import SpriteRendererUpdater from "../../components/SpriteRendererUpdater";
@@ -50,6 +50,9 @@ function onAssetReceived() {
       direction: -1,
       ratio: { x: pub.pixelsPerUnit / pub.grid.width, y: pub.pixelsPerUnit / pub.grid.height }
     });
+
+    centerAnimationCamera();
+    centerSpritesheetCamera();
   }
 
   ui.allSettings.forEach((setting: string) => {

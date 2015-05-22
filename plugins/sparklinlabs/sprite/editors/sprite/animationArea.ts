@@ -29,6 +29,16 @@ let originActor = new SupEngine.Actor(animationArea.gameInstance, "Origin");
 originActor.setLocalPosition(new SupEngine.THREE.Vector3(0, 0, 1));
 animationArea.originMakerComponent = new SpriteOriginMarker(originActor);
 
+export function centerCamera() {
+  let pub = data.spriteUpdater.spriteAsset.pub;
+  let scaleRatio = 1 / cameraComponent.orthographicScale;
+
+  cameraActor.setLocalPosition(new SupEngine.THREE.Vector3(
+    (0.5 - pub.origin.x) * pub.grid.width * scaleRatio,
+    (0.5 - pub.origin.y) * pub.grid.height * scaleRatio, 10
+  ));
+}
+
 export function handleAnimationArea() {
   animationArea.gameInstance.update();
   animationArea.gameInstance.draw();
