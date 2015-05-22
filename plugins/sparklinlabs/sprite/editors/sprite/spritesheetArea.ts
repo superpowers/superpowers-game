@@ -8,6 +8,7 @@ let spritesheetArea: {
   gameInstance?: SupEngine.GameInstance;
   cameraControls?: any;
   spriteRenderer?: SpriteRenderer;
+  spritesheet?: any;
   gridRenderer?: any;
   selectionRenderer?: any;
 } = {};
@@ -39,6 +40,8 @@ selectionActor.setLocalPosition(new SupEngine.THREE.Vector3(0, 0, 2));
 spritesheetArea.selectionRenderer = new SelectionRenderer(selectionActor);
 
 export function centerCamera() {
+  if (spritesheetArea.spriteRenderer.asset == null) return;
+
   let pub = data.spriteUpdater.spriteAsset.pub;
   let scaleRatio = 1 / cameraComponent.orthographicScale;
 

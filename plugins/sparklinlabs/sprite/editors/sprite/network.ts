@@ -28,32 +28,34 @@ function onConnected() {
 
 function onAssetReceived() {
   let pub = data.spriteUpdater.spriteAsset.pub;
-  if (pub.texture != null) {
-    let asset = {
-      texture: pub.texture.clone(),
-      filtering: pub.filtering,
-      pixelsPerUnit: pub.pixelsPerUnit,
-      framesPerSecond: pub.framesPerSecond,
-      alphaTest: pub.alphaTest,
 
-      grid: { width: pub.texture.image.width, height: pub.texture.image.height },
-      origin: { x: 0, y: 1 },
-      animations: <any>[]
-    };
-    asset.texture.needsUpdate = true;
-    spritesheetArea.spriteRenderer.setSprite(asset);
+  spritesheetArea.spritesheet = {
+    texture: (pub.image.byteLength !== 0) ? pub.texture.clone() : null,
+    filtering: pub.filtering,
+    pixelsPerUnit: pub.pixelsPerUnit,
+    framesPerSecond: pub.framesPerSecond,
+    alphaTest: pub.alphaTest,
 
-    spritesheetArea.gridRenderer.setGrid({
-      width: pub.texture.image.width / pub.grid.width,
-      height: pub.texture.image.height / pub.grid.height,
-      orthographicScale: 5,
-      direction: -1,
-      ratio: { x: pub.pixelsPerUnit / pub.grid.width, y: pub.pixelsPerUnit / pub.grid.height }
-    });
+    grid: { width: pub.texture.image.width, height: pub.texture.image.height },
+    origin: { x: 0, y: 1 },
+    animations: <any>[]
+  };
 
-    centerAnimationCamera();
-    centerSpritesheetCamera();
+  if (pub.image.byteLength !== 0) {
+    spritesheetArea.spritesheet.texture.needsUpdate = true;
+    spritesheetArea.spriteRenderer.setSprite(spritesheetArea.spritesheet);
   }
+
+  spritesheetArea.gridRenderer.setGrid({
+    width: pub.texture.image.width / pub.grid.width,
+    height: pub.texture.image.height / pub.grid.height,
+    orthographicScale: 5,
+    direction: -1,
+    ratio: { x: pub.pixelsPerUnit / pub.grid.width, y: pub.pixelsPerUnit / pub.grid.height }
+  });
+
+  centerAnimationCamera();
+  centerSpritesheetCamera();
 
   ui.allSettings.forEach((setting: string) => {
     let parts = setting.split(".");
@@ -70,7 +72,7 @@ function onAssetReceived() {
 onEditCommands.upload = () => {
   let pub = data.spriteUpdater.spriteAsset.pub;
 
-  let asset = spritesheetArea.spriteRenderer.asset;
+  let asset = spritesheetArea.spritesheet;
   asset.texture = pub.texture.clone();
   asset.texture.needsUpdate = true;
   asset.grid.width = pub.texture.image.width;

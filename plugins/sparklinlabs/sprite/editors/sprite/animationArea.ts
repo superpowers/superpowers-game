@@ -30,6 +30,8 @@ originActor.setLocalPosition(new SupEngine.THREE.Vector3(0, 0, 1));
 animationArea.originMakerComponent = new SpriteOriginMarker(originActor);
 
 export function centerCamera() {
+  if (data.spriteUpdater.spriteRenderer.asset == null) return;
+
   let pub = data.spriteUpdater.spriteAsset.pub;
   let scaleRatio = 1 / cameraComponent.orthographicScale;
 

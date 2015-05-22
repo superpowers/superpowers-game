@@ -106,12 +106,12 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
     let frameX = frame % framesPerRow
     let frameY = Math.floor(frame / framesPerRow)
 
-    let left   = (frameX     * this.asset.grid.width) / this.material.map.image.width
-    let right  = ((frameX+1) * this.asset.grid.width) / this.material.map.image.width
-    let bottom = (this.material.map.image.height - (frameY+1) * this.asset.grid.height) / this.material.map.image.height
-    let top    = (this.material.map.image.height - frameY     * this.asset.grid.height) / this.material.map.image.height
+    let left   = (frameX     * this.asset.grid.width) / this.material.map.image.width;
+    let right  = ((frameX+1) * this.asset.grid.width) / this.material.map.image.width;
+    let bottom = (this.material.map.image.height - (frameY+1) * this.asset.grid.height) / this.material.map.image.height;
+    let top    = (this.material.map.image.height - frameY     * this.asset.grid.height) / this.material.map.image.height;
 
-    let uvs = this.geometry.getAttribute("uv")
+    let uvs = this.geometry.getAttribute("uv");
     uvs.needsUpdate = true;
 
     uvs.array[0] = left ; uvs.array[1] = top;

@@ -257,8 +257,8 @@ export function setupProperty(path: string, value: any) {
 
   if (path === "pixelsPerUnit") {
     // FIXME: .setPixelsPerUnit(...) maybe?
-    spritesheetArea.spriteRenderer.asset.pixelsPerUnit = value;
-    spritesheetArea.spriteRenderer.setSprite(spritesheetArea.spriteRenderer.asset);
+    spritesheetArea.spritesheet.pixelsPerUnit = value;
+    if (spritesheetArea.spriteRenderer.asset != null) spritesheetArea.spriteRenderer.setSprite(spritesheetArea.spriteRenderer.asset);
 
     spritesheetArea.cameraControls.setMultiplier(value);
     animationArea.cameraControls.setMultiplier(value);

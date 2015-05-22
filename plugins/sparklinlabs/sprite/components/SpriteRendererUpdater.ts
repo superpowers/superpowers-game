@@ -71,9 +71,9 @@ export default class SpriteRendererUpdater {
       else {
         let onImageLoaded = () => {
           image.removeEventListener("load", onImageLoaded);
-          asset.pub.texture.needsUpdate = true
+          asset.pub.texture.needsUpdate = true;
           this.spriteRenderer.setSprite(asset.pub, this.materialType);
-          if (this.animationId != null) this._playAnimation()
+          if (this.animationId != null) this._playAnimation();
 
           if (this.receiveAssetCallbacks != null) this.receiveAssetCallbacks.sprite();
         };
@@ -119,7 +119,7 @@ export default class SpriteRendererUpdater {
     image.src = this.url;
     image.addEventListener("load", () => {
       this.spriteAsset.pub.texture.needsUpdate = true;
-      if (this.animationId == null) this.spriteRenderer.setFrame(0);
+      this.spriteRenderer.setSprite(this.spriteAsset.pub, this.materialType);
 
       if (this.editAssetCallbacks != null) this.editAssetCallbacks.sprite.upload();
     });
@@ -136,7 +136,7 @@ export default class SpriteRendererUpdater {
           this.spriteAsset.pub.texture.minFilter = THREE.LinearMipMapLinearFilter;
         }
         this.spriteAsset.pub.texture.needsUpdate = true;
-    } else {
+    } else if (this.spriteRenderer.asset != null) {
         this.spriteRenderer.setSprite(this.spriteAsset.pub, this.materialType);
         if (this.animationId != null) this._playAnimation();
     }
