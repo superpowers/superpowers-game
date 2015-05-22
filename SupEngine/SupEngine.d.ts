@@ -94,7 +94,7 @@ declare module SupEngine {
     setLocalEulerAngles(eulerAngles: THREE.Euler): void;
     setGlobalEulerAngles(eulerAngles: THREE.Euler): void;
     setLocalScale(scale: THREE.Vector3): void;
-    setParent(newParent: Actor, keepLocal: boolean): void;
+    setParent(newParent: Actor, keepLocal?: boolean): void;
 
     rotateGlobal(quaternion: THREE.Quaternion): void;
     rotateLocal(quaternion: THREE.Quaternion): void;
