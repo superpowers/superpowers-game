@@ -253,6 +253,19 @@ export function setupProperty(path: string, value: any) {
   if (path.indexOf("origin") !== -1) value *= 100;
   obj[parts[parts.length - 1]].value = value;
 
+  let pub = data.spriteUpdater.spriteAsset.pub;
+
+  if (path === "filtering" && spritesheetArea.spriteRenderer.asset != null) {
+    if (pub.filtering === "pixelated") {
+      spritesheetArea.spritesheet.texture.magFilter = SupEngine.THREE.NearestFilter;
+      spritesheetArea.spritesheet.texture.minFilter = SupEngine.THREE.NearestFilter;
+    } else {
+      spritesheetArea.spritesheet.texture.magFilter = SupEngine.THREE.LinearFilter;
+      spritesheetArea.spritesheet.texture.minFilter = SupEngine.THREE.LinearMipMapLinearFilter;
+    }
+    spritesheetArea.spritesheet.texture.needsUpdate = true;
+  }
+
   if (path === "pixelsPerUnit") {
     // FIXME: .setPixelsPerUnit(...) maybe?
     spritesheetArea.spritesheet.pixelsPerUnit = value;
@@ -265,7 +278,6 @@ export function setupProperty(path: string, value: any) {
   }
 
   if (path === "grid.width" || path === "grid.height") {
-    let pub = data.spriteUpdater.spriteAsset.pub;
     spritesheetArea.gridRenderer.setRatio({ x: pub.pixelsPerUnit / pub.grid.width, y: pub.pixelsPerUnit / pub.grid.height });
     spritesheetArea.gridRenderer.resize(pub.texture.image.width / pub.grid.width, pub.texture.image.height / pub.grid.height);
     updateSelection();
