@@ -255,8 +255,21 @@ export function setupProperty(path: string, value: any) {
   obj[parts[parts.length - 1]].value = value;
 
   if (path === "pixelsPerUnit") {
+    // FIXME: .setPixelsPerUnit(...) maybe?
+    spritesheetArea.spriteRenderer.asset.pixelsPerUnit = value;
+    spritesheetArea.spriteRenderer.setSprite(spritesheetArea.spriteRenderer.asset);
+
+    spritesheetArea.cameraControls.setMultiplier(value);
     animationArea.cameraControls.setMultiplier(value);
     animationArea.originMakerComponent.setScale(100 / value);
+    updateSelection();
+  }
+
+  if (path === "grid.width" || path === "grid.height") {
+    let pub = data.spriteUpdater.spriteAsset.pub;
+    spritesheetArea.gridRenderer.setRatio({ x: pub.pixelsPerUnit / pub.grid.width, y: pub.pixelsPerUnit / pub.grid.height });
+    spritesheetArea.gridRenderer.resize(pub.texture.image.width / pub.grid.width, pub.texture.image.height / pub.grid.height);
+    updateSelection();
   }
 }
 

@@ -17,12 +17,9 @@ let cameraActor = new SupEngine.Actor(animationArea.gameInstance, "Camera");
 cameraActor.setLocalPosition(new SupEngine.THREE.Vector3(0, 0, 10));
 let cameraComponent = new SupEngine.componentClasses["Camera"](cameraActor);
 cameraComponent.setOrthographicMode(true);
-cameraComponent.setOrthographicScale(5);
-animationArea.cameraControls = new SupEngine.editorComponentClasses["Camera2DControls"](cameraActor, cameraComponent, {
-  zoomSpeed: 1.5,
-  zoomMin: 1,
-  zoomMax: 60
-});
+cameraComponent.setOrthographicScale(10);
+animationArea.cameraControls = new SupEngine.editorComponentClasses["Camera2DControls"](cameraActor, cameraComponent,
+  { zoomSpeed: 1.5, zoomMin: 1, zoomMax: 60 });
 
 let originActor = new SupEngine.Actor(animationArea.gameInstance, "Origin");
 originActor.setLocalPosition(new SupEngine.THREE.Vector3(0, 0, 1));

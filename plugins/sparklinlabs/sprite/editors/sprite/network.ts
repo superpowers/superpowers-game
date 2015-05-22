@@ -72,25 +72,14 @@ onEditCommands.upload = () => {
   asset.texture.needsUpdate = true;
   asset.grid.width = pub.texture.image.width;
   asset.grid.height = pub.texture.image.height;
+  asset.pixelsPerUnit = pub.pixelsPerUnit;
   spritesheetArea.spriteRenderer.setSprite(asset);
 
   spritesheetArea.gridRenderer.resize(pub.texture.image.width / pub.grid.width, pub.texture.image.height / pub.grid.height);
 };
 
-onEditCommands.setProperty = (path: string, value: any) => {
-  setupProperty(path, value);
-
-  let pub = data.spriteUpdater.spriteAsset.pub;
-  if (path === "grid.width" || path === "grid.height") {
-    spritesheetArea.gridRenderer.setRatio({ x: pub.pixelsPerUnit / pub.grid.width, y: pub.pixelsPerUnit / pub.grid.height });
-    spritesheetArea.gridRenderer.resize(pub.texture.image.width / pub.grid.width, pub.texture.image.height / pub.grid.height);
-    updateSelection();
-  }
-};
-
-onEditCommands.newAnimation = (animation: any, index: number) => {
-  setupAnimation(animation, index);
-};
+onEditCommands.setProperty = (path: string, value: any) => { setupProperty(path, value); };
+onEditCommands.newAnimation = (animation: any, index: number) => { setupAnimation(animation, index); };
 
 onEditCommands.deleteAnimation = (id: string) => {
   let animationElt = ui.animationsTreeView.treeRoot.querySelector(`[data-id='${id}']`);

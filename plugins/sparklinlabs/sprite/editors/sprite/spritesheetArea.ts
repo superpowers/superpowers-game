@@ -6,6 +6,7 @@ import SelectionRenderer from "./SelectionRenderer";
 
 let spritesheetArea: {
   gameInstance?: SupEngine.GameInstance;
+  cameraControls?: any;
   spriteRenderer?: SpriteRenderer;
   gridRenderer?: any;
   selectionRenderer?: any;
@@ -19,12 +20,11 @@ let cameraActor = new SupEngine.Actor(spritesheetArea.gameInstance, "Camera");
 cameraActor.setLocalPosition(new SupEngine.THREE.Vector3(0, 0, 10));
 let cameraComponent = new SupEngine.componentClasses["Camera"](cameraActor);
 cameraComponent.setOrthographicMode(true);
-cameraComponent.setOrthographicScale(5);
-new SupEngine.editorComponentClasses["Camera2DControls"](cameraActor, cameraComponent, {
-  zoomSpeed: 1.5,
-  zoomMin: 1,
-  zoomMax: 60
-},() => { spritesheetArea.gridRenderer.setOrthgraphicScale(cameraComponent.orthographicScale); }
+cameraComponent.setOrthographicScale(10);
+
+spritesheetArea.cameraControls = new SupEngine.editorComponentClasses["Camera2DControls"](cameraActor, cameraComponent,
+  { zoomSpeed: 1.5, zoomMin: 1, zoomMax: 60 },
+  () => { spritesheetArea.gridRenderer.setOrthgraphicScale(cameraComponent.orthographicScale); }
 );
 
 let spriteActor = new SupEngine.Actor(spritesheetArea.gameInstance, "Sprite");
