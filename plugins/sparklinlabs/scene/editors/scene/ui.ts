@@ -13,6 +13,7 @@ let ui: {
   nodesTreeView?: any;
 
   newNodeButton?: HTMLButtonElement;
+  newPrefabButton?: HTMLButtonElement;
   renameNodeButton?: HTMLButtonElement;
   duplicateNodeButton?: HTMLButtonElement;
   deleteNodeButton?: HTMLButtonElement;
@@ -26,7 +27,8 @@ let ui: {
   };
 
   componentEditorClasses?: { [name: string]: string };
-  componentEditors?: { [id: string]: SupClient.ComponentEditorObject }
+  componentEditors?: { [id: string]: SupClient.ComponentEditorObject };
+  newComponentButton?: HTMLButtonElement;
 
   cameraMode?: string;
   cameraModeButton?: HTMLButtonElement;
@@ -47,6 +49,8 @@ ui.nodesTreeView.on("selectionChange", onNodeSelect);
 
 ui.newNodeButton = <HTMLButtonElement>document.querySelector("button.new-node");
 ui.newNodeButton.addEventListener("click", onNewNodeClick);
+ui.newPrefabButton = <HTMLButtonElement>document.querySelector("button.new-prefab");
+ui.newPrefabButton.addEventListener("click", onNewPrefabClick);
 ui.renameNodeButton = <HTMLButtonElement>document.querySelector("button.rename-node");
 ui.renameNodeButton.addEventListener("click", onRenameNodeClick);
 ui.duplicateNodeButton = <HTMLButtonElement>document.querySelector("button.duplicate-node");
@@ -68,7 +72,8 @@ for (let transformType in ui.transform) {
   for (let input of inputs) input.addEventListener("change", onTransformInputChange);
 }
 
-document.querySelector("button.new-component").addEventListener("click", onNewComponentClick);
+ui.newComponentButton = <HTMLButtonElement>document.querySelector("button.new-component");
+ui.newComponentButton.addEventListener("click", onNewComponentClick);
 
 ui.cameraMode = "3D";
 ui.cameraModeButton = <HTMLButtonElement>document.querySelector("button.toggle-camera-button");
@@ -86,6 +91,12 @@ export function createNodeElement(node: Node) {
   let liElt = document.createElement("li");
   (<any>liElt.dataset).id = node.id;
 
+  if (node.components[0] != null && node.components[0].type === "Prefab") {
+    let prefabSpan = document.createElement("span");
+    prefabSpan.textContent = "P";
+    liElt.appendChild(prefabSpan);
+  }
+
   let nameSpan = document.createElement("span");
   nameSpan.className = "name";
   nameSpan.textContent = node.name;
@@ -96,7 +107,7 @@ export function createNodeElement(node: Node) {
   visibleButton.classList.add("show");
   visibleButton.addEventListener("click", (event: any) => {
     event.stopPropagation();
-    let actor = engine.bySceneNodeId[event.target.parentElement.dataset["id"]].actor;
+    let actor = data.sceneUpdater.bySceneNodeId[event.target.parentElement.dataset["id"]].actor;
     actor.threeObject.visible = ! actor.threeObject.visible;
     visibleButton.textContent = (actor.threeObject.visible) ? "Hide" : "Show";
     if (actor.threeObject.visible) visibleButton.classList.add("show");
@@ -108,19 +119,19 @@ export function createNodeElement(node: Node) {
 }
 
 function onNodeDrop(dropInfo: any, orderedNodes: any) {
-  let dropPoint = SupClient.getTreeViewDropPoint(dropInfo, data.asset.nodes);
+  let dropPoint = SupClient.getTreeViewDropPoint(dropInfo, data.sceneUpdater.sceneAsset.nodes);
 
   let nodeIds: string[] = []
   for (let node of orderedNodes ) nodeIds.push(node.dataset.id);
 
-  let sourceParentNode = data.asset.nodes.parentNodesById[nodeIds[0]];
-  let sourceChildren = (sourceParentNode != null && sourceParentNode.children != null) ? sourceParentNode.children : data.asset.nodes.pub;
+  let sourceParentNode = data.sceneUpdater.sceneAsset.nodes.parentNodesById[nodeIds[0]];
+  let sourceChildren = (sourceParentNode != null && sourceParentNode.children != null) ? sourceParentNode.children : data.sceneUpdater.sceneAsset.nodes.pub;
   let sameParent = (sourceParentNode != null && dropPoint.parentId === sourceParentNode.id);
 
   let i = 0;
   for (let id of nodeIds) {
     socket.emit("edit:assets", info.assetId, "moveNode", id, dropPoint.parentId, dropPoint.index + i, (err: string) => { if (err != null) alert(err); });
-    if (! sameParent || sourceChildren.indexOf(data.asset.nodes.byId[id]) >= dropPoint.index) i++;
+    if (! sameParent || sourceChildren.indexOf(data.sceneUpdater.sceneAsset.nodes.byId[id]) >= dropPoint.index) i++;
   }
   return false
 }
@@ -138,6 +149,7 @@ export function onNodeSelect() {
     ui.inspectorElt.classList.add("noSelection");
 
     ui.newNodeButton.disabled = false;
+    ui.newPrefabButton.disabled = false;
     ui.renameNodeButton.disabled = true;
     ui.duplicateNodeButton.disabled = true;
     ui.deleteNodeButton.disabled = true;
@@ -145,15 +157,18 @@ export function onNodeSelect() {
   }
 
   ui.inspectorElt.classList.remove("noSelection");
-  ui.newNodeButton.disabled = false;
-  ui.renameNodeButton.disabled = false;
-  ui.duplicateNodeButton.disabled = false;
-  ui.deleteNodeButton.disabled = false;
 
-  let node = data.asset.nodes.byId[nodeElt.dataset.id];
+  let node = data.sceneUpdater.sceneAsset.nodes.byId[nodeElt.dataset.id];
   setInspectorPosition(<THREE.Vector3>node.position);
   setInspectorOrientation(<THREE.Quaternion>node.orientation);
   setInspectorScale(<THREE.Vector3>node.scale);
+
+  let isPrefab = node.components[0] != null && node.components[0].type === "Prefab";
+  ui.newNodeButton.disabled = isPrefab;
+  ui.newPrefabButton.disabled = isPrefab;
+  ui.renameNodeButton.disabled = false;
+  ui.duplicateNodeButton.disabled = false;
+  ui.deleteNodeButton.disabled = false;
 
   // Setup component editors
   let componentsElt = <HTMLDivElement>ui.inspectorElt.querySelector(".components");
@@ -163,6 +178,7 @@ export function onNodeSelect() {
     let componentElt = createComponentElement(node.id, component);
     ui.inspectorElt.querySelector(".components").appendChild(componentElt);
   }
+  ui.newComponentButton.disabled = isPrefab;
 }
 
 function roundForInspector(number: number) { return parseFloat(number.toFixed(3)); }
@@ -217,24 +233,35 @@ export function setInspectorScale(scale: THREE.Vector3) {
 function onNewNodeClick() {
   SupClient.dialogs.prompt("Enter a name for the actor.", null, "Actor", "Create", (name) => {
     if (name == null) return;
+    queryNewNode(name, false);
+  });
+}
 
-    let options = SupClient.getTreeViewInsertionPoint(ui.nodesTreeView);
+function onNewPrefabClick() {
+  SupClient.dialogs.prompt("Enter a name for the prefab.", null, "Prefab", "Create", (name) => {
+    if (name == null) return;
+    queryNewNode(name, true);
+  });
+}
 
-    let offset = new THREE.Vector3(0, 0, -5).applyQuaternion(engine.cameraActor.getGlobalOrientation());
-    let position = engine.cameraActor.getGlobalPosition().add(offset);
-    if (options.parentId != null) {
-      let parentMatrix = engine.bySceneNodeId[options.parentId].actor.getGlobalMatrix();
-      position.applyMatrix4(parentMatrix.getInverse(parentMatrix));
-    }
-    (<any>options).transform = { position };
+function queryNewNode(name: string, prefab: boolean) {
+  let options = SupClient.getTreeViewInsertionPoint(ui.nodesTreeView);
 
-    socket.emit("edit:assets", info.assetId, "addNode", name, options, (err: string, nodeId: string) => {
-      if (err != null) { alert(err); return; }
+  let offset = new THREE.Vector3(0, 0, -5).applyQuaternion(engine.cameraActor.getGlobalOrientation());
+  let position = engine.cameraActor.getGlobalPosition().add(offset);
+  if (options.parentId != null) {
+    let parentMatrix = data.sceneUpdater.bySceneNodeId[options.parentId].actor.getGlobalMatrix();
+    position.applyMatrix4(parentMatrix.getInverse(parentMatrix));
+  }
+  (<any>options).transform = { position };
+  (<any>options).prefab = prefab;
 
-      ui.nodesTreeView.clearSelection();
-      ui.nodesTreeView.addToSelection(ui.nodesTreeView.treeRoot.querySelector(`li[data-id='${nodeId}']`));
-      onNodeSelect();
-    });
+  socket.emit("edit:assets", info.assetId, "addNode", name, options, (err: string, nodeId: string) => {
+    if (err != null) { alert(err); return; }
+
+    ui.nodesTreeView.clearSelection();
+    ui.nodesTreeView.addToSelection(ui.nodesTreeView.treeRoot.querySelector(`li[data-id='${nodeId}']`));
+    onNodeSelect();
   });
 }
 
@@ -242,7 +269,7 @@ function onRenameNodeClick() {
   if (ui.nodesTreeView.selectedNodes.length !== 1) return;
 
   let selectedNode = ui.nodesTreeView.selectedNodes[0];
-  let node = data.asset.nodes.byId[selectedNode.dataset.id];
+  let node = data.sceneUpdater.sceneAsset.nodes.byId[selectedNode.dataset.id];
 
   SupClient.dialogs.prompt("Enter a new name for the actor.", null, node.name, "Rename", (newName) => {
     if (newName == null) return;
@@ -255,7 +282,7 @@ function onDuplicateNodeClick() {
   if (ui.nodesTreeView.selectedNodes.length !== 1) return;
 
   let selectedNode = ui.nodesTreeView.selectedNodes[0];
-  let node = data.asset.nodes.byId[selectedNode.dataset.id];
+  let node = data.sceneUpdater.sceneAsset.nodes.byId[selectedNode.dataset.id];
 
   SupClient.dialogs.prompt("Enter a name for the new actor.", null, node.name, "Duplicate", (newName) => {
     if (newName == null) return;

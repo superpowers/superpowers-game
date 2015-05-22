@@ -4,6 +4,7 @@ let THREE: any;
 // so that we inherit any settings, like the global Euler order
 // (or, alternatively, we could duplicate those settings...)
 if ((<any>global).window == null) THREE = serverRequire("../../../../system/SupEngine").THREE;
+else THREE = SupEngine.THREE;
 
 import * as path from "path";
 import * as fs from "fs";
@@ -11,6 +12,7 @@ import * as _ from "lodash";
 
 import { Component } from "./SceneComponents";
 import SceneNodes, { Node } from "./SceneNodes";
+import PrefabConfig from "./PrefabConfig";
 
 export interface DuplicatedNode {
   node: Node;
@@ -28,7 +30,7 @@ export default class SceneAsset extends SupCore.data.base.Asset {
   componentPathsByDependentAssetId: { [assetId: string]: string[] };
   nodes: SceneNodes;
 
-  constructor(id: string, pub: any, serverData: any) {
+  constructor(id: string, pub: any, serverData: SupCore.data.ProjectServerData) {
     super(id, pub, SceneAsset.schema, serverData);
   }
 
@@ -39,7 +41,7 @@ export default class SceneAsset extends SupCore.data.base.Asset {
 
   setup() {
     this.componentPathsByDependentAssetId = {};
-    this.nodes = new SceneNodes(this.pub.nodes);
+    this.nodes = new SceneNodes(this.pub.nodes, this.serverData);
 
     for (let nodeId in this.nodes.componentsByNodeId) {
       let components = this.nodes.componentsByNodeId[nodeId];
@@ -66,6 +68,22 @@ export default class SceneAsset extends SupCore.data.base.Asset {
   }
 
   server_addNode(client: any, name: string, options: any, callback: (err: string, node: Node, parentId: string, index: number) => any) {
+    let parentId = (options != null) ? options.parentId : null;
+    let parentNode = this.nodes.byId[parentId];
+    if (parentNode != null && parentNode.components[0] != null && parentNode.components[0].type === "Prefab") {
+      callback("Can't create children node on prefabs", null, null, null);
+      return
+    }
+
+    // Make sure a scene which is a prefab cannot contains prefab itself
+    if (options.prefab) {
+      let entry = this.serverData.entries.byId[this.id];
+      if (entry.dependentAssetIds.length > 0) {
+        callback("Can't add prefab on a scene which is a prefab itself", null, null, null);
+        return;
+      }
+    }
+
     let sceneNode: Node = {
       id: null, name: name, children: <Node[]>[], components: <Component[]>[],
       position: (options != null && options.transform != null && options.transform.position != null) ? options.transform.position : { x: 0, y: 0, z: 0 },
@@ -73,13 +91,27 @@ export default class SceneAsset extends SupCore.data.base.Asset {
       scale: (options != null && options.transform != null && options.transform.scale != null) ? options.transform.scale : { x: 1, y: 1, z: 1 },
     };
 
-    let parentId = (options != null) ? options.parentId : null;
     let index = (options != null) ? options.index : null;
     this.nodes.add(sceneNode, parentId, index, (err, actualIndex) => {
       if (err != null) { callback(err, null, null, null); return; }
 
-      callback(null, sceneNode, parentId, actualIndex);
-      this.emit("change");
+      if (options.prefab) {
+        let component: Component = { type: "Prefab", config: PrefabConfig.create() };
+
+        this.nodes.addComponent(sceneNode.id, component, 0, (err, actualIndex) => {
+          let config = this.nodes.componentsByNodeId[sceneNode.id].configsById[component.id];
+
+          let componentPath = `${sceneNode.id}_${component.id}`;
+          config.on("addDependencies", (depIds: string[]) => { this._onAddComponentDependencies(componentPath, depIds); });
+          config.on("removeDependencies", (depIds: string[]) => { this._onRemoveComponentDependencies(componentPath, depIds); });
+
+          callback(null, sceneNode, parentId, actualIndex);
+          this.emit("change");
+        });
+      } else {
+        callback(null, sceneNode, parentId, actualIndex);
+        this.emit("change");
+      }
     });
   }
 
@@ -103,6 +135,12 @@ export default class SceneAsset extends SupCore.data.base.Asset {
   server_moveNode(client: any, id: string, parentId: string, index: number, callback: (err: string, id: string, parentId: string, index: number) => any) {
     let node = this.nodes.byId[id];
     if (node == null) { callback(`Invalid node id: ${id}`, null, null, null); return; }
+
+    let parentNode = this.nodes.byId[parentId];
+    if (parentNode != null && parentNode.components[0] != null && parentNode.components[0].type === "Prefab") {
+      callback("Can't move children node on prefabs", null, null, null);
+      return
+    }
 
     let globalMatrix = this.computeGlobalMatrix(node);
 
@@ -144,7 +182,10 @@ export default class SceneAsset extends SupCore.data.base.Asset {
   }
 
   client_moveNode(id: string, parentId: string, index: number) {
+    let node = this.nodes.byId[id];
+    let globalMatrix = this.computeGlobalMatrix(node);
     this.nodes.client_move(id, parentId, index);
+    this.applyGlobalMatrix(node, globalMatrix);
   }
 
 
@@ -173,14 +214,16 @@ export default class SceneAsset extends SupCore.data.base.Asset {
       this.nodes.add(newNode, parentId, index, (err, actualIndex) => {
         if (err != null) { callback(err, null, null); return; }
 
-        for (let componentId in this.nodes.componentsByNodeId[newNode.id].configsById) {
-          let config = this.nodes.componentsByNodeId[newNode.id].configsById[componentId];
-          let componentPath = `${newNode.id}_${componentId}`;
-          ((config: SupCore.data.base.ComponentConfig, componentPath: string) => {
-            config.on("addDependencies", (depIds: string[]) => { this._onAddComponentDependencies(componentPath, depIds); });
-            config.on("removeDependencies", (depIds: string[]) => { this._onRemoveComponentDependencies(componentPath, depIds); });
-          })(config, componentPath);
-          config.restore()
+        if (newNode.components != null) {
+          for (let componentId in this.nodes.componentsByNodeId[newNode.id].configsById) {
+            let config = this.nodes.componentsByNodeId[newNode.id].configsById[componentId];
+            let componentPath = `${newNode.id}_${componentId}`;
+            ((config: SupCore.data.base.ComponentConfig, componentPath: string) => {
+              config.on("addDependencies", (depIds: string[]) => { this._onAddComponentDependencies(componentPath, depIds); });
+              config.on("removeDependencies", (depIds: string[]) => { this._onRemoveComponentDependencies(componentPath, depIds); });
+            })(config, componentPath);
+            config.restore()
+          }
         }
         newNodes.push({
           node: newNode,
@@ -271,6 +314,12 @@ export default class SceneAsset extends SupCore.data.base.Asset {
 
     let componentConfigClass = SupCore.data.componentConfigClasses[componentType];
     if (componentConfigClass == null) { callback("Invalid component type", null, null, null); return; }
+
+    let node = this.nodes.byId[nodeId];
+    if (node != null && node.components[0] != null && node.components[0].type === "Prefab") {
+      callback("Can't add component on prefabs", null, null, null);
+      return
+    }
 
     let component: Component = {
       type: componentType,

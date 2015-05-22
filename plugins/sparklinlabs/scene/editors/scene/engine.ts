@@ -2,7 +2,6 @@ import { data } from "./network";
 import ui from "./ui";
 
 let THREE = SupEngine.THREE;
-import TransformMarker from "./TransformMarker";
 import { Node } from "../../data/SceneNodes";
 import { Component } from "../../data/SceneComponents";
 
@@ -12,8 +11,6 @@ let engine: {
   cameraActor?: SupEngine.Actor;
   cameraComponent?: any;
   cameraControls?: any;
-
-  bySceneNodeId?: { [id: string]: { actor: SupEngine.Actor, bySceneComponentId: { [id: string]: { component: any; componentUpdater: any } } } };
 
   tickAnimationFrameId?: number;
 } = {};
@@ -27,8 +24,6 @@ engine.cameraActor.setLocalPosition(new THREE.Vector3(0, 0, 10));
 
 engine.cameraComponent = new SupEngine.componentClasses["Camera"](engine.cameraActor);
 engine.cameraControls = new SupEngine.editorComponentClasses["Camera3DControls"](engine.cameraActor, engine.cameraComponent);
-
-engine.bySceneNodeId = {};
 
 engine.tickAnimationFrameId = requestAnimationFrame(tick);
 function tick() {
@@ -47,35 +42,4 @@ function tick() {
 
   engine.gameInstance.draw();
   engine.tickAnimationFrameId = requestAnimationFrame(tick);
-}
-
-
-export function createNodeActor(node: Node) {
-  let parentNode = data.asset.nodes.parentNodesById[node.id]
-  let parentActor: SupEngine.Actor;
-  if (parentNode != null) parentActor = engine.bySceneNodeId[parentNode.id].actor
-
-  let nodeActor = new SupEngine.Actor(engine.gameInstance, node.name, parentActor);
-  nodeActor.threeObject.position.copy(<THREE.Vector3>node.position);
-  nodeActor.threeObject.quaternion.copy(<THREE.Quaternion>node.orientation);
-  nodeActor.threeObject.scale.copy(<THREE.Vector3>node.scale);
-  nodeActor.threeObject.updateMatrixWorld(false);
-  (<any>nodeActor).sceneNodeId = node.id;
-  new TransformMarker(nodeActor);
-
-  engine.bySceneNodeId[node.id] = { actor: nodeActor, bySceneComponentId: {} }
-
-  for (let component of node.components) createNodeActorComponent(node, component, nodeActor);
-  return nodeActor;
-}
-
-export function createNodeActorComponent(sceneNode: Node, sceneComponent: Component, nodeActor: SupEngine.Actor) {
-  let componentClass = SupEngine.editorComponentClasses[`${sceneComponent.type}Marker`];
-  if (componentClass == null) componentClass = SupEngine.componentClasses[sceneComponent.type];
-  let actorComponent = new componentClass(nodeActor);
-
-  engine.bySceneNodeId[sceneNode.id].bySceneComponentId[sceneComponent.id] = {
-    component: actorComponent,
-    componentUpdater: new componentClass.Updater(data.projectClient, actorComponent, sceneComponent.config),
-  }
 }

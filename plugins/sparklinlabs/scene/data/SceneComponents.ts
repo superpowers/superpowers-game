@@ -12,13 +12,15 @@ export default class SceneComponents extends SupCore.data.base.ListById {
   };
 
   configsById: { [id: string]: SupCore.data.base.ComponentConfig } = {};
+  serverData: SupCore.data.ProjectServerData;
 
-  constructor(pub: any) {
+  constructor(pub: any, serverData?: SupCore.data.ProjectServerData) {
     super(pub, SceneComponents.schema);
+    this.serverData = serverData;
 
     for (let item of this.pub) {
       let componentConfigClass = SupCore.data.componentConfigClasses[item.type];
-      this.configsById[item.id] = new componentConfigClass(item.config);
+      this.configsById[item.id] = new componentConfigClass(item.config, this.serverData);
     }
   }
 
@@ -27,7 +29,7 @@ export default class SceneComponents extends SupCore.data.base.ListById {
       if (err != null) { callback(err, null); return; }
 
       let componentConfigClass = SupCore.data.componentConfigClasses[component.type];
-      this.configsById[component.id] = new componentConfigClass(component.config);
+      this.configsById[component.id] = new componentConfigClass(component.config, this.serverData);
 
       callback(null, actualIndex);
     });

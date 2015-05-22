@@ -30,10 +30,15 @@ module Sup {
       actor.__inner.setLocalScale( tmpVector3.set(node.scale.x, node.scale.y, node.scale.z) )
 
       node.components.forEach( (sceneComponent) => {
-        allComponents.push({
-          sceneComponent: sceneComponent,
-          actorComponent: player.createComponent(sceneComponent.type, actor, sceneComponent.config)
-        });
+        if (sceneComponent.type === "Prefab") {
+          var prefabAsset = player.getOuterAsset(sceneComponent.config.sceneAssetId);
+          if (prefabAsset != null) appendScene(prefabAsset, actor);
+        } else {
+          allComponents.push({
+            sceneComponent: sceneComponent,
+            actorComponent: player.createComponent(sceneComponent.type, actor, sceneComponent.config)
+          });
+        }
       });
 
       node.children.forEach( (child) => { walk(child, actor); } );

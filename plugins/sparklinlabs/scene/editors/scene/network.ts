@@ -1,14 +1,15 @@
 import info from "./info";
 import ui, { setCameraMode, createNodeElement, onNodeSelect, createComponentElement, setInspectorPosition, setInspectorOrientation, setInspectorScale } from "./ui";
-import engine, { createNodeActor, createNodeActorComponent } from "./engine";
+import engine from "./engine";
 
 let THREE = SupEngine.THREE;
 import SceneAsset, { DuplicatedNode } from "../../data/SceneAsset";
 import SceneSettingsResource from "../../data/SceneSettingsResource";
 import { Node } from "../../data/SceneNodes";
 import { Component } from "../../data/SceneComponents";
+import SceneUpdater from "../../components/SceneUpdater";
 
-export let data: { projectClient: SupClient.ProjectClient, asset?: SceneAsset };
+export let data: { projectClient: SupClient.ProjectClient, sceneUpdater?: SceneUpdater };
 
 export let socket: SocketIOClient.Socket;
 export function networkStart() {
@@ -26,50 +27,41 @@ function onConnected() {
 var sceneSettingSubscriber = {
   onResourceReceived: (resourceId: string, resource: SceneSettingsResource) => {
     setCameraMode(resource.pub.defaultCameraMode);
-    data.projectClient.subAsset(info.assetId, "scene", sceneSubscriber);
+    data.sceneUpdater = new SceneUpdater(
+      data.projectClient,
+      { gameInstance: engine.gameInstance ,actor: null },
+      { sceneAssetId: info.assetId},
+      { scene: onSceneAssetReceived },
+      { scene: onEditCommands }
+    );
   },
 
   onResourceEdited: (resourceId: string, command: string, propertyName: string) => {}
 }
 
-var sceneSubscriber = {
-  onAssetReceived: (err: string, asset: SceneAsset) => {
-    data.asset = asset;
+function onSceneAssetReceived(err: string, asset: SceneAsset) {
+  // Clear tree view
+  ui.nodesTreeView.clearSelection();
+  ui.nodesTreeView.treeRoot.innerHTML = "";
 
-    // Clear tree view
-    ui.nodesTreeView.clearSelection()
-    ui.nodesTreeView.treeRoot.innerHTML = ""
+  function walk(node: Node, parentNode: Node, parentElt: HTMLLIElement) {
+    let liElt = createNodeElement(node);
+    ui.nodesTreeView.append(liElt, "group", parentElt);
 
-    // TODO: Clear existing actors
-
-    function walk(node: Node, parentNode: Node, parentElt: HTMLLIElement) {
-      let liElt = createNodeElement(node);
-      ui.nodesTreeView.append(liElt, "group", parentElt);
-
-      createNodeActor(node);
-
-      if (node.children != null && node.children.length > 0) {
-        liElt.classList.add("collapsed");
-        for (let child of node.children) walk(child, node, liElt)
-      }
+    if (node.children != null && node.children.length > 0) {
+      liElt.classList.add("collapsed");
+      for (let child of node.children) walk(child, node, liElt)
     }
-    for (let node of data.asset.nodes.pub) walk(node, null, null);
-  },
-
-  onAssetEdited: (id: string, command: string, ...args: any[]) => {
-    if (onEditCommands[command] != null) onEditCommands[command].apply(data.asset, args);
-  },
-
-  onAssetTrashed: (id: string) => { SupClient.onAssetTrashed(); }
+  }
+  for (let node of data.sceneUpdater.sceneAsset.nodes.pub) walk(node, null, null);
 }
+
 var onEditCommands: any = {};
 onEditCommands.addNode = (node: Node, parentId: string, index: number) => {
   let nodeElt = createNodeElement(node);
   let parentElt: HTMLLIElement;
   if (parentId != null) parentElt = ui.nodesTreeView.treeRoot.querySelector(`[data-id='${parentId}']`);
   ui.nodesTreeView.insertAt(nodeElt, "group", index, parentElt);
-
-  createNodeActor(node);
 }
 
 onEditCommands.moveNode = (id: string, parentId: string, index: number) => {
@@ -81,34 +73,9 @@ onEditCommands.moveNode = (id: string, parentId: string, index: number) => {
   if (parentId != null) parentElt = ui.nodesTreeView.treeRoot.querySelector(`[data-id='${parentId}']`)
   ui.nodesTreeView.insertAt(nodeElt, "group", index, parentElt);
 
-  // Update actor
-  let nodeActor = engine.bySceneNodeId[id].actor;
-  let parentNodeActor = (engine.bySceneNodeId[parentId] != null) ? engine.bySceneNodeId[parentId].actor : null;
-  nodeActor.setParent(parentNodeActor);
-
-  // Update data.asset.nodes with new local transform
-  let node = data.asset.nodes.byId[id];
-  node.position = {
-    x: nodeActor.threeObject.position.x,
-    y: nodeActor.threeObject.position.y,
-    z: nodeActor.threeObject.position.z,
-  };
-
-  node.orientation = {
-    x: nodeActor.threeObject.quaternion.x,
-    y: nodeActor.threeObject.quaternion.y,
-    z: nodeActor.threeObject.quaternion.z,
-    w: nodeActor.threeObject.quaternion.w,
-  };
-
-  node.scale = {
-    x: nodeActor.threeObject.scale.x,
-    y: nodeActor.threeObject.scale.y,
-    z: nodeActor.threeObject.scale.z,
-  };
-
   // Refresh inspector
   if (isInspected) {
+    let node = data.sceneUpdater.sceneAsset.nodes.byId[id];
     setInspectorPosition(<THREE.Vector3>node.position);
     setInspectorOrientation(<THREE.Quaternion>node.orientation);
     setInspectorScale(<THREE.Vector3>node.scale);
@@ -120,22 +87,18 @@ onEditCommands.setNodeProperty = (id: string, path: string, value: any) => {
   let isInspected = ui.nodesTreeView.selectedNodes.length === 1 && nodeElt === ui.nodesTreeView.selectedNodes[0];
 
   switch (path) {
-    case "name": { nodeElt.querySelector(".name").textContent = value; break; }
-    case "position": {
-      if (isInspected) setInspectorPosition(<THREE.Vector3>data.asset.nodes.byId[id].position);
-      engine.bySceneNodeId[id].actor.setLocalPosition(value);
+    case "name":
+      nodeElt.querySelector(".name").textContent = value;
       break;
-    }
-    case "orientation": {
-      if (isInspected) setInspectorOrientation(<THREE.Quaternion>data.asset.nodes.byId[id].orientation);
-      engine.bySceneNodeId[id].actor.setLocalOrientation(value);
+    case "position":
+      if (isInspected) setInspectorPosition(<THREE.Vector3>data.sceneUpdater.sceneAsset.nodes.byId[id].position);
       break;
-    }
-    case "scale": {
-      if (isInspected) setInspectorScale(<THREE.Vector3>data.asset.nodes.byId[id].scale);
-      engine.bySceneNodeId[id].actor.setLocalScale(value);
+    case "orientation":
+      if (isInspected) setInspectorOrientation(<THREE.Quaternion>data.sceneUpdater.sceneAsset.nodes.byId[id].orientation);
       break;
-    }
+    case "scale":
+      if (isInspected) setInspectorScale(<THREE.Vector3>data.sceneUpdater.sceneAsset.nodes.byId[id].scale);
+      break;
   }
 }
 
@@ -149,25 +112,6 @@ onEditCommands.removeNode = (id: string) => {
 
   ui.nodesTreeView.remove(nodeElt);
   if (isInspected) onNodeSelect();
-
-  let actorToBeDestroyed = engine.bySceneNodeId[id].actor;
-  recurseClearActorUIs(id);
-  engine.gameInstance.destroyActor(actorToBeDestroyed);
-}
-
-function recurseClearActorUIs(nodeId: string) {
-  let actor = engine.bySceneNodeId[nodeId].actor;
-
-  for (let childActor of actor.children) {
-    let sceneNodeId = (<any>childActor).sceneNodeId;
-  	if (sceneNodeId != null) recurseClearActorUIs(sceneNodeId);
-  }
-
-  for (let componentId in engine.bySceneNodeId[nodeId].bySceneComponentId) {
-    engine.bySceneNodeId[nodeId].bySceneComponentId[componentId].componentUpdater.destroy();
-  }
-
-  delete engine.bySceneNodeId[nodeId];
 }
 
 onEditCommands.addComponent = (nodeId: string, nodeComponent: Component, index: number) => {
@@ -178,14 +122,9 @@ onEditCommands.addComponent = (nodeId: string, nodeComponent: Component, index: 
     // TODO: Take index into account
     ui.inspectorElt.querySelector(".components").appendChild(componentElt);
   }
-
-  createNodeActorComponent(data.asset.nodes.byId[nodeId], nodeComponent, engine.bySceneNodeId[nodeId].actor);
 }
 
 onEditCommands.editComponent = (nodeId: string, componentId: string, command: string, ...args: any[]) => {
-  let componentUpdater = engine.bySceneNodeId[nodeId].bySceneComponentId[componentId].componentUpdater;
-  if (componentUpdater[`config_${command}`] != null) componentUpdater[`config_${command}`].call(componentUpdater, ...args);
-
   let isInspected = ui.nodesTreeView.selectedNodes.length === 1 && nodeId === ui.nodesTreeView.selectedNodes[0].dataset.id;
   if (isInspected) {
     let componentEditor = ui.componentEditors[componentId];
@@ -204,9 +143,4 @@ onEditCommands.removeComponent = (nodeId: string, componentId: string) => {
     let componentElt = <HTMLDivElement>ui.inspectorElt.querySelector(`.components > div[data-component-id='${componentId}']`);
     componentElt.parentElement.removeChild(componentElt);
   }
-
-  engine.gameInstance.destroyComponent(engine.bySceneNodeId[nodeId].bySceneComponentId[componentId].component);
-
-  engine.bySceneNodeId[nodeId].bySceneComponentId[componentId].componentUpdater.destroy();
-  delete engine.bySceneNodeId[nodeId].bySceneComponentId[componentId];
 }

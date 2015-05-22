@@ -26,6 +26,7 @@ html
     .sidebar
       .nodes-buttons
         button.new-node New Actor
+        button.new-prefab New Prefab
         button(disabled).rename-node Rename
         button(disabled).duplicate-node Duplicate
         button(disabled).delete-node Delete
@@ -60,8 +61,8 @@ html
         .components
 
     script(src="/core/SupCore.js")
-    script(src="../../data.js")
     script(src="/system/SupEngine.js")
+    script(src="../../data.js")
     script(src="../../components.js")
     script(src="/client/SupClient.js")
     script(src="../../componentEditors.js")
