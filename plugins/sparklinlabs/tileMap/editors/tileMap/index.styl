@@ -6,13 +6,23 @@ body
 .main
   flex 1
   display flex
+  flex-direction column
 
   canvas
     flex 1
 
+  .status-bar
+    height 30px
+    margin-left 10px
+    display flex
+    align-items center
+
+    .position-x, .position-y
+      margin 0 10px 0 10px
+
 .sidebar
-  display flex
   flex-direction column
+  display flex
   width 350px
   border-left 1px solid #aaa
 

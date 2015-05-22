@@ -25,6 +25,8 @@ let ui: {
   eraserToolButton?: HTMLInputElement;
 
   layersTreeView?: any;
+
+  mousePositionLabel?: { x: HTMLLabelElement; y: HTMLLabelElement; };
 } = {};
 export default ui;
 
@@ -70,6 +72,11 @@ ui.layersTreeView.on("selectionChange", onLayerSelect);
 document.querySelector("button.new-layer").addEventListener("click", onNewLayerClick);
 document.querySelector("button.rename-layer").addEventListener("click", onRenameLayerClick);
 document.querySelector("button.delete-layer").addEventListener("click", onDeleteLayerClick);
+
+ui.mousePositionLabel = {
+  x: <HTMLLabelElement>document.querySelector("label.position-x"),
+  y: <HTMLLabelElement>document.querySelector("label.position-y")
+}
 
 // Keybindings
 SupClient.setupHotkeys();

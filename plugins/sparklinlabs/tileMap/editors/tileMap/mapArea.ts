@@ -263,6 +263,9 @@ export function handleMapArea() {
     mapArea.cursorPoint.x = mouseX;
     mapArea.cursorPoint.y = mouseY;
 
+    ui.mousePositionLabel.x.textContent = mouseX.toString();
+    ui.mousePositionLabel.y.textContent = mouseY.toString();
+
     if (ui.fillToolButton.checked) {
       let position = data.tileSetUpdater.tileSetRenderer.selectedTileActor.getLocalPosition();
       setupFillPattern([ position.x, -position.y, false, false, 0 ]);
