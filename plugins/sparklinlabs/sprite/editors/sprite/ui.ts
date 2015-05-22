@@ -211,7 +211,7 @@ export function updateSelectedAnimation() {
     updateSelection();
   }
   else {
-    ui.selectedAnimationId = null
+    ui.selectedAnimationId = null;
     data.spriteUpdater.config_setProperty("animationId", null);
     ui.animationPlay.disabled = true;
     ui.animationSlider.disabled = true;
@@ -224,8 +224,8 @@ export function updateSelectedAnimation() {
 
   let buttons = document.querySelectorAll(".animations-buttons button");
   for (let index = 0; index < buttons.length; index ++) {
-    let button: any = buttons.item(index)
-    button.disabled = ui.selectedAnimationId == null && button.className !== "new-animation"
+    let button: any = buttons.item(index);
+    button.disabled = ui.selectedAnimationId == null && button.className !== "new-animation";
   }
 }
 

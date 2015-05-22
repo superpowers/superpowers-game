@@ -23,7 +23,7 @@ function onConnected() {
   let receiveCallbacks = { sprite: onAssetReceived };
   let editCallbacks = { sprite: onEditCommands };
 
-  data.spriteUpdater = new SpriteRendererUpdater(data.projectClient, spriteRenderer, config, receiveCallbacks, editCallbacks)
+  data.spriteUpdater = new SpriteRendererUpdater(data.projectClient, spriteRenderer, config, receiveCallbacks, editCallbacks);
 }
 
 function onAssetReceived() {
@@ -75,33 +75,34 @@ onEditCommands.upload = () => {
   spritesheetArea.spriteRenderer.setSprite(asset);
 
   spritesheetArea.gridRenderer.resize(pub.texture.image.width / pub.grid.width, pub.texture.image.height / pub.grid.height);
-}
+};
 
 onEditCommands.setProperty = (path: string, value: any) => {
   setupProperty(path, value);
 
   let pub = data.spriteUpdater.spriteAsset.pub;
-  if (path === "grid.width" || path === "grid.height")
+  if (path === "grid.width" || path === "grid.height") {
     spritesheetArea.gridRenderer.setRatio({ x: pub.pixelsPerUnit / pub.grid.width, y: pub.pixelsPerUnit / pub.grid.height });
     spritesheetArea.gridRenderer.resize(pub.texture.image.width / pub.grid.width, pub.texture.image.height / pub.grid.height);
     updateSelection();
-}
+  }
+};
 
 onEditCommands.newAnimation = (animation: any, index: number) => {
   setupAnimation(animation, index);
-}
+};
 
 onEditCommands.deleteAnimation = (id: string) => {
   let animationElt = ui.animationsTreeView.treeRoot.querySelector(`[data-id='${id}']`);
   ui.animationsTreeView.remove(animationElt);
 
   if (ui.selectedAnimationId === id) updateSelectedAnimation();
-}
+};
 
 onEditCommands.moveAnimation = (id: string, index: number) => {
   let animationElt = ui.animationsTreeView.treeRoot.querySelector(`[data-id='${id}']`);
   ui.animationsTreeView.insertAt(animationElt, "item", index);
-}
+};
 
 onEditCommands.setAnimationProperty = (id: string, key: string, value: any) => {
   let animationElt = ui.animationsTreeView.treeRoot.querySelector(`[data-id='${id}']`);
@@ -117,4 +118,4 @@ onEditCommands.setAnimationProperty = (id: string, key: string, value: any) => {
       if (id == ui.selectedAnimationId) updateSelection();
       break;
   }
-}
+};
