@@ -2,6 +2,7 @@ doctype html
 html
   head
     link(rel="stylesheet",href="/client/styles/reset.css")
+    link(rel="stylesheet",href="/client/styles/perfectResize.css")
     link(rel="stylesheet",href="/client/styles/treeView.css")
     link(rel="stylesheet",href="/client/styles/dialogs.css")
     link(rel="stylesheet",href="index.css")
@@ -11,12 +12,12 @@ html
       .spritesheet-container
         canvas.spritesheet-canvas
 
-      .animation-container
+      .animation-container(style="height: 300px;")
         canvas.animation-canvas
 
         .animation-control
           span.animation-name
-          button(disabled).animation-play Pause
+          button(disabled).animation-play ▐ ▌
           input(disabled, type='range', value=0).animation-slider
 
     .sidebar

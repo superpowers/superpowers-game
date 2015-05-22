@@ -7,17 +7,18 @@ body
   flex 1
   display flex
   flex-direction column
+  background #ccc
 
   .spritesheet-container
+    min-height 100px
     flex 1
-    border-bottom 1px solid #aaa
     display flex
 
     .spritesheet-canvas
       flex 1
 
   .animation-container
-    flex 1
+    min-height 100px
     display flex
     flex-direction column
 
@@ -25,12 +26,16 @@ body
       flex 1
 
     .animation-control
-      margin auto
+      background #eee
+      display flex
+      justify-content center
       padding 10px
 
       .animation-play
-        padding 10px
-        margin 10px
+        width 40px
+        line-height 1
+        margin-right 10px
+        color #444
 
       .animation-slider
         width 300px

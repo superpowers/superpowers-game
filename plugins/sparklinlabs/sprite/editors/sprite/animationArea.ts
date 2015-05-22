@@ -3,12 +3,16 @@ import ui from "./ui";
 
 import SpriteOriginMarker from "./SpriteOriginMarker";
 
+let PerfectResize = require("perfect-resize");
+
 let animationArea: {
   gameInstance?: SupEngine.GameInstance;
   cameraControls?: any;
   originMakerComponent?: SpriteOriginMarker;
 } = {};
 export default animationArea;
+
+new PerfectResize(document.querySelector(".animation-container"), "bottom");
 
 animationArea.gameInstance = new SupEngine.GameInstance(<HTMLCanvasElement>document.querySelector("canvas.animation-canvas"));
 animationArea.gameInstance.threeRenderer.setClearColor(0xbbbbbb);
