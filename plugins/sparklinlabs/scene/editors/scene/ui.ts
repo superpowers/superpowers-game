@@ -2,10 +2,12 @@ import info from "./info";
 import { socket, data } from "./network";
 import engine from "./engine";
 
-let THREE = SupEngine.THREE;
-let TreeView = require("dnd-tree-view");
 import { Node } from "../../data/SceneNodes";
 import { Component } from "../../data/SceneComponents";
+
+let THREE = SupEngine.THREE;
+let TreeView = require("dnd-tree-view");
+let PerfectResize = require("perfect-resize");
 
 let ui: {
   nodesTreeView?: any;
@@ -33,6 +35,10 @@ let ui: {
 export default ui;
 
 SupClient.setupHotkeys();
+
+// Setup resizable panes
+new PerfectResize(document.querySelector(".sidebar"), "right");
+new PerfectResize(document.querySelector(".nodes-tree-view"), "top");
 
 // Setup tree view
 ui.nodesTreeView = new TreeView(document.querySelector(".nodes-tree-view"), onNodeDrop);

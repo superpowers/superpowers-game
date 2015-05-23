@@ -20,6 +20,8 @@ body
 
 .sidebar
   width 250px
+  min-width 200px
+  max-width 500px
   border-right 1px solid #aaa
 
   display flex
@@ -34,10 +36,10 @@ body
     white-space nowrap
 
 .nodes-tree-view
+  min-height 100px
   height 300px
   position relative
   background #fff
-  border-bottom 1px solid #aaa
   overflow-y auto
 
   .tree
@@ -57,6 +59,7 @@ body
       &.show { visibility: hidden; }
 
 .inspector
+  min-height 100px
   overflow-y auto
   flex 1
   .transform
