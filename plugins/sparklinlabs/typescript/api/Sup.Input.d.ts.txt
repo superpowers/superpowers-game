@@ -18,7 +18,7 @@ declare module Sup {
     function vibrate(pattern: Array<number>): void;
 
     // Valid key names (based on window.KeyEvent.DOM_VK_*):
-    // CANCEL, HELP, BACK_SPACE, TAB, CLEAR, RETURN, ENTER, SHIFT, CONTROL, ALT,
+    // CANCEL, HELP, BACK_SPACE, TAB, CLEAR, RETURN, SHIFT, CONTROL, ALT,
     // PAUSE, CAPS_LOCK, ESCAPE, SPACE, PAGE_UP, PAGE_DOWN, END, HOME,
     // LEFT, UP, RIGHT, DOWN, PRINTSCREEN, INSERT, DELETE,
     // 0 to 9, SEMICOLON, EQUALS, A to Z,
