@@ -14,10 +14,12 @@ body
   display flex
   flex-flow column
   width 250px
-  border-left 1px solid #aaa
+  min-width 200px
+  max-width 500px
 
   table
     padding 10px
+    width 100%
     border-bottom 1px solid #aaa
 
     tr
@@ -27,7 +29,7 @@ body
       width 90px
       text-align left
 
-    input, button
+    input
       width 65px
 
   .tile-number
@@ -49,7 +51,6 @@ body
       white-space nowrap
 
   .properties-tree-view
-    border-top 1px solid #aaa
     flex 1
     position relative
     background #fff

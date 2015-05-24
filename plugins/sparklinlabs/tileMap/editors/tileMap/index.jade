@@ -2,6 +2,7 @@ doctype html
 html
   head
     link(rel="stylesheet",href="/client/styles/reset.css")
+    link(rel="stylesheet",href="/client/styles/perfectResize.css")
     link(rel="stylesheet",href="/client/styles/treeView.css")
     link(rel="stylesheet",href="/client/styles/dialogs.css")
     link(rel="stylesheet",href="index.css")
@@ -71,12 +72,13 @@ html
 
       canvas(tabindex='0').tileSet
 
-      .layers-buttons
-        button.new-layer New layer
-        button.rename-layer Rename
-        button.delete-layer Delete
+      .layers
+        .layers-buttons
+          button.new-layer New layer
+          button.rename-layer Rename
+          button.delete-layer Delete
 
-      .layers-tree-view
+        .layers-tree-view
 
     script(src="/core/SupCore.js")
     script(src="../../data.js")

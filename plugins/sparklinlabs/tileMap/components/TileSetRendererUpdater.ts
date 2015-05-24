@@ -90,7 +90,6 @@ export default class TileSetRendererUpdater {
       if (this.receiveAssetCallbacks != null) this.receiveAssetCallbacks.tileSet();
     }
 
-    console.log(asset.pub.domImage.complete);
     if (asset.pub.domImage.complete) { setupTileSetTexture(); return; }
 
     let onImageLoaded = () => {

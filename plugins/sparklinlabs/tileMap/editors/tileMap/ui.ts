@@ -4,6 +4,7 @@ import mapArea, { setupPattern, setupFillPattern, flipTilesVertically, flipTiles
 import tileSetArea from "./tileSetArea";
 
 let TreeView = require("dnd-tree-view");
+let PerfectResize = require("perfect-resize");
 
 import { TileMapLayerPub } from "../../data/TileMapLayers";
 
@@ -29,6 +30,10 @@ let ui: {
   mousePositionLabel?: { x: HTMLLabelElement; y: HTMLLabelElement; };
 } = {};
 export default ui;
+
+// Setup resize handles
+new PerfectResize(document.querySelector(".sidebar"), "right");
+new PerfectResize(document.querySelector(".layers"), "bottom");
 
 ui.tileSetInput = <HTMLInputElement>document.querySelector(".property-tileSetId");
 ui.tileSetInput.addEventListener("input", onTileSetChange);

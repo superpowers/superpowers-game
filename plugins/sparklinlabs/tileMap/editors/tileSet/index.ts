@@ -1,9 +1,10 @@
 import TileSetRenderer from "../../components/TileSetRenderer";
 import TileSetRendererUpdater from "../../components/TileSetRendererUpdater";
+import * as querystring from "querystring";
 
 let TreeView = require("dnd-tree-view");
+let PerfectResize = require("perfect-resize");
 
-import * as querystring from "querystring";
 let qs = querystring.parse(window.location.search.slice(1));
 let info = { projectId: qs.project, assetId: qs.asset };
 let data: { projectClient?: SupClient.ProjectClient; tileSetUpdater?: TileSetRendererUpdater; selectedTile?: { x: number; y: number; } };
@@ -31,6 +32,8 @@ function start() {
   );
 
   // Sidebar
+  new PerfectResize(document.querySelector(".sidebar"), "right");
+
   let fileSelect = <HTMLInputElement>document.querySelector("input.file-select");
   fileSelect.addEventListener("change", onFileSelectChange);
   document.querySelector("button.upload").addEventListener("click", () => { fileSelect.click(); });
