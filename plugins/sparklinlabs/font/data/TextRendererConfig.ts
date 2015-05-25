@@ -30,4 +30,23 @@ export default class TextRendererConfig extends SupCore.data.base.ComponentConfi
 
     super(pub, TextRendererConfig.schema);
   }
+
+  restore() { if (this.pub.fontAssetId != null) this.emit("addDependencies", [ this.pub.fontAssetId ]); }
+  destroy() { if (this.pub.fontAssetId != null) this.emit("removeDependencies", [ this.pub.fontAssetId ]); }
+
+  setProperty(path: string, value: any, callback: (err: string, actualValue?: any) => any) {
+    let oldDepId: string;
+    if (path === "fontAssetId") oldDepId = this.pub[path];
+
+    super.setProperty(path, value, (err, actualValue) => {
+      if (err != null) { callback(err); return; }
+
+      if (path === "fontAssetId") {
+        if (oldDepId != null) this.emit("removeDependencies", [ oldDepId ]);
+        if (actualValue != null) this.emit("addDependencies", [ actualValue ]);
+      }
+
+      callback(null, actualValue);
+    });
+  }
 }

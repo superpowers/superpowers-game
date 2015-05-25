@@ -46,7 +46,7 @@ export default class TileMapRendererConfig extends SupCore.data.base.ComponentCo
     super.setProperty(path, value, (err, actualValue) => {
       if (err != null) { callback(err, null); return; }
 
-      if (path in [ "tileMapAssetId", "tileSetAssetId" ]) {
+      if (path === "tileMapAssetId" || path === "tileSetAssetId") {
         if (oldDepId != null) this.emit("removeDependencies", [ oldDepId ]);
         if (actualValue != null) this.emit("addDependencies", [ actualValue ]);
       }
