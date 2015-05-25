@@ -3,12 +3,14 @@ module Sup {
   var tmpVector3 = new SupEngine.THREE.Vector3();
   var tmpQuaternion = new SupEngine.THREE.Quaternion();
 
+  export class Scene extends Asset {}
+
   export function loadScene(scenePathOrAsset) {
     player.gameInstance.destroyAllActors();
     appendScene(scenePathOrAsset);
   }
 
-  export function appendScene(scenePathOrAsset, sceneParentActor=null) {
+  export function appendScene(scenePathOrAsset, sceneParentActor=null, awakeActors=true) {
     var sceneAsset: Scene;
 
     if (typeof scenePathOrAsset === 'string') {
@@ -22,26 +24,36 @@ module Sup {
       sceneAsset = <Scene>scenePathOrAsset;
     }
 
-    function walk(node, parentActor) {
-      var actor = player.createActor(node.name, parentActor);
+    let walk = (node, parentActor) => {
+      let actor: Actor;
+      let isPrefab = (node.components[0] != null && node.components[0].type === "Prefab");
+      if (isPrefab) {
+        let prefabAsset = player.getOuterAsset(node.components[0].config.sceneAssetId);
+        if (prefabAsset != null) {
+          actor = appendScene(prefabAsset, parentActor, false)[0];
+          actor.__inner.name = node.name;
 
-      actor.__inner.setLocalPosition( tmpVector3.set(node.position.x, node.position.y, node.position.z) )
-      actor.__inner.setLocalOrientation( tmpQuaternion.set(node.orientation.x, node.orientation.y, node.orientation.z, node.orientation.w) )
-      actor.__inner.setLocalScale( tmpVector3.set(node.scale.x, node.scale.y, node.scale.z) )
+          actor.__inner.setLocalPosition( tmpVector3.set(node.position.x, node.position.y, node.position.z) )
+          actor.__inner.setLocalOrientation( tmpQuaternion.set(node.orientation.x, node.orientation.y, node.orientation.z, node.orientation.w) )
+          actor.__inner.setLocalScale( tmpVector3.set(node.scale.x, node.scale.y, node.scale.z) )
+        } else throw new Error(`Undefined prefab in ${sceneAsset.name}`);
 
-      node.components.forEach( (sceneComponent) => {
-        if (sceneComponent.type === "Prefab") {
-          var prefabAsset = player.getOuterAsset(sceneComponent.config.sceneAssetId);
-          if (prefabAsset != null) appendScene(prefabAsset, actor);
-        } else {
+      } else {
+        actor = player.createActor(node.name, parentActor);
+
+        actor.__inner.setLocalPosition( tmpVector3.set(node.position.x, node.position.y, node.position.z) )
+        actor.__inner.setLocalOrientation( tmpQuaternion.set(node.orientation.x, node.orientation.y, node.orientation.z, node.orientation.w) )
+        actor.__inner.setLocalScale( tmpVector3.set(node.scale.x, node.scale.y, node.scale.z) )
+
+        node.components.forEach( (sceneComponent) => {
           allComponents.push({
             sceneComponent: sceneComponent,
             actorComponent: player.createComponent(sceneComponent.type, actor, sceneComponent.config)
           });
-        }
-      });
+        });
 
-      node.children.forEach( (child) => { walk(child, actor); } );
+        node.children.forEach( (child) => { walk(child, actor); } );
+      }
 
       return actor;
     }
@@ -59,10 +71,8 @@ module Sup {
       SupRuntime.plugins[x.sceneComponent.type].setupComponent(player, x.actorComponent.__inner, x.sceneComponent.config);
     });
 
-    actors.forEach( (actor) => { awakeActor(actor); });
+    if (awakeActors) actors.forEach( (actor) => { awakeActor(actor); });
 
     return actors;
   }
-
-  export class Scene extends Asset {}
 }

@@ -84,6 +84,14 @@ export default class SceneAsset extends SupCore.data.base.Asset {
       }
     }
 
+    if (this.nodes.pub.length !== 0 && parentNode == null) {
+      let entry = this.serverData.entries.byId[this.id];
+      if (entry.dependentAssetIds.length > 0) {
+        callback("A prefab can have only one root actor", null, null, null);
+        return;
+      }
+    }
+
     let sceneNode: Node = {
       id: null, name: name, children: <Node[]>[], components: <Component[]>[],
       position: (options != null && options.transform != null && options.transform.position != null) ? options.transform.position : { x: 0, y: 0, z: 0 },
@@ -142,6 +150,14 @@ export default class SceneAsset extends SupCore.data.base.Asset {
       return
     }
 
+    if (parentNode == null) {
+      let entry = this.serverData.entries.byId[this.id];
+      if (entry.dependentAssetIds.length > 0) {
+        callback("A prefab can have only one root actor", null, null, null);
+        return;
+      }
+    }
+
     let globalMatrix = this.computeGlobalMatrix(node);
 
     this.nodes.move(id, parentId, index, (err, actualIndex) => {
@@ -192,6 +208,15 @@ export default class SceneAsset extends SupCore.data.base.Asset {
   server_duplicateNode(client: any, newName: string, id: string, index: number, callback: (err: string, rootNode: Node, newNodes: DuplicatedNode[]) => any) {
     let referenceNode = this.nodes.byId[id]
     if (referenceNode == null) { callback(`Invalid node id: ${id}`, null, null); return; }
+
+    let parentNode = this.nodes.parentNodesById[id];
+    if (parentNode == null) {
+      let entry = this.serverData.entries.byId[this.id];
+      if (entry.dependentAssetIds.length > 0) {
+        callback("A prefab can have only one root actor", null, null);
+        return;
+      }
+    }
 
     let newNodes: DuplicatedNode[] = [];
     let totalNodeCount = 0

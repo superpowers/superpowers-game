@@ -20,6 +20,7 @@ module Sup {
   }
 
   export class Asset {
+    name: string;
     type: string;
     children: Array<string>;
     __inner: any;
