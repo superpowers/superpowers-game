@@ -3,7 +3,7 @@ declare module Sup {
     constructor(actor: Actor, asset?: Model);
 
     getModel(): Model;
-    setModel(asset?: Model): ModelRenderer;
+    setModel(asset: Model): ModelRenderer;
     getOpacity(): number;
     setOpacity(opacity: number): ModelRenderer;
     getColor(): { r: number; g: number; b: number };

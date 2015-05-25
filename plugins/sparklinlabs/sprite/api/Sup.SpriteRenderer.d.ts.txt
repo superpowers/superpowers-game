@@ -3,7 +3,7 @@ declare module Sup {
     constructor(actor: Actor, asset?: Sprite);
 
     getSprite(): Sprite;
-    setSprite(asset?: Sprite): SpriteRenderer;
+    setSprite(asset: Sprite): SpriteRenderer;
     getOpacity(): number;
     setOpacity(opacity: number): SpriteRenderer;
     getColor(): { r: number; g: number; b: number };
