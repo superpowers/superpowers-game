@@ -60,7 +60,7 @@ export default class Player {
   }
 
   _loadManifest(callback: any) {
-    this.getAssetData("game.json", 'json', (err: any, gameData: {name: string; assets: Asset[]}) => {
+    this.getAssetData("game.json", "json", (err: any, gameData: {name: string; assets: Asset[]}) => {
       if (err != null) { callback(new Error("Failed to load game manifest")); return; }
 
       document.title = gameData.name;
@@ -137,7 +137,7 @@ export default class Player {
 
       let plugin = SupRuntime.plugins[entry.type];
       if (plugin == null || plugin.loadAsset == null) {
-        console.warn(`Don't know how to load assets of type '${entry.type}'`);
+        console.warn(`Don't know how to load assets of type "${entry.type}"`);
         onAssetLoaded(null, entry, {});
         return;
       }
@@ -210,9 +210,9 @@ export default class Player {
       // Local file access returns status code 0
       if (xhr.status !== 200 && xhr.status !== 0) { callback(new Error(`Could not get ${path}`)); return; }
 
-      // WORKAROUND: IE <= 11 does not support responseType = 'json'
+      // WORKAROUND: IE <= 11 does not support responseType = "json"
       let response = xhr.response;
-      if (xhr.responseType !== 'json') {
+      if (responseType === "json" && xhr.responseType !== "json") {
         try { response = JSON.parse(response); }
         catch (e) {}
       }
