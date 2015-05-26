@@ -50,8 +50,7 @@ var editors = require("fs").readdirSync("./editors");
 editors.forEach(function(editor) {
   makeBrowserify("./editors/" + editor + "/index.js", "./public/editors", editor + "/index");
 })
-makeBrowserify("./editors/script/compilationWorker.js", "./public/editors", "script/compilationWorker");
-makeBrowserify("./editors/script/completionWorker.js", "./public/editors", "script/completionWorker");
+makeBrowserify("./editors/script/typescriptWorker.js", "./public/editors", "script/typescriptWorker");
 
 // All
 gulp.task("default", tasks);

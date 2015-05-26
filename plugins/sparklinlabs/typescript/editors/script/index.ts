@@ -28,7 +28,7 @@ let ui: {
   errorsTBody?: HTMLTableSectionElement;
 
   undoTimeout?: number;
-  compileTimeout?: number;
+  errorCheckTimeout?: number;
   completionTimeout?: number;
   texts?: string[];
 
@@ -42,10 +42,9 @@ let ui: {
 } = {};
 let socket: SocketIOClient.Socket;
 
-let globalDefs = "";
-let scriptNames: string[] = [];
-let scriptNamesById: { [name: string]: string } = {};
-let scripts: { [name: string]: { id: string, text: string } } = {};
+let fileNames: string[] = [];
+let files: { [name: string]: { id: string; text: string; version: string; } } = {};
+let fileNamesByScriptId: { [name: string]: string } = {};
 
 function start() {
   socket = SupClient.connect(info.projectId);
@@ -111,9 +110,13 @@ function start() {
   });
 
   (<any>ui.editor).on("changes", onEditText);
-  (<any>ui.editor).on("keyup", (instance: any, event: any) => {
-    // Ignore Ctrl, Cmd, Escape, Return, Tab, arrow keys
-    if (event.ctrlKey || event.metaKey || [27, 9, 13, 37, 38, 39, 40, 16].indexOf(event.keyCode) !== -1) return;
+
+  (<any>CodeMirror).commands.autocomplete = (cm: CodeMirror.Editor) => { scheduleCompletion(); };
+
+  (<any>ui.editor).on("inputRead", (instance: any, changeObj: any) => {
+    // If the completion popup is active, the hint() method will automatically
+    // call for more autocomplete, so we don't need to do anything here.
+    if ((<any>ui.editor).state.completionActive != null && (<any>ui.editor).state.completionActive.active()) return;
     scheduleCompletion();
   });
 
@@ -163,14 +166,16 @@ function onWelcome(clientId: number) {
   data.projectClient.subEntries(entriesSubscriber);
 }
 
+let typescriptWorker = new Worker("typescriptWorker.js");
+
 var entriesSubscriber = {
   onEntriesReceived: (entries: SupCore.data.Entries) => {
     entries.walk((entry) => {
-      if (entry["type"] !== "script") return;
+      if (entry.type !== "script") return;
 
       var scriptName = `${data.projectClient.entries.getPathFromId(entry.id)}.ts`;
-      scriptNames.push(scriptName);
-      scriptNamesById[entry.id] = scriptName;
+      fileNames.push(scriptName);
+      fileNamesByScriptId[entry.id] = scriptName;
       data.projectClient.subAsset(entry.id, "script", scriptSubscriber);
     })
   },
@@ -183,10 +188,10 @@ var entriesSubscriber = {
     let i = 0;
     data.projectClient.entries.walk((entry) => {
       if (entry.type !== "script") return;
-      if (entry.id === newEntry.id) scriptNames.splice(i, 0, scriptName);
+      if (entry.id === newEntry.id) fileNames.splice(i, 0, scriptName);
       i++;
     });
-    scriptNamesById[newEntry.id] = scriptName;
+    fileNamesByScriptId[newEntry.id] = scriptName;
     data.projectClient.subAsset(newEntry.id, "script", scriptSubscriber);
   },
 
@@ -194,49 +199,53 @@ var entriesSubscriber = {
     let entry = data.projectClient.entries.byId[id];
     if (entry.type !== "script") return;
 
-    let oldScriptName = scriptNamesById[id];
-    let newScriptName = `${data.projectClient.entries.getPathFromId(id)}.ts`;
+    let oldFileName = fileNamesByScriptId[id];
 
-    scriptNames.splice(scriptNames.indexOf(oldScriptName), 1);
+    let newFileName = `${data.projectClient.entries.getPathFromId(id)}.ts`;
+
+    fileNames.splice(fileNames.indexOf(oldFileName), 1);
     let i = 0;
     data.projectClient.entries.walk((entry) => {
       if (entry.type !== "script") return;
-      if (entry.id === id) scriptNames.splice(i, 0, newScriptName);
+      if (entry.id === id) fileNames.splice(i, 0, newFileName);
       i++;
     });
 
-    scriptNamesById[id] = newScriptName;
-    scripts[newScriptName] = scripts[oldScriptName];
-    if (newScriptName !== oldScriptName) delete scripts[oldScriptName];
+    fileNamesByScriptId[id] = newFileName;
+    let file = files[oldFileName];
+    files[newFileName] = file;
+    if (newFileName !== oldFileName) delete files[oldFileName];
 
-    scheduleCompilation();
+    typescriptWorker.postMessage({ type: "removeFile", fileName: oldFileName });
+    typescriptWorker.postMessage({ type: "addFile", fileName: newFileName, index: fileNames.indexOf(newFileName), file });
+    scheduleErrorCheck();
   },
 
   onSetEntryProperty: (id: string, key: string, value: any) => {
     let entry = data.projectClient.entries.byId[id];
-    if (entry.type !== "script") return;
-    if (key !== "name") return;
+    if (entry.type !== "script" || key !== "name") return;
 
-    let oldScriptName = scriptNamesById[id];
+    let oldScriptName = fileNamesByScriptId[id];
     let newScriptName = `${data.projectClient.entries.getPathFromId(entry.id)}.ts`;
     if (newScriptName === oldScriptName) return;
 
-    let scriptIndex = scriptNames.indexOf(oldScriptName);
-    scriptNames[scriptIndex] = newScriptName;
-    scriptNamesById[id] = newScriptName;
-    scripts[newScriptName] = scripts[oldScriptName];
-    delete scripts[oldScriptName];
+    let scriptIndex = fileNames.indexOf(oldScriptName);
+    fileNames[scriptIndex] = newScriptName;
+    fileNamesByScriptId[id] = newScriptName;
+    files[newScriptName] = files[oldScriptName];
+    delete files[oldScriptName];
   },
 
   onEntryTrashed: (id: string) => {
-    let scriptName = scriptNamesById[id];
-    if (scriptName == null) return;
+    let fileName = fileNamesByScriptId[id];
+    if (fileName == null) return;
 
-    scriptNames.splice(scriptNames.indexOf(scriptName), 1);
-    delete scripts[scriptName];
-    delete scriptNamesById[id];
+    fileNames.splice(fileNames.indexOf(fileName), 1);
+    delete files[fileName];
+    delete fileNamesByScriptId[id];
 
-    scheduleCompilation();
+    typescriptWorker.postMessage({ type: "removeFile", fileName });
+    scheduleErrorCheck();
   },
 }
 
@@ -245,8 +254,9 @@ let allScriptsReceived = false;
 var scriptSubscriber = {
   onAssetReceived: (err: string, asset: ScriptAsset) => {
     data.assetsById[asset.id] = asset;
-    var scriptName = `${data.projectClient.entries.getPathFromId(asset.id)}.ts`;
-    scripts[scriptName] =  { id: asset.id, text: asset.pub.text };
+    let fileName = `${data.projectClient.entries.getPathFromId(asset.id)}.ts`;
+    let file = { id: asset.id, text: asset.pub.text, version: asset.pub.revisionId.toString() }
+    files[fileName] = file;
 
     if (asset.id === info.assetId) {
       data.asset = asset;
@@ -257,18 +267,30 @@ var scriptSubscriber = {
       if (info.line != null) ui.editor.getDoc().setCursor({ line: parseInt(info.line), ch: parseInt(info.ch) });
     }
 
-    if(!allScriptsReceived && Object.keys(scripts).length === scriptNames.length) {
-      allScriptsReceived = true;
-      scheduleCompilation();
+    if (!allScriptsReceived) {
+      if (Object.keys(files).length === fileNames.length) {
+        allScriptsReceived = true;
+        typescriptWorker.postMessage({ type: "setup", fileNames, files });
+        scheduleErrorCheck();
+      }
+    } else {
+      // All scripts have been received so this must be a newly created script
+      typescriptWorker.postMessage({ type: "addFile", fileName, index: fileNames.indexOf(fileName), file });
+      scheduleErrorCheck();
     }
   },
 
   onAssetEdited: (id: string, command: string, ...args: any[]) => {
     if (id !== info.assetId) {
       if (command === "saveText") {
-        var scriptName = `${data.projectClient.entries.getPathFromId(id)}.ts`;
-        scripts[scriptName] = { id, text: data.assetsById[id].pub.text };
-        scheduleCompilation();
+        let fileName = `${data.projectClient.entries.getPathFromId(id)}.ts`;
+        let asset = data.assetsById[id];
+        let file = files[fileName];
+        file.text = asset.pub.text;
+        file.version = asset.pub.revisionId.toString();
+
+        typescriptWorker.postMessage({ type: "updateFile", fileName, text: file.text, version: file.version });
+        scheduleErrorCheck();
       }
       return
     }
@@ -280,7 +302,8 @@ var scriptSubscriber = {
     if (id !== info.assetId) return;
 
     if (ui.undoTimeout != null) clearTimeout(ui.undoTimeout);
-    if (ui.compileTimeout != null) clearTimeout(ui.compileTimeout);
+    if (ui.errorCheckTimeout != null) clearTimeout(ui.errorCheckTimeout);
+    if (ui.completionTimeout != null) clearTimeout(ui.completionTimeout);
     SupClient.onAssetTrashed();
   },
 }
@@ -384,33 +407,71 @@ function applyOperation(operation: OT.TextOperation, origin: string, moveCursor:
   }
 }
 
-let compilationWorker = new Worker("compilationWorker.js")
-let activeCompilation: { dummy: boolean; };
-let nextCompilation: { dummy: boolean; };
+let isCheckingForErrors: boolean = false;
+let hasScheduledErrorCheck: boolean = false;
 
-compilationWorker.onmessage = (event) => {
-  refreshErrors(event.data);
-
-  activeCompilation = null;
-  if(nextCompilation != null) startCompilationWorker();
-};
-
-function startCompilationWorker() {
-  if(activeCompilation != null || nextCompilation == null) return;
-
-  activeCompilation = nextCompilation;
-  nextCompilation = null;
-
-  compilationWorker.postMessage({ scriptNames, scripts, globalDefs });
+interface CompletionRequest {
+  callback: any;
+  cursor: any;
+  token: any;
+  start: any;
 }
 
-function scheduleCompilation() {
-  if (ui.compileTimeout != null) clearTimeout(ui.compileTimeout);
+let activeCompletion: CompletionRequest;
+let nextCompletion: CompletionRequest;
 
-  ui.compileTimeout = window.setTimeout(() => {
-    nextCompilation = { dummy: true };
-    if (activeCompilation == null) startCompilationWorker();
-  }, 500);
+typescriptWorker.onmessage = (event: MessageEvent) => {
+  switch(event.data.type) {
+    case "errors":
+      refreshErrors(event.data.errors);
+      isCheckingForErrors = false;
+      if (hasScheduledErrorCheck) startErrorCheck();
+      break;
+
+    case "completion":
+      if (nextCompletion != null) {
+        activeCompletion = null;
+        startAutocomplete();
+        return;
+      }
+
+      let from = (<any>CodeMirror).Pos(activeCompletion.cursor.line, activeCompletion.token.start);
+      let to = (<any>CodeMirror).Pos(activeCompletion.cursor.line, activeCompletion.token.end);
+      activeCompletion.callback({ list: event.data.list, from, to });
+      activeCompletion = null;
+      break;
+  }
+};
+
+function startErrorCheck() {
+  if (isCheckingForErrors) return;
+
+  isCheckingForErrors = true;
+  hasScheduledErrorCheck = false;
+  typescriptWorker.postMessage({ type: "checkForErrors" });
+}
+
+function scheduleErrorCheck() {
+  if (ui.errorCheckTimeout != null) clearTimeout(ui.errorCheckTimeout);
+
+  ui.errorCheckTimeout = window.setTimeout(() => {
+    hasScheduledErrorCheck = true;
+    if (!isCheckingForErrors) startErrorCheck();
+  }, 300);
+}
+
+function startAutocomplete() {
+  if (activeCompletion != null) return;
+
+  activeCompletion = nextCompletion;
+  nextCompletion = null;
+
+  typescriptWorker.postMessage({
+    type: "getCompletionAt",
+    tokenString: activeCompletion.token.string,
+    name: fileNamesByScriptId[info.assetId],
+    start: activeCompletion.start
+  });
 }
 
 // User interface
@@ -439,7 +500,7 @@ function refreshErrors(errors: Array<{file: string; position: {line: number; cha
   // Display new ones
   for (let error of errors) {
     let errorRow = document.createElement("tr");
-    (<any>errorRow.dataset).assetId = scripts[error.file].id;
+    (<any>errorRow.dataset).assetId = files[error.file].id;
     (<any>errorRow.dataset).line = error.position.line;
     (<any>errorRow.dataset).character = error.position.character;
 
@@ -455,7 +516,7 @@ function refreshErrors(errors: Array<{file: string; position: {line: number; cha
     scriptCell.textContent = error.file.substring(0, error.file.length - 3);
     errorRow.appendChild(scriptCell);
 
-    if (error.file !== scriptNamesById[info.assetId]) {
+    if (error.file !== fileNamesByScriptId[info.assetId]) {
       ui.errorsTBody.appendChild(errorRow);
       continue;
     }
@@ -507,11 +568,19 @@ function onErrorTBodyClick(event: MouseEvent) {
   }
 }
 
+let localVersionNumber = 0;
 function onEditText(instance: CodeMirror.Editor, changes: CodeMirror.EditorChange[]) {
-  scripts[scriptNamesById[info.assetId]].text = ui.editor.getDoc().getValue();
+  let localFileName = fileNamesByScriptId[info.assetId];
+  let localFile = files[localFileName];
+  localFile.text = ui.editor.getDoc().getValue();
+  localVersionNumber++;
+  localFile.version = `l${localVersionNumber}`;
 
   // We ignore the initial setValue
-  if ((<any>changes[0]).origin !== "setValue") scheduleCompilation();
+  if ((<any>changes[0]).origin !== "setValue") {
+    typescriptWorker.postMessage({ type: "updateFile", fileName: localFileName, text: localFile.text, version: localFile.version });
+    scheduleErrorCheck();
+  }
 
   let undoRedo = false;
   let operationToSend: OT.TextOperation;
@@ -593,35 +662,6 @@ function onEditText(instance: CodeMirror.Editor, changes: CodeMirror.EditorChang
   }
 }
 
-let completionWorker = new Worker("completionWorker.js")
-let activeCompletion: { callback: any; cursor: any; token: any, start: any };
-let nextCompletion: { callback: any; cursor: any; token: any, start: any };
-
-completionWorker.onmessage = (event) => {
-  activeCompletion.callback({
-    list: event.data,
-    from: (<any>CodeMirror).Pos(activeCompletion.cursor.line, activeCompletion.token.start),
-    to: (<any>CodeMirror).Pos(activeCompletion.cursor.line, activeCompletion.token.end)
-  });
-
-  activeCompletion = null;
-  if(nextCompletion != null) startCompletionWorker();
-};
-
-function startCompletionWorker() {
-  if(activeCompletion != null || nextCompletion == null) return;
-
-  activeCompletion = nextCompletion;
-  nextCompletion = null;
-
-  completionWorker.postMessage({
-    scriptNames, scripts, globalDefs,
-    tokenString: activeCompletion.token.string,
-    start: activeCompletion.start,
-    name: scriptNamesById[info.assetId]
-  });
-}
-
 function hint(instance: any, callback: any) {
   let cursor = ui.editor.getDoc().getCursor();
   let token = ui.editor.getTokenAt(cursor);
@@ -632,27 +672,25 @@ function hint(instance: any, callback: any) {
   start += cursor.ch;
 
   nextCompletion = { callback, cursor, token, start };
-  if(activeCompletion == null) startCompletionWorker();
+  if(activeCompletion == null) startAutocomplete();
 }
 (<any>hint).async = true;
+
+let hintCustomKeys = {
+  "Up": (cm: any, commands: any) => { commands.moveFocus(-1); },
+  "Down": (cm: any, commands: any) => { commands.moveFocus(1); },
+  "Enter": (cm: any, commands: any) => { commands.pick(); },
+  "Tab": (cm: any, commands: any) => { commands.pick(); },
+  "Esc": (cm: any, commands: any) => { commands.close(); },
+};
 
 function scheduleCompletion() {
   if (ui.completionTimeout != null) clearTimeout(ui.completionTimeout);
 
   ui.completionTimeout = window.setTimeout(() => {
-    (<any>ui.editor).showHint({
-      completeSingle: false,
-      customKeys: {
-        "Up": (cm: any, commands: any) => { commands.moveFocus(-1); },
-        "Down": (cm: any, commands: any) => { commands.moveFocus(1); },
-        "Enter": (cm: any, commands: any) => { commands.pick(); },
-        "Tab": (cm: any, commands: any) => { commands.pick(); },
-        "Esc": (cm: any, commands: any) => { commands.close(); },
-      },
-      hint
-    });
+    (<any>ui.editor).showHint({ completeSingle: false, customKeys: hintCustomKeys, hint });
     ui.completionTimeout = null;
-  }, 500);
+  }, 100);
 }
 
 function onUndo() {
@@ -713,13 +751,18 @@ async.each(SupClient.pluginPaths.all, (pluginName, pluginCallback) => {
   document.body.appendChild(apiScript);
 }, (err) => {
   // Read API definitions
+  let globalDefs = "";
+
   let actorComponentAccessors: string[] = [];
   for (let pluginName in SupAPI.contexts["typescript"].plugins) {
     let plugin = SupAPI.contexts["typescript"].plugins[pluginName];
     if (plugin.defs != null) globalDefs += plugin.defs;
     if (plugin.exposeActorComponent != null) actorComponentAccessors.push(`${plugin.exposeActorComponent.propertyName}: ${plugin.exposeActorComponent.className};`);
   }
+
   globalDefs = globalDefs.replace("// INSERT_COMPONENT_ACCESSORS", actorComponentAccessors.join("\n    "));
+  fileNames.push("lib.d.ts");
+  files["lib.d.ts"] = { id: "lib.d.ts", text: globalDefs, version: "" };
 
   // Start
   start();
