@@ -41,7 +41,7 @@ export default class SceneAsset extends SupCore.data.base.Asset {
 
   setup() {
     this.componentPathsByDependentAssetId = {};
-    this.nodes = new SceneNodes(this.pub.nodes, this.serverData);
+    this.nodes = new SceneNodes(this.pub.nodes, this);
 
     for (let nodeId in this.nodes.componentsByNodeId) {
       let components = this.nodes.componentsByNodeId[nodeId];
@@ -73,15 +73,6 @@ export default class SceneAsset extends SupCore.data.base.Asset {
     if (parentNode != null && parentNode.components[0] != null && parentNode.components[0].type === "Prefab") {
       callback("Can't create children node on prefabs", null, null, null);
       return
-    }
-
-    // Make sure a scene which is a prefab cannot contains prefab itself
-    if (options.prefab) {
-      let entry = this.serverData.entries.byId[this.id];
-      if (entry.dependentAssetIds.length > 0) {
-        callback("Can't add prefab on a scene which is a prefab itself", null, null, null);
-        return;
-      }
     }
 
     if (this.nodes.pub.length !== 0 && parentNode == null) {

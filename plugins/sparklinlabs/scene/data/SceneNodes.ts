@@ -1,3 +1,4 @@
+import SceneAsset from "./SceneAsset";
 import SceneComponents, { Component } from "./SceneComponents";
 
 export interface Node extends SupCore.data.base.TreeNode {
@@ -54,14 +55,14 @@ export default class SceneNodes extends SupCore.data.base.TreeById {
   parentNodesById: { [id: string]: Node };
   componentsByNodeId: { [id: string]: SceneComponents } = {};
 
-  serverData: SupCore.data.ProjectServerData;
+  sceneAsset: SceneAsset;
 
-  constructor(pub: any, serverData: SupCore.data.ProjectServerData) {
+  constructor(pub: any, sceneAsset: SceneAsset) {
     super(pub, SceneNodes.schema);
-    this.serverData = serverData;
+    this.sceneAsset = sceneAsset;
 
     this.walk((node: any, parentNode: any) => {
-      if (node.components != null) this.componentsByNodeId[node.id] = new SceneComponents(node.components, this.serverData);
+      if (node.components != null) this.componentsByNodeId[node.id] = new SceneComponents(node.components, this.sceneAsset);
     });
   }
 
@@ -70,7 +71,7 @@ export default class SceneNodes extends SupCore.data.base.TreeById {
       if (err != null) { callback(err, null); return; }
 
       if (node.components != null) {
-        let components = new SceneComponents(node.components, this.serverData);
+        let components = new SceneComponents(node.components, this.sceneAsset);
         this.componentsByNodeId[node.id] = components;
         node.components = components.pub;
       }
@@ -81,7 +82,7 @@ export default class SceneNodes extends SupCore.data.base.TreeById {
 
   client_add(node: Node, parentId: string, index: number) {
     super.client_add(node, parentId, index);
-    if (node.components != null) this.componentsByNodeId[node.id] = new SceneComponents(node.components);
+    if (node.components != null) this.componentsByNodeId[node.id] = new SceneComponents(node.components, this.sceneAsset);
   }
 
   remove(id: string, callback: (err: string) => any) {

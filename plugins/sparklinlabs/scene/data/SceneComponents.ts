@@ -1,3 +1,5 @@
+import SceneAsset from "./SceneAsset";
+
 export interface Component {
   id?: string;
   type: string;
@@ -12,15 +14,15 @@ export default class SceneComponents extends SupCore.data.base.ListById {
   };
 
   configsById: { [id: string]: SupCore.data.base.ComponentConfig } = {};
-  serverData: SupCore.data.ProjectServerData;
+  sceneAsset: SceneAsset;
 
-  constructor(pub: any, serverData?: SupCore.data.ProjectServerData) {
+  constructor(pub: any, sceneAsset?: SceneAsset) {
     super(pub, SceneComponents.schema);
-    this.serverData = serverData;
+    this.sceneAsset = sceneAsset;
 
     for (let item of this.pub) {
       let componentConfigClass = SupCore.data.componentConfigClasses[item.type];
-      this.configsById[item.id] = new componentConfigClass(item.config, this.serverData);
+      this.configsById[item.id] = new componentConfigClass(item.config, this.sceneAsset);
     }
   }
 
@@ -29,7 +31,7 @@ export default class SceneComponents extends SupCore.data.base.ListById {
       if (err != null) { callback(err, null); return; }
 
       let componentConfigClass = SupCore.data.componentConfigClasses[component.type];
-      this.configsById[component.id] = new componentConfigClass(component.config, this.serverData);
+      this.configsById[component.id] = new componentConfigClass(component.config, this.sceneAsset);
 
       callback(null, actualIndex);
     });
