@@ -9,11 +9,7 @@ export default class LightEditor {
   intensityField: HTMLInputElement;
   distanceField: HTMLInputElement;
   angleField: HTMLInputElement;
-  targetFields: {
-    x: HTMLInputElement;
-    y: HTMLInputElement;
-    z: HTMLInputElement;
-  };
+  targetFields: HTMLInputElement[];
   castShadowField: HTMLInputElement;
 
   constructor(tbody: HTMLTableSectionElement, config: LightConfigPub, projectClient: SupClient.ProjectClient, editConfig: any) {
@@ -52,14 +48,14 @@ export default class LightEditor {
     });
 
     let targetRow = SupClient.table.appendRow(tbody, "Target");
-    this.targetFields = SupClient.table.appendVectorFields(targetRow.valueCell, config.target)
-    this.targetFields.x.addEventListener("change", (event: any) => {
+    this.targetFields = SupClient.table.appendNumberFields(targetRow.valueCell, [config.target.x, config.target.y, config.target.z]);
+    this.targetFields[0].addEventListener("change", (event: any) => {
       this.editConfig("setProperty", "target.x", parseFloat(event.target.value));
     });
-    this.targetFields.y.addEventListener("change", (event: any) => {
+    this.targetFields[1].addEventListener("change", (event: any) => {
       this.editConfig("setProperty", "target.y", parseFloat(event.target.value));
     });
-    this.targetFields.z.addEventListener("change", (event: any) => {
+    this.targetFields[2].addEventListener("change", (event: any) => {
       this.editConfig("setProperty", "target.z", parseFloat(event.target.value));
     });
 
@@ -90,13 +86,13 @@ export default class LightEditor {
         this.distanceField.value = value;
         break;
       case "target.x":
-        this.targetFields.x.value = value;
+        this.targetFields[0].value = value;
         break;
       case "target.y":
-        this.targetFields.y.value = value;
+        this.targetFields[1].value = value;
         break;
       case "target.z":
-        this.targetFields.z.value = value;
+        this.targetFields[2].value = value;
         break;
       case "castShadow":
         this.castShadowField.value = value;
@@ -115,7 +111,7 @@ export default class LightEditor {
       let angleRow = this.angleField.parentElement.parentElement;
       if (angleRow.parentElement != null) angleRow.parentElement.removeChild(angleRow);
 
-      let targetRow = this.targetFields.x.parentElement.parentElement.parentElement;
+      let targetRow = this.targetFields[0].parentElement.parentElement.parentElement;
       if (targetRow.parentElement != null) targetRow.parentElement.removeChild(targetRow);
 
       let castShadowRow = this.castShadowField.parentElement.parentElement;
@@ -135,7 +131,7 @@ export default class LightEditor {
         if (angleRow.parentElement == null) this.tbody.appendChild(angleRow);
       } else if (angleRow.parentElement != null) angleRow.parentElement.removeChild(angleRow);
 
-      let targetRow = this.targetFields.x.parentElement.parentElement.parentElement;
+      let targetRow = this.targetFields[0].parentElement.parentElement.parentElement;
       let castShadowRow = this.castShadowField.parentElement.parentElement;
       if (this.typeSelectBox.value === "spot" || this.typeSelectBox.value === "directional") {
         if (targetRow.parentElement == null) this.tbody.appendChild(targetRow);
