@@ -175,10 +175,16 @@ export default class ModelRendererEditor {
   }
 
   _onChangeModelAsset = (event: any) => {
-    let entry = SupClient.findEntryByPath(this.projectClient.entries.pub, event.target.value);
-    if (entry != null && entry.type === "model") {
-      this.editConfig("setProperty", "modelAssetId", entry.id);
+    if (event.target.value === "") {
+      this.editConfig("setProperty", "modelAssetId", null);
       this.editConfig("setProperty", "animationId", null);
+    }
+    else {
+      let entry = SupClient.findEntryByPath(this.projectClient.entries.pub, event.target.value);
+      if (entry != null && entry.type === "model") {
+        this.editConfig("setProperty", "modelAssetId", entry.id);
+        this.editConfig("setProperty", "animationId", null);
+      }
     }
   }
 
