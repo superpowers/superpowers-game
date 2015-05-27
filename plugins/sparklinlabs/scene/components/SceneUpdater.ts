@@ -164,6 +164,7 @@ export default class SceneUpdater {
     else parentActor = this.rootActor;
 
     let nodeActor = new SupEngine.Actor(this.gameInstance, node.name, parentActor);
+    nodeActor.threeObject.userData.nodeId = node.id;
     nodeActor.threeObject.position.copy(<THREE.Vector3>node.position);
     nodeActor.threeObject.quaternion.copy(<THREE.Quaternion>node.orientation);
     nodeActor.threeObject.scale.copy(<THREE.Vector3>node.scale);

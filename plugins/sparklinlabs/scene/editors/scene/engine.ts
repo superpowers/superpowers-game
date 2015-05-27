@@ -1,5 +1,5 @@
 import { data } from "./network";
-import ui from "./ui";
+import ui, { setupSelectedNode } from "./ui";
 
 let THREE = SupEngine.THREE;
 import { Node } from "../../data/SceneNodes";
@@ -42,4 +42,38 @@ function tick() {
 
   engine.gameInstance.draw();
   engine.tickAnimationFrameId = requestAnimationFrame(tick);
+}
+
+canvasElt.addEventListener("mouseup", onMouseUp);
+
+// Mouse picking
+let mousePosition = new THREE.Vector2;
+let raycaster = new THREE.Raycaster;
+
+function onMouseUp(event: MouseEvent) {
+	let rect = canvasElt.getBoundingClientRect();
+  mousePosition.set(
+    (( event.clientX - rect.left ) / rect.width * 2) - 1,
+    -(( event.clientY - rect.top ) / rect.height * 2) + 1
+  );
+
+	raycaster.setFromCamera(mousePosition, engine.cameraComponent.threeCamera);
+
+  ui.nodesTreeView.clearSelection();
+
+	let intersects = raycaster.intersectObject(engine.gameInstance.threeScene, true);
+  if (intersects.length > 0) {
+    let threeObject = intersects[0].object;
+
+    while (threeObject != null) {
+      if (threeObject.userData.nodeId != null) break;
+      threeObject = threeObject.parent;
+    }
+
+    if (threeObject != null) {
+      ui.nodesTreeView.addToSelection(ui.nodesTreeView.treeRoot.querySelector(`li[data-id='${threeObject.userData.nodeId}']`));
+    }
+  }
+
+  setupSelectedNode();
 }
