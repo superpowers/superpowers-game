@@ -30,7 +30,13 @@ let onLoadProgress = (value: number, max: number) => {
 let onLoaded = (err: Error) => {
   if (err != null) {
     console.error(err);
-    alert(err.message);
+
+    let aElt = <HTMLAnchorElement>loadingElt.querySelector("a");
+    aElt.parentElement.removeChild(aElt);
+
+    let errorElt = document.createElement("div");
+    errorElt.textContent = err.message;
+    loadingElt.appendChild(errorElt);
     return;
   }
 
