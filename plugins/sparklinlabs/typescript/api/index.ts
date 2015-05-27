@@ -35,3 +35,8 @@ SupAPI.registerPlugin("typescript", "Camera", {
   defs: fs.readFileSync(`${__dirname}/Sup.Camera.d.ts.txt`, { encoding: "utf8" }),
   exposeActorComponent: { propertyName: "camera", className: "Sup.Camera" }
 });
+
+SupAPI.registerPlugin("typescript", "Sup.Color", {
+  code: fs.readFileSync(`${__dirname}/Sup.Color.ts.txt`, { encoding: "utf8" }),
+  defs: fs.readFileSync(`${__dirname}/Sup.Color.d.ts.txt`, { encoding: "utf8" }),
+});

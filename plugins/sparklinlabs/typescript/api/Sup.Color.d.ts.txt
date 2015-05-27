@@ -1,0 +1,16 @@
+declare module Sup {
+  class Color {
+    r: number;
+    g: number;
+    b: number;
+
+    constructor(hex: number);
+    constructor(r: number, g: number, b: number);
+
+    setRGB(r: number, g: number, b: number): Color;
+    setHex(hex: number): Color;
+    getHex(): number;
+    setHSL(h: number, s: number, l: number): Color;
+    getHSL(): { h: number; s: number; l: number; };
+  }
+}
