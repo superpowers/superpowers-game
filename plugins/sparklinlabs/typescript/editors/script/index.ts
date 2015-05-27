@@ -46,6 +46,7 @@ let ui: {
 } = {};
 let socket: SocketIOClient.Socket;
 
+
 let typescriptWorker = new Worker("typescriptWorker.js");
 let fileNames: string[] = [];
 let files: { [name: string]: { id: string; text: string; version: string; } } = {};
@@ -119,6 +120,8 @@ function start() {
   (<any>CodeMirror).commands.autocomplete = (cm: CodeMirror.Editor) => { scheduleCompletion(); };
 
   (<any>ui.editor).on("keyup", (instance: any, event: any) => {
+    clearInfoPopup();
+
     // Ignore Ctrl, Cmd, Escape, Return, Tab, arrow keys
     if (event.ctrlKey || event.metaKey || [27, 9, 13, 37, 38, 39, 40, 16].indexOf(event.keyCode) !== -1) return;
 
@@ -131,17 +134,9 @@ function start() {
   ui.infoElement = document.createElement("div");
   ui.infoElement.classList.add("popup-info");
 
-  document.onmouseout = (event) => {
-    if (ui.infoElement.parentElement != null) {
-      ui.infoElement.parentElement.removeChild(ui.infoElement);
-    }
-    if (ui.infoTimeout != null) clearTimeout(ui.infoTimeout);
-  }
+  document.onmouseout = (event) => { clearInfoPopup(); }
   document.onmousemove = (event) => {
-    if (ui.infoElement.parentElement != null) {
-      ui.infoElement.parentElement.removeChild(ui.infoElement);
-    }
-    if (ui.infoTimeout != null) clearTimeout(ui.infoTimeout);
+    clearInfoPopup();
 
     ui.infoTimeout = window.setTimeout(() => {
       ui.infoPosition = ui.editor.coordsChar({ left: event.clientX, top: event.clientY });
@@ -444,6 +439,11 @@ function applyOperation(operation: OT.TextOperation, origin: string, moveCursor:
       }
     }
   }
+}
+
+function clearInfoPopup() {
+  if (ui.infoElement.parentElement != null) ui.infoElement.parentElement.removeChild(ui.infoElement);
+  if (ui.infoTimeout != null) clearTimeout(ui.infoTimeout);
 }
 
 let isCheckingForErrors: boolean = false;
