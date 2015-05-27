@@ -136,6 +136,7 @@ function onModelFileSelectChange(event: any) {
     let warningsCount = 0;
     let lastErrorRow: HTMLTableRowElement = null;
 
+    if (log == null) log = [];
     for (let entry of log) {
       // console.log(entry.file, entry.line, entry.type, entry.message);
 
