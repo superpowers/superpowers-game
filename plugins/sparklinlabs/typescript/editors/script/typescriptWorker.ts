@@ -19,6 +19,8 @@ let host: ts.LanguageServiceHost = {
 let service: ts.LanguageService;
 
 onmessage = (event: MessageEvent) => {
+  if (event.data.type !== "setup" && service == null) return;
+
   switch (event.data.type) {
     case "setup":
       scripts = { fileNames: event.data.fileNames, files: event.data.files };
