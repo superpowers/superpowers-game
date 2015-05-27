@@ -33,9 +33,15 @@ module Sup {
           actor = appendScene(prefabAsset, parentActor, false)[0];
           actor.__inner.name = node.name;
 
-          actor.__inner.setLocalPosition( tmpVector3.set(node.position.x, node.position.y, node.position.z) )
-          actor.__inner.setLocalOrientation( tmpQuaternion.set(node.orientation.x, node.orientation.y, node.orientation.z, node.orientation.w) )
-          actor.__inner.setLocalScale( tmpVector3.set(node.scale.x, node.scale.y, node.scale.z) )
+          let localPosition = actor.__inner.getLocalPosition();
+          actor.__inner.setLocalPosition(tmpVector3.set(node.position.x, node.position.y, node.position.z).add(localPosition));
+
+          let localOrientation = actor.__inner.getLocalOrientation();
+          tmpQuaternion.set(node.orientation.x, node.orientation.y, node.orientation.z, node.orientation.w);
+          actor.__inner.setLocalOrientation(tmpQuaternion.multiply(localOrientation));
+
+          let localScale = actor.__inner.getLocalScale();
+          actor.__inner.setLocalScale(tmpVector3.set(node.scale.x, node.scale.y, node.scale.z).multiply(localScale))
         } else throw new Error(`Undefined prefab in ${sceneAsset.name}`);
 
       } else {
