@@ -129,10 +129,7 @@ function start() {
   });
 
   ui.infoElement = document.createElement("div");
-  ui.infoElement.style.position = "absolute";
-  ui.infoElement.style.zIndex = "10";
-  ui.infoElement.style.backgroundColor = "rgba(86, 232, 86, 1)";
-  ui.infoElement.style.padding = "0.2em";
+  ui.infoElement.classList.add("popup-info");
 
   document.onmouseout = (event) => {
     if (ui.infoElement.parentElement != null) {
