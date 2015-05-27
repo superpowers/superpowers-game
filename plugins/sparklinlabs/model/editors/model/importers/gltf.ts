@@ -9,15 +9,31 @@ let gltfConst = {
   FLOAT: 5126
 }
 
+interface GLTFAccessor {
+  bufferView: string;
+  byteOffset: number;
+  byteStride: number;
+  componentType: number;
+  count: number;
+  type: string;
+}
+
+interface GLTFBufferView {
+  buffer: string;
+  byteLength: number;
+  byteOffset: number;
+  target: number;
+}
+
 function convertAxisAngleToQuaternion(rotations: Float32Array, count: number) {
   let q = new THREE.Quaternion;
   let axis = new THREE.Vector3;
-  let euler = new THREE.Vector3;
 
   for (let i = 0; i < count; i++) {
     axis.set(rotations[i * 4], rotations[i * 4 + 1], rotations[i * 4 + 2]).normalize();
     let angle = rotations[i * 4 + 3];
     q.setFromAxisAngle(axis, angle);
+
     rotations[i * 4] = q.x;
     rotations[i * 4 + 1] = q.y;
     rotations[i * 4 + 2] = q.z;
@@ -57,16 +73,17 @@ export function importModel(files: File[], callback: ImportCallback) {
   }
 
   let onGLTFRead = (err: Error, gltf: any) => {
-    if (err != null) { callback([ createLogError("Could not parse as JSON.", gltfFile.name) ]); return; }
+    if (err != null) { callback([ createLogError("Could not parse as JSON", gltfFile.name) ]); return; }
     if(Object.keys(gltf.meshes).length > 1) { callback([ createLogError("Only a single mesh is supported") ], gltfFile.name); return; }
 
-    let upAxisMatrix = new THREE.Matrix4;
 
     let rootNode = gltf.nodes[ gltf.scenes[gltf.scene].nodes[0] ];
 
     // Check if the model has its up-axis pointing in the wrong direction
+    let upAxisMatrix: THREE.Matrix4 = null;
+
     if(rootNode.name === "Y_UP_Transform") {
-      upAxisMatrix.fromArray(rootNode.matrix);
+      upAxisMatrix = new THREE.Matrix4().fromArray(rootNode.matrix);
       upAxisMatrix.getInverse(upAxisMatrix);
     }
 
@@ -86,7 +103,7 @@ export function importModel(files: File[], callback: ImportCallback) {
       }
     }
 
-    if (meshName == null) { callback([ createLogError("No mesh found.", gltfFile.name) ]); return; }
+    if (meshName == null) { callback([ createLogError("No mesh found", gltfFile.name) ]); return; }
 
     let meshInfo = gltf.meshes[meshName];
     if (meshInfo.primitives.length !== 1) { callback([ createLogError("Only a single primitive is supported", gltfFile.name) ]); return; }
@@ -115,63 +132,53 @@ export function importModel(files: File[], callback: ImportCallback) {
       let attributes: { [name: string]: ArrayBuffer } = {};
 
       // Indices
-      let indexAccessor = gltf.accessors[primitive.indices];
+      let indexAccessor: GLTFAccessor = gltf.accessors[primitive.indices];
       if (indexAccessor.componentType !== gltfConst.UNSIGNED_SHORT) {
         callback([ createLogError(`Unsupported component type for index accessor: ${indexAccessor.componentType}`) ]);
         return;
       }
 
       {
-        let indexBufferView = gltf.bufferViews[indexAccessor.bufferView];
+        let indexBufferView: GLTFBufferView = gltf.bufferViews[indexAccessor.bufferView];
         let start = indexBufferView.byteOffset + indexAccessor.byteOffset;
         attributes["index"] = buffers[indexBufferView.buffer].slice(start, start + indexAccessor.count * 2);
       }
 
       // Position
-      let positionAccessor = gltf.accessors[primitive.attributes.POSITION];
+      let positionAccessor: GLTFAccessor = gltf.accessors[primitive.attributes.POSITION];
       if (positionAccessor.componentType !== gltfConst.FLOAT) {
         callback([ createLogError(`Unsupported component type for position accessor: ${positionAccessor.componentType}`) ]);
         return
       }
 
       {
-        let positionBufferView = gltf.bufferViews[positionAccessor.bufferView];
+        let positionBufferView: GLTFBufferView = gltf.bufferViews[positionAccessor.bufferView];
         let start = positionBufferView.byteOffset + positionAccessor.byteOffset;
-        let positionArray = new Float32Array(buffers[positionBufferView.buffer], start, positionAccessor.count * 3);
-
-        for (let i = 0; i <positionAccessor.count; i++) {
-          let pos = new THREE.Vector3(positionArray[i * 3 + 0], positionArray[i * 3 + 1], positionArray[i * 3 + 2]);
-          pos.applyMatrix4(upAxisMatrix);
-          positionArray[i * 3 + 0] = pos.x;
-          positionArray[i * 3 + 1] = pos.y;
-          positionArray[i * 3 + 2] = pos.z;
-        }
-
         attributes["position"] = buffers[positionBufferView.buffer].slice(start, start + positionAccessor.count * positionAccessor.byteStride);
       }
 
       // Normal
-      let normalAccessor = gltf.accessors[primitive.attributes.NORMAL];
+      let normalAccessor: GLTFAccessor = gltf.accessors[primitive.attributes.NORMAL];
       if (normalAccessor != null) {
         if(normalAccessor.componentType !== gltfConst.FLOAT) {
           callback([ createLogError(`Unsupported component type for normal accessor: ${normalAccessor.componentType}`) ]);
           return;
         }
 
-        let normalBufferView = gltf.bufferViews[normalAccessor.bufferView];
+        let normalBufferView: GLTFBufferView = gltf.bufferViews[normalAccessor.bufferView];
         let start = normalBufferView.byteOffset + normalAccessor.byteOffset;
         attributes["normal"] = buffers[normalBufferView.buffer].slice(start, start + normalAccessor.count * 4);
       }
 
       // UV
-      let uvAccessor = gltf.accessors[primitive.attributes.TEXCOORD_0];
+      let uvAccessor: GLTFAccessor = gltf.accessors[primitive.attributes.TEXCOORD_0];
       if (uvAccessor != null) {
         if (uvAccessor.componentType !== gltfConst.FLOAT) {
           callback([ createLogError(`Unsupported component type for UV accessor: ${uvAccessor.componentType}`) ]);
           return;
         }
 
-        let uvBufferView = gltf.bufferViews[uvAccessor.bufferView];
+        let uvBufferView: GLTFBufferView = gltf.bufferViews[uvAccessor.bufferView];
         let start = uvBufferView.byteOffset + uvAccessor.byteOffset;
         let uvArray = new Float32Array(buffers[uvBufferView.buffer], start, uvAccessor.count * 2);
 
@@ -185,27 +192,27 @@ export function importModel(files: File[], callback: ImportCallback) {
       // TODO: support more attributes
 
       // Skin indices
-      let skinIndexAccessor = gltf.accessors[primitive.attributes.JOINT];
+      let skinIndexAccessor: GLTFAccessor = gltf.accessors[primitive.attributes.JOINT];
       if (skinIndexAccessor != null) {
         if (skinIndexAccessor.componentType !== gltfConst.FLOAT) {
           callback([ createLogError(`Unsupported component type for skin index accessor: ${skinIndexAccessor.componentType}`) ]);
           return;
         }
 
-        let skinIndexBufferView = gltf.bufferViews[skinIndexAccessor.bufferView];
+        let skinIndexBufferView: GLTFBufferView = gltf.bufferViews[skinIndexAccessor.bufferView];
         let start = skinIndexBufferView.byteOffset + skinIndexAccessor.byteOffset;
         attributes["skinIndex"] = buffers[skinIndexBufferView.buffer].slice(start, start + skinIndexAccessor.count * 4 * 4);
       }
 
       // Skin weights
-      let skinWeightAccessor = gltf.accessors[primitive.attributes.WEIGHT];
+      let skinWeightAccessor: GLTFAccessor = gltf.accessors[primitive.attributes.WEIGHT];
       if (skinWeightAccessor != null) {
         if (skinWeightAccessor.componentType !== gltfConst.FLOAT) {
           callback([ createLogError(`Unsupported component type for skin weight accessor: ${skinWeightAccessor.componentType}`) ]);
           return;
         }
 
-        let skinWeightBufferView = gltf.bufferViews[skinWeightAccessor.bufferView];
+        let skinWeightBufferView: GLTFBufferView = gltf.bufferViews[skinWeightAccessor.bufferView];
         let start = skinWeightBufferView.byteOffset + skinWeightAccessor.byteOffset;
         attributes["skinWeight"] = buffers[skinWeightBufferView.buffer].slice(start, start + skinWeightAccessor.count * 4 * 4);
       }
@@ -215,7 +222,6 @@ export function importModel(files: File[], callback: ImportCallback) {
       if (skin != null) {
         bones = [];
 
-        // skin.inverseBindMatrices
         for (let i = 0; i < skin.jointNames.length; i++) {
           let jointName = skin.jointNames[i];
           let boneNodeInfo = gltf.nodes[jointName];
@@ -224,9 +230,9 @@ export function importModel(files: File[], callback: ImportCallback) {
             convertAxisAngleToQuaternion(boneNodeInfo.rotation, 1);
 
             boneNodeInfo.matrix = new THREE.Matrix4().compose(
-              new THREE.Vector3( boneNodeInfo.translation[0], boneNodeInfo.translation[1], boneNodeInfo.translation[2] ),
-              new THREE.Quaternion( boneNodeInfo.rotation[0], boneNodeInfo.rotation[1], boneNodeInfo.rotation[2], boneNodeInfo.rotation[3] ),
-              new THREE.Vector3( boneNodeInfo.scale[0], boneNodeInfo.scale[1], boneNodeInfo.scale[2] )
+              new THREE.Vector3(boneNodeInfo.translation[0], boneNodeInfo.translation[1], boneNodeInfo.translation[2]),
+              new THREE.Quaternion(boneNodeInfo.rotation[0], boneNodeInfo.rotation[1], boneNodeInfo.rotation[2], boneNodeInfo.rotation[3]),
+              new THREE.Vector3(boneNodeInfo.scale[0], boneNodeInfo.scale[1], boneNodeInfo.scale[2])
             ).toArray();
           }
 
@@ -239,12 +245,6 @@ export function importModel(files: File[], callback: ImportCallback) {
           for (let childJointName of gltf.nodes[jointName].children) {
             bones[skin.jointNames.indexOf(childJointName)].parentIndex = i;
           }
-        }
-
-        let tmpMatrix = new THREE.Matrix4;
-        for (let jointName of rootBoneNames) {
-          let bone = bones[skin.jointNames.indexOf(jointName)];
-          bone.matrix = tmpMatrix.fromArray(bone.matrix).multiplyMatrices(upAxisMatrix, tmpMatrix).toArray();
         }
       }
 
@@ -276,17 +276,17 @@ export function importModel(files: File[], callback: ImportCallback) {
             if (boneTransformAnim == null) boneTransformAnim = boneAnim[gltfChannel.target.path] = [];
 
             let inputParameterName = gltfAnim.samplers[gltfChannel.sampler].input;
-            let timeAccessor = gltf.accessors[gltfAnim.parameters[inputParameterName]];
+            let timeAccessor: GLTFAccessor = gltf.accessors[gltfAnim.parameters[inputParameterName]];
             if (timeAccessor.componentType !== gltfConst.FLOAT) {
               callback([ createLogError(`Unsupported component type for animation time accessor: ${timeAccessor.componentType}`) ]);
               return;
             }
 
-            let timeBufferView = gltf.bufferViews[timeAccessor.bufferView];
+            let timeBufferView: GLTFBufferView = gltf.bufferViews[timeAccessor.bufferView];
             let timeArray = new Float32Array(buffers[timeBufferView.buffer], timeBufferView.byteOffset + timeAccessor.byteOffset, timeAccessor.count);
 
             let outputParameterName = gltfAnim.samplers[gltfChannel.sampler].output;
-            let outputAccessor = gltf.accessors[gltfAnim.parameters[outputParameterName]];
+            let outputAccessor: GLTFAccessor = gltf.accessors[gltfAnim.parameters[outputParameterName]];
             if (outputAccessor.componentType !== gltfConst.FLOAT) {
               callback([ createLogError(`Unsupported component type for animation output accessor: ${outputAccessor.componentType}`) ]);
               return;
@@ -294,12 +294,12 @@ export function importModel(files: File[], callback: ImportCallback) {
 
             let componentsCount = (outputAccessor.type === "VEC3") ? 3 : 4;
 
-            let outputBufferView = gltf.bufferViews[outputAccessor.bufferView];
+            let outputBufferView: GLTFBufferView = gltf.bufferViews[outputAccessor.bufferView];
             let outputArray = new Float32Array(buffers[outputBufferView.buffer], outputBufferView.byteOffset + outputAccessor.byteOffset, outputAccessor.count * componentsCount);
 
-            if (outputParameterName === "rotation") {
-              convertAxisAngleToQuaternion(outputArray, outputAccessor.count);
-            }
+            console.log( outputParameterName, outputAccessor.count, bones.length );
+
+            if (outputParameterName == "rotation") convertAxisAngleToQuaternion(outputArray, outputAccessor.count);
 
             for (let i = 0; i < timeArray.length; i++) {
               let time = timeArray[i];
@@ -317,13 +317,13 @@ export function importModel(files: File[], callback: ImportCallback) {
       let maps: { [name: string]: ArrayBuffer } = {};
 
       if(Object.keys(imageFiles).length === 0) {
-        callback(null, { attributes, bones, maps, animation });
+        callback(null, { attributes, bones, maps, animation, upAxisMatrix: upAxisMatrix.toArray() });
         return;
       }
 
       readFile(imageFiles[Object.keys(imageFiles)[0]], "arraybuffer", (err, data) => {
         maps["diffuse"] = data;
-        callback(null, { attributes, bones, maps, animation });
+        callback(null, { attributes, bones, maps, animation, upAxisMatrix: upAxisMatrix.toArray() });
       });
     });
   }

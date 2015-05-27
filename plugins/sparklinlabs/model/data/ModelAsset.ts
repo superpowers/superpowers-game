@@ -13,6 +13,7 @@ interface Animation {
 export default class ModelAsset extends SupCore.data.base.Asset {
 
   static schema = {
+    upAxisMatrix: { type: "array", length: 16, items: { type: "number" } },
     attributes: {
       type: "hash",
       properties: {
@@ -171,8 +172,14 @@ export default class ModelAsset extends SupCore.data.base.Asset {
     ], (err) => { saveCallback(err); });
   }
 
-  // TODO: Replace with setModel
-  server_setAttributes(client: any, attributes: any, callback: (err: string, attributes?: any) => any) {
+  server_setModel(client: any, upAxisMatrix: number[], attributes: { [name: string]: any }, bones: any[], callback: (err: string, upAxisMatrix?: number[], attributes?: { [name: string]: any }, bones?: any[]) => any) {
+    // Validate up matrix
+    if (upAxisMatrix != null) {
+      let violation = SupCore.data.base.getRuleViolation(upAxisMatrix, ModelAsset.schema.upAxisMatrix, true);
+      if (violation != null) { callback(`Invalid up axis matrix: ${SupCore.data.base.formatRuleViolation(violation)}`); return; }
+    }
+
+    // Validate attributes
     if (attributes == null || typeof attributes !== "object") { callback("Attributes must be an object"); return; }
 
     for (let key in attributes) {
@@ -181,33 +188,26 @@ export default class ModelAsset extends SupCore.data.base.Asset {
       if (value != null && !(value instanceof Buffer)) { callback(`Value for ${key} must be an ArrayBuffer or null`); return; }
     }
 
-    for (let key in ModelAsset.schema.attributes.properties) {
-      this.pub.attributes[key] = attributes[key];
-    }
-
-    callback(null, attributes);
-    this.emit("change");
-  }
-
-  client_setAttributes(attributes: any) {
-    for (let key in ModelAsset.schema.attributes.properties) {
-      this.pub.attributes[key] = attributes[key];
-    }
-  }
-
-  server_setBones(client: any, bones: any, callback: (err: string, bones?: any) => any) {
+    // Validate bones
     if (bones != null) {
       let violation = SupCore.data.base.getRuleViolation(bones, ModelAsset.schema.bones, true);
       if (violation != null) { callback(`Invalid bones: ${SupCore.data.base.formatRuleViolation(violation)}`); return; }
     }
 
+    // Apply changes
+    this.pub.upAxisMatrix = upAxisMatrix;
+    this.pub.attributes = attributes;
     this.pub.bones = bones;
-    callback(null, bones);
+
+    callback(null, upAxisMatrix, attributes, bones);
     this.emit("change");
-    return
   }
 
-  client_setBones(bones: any) { this.pub.bones = bones; }
+  client_setModel(upAxisMatrix: number[], attributes: { [name: string]: any }, bones: any[]) {
+    this.pub.upAxisMatrix = upAxisMatrix;
+    this.pub.attributes = attributes;
+    this.pub.bones = bones;
+  }
 
   server_setMaps(client: any, maps: any, callback: (err: string, maps?: any) => any) {
     if (maps == null || typeof maps !== "object") { callback("Maps must be an object"); return; }
@@ -218,18 +218,14 @@ export default class ModelAsset extends SupCore.data.base.Asset {
       if (value != null && !(value instanceof Buffer)) { callback(`Value for ${key} must be an ArrayBuffer or null`); return; }
     }
 
-    for (let key in maps) {
-      this.pub.maps[key] = maps[key];
-    }
+    for (let key in maps) this.pub.maps[key] = maps[key];
 
     callback(null, maps);
     this.emit("change");
   }
 
   client_setMaps(maps: any) {
-    for (let key in maps) {
-      this.pub.maps[key] = maps[key];
-    }
+    for (let key in maps) this.pub.maps[key] = maps[key];
   }
 
   // Animations

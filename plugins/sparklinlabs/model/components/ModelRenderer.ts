@@ -69,6 +69,10 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
   }
 
   _clearMesh() {
+    if (this.skeletonHelper != null) {
+      this.actor.threeObject.remove(this.skeletonHelper);
+      this.skeletonHelper = null;
+    }
     this.actor.threeObject.remove(this.threeMesh);
     this.threeMesh.traverse((obj: any) => { if (obj.dispose != null) obj.dispose() });
     this.threeMesh = null;
@@ -134,6 +138,11 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
     if(this.asset.bones != null) {
       this.threeMesh = new THREE.SkinnedMesh(geometry, material);
 
+      if (this.asset.upAxisMatrix != null) {
+        let upAxisMatrix = new THREE.Matrix4().fromArray(this.asset.upAxisMatrix);
+        this.threeMesh.applyMatrix(upAxisMatrix);
+      }
+
       let bones: THREE.Bone[] = [];
       this.bonesByName = {};
 
@@ -152,17 +161,11 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
       }
 
       this.threeMesh.updateMatrixWorld(true);
+
       let useVertexTexture = false;
-      (<THREE.SkinnedMesh>this.threeMesh).bind(new THREE.Skeleton(bones, undefined, useVertexTexture));;
+      (<THREE.SkinnedMesh>this.threeMesh).bind(new THREE.Skeleton(bones, undefined, useVertexTexture));
       material.skinning = true;
 
-      // TODO: Allow toggling in it in the user interface
-      /*
-      this.skeletonHelper = new THREE.SkeletonHelper(this.threeMesh);
-      this.skeletonHelper.material.linewidth = 3;
-      this.threeMesh.add(this.skeletonHelper);
-      this.skeletonHelper.updateMatrixWorld();
-      */
       this.updateAnimationsByName();
     } else {
       this.threeMesh = new THREE.Mesh(geometry, material);
@@ -186,6 +189,27 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
       let material: THREE.Material = object.material;
       if (material != null) material.needsUpdate = true;
     })
+  }
+
+  setShowSkeleton(show: boolean) {
+    if (show == (this.skeletonHelper != null)) return;
+
+    if (show) {
+      this.skeletonHelper = new THREE.SkeletonHelper(this.threeMesh);
+      if (this.asset.upAxisMatrix != null) {
+        let upAxisMatrix = new THREE.Matrix4().fromArray(this.asset.upAxisMatrix);
+        this.skeletonHelper.root = this.skeletonHelper;
+        this.skeletonHelper.applyMatrix(upAxisMatrix);
+        this.skeletonHelper.update();
+      }
+      (<THREE.LineBasicMaterial>this.skeletonHelper.material).linewidth = 3;
+      this.actor.threeObject.add(this.skeletonHelper);
+    } else {
+      this.actor.threeObject.remove(this.skeletonHelper);
+      this.skeletonHelper = null;
+    }
+
+    if (this.threeMesh != null) this.threeMesh.updateMatrixWorld(true);
   }
 
   updateAnimationsByName() {
@@ -249,11 +273,8 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
       bone.matrix.decompose(bone.position, bone.quaternion, bone.scale);
     }
 
-    this.threeMesh.rotation.set(0, 0, 0);
     this.threeMesh.updateMatrixWorld(false);
-
     if (this.skeletonHelper != null) this.skeletonHelper.update();
-    return
   }
 
   getBoneTransform(name: string) {
@@ -310,10 +331,7 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
       }
     }
 
-    // FIXME: Work around for model animations not being oriented the right way up
-    this.threeMesh.rotation.set(-Math.PI / 2, 0, 0);
     this.threeMesh.updateMatrixWorld(false);
-
     if (this.skeletonHelper != null) this.skeletonHelper.update();
   }
 
@@ -325,7 +343,6 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
 
     this._tickAnimation();
     this.hasPoseBeenUpdated = false;
-    return
   }
 
   _tickAnimation() {

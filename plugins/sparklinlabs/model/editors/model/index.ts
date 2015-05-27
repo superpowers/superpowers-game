@@ -33,6 +33,10 @@ function start() {
   diffuseMapFileSelect.addEventListener("change", onDiffuseMapFileSelectChange);
   document.querySelector(".diffuse-map button.upload").addEventListener("click", () => { diffuseMapFileSelect.click(); });
 
+  // Show skeleton
+  let showSkeletonCheckbox = <HTMLInputElement>document.querySelector(".show-skeleton");
+  showSkeletonCheckbox.addEventListener("change", onShowSkeletonChange);
+
   // Animations
   ui.animationsTreeView = new TreeView(document.querySelector(".animations-tree-view"), onAnimationDrop);
   ui.animationsTreeView.on("selectionChange", updateSelectedAnimation);
@@ -188,11 +192,7 @@ function onModelFileSelectChange(event: any) {
     ui.errorPaneInfo.textContent = errorsAndWarningsInfo.join(", ");
     ui.errorPaneStatus.classList.remove("has-errors");
 
-    socket.emit("edit:assets", info.assetId, "setAttributes", data.attributes, (err: string) => {
-      if (err != null) { alert(err); return; }
-    });
-
-    socket.emit("edit:assets", info.assetId, "setBones", data.bones, (err: string) => {
+    socket.emit("edit:assets", info.assetId, "setModel", data.upAxisMatrix, data.attributes, data.bones, (err: string) => {
       if (err != null) { alert(err); return; }
     });
 
@@ -204,7 +204,7 @@ function onModelFileSelectChange(event: any) {
   });
 }
 
-function onDiffuseMapFileSelectChange(event: any) {
+function onDiffuseMapFileSelectChange(event: Event) {
   ui.errorsTBody.innerHTML = "";
   ui.errorPaneInfo.textContent = "No errors";
   ui.errorPaneStatus.classList.remove("has-errors");
@@ -219,9 +219,14 @@ function onDiffuseMapFileSelectChange(event: any) {
     });
   };
 
-  reader.readAsArrayBuffer(event.target.files[0]);
-  event.target.parentElement.reset();
+  let element = <HTMLInputElement>event.target;
+  reader.readAsArrayBuffer(element.files[0]);
+  (<HTMLFormElement>element.parentElement).reset();
   return
+}
+
+function onShowSkeletonChange(event: Event) {
+  data.modelUpdater.modelRenderer.setShowSkeleton((<HTMLInputElement>event.target).checked);
 }
 
 function onNewAnimationClick() {
