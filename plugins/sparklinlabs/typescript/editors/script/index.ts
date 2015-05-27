@@ -113,7 +113,10 @@ function start() {
 
   (<any>CodeMirror).commands.autocomplete = (cm: CodeMirror.Editor) => { scheduleCompletion(); };
 
-  (<any>ui.editor).on("inputRead", (instance: any, changeObj: any) => {
+  (<any>ui.editor).on("keyup", (instance: any, event: any) => {
+    // Ignore Ctrl, Cmd, Escape, Return, Tab, arrow keys
+    if (event.ctrlKey || event.metaKey || [27, 9, 13, 37, 38, 39, 40, 16].indexOf(event.keyCode) !== -1) return;
+
     // If the completion popup is active, the hint() method will automatically
     // call for more autocomplete, so we don't need to do anything here.
     if ((<any>ui.editor).state.completionActive != null && (<any>ui.editor).state.completionActive.active()) return;
@@ -435,6 +438,32 @@ typescriptWorker.onmessage = (event: MessageEvent) => {
         return;
       }
 
+      for (let item of event.data.list) {
+        item.render = (parentElt: HTMLDivElement, data: any, item: { kind: string; name: string; info: string }) => {
+          parentElt.style.maxWidth = "100em";
+
+          let rowElement = document.createElement("div");
+          rowElement.style.display = "flex";
+          parentElt.appendChild(rowElement);
+
+          let kindElement = document.createElement("div");
+          kindElement.style.marginRight = "0.5em";
+          kindElement.style.width = "5em";
+          kindElement.textContent = item.kind;
+          rowElement.appendChild(kindElement);
+
+          let nameElement = document.createElement("div");
+          nameElement.style.marginRight = "0.5em";
+          nameElement.style.width = "15em";
+          nameElement.style.fontWeight = "bold";
+          nameElement.textContent = item.name;
+          rowElement.appendChild(nameElement);
+
+          let infoElement = document.createElement("div");
+          infoElement.textContent = item.info;
+          rowElement.appendChild(infoElement);
+        };
+      }
       let from = (<any>CodeMirror).Pos(activeCompletion.cursor.line, activeCompletion.token.start);
       let to = (<any>CodeMirror).Pos(activeCompletion.cursor.line, activeCompletion.token.end);
       activeCompletion.callback({ list: event.data.list, from, to });

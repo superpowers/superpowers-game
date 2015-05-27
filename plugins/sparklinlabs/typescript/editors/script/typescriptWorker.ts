@@ -55,7 +55,7 @@ onmessage = (event: MessageEvent) => {
       break;
 
     case "getCompletionAt":
-      let list: string[] = [];
+      let list: { text: string; kind: string; name: string; info: string }[] = [];
 
       if (event.data.tokenString !== "" && event.data.tokenString !== ";") {
         let completions = service.getCompletionsAtPosition(event.data.name, event.data.start);
@@ -66,7 +66,13 @@ onmessage = (event: MessageEvent) => {
 
           event.data.tokenString = (event.data.tokenString !== ".") ? event.data.tokenString : "";
           let results = fuzzy.filter(event.data.tokenString, rawList);
-          for (let result of results) list.push(result.original);
+          for (let result of results) {
+            let details = service.getCompletionEntryDetails(event.data.name, event.data.start, result.original);
+            let kind = details.kind;
+            let info = "";
+            if (["class", "module", "interface", "keyword"].indexOf(kind) === -1) info = ts.displayPartsToString(details.displayParts);
+            list.push({ text: result.original, kind, name: details.name, info });
+          }
         }
       }
       (<any>postMessage)({ type: "completion", list });
