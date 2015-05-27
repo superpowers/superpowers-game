@@ -10,6 +10,14 @@ export function init(player: SupRuntime.Player, callback: Function) {
 
 export function lateStart(player: SupRuntime.Player, callback: Function) {
   let scene = player.resources.gameSettings.startupScene;
-  if (scene != null) (<any>window).Sup.loadScene(scene);
+  if (scene != null) {
+    var entry = player.entriesByPath[scene];
+    if (entry == null) { callback(new Error(`Startup scene not found: ${scene}`)); return }
+
+    var outerAsset = player.getOuterAsset(entry.id);
+    if (outerAsset.type != 'scene') { callback(new Error(`Startup scene not found: ${scene}`)); return }
+
+    (<any>window).Sup.loadScene(scene);
+  }
   callback();
 }
