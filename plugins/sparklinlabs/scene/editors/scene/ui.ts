@@ -45,7 +45,7 @@ new PerfectResize(document.querySelector(".nodes-tree-view"), "top");
 // Setup tree view
 ui.nodesTreeView = new TreeView(document.querySelector(".nodes-tree-view"), onNodeDrop);
 ui.nodesTreeView.on("activate", onNodeActivate);
-ui.nodesTreeView.on("selectionChange", onNodeSelect);
+ui.nodesTreeView.on("selectionChange", () => { setupSelectedNode(); });
 
 ui.newNodeButton = <HTMLButtonElement>document.querySelector("button.new-node");
 ui.newNodeButton.addEventListener("click", onNewNodeClick);
@@ -121,7 +121,7 @@ export function createNodeElement(node: Node) {
 function onNodeDrop(dropInfo: any, orderedNodes: any) {
   let dropPoint = SupClient.getTreeViewDropPoint(dropInfo, data.sceneUpdater.sceneAsset.nodes);
 
-  let nodeIds: string[] = []
+  let nodeIds: string[] = [];
   for (let node of orderedNodes ) nodeIds.push(node.dataset.id);
 
   let sourceParentNode = data.sceneUpdater.sceneAsset.nodes.parentNodesById[nodeIds[0]];
@@ -138,7 +138,7 @@ function onNodeDrop(dropInfo: any, orderedNodes: any) {
 
 function onNodeActivate() { ui.nodesTreeView.selectedNodes[0].classList.toggle("collapsed"); }
 
-export function onNodeSelect() {
+export function setupSelectedNode() {
   // Clear component editors
   for (let componentId in ui.componentEditors) ui.componentEditors[componentId].destroy();
   ui.componentEditors = {};
@@ -261,7 +261,7 @@ function queryNewNode(name: string, prefab: boolean) {
 
     ui.nodesTreeView.clearSelection();
     ui.nodesTreeView.addToSelection(ui.nodesTreeView.treeRoot.querySelector(`li[data-id='${nodeId}']`));
-    onNodeSelect();
+    setupSelectedNode();
   });
 }
 
@@ -293,7 +293,7 @@ function onDuplicateNodeClick() {
 
       ui.nodesTreeView.clearSelection();
       ui.nodesTreeView.addToSelection(ui.nodesTreeView.treeRoot.querySelector(`li[data-id='${nodeId}']`));
-      onNodeSelect();
+      setupSelectedNode();
     });
   });
 }

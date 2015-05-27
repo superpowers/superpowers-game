@@ -179,13 +179,13 @@ export default class SceneAsset extends SupCore.data.base.Asset {
       matrix.multiplyMatrices(new THREE.Matrix4().getInverse(parentGlobalMatrix), matrix);
     }
 
-    let position = new THREE.Vector3()
-    let orientation = new THREE.Quaternion()
-    let scale = new THREE.Vector3()
+    let position = new THREE.Vector3();
+    let orientation = new THREE.Quaternion();
+    let scale = new THREE.Vector3();
     matrix.decompose(position, orientation, scale);
-    node.position = { x: position.x, y: position.y, z: position.z }
-    node.orientation = { x: orientation.x, y: orientation.y, z: orientation.z, w: orientation.w }
-    node.scale = { x: scale.x, y: scale.y, z: scale.z }
+    node.position = { x: position.x, y: position.y, z: position.z };
+    node.orientation = { x: orientation.x, y: orientation.y, z: orientation.z, w: orientation.w };
+    node.scale = { x: scale.x, y: scale.y, z: scale.z };
   }
 
   client_moveNode(id: string, parentId: string, index: number) {
@@ -197,7 +197,7 @@ export default class SceneAsset extends SupCore.data.base.Asset {
 
 
   server_duplicateNode(client: any, newName: string, id: string, index: number, callback: (err: string, rootNode: Node, newNodes: DuplicatedNode[]) => any) {
-    let referenceNode = this.nodes.byId[id]
+    let referenceNode = this.nodes.byId[id];
     if (referenceNode == null) { callback(`Invalid node id: ${id}`, null, null); return; }
 
     let parentNode = this.nodes.parentNodesById[id];

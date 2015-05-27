@@ -53,7 +53,7 @@ export default class SceneUpdater {
       this._createNodeActor(node);
 
       if (node.children != null && node.children.length > 0) {
-        for (let child of node.children) walk(child)
+        for (let child of node.children) walk(child);
       }
     }
     for (let node of asset.nodes.pub) walk(node);
@@ -158,7 +158,7 @@ export default class SceneUpdater {
   }
 
   _createNodeActor(node: Node) {
-    let parentNode = this.sceneAsset.nodes.parentNodesById[node.id]
+    let parentNode = this.sceneAsset.nodes.parentNodesById[node.id];
     let parentActor: SupEngine.Actor;
     if (parentNode != null) parentActor = this.bySceneNodeId[parentNode.id].actor;
     else parentActor = this.rootActor;
@@ -171,7 +171,7 @@ export default class SceneUpdater {
     (<any>nodeActor).sceneNodeId = node.id;
     new TransformMarker(nodeActor);
 
-    this.bySceneNodeId[node.id] = { actor: nodeActor, bySceneComponentId: {} }
+    this.bySceneNodeId[node.id] = { actor: nodeActor, bySceneComponentId: {} };
 
     if (node.components != null) for (let component of node.components) this._createNodeActorComponent(node, component, nodeActor);
     return nodeActor;
@@ -185,7 +185,7 @@ export default class SceneUpdater {
     this.bySceneNodeId[sceneNode.id].bySceneComponentId[sceneComponent.id] = {
       component: actorComponent,
       componentUpdater: new componentClass.Updater(this.projectClient, actorComponent, sceneComponent.config),
-    }
+    };
   }
 
   _clearScene() {

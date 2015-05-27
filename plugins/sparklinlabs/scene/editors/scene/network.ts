@@ -1,5 +1,5 @@
 import info from "./info";
-import ui, { setCameraMode, createNodeElement, onNodeSelect, createComponentElement, setInspectorPosition, setInspectorOrientation, setInspectorScale } from "./ui";
+import ui, { setCameraMode, createNodeElement, setupSelectedNode, createComponentElement, setInspectorPosition, setInspectorOrientation, setInspectorScale } from "./ui";
 import engine from "./engine";
 
 let THREE = SupEngine.THREE;
@@ -111,7 +111,7 @@ onEditCommands.removeNode = (id: string) => {
   let isInspected = ui.nodesTreeView.selectedNodes.length === 1 && nodeElt === ui.nodesTreeView.selectedNodes[0];
 
   ui.nodesTreeView.remove(nodeElt);
-  if (isInspected) onNodeSelect();
+  if (isInspected) setupSelectedNode();
 }
 
 onEditCommands.addComponent = (nodeId: string, nodeComponent: Component, index: number) => {
