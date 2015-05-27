@@ -37,11 +37,16 @@ let ui: {
   redoStack?: OT.TextOperation[];
   redoQuantityByAction?: number[];
 
+  infoElement?: HTMLDivElement;
+  infoPosition?: CodeMirror.Position;
+  infoTimeout?: number;
+
   sentOperation?: OT.TextOperation;
   pendingOperation?: OT.TextOperation;
 } = {};
 let socket: SocketIOClient.Socket;
 
+let typescriptWorker = new Worker("typescriptWorker.js");
 let fileNames: string[] = [];
 let files: { [name: string]: { id: string; text: string; version: string; } } = {};
 let fileNamesByScriptId: { [name: string]: string } = {};
@@ -123,6 +128,42 @@ function start() {
     scheduleCompletion();
   });
 
+  ui.infoElement = document.createElement("div");
+  ui.infoElement.style.position = "absolute";
+  ui.infoElement.style.zIndex = "10";
+  ui.infoElement.style.backgroundColor = "rgba(86, 232, 86, 1)";
+  ui.infoElement.style.padding = "0.2em";
+
+  document.onmouseout = (event) => {
+    if (ui.infoElement.parentElement != null) {
+      ui.infoElement.parentElement.removeChild(ui.infoElement);
+    }
+    if (ui.infoTimeout != null) clearTimeout(ui.infoTimeout);
+  }
+  document.onmousemove = (event) => {
+    if (ui.infoElement.parentElement != null) {
+      ui.infoElement.parentElement.removeChild(ui.infoElement);
+    }
+    if (ui.infoTimeout != null) clearTimeout(ui.infoTimeout);
+
+    ui.infoTimeout = window.setTimeout(() => {
+      ui.infoPosition = ui.editor.coordsChar({ left: event.clientX, top: event.clientY });
+      if ((<any>ui.infoPosition).outside) return;
+
+      let token = ui.editor.getTokenAt(ui.infoPosition);
+      let start = 0;
+      for (let i = 0; i < ui.infoPosition.line; i++) start += ui.editor.getDoc().getLine(i).length + 1;
+      start += ui.infoPosition.ch;
+
+      ui.infoTimeout = null;
+      typescriptWorker.postMessage({
+        type: "getQuickInfoAt",
+        name: fileNamesByScriptId[info.assetId],
+        start
+      });
+    }, 200);
+  };
+
   let nwDispatcher = (<any>window).nwDispatcher;
   if (nwDispatcher != null) {
     let gui = nwDispatcher.requireNwGui();
@@ -168,8 +209,6 @@ function onWelcome(clientId: number) {
   data.projectClient = new SupClient.ProjectClient(socket);
   data.projectClient.subEntries(entriesSubscriber);
 }
-
-let typescriptWorker = new Worker("typescriptWorker.js");
 
 var entriesSubscriber = {
   onEntriesReceived: (entries: SupCore.data.Entries) => {
@@ -468,6 +507,16 @@ typescriptWorker.onmessage = (event: MessageEvent) => {
       let to = (<any>CodeMirror).Pos(activeCompletion.cursor.line, activeCompletion.token.end);
       activeCompletion.callback({ list: event.data.list, from, to });
       activeCompletion = null;
+      break;
+
+    case "quickInfo":
+      if (ui.infoTimeout == null) {
+        ui.infoElement.textContent = event.data.text;
+        ui.editor.addWidget(ui.infoPosition, ui.infoElement, false)
+      }
+      /*if (token.string !== "" && token.string !== " ") {
+
+      }*/
       break;
   }
 };

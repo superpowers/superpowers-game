@@ -78,6 +78,11 @@ onmessage = (event: MessageEvent) => {
       (<any>postMessage)({ type: "completion", list });
       break;
 
+    case "getQuickInfoAt":
+      let info = service.getQuickInfoAtPosition(event.data.name, event.data.start);
+      if (info != null) (<any>postMessage)({ type: "quickInfo", text: ts.displayPartsToString(info.displayParts) });
+      break;
+
     default:
       throw new Error(`Unexpected message type: ${event.data.type}`);
   }
