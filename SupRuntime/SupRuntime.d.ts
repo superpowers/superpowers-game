@@ -25,6 +25,7 @@ declare module SupRuntime {
 
     canvas: HTMLCanvasElement;
     dataURL: string;
+    gameName: string;
 
     gameInstance: SupEngine.GameInstance;
 
