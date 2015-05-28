@@ -51,17 +51,19 @@ let mousePosition = new THREE.Vector2;
 let raycaster = new THREE.Raycaster;
 
 function onMouseUp(event: MouseEvent) {
-	let rect = canvasElt.getBoundingClientRect();
+  if (event.button !== 0) return;
+
+  let rect = canvasElt.getBoundingClientRect();
   mousePosition.set(
     (( event.clientX - rect.left ) / rect.width * 2) - 1,
     -(( event.clientY - rect.top ) / rect.height * 2) + 1
   );
 
-	raycaster.setFromCamera(mousePosition, engine.cameraComponent.threeCamera);
+  raycaster.setFromCamera(mousePosition, engine.cameraComponent.threeCamera);
 
   ui.nodesTreeView.clearSelection();
 
-	let intersects = raycaster.intersectObject(engine.gameInstance.threeScene, true);
+  let intersects = raycaster.intersectObject(engine.gameInstance.threeScene, true);
   if (intersects.length > 0) {
     let threeObject = intersects[0].object;
 
