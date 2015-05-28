@@ -15,6 +15,7 @@ export default class Player {
 
   canvas: HTMLCanvasElement;
   dataURL: string;
+  gameName: string;
 
   gameInstance: SupEngine.GameInstance;
 
@@ -63,6 +64,7 @@ export default class Player {
     this.getAssetData("game.json", "json", (err: any, gameData: {name: string; assets: Asset[]}) => {
       if (err != null) { callback(new Error("Failed to load game manifest")); return; }
 
+      this.gameName = gameData.name;
       document.title = gameData.name;
 
       this.resourcesToLoad = Object.keys(SupRuntime.resourcePlugins);
