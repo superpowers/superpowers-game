@@ -25,13 +25,14 @@ export default function compileTypeScript(sourceFileNames: string[], sourceFiles
         sourceMaps[name] = sourceMap;
       }
       else {
-        name = name.slice(0, name.length - 3);
-        let sourceMapText = `//# sourceMappingURL=${name}.js.map`;
-        let sourceMapEmpty = "";
-        for (let i = 0; i < sourceMapText.length; i++ ) sourceMapEmpty += " "
-        text = text.replace( sourceMapText, sourceMapEmpty);
+        let filePath = name.slice(0, name.length - 3);
+        let fileName = filePath.slice(filePath.lastIndexOf("/") + 1);
 
-        files.push({ name, text });
+        let sourceMapText = `//# sourceMappingURL=${fileName}.js.map`;
+        let sourceMapEmpty = new Array(sourceMapText.length).join(" ");
+        text = text.replace(sourceMapText, sourceMapEmpty);
+
+        files.push({ name: filePath, text });
         script += `\n${text}`;
       }
     },
