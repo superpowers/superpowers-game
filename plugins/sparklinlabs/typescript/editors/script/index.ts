@@ -484,7 +484,7 @@ typescriptWorker.onmessage = (event: MessageEvent) => {
 
           let kindElement = document.createElement("div");
           kindElement.style.marginRight = "0.5em";
-          kindElement.style.width = "5em";
+          kindElement.style.width = "6em";
           kindElement.textContent = item.kind;
           rowElement.appendChild(kindElement);
 
