@@ -57,6 +57,7 @@ export default class ModelRendererEditor {
     colorRow.valueCell.appendChild(colorParent);
 
     this.colorField = SupClient.table.appendTextField(colorParent, config.color);
+    this.colorField.classList.add("color");
     this.colorField.addEventListener("change", (event: any) => {
       this.editConfig("setProperty", "color", event.target.value);
     });
