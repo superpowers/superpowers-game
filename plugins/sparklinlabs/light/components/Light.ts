@@ -8,7 +8,7 @@ export default class Light extends SupEngine.ActorComponent {
 
   light: THREE.AmbientLight|THREE.PointLight|THREE.SpotLight|THREE.DirectionalLight;
   type: string;
-  color = "ffffff";
+  color = 0xffffff;
   intensity = 1;
   distance = 0;
   angle = Math.PI / 3;
@@ -28,13 +28,13 @@ export default class Light extends SupEngine.ActorComponent {
 
     switch (type) {
       case "ambient":
-        this.light = new THREE.AmbientLight(parseInt(this.color, 16));
+        this.light = new THREE.AmbientLight(this.color);
         break;
       case "point":
-        this.light = new THREE.PointLight(parseInt(this.color, 16), this.intensity, this.distance);
+        this.light = new THREE.PointLight(this.color, this.intensity, this.distance);
         break;
       case "spot":
-        let spotLight = new THREE.SpotLight(parseInt(this.color, 16), this.intensity, this.distance, this.angle * Math.PI / 180);
+        let spotLight = new THREE.SpotLight(this.color, this.intensity, this.distance, this.angle * Math.PI / 180);
         spotLight.target.position.copy(this.target);
         spotLight.target.updateMatrixWorld(false);
         spotLight.shadowCameraNear = 0.1;
@@ -42,7 +42,7 @@ export default class Light extends SupEngine.ActorComponent {
         this.setCastShadow(this.castShadow);
         break;
       case "directional":
-        let directionalLight = new THREE.DirectionalLight(parseInt(this.color, 16), this.intensity);
+        let directionalLight = new THREE.DirectionalLight(this.color, this.intensity);
         directionalLight.target.position.copy(this.target);
         directionalLight.target.updateMatrixWorld(false);
         directionalLight.shadowCameraNear = 0.1;
@@ -64,9 +64,9 @@ export default class Light extends SupEngine.ActorComponent {
     })
   }
 
-  setColor(color: string) {
+  setColor(color: number) {
     this.color = color;
-    this.light.color.setHex(parseInt(`0x${this.color}`));
+    this.light.color.setHex(this.color);
   }
 
   setIntensity(intensity: number) {

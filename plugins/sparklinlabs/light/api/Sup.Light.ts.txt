@@ -12,7 +12,7 @@ module Sup {
       this.type = options.type;
       let types = ["ambient", "point", "spot", "directional"];
       this.__inner.setType(types[this.type]);
-      this.__inner.setColor(options.color);
+      this.__inner.setColor(options.color.getHex());
       if (options.intensity != null) this.__inner.setIntensity(options.intensity);
       if (options.distance != null) this.__inner.setDistance(options.distance);
       if (options.angle != null) this.__inner.setAngle(options.angle);
@@ -25,8 +25,8 @@ module Sup {
     }
 
     getType() { return this.type; }
-    setColor(color) { this.__inner.setColor(color); return this; }
-    getColor() { return this.__inner.color; }
+    setColor(color) { this.__inner.setColor(color.getHex()); return this; }
+    getColor() { return new Color(1, 1, 1).setHex(this.__inner.color); }
     setIntensity(intensity) { this.__inner.setIntensity(intensity); return this; }
     getIntensity() { return this.__inner.intensity; }
     setDistance(distance) { this.__inner.setDistance(distance); return this; }

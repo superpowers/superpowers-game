@@ -30,7 +30,7 @@ export default class LightMarker extends Light {
     }
   }
 
-  setColor(color: string) {
+  setColor(color: number) {
     super.setColor(color);
     if (this.lightMarker != null) this.lightMarker.update();
   }

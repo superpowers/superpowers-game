@@ -1,6 +1,6 @@
 interface LightOptions {
   type: Sup.Light.Type;
-  color: string;
+  color: Sup.Color;
   intensity?: number;
   distance?: number;
   angle?: number;
@@ -17,8 +17,8 @@ declare module Sup {
     constructor(actor: Actor, options: LightOptions);
 
     getType(): Sup.Light.Type;
-    setColor(color: number): Light;
-    getColor(): number;
+    setColor(color: Color): Light;
+    getColor(): Color;
     setIntensity(intensity: number): Light;
     getIntensity(): number;
     setDistance(distance: number): Light;

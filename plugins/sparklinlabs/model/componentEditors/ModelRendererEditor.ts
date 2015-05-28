@@ -13,7 +13,6 @@ export default class ModelRendererEditor {
   castShadowField: HTMLInputElement;
   receiveShadowField: HTMLInputElement;
 
-  color: { r: number; g: number; b: number; };
   colorField: HTMLInputElement;
   colorPicker: HTMLInputElement;
 
@@ -125,7 +124,6 @@ export default class ModelRendererEditor {
         break;
 
       case "color":
-        this.color = value;
         this.colorField.value = value;
         this.colorPicker.value = `#${value}`;
         break;

@@ -6,6 +6,7 @@ export default class LightEditor {
 
   typeSelectBox: HTMLSelectElement;
   colorField: HTMLInputElement;
+  colorPicker: HTMLInputElement;
   intensityField: HTMLInputElement;
   distanceField: HTMLInputElement;
   angleField: HTMLInputElement;
@@ -24,10 +25,25 @@ export default class LightEditor {
     });
 
     let colorRow = SupClient.table.appendRow(tbody, "Color");
-    this.colorField = SupClient.table.appendTextField(colorRow.valueCell, config.color);
+    let colorParent = <any>document.createElement("div");
+    colorParent.classList.add("inputs");
+    colorRow.valueCell.appendChild(colorParent);
+
+    this.colorField = SupClient.table.appendTextField(colorParent, config.color);
+    this.colorField.classList.add("color");
     this.colorField.addEventListener("change", (event: any) => {
       this.editConfig("setProperty", "color", event.target.value);
     });
+
+    this.colorPicker = document.createElement("input");
+    this.colorPicker.style.padding = "0";
+    this.colorPicker.style.alignSelf = "center";
+    this.colorPicker.type = "color";
+    this.colorPicker.value = `#${config.color}`;
+    this.colorPicker.addEventListener("change", (event: any) => {
+      this.editConfig("setProperty", "color", event.target.value.slice(1));
+    })
+    colorParent.appendChild(this.colorPicker);
 
     let intensityRow = SupClient.table.appendRow(tbody, "Intensity");
     this.intensityField = SupClient.table.appendNumberField(intensityRow.valueCell, config.intensity, 0);
@@ -78,6 +94,7 @@ export default class LightEditor {
         break;
       case "color":
         this.colorField.value = value;
+        this.colorPicker.value = `#${value}`;
         break;
       case "intensity":
         this.intensityField.value = value;

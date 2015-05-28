@@ -9,7 +9,7 @@ export default class LightUpdater {
     this.light = light;
 
     this.light.setType(config.type);
-    this.light.setColor(config.color);
+    this.light.setColor(parseInt(config.color, 16));
     this.light.setIntensity(config.intensity);
     this.light.setDistance(config.distance);
     this.light.setAngle(config.angle);
@@ -25,7 +25,7 @@ export default class LightUpdater {
         this.light.setType(value);
         break;
       case "color":
-        this.light.setColor(value);
+        this.light.setColor(parseInt(value, 16));
         break;
       case "intensity":
         this.light.setIntensity(value);
