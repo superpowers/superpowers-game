@@ -60,6 +60,11 @@ function start() {
     }
   });
 
+  ui.colorPicker = document.querySelector("input.color-picker");
+  ui.colorPicker.addEventListener("change", (event: any) => {
+    socket.emit("edit:assets", info.assetId, "setProperty", "color", event.target.value.slice(1), (err: string) => { if (err != null) alert(err); });
+  })
+
   ui.fontTable = document.querySelector("table.font");
   ui.bitmapTable = document.querySelector("table.bitmap");
 
@@ -90,6 +95,7 @@ function onAssetReceived() {
     }
   });
 
+  ui.colorPicker.value = `#${data.textUpdater.fontAsset.pub.color}`;
   ui.settings["charsetOffset"].disabled = data.textUpdater.fontAsset.pub.isBitmap && data.textUpdater.fontAsset.pub.charset != null;
 }
 onEditCommands.setProperty = (path: string, value: any) => {
@@ -98,7 +104,8 @@ onEditCommands.setProperty = (path: string, value: any) => {
     refreshTables();
   } else ui.settings[path].value = value;
 
-  if (path === "charset") {
+  if (path === "color") ui.colorPicker.value = `#${value}`;
+  else if (path === "charset") {
     ui.settings["charsetOffset"].disabled = data.textUpdater.fontAsset.pub.isBitmap && data.textUpdater.fontAsset.pub.charset != null;
   }
 }

@@ -25,6 +25,9 @@ module Sup {
     getHex() {
       return (this.r * 255) << 16 ^ (this.g * 255) << 8 ^ (this.b * 255) << 0;
     }
+    getHexString() {
+      return ('000000' + this.getHex().toString(16)).slice(- 6);
+    }
 
     setHSL(h: number, s: number, l: number) {
       if (s === 0) this.r = this.g = this.b = l;

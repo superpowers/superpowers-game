@@ -16,7 +16,7 @@ export default class FontAsset extends SupCore.data.base.Asset {
 
     font: { type: "buffer" },
     size: { type: "number", min: 1, mutable: true },
-    color: { type: "string", mutable: true },
+    color: { type: "string", length: 6, mutable: true },
 
     bitmap: { type: "buffer" },
     gridWidth: { type: "number", min: 1, mutable: true },
@@ -39,7 +39,7 @@ export default class FontAsset extends SupCore.data.base.Asset {
 
       font: new Buffer(0),
       size: 32,
-      color: "white",
+      color: "ffffff",
 
       bitmap: new Buffer(0),
       gridWidth: 16,
@@ -54,6 +54,10 @@ export default class FontAsset extends SupCore.data.base.Asset {
   load(assetPath: string) {
     fs.readFile(path.join(assetPath, "asset.json"), { encoding: "utf8" }, (err, json) => {
       this.pub = JSON.parse(json);
+
+      // TODO: Remove these casts at some point, legacy stuff from Superpowers 0.7
+      if (this.pub.color.length !== 6) this.pub.color = "ffffff";
+
       fs.readFile(path.join(assetPath, "font.dat"), (err, buffer) => {
         this.pub.font = buffer;
         fs.readFile(path.join(assetPath, "bitmap.dat"), (err, buffer) => {

@@ -1,9 +1,10 @@
 module Sup {
   export class TextRenderer extends Sup.ActorComponent {
-    constructor(actor, text, font, options={}) {
+    constructor(actor, text, font, options: any ={}) {
       super(actor);
       this.__inner = new SupEngine.componentClasses.TextRenderer(this.actor.__inner);
 
+      if (options.color != null) options.color = options.color.getHexString();
       this.__inner.setOptions(options);
       if (text != null) this.__inner.setText(text);
       if (font != null) this.__inner.setFont(font.__inner);
@@ -28,11 +29,11 @@ module Sup {
     }
     getColor() {
       var color = (this.__inner.options.color != null) ? this.__inner.options.color : this.__inner.font.color;
-      return color;
+      return new Sup.Color(1, 1, 1).setHex(parseInt(color, 16));
     }
     setColor(color) {
       var options = this.__inner.options;
-      options.color = color;
+      options.color = color.getHexString();
       this.__inner.setOptions(options);
       return this;
     }

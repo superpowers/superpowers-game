@@ -6,7 +6,7 @@ export default class TextRendererConfig extends SupCore.data.base.ComponentConfi
     alignment: { type: "enum", items: [ "left", "center", "right" ], mutable: true },
     verticalAlignment: { type: "enum", items: [ "top", "center", "bottom" ], mutable: true },
     size: { type: "integer?", min: 0, mutable: true },
-    color: { type: "string?", min: 0, mutable: true }
+    color: { type: "string?", length: 6, mutable: true }
   }
 
   static create() {
@@ -21,6 +21,9 @@ export default class TextRendererConfig extends SupCore.data.base.ComponentConfi
   }
 
   constructor(pub: any) {
+    // TODO: Remove these casts at some point, legacy stuff from Superpowers 0.7
+    if (pub.color != null && pub.color.length !== 6) pub.color = "ffffff";
+
     // Migrate from old "align" property
     if (pub.align != null) {
       pub.alignment = pub.align;

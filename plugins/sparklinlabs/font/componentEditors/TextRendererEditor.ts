@@ -3,6 +3,7 @@ export default class TextRendererEditor {
   editConfig: any;
 
   fields: {[key: string]: any} = {};
+  colorPicker: HTMLInputElement;
   fontAssetId: string;
 
   constructor(tbody: HTMLTableSectionElement, config: any, projectClient: SupClient.ProjectClient, editConfig: any) {
@@ -10,30 +11,51 @@ export default class TextRendererEditor {
     this.projectClient = projectClient;
     this.fontAssetId = config.fontAssetId;
 
-    var fontRow = SupClient.table.appendRow(tbody, 'Font');
+    var fontRow = SupClient.table.appendRow(tbody, "Font");
     var fontName = (config.fontAssetId != null) ? this.projectClient.entries.getPathFromId(this.fontAssetId) : ""
     this.fields["fontAssetId"] = SupClient.table.appendTextField(fontRow.valueCell, fontName);
-    this.fields["fontAssetId"].addEventListener('input', this._onChangeFontAsset);
+    this.fields["fontAssetId"].addEventListener("input", this._onChangeFontAsset);
 
-    var textRow = SupClient.table.appendRow(tbody, 'Text');
+    var textRow = SupClient.table.appendRow(tbody, "Text");
     this.fields["text"] = SupClient.table.appendTextAreaField(textRow.valueCell, config.text);
-    this.fields["text"].addEventListener('input', (event: any) => { this.editConfig('setProperty', 'text', event.target.value); });
+    this.fields["text"].addEventListener("input", (event: any) => { this.editConfig("setProperty", "text", event.target.value); });
 
-    var alignmentRow = SupClient.table.appendRow(tbody, 'Alignment');
+    var alignmentRow = SupClient.table.appendRow(tbody, "Alignment");
     this.fields["alignment"] = SupClient.table.appendSelectBox(alignmentRow.valueCell, {"left": "Left", "center": "Center", "right": "Right"}, config.alignment);
-    this.fields["alignment"].addEventListener('change', (event: any) => { this.editConfig('setProperty', 'alignment', event.target.value); });
+    this.fields["alignment"].addEventListener("change", (event: any) => { this.editConfig("setProperty", "alignment", event.target.value); });
 
-    var alignmentRow = SupClient.table.appendRow(tbody, 'Vertical Align');
+    var alignmentRow = SupClient.table.appendRow(tbody, "Vertical Align");
     this.fields["verticalAlignment"] = SupClient.table.appendSelectBox(alignmentRow.valueCell, {"top": "Top", "center": "Center", "bottom": "Bottom"}, config.verticalAlignment);
-    this.fields["verticalAlignment"].addEventListener('change', (event: any) => { this.editConfig('setProperty', 'verticalAlignment', event.target.value); });
+    this.fields["verticalAlignment"].addEventListener("change", (event: any) => { this.editConfig("setProperty", "verticalAlignment", event.target.value); });
 
-    var sizeRow = SupClient.table.appendRow(tbody, 'Size');
+    var sizeRow = SupClient.table.appendRow(tbody, "Size");
     this.fields["size"] = SupClient.table.appendNumberField(sizeRow.valueCell, config.size, 0);
-    this.fields["size"].addEventListener('change', (event: any) => { this.editConfig('setProperty', 'size', parseInt(event.target.value)); });
+    this.fields["size"].addEventListener("change", (event: any) => {
+      let size = (event.target.value !== "") ? parseInt(event.target.value) : null;
+      this.editConfig("setProperty", "size", size);
+    });
 
-    var colorRow = SupClient.table.appendRow(tbody, 'Color');
-    this.fields["color"] = SupClient.table.appendTextField(colorRow.valueCell, config.color);
-    this.fields["color"].addEventListener('change', (event: any) => { this.editConfig('setProperty', 'color', event.target.value); });
+    let colorRow = SupClient.table.appendRow(tbody, "Color");
+    let colorParent = <any>document.createElement("div");
+    colorParent.classList.add("inputs");
+    colorRow.valueCell.appendChild(colorParent);
+
+    this.fields["color"] = SupClient.table.appendTextField(colorParent, config.color);
+    this.fields["color"].classList.add("color");
+    this.fields["color"].addEventListener("change", (event: any) => {
+      let color = (event.target.value !== "") ? event.target.value : null;
+      this.editConfig("setProperty", "color", color);
+    });
+
+    this.colorPicker = document.createElement("input");
+    this.colorPicker.style.padding = "0";
+    this.colorPicker.style.alignSelf = "center";
+    this.colorPicker.type = "color";
+    this.colorPicker.value = (config.color != null) ? `#${config.color}` : "#ffffff";
+    this.colorPicker.addEventListener("change", (event: any) => {
+      this.editConfig("setProperty", "color", event.target.value.slice(1));
+    })
+    colorParent.appendChild(this.colorPicker);
 
     this.projectClient.subEntries(this);
   }
@@ -44,16 +66,18 @@ export default class TextRendererEditor {
     if (path === "fontAssetId") {
       if (value != null) this.fields["fontAssetId"].value = this.projectClient.entries.getPathFromId(value);
       else this.fields["fontAssetId"].value = "";
-    }
-    else this.fields[path].value = value;
+    } else if (path === "color") {
+      this.fields["color"].value = value;
+      this.colorPicker.value = (value != null) ? `#${value}` : "#ffffff";
+    } else this.fields[path].value = value;
   }
 
   _onChangeFontAsset = (event: any) => {
-    if (event.target.value === "") this.editConfig('setProperty', 'fontAssetId', null);
+    if (event.target.value === "") this.editConfig("setProperty", "fontAssetId", null);
 
     else {
       var entry = SupClient.findEntryByPath(this.projectClient.entries.pub, event.target.value);
-      if (entry != null && entry.type === 'font') this.editConfig('setProperty', 'fontAssetId', entry.id);
+      if (entry != null && entry.type === "font") this.editConfig("setProperty", "fontAssetId", entry.id);
     }
   }
 

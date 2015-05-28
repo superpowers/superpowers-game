@@ -10,6 +10,7 @@ declare module Sup {
     setRGB(r: number, g: number, b: number): Color;
     setHex(hex: number): Color;
     getHex(): number;
+    getHexString(): string;
     setHSL(h: number, s: number, l: number): Color;
     getHSL(): { h: number; s: number; l: number; };
   }
