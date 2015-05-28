@@ -18,6 +18,7 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
   asset: any;
   geometry: THREE.PlaneBufferGeometry;
   material: THREE.MeshBasicMaterial|THREE.MeshPhongMaterial;
+  materialType = "basic";
   threeMesh: THREE.Mesh;
   castShadow = false;
   receiveShadow = false;
@@ -34,10 +35,11 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
     if (spriteAsset != null) this.setSprite(spriteAsset, materialType);
   }
 
-  setSprite(asset: any, materialType="basic") {
+  setSprite(asset: any, materialType?: string) {
     this._clearMesh();
 
     this.asset = asset;
+    if (materialType != null) this.materialType = materialType;
     this.animationName = null;
     this.animationsByName = {};
     if (this.asset == null) return;
@@ -46,8 +48,8 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
 
     this.geometry = new THREE.PlaneBufferGeometry(this.asset.grid.width, this.asset.grid.height);
 
-    if (materialType === "basic") this.material = new THREE.MeshBasicMaterial();
-    else if (materialType === "phong") this.material = new THREE.MeshPhongMaterial();
+    if (this.materialType === "basic") this.material = new THREE.MeshBasicMaterial();
+    else if (this.materialType === "phong") this.material = new THREE.MeshPhongMaterial();
     this.material.map = this.asset.texture;
     this.material.alphaTest = this.asset.alphaTest;
     this.material.side = THREE.DoubleSide;

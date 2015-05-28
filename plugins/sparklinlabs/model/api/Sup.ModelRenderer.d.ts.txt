@@ -1,9 +1,10 @@
 declare module Sup {
   class ModelRenderer extends ActorComponent {
-    constructor(actor: Actor, asset?: Model);
+    constructor(actor: Actor, asset?: Model, materialType?: ModelRenderer.MaterialType);
 
     getModel(): Model;
-    setModel(asset: Model): ModelRenderer;
+    setModel(asset: Model, materialType?: ModelRenderer.MaterialType): ModelRenderer;
+    getMaterialType(): ModelRenderer.MaterialType;
     getOpacity(): number;
     setOpacity(opacity: number): ModelRenderer;
     getColor(): Color;
@@ -20,5 +21,9 @@ declare module Sup {
     playAnimation(looping?: boolean): ModelRenderer;
     pauseAnimation(): ModelRenderer;
     stopAnimation(): ModelRenderer;
+  }
+
+  module ModelRenderer {
+    enum MaterialType { Basic, Phong }
   }
 }

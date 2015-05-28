@@ -1,9 +1,10 @@
 declare module Sup {
   class SpriteRenderer extends ActorComponent {
-    constructor(actor: Actor, asset?: Sprite);
+    constructor(actor: Actor, asset?: Sprite, materialType?: SpriteRenderer.MaterialType );
 
     getSprite(): Sprite;
-    setSprite(asset: Sprite): SpriteRenderer;
+    setSprite(asset: Sprite, materialType?: SpriteRenderer.MaterialType): SpriteRenderer;
+    getMaterialType(): SpriteRenderer.MaterialType;
     getOpacity(): number;
     setOpacity(opacity: number): SpriteRenderer;
     getColor(): Sup.Color;
@@ -12,12 +13,16 @@ declare module Sup {
     getAnimation(): string;
     setAnimation(animationName: string, looping?: boolean): SpriteRenderer;
     setAnimationTime(time: number): SpriteRenderer;
-    getAnimationTime(): number
-    getAnimationDuration(): number
+    getAnimationTime(): number;
+    getAnimationDuration(): number;
 
-    isAnimationPlaying(): boolean
+    isAnimationPlaying(): boolean;
     playAnimation(looping?: boolean): SpriteRenderer;
     pauseAnimation(): SpriteRenderer;
     stopAnimation(): SpriteRenderer;
+  }
+
+  module SpriteRenderer {
+    enum MaterialType { Basic, Phong }
   }
 }

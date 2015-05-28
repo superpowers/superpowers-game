@@ -48,6 +48,7 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
 
   asset: any;
   threeMesh: THREE.Mesh|THREE.SkinnedMesh;
+  materialType = "basic";
   castShadow = false;
   receiveShadow = false;
 
@@ -79,7 +80,7 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
     super._destroy();
   }
 
-  setModel(asset: any, materialType="basic") {
+  setModel(asset: any, materialType?: string) {
     if (this.asset != null) this._clearMesh();
     this.asset = null;
     this.animation = null;
@@ -88,6 +89,7 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
     if (asset == null || asset.attributes.position == null) return;
 
     this.asset = asset;
+    if (materialType != null) this.materialType = materialType;
 
     let geometry = new THREE.BufferGeometry;
 
@@ -121,8 +123,8 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
     }
 
     let material: THREE.MeshBasicMaterial|THREE.MeshPhongMaterial;
-    if (materialType === "basic") material = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide, alphaTest: 0.1 });
-    else if (materialType === "phong") material = new THREE.MeshPhongMaterial({ side: THREE.DoubleSide, alphaTest: 0.1 });
+    if (this.materialType === "basic") material = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide, alphaTest: 0.1 });
+    else if (this.materialType === "phong") material = new THREE.MeshPhongMaterial({ side: THREE.DoubleSide, alphaTest: 0.1 });
     material.color.setHex(this.color);
 
     if(this.asset.textures.diffuse != null) {
