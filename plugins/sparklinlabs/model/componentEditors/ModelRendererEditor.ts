@@ -51,26 +51,18 @@ export default class ModelRendererEditor {
     this.receiveShadowField.disabled = true;
 
     let colorRow = SupClient.table.appendRow(tbody, "Color");
-    let colorParent = <any>document.createElement("div");
-    colorParent.classList.add("inputs");
-    colorRow.valueCell.appendChild(colorParent);
+    let colorInputs = SupClient.table.appendColorField(colorRow.valueCell, config.color);
 
-    this.colorField = SupClient.table.appendTextField(colorParent, config.color);
-    this.colorField.classList.add("color");
+    this.colorField = colorInputs.textField;
     this.colorField.addEventListener("change", (event: any) => {
       this.editConfig("setProperty", "color", event.target.value);
     });
     this.colorField.disabled = true;
 
-    this.colorPicker = document.createElement("input");
-    this.colorPicker.style.padding = "0";
-    this.colorPicker.style.alignSelf = "center";
-    this.colorPicker.type = "color";
-    this.colorPicker.value = `#${config.color}`;
+    this.colorPicker = colorInputs.pickerField;
     this.colorPicker.addEventListener("change", (event: any) => {
       this.editConfig("setProperty", "color", event.target.value.slice(1));
-    })
-    colorParent.appendChild(this.colorPicker);
+    });
     this.colorPicker.disabled = true;
 
     let materialRow = SupClient.table.appendRow(tbody, "Material");

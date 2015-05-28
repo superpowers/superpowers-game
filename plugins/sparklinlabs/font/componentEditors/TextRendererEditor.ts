@@ -36,26 +36,17 @@ export default class TextRendererEditor {
     });
 
     let colorRow = SupClient.table.appendRow(tbody, "Color");
-    let colorParent = <any>document.createElement("div");
-    colorParent.classList.add("inputs");
-    colorRow.valueCell.appendChild(colorParent);
+    let colorInputs = SupClient.table.appendColorField(colorRow.valueCell, config.color);
 
-    this.fields["color"] = SupClient.table.appendTextField(colorParent, config.color);
-    this.fields["color"].classList.add("color");
+    this.fields["color"] = colorInputs.textField;
     this.fields["color"].addEventListener("change", (event: any) => {
-      let color = (event.target.value !== "") ? event.target.value : null;
-      this.editConfig("setProperty", "color", color);
+      this.editConfig("setProperty", "color", event.target.value);
     });
 
-    this.colorPicker = document.createElement("input");
-    this.colorPicker.style.padding = "0";
-    this.colorPicker.style.alignSelf = "center";
-    this.colorPicker.type = "color";
-    this.colorPicker.value = (config.color != null) ? `#${config.color}` : "#ffffff";
+    this.colorPicker = colorInputs.pickerField;
     this.colorPicker.addEventListener("change", (event: any) => {
       this.editConfig("setProperty", "color", event.target.value.slice(1));
-    })
-    colorParent.appendChild(this.colorPicker);
+    });
 
     this.projectClient.subEntries(this);
   }
