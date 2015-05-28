@@ -106,9 +106,8 @@ ${jsGlobals.script}
     line += ( getLineCounts( file.text ) );
   }
 
-
   let code =`${jsGlobals.script}${results.script}
-//# sourceMappingURL=data:application/json;base64,${combinedSourceMap.base64()}`;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,${combinedSourceMap.base64()}`;
 
   // Execute the generated code
   let scriptFunction = new Function("_player", code);
