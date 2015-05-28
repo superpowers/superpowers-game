@@ -43,7 +43,7 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
 
   static Updater = ModelRendererUpdater;
 
-  color = { r: 1, g: 1, b: 1 };
+  color = 0xffffff;
   hasPoseBeenUpdated = false;
 
   asset: any;
@@ -123,7 +123,7 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
     let material: THREE.MeshBasicMaterial|THREE.MeshPhongMaterial;
     if (materialType === "basic") material = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide, alphaTest: 0.1 });
     else if (materialType === "phong") material = new THREE.MeshPhongMaterial({ side: THREE.DoubleSide, alphaTest: 0.1 });
-    material.color.setRGB(this.color.r, this.color.g, this.color.b);
+    material.color.setHex(this.color);
 
     if(this.asset.textures.diffuse != null) {
       material.map = this.asset.textures.diffuse;

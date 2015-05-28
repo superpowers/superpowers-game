@@ -3,7 +3,7 @@ export interface ModelRendererConfigPub {
   animationId: string;
   castShadow: boolean;
   receiveShadow: boolean;
-  color: { r: number; g: number; b: number; };
+  color: string;
   materialType: string;
 }
 
@@ -14,15 +14,7 @@ export default class ModelRendererConfig extends SupCore.data.base.ComponentConf
     animationId: { type: "string?", min: 0, mutable: true },
     castShadow: { type: "boolean", mutable: true },
     receiveShadow: { type: "boolean", mutable: true },
-    color: {
-      type: "hash",
-      properties: {
-        r: { type: "number", min: 0, mutable: true },
-        g: { type: "number", min: 0, mutable: true },
-        b: { type: "number", min: 0, mutable: true },
-      },
-      mutable: true
-    },
+    color: { type: "string", length: 6, mutable: true },
     materialType: { type: "enum", items: ["basic", "phong", "shader"], mutable: true }
   }
 
@@ -32,14 +24,14 @@ export default class ModelRendererConfig extends SupCore.data.base.ComponentConf
       animationId: null,
       castShadow: false,
       receiveShadow: false,
-      color: { r: 1, g: 1, b: 1 },
+      color: "ffffff",
       materialType: "basic" };
     return emptyConfig;
   }
 
   constructor(pub: ModelRendererConfigPub) {
     // TODO: Remove these at some point, new config setting introduced in Superpowers 0.8
-    if (pub.color == null) pub.color = { r: 1, g: 1, b: 1 };
+    if (pub.color == null) pub.color = "ffffff";
 
     // TODO: Remove these at some point, new config setting introduced in Superpowers 0.7
     if (pub.castShadow == null) pub.castShadow = false;

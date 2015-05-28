@@ -14,7 +14,7 @@ export default class ModelRendererEditor {
   receiveShadowField: HTMLInputElement;
 
   color: { r: number; g: number; b: number; };
-  colorFields: HTMLInputElement[];
+  colorField: HTMLInputElement;
   colorPicker: HTMLInputElement;
 
   materialSelectBox: HTMLSelectElement;
@@ -52,34 +52,26 @@ export default class ModelRendererEditor {
     this.receiveShadowField.disabled = true;
 
     let colorRow = SupClient.table.appendRow(tbody, "Color");
-    this.colorFields = SupClient.table.appendNumberFields(colorRow.valueCell, [config.color.r, config.color.g, config.color.b], 0);
-    this.colorFields[0].addEventListener("change", (event: any) => {
-      this.editConfig("setProperty", "color.r", parseFloat(event.target.value));
+    let colorParent = <any>document.createElement("div");
+    colorParent.classList.add("inputs");
+    colorRow.valueCell.appendChild(colorParent);
+
+    this.colorField = SupClient.table.appendTextField(colorParent, config.color);
+    this.colorField.addEventListener("change", (event: any) => {
+      this.editConfig("setProperty", "color", event.target.value);
     });
-    this.colorFields[1].addEventListener("change", (event: any) => {
-      this.editConfig("setProperty", "color.g", parseFloat(event.target.value));
-    });
-    this.colorFields[2].addEventListener("change", (event: any) => {
-      this.editConfig("setProperty", "color.b", parseFloat(event.target.value));
-    });
-    for (let colorField of this.colorFields) {
-      colorField.step = "0.1";
-      colorField.disabled = true;
-    }
+    this.colorField.disabled = true;
+
     this.colorPicker = document.createElement("input");
-    this.colorPicker.style.width = "60%";
     this.colorPicker.style.padding = "0";
     this.colorPicker.style.alignSelf = "center";
     this.colorPicker.type = "color";
-    this.color = config.color;
-    this._setColorPicker(this.color);
+    this.colorPicker.value = `#${config.color}`;
     this.colorPicker.addEventListener("change", (event: any) => {
-      let r = parseInt(event.target.value.slice(1, 3), 16) / 255;
-      let g = parseInt(event.target.value.slice(3, 5), 16) / 255;
-      let b = parseInt(event.target.value.slice(5, 7), 16) / 255;
-      this.editConfig("setProperty", "color", { r, g, b });
+      this.editConfig("setProperty", "color", event.target.value.slice(1));
     })
-    this.colorFields[0].parentElement.appendChild(this.colorPicker);
+    colorParent.appendChild(this.colorPicker);
+    this.colorPicker.disabled = true;
 
     let materialRow = SupClient.table.appendRow(tbody, "Material");
     this.materialSelectBox = SupClient.table.appendSelectBox(materialRow.valueCell, { "basic": "Basic", "phong": "Phong" }, config.materialType);
@@ -133,25 +125,8 @@ export default class ModelRendererEditor {
 
       case "color":
         this.color = value;
-        this.colorFields[0].value = value.r;
-        this.colorFields[1].value = value.g;
-        this.colorFields[2].value = value.b;
-        this._setColorPicker(this.color);
-        break;
-      case "color.r":
-        this.color.r = value;
-        this.colorFields[0].value = value;
-        this._setColorPicker(this.color);
-        break;
-      case "color.g":
-        this.color.g = value;
-        this.colorFields[1].value = value;
-        this._setColorPicker(this.color);
-        break;
-      case "color.b":
-        this.color.b = value;
-        this.colorFields[2].value = value;
-        this._setColorPicker(this.color);
+        this.colorField.value = value;
+        this.colorPicker.value = `#${value}`;
         break;
 
       case "materialType":
@@ -166,7 +141,8 @@ export default class ModelRendererEditor {
     this.materialSelectBox.disabled = false;
     this.castShadowField.disabled = false;
     this.receiveShadowField.disabled = false;
-    for (let colorField of this.colorFields) colorField.disabled = false;
+    this.colorField.disabled = false;
+    this.colorPicker.disabled = false;
 
     if (entries.byId[this.modelAssetId] != null) {
       this.modelTextField.value = entries.getPathFromId(this.modelAssetId);
@@ -249,18 +225,5 @@ export default class ModelRendererEditor {
   _onChangeModelAnimation = (event: any) => {
     let animationId = (event.target.value === "") ? null : event.target.value;
     this.editConfig("setProperty", "animationId", animationId);
-  }
-
-  _setColorPicker(color: { r: number, g: number, b: number }) {
-    let rStr = (Math.round(color.r*255)).toString(16);
-    if (rStr.length === 1) rStr = `0${rStr}`;
-
-    let gStr = (Math.round(color.g*255)).toString(16);
-    if (gStr.length === 1) gStr = `0${gStr}`;
-
-    let bStr = (Math.round(color.b*255)).toString(16);
-    if (bStr.length === 1) bStr = `0${bStr}`;
-
-    this.colorPicker.value = `#${rStr}${gStr}${bStr}`;
   }
 }

@@ -36,7 +36,7 @@ export default class ModelRendererUpdater {
 
     this.modelRenderer.castShadow = config.castShadow;
     this.modelRenderer.receiveShadow = config.receiveShadow;
-    if (config.color != null) this.modelRenderer.color = config.color;
+    if (config.color != null) this.modelRenderer.color = parseInt(config.color, 16);
 
     if (this.modelAssetId != null) {
       this.client.subAsset(this.modelAssetId, "model", this.modelSubscriber);
@@ -177,25 +177,10 @@ export default class ModelRendererUpdater {
         break;
 
       case "color":
-        this.modelRenderer.color = value;
+        this.modelRenderer.color = parseInt(value, 16);
         let material = <THREE.MeshBasicMaterial>this.modelRenderer.threeMesh.material;
-        material.color.setRGB(value.r, value.g, value.b);
+        material.color.setHex(this.modelRenderer.color);
         material.needsUpdate = true;
-        break;
-      case "color.r":
-        this.modelRenderer.color.r = value;
-        (<THREE.MeshBasicMaterial>this.modelRenderer.threeMesh.material).color.r = value;
-        this.modelRenderer.threeMesh.material.needsUpdate = true;
-        break;
-      case "color.g":
-        this.modelRenderer.color.g = value;
-        (<THREE.MeshBasicMaterial>this.modelRenderer.threeMesh.material).color.g = value;
-        this.modelRenderer.threeMesh.material.needsUpdate = true;
-        break;
-      case "color.b":
-        this.modelRenderer.color.b = value;
-        (<THREE.MeshBasicMaterial>this.modelRenderer.threeMesh.material).color.b = value;
-        this.modelRenderer.threeMesh.material.needsUpdate = true;
         break;
 
       case "materialType":

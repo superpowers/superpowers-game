@@ -13,10 +13,10 @@ declare module Sup {
     getAnimation(): string;
     setAnimation(animationName: string, looping?: boolean): ModelRenderer;
     setAnimationTime(time: number): ModelRenderer;
-    getAnimationTime(): number
-    getAnimationDuration(): number
+    getAnimationTime(): number;
+    getAnimationDuration(): number;
 
-    isAnimationPlaying(): boolean
+    isAnimationPlaying(): boolean;
     playAnimation(looping?: boolean): ModelRenderer;
     pauseAnimation(): ModelRenderer;
     stopAnimation(): ModelRenderer;
