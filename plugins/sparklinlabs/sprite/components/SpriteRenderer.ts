@@ -12,7 +12,7 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
   static Updater = SpriteRendererUpdater;
 
   opacity = 1;
-  color = { r: 1, g: 1, b: 1 };
+  color = 0xffffff;
   hasFrameBeenUpdated = false;
 
   asset: any;
@@ -55,7 +55,7 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
     this.material.side = THREE.DoubleSide;
     this.material.transparent = true,
     this.material.opacity = this.opacity;
-    this.material.color.setRGB(this.color.r, this.color.g, this.color.b);
+    this.material.color.setHex(this.color);
 
     this.threeMesh = new THREE.Mesh(this.geometry, this.material);
     this.setCastShadow(this.castShadow);

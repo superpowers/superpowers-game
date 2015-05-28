@@ -12,6 +12,8 @@ export default class SpriteRendererEditor {
   animationSelectBox: HTMLSelectElement;
   castShadowField: HTMLInputElement;
   receiveShadowField: HTMLInputElement;
+  colorField: HTMLInputElement;
+  colorPicker: HTMLInputElement;
   materialSelectBox: HTMLSelectElement;
 
   asset: SpriteAsset;
@@ -43,6 +45,21 @@ export default class SpriteRendererEditor {
       this.editConfig("setProperty", "receiveShadow", event.target.checked);
     })
     this.receiveShadowField.disabled = true;
+
+    let colorRow = SupClient.table.appendRow(tbody, "Color");
+    let colorInputs = SupClient.table.appendColorField(colorRow.valueCell, config.color);
+
+    this.colorField = colorInputs.textField;
+    this.colorField.addEventListener("change", (event: any) => {
+      this.editConfig("setProperty", "color", event.target.value);
+    });
+    this.colorField.disabled = true;
+
+    this.colorPicker = colorInputs.pickerField;
+    this.colorPicker.addEventListener("change", (event: any) => {
+      this.editConfig("setProperty", "color", event.target.value.slice(1));
+    });
+    this.colorPicker.disabled = true;
 
     let materialRow = SupClient.table.appendRow(tbody, "Material");
     this.materialSelectBox = SupClient.table.appendSelectBox(materialRow.valueCell, { "basic": "Basic", "phong": "Phong" }, config.materialType);
@@ -92,6 +109,11 @@ export default class SpriteRendererEditor {
         this.receiveShadowField.value = value;
         break;
 
+      case "color":
+        this.colorField.value = value;
+        this.colorPicker.value = `#${value}`;
+        break;
+
       case "materialType":
         this.materialSelectBox.value = value;
         break;
@@ -103,6 +125,8 @@ export default class SpriteRendererEditor {
     this.spriteTextField.disabled = false;
     this.castShadowField.disabled = false;
     this.receiveShadowField.disabled = false;
+    this.colorField.disabled = false;
+    this.colorPicker.disabled = false;
     this.materialSelectBox.disabled = false;
 
     if (entries.byId[this.spriteAssetId] != null) {

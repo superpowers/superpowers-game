@@ -3,6 +3,7 @@ export interface SpriteRendererConfigPub {
   animationId: string;
   castShadow: boolean;
   receiveShadow: boolean;
+  color: string;
   materialType: string;
 }
 
@@ -13,6 +14,7 @@ export default class SpriteRendererConfig extends SupCore.data.base.ComponentCon
     animationId: { type: "string?", min: 0, mutable: true },
     castShadow: { type: "boolean", mutable: true },
     receiveShadow: { type: "boolean", mutable: true },
+    color: { type: "string?", length: 6, mutable: true },
     materialType: { type: "enum", items: ["basic", "phong", "shader"], mutable: true }
   }
 
@@ -22,12 +24,16 @@ export default class SpriteRendererConfig extends SupCore.data.base.ComponentCon
       animationId: null,
       castShadow: false,
       receiveShadow: false,
+      color: "ffffff",
       materialType: "basic"
     };
     return emptyConfig;
   }
 
   constructor(pub: SpriteRendererConfigPub) {
+    // TODO: Remove these casts at some point, legacy stuff from Superpowers 0.7
+    if (pub.color == null) pub.color = "ffffff";
+
     // TODO: Remove these at some point, new config setting introduced in Superpowers 0.7
     if (pub.castShadow == null) pub.castShadow = false;
     if (pub.receiveShadow == null) pub.receiveShadow = false;

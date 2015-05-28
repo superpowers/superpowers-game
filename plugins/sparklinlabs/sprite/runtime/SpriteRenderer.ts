@@ -3,6 +3,7 @@ export function setupComponent(player: SupRuntime.Player, component: any, config
     let sprite = player.getOuterAsset(config.spriteAssetId).__inner;
     component.castShadow = config.castShadow;
     component.receiveShadow = config.receiveShadow;
+    component.color = parseInt(config.color, 16);
     component.setSprite(sprite, config.materialType);
 
     if (config.animationId != null) {
