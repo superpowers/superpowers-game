@@ -102,14 +102,13 @@ ${jsGlobals.script}
   let combinedSourceMap = combine.create("bundle.js");
   for (let file of results.files) {
     let comment = convert.fromObject( results.sourceMaps[file.name] ).toComment();
-    combinedSourceMap.addFile( { sourceFile: file.name, source: file.text + `\n${comment}` }, {line} );
+    combinedSourceMap.addFile( { sourceFile: `/${player.gameName}/${file.name}`, source: file.text + `\n${comment}` }, {line} );
     line += ( getLineCounts( file.text ) );
   }
 
-  let convertedSourceMap = convert.fromBase64(combinedSourceMap.base64()).toObject();
-  let url = URL.createObjectURL(new Blob([ JSON.stringify(convertedSourceMap) ]));
+
   let code =`${jsGlobals.script}${results.script}
-//# sourceMappingURL=${url}`;
+//# sourceMappingURL=data:application/json;base64,${combinedSourceMap.base64()}`;
 
   // Execute the generated code
   let scriptFunction = new Function("_player", code);
