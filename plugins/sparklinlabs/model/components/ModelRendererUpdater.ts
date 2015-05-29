@@ -36,7 +36,12 @@ export default class ModelRendererUpdater {
 
     this.modelRenderer.castShadow = config.castShadow;
     this.modelRenderer.receiveShadow = config.receiveShadow;
-    if (config.color != null) this.modelRenderer.color = parseInt(config.color, 16);
+    if (config.color != null) {
+      let hex = parseInt(config.color, 16);
+      this.modelRenderer.color.r = (hex >> 16 & 255) / 255;
+      this.modelRenderer.color.g = (hex >> 8 & 255) / 255;
+      this.modelRenderer.color.b = (hex & 255) / 255;
+    }
 
     if (this.modelAssetId != null) {
       this.client.subAsset(this.modelAssetId, "model", this.modelSubscriber);
@@ -177,9 +182,12 @@ export default class ModelRendererUpdater {
         break;
 
       case "color":
-        this.modelRenderer.color = parseInt(value, 16);
+        let hex = parseInt(value, 16);
+        this.modelRenderer.color.r = (hex >> 16 & 255) / 255;
+        this.modelRenderer.color.g = (hex >> 8 & 255) / 255;
+        this.modelRenderer.color.b = (hex & 255) / 255;
         let material = <THREE.MeshBasicMaterial>this.modelRenderer.threeMesh.material;
-        material.color.setHex(this.modelRenderer.color);
+        material.color.setRGB(this.modelRenderer.color.r, this.modelRenderer.color.g, this.modelRenderer.color.b);
         material.needsUpdate = true;
         break;
 
