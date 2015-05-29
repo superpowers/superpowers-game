@@ -9,6 +9,7 @@ declare module Sup {
     setOpacity(opacity: number): SpriteRenderer;
     getColor(): Sup.Color;
     setColor(color: Sup.Color): SpriteRenderer;
+    setColor(r: number, g: number, b: number): SpriteRenderer;
 
     getAnimation(): string;
     setAnimation(animationName: string, looping?: boolean): SpriteRenderer;

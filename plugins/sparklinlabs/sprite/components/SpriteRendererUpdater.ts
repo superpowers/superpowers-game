@@ -35,7 +35,12 @@ export default class SpriteRendererUpdater {
 
     this.spriteRenderer.castShadow = config.castShadow;
     this.spriteRenderer.receiveShadow = config.receiveShadow;
-    this.spriteRenderer.color = parseInt(config.color, 16);
+    if (config.color != null) {
+      let hex = parseInt(config.color, 16);
+      this.spriteRenderer.color.r = (hex >> 16 & 255) / 255;
+      this.spriteRenderer.color.g = (hex >> 8 & 255) / 255;
+      this.spriteRenderer.color.b = (hex & 255) / 255;
+    }
 
     if (this.spriteAssetId != null) this.client.subAsset(this.spriteAssetId, "sprite", this.spriteSubscriber);
   }
@@ -195,9 +200,12 @@ export default class SpriteRendererUpdater {
         break;
 
       case "color":
-        this.spriteRenderer.color = parseInt(value, 16);
+        let hex = parseInt(value, 16);
+        this.spriteRenderer.color.r = (hex >> 16 & 255) / 255;
+        this.spriteRenderer.color.g = (hex >> 8 & 255) / 255;
+        this.spriteRenderer.color.b = (hex & 255) / 255;
         let material = <THREE.MeshBasicMaterial>this.spriteRenderer.threeMesh.material;
-        material.color.setHex(this.spriteRenderer.color);
+        material.color.setRGB(this.spriteRenderer.color.r, this.spriteRenderer.color.g, this.spriteRenderer.color.b);
         material.needsUpdate = true;
         break;
 
