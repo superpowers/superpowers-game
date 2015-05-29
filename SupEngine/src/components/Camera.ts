@@ -104,10 +104,7 @@ export default class Camera extends ActorComponent {
         orthographicCamera.top = this.orthographicScale / 2;
         orthographicCamera.bottom = -this.orthographicScale / 2;
 
-        // FIXME: Is it required? It's buggy at least.
-        // this.halfPixelTranslationMatrix.makeTranslation -0.5 / (this.orthographicScale  * this.cachedRatio), 0.5 / this.orthographicScale, 0
         orthographicCamera.updateProjectionMatrix();
-        // orthographicCamera.projectionMatrix.multiplyMatrices this.halfPixelTranslationMatrix, this.threeCamera.projectionMatrix
       }
       else {
         let perspectiveCamera = <THREE.PerspectiveCamera>this.threeCamera;
