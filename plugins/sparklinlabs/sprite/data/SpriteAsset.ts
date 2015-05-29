@@ -1,12 +1,21 @@
 import * as path from "path";
 import * as fs from "fs";
 
-import SpriteAnimations from "./SpriteAnimations";
-interface Animation {
-  id?: string;
-  name: string;
-  startFrameIndex: number;
-  endFrameIndex: number;
+import SpriteAnimations, { SpriteAnimationPub } from "./SpriteAnimations";
+
+interface SpriteAssetPub {
+  texture?: any;
+  image: Buffer;
+  filtering: string;
+  pixelsPerUnit: number;
+  framesPerSecond: number;
+  opacity: number;
+  alphaTest: number;
+
+  grid: { width: number; height: number;};
+  origin: { x: number; y: number; };
+
+  animations: SpriteAnimationPub[];
 }
 
 export default class SpriteAsset extends SupCore.data.base.Asset {
@@ -16,6 +25,7 @@ export default class SpriteAsset extends SupCore.data.base.Asset {
     filtering: { type: "enum", items: [ "pixelated", "smooth"], mutable: true },
     pixelsPerUnit: { type: "number", min: 1, mutable: true },
     framesPerSecond: { type: "number", min: 1, mutable: true },
+    opacity: { type: "number?", min: 0, max: 1, mutable: true },
     alphaTest: { type: "number", min: 0, max: 1, mutable: true },
 
     grid: {
@@ -38,8 +48,9 @@ export default class SpriteAsset extends SupCore.data.base.Asset {
   };
 
   animations: SpriteAnimations;
+  pub: SpriteAssetPub;
 
-  constructor(id: string, pub: any, serverData: any) {
+  constructor(id: string, pub: SpriteAssetPub, serverData: any) {
     super(id, pub, SpriteAsset.schema, serverData);
   }
 
@@ -50,6 +61,7 @@ export default class SpriteAsset extends SupCore.data.base.Asset {
         filtering: spriteSettings.pub.filtering,
         pixelsPerUnit: spriteSettings.pub.pixelsPerUnit,
         framesPerSecond: spriteSettings.pub.framesPerSecond,
+        opacity: null,
         alphaTest: spriteSettings.pub.alphaTest,
 
         grid: { width: 100, height: 100 },
@@ -70,7 +82,10 @@ export default class SpriteAsset extends SupCore.data.base.Asset {
   load(assetPath: string) {
     fs.readFile(path.join(assetPath, "asset.json"), { encoding: "utf8" }, (err, json) => {
       this.pub = JSON.parse(json);
-      if (this.pub.alphaTest == null) this.pub.alphaTest = 0.1;
+
+      // TODO: Remove these at some point, new config setting introduced in Superpowers 0.8
+      if (typeof this.pub.opacity === "undefined") this.pub.opacity = 1;
+
       fs.readFile(path.join(assetPath, "image.dat"), (err, buffer) => {
         this.pub.image = buffer;
         this.setup();
@@ -102,8 +117,8 @@ export default class SpriteAsset extends SupCore.data.base.Asset {
     this.pub.image = image;
   }
 
-  server_newAnimation(client: any, name: string, callback: (err: string, animation?: Animation, actualIndex?: number) => any) {
-    let animation: Animation = { name, startFrameIndex: 0, endFrameIndex: 0 };
+  server_newAnimation(client: any, name: string, callback: (err: string, animation?: SpriteAnimationPub, actualIndex?: number) => any) {
+    let animation: SpriteAnimationPub = { id: null, name, startFrameIndex: 0, endFrameIndex: 0 };
 
     this.animations.add(animation, null, (err, actualIndex) => {
       if (err != null) { callback(err); return }
@@ -115,7 +130,7 @@ export default class SpriteAsset extends SupCore.data.base.Asset {
     });
   }
 
-  client_newAnimation(animation: Animation, actualIndex: number) {
+  client_newAnimation(animation: SpriteAnimationPub, actualIndex: number) {
     this.animations.client_add(animation, actualIndex);
   }
 

@@ -4,6 +4,8 @@ export interface SpriteRendererConfigPub {
   castShadow: boolean;
   receiveShadow: boolean;
   color: string;
+  overrideOpacity: boolean;
+  opacity: number;
   materialType: string;
 }
 
@@ -15,6 +17,8 @@ export default class SpriteRendererConfig extends SupCore.data.base.ComponentCon
     castShadow: { type: "boolean", mutable: true },
     receiveShadow: { type: "boolean", mutable: true },
     color: { type: "string?", length: 6, mutable: true },
+    overrideOpacity: { type: "boolean", mutable: true },
+    opacity: { type: "number?", min: 0, max: 1, mutable: true },
     materialType: { type: "enum", items: ["basic", "phong", "shader"], mutable: true }
   }
 
@@ -24,6 +28,8 @@ export default class SpriteRendererConfig extends SupCore.data.base.ComponentCon
       animationId: null,
       castShadow: false,
       receiveShadow: false,
+      overrideOpacity: false,
+      opacity: null,
       color: "ffffff",
       materialType: "basic"
     };
@@ -31,7 +37,8 @@ export default class SpriteRendererConfig extends SupCore.data.base.ComponentCon
   }
 
   constructor(pub: SpriteRendererConfigPub) {
-    // TODO: Remove these casts at some point, legacy stuff from Superpowers 0.7
+    // TODO: Remove these at some point, new config setting introduced in Superpowers 0.8
+    if (pub.overrideOpacity == null) pub.overrideOpacity = false;
     if (pub.color == null) pub.color = "ffffff";
 
     // TODO: Remove these at some point, new config setting introduced in Superpowers 0.7
@@ -60,6 +67,8 @@ export default class SpriteRendererConfig extends SupCore.data.base.ComponentCon
         if (oldDepId != null) this.emit("removeDependencies", [ oldDepId ]);
         if (actualValue != null) this.emit("addDependencies", [ actualValue ]);
       }
+
+      if (path === "overrideOpacity") this.pub.opacity = null;
 
       callback(null, actualValue);
     });

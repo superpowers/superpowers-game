@@ -14,6 +14,9 @@ export default class SpriteRendererEditor {
   receiveShadowField: HTMLInputElement;
   colorField: HTMLInputElement;
   colorPicker: HTMLInputElement;
+  overrideOpacityField: HTMLInputElement;
+  transparentField: HTMLInputElement;
+  opacityField: HTMLInputElement;
   materialSelectBox: HTMLSelectElement;
 
   asset: SpriteAsset;
@@ -60,6 +63,34 @@ export default class SpriteRendererEditor {
       this.editConfig("setProperty", "color", event.target.value.slice(1));
     });
     this.colorPicker.disabled = true;
+
+    let opacityRow = SupClient.table.appendRow(tbody, "Opacity", { checkbox: true } );
+    this.overrideOpacityField = opacityRow.checkbox;
+    this.overrideOpacityField.checked = config.overrideOpacity;
+    this.overrideOpacityField.addEventListener("change", (event: any) => {
+      this.editConfig("setProperty", "overrideOpacity", event.target.checked);
+    });
+
+    let opacityParent = document.createElement("div");
+    opacityParent.style.display = "flex";
+    opacityParent.style.alignItems = "center";
+    opacityRow.valueCell.appendChild(opacityParent);
+
+    this.transparentField = SupClient.table.appendBooleanField(<any>opacityParent, config.opacity != null);
+    this.transparentField.style.width = "50%";
+    this.transparentField.style.borderRight = "1px solid #ccc";
+    this.transparentField.addEventListener("change", (event: any) => {
+      let opacity = (event.target.checked) ? 1 : null;
+      this.editConfig("setProperty", "opacity", opacity);
+    });
+    this.transparentField.disabled = ! config.overrideOpacity;
+
+    this.opacityField = SupClient.table.appendNumberField(<any>opacityParent, config.opacity, 0, 1);
+    this.opacityField.addEventListener("input", (event: any) => {
+      this.editConfig("setProperty", "opacity", parseFloat(event.target.value));
+    });
+    this.opacityField.step = "0.1";
+    this.opacityField.disabled = ! config.overrideOpacity;
 
     let materialRow = SupClient.table.appendRow(tbody, "Material");
     this.materialSelectBox = SupClient.table.appendSelectBox(materialRow.valueCell, { "basic": "Basic", "phong": "Phong" }, config.materialType);
@@ -112,6 +143,20 @@ export default class SpriteRendererEditor {
       case "color":
         this.colorField.value = value;
         this.colorPicker.value = `#${value}`;
+        break;
+
+      case "overrideOpacity":
+        this.overrideOpacityField.checked = value;
+        this.transparentField.disabled = ! value;
+        this.transparentField.checked = false;
+        this.opacityField.value = null;
+        this.opacityField.disabled = true;
+        break;
+
+      case "opacity":
+        this.transparentField.checked = value != null;
+        this.opacityField.disabled = value == null;
+        this.opacityField.value = value;
         break;
 
       case "materialType":

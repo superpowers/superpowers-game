@@ -13,6 +13,7 @@ export default class SpriteRendererUpdater {
   spriteAssetId: string;
   animationId: string;
   materialType: string;
+  overrideOpacity = false;
   spriteAsset: SpriteAsset;
   url: string;
 
@@ -31,10 +32,12 @@ export default class SpriteRendererUpdater {
     this.spriteAssetId = config.spriteAssetId;
     this.animationId = config.animationId;
     this.materialType = config.materialType;
+    if (config.overrideOpacity != null) this.overrideOpacity = config.overrideOpacity;
     this.spriteAsset = null;
 
     this.spriteRenderer.castShadow = config.castShadow;
     this.spriteRenderer.receiveShadow = config.receiveShadow;
+    if (config.overrideOpacity) this.spriteRenderer.opacity = config.opacity;
     if (config.color != null) {
       let hex = parseInt(config.color, 16);
       this.spriteRenderer.color.r = (hex >> 16 & 255) / 255;
@@ -49,8 +52,9 @@ export default class SpriteRendererUpdater {
     if (this.spriteAssetId != null) this.client.unsubAsset(this.spriteAssetId, this.spriteSubscriber);
   }
 
-  _onSpriteAssetReceived(assetId: string, asset: any) {
+  _onSpriteAssetReceived(assetId: string, asset: SpriteAsset) {
     this.spriteAsset = asset;
+    if (this.spriteRenderer.opacity == null) this.spriteRenderer.opacity = asset.pub.opacity;
 
     let image = (asset.pub.texture != null) ? asset.pub.texture.image : null;
     if (image == null) {
@@ -64,14 +68,14 @@ export default class SpriteRendererUpdater {
 
       if (this.url != null) URL.revokeObjectURL(this.url);
 
-      let typedArray = new Uint8Array(asset.pub.image);
+      let typedArray = new Uint8Array((<any>asset.pub.image));
       let blob = new Blob([ typedArray ], { type: "image/*" });
       this.url = URL.createObjectURL(blob);
       image.src = this.url
     }
 
     if (! image.complete) {
-      if (asset.pub.image.byteLength === 0) {
+      if ((<any>asset.pub.image).byteLength === 0) {
         if (this.receiveAssetCallbacks != null) this.receiveAssetCallbacks.sprite();
       }
       else {
@@ -118,7 +122,7 @@ export default class SpriteRendererUpdater {
   _onEditCommand_upload() {
     if (this.url != null) URL.revokeObjectURL(this.url);
 
-    let typedArray = new Uint8Array(this.spriteAsset.pub.image);
+    let typedArray = new Uint8Array((<any>this.spriteAsset.pub.image));
     let blob = new Blob([ typedArray ], { type: "image/*" });
     this.url = URL.createObjectURL(blob);
     let image = this.spriteAsset.pub.texture.image;
@@ -133,7 +137,8 @@ export default class SpriteRendererUpdater {
   }
 
   _onEditCommand_setProperty(path: string, value: any) {
-    if (path === "filtering") {
+    switch(path) {
+      case "filtering":
         if (this.spriteAsset.pub.filtering === "pixelated") {
           this.spriteAsset.pub.texture.magFilter = THREE.NearestFilter;
           this.spriteAsset.pub.texture.minFilter = THREE.NearestFilter;
@@ -142,9 +147,27 @@ export default class SpriteRendererUpdater {
           this.spriteAsset.pub.texture.minFilter = THREE.LinearMipMapLinearFilter;
         }
         this.spriteAsset.pub.texture.needsUpdate = true;
-    } else if (this.spriteRenderer.asset != null) {
+        break;
+
+      case "opacity":
+        if (! this.overrideOpacity) this.spriteRenderer.setOpacity(value);
+        break;
+
+      case "alphaTest":
+        this.spriteRenderer.material.alphaTest = value;
+        this.spriteRenderer.material.needsUpdate = true;
+        break;
+
+      case "pixelsPerUnit":
+      case "origin.x":
+      case "origin.y":
+        this.spriteRenderer.updateShape();
+        break;
+
+      default:
         this.spriteRenderer.setSprite(this.spriteAsset.pub, this.materialType);
         if (this.animationId != null) this._playAnimation();
+        break;
     }
   }
 
@@ -207,6 +230,15 @@ export default class SpriteRendererUpdater {
         let material = <THREE.MeshBasicMaterial>this.spriteRenderer.threeMesh.material;
         material.color.setRGB(this.spriteRenderer.color.r, this.spriteRenderer.color.g, this.spriteRenderer.color.b);
         material.needsUpdate = true;
+        break;
+
+      case "overrideOpacity":
+        this.overrideOpacity = value;
+        this.spriteRenderer.setOpacity(value ? null : this.spriteAsset.pub.opacity);
+        break;
+
+      case "opacity":
+        this.spriteRenderer.setOpacity(value);
         break;
 
       case "materialType":

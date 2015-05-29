@@ -41,17 +41,24 @@ html
         tr
           th Pixels /&nbsp;unit
           td
-            input(type="number").property-pixelsPerUnit
+            input(type="number" min="1").property-pixelsPerUnit
 
         tr
           th Frames /&nbsp;second
           td
-            input(type="number").property-framesPerSecond
+            input(type="number" min="1").property-framesPerSecond
+
+        tr
+          th
+            span Opacity
+            input(type="checkbox").opacity-checkbox
+          td
+            input(type="number" min="0" max="1" step="0.1").property-opacity
 
         tr
           th Alpha test
           td
-            input.property-alphaTest
+            input(type="number" min="0" max="1" step="0.1").property-alphaTest
 
         tr
           th Image

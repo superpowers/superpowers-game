@@ -1,3 +1,10 @@
+export interface SpriteAnimationPub {
+  id: string;
+  name: string;
+  startFrameIndex: number;
+  endFrameIndex: number;
+}
+
 export default class SpriteAnimations extends SupCore.data.base.ListById {
 
   static schema = {
@@ -5,6 +12,9 @@ export default class SpriteAnimations extends SupCore.data.base.ListById {
     startFrameIndex: { type: "number", min: 0, mutable: true },
     endFrameIndex: { type: "number", min: 0, mutable: true }
   }
+
+  pub: SpriteAnimationPub[];
+  byId: { [id: string]: SpriteAnimationPub};
 
   constructor(pub: any) {
     super(pub, SpriteAnimations.schema);

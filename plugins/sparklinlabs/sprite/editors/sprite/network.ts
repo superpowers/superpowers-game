@@ -30,7 +30,7 @@ function onAssetReceived() {
   let pub = data.spriteUpdater.spriteAsset.pub;
 
   spritesheetArea.spritesheet = {
-    texture: (pub.image.byteLength !== 0) ? pub.texture.clone() : null,
+    texture: ((<any>pub.image).byteLength !== 0) ? pub.texture.clone() : null,
     filtering: pub.filtering,
     pixelsPerUnit: pub.pixelsPerUnit,
     framesPerSecond: pub.framesPerSecond,
@@ -41,7 +41,7 @@ function onAssetReceived() {
     animations: <any>[]
   };
 
-  if (pub.image.byteLength !== 0) {
+  if ((<any>pub.image).byteLength !== 0) {
     spritesheetArea.spritesheet.texture.needsUpdate = true;
     spritesheetArea.spriteRenderer.setSprite(spritesheetArea.spritesheet);
 
@@ -62,7 +62,7 @@ function onAssetReceived() {
 
   ui.allSettings.forEach((setting: string) => {
     let parts = setting.split(".");
-    let obj = pub;
+    let obj = <any>pub;
     parts.slice(0, parts.length - 1).forEach((part) => { obj = obj[part]; })
     setupProperty(setting, obj[parts[parts.length - 1]]);
   });

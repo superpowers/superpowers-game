@@ -11,7 +11,7 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
 
   static Updater = SpriteRendererUpdater;
 
-  opacity = 1;
+  opacity: number;
   color = { r: 1, g: 1, b: 1 };
   hasFrameBeenUpdated = false;
 
@@ -53,22 +53,36 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
     this.material.map = this.asset.texture;
     this.material.alphaTest = this.asset.alphaTest;
     this.material.side = THREE.DoubleSide;
-    this.material.transparent = true,
-    this.material.opacity = this.opacity;
+    this.setOpacity(this.opacity);
     this.material.color.setRGB(this.color.r, this.color.g, this.color.b);
 
     this.threeMesh = new THREE.Mesh(this.geometry, this.material);
     this.setCastShadow(this.castShadow);
     this.threeMesh.receiveShadow = this.receiveShadow;
 
+    this.setFrame(0);
+    this.actor.threeObject.add(this.threeMesh);
+    this.updateShape();
+  }
+
+  updateShape() {
     let scaleRatio = 1 / this.asset.pixelsPerUnit;
     this.threeMesh.scale.set(scaleRatio, scaleRatio, scaleRatio);
     this.threeMesh.position.setX((0.5 - this.asset.origin.x) * this.asset.grid.width * scaleRatio);
     this.threeMesh.position.setY((0.5 - this.asset.origin.y) * this.asset.grid.height * scaleRatio);
-
-    this.setFrame(0);
-    this.actor.threeObject.add(this.threeMesh);
     this.threeMesh.updateMatrixWorld(false);
+  }
+
+  setOpacity(opacity: number) {
+    this.opacity = opacity;
+    if (this.opacity != null) {
+      this.material.transparent = true;
+      this.material.opacity = this.opacity;
+    } else {
+      this.material.transparent = false;
+      this.material.opacity = 1;
+    }
+    this.material.needsUpdate = true;
   }
 
   updateAnimationsByName() {

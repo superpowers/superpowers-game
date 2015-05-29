@@ -8,6 +8,7 @@ let TreeView = require("dnd-tree-view");
 let ui: {
   allSettings?: string[];
   settings?: { [name: string]: any; };
+  opacityCheckbox?: HTMLInputElement;
 
   imageLabel?: { width: HTMLLabelElement; height: HTMLLabelElement; };
 
@@ -26,7 +27,7 @@ document.querySelector("button.upload").addEventListener("click", () => { fileSe
 
 document.querySelector("button.download").addEventListener("click", onDownloadSpritesheet);
 
-ui.allSettings = ["filtering", "pixelsPerUnit", "framesPerSecond", "alphaTest", "grid.width", "grid.height", "origin.x", "origin.y"]
+ui.allSettings = ["filtering", "pixelsPerUnit", "framesPerSecond", "opacity", "alphaTest", "grid.width", "grid.height", "origin.x", "origin.y"]
 ui.settings = {};
 ui.allSettings.forEach((setting: string) => {
   let parts = setting.split(".");
@@ -50,6 +51,7 @@ ui.allSettings.forEach((setting: string) => {
       });
       break;
 
+    case "opacity":
     case "alphaTest":
       settingObj.addEventListener("change", (event: any) => {
         socket.emit("edit:assets", info.assetId, "setProperty", setting, parseFloat(event.target.value), (err: string) => { if (err != null) alert(err); });
@@ -68,6 +70,8 @@ ui.allSettings.forEach((setting: string) => {
       }
   }
 });
+ui.opacityCheckbox = <HTMLInputElement>document.querySelector("input.opacity-checkbox");
+ui.opacityCheckbox.addEventListener("click", onCheckOpacity);
 document.querySelector("button.set-grid-width").addEventListener("click", onSetGridWidth);
 document.querySelector("button.set-grid-height").addEventListener("click", onSetGridHeight);
 
@@ -116,6 +120,13 @@ function onDownloadSpritesheet(event: any) {
     (<any>a).download = name + ".png";
     a.click();
     document.body.removeChild(a);
+  });
+}
+
+function onCheckOpacity(event: any) {
+  let opacity = (event.target.checked) ? 1 : null;
+  socket.emit("edit:assets", info.assetId, "setProperty", "opacity", opacity, (err: string) => {
+    if (err != null) alert(err);
   });
 }
 
@@ -273,10 +284,22 @@ export function setupProperty(path: string, value: any) {
     spritesheetArea.spritesheet.texture.needsUpdate = true;
   }
 
+  if (path === "opacity") {
+    obj[parts[parts.length - 1]].disabled = value == null;
+    ui.opacityCheckbox.checked = value != null;
+    spritesheetArea.spriteRenderer.setOpacity(value != null ? 1 : null)
+  }
+
+  if (path === "alphaTest") {
+    spritesheetArea.spriteRenderer.material.alphaTest = value;
+    spritesheetArea.spriteRenderer.material.needsUpdate = true;
+  }
+
   if (path === "pixelsPerUnit") {
     // FIXME: .setPixelsPerUnit(...) maybe?
     spritesheetArea.spritesheet.pixelsPerUnit = value;
-    if (spritesheetArea.spriteRenderer.asset != null) spritesheetArea.spriteRenderer.setSprite(spritesheetArea.spriteRenderer.asset);
+    spritesheetArea.spriteRenderer.updateShape();
+    spritesheetArea.gridRenderer.setRatio({ x: pub.pixelsPerUnit / pub.grid.width, y: pub.pixelsPerUnit / pub.grid.height });
 
     spritesheetArea.cameraControls.setMultiplier(value);
     animationArea.cameraControls.setMultiplier(value);
