@@ -48,15 +48,16 @@ body
   img
     width 540px
     height 160px
+    max-width 100%
 
   progress
     background #c4c8b7
     border none
-    width 370px
+    width calc(370% / 540 * 100)
     height 3px
     position absolute
-    top 137px
-    right 30px
+    bottom 26px
+    right calc(30% / 540 * 100)
 
     &::-webkit-progress-bar
       background #d0d4c3
