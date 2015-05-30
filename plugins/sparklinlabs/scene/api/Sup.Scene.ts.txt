@@ -58,7 +58,7 @@ module Sup {
           });
         });
 
-        actor.__inner.awaken = false;
+        actor.__inner.awoken = false;
         node.children.forEach( (child) => { walk(child, actor); } );
       }
 
@@ -66,9 +66,9 @@ module Sup {
     }
 
     function awakeActor(actor) {
-      if (actor.__inner.awaken) return;
+      if (actor.__inner.awoken) return;
 
-      actor.__inner.awaken = true;
+      actor.__inner.awoken = true;
       actor.__inner.awake();
       actor.getChildren().forEach( (child) => { awakeActor(child); } )
     }
