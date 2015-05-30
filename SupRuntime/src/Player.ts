@@ -115,6 +115,8 @@ export default class Player {
   }
 
   _loadAssets(progressCallback: Function, callback: any) {
+    if (this.gameInstance.threeRenderer == null) { callback(new Error("Failed to initialize renderer. Your device might not support WebGL.")); return; }
+
     if (this.assetsToLoad.length === 0 ) { callback(); return; }
     let assetsLoaded = 0;
 

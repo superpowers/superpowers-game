@@ -37,10 +37,9 @@ export default class GameInstance extends EventEmitter {
     let enableOnExit = (options.enableOnExit != null) ? options.enableOnExit : false;
     this.input = new Input(canvas, enableOnExit);
 
-    this.threeRenderer = new THREE.WebGLRenderer({
-      canvas, precision: "mediump",
-      alpha: false, antialias: false, stencil: false
-    });
+    try {
+      this.threeRenderer = new THREE.WebGLRenderer({ canvas, precision: "mediump", alpha: false, antialias: false, stencil: false });
+    } catch (e) { return; }
     this.threeRenderer.setSize(0, 0, false);
     this.threeRenderer.autoClearColor = false
     // this.threeRenderer.setFaceCulling(THREE.CullFaceNone);
