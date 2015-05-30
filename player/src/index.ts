@@ -35,6 +35,7 @@ let onLoaded = (err: Error) => {
     aElt.parentElement.removeChild(aElt);
 
     let errorElt = document.createElement("div");
+    errorElt.className = "error";
     errorElt.textContent = err.message;
     loadingElt.appendChild(errorElt);
     return;
