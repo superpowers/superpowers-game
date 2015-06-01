@@ -165,7 +165,7 @@ function start() {
     menu.append(new gui.MenuItem({ label: "Copy (Ctrl-C)", click: () => { document.execCommand("copy"); } }));
     menu.append(new gui.MenuItem({ label: "Paste (Ctrl-V)", click: () => { document.execCommand("paste"); } }));
 
-    document.body.addEventListener("contextmenu", (event) => {
+    document.querySelector(".code-editor-container").addEventListener("contextmenu", (event: any) => {
       event.preventDefault();
       menu.popup(event.screenX - gui.Window.get().x, event.screenY - gui.Window.get().y);
       return false;
