@@ -96,7 +96,7 @@ export default  class CameraMarker extends SupEngine.ActorComponent {
     else {
       let tan = Math.tan(THREE.Math.degToRad(this.fov / 2));
       farTopRight = new THREE.Vector3(far * tan, far * tan, far);
-      nearTopRight = farTopRight.clone().normalize().multiplyScalar(0.1);
+      nearTopRight = farTopRight.clone().normalize().multiplyScalar(near);
     }
 
     // Near plane
