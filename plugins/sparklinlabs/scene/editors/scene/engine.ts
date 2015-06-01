@@ -12,6 +12,9 @@ let engine: {
   cameraComponent?: any;
   cameraControls?: any;
 
+  selectionBoxActor?: SupEngine.Actor;
+  selectionBoxComponent?: any;
+
   tickAnimationFrameId?: number;
 } = {};
 export default engine;
@@ -24,6 +27,9 @@ engine.cameraActor.setLocalPosition(new THREE.Vector3(0, 0, 10));
 
 engine.cameraComponent = new SupEngine.componentClasses["Camera"](engine.cameraActor);
 engine.cameraControls = new SupEngine.editorComponentClasses["Camera3DControls"](engine.cameraActor, engine.cameraComponent);
+
+engine.selectionBoxActor = new SupEngine.Actor(engine.gameInstance, "Selection Box");
+engine.selectionBoxComponent= new SupEngine.editorComponentClasses["SelectionBox"](engine.selectionBoxActor);
 
 engine.tickAnimationFrameId = requestAnimationFrame(tick);
 function tick() {
@@ -61,20 +67,39 @@ function onMouseUp(event: MouseEvent) {
 
   raycaster.setFromCamera(mousePosition, engine.cameraComponent.threeCamera);
 
+  let selectedNodeId: string = null;
   ui.nodesTreeView.clearSelection();
 
   let intersects = raycaster.intersectObject(engine.gameInstance.threeScene, true);
   if (intersects.length > 0) {
-    let threeObject = intersects[0].object;
+    for (let intersect of intersects) {
+      let threeObject = intersect.object;
 
-    while (threeObject != null) {
-      if (threeObject.userData.nodeId != null) break;
-      threeObject = threeObject.parent;
-    }
+      while (threeObject != null) {
+        if (threeObject.userData.nodeId != null) break;
+        threeObject = threeObject.parent;
+      }
 
-    if (threeObject != null) {
-      ui.nodesTreeView.addToSelection(ui.nodesTreeView.treeRoot.querySelector(`li[data-id='${threeObject.userData.nodeId}']`));
+      if (threeObject != null) {
+        selectedNodeId = threeObject.userData.nodeId;
+        
+        let treeViewNode: HTMLLIElement = ui.nodesTreeView.treeRoot.querySelector(`li[data-id='${selectedNodeId}']`);
+        ui.nodesTreeView.addToSelection(treeViewNode);
+        
+        let treeViewParent = treeViewNode.parentElement;
+        while (treeViewParent !== ui.nodesTreeView.treeRoot) {
+          if (treeViewParent.tagName === "OL") (<HTMLElement>treeViewParent.previousElementSibling).classList.remove("collapsed");
+          treeViewParent = treeViewParent.parentElement;
+        }
+        break;
+      }
     }
+  }
+
+  if (selectedNodeId != null) {
+    engine.selectionBoxComponent.setTarget(data.sceneUpdater.bySceneNodeId[selectedNodeId].actor);
+  } else {
+    engine.selectionBoxComponent.setTarget(null);
   }
 
   setupSelectedNode();

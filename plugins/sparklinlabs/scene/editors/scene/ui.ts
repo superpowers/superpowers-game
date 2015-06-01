@@ -402,7 +402,7 @@ export function setCameraMode(mode: string) {
   } else {
     ui.cameraSpeedSlider.style.display = "none";
     engine.cameraActor.setLocalOrientation(new SupEngine.THREE.Quaternion().setFromAxisAngle(new SupEngine.THREE.Vector3(0, 1, 0), 0))
-    engine.cameraComponent.setOrthographicMode(true)
+    engine.cameraComponent.setOrthographicMode(true);
     engine.cameraControls = new SupEngine.editorComponentClasses["Camera2DControls"](engine.cameraActor, engine.cameraComponent, {
       zoomSpeed: 1.5,
       zoomMin: 1,
