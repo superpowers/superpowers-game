@@ -1,4 +1,4 @@
-import { ConfigPub } from '../data/ArcadeBody2DConfig';
+import { ConfigPub } from "../data/ArcadeBody2DConfig";
 
 export default class ArcadeBody2DEditor {
   tbody: HTMLTableSectionElement;

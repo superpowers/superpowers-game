@@ -819,10 +819,10 @@ function onRedo() {
 async.each(SupClient.pluginPaths.all, (pluginName, pluginCallback) => {
   if (pluginName === "sparklinlabs/typescript") { pluginCallback(); return; }
 
-  let apiScript = document.createElement('script');
+  let apiScript = document.createElement("script");
   apiScript.src = `/plugins/${pluginName}/api.js`;
-  apiScript.addEventListener('load', () => { pluginCallback(); } );
-  apiScript.addEventListener('error', () => { pluginCallback(); } );
+  apiScript.addEventListener("load", () => { pluginCallback(); } );
+  apiScript.addEventListener("error", () => { pluginCallback(); } );
   document.body.appendChild(apiScript);
 }, (err) => {
   // Read API definitions

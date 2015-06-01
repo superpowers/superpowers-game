@@ -27,7 +27,7 @@ export default function(files: File[], callback: ImportCallback) {
 
   for (let file of files) {
     let filename = file.name;
-    let extension = filename.substring(filename.lastIndexOf('.') + 1).toLowerCase();
+    let extension = filename.substring(filename.lastIndexOf(".") + 1).toLowerCase();
     modelImporter = modelImporters[extension]
     if (modelImporter != null) break;
   }

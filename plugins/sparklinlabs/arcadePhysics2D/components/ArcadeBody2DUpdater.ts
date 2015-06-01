@@ -1,5 +1,5 @@
 import ArcadeBody2DMarker from "./ArcadeBody2DMarker";
-import { ConfigPub } from '../data/ArcadeBody2DConfig';
+import { ConfigPub } from "../data/ArcadeBody2DConfig";
 
 export default class ArcadeBody2DUpdater {
   bodyRenderer: ArcadeBody2DMarker;

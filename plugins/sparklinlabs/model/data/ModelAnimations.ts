@@ -1,41 +1,41 @@
 export default class ModelAnimations extends SupCore.data.base.ListById {
 
   static schema = {
-    name: { type: 'string', minLength: 1, maxLength: 80, mutable: true },
-    duration: { type: 'number' }, // seconds
+    name: { type: "string", minLength: 1, maxLength: 80, mutable: true },
+    duration: { type: "number" }, // seconds
     keyFrames: {
-      type: 'hash',
+      type: "hash",
       keys: { minLength: 1, maxLength: 80 },
       values: {
-        type: 'hash',
+        type: "hash",
         properties: <{ [index: string]: SupCore.data.base.Rule }> {
           translation: {
-            type: 'array?',
+            type: "array?",
             items: {
-              type: 'hash',
+              type: "hash",
               properties: {
-                time: { type: 'number', minValue: 0 },
-                value: { type: 'array', items: { type: 'number', length: 3 } }
+                time: { type: "number", minValue: 0 },
+                value: { type: "array", items: { type: "number", length: 3 } }
               }
             }
           },
           rotation: {
-            type: 'array?',
+            type: "array?",
             items: {
-              type: 'hash',
+              type: "hash",
               properties: {
-                time: { type: 'number', minValue: 0 },
-                value: { type: 'array', items: { type: 'number', length: 4 } }
+                time: { type: "number", minValue: 0 },
+                value: { type: "array", items: { type: "number", length: 4 } }
               }
             }
           },
           scale: {
-            type: 'array?',
+            type: "array?",
             items: {
-              type: 'hash',
+              type: "hash",
               properties: {
-                time: { type: 'number', minValue: 0 },
-                value: { type: 'array', items: { type: 'number', length: 3 } }
+                time: { type: "number", minValue: 0 },
+                value: { type: "array", items: { type: "number", length: 3 } }
               }
             }
           }

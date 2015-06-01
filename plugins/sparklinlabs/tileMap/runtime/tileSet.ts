@@ -1,7 +1,7 @@
 import TileSet from "../components/TileSet";
 
 export function loadAsset(player: SupRuntime.Player, entry: any, callback: (err: Error, asset: any) => any) {
-  player.getAssetData(`assets/${entry.id}/asset.json`, 'json', (err, data) => {
+  player.getAssetData(`assets/${entry.id}/asset.json`, "json", (err, data) => {
     let img = new Image();
 
     img.onload = () => {
