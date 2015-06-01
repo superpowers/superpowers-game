@@ -101,10 +101,11 @@ export default class SceneUpdater {
 
   _onEditCommand_removeNode = (id: string) => {
     let recurseClearActor = (nodeId: string) => {
-      let actor = this.bySceneNodeId[nodeId].actor;
+      let sceneNode = this.bySceneNodeId[nodeId];
+      let maybePrefab = sceneNode.bySceneComponentId[0];
 
-      if (this.bySceneNodeId[nodeId].bySceneComponentId[0].component.typeName !== "Scene") {
-        for (let childActor of actor.children) {
+      if (maybePrefab != null && maybePrefab.component.typeName !== "Scene") {
+        for (let childActor of sceneNode.actor.children) {
           let sceneNodeId = (<any>childActor).sceneNodeId;
           if (sceneNodeId != null) recurseClearActor(sceneNodeId);
         }
