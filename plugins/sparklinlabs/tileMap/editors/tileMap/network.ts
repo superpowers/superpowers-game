@@ -46,7 +46,7 @@ function onTileMapAssetReceived() {
   onEditCommands.resizeMap();
 
   for (let setting in ui.settings) onEditCommands.setProperty(setting, (<any>pub)[setting]);
-  for (let index = 0; index < pub.layers.length; index++) setupLayer(pub.layers[index], index);
+  for (let index = pub.layers.length - 1; index >= 0; index--) setupLayer(pub.layers[index], index);
 
   tileSetArea.selectedLayerId = pub.layers[0].id.toString();
   ui.layersTreeView.addToSelection(ui.layersTreeView.treeRoot.querySelector(`li[data-id="${pub.layers[0].id}"]`));
@@ -117,10 +117,11 @@ onEditCommands.deleteLayer = (id: string, index: number) => {
 };
 
 onEditCommands.moveLayer = (id: string, newIndex: number) => {
-  let layerElt = ui.layersTreeView.treeRoot.querySelector(`[data-id="${id}"]`);
-  ui.layersTreeView.insertAt(layerElt, "item", newIndex);
-
   let pub = data.tileMapUpdater.tileMapAsset.pub;
+
+  let layerElt = ui.layersTreeView.treeRoot.querySelector(`[data-id="${id}"]`);
+  ui.layersTreeView.insertAt(layerElt, "item", pub.layers.length - newIndex);
+
   let layer = data.tileMapUpdater.tileMapAsset.layers.byId[tileSetArea.selectedLayerId];
   let z = (pub.layers.indexOf(layer) + 0.5) * pub.layerDepthOffset
   mapArea.patternActor.setLocalPosition(new SupEngine.THREE.Vector3(0, 0, z));

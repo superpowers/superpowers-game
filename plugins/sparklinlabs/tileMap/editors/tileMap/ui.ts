@@ -151,7 +151,9 @@ function onNewLayerClick() {
   SupClient.dialogs.prompt("Enter a name for the layer.", null, "Layer", "Create", (name) => {
     if (name == null) return;
 
-    socket.emit("edit:assets", info.assetId, "newLayer", name, SupClient.getTreeViewInsertionPoint(ui.layersTreeView).index, (err: string, layerId: string) => {
+    let index = SupClient.getTreeViewInsertionPoint(ui.layersTreeView).index;
+    index = data.tileMapUpdater.tileMapAsset.pub.layers.length - index + 1;
+    socket.emit("edit:assets", info.assetId, "newLayer", name, index, (err: string, layerId: string) => {
       if (err != null) { alert(err); return; }
 
       ui.layersTreeView.clearSelection();
@@ -191,7 +193,10 @@ function onDeleteLayerClick() {
 function onLayerDrop(dropInfo: any, orderedNodes: any[]) {
   let id = orderedNodes[0].dataset.id;
 
-  let newIndex = SupClient.getListViewDropIndex(dropInfo, data.tileMapUpdater.tileMapAsset.layers);
+  let layer = data.tileMapUpdater.tileMapAsset.layers.byId[id];
+  let currentIndex = data.tileMapUpdater.tileMapAsset.pub.layers.indexOf(layer);
+  let newIndex = SupClient.getListViewDropIndex(dropInfo, data.tileMapUpdater.tileMapAsset.layers, true);
+
   socket.emit("edit:assets", info.assetId, "moveLayer", id, newIndex, (err: string) => {
     if (err != null) { alert(err); return; }
   });
@@ -292,8 +297,9 @@ export function setupLayer(layer: TileMapLayerPub, index: number) {
   displayCheckbox.className = "display";
   displayCheckbox.type = "checkbox";
   displayCheckbox.checked = true;
-  displayCheckbox.addEventListener("change", () => { data.tileMapUpdater.tileMapRenderer.layerMeshesById[layer.id].visible = displayCheckbox.checked; });
-
+  displayCheckbox.addEventListener("change", () => {
+    data.tileMapUpdater.tileMapRenderer.layerMeshesById[layer.id].visible = displayCheckbox.checked;
+  });
   displayCheckbox.addEventListener("click", (event) => { event.stopPropagation(); });
 
   liElt.appendChild(displayCheckbox);
@@ -303,5 +309,5 @@ export function setupLayer(layer: TileMapLayerPub, index: number) {
   nameSpan.textContent = layer.name;
   liElt.appendChild(nameSpan);
 
-  ui.layersTreeView.insertAt(liElt, "item", index);
+  ui.layersTreeView.insertAt(liElt, "item", data.tileMapUpdater.tileMapAsset.pub.layers.length - 1 - index);
 }
