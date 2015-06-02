@@ -52,8 +52,34 @@ module Sup {
       return new Math.Vector3(position.x, position.y, position.z);
     }
 
-    setPosition(position) {
-      this.__inner.setGlobalPosition( tmpVector3.set(position.x, position.y, position.z) );
+    setPosition(x, y, z) {
+      if (y == null && z == null) {
+        let position = x;
+        tmpVector3.set(position.x, position.y, position.z)
+      } else tmpVector3.set(x, y, z);
+      this.__inner.setGlobalPosition(tmpVector3);
+      return this;
+    }
+    
+    getX() { return this.__inner.getGlobalPosition().x; }
+    setX(x) {
+      let position = this.__inner.getGlobalPosition();
+      position.x = x;
+      this.__inner.setGlobalPosition(position);
+      return this;
+    }
+    getY() { return this.__inner.getGlobalPosition().y; }
+    setY(y) {
+      let position = this.__inner.getGlobalPosition();
+      position.y = y;
+      this.__inner.setGlobalPosition(position);
+      return this;
+    }
+    getZ() { return this.__inner.getGlobalPosition().z; }
+    setZ(z) {
+      let position = this.__inner.getGlobalPosition();
+      position.z = z;
+      this.__inner.setGlobalPosition(position);
       return this;
     }
 
@@ -62,22 +88,97 @@ module Sup {
       return new Math.Vector3(position.x, position.y, position.z)
     }
 
-    setLocalPosition(position) {
-      this.__inner.setLocalPosition( tmpVector3.set(position.x, position.y, position.z) );
+    setLocalPosition(x, y, z) {
+      if (y == null && z == null) {
+        let position = x;
+        tmpVector3.set(position.x, position.y, position.z)
+      } else tmpVector3.set(x, y, z);
+      this.__inner.setLocalPosition(tmpVector3);
+      return this;
+    }
+    
+    getLocalX() { return this.__inner.getLocalPosition().x; }
+    setLocalX(x) {
+      let position = this.__inner.getLocalPosition();
+      position.x = x;
+      this.__inner.setLocalPosition(position);
+      return this;
+    }
+    getLocalY() { return this.__inner.getLocalPosition().y; }
+    setLocalY(y) {
+      let position = this.__inner.getLocalPosition();
+      position.y = y;
+      this.__inner.setLocalPosition(position);
+      return this;
+    }
+    getLocalZ() { return this.__inner.getLocalPosition().z; }
+    setLocalZ(z) {
+      let position = this.__inner.getLocalPosition();
+      position.z = z;
+      this.__inner.setLocalPosition(position);
       return this;
     }
 
-    move(offset) {
-      this.__inner.moveGlobal( tmpVector3.set(offset.x, offset.y, offset.z) )
+    move(x, y, z) {
+      if (y == null && z == null) {
+        let offset = x;
+        tmpVector3.set(offset.x, offset.y, offset.z);
+      } else tmpVector3.set(x, y, z);
+      this.__inner.moveGlobal(tmpVector3)
+      return this;
+    }
+    moveX(x) {
+      this.__inner.moveGlobal(tmpVector3.set(x, 0, 0));
+      return this;
+    }
+    moveY(y) {
+      this.__inner.moveGlobal(tmpVector3.set(0, y, 0));
+      return this;
+    }
+    moveZ(z) {
+      this.__inner.moveGlobal(tmpVector3.set(0, 0, z));
       return this;
     }
 
-    moveLocal(offset) {
-      this.__inner.moveLocal( tmpVector3.set(offset.x, offset.y, offset.z) )
+    moveLocal(x, y, z) {
+      if (y == null && z == null) {
+        let offset = x;
+        tmpVector3.set(offset.x, offset.y, offset.z);
+      } else tmpVector3.set(x, y, z);
+      this.__inner.moveLocal(tmpVector3)
       return this;
     }
-    moveOriented(offset) {
-      this.__inner.moveOriented( tmpVector3.set(offset.x, offset.y, offset.z) )
+    moveLocalX(x) {
+      this.__inner.moveLocal(tmpVector3.set(x, 0, 0));
+      return this;
+    }
+    moveLocalY(y) {
+      this.__inner.moveLocal(tmpVector3.set(0, y, 0));
+      return this;
+    }
+    moveLocalZ(z) {
+      this.__inner.moveLocal(tmpVector3.set(0, 0, z));
+      return this;
+    }
+
+    moveOriented(x, y, z) {
+      if (y == null && z == null) {
+        let offset = x;
+        tmpVector3.set(offset.x, offset.y, offset.z);
+      } else tmpVector3.set(x, y, z);
+      this.__inner.moveOriented(tmpVector3)
+      return this;
+    }
+    moveOrientedX(x) {
+      this.__inner.moveOriented(tmpVector3.set(x, 0, 0));
+      return this;
+    }
+    moveOrientedY(y) {
+      this.__inner.moveOriented(tmpVector3.set(0, y, 0));
+      return this;
+    }
+    moveOrientedZ(z) {
+      this.__inner.moveOriented(tmpVector3.set(0, 0, z));
       return this;
     }
 
@@ -118,9 +219,34 @@ module Sup {
       var z = eulerAngles.z;
       return new Math.Vector3( x, y, z );
     }
-
-    setEulerAngles(eulerAngles) {
-      this.__inner.setGlobalEulerAngles( tmpEuler.set(eulerAngles.x, eulerAngles.y, eulerAngles.z) );
+    setEulerAngles(x, y, z) {
+      if (y == null && z == null) {
+        let eulerAngles = x;
+        tmpEuler.set(eulerAngles.x, eulerAngles.y, eulerAngles.z);
+      } else tmpEuler.set(x, y, z);
+      this.__inner.setGlobalEulerAngles(tmpEuler);
+      return this;
+    }
+    
+    getEulerX() { return this.__inner.getGlobalEulerAngles().x; }
+    setEulerX(x) {
+      let eulerAngles = this.__inner.getGlobalEulerAngles();
+      eulerAngles.x = x;
+      this.__inner.setGlobalEulerAngles(eulerAngles);
+      return this;
+    }
+    getEulerY() { return this.__inner.getGlobalEulerAngles().y; }
+    setEulerY(y) {
+      let eulerAngles = this.__inner.getGlobalEulerAngles();
+      eulerAngles.y = y;
+      this.__inner.setGlobalEulerAngles(eulerAngles);
+      return this;
+    }
+    getEulerZ() { return this.__inner.getGlobalEulerAngles().z; }
+    setEulerZ(z) {
+      let eulerAngles = this.__inner.getGlobalEulerAngles();
+      eulerAngles.z = z;
+      this.__inner.setGlobalEulerAngles(eulerAngles);
       return this;
     }
 
@@ -129,21 +255,78 @@ module Sup {
       var x = eulerAngles.x;
       var y = eulerAngles.y;
       var z = eulerAngles.z;
-      return new Math.Vector3( x, y, z );
+      return new Math.Vector3(x, y, z);
     }
-
-    setLocalEulerAngles(eulerAngles) {
-      this.__inner.setLocalEulerAngles( tmpEuler.set(eulerAngles.x, eulerAngles.y, eulerAngles.z) );
+    setLocalEulerAngles(x, y, z) {
+      if (y == null && z == null) {
+        let eulerAngles = x;
+        tmpEuler.set(eulerAngles.x, eulerAngles.y, eulerAngles.z);
+      } else tmpEuler.set(x, y, z);
+      this.__inner.setLocalEulerAngles(tmpEuler);
+      return this;
+    }
+    
+    getLocalEulerX() { return this.__inner.getLocalEulerAngles().x; }
+    setLocalEulerX(x) {
+      let eulerAngles = this.__inner.getLocalEulerAngles();
+      eulerAngles.x = x;
+      this.__inner.setLocalEulerAngles(eulerAngles);
+      return this;
+    }
+    getLocalEulerY() { return this.__inner.getLocalEulerAngles().y; }
+    setLocalEulerY(y) {
+      let eulerAngles = this.__inner.getLocalEulerAngles();
+      eulerAngles.y = y;
+      this.__inner.setLocalEulerAngles(eulerAngles);
+      return this;
+    }
+    getLocalEulerZ() { return this.__inner.getLocalEulerAngles().z; }
+    setLocalEulerZ(z) {
+      let eulerAngles = this.__inner.getLocalEulerAngles();
+      eulerAngles.z = z;
+      this.__inner.setLocalEulerAngles(eulerAngles);
       return this;
     }
 
-    rotateEulerAngles(offset) {
-      this.__inner.rotateGlobalEulerAngles( tmpEuler.set(offset.x, offset.y, offset.z) );
+    rotateEulerAngles(x, y, z) {
+      if (y == null && z == null) {
+        let eulerAngles = x;
+        tmpEuler.set(eulerAngles.x, eulerAngles.y, eulerAngles.z);
+      } else tmpEuler.set(x, y, z);
+      this.__inner.rotateGlobalEulerAngles(tmpEuler);
+      return this;
+    }
+    rotateEulerX(x) {
+      this.__inner.rotateGlobalEulerAngles(tmpEuler.set(x, 0, 0));
+      return this;
+    }
+    rotateEulerY(y) {
+      this.__inner.rotateGlobalEulerAngles(tmpEuler.set(0, y, 0));
+      return this;
+    }
+    rotateEulerZ(z) {
+      this.__inner.rotateGlobalEulerAngles(tmpEuler.set(0, 0, z));
       return this;
     }
 
-    rotateLocalEulerAngles(offset) {
-      this.__inner.rotateLocalEulerAngles( tmpEuler.set(offset.x, offset.y, offset.z) );
+    rotateLocalEulerAngles(x, y, z) {
+      if (y == null && z == null) {
+        let eulerAngles = x;
+        tmpEuler.set(eulerAngles.x, eulerAngles.y, eulerAngles.z);
+      } else tmpEuler.set(x, y, z);
+      this.__inner.rotateLocalEulerAngles(tmpEuler);
+      return this;
+    }
+    rotateLocalEulerX(x) {
+      this.__inner.rotateLocalEulerAngles(tmpEuler.set(x, 0, 0));
+      return this;
+    }
+    rotateLocalEulerY(y) {
+      this.__inner.rotateLocalEulerAngles(tmpEuler.set(0, y, 0));
+      return this;
+    }
+    rotateLocalEulerZ(z) {
+      this.__inner.rotateLocalEulerAngles(tmpEuler.set(0, 0, z));
       return this;
     }
 
@@ -159,11 +342,15 @@ module Sup {
 
     getLocalScale() {
       var scale = this.__inner.getLocalScale();
-      return new Math.Vector3( scale.x, scale.y, scale.z );
+      return new Math.Vector3(scale.x, scale.y, scale.z);
     }
 
-    setLocalScale(scale) {
-      this.__inner.setLocalScale( tmpVector3.set(scale.x, scale.y, scale.z) );
+    setLocalScale(x, y, z) {
+      if (y == null && z == null) {
+        let scale = x;
+        tmpVector3.set(scale.x, scale.y, scale.z)
+      } else tmpVector3.set(x, y, z)
+      this.__inner.setLocalScale(tmpVector3);
       return this;
     }
 

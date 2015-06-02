@@ -34,7 +34,9 @@ declare module Sup {
       clone(): Vector3;
 
       add(v: Vector3): Vector3;
+      add(x: number, y: number, z: number): Vector3;
       subtract(v: Vector3): Vector3;
+      subtract(x: number, y: number, z: number): Vector3;
       multiplyScalar(m: number): Vector3;
       cross(v: Vector3): Vector3;
       dot(v: Vector3): number;

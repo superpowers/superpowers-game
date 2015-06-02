@@ -55,8 +55,20 @@ module Sup {
       copy(v) { this.x = v.x; this.y = v.y; this.z = v.z; return this; }
       clone() { return new Vector3(this.x, this.y, this.z); }
 
-      add(v) { this.x += v.x; this.y += v.y; this.z += v.z; return this; }
-      subtract(v) { this.x -= v.x; this.y -= v.y; this.z -= v.z; return this; }
+      add(x, y, z) {
+        if (y == null && z == null) {
+          let v = x;
+          this.x += v.x; this.y += v.y; this.z += v.z;
+        } else this.x += x; this.y += y; this.z += z;
+        return this;
+      }
+      subtract(x, y, z) {
+        if (y == null && z == null) {
+          let v = x;
+          this.x -= v.x; this.y -= v.y; this.z -= v.z;
+        } else this.x -= x; this.y -= y; this.z -= z;
+        return this;
+      }
       multiplyScalar(m) { this.x *= m; this.y *= m; this.z *= m; return this; }
 
       cross(v) {
