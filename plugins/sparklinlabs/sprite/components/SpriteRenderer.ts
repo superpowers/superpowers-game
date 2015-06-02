@@ -20,6 +20,8 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
   material: THREE.MeshBasicMaterial|THREE.MeshPhongMaterial;
   materialType = "basic";
   threeMesh: THREE.Mesh;
+  horizontalFlip = false;
+  verticalFlip = false;
   castShadow = false;
   receiveShadow = false;
 
@@ -84,6 +86,18 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
     }
     this.material.needsUpdate = true;
   }
+  
+  setHorizontalFlip(horizontalFlip: boolean) {
+    this.horizontalFlip = horizontalFlip;
+    if (this.animationName == null) this.setFrame(0);
+    else if (! this.isAnimationPlaying) this.updateFrame();
+  }
+  
+  setVerticalFlip(verticalFlip: boolean) {
+    this.verticalFlip = verticalFlip;
+    if (this.animationName == null) this.setFrame(0);
+    else if (! this.isAnimationPlaying) this.updateFrame();
+  }
 
   updateAnimationsByName() {
     this.animationsByName = {};
@@ -126,6 +140,19 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
     let right  = ((frameX+1) * this.asset.grid.width) / this.material.map.image.width;
     let bottom = (this.material.map.image.height - (frameY+1) * this.asset.grid.height) / this.material.map.image.height;
     let top    = (this.material.map.image.height - frameY     * this.asset.grid.height) / this.material.map.image.height;
+
+    let tmp: number;
+    if (this.horizontalFlip) {
+      tmp = left;
+      left = right;
+      right = tmp;
+    }
+    
+    if (this.verticalFlip) {
+      tmp = top;
+      top = bottom;
+      bottom = tmp;
+    }
 
     let uvs = this.geometry.getAttribute("uv");
     uvs.needsUpdate = true;

@@ -25,6 +25,10 @@ module Sup {
       return this;
     }
     getMaterialType() { return materialTypes.indexOf(this.__inner.materialType); }
+    setHorizontalFlip(horizontalFlip) { this.__inner.setHorizontalFlip(horizontalFlip); return this; }
+    getHorizontalFlip() { return this.__inner.horizontalFlip; }
+    setVerticalFlip(verticalFlip) { this.__inner.setVerticalFlip(verticalFlip); return this; }
+    getVerticalFlip() { return this.__inner.verticalFlip; }
     getOpacity() { return this.__inner.opacity; }
     setOpacity(opacity) { this.__inner.setOpacity(opacity); return this; }
     getColor() { return new Color(this.__inner.color.r, this.__inner.color.g, this.__inner.color.b); }

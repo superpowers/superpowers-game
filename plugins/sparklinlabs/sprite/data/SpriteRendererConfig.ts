@@ -1,6 +1,8 @@
 export interface SpriteRendererConfigPub {
   spriteAssetId: string;
   animationId: string;
+  horizontalFlip: boolean;
+  verticalFlip: boolean;
   castShadow: boolean;
   receiveShadow: boolean;
   color: string;
@@ -14,6 +16,8 @@ export default class SpriteRendererConfig extends SupCore.data.base.ComponentCon
   static schema = {
     spriteAssetId: { type: "string?", min: 0, mutable: true },
     animationId: { type: "string?", min: 0, mutable: true },
+    horizontalFlip: { type: "boolean", mutable: true },
+    verticalFlip: { type: "boolean", mutable: true },
     castShadow: { type: "boolean", mutable: true },
     receiveShadow: { type: "boolean", mutable: true },
     color: { type: "string?", length: 6, mutable: true },
@@ -26,6 +30,8 @@ export default class SpriteRendererConfig extends SupCore.data.base.ComponentCon
     let emptyConfig: SpriteRendererConfigPub = {
       spriteAssetId: null,
       animationId: null,
+      horizontalFlip: false,
+      verticalFlip: false,
       castShadow: false,
       receiveShadow: false,
       overrideOpacity: false,
@@ -40,6 +46,8 @@ export default class SpriteRendererConfig extends SupCore.data.base.ComponentCon
     // TODO: Remove these at some point, new config setting introduced in Superpowers 0.8
     if (pub.overrideOpacity == null) pub.overrideOpacity = false;
     if (pub.color == null) pub.color = "ffffff";
+    if (pub.horizontalFlip == null) pub.horizontalFlip = false;
+    if (pub.verticalFlip == null) pub.verticalFlip = false;
 
     // TODO: Remove these at some point, new config setting introduced in Superpowers 0.7
     if (pub.castShadow == null) pub.castShadow = false;

@@ -5,6 +5,10 @@ declare module Sup {
     getSprite(): Sprite;
     setSprite(asset: Sprite, materialType?: SpriteRenderer.MaterialType): SpriteRenderer;
     getMaterialType(): SpriteRenderer.MaterialType;
+    setHorizontalFlip(horizontalFlip: boolean): SpriteRenderer;
+    getHorizontalFlip(): boolean;
+    setVerticalFlip(verticalFlip: boolean): SpriteRenderer;
+    getVerticalFlip(): boolean;
     getOpacity(): number;
     setOpacity(opacity: number): SpriteRenderer;
     getColor(): Sup.Color;

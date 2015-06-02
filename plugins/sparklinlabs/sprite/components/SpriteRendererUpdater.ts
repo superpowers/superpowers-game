@@ -36,6 +36,8 @@ export default class SpriteRendererUpdater {
     if (config.overrideOpacity != null) this.overrideOpacity = config.overrideOpacity;
     this.spriteAsset = null;
 
+    this.spriteRenderer.horizontalFlip = config.horizontalFlip;
+    this.spriteRenderer.verticalFlip = config.verticalFlip;
     this.spriteRenderer.castShadow = config.castShadow;
     this.spriteRenderer.receiveShadow = config.receiveShadow;
     if (config.overrideOpacity) this.spriteRenderer.opacity = config.opacity;
@@ -217,6 +219,14 @@ export default class SpriteRendererUpdater {
       case "looping":
         this.looping = value;
         if (this.animationId != null) this._playAnimation();
+        
+      case "horizontalFlip":
+        this.spriteRenderer.setHorizontalFlip(value);
+        break;
+        
+      case "verticalFlip":
+        this.spriteRenderer.setVerticalFlip(value);
+        break;
 
       case "castShadow":
         this.spriteRenderer.setCastShadow(value);

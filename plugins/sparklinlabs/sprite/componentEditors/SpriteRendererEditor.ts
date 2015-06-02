@@ -10,6 +10,8 @@ export default class SpriteRendererEditor {
 
   spriteTextField: HTMLInputElement;
   animationSelectBox: HTMLSelectElement;
+  horizontalFlipField: HTMLInputElement;
+  verticalFlipField: HTMLInputElement;
   castShadowField: HTMLInputElement;
   receiveShadowField: HTMLInputElement;
   colorField: HTMLInputElement;
@@ -34,6 +36,29 @@ export default class SpriteRendererEditor {
     let animationRow = SupClient.table.appendRow(tbody, "Animation");
     this.animationSelectBox = SupClient.table.appendSelectBox(animationRow.valueCell, { "": "(None)" });
     this.animationSelectBox.disabled = true;
+    
+    let flipRow = SupClient.table.appendRow(tbody, "Flip");
+    let flipDiv = <any>document.createElement("div");
+    flipDiv.classList.add("inputs");
+    flipRow.valueCell.appendChild(flipDiv);
+    
+    let horizontalSpan = document.createElement("span");
+    horizontalSpan.style.marginLeft = "5px";
+    horizontalSpan.textContent = "H";
+    flipDiv.appendChild(horizontalSpan);
+    this.horizontalFlipField = SupClient.table.appendBooleanField(flipDiv, config.horizontalFlip);
+    this.horizontalFlipField.addEventListener("change", (event: any) => {
+      this.editConfig("setProperty", "horizontalFlip", event.target.checked);
+    });
+    
+    let verticalSpan = document.createElement("span");
+    verticalSpan.style.marginLeft = "5px";
+    verticalSpan.textContent = "V";
+    flipDiv.appendChild(verticalSpan);
+    this.verticalFlipField = SupClient.table.appendBooleanField(flipDiv, config.verticalFlip);
+    this.verticalFlipField.addEventListener("change", (event: any) => {
+      this.editConfig("setProperty", "verticalFlip", event.target.checked);
+    });
 
     let castShadowRow = SupClient.table.appendRow(tbody, "Cast Shadow");
     this.castShadowField = SupClient.table.appendBooleanField(castShadowRow.valueCell, config.castShadow);
@@ -131,13 +156,21 @@ export default class SpriteRendererEditor {
         if (! this.animationSelectBox.disabled) this.animationSelectBox.value = (value != null) ? value : "";
         this.animationId = value;
         break;
+      
+      case "horizontalFlip":
+        this.horizontalFlipField.checked = value;
+        break;
+
+      case "verticalFlip":
+        this.verticalFlipField.checked = value;
+        break;
 
       case "castShadow":
-        this.castShadowField.value = value;
+        this.castShadowField.checked = value;
         break;
 
       case "receiveShadow":
-        this.receiveShadowField.value = value;
+        this.receiveShadowField.checked = value;
         break;
 
       case "color":
