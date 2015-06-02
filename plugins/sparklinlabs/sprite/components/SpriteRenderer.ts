@@ -176,6 +176,9 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
   playAnimation(animationLooping=true) {
     this.animationLooping = animationLooping;
     this.isAnimationPlaying = true;
+    
+    if (! this.animationLooping && this.animationTimer / SupEngine.GameInstance.framesPerSecond >= this.getAnimationDuration())
+      this.animationTimer = 0;
   }
   pauseAnimation() { this.isAnimationPlaying = false; }
 

@@ -12,6 +12,7 @@ export default class SpriteRendererUpdater {
 
   spriteAssetId: string;
   animationId: string;
+  looping = true;
   materialType: string;
   overrideOpacity = false;
   spriteAsset: SpriteAsset;
@@ -103,7 +104,7 @@ export default class SpriteRendererUpdater {
     let animation = this.spriteAsset.animations.byId[this.animationId];
     if (animation == null) return;
 
-    this.spriteRenderer.setAnimation(animation.name);
+    this.spriteRenderer.setAnimation(animation.name, this.looping);
   }
 
   _onSpriteAssetEdited(id: string, command: string, ...args: any[]) {
@@ -212,6 +213,10 @@ export default class SpriteRendererUpdater {
           else this.spriteRenderer.setAnimation(null);
         }
         break;
+      
+      case "looping":
+        this.looping = value;
+        if (this.animationId != null) this._playAnimation();
 
       case "castShadow":
         this.spriteRenderer.setCastShadow(value);

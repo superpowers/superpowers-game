@@ -94,6 +94,10 @@ ui.animationPlay.addEventListener("click", onPlayAnimation);
 ui.animationSlider = <HTMLInputElement>document.querySelector("input.animation-slider");
 ui.animationSlider.addEventListener("input", onChangeAnimationTime);
 
+document.querySelector("input.animation-loop").addEventListener("change", (event: any) => {
+  data.spriteUpdater.config_setProperty("looping", event.target.checked);
+});
+
 function onFileSelectChange(event: any) {
   if (event.target.files.length === 0) return;
 
@@ -252,7 +256,7 @@ function onPlayAnimation() {
     ui.animationPlay.textContent = "▶";
   }
   else {
-    data.spriteUpdater.spriteRenderer.playAnimation();
+    data.spriteUpdater.spriteRenderer.playAnimation(data.spriteUpdater.looping);
     ui.animationPlay.textContent = "▐ ▌";
   }
 }
