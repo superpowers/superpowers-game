@@ -3,6 +3,7 @@ module Sup {
     getWidth() { return this.__inner.getWidth(); }
     getHeight() { return this.__inner.getHeight(); }
     getPixelsPerUnit() { return this.__inner.getPixelsPerUnit(); }
+    getLayerCount() { return this.__inner.data.layers.length; }
 
     setTileAt(layer, x, y, value, flipX, flipY, angle) {
       var tileSet = player.getOuterAsset(this.__inner.data.tileSetId);
