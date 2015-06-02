@@ -30,6 +30,7 @@ function makeBrowserify(source, destination, output) {
 makeBrowserify("./data/index.js", "./public", "data");
 makeBrowserify("./runtime/index.js", "./public", "runtime");
 makeBrowserify("./settingsEditors/index.js", "./public", "settingsEditors");
+makeBrowserify("./api/index.js", "./public", "api");
 
 // All
 gulp.task("default", tasks);

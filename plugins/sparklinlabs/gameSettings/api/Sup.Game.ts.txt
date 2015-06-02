@@ -1,0 +1,10 @@
+module Sup {
+  export module Game {
+    export function getFPS() { return player.resources.gameSettings.framesPerSecond; }
+    export function getScreenRatio() {
+      let width = player.resources.gameSettings.ratioNumerator;
+      let height = player.resources.gameSettings.ratioDenominator;
+      return { width, height };
+    }
+  }
+}
