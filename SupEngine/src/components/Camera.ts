@@ -5,7 +5,6 @@ import ActorComponent from "../ActorComponent";
 export default class Camera extends ActorComponent {
   fov = 45;
   orthographicScale = 10;
-  halfPixelTranslationMatrix = new THREE.Matrix4();
 
   threeCamera: THREE.OrthographicCamera|THREE.PerspectiveCamera;
   viewport = { x: 0, y: 0, width: 1, height: 1 };
