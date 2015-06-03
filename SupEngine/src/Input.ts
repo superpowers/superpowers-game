@@ -2,7 +2,7 @@ export default class Input {
   static maxTouches = 10;
 
   canvas: HTMLCanvasElement;
-  enableOnExit: boolean;
+  _exitCallback: Function;
 
   mouseButtons: Array<{isDown: boolean; wasJustPressed: boolean; wasJustReleased: boolean;}> = [];
   mouseButtonsDown: boolean[] = [];
@@ -20,11 +20,10 @@ export default class Input {
   gamepadsButtons: Array<Array<{isDown: boolean; wasJustPressed: boolean; wasJustReleased: boolean;}>> = [];
   gamepadsAxes: Array<number[]> = [];
 
-  onExit: Function;
+  constructor(canvas: HTMLCanvasElement, options: { exitCallback?: Function } = {}) {
+    if (options == null) options = {};
 
-  constructor(canvas: HTMLCanvasElement, enableOnExit: boolean) {
     this.canvas = canvas;
-    this.enableOnExit = enableOnExit;
 
     // Mouse
     this.canvas.addEventListener("mousemove", this._onMouseMove);
@@ -50,16 +49,16 @@ export default class Input {
     }
 
     // On exit
-    if (this.enableOnExit) {
+    if (options.exitCallback != null) {
+      this._exitCallback = options.exitCallback;
       let nwDispatcher = (<any>window).nwDispatcher;
       if (nwDispatcher != null) {
-        let gui = nwDispatcher.requireNwGui();
-        gui.Window.get().on("close", this._onExit);
-      } else {
-        window.onbeforeunload = (event: any) => {
-          if (this.onExit != null) { this.onExit(); this.onExit = null; }
-        };
-      }
+        try { nwDispatcher.requireNwGui().Window.get().on("close", this._doExitCallback); }
+        // An exception might happen if we're in NW.js but the window wasn't created by Superpowers
+        // Some users have reported they use NW.js as a browser while developing with Superpowers
+        // so as a convenience for them, we're logging a warning rather than crashing
+        catch(e) { console.warn("Could not setup exit callback:", e); }
+      } else window.onbeforeunload = this._doExitCallback;
     }
 
     window.addEventListener("blur", this._onBlur);
@@ -81,11 +80,11 @@ export default class Input {
     this.canvas.removeEventListener("keydown", this._onKeyDown);
     document.removeEventListener("keyup", this._onKeyUp);
 
-    if (this.enableOnExit) {
+    if (this._exitCallback != null) {
       let nwDispatcher = (<any>window).nwDispatcher;
       if (nwDispatcher != null) {
-        let gui = nwDispatcher.requireNwGui();
-        gui.Window.get().removeListener("close", this._onExit);
+        try { nwDispatcher.requireNwGui().Window.get().removeListener("close", this._exitCallback); }
+        catch(e) {}
       }
     }
 
@@ -215,10 +214,15 @@ export default class Input {
     this.keyboardButtonsDown[event.keyCode] = false;
   }
 
-  _onExit = (event: any) => {
-    if (this.onExit != null) { this.onExit(); this.onExit = null; }
-    let gui = (<any>window).nwDispatcher.requireNwGui();
-    gui.Window.get().close(true);
+  _doExitCallback = () => {
+    this._exitCallback();
+    this._exitCallback = null;
+    
+    let nwDispatcher = (<any>window).nwDispatcher;
+    if (nwDispatcher != null) {
+      let gui = (<any>window).nwDispatcher.requireNwGui();
+      gui.Window.get().close(true);
+    }
   }
 
   update() {

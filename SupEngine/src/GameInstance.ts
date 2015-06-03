@@ -10,32 +10,35 @@ import Camera from "./components/Camera";
 
 export default class GameInstance extends EventEmitter {
   static framesPerSecond = 60;
-
-  debug: boolean;
   ratio: number;
+  
   tree = new ActorTree();
   cachedActors: Actor[] = [];
   renderComponents: Camera[] = [];
   componentsToBeStarted: ActorComponent[] = [];
   componentsToBeDestroyed: ActorComponent[] = [];
   actorsToBeDestroyed: Actor[] = [];
-  skipRendering = false;
-  exited = false;
-
+  
   input: Input;
   audio = new Audio();
 
   threeRenderer: THREE.WebGLRenderer;
   threeScene = new THREE.Scene();
 
-  constructor(canvas: HTMLCanvasElement, options: {debug?: boolean; enableOnExit?: boolean;} = {}) {
-    super()
+  debug: boolean;
+  skipRendering = false;
+  exitCallback: Function;
+  exited = false;
+
+  constructor(canvas: HTMLCanvasElement, options: { debug?: boolean; enableOnExit?: boolean; } = {}) {
+    super();
 
     // Used to know whether or not we have to close the window at exit when using NW.js
     this.debug = options.debug === true;
-
+    
+    // Exit callback is only enabled when playing the actual game, not in most editors
     let enableOnExit = (options.enableOnExit != null) ? options.enableOnExit : false;
-    this.input = new Input(canvas, enableOnExit);
+    this.input = new Input(canvas, options.enableOnExit ? { exitCallback: this._doExitCallback } : null);
 
     try {
       this.threeRenderer = new THREE.WebGLRenderer({ canvas, precision: "mediump", alpha: false, antialias: false, stencil: false });
@@ -170,4 +173,11 @@ export default class GameInstance extends EventEmitter {
 
     actor._destroy();
   }
+  
+  _doExitCallback = () => {
+    if (this.exitCallback != null) {
+      this.exitCallback();
+      this.exitCallback = null;
+    }
+  };
 }
