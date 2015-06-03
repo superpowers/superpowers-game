@@ -159,11 +159,11 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
   setAnimationTime(time: any) {
     if (typeof time !== "number") throw new Error("Time must be an integer");
     if (time < 0 || time > this.getAnimationDuration()) throw new Error(`Time must be between 0 and ${this.getAnimationDuration()}`);
-    this.animationTimer = time * SupEngine.GameInstance.framesPerSecond;
+    this.animationTimer = time * this.actor.gameInstance.framesPerSecond;
     this.updateFrame();
   }
 
-  getAnimationTime() { return (this.animationName != null) ? this.animationTimer / SupEngine.GameInstance.framesPerSecond : 0; }
+  getAnimationTime() { return (this.animationName != null) ? this.animationTimer / this.actor.gameInstance.framesPerSecond : 0; }
 
   getAnimationDuration() {
     if (this.animationName != null) {
@@ -191,7 +191,7 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
     this.hasFrameBeenUpdated = true
 
     let animation = this.animationsByName[this.animationName]
-    let frame = animation.startFrameIndex + Math.max(1, Math.ceil(this.animationTimer / SupEngine.GameInstance.framesPerSecond * this.asset.framesPerSecond)) - 1
+    let frame = animation.startFrameIndex + Math.max(1, Math.ceil(this.animationTimer / this.actor.gameInstance.framesPerSecond * this.asset.framesPerSecond)) - 1
     if (frame > animation.endFrameIndex) {
       if (this.animationLooping) {
         frame = animation.startFrameIndex

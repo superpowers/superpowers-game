@@ -240,11 +240,11 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
 
   setAnimationTime(time: number) {
     if (typeof time !== "number" || time < 0 || time > this.getAnimationDuration()) throw new Error("Invalid time");
-    this.animationTimer = time * SupEngine.GameInstance.framesPerSecond;
+    this.animationTimer = time * this.actor.gameInstance.framesPerSecond;
     this.updatePose();
   }
 
-  getAnimationTime() { return (this.animation != null) ? this.animationTimer / SupEngine.GameInstance.framesPerSecond : 0; }
+  getAnimationTime() { return (this.animation != null) ? this.animationTimer / this.actor.gameInstance.framesPerSecond : 0; }
   getAnimationDuration() {
     if (this.animation == null || this.animation.duration == null) return 0;
     return this.animation.duration;
@@ -295,11 +295,11 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
 
     // TODO: this.asset.speedMultiplier
     let speedMultiplier = 1;
-    let time = this.animationTimer * speedMultiplier / SupEngine.GameInstance.framesPerSecond;
+    let time = this.animationTimer * speedMultiplier / this.actor.gameInstance.framesPerSecond;
 
     if (time > this.animation.duration) {
       if (this.animationLooping) {
-        this.animationTimer -= this.animation.duration * SupEngine.GameInstance.framesPerSecond / speedMultiplier;
+        this.animationTimer -= this.animation.duration * this.actor.gameInstance.framesPerSecond / speedMultiplier;
         time -= this.animation.duration;
       } else {
         time = this.animation.duration;

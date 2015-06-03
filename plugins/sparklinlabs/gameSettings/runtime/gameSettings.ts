@@ -1,6 +1,6 @@
 export function init(player: SupRuntime.Player, callback: Function) {
-  SupEngine.GameInstance.framesPerSecond = player.resources.gameSettings.framesPerSecond;
-  SupRuntime.Player.updateInterval = 1 / SupEngine.GameInstance.framesPerSecond * 1000;
+  player.gameInstance.framesPerSecond = player.resources.gameSettings.framesPerSecond;
+  SupRuntime.Player.updateInterval = 1 / player.gameInstance.framesPerSecond * 1000;
 
   if (player.resources.gameSettings.ratioNumerator != null && player.resources.gameSettings.ratioDenominator != null) {
     player.gameInstance.setRatio(player.resources.gameSettings.ratioNumerator / player.resources.gameSettings.ratioDenominator);
