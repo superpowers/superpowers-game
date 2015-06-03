@@ -44,21 +44,6 @@ export default class Camera2DControls extends ActorComponent {
   }
 
   update() {
-    // Zoom
-    let newOrthographicScale: number;
-    if (this.actor.gameInstance.input.mouseButtons[5].isDown) {
-      newOrthographicScale = Math.max(this.options.zoomMin, this.camera.orthographicScale * this.multiplier / this.options.zoomSpeed);
-    }
-
-    if (this.actor.gameInstance.input.mouseButtons[6].isDown) {
-      newOrthographicScale = Math.min(this.options.zoomMax, this.camera.orthographicScale * this.multiplier * this.options.zoomSpeed);
-    }
-
-    if (newOrthographicScale != null && newOrthographicScale !== this.camera.orthographicScale) {
-      let mousePosition = this.actor.gameInstance.input.mousePosition;
-      this.changeOrthographicScale(newOrthographicScale, mousePosition.x, mousePosition.y);
-    }
-
     // Move
     if (this.actor.gameInstance.input.mouseButtons[1].isDown ||
     (this.actor.gameInstance.input.mouseButtons[0].isDown && this.actor.gameInstance.input.keyboardButtons[(<any>window).KeyEvent.DOM_VK_ALT].isDown)) {
@@ -70,6 +55,23 @@ export default class Camera2DControls extends ActorComponent {
       mouseDelta.y *= this.camera.orthographicScale;
 
       if (mouseDelta.x !== 0 || mouseDelta.y !== 0) this.camera.actor.moveLocal(new THREE.Vector3(-mouseDelta.x, mouseDelta.y, 0));
+    }
+    
+    // Zoom
+    else {
+      let newOrthographicScale: number;
+      if (this.actor.gameInstance.input.mouseButtons[5].isDown) {
+        newOrthographicScale = Math.max(this.options.zoomMin, this.camera.orthographicScale * this.multiplier / this.options.zoomSpeed);
+      }
+
+      if (this.actor.gameInstance.input.mouseButtons[6].isDown) {
+        newOrthographicScale = Math.min(this.options.zoomMax, this.camera.orthographicScale * this.multiplier * this.options.zoomSpeed);
+      }
+
+      if (newOrthographicScale != null && newOrthographicScale !== this.camera.orthographicScale) {
+        let mousePosition = this.actor.gameInstance.input.mousePosition;
+        this.changeOrthographicScale(newOrthographicScale, mousePosition.x, mousePosition.y);
+      }
     }
   }
 
