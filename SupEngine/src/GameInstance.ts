@@ -129,8 +129,12 @@ export default class GameInstance extends EventEmitter {
     this.resizeRenderer();
 
     this.threeRenderer.clear();
-    this.renderComponents.sort( (a, b) => { return this.cachedActors.indexOf(a.actor) - this.cachedActors.indexOf(b.actor); } );
-    this.renderComponents.forEach((renderComponent) => { renderComponent.render(); });
+    this.renderComponents.sort((a, b) => {
+      let order = (a.depth - b.depth);
+      if (order === 0) order = this.cachedActors.indexOf(a.actor) - this.cachedActors.indexOf(b.actor);
+      return order;
+    });
+    for (let renderComponent of this.renderComponents) renderComponent.render();
   }
 
   clear() { this.threeRenderer.clear(); }
