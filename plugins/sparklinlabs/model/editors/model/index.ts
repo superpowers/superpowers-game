@@ -338,10 +338,15 @@ function setupAnimation(animation: any, index: number) {
 }
 
 // Engine
-function tick() {
-  // FIXME: decouple update interval from render interval
-  ui.gameInstance.update();
-  ui.gameInstance.draw();
+let lastTimestamp = 0;
+let accumulatedTime = 0;
+function tick(timestamp=0) {
+  accumulatedTime += timestamp - lastTimestamp;
+  lastTimestamp = timestamp;
+  let { updates, timeLeft } = ui.gameInstance.tick(accumulatedTime);
+  accumulatedTime = timeLeft;
+
+  if (updates > 0) ui.gameInstance.draw();
   ui.tickAnimationFrameId = requestAnimationFrame(tick);
 }
 

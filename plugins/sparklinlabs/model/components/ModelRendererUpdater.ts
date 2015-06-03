@@ -123,7 +123,7 @@ export default class ModelRendererUpdater {
   }
 
   _onEditCommand_setMaps(maps: any) {
-    // TODO: Only update the maps that changed, don"t recreate the whole model
+    // TODO: Only update the maps that changed, don't recreate the whole model
     this._prepareMaps(() => {
       this.modelRenderer.setModel(this.modelAsset.pub, this.materialType);
       if (this.animationId != null) this._playAnimation();

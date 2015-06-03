@@ -56,7 +56,7 @@ function start() {
   document.querySelector("button.rename-property").addEventListener("click", onRenamePropertyClick);
   document.querySelector("button.delete-property").addEventListener("click", onDeletePropertyClick);
 
-  requestAnimationFrame(draw);
+  requestAnimationFrame(tick);
 }
 
 // Network callbacks
@@ -251,26 +251,33 @@ function onDeletePropertyClick() {
 }
 
 // Drawing
-function draw() {
-  requestAnimationFrame(draw);
+let lastTimestamp = 0;
+let accumulatedTime = 0;
+function tick(timestamp=0) {
+  requestAnimationFrame(tick);
 
-  ui.gameInstance.update();
+  accumulatedTime += timestamp - lastTimestamp;
+  lastTimestamp = timestamp;
+  let { updates, timeLeft } = ui.gameInstance.tick(accumulatedTime);
+  accumulatedTime = timeLeft;
 
-  if (ui.gameInstance.input.mouseButtons[0].wasJustReleased) {
-    let mousePosition = ui.gameInstance.input.mousePosition;
-    let [ mouseX, mouseY ] = ui.cameraControls.getScenePosition(mousePosition.x, mousePosition.y);
-    let x = Math.floor(mouseX);
-    let y = Math.floor(mouseY);
+  if (updates > 0) {
+    if (ui.gameInstance.input.mouseButtons[0].wasJustReleased) {
+      let mousePosition = ui.gameInstance.input.mousePosition;
+      let [ mouseX, mouseY ] = ui.cameraControls.getScenePosition(mousePosition.x, mousePosition.y);
+      let x = Math.floor(mouseX);
+      let y = Math.floor(mouseY);
 
-    if (x >= 0 && x < data.tileSetUpdater.tileSetAsset.pub.domImage.width / data.tileSetUpdater.tileSetAsset.pub.gridSize &&
-    y >= 0 && y < data.tileSetUpdater.tileSetAsset.pub.domImage.height / data.tileSetUpdater.tileSetAsset.pub.gridSize &&
-    (x !== data.selectedTile.x || y !== data.selectedTile.y)) {
-      data.tileSetUpdater.tileSetRenderer.select(x, y);
-      selectTile({ x, y });
+      if (x >= 0 && x < data.tileSetUpdater.tileSetAsset.pub.domImage.width / data.tileSetUpdater.tileSetAsset.pub.gridSize &&
+      y >= 0 && y < data.tileSetUpdater.tileSetAsset.pub.domImage.height / data.tileSetUpdater.tileSetAsset.pub.gridSize &&
+      (x !== data.selectedTile.x || y !== data.selectedTile.y)) {
+        data.tileSetUpdater.tileSetRenderer.select(x, y);
+        selectTile({ x, y });
+      }
     }
-  }
 
-  ui.gameInstance.draw();
+    ui.gameInstance.draw();
+  }
 }
 
 // Start

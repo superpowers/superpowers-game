@@ -62,7 +62,13 @@ export function updateSelection() {
   spritesheetArea.selectionRenderer.setup(width, height, animation.startFrameIndex, animation.endFrameIndex, framesPerRow);
 }
 
-export function handleSpritesheetArea() {
-  spritesheetArea.gameInstance.update();
-  spritesheetArea.gameInstance.draw();
+let lastTimestamp = 0;
+let accumulatedTime = 0;
+export function handleSpritesheetArea(timestamp: number) {
+  accumulatedTime += timestamp - lastTimestamp;
+  lastTimestamp = timestamp;
+  let { updates, timeLeft } = spritesheetArea.gameInstance.tick(accumulatedTime);
+  accumulatedTime = timeLeft;
+
+  if (updates > 0) spritesheetArea.gameInstance.draw();
 }

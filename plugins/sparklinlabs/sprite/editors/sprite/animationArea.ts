@@ -41,9 +41,15 @@ export function centerCamera() {
   ));
 }
 
-export function handleAnimationArea() {
-  animationArea.gameInstance.update();
-  animationArea.gameInstance.draw();
+let lastTimestamp = 0;
+let accumulatedTime = 0;
+export function handleAnimationArea(timestamp: number) {
+  accumulatedTime += timestamp - lastTimestamp;
+  lastTimestamp = timestamp;
+  let { updates, timeLeft } = animationArea.gameInstance.tick(accumulatedTime);
+  accumulatedTime = timeLeft;
+
+  if (updates > 0) animationArea.gameInstance.draw();
 
   if (data != null && ui.selectedAnimationId != null) {
     let animationTime = data.spriteUpdater.spriteRenderer.getAnimationTime() / data.spriteUpdater.spriteRenderer.getAnimationDuration();

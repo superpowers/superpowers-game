@@ -1,11 +1,11 @@
 import { handleSpritesheetArea } from "./spritesheetArea";
 import { handleAnimationArea } from "./animationArea";
 
-function draw() {
-  requestAnimationFrame(draw);
+function tick(timestamp=0) {
+  requestAnimationFrame(tick);
 
-  handleSpritesheetArea();
-  handleAnimationArea();
+  handleSpritesheetArea(timestamp);
+  handleAnimationArea(timestamp);
 }
 
-requestAnimationFrame(draw);
+requestAnimationFrame(tick);

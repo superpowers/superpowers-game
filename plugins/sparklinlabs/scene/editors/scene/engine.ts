@@ -32,22 +32,30 @@ engine.selectionBoxActor = new SupEngine.Actor(engine.gameInstance, "Selection B
 engine.selectionBoxComponent= new SupEngine.editorComponentClasses["SelectionBox"](engine.selectionBoxActor);
 
 engine.tickAnimationFrameId = requestAnimationFrame(tick);
-function tick() {
-  // FIXME: decouple update interval from render interval
-  engine.gameInstance.update();
 
-  if (ui.cameraMode === "3D" && engine.gameInstance.input.keyboardButtons[(<any>window).KeyEvent.DOM_VK_CONTROL].isDown) {
-    if (engine.gameInstance.input.mouseButtons[5].isDown) {
-      ui.cameraSpeedSlider.value = (parseFloat(ui.cameraSpeedSlider.value) + 2 * parseFloat(ui.cameraSpeedSlider.step)).toString();
-      engine.cameraControls.movementSpeed = ui.cameraSpeedSlider.value;
-    } else if (engine.gameInstance.input.mouseButtons[6].isDown) {
-      ui.cameraSpeedSlider.value = (parseFloat(ui.cameraSpeedSlider.value) - 2 * parseFloat(ui.cameraSpeedSlider.step)).toString();
-      engine.cameraControls.movementSpeed = ui.cameraSpeedSlider.value;
-    }
-  }
-
-  engine.gameInstance.draw();
+let lastTimestamp = 0;
+let accumulatedTime = 0;
+function tick(timestamp=0) {
   engine.tickAnimationFrameId = requestAnimationFrame(tick);
+
+  accumulatedTime += timestamp - lastTimestamp;
+  lastTimestamp = timestamp;
+  let { updates, timeLeft } = engine.gameInstance.tick(accumulatedTime);
+  accumulatedTime = timeLeft;
+
+  if (updates > 0) {
+    if (ui.cameraMode === "3D" && engine.gameInstance.input.keyboardButtons[(<any>window).KeyEvent.DOM_VK_CONTROL].isDown) {
+      if (engine.gameInstance.input.mouseButtons[5].isDown) {
+        ui.cameraSpeedSlider.value = (parseFloat(ui.cameraSpeedSlider.value) + 2 * parseFloat(ui.cameraSpeedSlider.step)).toString();
+        engine.cameraControls.movementSpeed = ui.cameraSpeedSlider.value;
+      } else if (engine.gameInstance.input.mouseButtons[6].isDown) {
+        ui.cameraSpeedSlider.value = (parseFloat(ui.cameraSpeedSlider.value) - 2 * parseFloat(ui.cameraSpeedSlider.step)).toString();
+        engine.cameraControls.movementSpeed = ui.cameraSpeedSlider.value;
+      }
+    }
+
+    engine.gameInstance.draw();
+  }
 }
 
 canvasElt.addEventListener("mouseup", onMouseUp);
@@ -82,10 +90,10 @@ function onMouseUp(event: MouseEvent) {
 
       if (threeObject != null) {
         selectedNodeId = threeObject.userData.nodeId;
-        
+
         let treeViewNode: HTMLLIElement = ui.nodesTreeView.treeRoot.querySelector(`li[data-id='${selectedNodeId}']`);
         ui.nodesTreeView.addToSelection(treeViewNode);
-        
+
         let treeViewParent = treeViewNode.parentElement;
         while (treeViewParent !== ui.nodesTreeView.treeRoot) {
           if (treeViewParent.tagName === "OL") (<HTMLElement>treeViewParent.previousElementSibling).classList.remove("collapsed");
