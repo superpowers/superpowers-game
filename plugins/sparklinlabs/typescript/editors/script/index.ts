@@ -134,8 +134,15 @@ function start() {
   ui.infoElement = document.createElement("div");
   ui.infoElement.classList.add("popup-info");
 
-  document.onmouseout = (event) => { clearInfoPopup(); }
-  document.onmousemove = (event) => {
+  document.addEventListener("mouseout", (event) => { clearInfoPopup(); });
+  
+  let previousMousePosition = { x: -1, y: -1 };
+  document.addEventListener("mousemove", (event) => {
+    // On some systems, Chrome (at least v43) generates
+    // spurious "mousemove" events every second or so.
+    if (event.clientX === previousMousePosition.x && event.clientY === previousMousePosition.y) return;
+    previousMousePosition.x = event.clientX;
+    previousMousePosition.y = event.clientY;
     clearInfoPopup();
 
     ui.infoTimeout = window.setTimeout(() => {
@@ -154,7 +161,7 @@ function start() {
         start
       });
     }, 200);
-  };
+  });
 
   let nwDispatcher = (<any>window).nwDispatcher;
   if (nwDispatcher != null) {
