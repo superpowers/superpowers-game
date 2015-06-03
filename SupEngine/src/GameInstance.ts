@@ -9,7 +9,7 @@ import Audio from "./Audio";
 import Camera from "./components/Camera";
 
 export default class GameInstance extends EventEmitter {
-  static framesPerSecond = 60;
+  framesPerSecond = 60;
   ratio: number;
   
   tree = new ActorTree();
@@ -40,13 +40,10 @@ export default class GameInstance extends EventEmitter {
     let enableOnExit = (options.enableOnExit != null) ? options.enableOnExit : false;
     this.input = new Input(canvas, options.enableOnExit ? { exitCallback: this._doExitCallback } : null);
 
-    try {
-      this.threeRenderer = new THREE.WebGLRenderer({ canvas, precision: "mediump", alpha: false, antialias: false, stencil: false });
-    } catch (e) { return; }
+    try { this.threeRenderer = new THREE.WebGLRenderer({ canvas, precision: "mediump", alpha: false, antialias: false, stencil: false }); }
+    catch (e) { return; }
     this.threeRenderer.setSize(0, 0, false);
-    this.threeRenderer.autoClearColor = false
-    // this.threeRenderer.setFaceCulling(THREE.CullFaceNone);
-    // this.threeRenderer.setBlending(THREE.CustomBlending, THREE.AddEquation, THREE.OneFactor, THREE.OneMinusSrcAlphaFactor);
+    this.threeRenderer.autoClearColor = false;
 
     this.threeScene.autoUpdate = false;
   }

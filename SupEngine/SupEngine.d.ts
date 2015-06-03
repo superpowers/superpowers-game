@@ -16,28 +16,30 @@ declare module SupEngine {
   function registerEarlyUpdateFunction(name: string, callback: Function): void;
 
   class GameInstance extends EventEmitter {
-    static framesPerSecond: number;
-
-    debug: boolean;
+    framesPerSecond: number;
     ratio: number;
+    
     tree: ActorTree;
     cachedActors: Actor[];
     renderComponents: ActorComponent[];
     componentsToBeStarted: ActorComponent[];
     componentsToBeDestroyed: ActorComponent[];
     actorsToBeDestroyed: Actor[];
-    skipRendering: boolean;
-    exited: boolean;
-
+    
     input: Input;
     audio: Audio;
 
     threeRenderer: THREE.WebGLRenderer;
     threeScene: THREE.Scene;
 
-    constructor(canvas: HTMLCanvasElement, options?: {debug?: boolean; enableOnExit?: boolean});
-    update(): void;
+    debug: boolean;
+    skipRendering: boolean;
+    exitCallback: Function;
+    exited: boolean;
+
+    constructor(canvas: HTMLCanvasElement, options?: { debug?: boolean; enableOnExit?: boolean; });
     setRatio(ratio?: number): void;
+    update(): void;
     draw(): void;
     clear(): void;
     destroyComponent(component: ActorComponent): void;

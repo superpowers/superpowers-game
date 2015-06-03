@@ -9,10 +9,6 @@ interface Asset {
 }
 
 export default class Player {
-
-  static updateInterval = 1 / SupEngine.GameInstance.framesPerSecond * 1000;
-  static maxAccumulatedTime = 5 * Player.updateInterval;
-
   canvas: HTMLCanvasElement;
   dataURL: string;
   gameName: string;
@@ -186,15 +182,18 @@ export default class Player {
     this.accumulatedTime += timestamp - this.lastTimestamp;
     this.lastTimestamp = timestamp;
 
+    let updateInterval = 1 / this.gameInstance.framesPerSecond * 1000;
+    let maxAccumulatedTime = 5 * updateInterval;
+
     // If the game is running slowly, don't fall into the well of dispair
-    if (this.accumulatedTime > Player.maxAccumulatedTime) this.accumulatedTime = Player.maxAccumulatedTime;
+    if (this.accumulatedTime > maxAccumulatedTime) this.accumulatedTime = maxAccumulatedTime;
 
     // Update
     let gameUpdated = false;
-    while (this.accumulatedTime >= Player.updateInterval) {
+    while (this.accumulatedTime >= updateInterval) {
       this.gameInstance.update();
       if (this.gameInstance.exited) return;
-      this.accumulatedTime -= Player.updateInterval;
+      this.accumulatedTime -= updateInterval;
       gameUpdated = true;
     }
 
