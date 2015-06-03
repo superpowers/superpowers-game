@@ -3,9 +3,9 @@ module Sup {
   export function log(message, ...optionalParams) { console.log.apply(console, [ message ].concat(optionalParams)); }
 
   export function exit() {
-    if (player.gameInstance.input.onExit != null) {
-      player.gameInstance.input.onExit();
-      player.gameInstance.input.onExit = null;
+    if (player.gameInstance.exitCallback != null) {
+      player.gameInstance.exitCallback();
+      player.gameInstance.exitCallback = null;
     }
 
     player.gameInstance.destroyAllActors();
@@ -15,9 +15,7 @@ module Sup {
     if (! player.gameInstance.debug && window.nwDispatcher != null)
       window.nwDispatcher.requireNwGui().Window.get().close();
   }
-  export function onExit(callback) {
-    player.gameInstance.input.onExit = callback;
-  }
+  export function onExit(callback) { player.gameInstance.exitCallback = callback; }
 
   export class Asset {
     name: string;
