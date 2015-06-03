@@ -80,8 +80,8 @@ export default class TileMapRenderer extends SupEngine.ActorComponent {
 
   _setupTexture(texture: THREE.Texture) {
     this.tileSetTexture = texture;
-    this.tilesPerRow = this.tileSetTexture.image.width / this.tileSet.data.gridSize;
-    this.tilesPerColumn = this.tileSetTexture.image.height / this.tileSet.data.gridSize;
+    this.tilesPerRow = this.tileSetTexture.image.width / this.tileSet.data.grid.width;
+    this.tilesPerColumn = this.tileSetTexture.image.height / this.tileSet.data.grid.height;
   }
 
   _destroy() {
@@ -96,8 +96,8 @@ export default class TileMapRenderer extends SupEngine.ActorComponent {
   }
 
   addLayer(layer: TileMapLayerPub, layerIndex: number) {
-    let width = this.tileMap.data.width * this.tileSet.data.gridSize;
-    let height = this.tileMap.data.height * this.tileSet.data.gridSize;
+    let width = this.tileMap.data.width * this.tileSet.data.grid.width;
+    let height = this.tileMap.data.height * this.tileSet.data.grid.height;
     let geometry = new TileLayerGeometry(width, height, this.tileMap.data.width, this.tileMap.data.height);
     let material = new THREE.MeshBasicMaterial({ map: this.tileSetTexture, alphaTest: 0.1, side: THREE.DoubleSide, transparent: true });
     let layerMesh = new THREE.Mesh(geometry, material);
@@ -178,10 +178,10 @@ export default class TileMapRenderer extends SupEngine.ActorComponent {
       tileY = this.tilesPerColumn - 1;
     }
 
-    let left   = (tileX     * this.tileSet.data.gridSize + 0.2) / this.tileSetTexture.image.width;
-    let right  = ((tileX+1) * this.tileSet.data.gridSize - 0.2) / this.tileSetTexture.image.width;
-    let bottom = 1 - ((tileY+1) * this.tileSet.data.gridSize - 0.2) / this.tileSetTexture.image.height;
-    let top    = 1 - (tileY     * this.tileSet.data.gridSize + 0.2) / this.tileSetTexture.image.height;
+    let left   = (tileX     * this.tileSet.data.grid.width + 0.2) / this.tileSetTexture.image.width;
+    let right  = ((tileX+1) * this.tileSet.data.grid.width - 0.2) / this.tileSetTexture.image.width;
+    let bottom = 1 - ((tileY+1) * this.tileSet.data.grid.height - 0.2) / this.tileSetTexture.image.height;
+    let top    = 1 - (tileY     * this.tileSet.data.grid.height + 0.2) / this.tileSetTexture.image.height;
 
     if (flipX) {
       let temp = right;

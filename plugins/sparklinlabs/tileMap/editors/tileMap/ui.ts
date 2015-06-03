@@ -234,8 +234,11 @@ function onChangeHighlight() {
 export function selectBrush(x?: number, y?: number, width=1, height=1) {
   if (x != null && y != null) data.tileSetUpdater.tileSetRenderer.select(x, y, width, height);
 
+  let ratio = data.tileSetUpdater.tileSetAsset.pub.grid.width / data.tileSetUpdater.tileSetAsset.pub.grid.height;
   let position = data.tileSetUpdater.tileSetRenderer.selectedTileActor.getLocalPosition();
+  position.y = Math.round(position.y * ratio);
   let scale = data.tileSetUpdater.tileSetRenderer.selectedTileActor.getLocalScale();
+  scale.y = Math.round(scale.y * ratio);
   let layerData: (number|boolean)[][] = [];
   for (let y = -scale.y - 1; y >= 0; y--) {
     for (let x = 0; x < scale.x; x++) {
@@ -248,7 +251,7 @@ export function selectBrush(x?: number, y?: number, width=1, height=1) {
   mapArea.patternActor.threeObject.visible = true;
   data.tileSetUpdater.tileSetRenderer.selectedTileActor.threeObject.visible = true;
   mapArea.patternBackgroundActor.threeObject.visible = true;
-  mapArea.patternBackgroundActor.setLocalScale(new SupEngine.THREE.Vector3(width, height, 1));
+  mapArea.patternBackgroundActor.setLocalScale(new SupEngine.THREE.Vector3(width, height / ratio, 1));
 }
 
 export function selectFill(x?: number, y?: number) {
@@ -277,7 +280,8 @@ export function selectEraser() {
   mapArea.patternActor.threeObject.visible = false;
   data.tileSetUpdater.tileSetRenderer.selectedTileActor.threeObject.visible = false;
   mapArea.patternBackgroundActor.threeObject.visible = true;
-  mapArea.patternBackgroundActor.setLocalScale(new SupEngine.THREE.Vector3(1, 1, 1));
+  let ratio = data.tileSetUpdater.tileSetAsset.pub.grid.width / data.tileSetUpdater.tileSetAsset.pub.grid.height;
+  mapArea.patternBackgroundActor.setLocalScale(new SupEngine.THREE.Vector3(1, 1 / ratio, 1));
 }
 
 export function setupLayer(layer: TileMapLayerPub, index: number) {

@@ -5,7 +5,7 @@ import TileMapSettingsResource from "./TileMapSettingsResource";
 
 interface TileSetAssetPub {
   image: Buffer;
-  gridSize: number;
+  grid: { width: number; height: number };
   tileProperties: { [tileName: string]: { [propertyName: string]: string} };
   domImage?: any;
 }
@@ -14,7 +14,13 @@ export default class TileSetAsset extends SupCore.data.base.Asset {
 
   static schema = {
     image: { type: "buffer" },
-    gridSize: { type: "integer", min: 1, mutable: true },
+    grid: {
+      type: "hash",
+      properties: {
+        width: { type: "number", min: 1, mutable: true },
+        height: { type: "number", min: 1, mutable: true }
+      }
+    },
     tileProperties: {
       type: "hash",
       values: {
@@ -35,7 +41,7 @@ export default class TileSetAsset extends SupCore.data.base.Asset {
     this.serverData.resources.acquire("tileMapSettings", null, (err: Error, tileMapSettings: TileMapSettingsResource) => {
       this.pub = {
         image: new Buffer(0),
-        gridSize: tileMapSettings.pub.gridSize,
+        grid: tileMapSettings.pub.grid,
         tileProperties: {}
       };
 
@@ -46,6 +52,13 @@ export default class TileSetAsset extends SupCore.data.base.Asset {
   load(assetPath: string) {
     fs.readFile(path.join(assetPath, "asset.json"), { encoding: "utf8" }, (err, json) => {
       this.pub = JSON.parse(json);
+      
+      // TODO: Remove these at some point, new config setting introduced in Superpowers 0.8
+      if (this.pub["gridSize"] != null) {
+        this.pub.grid = { width: this.pub["gridSize"], height: this.pub["gridSize"]};
+        delete this.pub["gridSize"];
+      }
+      
       fs.readFile(path.join(assetPath, "image.dat"), (err, buffer) => {
         this.pub.image = buffer;
         this.setup();

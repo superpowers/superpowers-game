@@ -39,16 +39,18 @@ export default class TileSetRenderer extends SupEngine.ActorComponent {
   }
 
   select(x: number, y: number, width=1, height=1) {
-    this.selectedTileActor.setLocalPosition(new THREE.Vector3(x, -y, 2));
-    this.selectedTileActor.setLocalScale(new THREE.Vector3(width, -height, 1));
+    let ratio = this.asset.data.grid.width / this.asset.data.grid.height;
+    this.selectedTileActor.setLocalPosition(new THREE.Vector3(x, -y / ratio, 2));
+    this.selectedTileActor.setLocalScale(new THREE.Vector3(width, -height / ratio, 1));
   }
 
   refreshScaleRatio() {
-    let scaleRatio = 1 / this.asset.data.gridSize
-    this.mesh.scale.set(scaleRatio, scaleRatio, scaleRatio);
+    let scaleX = 1 / this.asset.data.grid.width;
+    let scaleY = 1 / this.asset.data.grid.height;
+    this.mesh.scale.set(scaleX, scaleX, 1);
     let material = <THREE.MeshBasicMaterial>this.mesh.material;
-    this.mesh.position.setX(material.map.image.width / 2 * scaleRatio);
-    this.mesh.position.setY(-material.map.image.height / 2 * scaleRatio);
+    this.mesh.position.setX(material.map.image.width / 2 * scaleX);
+    this.mesh.position.setY(-material.map.image.height / 2 * scaleX);
     this.mesh.updateMatrixWorld(false);
 
     this.select(0, 0);

@@ -31,7 +31,9 @@ export default class TileMapSettingsEditor {
     this.fields["layerDepthOffset"] = SupClient.table.appendNumberField(this.depthOffsetRow.valueCell, "");
 
     this.gridSizeRow = SupClient.table.appendRow(tbody, "Tile set grid size");
-    this.fields["gridSize"] = SupClient.table.appendNumberField(this.gridSizeRow.valueCell, "");
+    let gridFields = SupClient.table.appendNumberFields(this.gridSizeRow.valueCell, [null, null]);
+    this.fields["grid.width"] = gridFields[0];
+    this.fields["grid.height"] = gridFields[1];
 
     this.fields["pixelsPerUnit"].addEventListener("change", (event: any) => {
       this.projectClient.socket.emit("edit:resources", "tileMapSettings", "setProperty", "pixelsPerUnit", parseInt(event.target.value), (err: string) => { if (err != null) alert(err); });
@@ -49,8 +51,12 @@ export default class TileMapSettingsEditor {
       this.projectClient.socket.emit("edit:resources", "tileMapSettings", "setProperty", "layerDepthOffset", parseInt(event.target.value), (err: string) => { if (err != null) alert(err); });
     });
 
-    this.fields["gridSize"].addEventListener("change", (event: any) => {
-      this.projectClient.socket.emit("edit:resources", "tileMapSettings", "setProperty", "gridSize", parseInt(event.target.value), (err: string) => { if (err != null) alert(err); });
+    this.fields["grid.width"].addEventListener("change", (event: any) => {
+      this.projectClient.socket.emit("edit:resources", "tileMapSettings", "setProperty", "grid.width", parseInt(event.target.value), (err: string) => { if (err != null) alert(err); });
+    });
+    
+    this.fields["grid.height"].addEventListener("change", (event: any) => {
+      this.projectClient.socket.emit("edit:resources", "tileMapSettings", "setProperty", "grid.height", parseInt(event.target.value), (err: string) => { if (err != null) alert(err); });
     });
 
     this.projectClient.subResource("tileMapSettings", this);

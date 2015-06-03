@@ -195,7 +195,8 @@ export function rotateTiles() {
   }
 
   setupPattern(layerData, height);
-  mapArea.patternBackgroundActor.setLocalScale(new SupEngine.THREE.Vector3(height, width, 1));
+  let ratio = data.tileSetUpdater.tileSetAsset.pub.grid.width / data.tileSetUpdater.tileSetAsset.pub.grid.height;
+  mapArea.patternBackgroundActor.setLocalScale(new SupEngine.THREE.Vector3(height, width / ratio, 1));
 }
 
 interface Edits {
@@ -239,14 +240,14 @@ function getMapGridPosition(gameInstance: SupEngine.GameInstance, cameraComponen
   x = x * 2 - 1;
   x *= cameraComponent.orthographicScale / 2 * cameraComponent.cachedRatio;
   x += cameraPosition.x;
-  x *= data.tileMapUpdater.tileMapAsset.pub.pixelsPerUnit / data.tileMapUpdater.tileSetAsset.pub.gridSize;
+  x *= data.tileMapUpdater.tileMapAsset.pub.pixelsPerUnit / data.tileMapUpdater.tileSetAsset.pub.grid.width;
   x = Math.floor(x);
 
   let y = position.y / gameInstance.threeRenderer.domElement.height;
   y = y * 2 - 1;
   y *= cameraComponent.orthographicScale / 2;
   y -= cameraPosition.y;
-  y *= data.tileMapUpdater.tileMapAsset.pub.pixelsPerUnit / data.tileMapUpdater.tileSetAsset.pub.gridSize;
+  y *= data.tileMapUpdater.tileMapAsset.pub.pixelsPerUnit / data.tileMapUpdater.tileSetAsset.pub.grid.height;
   y = Math.floor(y);
 
   return [ x, -y - 1 ];
@@ -341,10 +342,11 @@ export function handleMapArea() {
   }
 
   if (mapArea.patternActor.threeObject.visible || ui.eraserToolButton.checked) {
-    let ratio = pub.pixelsPerUnit / data.tileMapUpdater.tileSetAsset.pub.gridSize;
     let layer = data.tileMapUpdater.tileMapAsset.layers.byId[tileSetArea.selectedLayerId];
     let z = (pub.layers.indexOf(layer) + 0.5) * pub.layerDepthOffset
-    let patternPosition = new SupEngine.THREE.Vector3(mouseX/ratio, mouseY/ratio, z);
+    let ratioX = pub.pixelsPerUnit / data.tileMapUpdater.tileSetAsset.pub.grid.width;
+    let ratioY = pub.pixelsPerUnit / data.tileMapUpdater.tileSetAsset.pub.grid.height;
+    let patternPosition = new SupEngine.THREE.Vector3(mouseX/ratioX, mouseY/ratioY, z);
     mapArea.patternBackgroundActor.setLocalPosition(patternPosition);
   }
 
@@ -392,10 +394,13 @@ export function handleMapArea() {
       let width = Math.abs(mapArea.selectionEndPoint.x - mapArea.selectionStartPoint.x) + 1;
       let height = Math.abs(mapArea.selectionEndPoint.y - mapArea.selectionStartPoint.y) + 1;
 
-      let ratio = pub.pixelsPerUnit / data.tileMapUpdater.tileSetAsset.pub.gridSize;
-      let patternPosition = new SupEngine.THREE.Vector3(startX/ratio, startY/ratio, data.tileMapUpdater.tileMapAsset.layers.pub.length * pub.layerDepthOffset);
+      let ratioX = pub.pixelsPerUnit / data.tileMapUpdater.tileSetAsset.pub.grid.width;
+      let ratioY = pub.pixelsPerUnit / data.tileMapUpdater.tileSetAsset.pub.grid.height;
+      let z = data.tileMapUpdater.tileMapAsset.layers.pub.length * pub.layerDepthOffset;
+      let patternPosition = new SupEngine.THREE.Vector3(startX/ratioX, startY/ratioY, z);
       mapArea.patternBackgroundActor.setLocalPosition(patternPosition);
-      mapArea.patternBackgroundActor.setLocalScale(new SupEngine.THREE.Vector3(width, height, 1));
+      let ratio = data.tileSetUpdater.tileSetAsset.pub.grid.width / data.tileSetUpdater.tileSetAsset.pub.grid.height;
+      mapArea.patternBackgroundActor.setLocalScale(new SupEngine.THREE.Vector3(width, height / ratio, 1));
 
       // Delete selection
       if (mapArea.gameInstance.input.keyboardButtons[(<any>window).KeyEvent.DOM_VK_DELETE].wasJustReleased) {

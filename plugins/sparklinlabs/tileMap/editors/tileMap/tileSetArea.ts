@@ -31,6 +31,7 @@ function getTileSetGridPosition(gameInstance: SupEngine.GameInstance, cameraComp
   let mousePosition = gameInstance.input.mousePosition;
   let position = new SupEngine.THREE.Vector3(mousePosition.x, mousePosition.y, 0);
   let cameraPosition = cameraComponent.actor.getLocalPosition();
+  let ratio = data.tileSetUpdater.tileSetAsset.pub.grid.width / data.tileSetUpdater.tileSetAsset.pub.grid.height;
 
   let x = position.x / gameInstance.threeRenderer.domElement.width;
   x = x * 2 - 1;
@@ -38,10 +39,12 @@ function getTileSetGridPosition(gameInstance: SupEngine.GameInstance, cameraComp
   x += cameraPosition.x;
   x = Math.floor(x);
 
+  
   let y = position.y / gameInstance.threeRenderer.domElement.height;
   y = y * 2 - 1;
   y *= cameraComponent.orthographicScale / 2;
   y -= cameraPosition.y;
+  y *= ratio;
   y = Math.floor(y);
 
   return [ x, y ];
@@ -52,8 +55,8 @@ export function handleTileSetArea() {
   if (data.tileMapUpdater.tileMapAsset == null) return;
   if (data.tileMapUpdater.tileSetAsset == null) return;
 
-  let tilesPerRow = data.tileMapUpdater.tileSetAsset.pub.domImage.width / data.tileMapUpdater.tileSetAsset.pub.gridSize;
-  let tilesPerColumn = data.tileMapUpdater.tileSetAsset.pub.domImage.height / data.tileMapUpdater.tileSetAsset.pub.gridSize;
+  let tilesPerRow = data.tileMapUpdater.tileSetAsset.pub.domImage.width / data.tileMapUpdater.tileSetAsset.pub.grid.width;
+  let tilesPerColumn = data.tileMapUpdater.tileSetAsset.pub.domImage.height / data.tileMapUpdater.tileSetAsset.pub.grid.height;
 
   let [ mouseX, mouseY ] = getTileSetGridPosition(tileSetArea.gameInstance, tileSetArea.cameraComponent);
   if (tileSetArea.gameInstance.input.mouseButtons[0].wasJustPressed) {

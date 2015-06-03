@@ -25,7 +25,8 @@ html
         tr
           th Grid (pixels)
           td
-            input(type='number').grid-size
+            input(type='number' min="1").grid-width
+            input(type='number' min="1").grid-height
 
       .tile-number
         label Tile ID:

@@ -80,11 +80,11 @@ export default class TileSetRendererUpdater {
       this.tileSetThreeTexture.needsUpdate = true;
       this.tileSetRenderer.setTileSet(new TileSet(asset.pub), this.tileSetThreeTexture);
       this.tileSetRenderer.gridRenderer.setGrid({
-        width: asset.pub.domImage.width / asset.pub.gridSize,
-        height: asset.pub.domImage.height / asset.pub.gridSize,
+        width: asset.pub.domImage.width / asset.pub.grid.width,
+        height: asset.pub.domImage.height / asset.pub.grid.height,
         direction: -1,
         orthographicScale: 10,
-        ratio: { x: 1, y: 1 }
+        ratio: { x: 1, y: asset.pub.grid.width / asset.pub.grid.height }
       });
 
       if (this.receiveAssetCallbacks != null) this.receiveAssetCallbacks.tileSet();
@@ -122,20 +122,23 @@ export default class TileSetRendererUpdater {
       this.tileSetThreeTexture.needsUpdate = true;
       this.tileSetRenderer.setTileSet(new TileSet(this.tileSetAsset.pub), this.tileSetThreeTexture);
 
-      let width = this.tileSetThreeTexture.image.width / this.tileSetAsset.pub.gridSize;
-      let height = this.tileSetThreeTexture.image.height / this.tileSetAsset.pub.gridSize;
+      let width = this.tileSetThreeTexture.image.width / this.tileSetAsset.pub.grid.width;
+      let height = this.tileSetThreeTexture.image.height / this.tileSetAsset.pub.grid.height;
       this.tileSetRenderer.gridRenderer.resize(width, height);
+      this.tileSetRenderer.gridRenderer.setRatio({ x: 1, y: this.tileSetAsset.pub.grid.width / this.tileSetAsset.pub.grid.height });
     });
   }
 
   _onEditCommand_setProperty(key: string, value: any) {
     switch (key) {
-      case "gridSize":
+      case "grid.width":
+      case "grid.height":
         this.tileSetRenderer.refreshScaleRatio();
 
-        let width = this.tileSetThreeTexture.image.width / this.tileSetAsset.pub.gridSize;
-        let height = this.tileSetThreeTexture.image.height / this.tileSetAsset.pub.gridSize;
+        let width = this.tileSetThreeTexture.image.width / this.tileSetAsset.pub.grid.width;
+        let height = this.tileSetThreeTexture.image.height / this.tileSetAsset.pub.grid.height;
         this.tileSetRenderer.gridRenderer.resize(width, height);
+        this.tileSetRenderer.gridRenderer.setRatio({ x: 1, y: this.tileSetAsset.pub.grid.width / this.tileSetAsset.pub.grid.height });
         break;
     }
   }

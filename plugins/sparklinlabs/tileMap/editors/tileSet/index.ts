@@ -40,9 +40,16 @@ function start() {
 
   document.querySelector("button.download").addEventListener("click", onDownloadTileset);
 
-  ui.gridSizeInput = document.querySelector("input.grid-size");
-  ui.gridSizeInput.addEventListener("change", () => {
-    socket.emit("edit:assets", info.assetId, "setProperty", "gridSize", parseInt(ui.gridSizeInput.value), (err: string) => {
+  ui.gridWidthInput = document.querySelector("input.grid-width");
+  ui.gridWidthInput.addEventListener("change", () => {
+    socket.emit("edit:assets", info.assetId, "setProperty", "grid.width", parseInt(ui.gridWidthInput.value), (err: string) => {
+      if (err != null) alert(err);
+    });
+  });
+  
+  ui.gridHeightInput = document.querySelector("input.grid-height");
+  ui.gridHeightInput.addEventListener("change", () => {
+    socket.emit("edit:assets", info.assetId, "setProperty", "grid.height", parseInt(ui.gridHeightInput.value), (err: string) => {
       if (err != null) alert(err);
     });
   });
@@ -75,7 +82,8 @@ function onConnected() {
 }
 
 function onAssetReceived(err: string, asset: any) {
-  setupProperty("gridSize", data.tileSetUpdater.tileSetAsset.pub.gridSize);
+  setupProperty("grid-width", data.tileSetUpdater.tileSetAsset.pub.grid.width);
+  setupProperty("grid-height", data.tileSetUpdater.tileSetAsset.pub.grid.height);
   selectTile({ x: 0, y: 0 });
 }
 
@@ -127,15 +135,17 @@ onEditCommands.editTileProperty = (tile: { x: number; y: number; }, name: string
 
 function setupProperty(key: string, value: any) {
   switch (key) {
-    case "gridSize": ui.gridSizeInput.value = value; break;
+    case "grid-width": ui.gridWidthInput.value = value; break;
+    case "grid-height": ui.gridHeightInput.value = value; break;
   }
 }
 
 function selectTile(tile: { x: number; y: number; }) {
   data.selectedTile = tile;
+  let pub = data.tileSetUpdater.tileSetAsset.pub
 
-  let tilePerRow = Math.floor(data.tileSetUpdater.tileSetAsset.pub.domImage.width / data.tileSetUpdater.tileSetAsset.pub.gridSize);
-  let tilePerColumn = Math.floor(data.tileSetUpdater.tileSetAsset.pub.domImage.height / data.tileSetUpdater.tileSetAsset.pub.gridSize);
+  let tilePerRow = Math.floor(pub.domImage.width / pub.grid.width);
+  let tilePerColumn = Math.floor(pub.domImage.height / pub.grid.height);
 
   let tileIndex = (tile.x === tilePerRow - 1 && tile.y === tilePerColumn - 1) ? -1 : tile.x + tile.y * tilePerRow;
   ui.selectedTileLabel.textContent = tileIndex;
@@ -144,12 +154,12 @@ function selectTile(tile: { x: number; y: number; }) {
     ui.propertiesTreeView.remove(ui.propertiesTreeView.treeRoot.children[0]);
   }
 
-  if (data.tileSetUpdater.tileSetAsset.pub.tileProperties[`${tile.x}_${tile.y}`] == null) return;
+  if (pub.tileProperties[`${tile.x}_${tile.y}`] == null) return;
 
-  let properties = Object.keys(data.tileSetUpdater.tileSetAsset.pub.tileProperties[`${tile.x}_${tile.y}`]);
+  let properties = Object.keys(pub.tileProperties[`${tile.x}_${tile.y}`]);
   properties.sort();
   for (let propertyName of properties) {
-    addTileProperty(propertyName, data.tileSetUpdater.tileSetAsset.pub.tileProperties[`${tile.x}_${tile.y}`][propertyName]);
+    addTileProperty(propertyName, pub.tileProperties[`${tile.x}_${tile.y}`][propertyName]);
   }
 }
 
@@ -268,8 +278,9 @@ function tick(timestamp=0) {
       let x = Math.floor(mouseX);
       let y = Math.floor(mouseY);
 
-      if (x >= 0 && x < data.tileSetUpdater.tileSetAsset.pub.domImage.width / data.tileSetUpdater.tileSetAsset.pub.gridSize &&
-      y >= 0 && y < data.tileSetUpdater.tileSetAsset.pub.domImage.height / data.tileSetUpdater.tileSetAsset.pub.gridSize &&
+      let pub = data.tileSetUpdater.tileSetAsset.pub;
+      if (x >= 0 && x < pub.domImage.width / .pub.gridSize &&
+      y >= 0 && y < pub.domImage.height / pub.gridSize &&
       (x !== data.selectedTile.x || y !== data.selectedTile.y)) {
         data.tileSetUpdater.tileSetRenderer.select(x, y);
         selectTile({ x, y });
