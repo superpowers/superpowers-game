@@ -48,9 +48,6 @@ export default class GameInstance extends EventEmitter {
     this.threeScene.autoUpdate = false;
   }
 
-  /*init: (callback) ->
-    callback()*/
-
   update() {
     this.input.update();
 
@@ -110,11 +107,11 @@ export default class GameInstance extends EventEmitter {
     if (this.ratio != null) {
       if (document.body.clientWidth / document.body.clientHeight > this.ratio) {
         height = document.body.clientHeight;
-        width = Math.min(document.body.clientWidth, height * this.ratio)
+        width = Math.min(document.body.clientWidth, height * this.ratio);
       }
       else {
         width = document.body.clientWidth;
-        height = Math.min(document.body.clientHeight, width / this.ratio)
+        height = Math.min(document.body.clientHeight, width / this.ratio);
       }
     }
     else {
