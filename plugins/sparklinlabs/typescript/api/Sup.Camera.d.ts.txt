@@ -10,11 +10,13 @@ declare module Sup {
     setFOV(angle: number): Camera;
     getFOV(): number;
     getWidthToHeightRatio(): number;
-    setViewport(x: number, y: number, width: number, height: number): Camera;
-    getViewport(): { x: number; y: number; width: number; height: number; };
+    setDepth(depth: number): Camera;
+    getDepth(): number;
     setNearClippingPlane(nearClippingPlane: number) : Camera;
     getNearClippingPlane(): number;
     setFarClippingPlane(farClippingPlane: number): Camera;
     getFarClippingPlane(): number;
+    setViewport(x: number, y: number, width: number, height: number): Camera;
+    getViewport(): { x: number; y: number; width: number; height: number; };
   }
 }
