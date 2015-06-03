@@ -48,6 +48,25 @@ export default class GameInstance extends EventEmitter {
     this.threeScene.autoUpdate = false;
   }
 
+  tick(accumulatedTime: number): { updates: number; timeLeft: number; }  {
+    let updateInterval = 1 / this.framesPerSecond * 1000;
+    let maxAccumulatedTime = 5 * updateInterval;
+
+    // If the game is running slowly, don't fall into the well of dispair
+    if (accumulatedTime > maxAccumulatedTime) accumulatedTime = maxAccumulatedTime;
+
+    // Update
+    let updates = 0;
+    while (accumulatedTime >= updateInterval) {
+      this.update();
+      if (this.exited) break;
+      accumulatedTime -= updateInterval;
+      updates++;
+    }
+    
+    return { updates, timeLeft: accumulatedTime };
+  }
+
   update() {
     this.input.update();
 

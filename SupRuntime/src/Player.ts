@@ -177,28 +177,16 @@ export default class Player {
     this.tick();
   }
 
-  tick(timestamp?: number) {
-    timestamp |= 0;
+  tick(timestamp=0) {
     this.accumulatedTime += timestamp - this.lastTimestamp;
     this.lastTimestamp = timestamp;
 
-    let updateInterval = 1 / this.gameInstance.framesPerSecond * 1000;
-    let maxAccumulatedTime = 5 * updateInterval;
-
-    // If the game is running slowly, don't fall into the well of dispair
-    if (this.accumulatedTime > maxAccumulatedTime) this.accumulatedTime = maxAccumulatedTime;
-
-    // Update
-    let gameUpdated = false;
-    while (this.accumulatedTime >= updateInterval) {
-      this.gameInstance.update();
-      if (this.gameInstance.exited) return;
-      this.accumulatedTime -= updateInterval;
-      gameUpdated = true;
-    }
-
+    let { updates, timeLeft } = this.gameInstance.tick(this.accumulatedTime);
+    this.accumulatedTime = timeLeft;
+    if (this.gameInstance.exited) return;
+    
     // Render
-    if (gameUpdated) this.gameInstance.draw();
+    if (updates > 0) this.gameInstance.draw();
 
     // Do it again soon
     this.tickAnimationFrameId = requestAnimationFrame((timestamp) => { this.tick(timestamp); });
