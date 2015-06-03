@@ -18,7 +18,7 @@ export default class GameInstance extends EventEmitter {
   componentsToBeStarted: ActorComponent[] = [];
   componentsToBeDestroyed: ActorComponent[] = [];
   actorsToBeDestroyed: Actor[] = [];
-  
+
   input: Input;
   audio = new Audio();
 
@@ -35,7 +35,7 @@ export default class GameInstance extends EventEmitter {
 
     // Used to know whether or not we have to close the window at exit when using NW.js
     this.debug = options.debug === true;
-    
+
     // Exit callback is only enabled when playing the actual game, not in most editors
     let enableOnExit = (options.enableOnExit != null) ? options.enableOnExit : false;
     this.input = new Input(canvas, options.enableOnExit ? { exitCallback: this._doExitCallback } : null);
@@ -63,7 +63,7 @@ export default class GameInstance extends EventEmitter {
       accumulatedTime -= updateInterval;
       updates++;
     }
-    
+
     return { updates, timeLeft: accumulatedTime };
   }
 
@@ -189,7 +189,7 @@ export default class GameInstance extends EventEmitter {
 
     actor._destroy();
   }
-  
+
   _doExitCallback = () => {
     if (this.exitCallback != null) {
       this.exitCallback();

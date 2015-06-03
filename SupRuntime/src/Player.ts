@@ -177,19 +177,17 @@ export default class Player {
     this.tick();
   }
 
-  tick(timestamp=0) {
+  tick = (timestamp=0) => {
+    this.tickAnimationFrameId = requestAnimationFrame(this.tick);
+
     this.accumulatedTime += timestamp - this.lastTimestamp;
     this.lastTimestamp = timestamp;
 
     let { updates, timeLeft } = this.gameInstance.tick(this.accumulatedTime);
     this.accumulatedTime = timeLeft;
-    if (this.gameInstance.exited) return;
-    
-    // Render
-    if (updates > 0) this.gameInstance.draw();
+    if (this.gameInstance.exited) { cancelAnimationFrame(this.tickAnimationFrameId); return; }
 
-    // Do it again soon
-    this.tickAnimationFrameId = requestAnimationFrame((timestamp) => { this.tick(timestamp); });
+    if (updates > 0) this.gameInstance.draw();
   }
 
   getAssetData(path: string, responseType: string, callback: (err: Error, data?: any) => any) {

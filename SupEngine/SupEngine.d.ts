@@ -25,7 +25,7 @@ declare module SupEngine {
     componentsToBeStarted: ActorComponent[];
     componentsToBeDestroyed: ActorComponent[];
     actorsToBeDestroyed: Actor[];
-    
+
     input: Input;
     audio: Audio;
 
