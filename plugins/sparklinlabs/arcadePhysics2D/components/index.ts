@@ -65,12 +65,12 @@ module ArcadePhysics2D {
         function checkY(mapBody: ArcadeBody2D) {
           if (body1.deltaY() < 0) {
             let x = body1.position.x - mapBody.position.x - body1.width / 2;
-            let y = Math.floor((body1.position.y - mapBody.position.y - body1.height / 2) / mapBody.mapToSceneFactor);
+            let y = Math.floor((body1.position.y - mapBody.position.y - body1.height / 2) / mapBody.mapToSceneFactor.y);
             let testedWidth = body1.width - epsilon;
-            let totalPoints = Math.ceil(testedWidth / mapBody.mapToSceneFactor) + 1;
+            let totalPoints = Math.ceil(testedWidth / mapBody.mapToSceneFactor.x) + 1;
             for (let point = 0; point <= totalPoints; point++) {
               for (let layer in mapBody.layersIndex) {
-                let tile = mapBody.tileMapAsset.getTileAt(layer, Math.floor((x + point * testedWidth / totalPoints) / mapBody.mapToSceneFactor), y);
+                let tile = mapBody.tileMapAsset.getTileAt(layer, Math.floor((x + point * testedWidth / totalPoints) / mapBody.mapToSceneFactor.x), y);
 
                 let collide = false;
                 if (mapBody.tileSetPropertyName != null) {
@@ -81,7 +81,7 @@ module ArcadePhysics2D {
                 if (collide) {
                   gotCollision = true;
                   body1.velocity.y = -body1.velocity.y * body1.bounceY;
-                  body1.position.y = (y + 1) * mapBody.mapToSceneFactor + mapBody.position.y + body1.height / 2;
+                  body1.position.y = (y + 1) * mapBody.mapToSceneFactor.y + mapBody.position.y + body1.height / 2;
                   body1.touches.bottom = true;
                   return;
                 }
@@ -89,12 +89,12 @@ module ArcadePhysics2D {
             }
           } else if (body1.deltaY() > 0) {
             let x = body1.position.x - mapBody.position.x - body1.width / 2;
-            let y = Math.floor((body1.position.y - mapBody.position.y + body1.height / 2 - epsilon) / mapBody.mapToSceneFactor);
+            let y = Math.floor((body1.position.y - mapBody.position.y + body1.height / 2 - epsilon) / mapBody.mapToSceneFactor.y);
             let testedWidth = body1.width - epsilon;
-            let totalPoints = Math.ceil(testedWidth / mapBody.mapToSceneFactor) + 1;
+            let totalPoints = Math.ceil(testedWidth / mapBody.mapToSceneFactor.x) + 1;
             for (let point = 0; point <= totalPoints; point++) {
               for (let layer in mapBody.layersIndex) {
-                let tile = mapBody.tileMapAsset.getTileAt(layer, Math.floor((x + point * testedWidth / totalPoints) / mapBody.mapToSceneFactor), y);
+                let tile = mapBody.tileMapAsset.getTileAt(layer, Math.floor((x + point * testedWidth / totalPoints) / mapBody.mapToSceneFactor.x), y);
 
                 let collide = false;
                 if (mapBody.tileSetPropertyName != null) {
@@ -105,7 +105,7 @@ module ArcadePhysics2D {
                 if (collide) {
                   gotCollision = true;
                   body1.velocity.y = -body1.velocity.y * body1.bounceY;
-                  body1.position.y = y * mapBody.mapToSceneFactor + mapBody.position.y - body1.height / 2;
+                  body1.position.y = y * mapBody.mapToSceneFactor.y + mapBody.position.y - body1.height / 2;
                   body1.touches.bottom = true;
                   return;
                 }
@@ -116,13 +116,13 @@ module ArcadePhysics2D {
 
           function checkX(mapBody: ArcadeBody2D) {
           if (body1.deltaX() < 0) {
-            let x = Math.floor((body1.position.x - mapBody.position.x - body1.width / 2) / mapBody.mapToSceneFactor);
+            let x = Math.floor((body1.position.x - mapBody.position.x - body1.width / 2) / mapBody.mapToSceneFactor.x);
             let y = body1.position.y - mapBody.position.y - body1.height / 2;
             let testedHeight = body1.height - epsilon;
-            let totalPoints = Math.ceil(testedHeight / mapBody.mapToSceneFactor) + 1;
+            let totalPoints = Math.ceil(testedHeight / mapBody.mapToSceneFactor.x) + 1;
             for (let point = 0; point <= totalPoints; point++) {
               for (let layer in mapBody.layersIndex) {
-                let tile = mapBody.tileMapAsset.getTileAt(layer, x, Math.floor((y + point * testedHeight / totalPoints) / mapBody.mapToSceneFactor));
+                let tile = mapBody.tileMapAsset.getTileAt(layer, x, Math.floor((y + point * testedHeight / totalPoints) / mapBody.mapToSceneFactor.y));
 
                 let collide = false;
                 if (mapBody.tileSetPropertyName != null) {
@@ -133,7 +133,7 @@ module ArcadePhysics2D {
                 if (collide) {
                   gotCollision = true;
                   body1.velocity.x = -body1.velocity.x * body1.bounceX;
-                  body1.position.x = (x + 1) * mapBody.mapToSceneFactor + mapBody.position.x + body1.width / 2;
+                  body1.position.x = (x + 1) * mapBody.mapToSceneFactor.x + mapBody.position.x + body1.width / 2;
                   body1.touches.left = true;
                   return true;
                 }
@@ -141,13 +141,13 @@ module ArcadePhysics2D {
             }
 
           } else if (body1.deltaX() > 0) {
-            let x = Math.floor((body1.position.x - mapBody.position.x + body1.width / 2 - epsilon) / mapBody.mapToSceneFactor);
+            let x = Math.floor((body1.position.x - mapBody.position.x + body1.width / 2 - epsilon) / mapBody.mapToSceneFactor.x);
             let y = body1.position.y - mapBody.position.y - body1.height / 2;
             let testedHeight = body1.height - epsilon;
-            let totalPoints = Math.ceil(testedHeight / mapBody.mapToSceneFactor) + 1;
+            let totalPoints = Math.ceil(testedHeight / mapBody.mapToSceneFactor.y) + 1;
             for (let point = 0; point <= totalPoints; point++) {
               for (let layer in mapBody.layersIndex) {
-                let tile = mapBody.tileMapAsset.getTileAt(layer, x, Math.floor((y + point * testedHeight / totalPoints) / mapBody.mapToSceneFactor));
+                let tile = mapBody.tileMapAsset.getTileAt(layer, x, Math.floor((y + point * testedHeight / totalPoints) / mapBody.mapToSceneFactor.y));
 
                 let collide = false;
                 if (mapBody.tileSetPropertyName != null) {
@@ -158,7 +158,7 @@ module ArcadePhysics2D {
                 if (collide) {
                   gotCollision = true;
                   body1.velocity.x = -body1.velocity.x * body1.bounceX;
-                  body1.position.x = x * mapBody.mapToSceneFactor + mapBody.position.x - body1.width / 2;
+                  body1.position.x = x * mapBody.mapToSceneFactor.x + mapBody.position.x - body1.width / 2;
                   body1.touches.left = true;
                   return true;
                 }

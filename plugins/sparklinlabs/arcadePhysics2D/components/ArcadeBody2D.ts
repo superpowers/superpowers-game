@@ -14,7 +14,7 @@ export default class ArcadeBody2D extends SupEngine.ActorComponent {
   tileMapAsset: any;
   tileSetAsset: any;
   tileSetPropertyName: string;
-  mapToSceneFactor: number;
+  mapToSceneFactor: { x: number; y: number };
   layersIndex: number[] = [];
 
   actorPosition: THREE.Vector3;
@@ -63,7 +63,10 @@ export default class ArcadeBody2D extends SupEngine.ActorComponent {
     this.type = "tileMap";
     this.tileMapAsset = config.tileMapAsset;
     this.tileSetAsset = config.tileSetAsset;
-    this.mapToSceneFactor = this.tileSetAsset.__inner.data.gridSize / this.tileMapAsset.__inner.data.pixelsPerUnit;
+    this.mapToSceneFactor = {
+      x: this.tileSetAsset.__inner.data.grid.width / this.tileMapAsset.__inner.data.pixelsPerUnit,
+      y: this.tileSetAsset.__inner.data.grid.height / this.tileMapAsset.__inner.data.pixelsPerUnit,
+    }
     this.tileSetPropertyName = config.tileSetPropertyName;
     if (config.layersIndex != null) {
       let layers = config.layersIndex.split(",");
