@@ -26,7 +26,8 @@ html
     .sidebar
       .nodes-buttons
         button.new-node New Actor
-        button.new-prefab New Prefab
+        // Disabled until we figure out whether prefabs should be components
+        button(style="display: none;").new-prefab New Prefab
         button(disabled).rename-node Rename
         button(disabled).duplicate-node Duplicate
         button(disabled).delete-node Delete
