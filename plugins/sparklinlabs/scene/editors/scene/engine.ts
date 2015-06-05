@@ -26,10 +26,12 @@ engine.cameraActor = new SupEngine.Actor(engine.gameInstance, "Camera");
 engine.cameraActor.setLocalPosition(new THREE.Vector3(0, 0, 10));
 
 engine.cameraComponent = new SupEngine.componentClasses["Camera"](engine.cameraActor);
+engine.cameraComponent.layers = [ 0, -1 ];
 engine.cameraControls = new SupEngine.editorComponentClasses["Camera3DControls"](engine.cameraActor, engine.cameraComponent);
 
 engine.selectionBoxActor = new SupEngine.Actor(engine.gameInstance, "Selection Box");
-engine.selectionBoxComponent= new SupEngine.editorComponentClasses["SelectionBox"](engine.selectionBoxActor);
+engine.selectionBoxActor.layer = -1;
+engine.selectionBoxComponent = new SupEngine.editorComponentClasses["SelectionBox"](engine.selectionBoxActor);
 
 engine.tickAnimationFrameId = requestAnimationFrame(tick);
 
