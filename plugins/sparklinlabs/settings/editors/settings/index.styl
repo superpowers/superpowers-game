@@ -62,8 +62,29 @@ section table
     background #eee
     padding 0 0.5em
 
-  td input, td select
+  td input, td select, td textarea
     width 100%
     margin 0
     padding 0.5em 0.25em
     border none
+
+  td select
+    padding 0.25em 0
+
+  td input[type=checkbox]
+    width auto
+    margin 0.5em
+    cursor pointer
+
+  td
+    .inputs
+      display flex
+
+      input:not(:last-of-type)
+        border-right 1px solid #ccc
+
+    .list input:not(:last-of-type)
+      border-bottom 1px solid #ccc
+
+  td input.color
+    font-family "Consolas", monospace

@@ -8,6 +8,9 @@ export default class GameSettingsEditor {
   startupSceneRow: SupClient.table.RowParts;
   fpsRow: SupClient.table.RowParts;
   ratioRow: SupClient.table.RowParts;
+  customLayersRow: SupClient.table.RowParts;
+  customLayers: string[];
+  layerContainers: HTMLDivElement;
 
   fields: { [name: string]: HTMLInputElement } = {};
 
@@ -18,19 +21,31 @@ export default class GameSettingsEditor {
 
     this.startupSceneRow = SupClient.table.appendRow(tbody, "Startup scene");
     this.fields["startupScene"] = SupClient.table.appendTextField(this.startupSceneRow.valueCell, "");
-    this.startupSceneRow.valueCell.colSpan = 2;
 
     this.fpsRow = SupClient.table.appendRow(tbody, "Frames per second");
     this.fields["framesPerSecond"] = SupClient.table.appendNumberField(this.fpsRow.valueCell, "");
-    this.fpsRow.valueCell.colSpan = 2;
 
     this.ratioRow = SupClient.table.appendRow(tbody, "Screen ratio");
-    this.fields["ratioNumerator"] = SupClient.table.appendNumberField(this.ratioRow.valueCell, "");
-    this.fields["ratioNumerator"].placeholder = "Width";
+    let ratioContainer = document.createElement("div");
+    ratioContainer.className = "";
+    this.ratioRow.valueCell.appendChild(ratioContainer);
 
-    let heightValueCell = <HTMLTableDataCellElement>this.ratioRow.row.appendChild(document.createElement("td"));
-    this.fields["ratioDenominator"] = SupClient.table.appendNumberField(heightValueCell, "");
+    [ this.fields["ratioNumerator"], this.fields["ratioDenominator"] ] = SupClient.table.appendNumberFields(this.ratioRow.valueCell, [ "", "" ] );
+    this.fields["ratioNumerator"].placeholder = "Width";
     this.fields["ratioDenominator"].placeholder = "Height";
+
+    this.customLayersRow = SupClient.table.appendRow(tbody, "Custom layers");
+    this.layerContainers = document.createElement("div");
+    this.layerContainers.className = "list";
+    this.customLayersRow.valueCell.appendChild(this.layerContainers);
+    this.fields["defaultLayer"] = SupClient.table.appendTextField(this.layerContainers, "Default");
+    this.fields["defaultLayer"].readOnly = true;
+
+    for (let i = 0; i < GameSettingsResource.schema.customLayers.maxLength; i++) {
+      let field = this.fields[`customLayer${i}`] = SupClient.table.appendTextField(this.layerContainers, "");
+      (<any>field.dataset).customLayerIndex = i;
+      field.addEventListener("change", this.onCustomLayerFieldChange);
+    }
 
     this.fields["startupScene"].addEventListener("change", (event: any) => {
       let scene = (event.target.value !== "") ? event.target.value : null;
@@ -55,12 +70,62 @@ export default class GameSettingsEditor {
   onResourceReceived = (resourceId: string, resource: GameSettingsResource) => {
     this.resource = resource;
 
+    this._setupCustomLayers();
+
     for (let setting in resource.pub) {
-      this.fields[setting].value = resource.pub[setting];
+      if (setting !== "customLayers") {
+        this.fields[setting].value = resource.pub[setting];
+      }
+    }
+  }
+  
+  _setupCustomLayers() {
+    this.customLayers = this.resource.pub.customLayers.slice(0);
+    for (let i = 0; i < GameSettingsResource.schema.customLayers.maxLength; i++) {
+      let field = this.fields[`customLayer${i}`];
+      if (i === this.customLayers.length) {
+        field.placeholder = "New layer...";
+        field.value = "";
+      } else {
+        field.placeholder = "";
+      }
+      
+      if (i > this.customLayers.length) {
+        this.layerContainers.removeChild(field);
+      } else {
+        this.layerContainers.appendChild(field);
+        if (i < this.customLayers.length) field.value = this.customLayers[i];
+      }
     }
   }
 
   onResourceEdited = (resourceId: string, command: string, propertyName: string) => {
-    this.fields[propertyName].value = this.resource.pub[propertyName];
+    if (propertyName === "customLayers") this._setupCustomLayers();
+    else this.fields[propertyName].value = this.resource.pub[propertyName];
+  }
+  
+  onCustomLayerFieldChange = (event: any) => {
+    let index = parseInt(<string>event.target.dataset.customLayerIndex);
+    if (index > this.customLayers.length) return;
+    
+    if (index === this.customLayers.length) {
+      if (event.target.value === "") return;
+      this.customLayers.push(event.target.value);
+
+    } else {
+      if (event.target.value === "") {
+        if (index === this.customLayers.length - 1) {
+          this.customLayers.pop();
+        } else {
+          alert("Layer name cannot be empty");
+          event.target.value = this.customLayers[index];
+          return;
+        }
+      } else {
+        this.customLayers[index] = event.target.value;
+      }
+    }
+
+    this.projectClient.socket.emit("edit:resources", "gameSettings", "setProperty", "customLayers", this.customLayers, (err: string) => { if (err != null) alert(err); });
   }
 }
