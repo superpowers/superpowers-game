@@ -8,6 +8,8 @@ export interface Node extends SupCore.data.base.TreeNode {
   position: { x: number; y: number; z: number };
   orientation: { x: number; y: number; z: number; w: number };
   scale: { x: number; y: number; z: number };
+  visible: boolean;
+  layer: number;
 }
 
 export default class SceneNodes extends SupCore.data.base.TreeById {
@@ -47,6 +49,9 @@ export default class SceneNodes extends SupCore.data.base.TreeById {
       }
     },
 
+    visible: { type: "boolean", mutable: true },
+    layer: { type: "integer", min: 0, mutable: true },
+
     components: { type: "array?" }
   }
 
@@ -61,7 +66,12 @@ export default class SceneNodes extends SupCore.data.base.TreeById {
     super(pub, SceneNodes.schema);
     this.sceneAsset = sceneAsset;
 
-    this.walk((node: any, parentNode: any) => {
+    this.walk((node: Node, parentNode: Node) => {
+      // NOTE: Node visibility and layer were introduced in Superpowers 0.8
+      if (typeof node.visible === "undefined") {
+        node.visible = true;
+        node.layer = 0;
+      }
       if (node.components != null) this.componentsByNodeId[node.id] = new SceneComponents(node.components, this.sceneAsset);
     });
   }

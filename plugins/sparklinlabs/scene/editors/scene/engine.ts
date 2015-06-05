@@ -106,11 +106,15 @@ function onMouseUp(event: MouseEvent) {
     }
   }
 
-  if (selectedNodeId != null) {
-    engine.selectionBoxComponent.setTarget(data.sceneUpdater.bySceneNodeId[selectedNodeId].actor);
+  setupSelectedNode();
+  setupHelpers();
+}
+
+export function setupHelpers() {
+  let nodeElt = ui.nodesTreeView.selectedNodes[0];
+  if (nodeElt != null && ui.nodesTreeView.selectedNodes.length == 1) {
+    engine.selectionBoxComponent.setTarget(data.sceneUpdater.bySceneNodeId[nodeElt.dataset.id].actor);
   } else {
     engine.selectionBoxComponent.setTarget(null);
   }
-
-  setupSelectedNode();
 }

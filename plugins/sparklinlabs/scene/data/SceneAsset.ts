@@ -88,6 +88,7 @@ export default class SceneAsset extends SupCore.data.base.Asset {
       position: (options != null && options.transform != null && options.transform.position != null) ? options.transform.position : { x: 0, y: 0, z: 0 },
       orientation: (options != null && options.transform != null && options.transform.orientation != null) ? options.transform.orientation : { x: 0, y: 0, z: 0, w: 1 },
       scale: (options != null && options.transform != null && options.transform.scale != null) ? options.transform.scale : { x: 1, y: 1, z: 1 },
+      visible: true, layer: 0
     };
 
     let index = (options != null) ? options.index : null;
@@ -223,6 +224,7 @@ export default class SceneAsset extends SupCore.data.base.Asset {
       position: _.cloneDeep(referenceNode.position),
       orientation: _.cloneDeep(referenceNode.orientation),
       scale: _.cloneDeep(referenceNode.scale),
+      visible: referenceNode.visible, layer: referenceNode.layer
     }
     let parentId = (this.nodes.parentNodesById[id] != null) ? this.nodes.parentNodesById[id].id : null;
 
@@ -260,6 +262,7 @@ export default class SceneAsset extends SupCore.data.base.Asset {
             position: _.cloneDeep(childNode.position),
             orientation: _.cloneDeep(childNode.orientation),
             scale: _.cloneDeep(childNode.scale),
+            visible: childNode.visible, layer: childNode.layer
           };
           addNode(node, newNode.id, childIndex, childNode.children);
         }
@@ -339,7 +342,7 @@ export default class SceneAsset extends SupCore.data.base.Asset {
     let component: Component = {
       type: componentType,
       config: componentConfigClass.create(),
-    }
+    };
 
     this.nodes.addComponent(nodeId, component, index, (err, actualIndex) => {
       if (err != null) { callback(err, null, null, null); return; }

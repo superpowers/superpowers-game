@@ -1,6 +1,6 @@
 import info from "./info";
 import { socket, data } from "./network";
-import engine from "./engine";
+import engine, { setupHelpers } from "./engine";
 
 import { Node } from "../../data/SceneNodes";
 import { Component } from "../../data/SceneComponents";
@@ -25,6 +25,9 @@ let ui: {
     orientationElts: HTMLInputElement[];
     scaleElts: HTMLInputElement[];
   };
+  
+  visibleCheckbox?: HTMLInputElement;
+  layerSelect?: HTMLSelectElement;
 
   componentEditorClasses?: { [name: string]: string };
   componentEditors?: { [id: string]: SupClient.ComponentEditorObject };
@@ -67,6 +70,13 @@ ui.transform = {
   scaleElts: <any>ui.inspectorElt.querySelectorAll(".transform .scale input"),
 };
 
+ui.visibleCheckbox = <HTMLInputElement>ui.inspectorElt.querySelector(".visible input");
+ui.visibleCheckbox.addEventListener("change", onVisibleChange);
+
+ui.layerSelect = <HTMLSelectElement>ui.inspectorElt.querySelector(".layer select");
+ui.layerSelect.addEventListener("change", onLayerChange);
+
+
 for (let transformType in ui.transform) {
   let inputs: HTMLInputElement[] = (<any>ui).transform[transformType];
   for (let input of inputs) input.addEventListener("change", onTransformInputChange);
@@ -108,11 +118,11 @@ export function createNodeElement(node: Node) {
   visibleButton.addEventListener("click", (event: any) => {
     event.stopPropagation();
     let actor = data.sceneUpdater.bySceneNodeId[event.target.parentElement.dataset["id"]].actor;
-    actor.threeObject.visible = ! actor.threeObject.visible;
+    actor.threeObject.visible = !actor.threeObject.visible;
     visibleButton.textContent = (actor.threeObject.visible) ? "Hide" : "Show";
     if (actor.threeObject.visible) visibleButton.classList.add("show");
     else visibleButton.classList.remove("show");
-  })
+  });
   liElt.appendChild(visibleButton);
 
   return liElt;
@@ -139,6 +149,8 @@ function onNodeDrop(dropInfo: any, orderedNodes: any) {
 function onNodeActivate() { ui.nodesTreeView.selectedNodes[0].classList.toggle("collapsed"); }
 
 export function setupSelectedNode() {
+  setupHelpers();
+  
   // Clear component editors
   for (let componentId in ui.componentEditors) ui.componentEditors[componentId].destroy();
   ui.componentEditors = {};
@@ -162,7 +174,11 @@ export function setupSelectedNode() {
   setInspectorPosition(<THREE.Vector3>node.position);
   setInspectorOrientation(<THREE.Quaternion>node.orientation);
   setInspectorScale(<THREE.Vector3>node.scale);
-
+    
+  ui.visibleCheckbox.checked = node.visible;
+  ui.layerSelect.value = <any>node.layer;
+  
+  // If it's a prefab, disable various buttons
   let isPrefab = node.components[0] != null && node.components[0].type === "Prefab";
   ui.newNodeButton.disabled = isPrefab;
   ui.newPrefabButton.disabled = isPrefab;
@@ -227,6 +243,30 @@ export function setInspectorScale(scale: THREE.Vector3) {
     if (ui.transform.scaleElts[i].value !== values[i]) {
       ui.transform.scaleElts[i].value = values[i];
     }
+  }
+}
+
+export function setInspectorVisible(visible: boolean) {
+  ui.visibleCheckbox.checked = visible;
+}
+
+export function setInspectorLayer(layer: number) {
+  ui.layerSelect.value = <any>layer;
+}
+
+export function setupInspectorLayers() {
+  while (ui.layerSelect.childElementCount > data.gameSettingsResource.pub.customLayers.length + 1) ui.layerSelect.removeChild(ui.layerSelect.lastElementChild);
+
+  let optionElt = <HTMLOptionElement>ui.layerSelect.firstElementChild.nextElementSibling;
+  for (let i = 0; i < data.gameSettingsResource.pub.customLayers.length; i++) {
+    if (optionElt == null) {
+      optionElt = document.createElement("option");
+      ui.layerSelect.appendChild(optionElt);
+    }
+    optionElt.value = (i + 1).toString(); // + 1 because "Default" is 0
+    optionElt.textContent = data.gameSettingsResource.pub.customLayers[i];
+
+    optionElt = <HTMLOptionElement>optionElt.nextElementSibling;
   }
 }
 
@@ -329,6 +369,20 @@ function onTransformInputChange(event: any) {
   let nodeId = ui.nodesTreeView.selectedNodes[0].dataset.id;
 
   socket.emit("edit:assets", info.assetId, "setNodeProperty", nodeId, transformType, value, (err: string) => { if (err != null) alert(err); });
+}
+
+function onVisibleChange(event: any) {
+  if (ui.nodesTreeView.selectedNodes.length !== 1) return;
+  
+  let nodeId = ui.nodesTreeView.selectedNodes[0].dataset.id;
+  socket.emit("edit:assets", info.assetId, "setNodeProperty", nodeId, "visible", event.target.checked, (err: string) => { if (err != null) alert(err); });
+}
+
+function onLayerChange(event: any) {
+  if (ui.nodesTreeView.selectedNodes.length !== 1) return;
+  
+  let nodeId = ui.nodesTreeView.selectedNodes[0].dataset.id;
+  socket.emit("edit:assets", info.assetId, "setNodeProperty", nodeId, "layer", parseInt(event.target.value), (err: string) => { if (err != null) alert(err); });
 }
 
 export function createComponentElement(nodeId: string, component: Component) {

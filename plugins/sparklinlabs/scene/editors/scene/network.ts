@@ -1,6 +1,10 @@
 import info from "./info";
-import ui, { setCameraMode, createNodeElement, setupSelectedNode, createComponentElement, setInspectorPosition, setInspectorOrientation, setInspectorScale } from "./ui";
-import engine from "./engine";
+import ui, {
+  setCameraMode, createNodeElement, setupSelectedNode, createComponentElement,
+  setInspectorPosition, setInspectorOrientation, setInspectorScale,
+  setInspectorVisible, setInspectorLayer,
+  setupInspectorLayers } from "./ui";
+import engine, { setupHelpers } from "./engine";
 
 let THREE = SupEngine.THREE;
 import SceneAsset, { DuplicatedNode } from "../../data/SceneAsset";
@@ -9,7 +13,7 @@ import { Node } from "../../data/SceneNodes";
 import { Component } from "../../data/SceneComponents";
 import SceneUpdater from "../../components/SceneUpdater";
 
-export let data: { projectClient: SupClient.ProjectClient, sceneUpdater?: SceneUpdater };
+export let data: { projectClient: SupClient.ProjectClient, sceneUpdater?: SceneUpdater, gameSettingsResource?: any };
 
 export let socket: SocketIOClient.Socket;
 export function networkStart() {
@@ -22,6 +26,7 @@ function onConnected() {
   data = { projectClient: new SupClient.ProjectClient(socket, { subEntries: true }) };
 
   data.projectClient.subResource("sceneSettings", sceneSettingSubscriber);
+  data.projectClient.subResource("gameSettings", gameSettingSubscriber);
 }
 
 var sceneSettingSubscriber = {
@@ -29,7 +34,7 @@ var sceneSettingSubscriber = {
     setCameraMode(resource.pub.defaultCameraMode);
     data.sceneUpdater = new SceneUpdater(
       data.projectClient,
-      { gameInstance: engine.gameInstance ,actor: null },
+      { gameInstance: engine.gameInstance, actor: null },
       { sceneAssetId: info.assetId},
       { scene: onSceneAssetReceived },
       { scene: onEditCommands }
@@ -37,7 +42,18 @@ var sceneSettingSubscriber = {
   },
 
   onResourceEdited: (resourceId: string, command: string, propertyName: string) => {}
-}
+};
+
+var gameSettingSubscriber = {
+  onResourceReceived: (resourceId: string, resource: any) => {
+    data.gameSettingsResource = resource;
+    setupInspectorLayers();
+  },
+  
+  onResourceEdited: (resourceId: string, command: string, propertyName: string) => {
+    if (propertyName == "customLayers") setupInspectorLayers();
+  }
+};
 
 function onSceneAssetReceived(err: string, asset: SceneAsset) {
   // Clear tree view
@@ -80,6 +96,9 @@ onEditCommands.moveNode = (id: string, parentId: string, index: number) => {
     setInspectorOrientation(<THREE.Quaternion>node.orientation);
     setInspectorScale(<THREE.Vector3>node.scale);
   }
+  
+  // TODO: Only refresh if selection is affected
+  setupHelpers();
 }
 
 onEditCommands.setNodeProperty = (id: string, path: string, value: any) => {
@@ -99,11 +118,23 @@ onEditCommands.setNodeProperty = (id: string, path: string, value: any) => {
     case "scale":
       if (isInspected) setInspectorScale(<THREE.Vector3>data.sceneUpdater.sceneAsset.nodes.byId[id].scale);
       break;
+    case "visible":
+      if (isInspected) setInspectorVisible(value);
+      break;
+    case "layer":
+      if (isInspected) setInspectorLayer(value);
+      break;
   }
+  
+  // TODO: Only refresh if selection is affected
+  setupHelpers();
 }
 
 onEditCommands.duplicateNode = (rootNode: Node, newNodes: DuplicatedNode[]) => {
   for (let newNode of newNodes) onEditCommands.addNode(newNode.node, newNode.parentId, newNode.index);
+  
+  // TODO: Only refresh if selection is affected
+  setupHelpers();
 }
 
 onEditCommands.removeNode = (id: string) => {
@@ -112,6 +143,8 @@ onEditCommands.removeNode = (id: string) => {
 
   ui.nodesTreeView.remove(nodeElt);
   if (isInspected) setupSelectedNode();
+  // TODO: Only refresh if selection is affected
+  else setupHelpers();
 }
 
 onEditCommands.addComponent = (nodeId: string, nodeComponent: Component, index: number) => {
@@ -122,6 +155,9 @@ onEditCommands.addComponent = (nodeId: string, nodeComponent: Component, index: 
     // TODO: Take index into account
     ui.inspectorElt.querySelector(".components").appendChild(componentElt);
   }
+  
+  // TODO: Only refresh if selection is affected
+  setupHelpers();
 }
 
 onEditCommands.editComponent = (nodeId: string, componentId: string, command: string, ...args: any[]) => {
@@ -131,6 +167,9 @@ onEditCommands.editComponent = (nodeId: string, componentId: string, command: st
     let commandCallback = (<any>componentEditor)[`config_${command}`];
     if (commandCallback != null) commandCallback.call(componentEditor, ...args);
   }
+  
+  // TODO: Only refresh if selection is affected
+  setupHelpers();
 }
 
 onEditCommands.removeComponent = (nodeId: string, componentId: string) => {
@@ -143,4 +182,7 @@ onEditCommands.removeComponent = (nodeId: string, componentId: string) => {
     let componentElt = <HTMLDivElement>ui.inspectorElt.querySelector(`.components > div[data-component-id='${componentId}']`);
     componentElt.parentElement.removeChild(componentElt);
   }
+  
+  // TODO: Only refresh if selection is affected
+  setupHelpers();
 }

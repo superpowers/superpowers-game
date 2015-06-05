@@ -56,6 +56,15 @@ html
                 input(type="number").x
                 input(type="number").y
                 input(type="number").z
+          tr.visible
+            th.label Visible
+            td
+              input(type="checkbox")
+          tr.layer
+            th.label Layer
+            td
+              select
+                option(value="0") Default
         .components-buttons
           button.new-component New Component
         .components
