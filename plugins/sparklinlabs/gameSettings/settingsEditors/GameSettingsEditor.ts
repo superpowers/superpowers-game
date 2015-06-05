@@ -91,9 +91,9 @@ export default class GameSettingsEditor {
       }
       
       if (i > this.customLayers.length) {
-        this.layerContainers.removeChild(field);
+        if (field.parentElement != null) this.layerContainers.removeChild(field);
       } else {
-        this.layerContainers.appendChild(field);
+        if (field.parentElement == null) this.layerContainers.appendChild(field);
         if (i < this.customLayers.length) field.value = this.customLayers[i];
       }
     }
