@@ -87,7 +87,9 @@ function start() {
       socket.emit("edit:assets", info.assetId, "saveText", (err: string) => { if (err != null) { alert(err); SupClient.onDisconnected(); }});
     },
     "Ctrl-Space": "autocomplete",
-    "Cmd-Space": "autocomplete"
+    "Cmd-Space": "autocomplete",
+    "Shift-Ctrl-F": () => { onGlobalResearch(); },
+    "Shift-Cmd-F": () => { onGlobalResearch(); }
   }
 
   let textArea = <HTMLTextAreaElement>document.querySelector(".code-editor");
@@ -773,6 +775,22 @@ function scheduleCompletion() {
     (<any>ui.editor).showHint({ completeSingle: false, customKeys: hintCustomKeys, hint });
     ui.completionTimeout = null;
   }, 100);
+}
+
+function onGlobalResearch() {
+  if (window.parent == null) {
+    //TODO: find a way so it works ? or display an information saying that you can't ?
+    return;
+  }
+  
+  let selection = ui.editor.getDoc().getSelection();
+  SupClient.dialogs.prompt("Global research", "Find in project", selection, "Search", (text) => {
+    if (text == null) {
+      ui.editor.focus();
+      return;
+    }
+    window.parent.postMessage({ type: "openTool", name: "search", options: { text } }, (<any>window.location).origin);
+  })
 }
 
 function onUndo() {

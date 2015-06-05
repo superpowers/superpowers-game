@@ -1,3 +1,4 @@
+import info from "./info";
 import { data } from "./network";
 
 let ui: {
@@ -8,13 +9,23 @@ let ui: {
 } = {};
 export default ui;
 
-ui.textToSearch = "";
 ui.resultsPane = <HTMLDivElement>document.querySelector(".results");
 ui.searchInput = <HTMLInputElement>document.querySelector(".research input");
 ui.searchInput.focus();
 ui.searchInput.addEventListener("keydown", (event: any) => { if (event.keyCode === 13) search(); })
 document.querySelector(".research button").addEventListener("click", (event: any) => { search(); });
 ui.statusSpan = <HTMLSpanElement>document.querySelector(".research span");
+
+// Handle request from another tab
+ui.searchInput.value = info.text != null ? info.text : "";
+search();
+
+window.addEventListener("message", (event: any) => {
+  if (event.data.text != null) {
+    ui.searchInput.value = event.data.text;
+    search();
+  }
+});
 
 function search() {
   while (ui.resultsPane.children.length !== 0) {
