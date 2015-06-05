@@ -276,7 +276,8 @@ function tick(timestamp=0) {
       let mousePosition = ui.gameInstance.input.mousePosition;
       let [ mouseX, mouseY ] = ui.cameraControls.getScenePosition(mousePosition.x, mousePosition.y);
       let x = Math.floor(mouseX);
-      let y = Math.floor(mouseY);
+      let ratio = data.tileSetUpdater.tileSetAsset.pub.grid.width / data.tileSetUpdater.tileSetAsset.pub.grid.height;
+      let y = Math.floor(mouseY * ratio);
 
       let pub = data.tileSetUpdater.tileSetAsset.pub;
       if (x >= 0 && x < pub.domImage.width / .pub.gridSize &&

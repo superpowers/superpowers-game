@@ -39,7 +39,6 @@ function getTileSetGridPosition(gameInstance: SupEngine.GameInstance, cameraComp
   x += cameraPosition.x;
   x = Math.floor(x);
 
-  
   let y = position.y / gameInstance.threeRenderer.domElement.height;
   y = y * 2 - 1;
   y *= cameraComponent.orthographicScale / 2;
