@@ -45,20 +45,14 @@ export default class CameraEditor {
     viewportHeaderRow.appendChild(headerTh);
     tbody.appendChild(viewportHeaderRow);
 
-    let viewportXRow = SupClient.table.appendRow(tbody, "X");
-    this.viewportFields.x = SupClient.table.appendNumberField(viewportXRow.valueCell, config.viewport.x, 0, 1);
+    let viewportXRow = SupClient.table.appendRow(tbody, "Top / Left");
+    [ this.viewportFields.x, this.viewportFields.y ] = SupClient.table.appendNumberFields(viewportXRow.valueCell, [ config.viewport.x, config.viewport.y ], 0, 1);
     this.viewportFields.x.step = "0.1";
-
-    let viewportYRow = SupClient.table.appendRow(tbody, "Y");
-    this.viewportFields.y = SupClient.table.appendNumberField(viewportYRow.valueCell, config.viewport.y, 0, 1);
     this.viewportFields.y.step = "0.1";
 
-    let widthRow = SupClient.table.appendRow(tbody, "Width");
-    this.viewportFields.width = SupClient.table.appendNumberField(widthRow.valueCell, config.viewport.width, 0, 1);
+    let widthRow = SupClient.table.appendRow(tbody, "Width / Height");
+    [ this.viewportFields.width, this.viewportFields.height ] = SupClient.table.appendNumberFields(widthRow.valueCell, [ config.viewport.width, config.viewport.height ], 0, 1);
     this.viewportFields.width.step = "0.1";
-
-    let heightRow = SupClient.table.appendRow(tbody, "Height");
-    this.viewportFields.height = SupClient.table.appendNumberField(heightRow.valueCell, config.viewport.height, 0, 1);
     this.viewportFields.height.step = "0.1";
 
     this.modeSelectBox.addEventListener("change", this._onChangeMode);
