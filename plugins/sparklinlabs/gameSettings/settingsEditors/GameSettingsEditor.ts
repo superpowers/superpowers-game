@@ -34,7 +34,7 @@ export default class GameSettingsEditor {
     this.fields["ratioNumerator"].placeholder = "Width";
     this.fields["ratioDenominator"].placeholder = "Height";
 
-    this.customLayersRow = SupClient.table.appendRow(tbody, "Custom layers");
+    this.customLayersRow = SupClient.table.appendRow(tbody, "Layers");
     this.layerContainers = document.createElement("div");
     this.layerContainers.className = "list";
     this.customLayersRow.valueCell.appendChild(this.layerContainers);
