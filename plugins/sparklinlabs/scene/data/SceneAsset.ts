@@ -332,10 +332,9 @@ export default class SceneAsset extends SupCore.data.base.Asset {
     if (componentConfigClass == null) { callback("Invalid component type", null, null, null); return; }
 
     let node = this.nodes.byId[nodeId];
-    if (node != null && node.components[0] != null && node.components[0].type === "Prefab") {
-      callback("Can't add component on prefabs", null, null, null);
-      return
-    }
+    
+    if (componentType === "Prefab" && node.components.length > 0) { callback("Can't turn an actor with components into a prefab", null, null, null); return; }
+    if (node != null && node.components[0] != null && node.components[0].type === "Prefab") { callback("Can't add component on prefabs", null, null, null); return; }
 
     let component: Component = {
       type: componentType,
