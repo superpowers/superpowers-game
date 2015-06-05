@@ -11,6 +11,7 @@ import Camera from "./components/Camera";
 export default class GameInstance extends EventEmitter {
   framesPerSecond = 60;
   ratio: number;
+  layers: string[] = [ "Default" ];
   
   tree = new ActorTree();
   cachedActors: Actor[] = [];
@@ -30,7 +31,7 @@ export default class GameInstance extends EventEmitter {
   exitCallback: Function;
   exited = false;
 
-  constructor(canvas: HTMLCanvasElement, options: { debug?: boolean; enableOnExit?: boolean; } = {}) {
+  constructor(canvas: HTMLCanvasElement, options: { debug?: boolean; enableOnExit?: boolean; layers?: string[]; } = {}) {
     super();
 
     // Used to know whether or not we have to close the window at exit when using NW.js
@@ -39,6 +40,9 @@ export default class GameInstance extends EventEmitter {
     // Exit callback is only enabled when playing the actual game, not in most editors
     let enableOnExit = (options.enableOnExit != null) ? options.enableOnExit : false;
     this.input = new Input(canvas, options.enableOnExit ? { exitCallback: this._doExitCallback } : null);
+    
+    // Setup layers
+    if (options.layers != null) this.layers = options.layers;
 
     try { this.threeRenderer = new THREE.WebGLRenderer({ canvas, precision: "mediump", alpha: false, antialias: false, stencil: false }); }
     catch (e) { return; }
@@ -142,6 +146,10 @@ export default class GameInstance extends EventEmitter {
       this.threeRenderer.setSize(width, height, false);
       this.emit("resize", { width, height });
     }
+  }
+  
+  setActiveLayer(layer: number) {
+    for (let cachedActor of this.cachedActors) cachedActor.setActiveLayer(layer);
   }
 
   draw() {

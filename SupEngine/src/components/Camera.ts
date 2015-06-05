@@ -9,6 +9,7 @@ export default class Camera extends ActorComponent {
   threeCamera: THREE.OrthographicCamera|THREE.PerspectiveCamera;
   viewport = { x: 0, y: 0, width: 1, height: 1 };
   
+  layers: number[] = [];
   depth = 0;
   nearClippingPlane = 0.1;
   farClippingPlane = 1000;
@@ -123,6 +124,17 @@ export default class Camera extends ActorComponent {
       this.viewport.x * canvas.width    , (1 - this.viewport.y - this.viewport.height) * canvas.height,
       this.viewport.width * canvas.width, this.viewport.height * canvas.height
     );
-    this.actor.gameInstance.threeRenderer.render(this.actor.gameInstance.threeScene, this.threeCamera);
+    
+    if (this.layers.length > 0) {
+      for (let layer of this.layers) {
+        this.actor.gameInstance.setActiveLayer(layer);
+        this.actor.gameInstance.threeRenderer.render(this.actor.gameInstance.threeScene, this.threeCamera);
+      }
+    } else {
+      for (let layer = 0; layer < this.actor.gameInstance.layers.length; layer++) {
+        this.actor.gameInstance.setActiveLayer(layer);
+        this.actor.gameInstance.threeRenderer.render(this.actor.gameInstance.threeScene, this.threeCamera);
+      }
+    }
   }
 }

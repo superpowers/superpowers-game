@@ -18,6 +18,7 @@ declare module SupEngine {
   class GameInstance extends EventEmitter {
     framesPerSecond: number;
     ratio: number;
+    layers: string[];
     
     tree: ActorTree;
     cachedActors: Actor[];
@@ -37,7 +38,7 @@ declare module SupEngine {
     exitCallback: Function;
     exited: boolean;
 
-    constructor(canvas: HTMLCanvasElement, options?: { debug?: boolean; enableOnExit?: boolean; });
+    constructor(canvas: HTMLCanvasElement, options?: { debug?: boolean; enableOnExit?: boolean; layers?: string[]; });
     setRatio(ratio?: number): void;
     tick(accumulatedTime: number): { updates: number; timeLeft: number; };
     update(): void;
@@ -58,14 +59,15 @@ declare module SupEngine {
   }
 
   class Actor {
-    gameInstance: GameInstance;
     name: string;
     parent: Actor;
-    threeObject: THREE.Object3D;
-
     children: Actor[];
     components: ActorComponent[];
+    layer: number;
     pendingForDestruction: boolean;
+
+    gameInstance: GameInstance;
+    threeObject: THREE.Object3D;
 
     constructor(gameInstance: GameInstance, name: string, parent?: Actor);
     // We have to duplicate the components list because a script could add more

@@ -23,4 +23,6 @@ export default class ActorComponent {
   awake() {}
   start() {}
   update() {}
+  
+  setVisible(visible: boolean) {}
 }

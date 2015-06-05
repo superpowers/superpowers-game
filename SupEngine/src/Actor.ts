@@ -5,19 +5,24 @@ import ActorComponent from "./ActorComponent";
 let tmpMatrix = new THREE.Matrix4();
 
 export default class Actor {
-  gameInstance: GameInstance;
   name: string;
   parent: Actor;
-  threeObject = new THREE.Object3D;
-
   children: Actor[] = [];
   components: ActorComponent[] = [];
+  layer = 0;
   pendingForDestruction = false;
 
-  constructor(gameInstance: GameInstance, name: string, parent?: Actor) {
+  gameInstance: GameInstance;
+  threeObject = new THREE.Object3D;
+
+  constructor(gameInstance: GameInstance, name: string, parent?: Actor, options?: { layer?: number; }) {
     this.gameInstance = gameInstance;
     this.name = name;
     this.parent = parent;
+
+    if (options != null) {
+      if (options.layer != null) this.layer = options.layer;
+    }
 
     if (this.parent != null) {
       this.parent.children.push(this)
@@ -31,6 +36,11 @@ export default class Actor {
   }
 
   awake() { for (let component of this.components.slice()) { component.awake(); } }
+
+  setActiveLayer(layer: number) {
+    let visible = (this.layer === layer);
+    for (let component of this.components) component.setVisible(visible);
+  }
 
   update() {
     if (this.pendingForDestruction) return;
