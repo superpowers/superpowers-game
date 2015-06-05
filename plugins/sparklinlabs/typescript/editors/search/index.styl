@@ -1,0 +1,46 @@
+@import "nib"
+
+body
+  display flex
+  flex-flow column
+  
+  .research, .results
+    padding 1em
+    
+  .research button
+    margin 0 1em 0 1em
+    
+  .results
+    display flex
+    flex-flow column
+    
+    > span
+      cursor pointer
+      height 60px
+      padding 5px
+      margin-bottom 5px
+      background-color #444
+      color #fff
+  
+  table
+    width 100%
+    border-collapse collapse
+    margin 0.5em 0 0.5em 0
+    
+    &.collapsed
+      display none
+    
+    tr
+      cursor pointer
+      &:hover { background: #ddd; }
+    
+    td
+      border 1px solid #ccc
+      padding 5px
+      
+      &:nth-child(2)
+        width 100%
+        text-align left
+      
+      span:nth-child(2)
+        background-color rgba(86, 232, 86, 1)
