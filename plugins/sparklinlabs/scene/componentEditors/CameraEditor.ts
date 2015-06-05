@@ -32,6 +32,11 @@ export default class CameraEditor {
     let depthRow = SupClient.table.appendRow(tbody, "Depth", { title: "Used to determine in which order to render multiple cameras" });
     this.depthField = SupClient.table.appendNumberField(depthRow.valueCell, config.depth);
     
+    let layersRow = SupClient.table.appendRow(tbody, "Layers", { title: "Which layers to be render and in which order" });
+    let layersField = SupClient.table.appendTextField(layersRow.valueCell, "");
+    layersField.disabled = true;
+    layersField.placeholder = "(not yet customizable)";
+    
     let nearClippingPlaneRow = SupClient.table.appendRow(tbody, "Near plane");
     this.nearClippingPlaneField = SupClient.table.appendNumberField(nearClippingPlaneRow.valueCell, config.nearClippingPlane, 0.1);
 
