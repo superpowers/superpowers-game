@@ -19,7 +19,7 @@ declare module SupEngine {
     framesPerSecond: number;
     ratio: number;
     layers: string[];
-    
+
     tree: ActorTree;
     cachedActors: Actor[];
     renderComponents: ActorComponent[];
@@ -69,7 +69,7 @@ declare module SupEngine {
     gameInstance: GameInstance;
     threeObject: THREE.Object3D;
 
-    constructor(gameInstance: GameInstance, name: string, parent?: Actor);
+    constructor(gameInstance: GameInstance, name: string, parent?: Actor, options?: { visible?: boolean; layer?: number; });
     // We have to duplicate the components list because a script could add more
     // components to the actor during the loop and they will be awoken automatically
     awake(): void;

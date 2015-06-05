@@ -15,23 +15,23 @@ export default class Actor {
   gameInstance: GameInstance;
   threeObject = new THREE.Object3D;
 
-  constructor(gameInstance: GameInstance, name: string, parent?: Actor, options?: { layer?: number; }) {
+  constructor(gameInstance: GameInstance, name: string, parent?: Actor, options?: { visible?: boolean; layer?: number; }) {
     this.gameInstance = gameInstance;
     this.name = name;
     this.parent = parent;
-
-    if (options != null) {
-      if (options.layer != null) this.layer = options.layer;
-    }
 
     if (this.parent != null) {
       this.parent.children.push(this)
       this.parent.threeObject.add(this.threeObject);
       this.threeObject.updateMatrixWorld(false);
-    }
-    else {
+    } else {
       this.gameInstance.tree.root.push(this);
       this.gameInstance.threeScene.add(this.threeObject);
+    }
+
+    if (options != null) {
+      if (options.visible === false) this.threeObject.visible = false;
+      if (options.layer != null) this.layer = options.layer;
     }
   }
 
