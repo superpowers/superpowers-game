@@ -115,4 +115,6 @@ export default class Light extends SupEngine.ActorComponent {
     }
     super._destroy();
   }
+  
+  setVisible(visible: boolean) { this.light.visible = visible; }
 }

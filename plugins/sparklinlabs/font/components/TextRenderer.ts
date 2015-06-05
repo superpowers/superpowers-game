@@ -191,4 +191,6 @@ export default class TextRenderer extends SupEngine.ActorComponent {
     this.clearMesh();
     super._destroy();
   }
+  
+  setVisible(visible: boolean) { for (let threeMesh of this.threeMeshes) threeMesh.visible = visible; }
 }

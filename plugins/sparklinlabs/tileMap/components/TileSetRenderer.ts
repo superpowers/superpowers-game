@@ -26,7 +26,7 @@ export default class TileSetRenderer extends SupEngine.ActorComponent {
   }
 
   setTileSet(asset: TileSet, texture: THREE.Texture) {
-    this._clearMesh()
+    this._clearMesh();
     this.asset = asset;
     if (this.asset == null) return;
 
@@ -70,4 +70,6 @@ export default class TileSetRenderer extends SupEngine.ActorComponent {
     this.asset = null;
     super._destroy();
   }
+  
+  setVisible(visible: boolean) { if (this.mesh != null) this.mesh.visible = visible; }
 }

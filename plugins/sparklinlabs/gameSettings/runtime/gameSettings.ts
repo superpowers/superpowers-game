@@ -5,6 +5,9 @@ export function init(player: SupRuntime.Player, callback: Function) {
   if (player.resources.gameSettings.ratioNumerator != null && player.resources.gameSettings.ratioDenominator != null) {
     player.gameInstance.setRatio(player.resources.gameSettings.ratioNumerator / player.resources.gameSettings.ratioDenominator);
   }
+  
+  player.gameInstance.layers = player.gameInstance.layers.concat(player.resources.gameSettings.customLayers);
+  
   callback();
 }
 

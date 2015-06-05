@@ -258,4 +258,6 @@ export default class TileMapRenderer extends SupEngine.ActorComponent {
         break;
     }
   }
+  
+  setVisible(visible: boolean) { for (let layerMesh of this.layerMeshes) layerMesh.visible = visible; }
 }

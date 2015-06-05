@@ -222,4 +222,6 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
     this.animationTimer += 1;
     this.updateFrame();
   }
+  
+  setVisible(visible: boolean) { if (this.threeMesh != null) this.threeMesh.visible = visible; }
 }

@@ -352,4 +352,6 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
     this.animationTimer += 1;
     this.updatePose();
   }
+  
+  setVisible(visible: boolean) { if (this.threeMesh != null) this.threeMesh.visible = visible; }
 }
