@@ -29,7 +29,7 @@ let ui: {
   visibleCheckbox?: HTMLInputElement;
   layerSelect?: HTMLSelectElement;
 
-  componentEditorClasses?: { [name: string]: string };
+  availableComponents?: { [name: string]: string };
   componentEditors?: { [id: string]: SupClient.ComponentEditorObject };
   newComponentButton?: HTMLButtonElement;
 
@@ -92,9 +92,11 @@ ui.cameraSpeedSlider = <HTMLInputElement>document.querySelector("input.camera-sp
 ui.cameraSpeedSlider.addEventListener("input", onChangeCameraSpeed);
 ui.cameraSpeedSlider.value = engine.cameraControls.movementSpeed;
 
-ui.componentEditorClasses = {};
+ui.availableComponents = {};
 export function uiStart() {
-  for (let componentName in SupClient.componentEditorClasses) ui.componentEditorClasses[componentName] = componentName;
+  for (let componentName in SupClient.componentEditorClasses) {
+    if (componentName !== "Prefab") ui.availableComponents[componentName] = componentName;
+  }
 }
 
 export function createNodeElement(node: Node) {
@@ -424,7 +426,7 @@ export function createComponentElement(nodeId: string, component: Component) {
 }
 
 function onNewComponentClick() {
-  SupClient.dialogs.select("Select the type of component to create.", ui.componentEditorClasses, "Create", (type) => {
+  SupClient.dialogs.select("Select the type of component to create.", ui.availableComponents, "Create", (type) => {
     if (type == null) return;
 
     let nodeId = ui.nodesTreeView.selectedNodes[0].dataset.id;
