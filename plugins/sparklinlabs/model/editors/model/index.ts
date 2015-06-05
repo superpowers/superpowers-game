@@ -36,6 +36,13 @@ function start() {
   // Show skeleton
   let showSkeletonCheckbox = <HTMLInputElement>document.querySelector(".show-skeleton");
   showSkeletonCheckbox.addEventListener("change", onShowSkeletonChange);
+  
+  // Opacity
+  ui.opacityCheckbox = <HTMLInputElement>document.querySelector("input.opacity-checkbox");
+  ui.opacityCheckbox.addEventListener("click", onCheckOpacity);
+  
+  ui.opacityInput = <HTMLInputElement>document.querySelector("input.property-opacity");
+  ui.opacityInput.addEventListener("input", onChangeOpacity);
 
   // Animations
   ui.animationsTreeView = new TreeView(document.querySelector(".animations-tree-view"), onAnimationDrop);
@@ -126,6 +133,16 @@ onEditCommands.setAnimationProperty = (id: string, key: string, value: any) => {
     case "name": animationElt.querySelector(".name").textContent = value; break;
   }
 };
+
+onEditCommands.setProperty = (path: string, value: any) => {
+  switch (path) {
+    case "opacity":
+      ui.opacityInput.value = value;
+      ui.opacityInput.disabled = value == null;
+      ui.opacityCheckbox.checked = value != null
+      break;
+  }
+}
 
 // User interface
 function onModelFileSelectChange(event: any) {
@@ -227,6 +244,19 @@ function onDiffuseMapFileSelectChange(event: Event) {
 
 function onShowSkeletonChange(event: Event) {
   data.modelUpdater.modelRenderer.setShowSkeleton((<HTMLInputElement>event.target).checked);
+}
+
+function onCheckOpacity(event: any) {
+  let opacity = (event.target.checked) ? 1 : null;
+  socket.emit("edit:assets", info.assetId, "setProperty", "opacity", opacity, (err: string) => {
+    if (err != null) alert(err);
+  });
+}
+
+function onChangeOpacity(event: any) {
+  socket.emit("edit:assets", info.assetId, "setProperty", "opacity", parseFloat(event.target.value), (err: string) => {
+    if (err != null) alert(err);
+  });
 }
 
 function onNewAnimationClick() {

@@ -46,6 +46,13 @@ html
           th Show skeleton
           td
             input.show-skeleton(type="checkbox")
+        
+        tr
+          th
+            span Opacity
+            input(type="checkbox").opacity-checkbox
+          td
+            input(type="number" min="0" max="1" step="0.1").property-opacity
 
       .animations-buttons
         button.new-animation New

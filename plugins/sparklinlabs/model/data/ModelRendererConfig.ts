@@ -4,6 +4,8 @@ export interface ModelRendererConfigPub {
   castShadow: boolean;
   receiveShadow: boolean;
   color: string;
+  overrideOpacity: boolean;
+  opacity: number;
   materialType: string;
 }
 
@@ -15,6 +17,8 @@ export default class ModelRendererConfig extends SupCore.data.base.ComponentConf
     castShadow: { type: "boolean", mutable: true },
     receiveShadow: { type: "boolean", mutable: true },
     color: { type: "string", length: 6, mutable: true },
+    overrideOpacity: { type: "boolean", mutable: true },
+    opacity: { type: "number?", min: 0, max: 1, mutable: true },
     materialType: { type: "enum", items: ["basic", "phong", "shader"], mutable: true }
   }
 
@@ -25,12 +29,15 @@ export default class ModelRendererConfig extends SupCore.data.base.ComponentConf
       castShadow: false,
       receiveShadow: false,
       color: "ffffff",
+      overrideOpacity: false,
+      opacity: null,
       materialType: "basic" };
     return emptyConfig;
   }
 
   constructor(pub: ModelRendererConfigPub) {
     // TODO: Remove these at some point, new config setting introduced in Superpowers 0.8
+    if (pub.overrideOpacity == null) pub.overrideOpacity = false;
     if (pub.color == null) pub.color = "ffffff";
 
     // TODO: Remove these at some point, new config setting introduced in Superpowers 0.7
@@ -59,6 +66,8 @@ export default class ModelRendererConfig extends SupCore.data.base.ComponentConf
         if (oldDepId != null) this.emit("removeDependencies", [ oldDepId ]);
         if (actualValue != null) this.emit("addDependencies", [ actualValue ]);
       }
+      
+      if (path === "overrideOpacity") this.pub.opacity = null;
 
       callback(null, actualValue);
     });

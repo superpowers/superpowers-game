@@ -43,6 +43,7 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
 
   static Updater = ModelRendererUpdater;
 
+  opacity: number;
   color = { r: 1, g: 1, b: 1 };
   hasPoseBeenUpdated = false;
 
@@ -172,6 +173,7 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
     }
 
     this.setCastShadow(this.castShadow);
+    this.setOpacity(this.opacity);
     this.threeMesh.receiveShadow = this.receiveShadow;
 
     this.actor.threeObject.add(this.threeMesh);
@@ -190,6 +192,19 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
       if (material != null) material.needsUpdate = true;
     })
   }
+  
+  setOpacity(opacity: number) {
+    this.opacity = opacity;
+    let material = this.threeMesh.material;
+    if (this.opacity != null) {
+      material.transparent = true;
+      material.opacity = this.opacity;
+    } else {
+      material.transparent = false;
+      material.opacity = 1;
+    }
+    material.needsUpdate = true;
+   }
 
   setShowSkeleton(show: boolean) {
     if (show == (this.skeletonHelper != null)) return;

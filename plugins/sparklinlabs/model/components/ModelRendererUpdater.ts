@@ -13,6 +13,7 @@ export default class ModelRendererUpdater {
 
   modelAssetId: string;
   animationId: string;
+  overrideOpacity = false;
   modelAsset: ModelAsset = null;
   materialType: string;
 
@@ -33,9 +34,11 @@ export default class ModelRendererUpdater {
     this.modelAssetId = config.modelAssetId;
     this.animationId = config.animationId;
     this.materialType = config.materialType;
+    if (config.overrideOpacity != null) this.overrideOpacity = config.overrideOpacity;
 
     this.modelRenderer.castShadow = config.castShadow;
     this.modelRenderer.receiveShadow = config.receiveShadow;
+    if (config.overrideOpacity) this.modelRenderer.opacity = config.opacity;
     if (config.color != null) {
       let hex = parseInt(config.color, 16);
       this.modelRenderer.color.r = (hex >> 16 & 255) / 255;
@@ -55,6 +58,7 @@ export default class ModelRendererUpdater {
   }
 
   _onModelAssetReceived(assetId: string, asset: ModelAsset) {
+    if (this.modelRenderer.opacity == null) this.modelRenderer.opacity = asset.pub.opacity;
     this.modelAsset = asset;
     this._prepareMaps(() => {
       this.modelRenderer.setModel(this.modelAsset.pub, this.materialType);
@@ -144,6 +148,14 @@ export default class ModelRendererUpdater {
     this.modelRenderer.updateAnimationsByName();
     this._playAnimation();
   }
+  
+  _onEditCommand_setProperty(path: string, value: any) {
+    switch(path) {
+      case "opacity":
+        if (! this.overrideOpacity) this.modelRenderer.setOpacity(value);
+        break;
+    }
+  }
 
   _onModelAssetTrashed() {
     this.modelRenderer.setModel(null, null);
@@ -179,6 +191,15 @@ export default class ModelRendererUpdater {
       case "receiveShadow":
         this.modelRenderer.threeMesh.receiveShadow = value;
         this.modelRenderer.threeMesh.material.needsUpdate = true;
+        break;
+      
+      case "overrideOpacity":
+        this.overrideOpacity = value;
+        this.modelRenderer.setOpacity(value ? null : this.modelAsset.pub.opacity);
+        break;
+
+      case "opacity":
+        this.modelRenderer.setOpacity(value);
         break;
 
       case "color":

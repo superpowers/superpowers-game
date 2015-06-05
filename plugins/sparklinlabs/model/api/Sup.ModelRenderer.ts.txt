@@ -5,10 +5,9 @@ module Sup {
     constructor(actor, asset, materialIndex) {
       super(actor);
       this.__inner = new SupEngine.componentClasses.ModelRenderer(this.actor.__inner);
-      if (asset) {
-        let material: string;
-        if (materialIndex != null) material = materialTypes[materialIndex];
-        this.setModel(asset, material);
+      if (asset != null) {
+        this.__inner.opacity = asset.__inner.opacity;
+        this.setModel(asset, materialIndex);
       }
       this.__inner.__outer = this;
       this.actor.modelRenderer = this;
@@ -27,7 +26,7 @@ module Sup {
     }
     getMaterialType() { return materialTypes.indexOf(this.__inner.materialType); }
     getOpacity() { return this.__inner.opacity; }
-    setOpacity(opacity) { this.__inner.opacity = opacity; this.__inner.threeMesh.material.opacity = opacity; return this; }
+    setOpacity(opacity) { this.__inner.setOpacity(opacity); return this; }
     getColor() { return new Color(this.__inner.color.r, this.__inner.color.g, this.__inner.color.b); }
     setColor(r, g, b) {
       if (g == null && b == null) {

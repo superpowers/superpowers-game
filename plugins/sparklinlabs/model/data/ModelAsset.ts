@@ -47,7 +47,9 @@ export default class ModelAsset extends SupCore.data.base.Asset {
         diffuse: { type: "buffer?", mutable: true }
       }
     },
-    animations: { type: "array" }
+    animations: { type: "array" },
+    
+    opacity: { type: "number?", min: 0, max: 1, mutable: true }
   };
 
   animations: ModelAnimations;
@@ -61,7 +63,8 @@ export default class ModelAsset extends SupCore.data.base.Asset {
       attributes: { position: null, index: null, color: null, uv: null, normal: null },
       bones: null,
       maps: { diffuse: null },
-      animations: []
+      animations: [],
+      opacity: null
     };
 
     super.init(options, callback);
@@ -74,6 +77,10 @@ export default class ModelAsset extends SupCore.data.base.Asset {
   load(assetPath: string) {
     fs.readFile(path.join(assetPath, "asset.json"), { encoding: "utf8" }, (err, json) => {
       this.pub = JSON.parse(json);
+      
+      // TODO: Remove these at some point, new config setting introduced in Superpowers 0.8
+      if (typeof this.pub.opacity === "undefined") this.pub.opacity = 1;
+
       this.pub.attributes = {};
       this.pub.maps = {};
       if (this.pub.animations == null) this.pub.animations = [];
