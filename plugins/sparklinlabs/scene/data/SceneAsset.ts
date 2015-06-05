@@ -95,12 +95,12 @@ export default class SceneAsset extends SupCore.data.base.Asset {
       if (err != null) { callback(err, null, null, null); return; }
 
       if (options.prefab) {
-        let component: Component = { type: "Prefab", config: PrefabConfig.create() };
+        let prefabComponent: Component = { type: "Prefab", config: PrefabConfig.create() };
 
-        this.nodes.addComponent(sceneNode.id, component, 0, (err, actualIndex) => {
-          let config = this.nodes.componentsByNodeId[sceneNode.id].configsById[component.id];
+        this.nodes.addComponent(sceneNode.id, prefabComponent, 0, (err, componentActualIndex) => {
+          let config = this.nodes.componentsByNodeId[sceneNode.id].configsById[prefabComponent.id];
 
-          let componentPath = `${sceneNode.id}_${component.id}`;
+          let componentPath = `${sceneNode.id}_${prefabComponent.id}`;
           config.on("addDependencies", (depIds: string[]) => { this._onAddComponentDependencies(componentPath, depIds); });
           config.on("removeDependencies", (depIds: string[]) => { this._onRemoveComponentDependencies(componentPath, depIds); });
 
