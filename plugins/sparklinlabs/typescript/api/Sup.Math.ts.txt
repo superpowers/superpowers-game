@@ -59,14 +59,18 @@ module Sup {
         if (y == null && z == null) {
           let v = x;
           this.x += v.x; this.y += v.y; this.z += v.z;
-        } else this.x += x; this.y += y; this.z += z;
+        } else {
+          this.x += x; this.y += y; this.z += z;
+        }
         return this;
       }
       subtract(x, y, z) {
         if (y == null && z == null) {
           let v = x;
           this.x -= v.x; this.y -= v.y; this.z -= v.z;
-        } else this.x -= x; this.y -= y; this.z -= z;
+        } else {
+          this.x -= x; this.y -= y; this.z -= z;
+        }
         return this;
       }
       multiplyScalar(m) { this.x *= m; this.y *= m; this.z *= m; return this; }
