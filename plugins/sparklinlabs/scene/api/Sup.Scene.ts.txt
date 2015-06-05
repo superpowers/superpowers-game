@@ -45,7 +45,7 @@ module Sup {
         } else throw new Error(`Undefined prefab in ${sceneAsset.name}`);
 
       } else {
-        actor = player.createActor(node.name, parentActor);
+        actor = player.createActor(node.name, parentActor, { visible: node.visible, layer: node.layer });
 
         actor.__inner.setLocalPosition( tmpVector3.set(node.position.x, node.position.y, node.position.z) )
         actor.__inner.setLocalOrientation( tmpQuaternion.set(node.orientation.x, node.orientation.y, node.orientation.z, node.orientation.w) )

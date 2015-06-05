@@ -10,9 +10,9 @@ module Sup {
 
     // INSERT_COMPONENT_ACCESSORS
 
-    constructor(name, parent) {
+    constructor(name, parent, options) {
       var innerParent = (parent) ? parent.__inner : null;
-      var actor = new SupEngine.Actor(player.gameInstance, name, innerParent);
+      var actor = new SupEngine.Actor(player.gameInstance, name, innerParent, options);
       this.__inner = actor;
       this.__behaviors = {};
       actor.__outer = this;

@@ -3,7 +3,7 @@ declare module Sup {
   class Actor {
     // INSERT_COMPONENT_ACCESSORS
 
-    constructor(name: string, parent?: Actor);
+    constructor(name: string, parent?: Actor, options?: { visible?: boolean; layer?: number });
     destroy(): void;
 
     getName(): string;
