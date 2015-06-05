@@ -21,6 +21,8 @@ ui.searchInput.value = info.text != null ? info.text : "";
 search();
 
 window.addEventListener("message", (event: any) => {
+  if (event.data.type === "activate") ui.searchInput.focus();
+  
   if (event.data.text != null) {
     ui.searchInput.value = event.data.text;
     search();
