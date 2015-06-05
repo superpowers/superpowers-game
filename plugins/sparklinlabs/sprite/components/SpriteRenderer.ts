@@ -34,7 +34,7 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
 
     if (spriteAsset != null) this.setSprite(spriteAsset, materialType);
   }
-
+  
   setSprite(asset: any, materialType?: string) {
     this._clearMesh();
 
@@ -188,18 +188,18 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
   }
 
   updateFrame() {
-    this.hasFrameBeenUpdated = true
+    this.hasFrameBeenUpdated = true;
 
     let animation = this.animationsByName[this.animationName]
     let frame = animation.startFrameIndex + Math.max(1, Math.ceil(this.animationTimer / this.actor.gameInstance.framesPerSecond * this.asset.framesPerSecond)) - 1
     if (frame > animation.endFrameIndex) {
       if (this.animationLooping) {
-        frame = animation.startFrameIndex
-        this.animationTimer = 1
+        frame = animation.startFrameIndex;
+        this.animationTimer = 1;
       }
       else {
-        frame = animation.endFrameIndex
-        this.isAnimationPlaying = false
+        frame = animation.endFrameIndex;
+        this.isAnimationPlaying = false;
       }
     }
 
@@ -212,8 +212,8 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
       return;
     }
 
-    this._tickAnimation()
-    this.hasFrameBeenUpdated = false
+    this._tickAnimation();
+    this.hasFrameBeenUpdated = false;
   }
 
   _tickAnimation() {
