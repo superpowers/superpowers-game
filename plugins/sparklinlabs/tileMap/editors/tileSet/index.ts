@@ -46,7 +46,7 @@ function start() {
       if (err != null) alert(err);
     });
   });
-  
+
   ui.gridHeightInput = document.querySelector("input.grid-height");
   ui.gridHeightInput.addEventListener("change", () => {
     socket.emit("edit:assets", info.assetId, "setProperty", "grid.height", parseInt(ui.gridHeightInput.value), (err: string) => {
@@ -280,8 +280,8 @@ function tick(timestamp=0) {
       let y = Math.floor(mouseY * ratio);
 
       let pub = data.tileSetUpdater.tileSetAsset.pub;
-      if (x >= 0 && x < pub.domImage.width / .pub.gridSize &&
-      y >= 0 && y < pub.domImage.height / pub.gridSize &&
+      if (x >= 0 && x < pub.domImage.width / pub.grid.width &&
+      y >= 0 && y < pub.domImage.height / pub.grid.height &&
       (x !== data.selectedTile.x || y !== data.selectedTile.y)) {
         data.tileSetUpdater.tileSetRenderer.select(x, y);
         selectTile({ x, y });
