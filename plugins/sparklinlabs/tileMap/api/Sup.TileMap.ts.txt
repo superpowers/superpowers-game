@@ -7,7 +7,7 @@ module Sup {
 
     setTileAt(layer, x, y, value, flipX, flipY, angle) {
       var tileSet = player.getOuterAsset(this.__inner.data.tileSetId);
-      var tilesPerRow = tileSet.__inner.data.texture.image.width / tileSet.__inner.data.gridSize;
+      var tilesPerRow = tileSet.__inner.data.texture.image.width / tileSet.__inner.data.grid.width;
       if (value == -1) {
         this.__inner.setTileAt(layer, x, y, null);
       } else {
@@ -20,7 +20,7 @@ module Sup {
     }
     getTileAt(layer, x, y) {
       var tileSet = player.getOuterAsset(this.__inner.data.tileSetId);
-      var tilesPerRow = tileSet.__inner.data.texture.image.width / tileSet.__inner.data.gridSize;
+      var tilesPerRow = tileSet.__inner.data.texture.image.width / tileSet.__inner.data.grid.width;
       var transform = this.__inner.getTileAt(layer, x, y);
       var tileX = transform[0]; var tileY = transform[1];
 
@@ -30,7 +30,7 @@ module Sup {
     }
     getTileTransformAt(layer, x, y) {
       var tileSet = player.getOuterAsset(this.__inner.data.tileSetId);
-      var tilesPerRow = tileSet.__inner.data.texture.image.width / tileSet.__inner.data.gridSize;
+      var tilesPerRow = tileSet.__inner.data.texture.image.width / tileSet.__inner.data.grid.width;
       var transform = this.__inner.getTileAt(layer, x, y);
       return { "flipX": transform[2], "flipY": transform[3], "angle": transform[4] };
     }
