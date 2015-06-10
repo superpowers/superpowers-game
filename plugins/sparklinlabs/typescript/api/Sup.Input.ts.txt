@@ -61,21 +61,47 @@ module Sup {
       return player.gameInstance.input.touches[index].wasEnded
     }
 
-
     export function vibrate(pattern) { window.navigator.vibrate(pattern); }
 
     export function isKeyDown(keyName) {
-      if ( player.gameInstance.input.keyboardButtons[window.KeyEvent["DOM_VK_" + keyName ]] == null ) { throw new Error("Invalid key name") }
+      if (keyName === "ANY") {
+        for (let key of player.gameInstance.input.keyboardButtons) if (key.isDown) return true;
+        return false;
+
+      } else if (keyName === "NONE") {
+        for (let key of player.gameInstance.input.keyboardButtons) if (key.isDown) return false;
+        return true;
+
+      } else if ( player.gameInstance.input.keyboardButtons[window.KeyEvent["DOM_VK_" + keyName ]] == null ) { throw new Error("Invalid key name") }
       return player.gameInstance.input.keyboardButtons[window.KeyEvent["DOM_VK_" + keyName ]].isDown
     }
 
     export function wasKeyJustPressed(keyName) {
-      if ( player.gameInstance.input.keyboardButtons[window.KeyEvent["DOM_VK_" + keyName ]] == null ) { throw new Error("Invalid key name") }
+      if (keyName === "ANY") {
+        for (let key of player.gameInstance.input.keyboardButtons) if (key.wasJustPressed) return true;
+        return false;
+
+      } else if (keyName === "NONE") {
+        for (let key of player.gameInstance.input.keyboardButtons) if (key.wasJustPressed) return false;
+        return true;
+
+      } else if ( player.gameInstance.input.keyboardButtons[window.KeyEvent["DOM_VK_" + keyName ]] == null ) {
+        throw new Error("Invalid key name")
+      }
+
       return player.gameInstance.input.keyboardButtons[window.KeyEvent["DOM_VK_" + keyName ]].wasJustPressed;
     }
 
     export function wasKeyJustReleased(keyName) {
-      if ( player.gameInstance.input.keyboardButtons[window.KeyEvent["DOM_VK_" + keyName ]] == null ) { throw new Error("Invalid key name") }
+      if (keyName === "ANY") {
+        for (let key of player.gameInstance.input.keyboardButtons) if (key.wasJustReleased) return true;
+        return false;
+
+      } else if (keyName === "NONE") {
+        for (let key of player.gameInstance.input.keyboardButtons) if (key.wasJustReleased) return false;
+        return true;
+
+      } else if ( player.gameInstance.input.keyboardButtons[window.KeyEvent["DOM_VK_" + keyName ]] == null ) { throw new Error("Invalid key name") }
       return player.gameInstance.input.keyboardButtons[window.KeyEvent["DOM_VK_" + keyName ]].wasJustReleased;
     }
 
