@@ -128,7 +128,10 @@ export default class TileMapRenderer extends SupEngine.ActorComponent {
 
   moveLayer(layerId: string, newIndex: number) {
     let layer = this.layerMeshesById[layerId];
-    this.layerMeshes.splice(this.layerMeshes.indexOf(layer), 1);
+    let oldIndex = this.layerMeshes.indexOf(layer);
+    this.layerMeshes.splice(oldIndex, 1);
+    
+    if (oldIndex < newIndex) newIndex--;
     this.layerMeshes.splice(newIndex, 0, layer);
 
     this.refreshLayersDepth();
@@ -258,6 +261,9 @@ export default class TileMapRenderer extends SupEngine.ActorComponent {
         break;
     }
   }
-  
-  setVisible(visible: boolean) { for (let layerMesh of this.layerMeshes) layerMesh.visible = visible; }
+
+  setVisible(visible: boolean) {
+    if (this.layerMeshes == null) return;
+    for (let layerMesh of this.layerMeshes) layerMesh.visible = visible;
+  }
 }
