@@ -36,7 +36,7 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
 
     if (spriteAsset != null) this.setSprite(spriteAsset, materialType);
   }
-  
+
   setSprite(asset: any, materialType?: string) {
     this._clearMesh();
 
@@ -79,7 +79,7 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
 
   setOpacity(opacity: number) {
     this.opacity = opacity;
-    if (this.threeMesh == null) return;
+    if (this.material == null) return;
 
     if (this.opacity != null) {
       this.material.transparent = true;
@@ -90,13 +90,13 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
     }
     this.material.needsUpdate = true;
   }
-  
+
   setHorizontalFlip(horizontalFlip: boolean) {
     this.horizontalFlip = horizontalFlip;
     if (this.animationName == null) this.setFrame(0);
     else if (! this.isAnimationPlaying) this.updateFrame();
   }
-  
+
   setVerticalFlip(verticalFlip: boolean) {
     this.verticalFlip = verticalFlip;
     if (this.animationName == null) this.setFrame(0);
@@ -151,7 +151,7 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
       left = right;
       right = tmp;
     }
-    
+
     if (this.verticalFlip) {
       tmp = top;
       top = bottom;
@@ -256,6 +256,6 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
     this.animationTimer += 1;
     this.updateFrame();
   }
-  
+
   setVisible(visible: boolean) { if (this.threeMesh != null) this.threeMesh.visible = visible; }
 }
