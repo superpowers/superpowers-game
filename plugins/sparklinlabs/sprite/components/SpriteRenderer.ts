@@ -68,6 +68,8 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
   }
 
   updateShape() {
+    if (this.threeMesh == null) return;
+
     let scaleRatio = 1 / this.asset.pixelsPerUnit;
     this.threeMesh.scale.set(scaleRatio, scaleRatio, scaleRatio);
     this.threeMesh.position.setX((0.5 - this.asset.origin.x) * this.asset.grid.width * scaleRatio);
@@ -77,6 +79,8 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
 
   setOpacity(opacity: number) {
     this.opacity = opacity;
+    if (this.threeMesh == null) return;
+
     if (this.opacity != null) {
       this.material.transparent = true;
       this.material.opacity = this.opacity;

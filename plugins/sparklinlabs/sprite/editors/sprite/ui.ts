@@ -294,7 +294,7 @@ export function setupProperty(path: string, value: any) {
     spritesheetArea.spriteRenderer.setOpacity(value != null ? 1 : null)
   }
 
-  if (path === "alphaTest") {
+  if (path === "alphaTest" && spritesheetArea.spriteRenderer.material != null) {
     spritesheetArea.spriteRenderer.material.alphaTest = value;
     spritesheetArea.spriteRenderer.material.needsUpdate = true;
   }
