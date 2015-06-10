@@ -15,6 +15,7 @@ export default class TileMapRenderer extends SupEngine.ActorComponent {
   tileSetTexture: THREE.Texture;
   layerMeshes: THREE.Mesh[];
   layerMeshesById: { [id: string]: THREE.Mesh };
+  layerVisibleById: { [id: string]: boolean };
 
   tilesPerRow: number;
   tilesPerColumn: number;
@@ -56,6 +57,7 @@ export default class TileMapRenderer extends SupEngine.ActorComponent {
   _createLayerMeshes() {
     this.layerMeshes = [];
     this.layerMeshesById = {};
+    this.layerVisibleById = {};
 
     for (let layerIndex = 0; layerIndex < this.tileMap.data.layers.length; layerIndex++) {
       let layer = this.tileMap.data.layers[layerIndex];
@@ -74,6 +76,7 @@ export default class TileMapRenderer extends SupEngine.ActorComponent {
 
     this.layerMeshes = null;
     this.layerMeshesById = null;
+    this.layerVisibleById = null;
 
     this.tileMap.removeListener("setTileAt", this._onSetTileAt);
   }
@@ -108,6 +111,7 @@ export default class TileMapRenderer extends SupEngine.ActorComponent {
 
     this.layerMeshes.splice(layerIndex, 0, layerMesh);
     this.layerMeshesById[layer.id] = layerMesh;
+    this.layerVisibleById[layer.id] = true;
     this.actor.threeObject.add(layerMesh);
 
     for (let y = 0; y < this.tileMap.data.height; y++) {
@@ -130,7 +134,7 @@ export default class TileMapRenderer extends SupEngine.ActorComponent {
     let layer = this.layerMeshesById[layerId];
     let oldIndex = this.layerMeshes.indexOf(layer);
     this.layerMeshes.splice(oldIndex, 1);
-    
+
     if (oldIndex < newIndex) newIndex--;
     this.layerMeshes.splice(newIndex, 0, layer);
 
@@ -264,6 +268,8 @@ export default class TileMapRenderer extends SupEngine.ActorComponent {
 
   setVisible(visible: boolean) {
     if (this.layerMeshes == null) return;
-    for (let layerMesh of this.layerMeshes) layerMesh.visible = visible;
+
+    for (let layerId in this.layerMeshesById)
+      this.layerMeshesById[layerId].visible = visible ? this.layerVisibleById[layerId]: false;
   }
 }

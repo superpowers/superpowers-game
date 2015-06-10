@@ -298,7 +298,7 @@ export function setupLayer(layer: TileMapLayerPub, index: number) {
   displayCheckbox.type = "checkbox";
   displayCheckbox.checked = true;
   displayCheckbox.addEventListener("change", () => {
-    data.tileMapUpdater.tileMapRenderer.layerMeshesById[layer.id].visible = displayCheckbox.checked;
+    data.tileMapUpdater.tileMapRenderer.layerVisibleById[layer.id] = displayCheckbox.checked;
   });
   displayCheckbox.addEventListener("click", (event) => { event.stopPropagation(); });
 
