@@ -53,9 +53,8 @@ declare module SupEngine {
     root: Actor[];
 
     constructor();
-    _walkRecurseTopDown(node: Actor, parentNode: Actor, callback: (node: Actor, parentNode?: Actor) => any): void;
-    walkTopDown(callback: (node: Actor, parentNode?: Actor) => any): void;
-    walkDown(rootNode: Actor, callback: (node: Actor, parentNode?: Actor) => any): void;
+    walkTopDown(callback: (node: Actor, parentNode?: Actor) => boolean): boolean;
+    walkDown(rootNode: Actor, callback: (node: Actor, parentNode?: Actor) => boolean): boolean;
   }
 
   class Actor {

@@ -40,7 +40,7 @@ export default class GameInstance extends EventEmitter {
     // Exit callback is only enabled when playing the actual game, not in most editors
     let enableOnExit = (options.enableOnExit != null) ? options.enableOnExit : false;
     this.input = new Input(canvas, options.enableOnExit ? { exitCallback: this._doExitCallback } : null);
-    
+
     // Setup layers
     if (options.layers != null) this.layers = options.layers;
 
@@ -76,7 +76,7 @@ export default class GameInstance extends EventEmitter {
 
     // Build cached actors list
     this.cachedActors.length = 0;
-    this.tree.walkTopDown( (actor) => { this.cachedActors.push(actor); });
+    this.tree.walkTopDown((actor) => { this.cachedActors.push(actor); return true; });
 
     // Start newly-added components
     let index = 0;
@@ -183,7 +183,7 @@ export default class GameInstance extends EventEmitter {
   }
 
   destroyAllActors() {
-    this.tree.walkTopDown( (actor) => { this.destroyActor(actor); } );
+    this.tree.walkTopDown((actor) => { this.destroyActor(actor); return true; });
     this.skipRendering = true;
   }
 

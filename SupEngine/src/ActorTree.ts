@@ -5,27 +5,29 @@ export default class ActorTree {
 
   constructor() {}
 
-  _walkRecurseTopDown(node: Actor, parentNode: Actor, callback: (node: Actor, parentNode?: Actor) => any) {
-    callback(node, parentNode);
-    for (let child of node.children) this._walkRecurseTopDown(child, node, callback);
+  _walkRecurseTopDown(node: Actor, parentNode: Actor, callback: (node: Actor, parentNode?: Actor) => boolean) {
+    if (callback(node, parentNode) === false) return false;
+
+    for (let child of node.children) {
+      if (this._walkRecurseTopDown(child, node, callback) === false) return false;
+    }
+
+    return true;
   }
 
-  walkTopDown(callback: (node: Actor, parentNode?: Actor) => any) {
-    for (let child of this.root) this._walkRecurseTopDown(child, null, callback);
+  walkTopDown(callback: (node: Actor, parentNode?: Actor) => boolean): boolean {
+    for (let child of this.root) {
+      if (this._walkRecurseTopDown(child, null, callback) === false) return false;
+    }
+
+    return true;
   }
 
   walkDown(rootNode: Actor, callback: (node: Actor, parentNode?: Actor) => any) {
-    for (let child of rootNode.children) this._walkRecurseTopDown(child, rootNode, callback);
+    for (let child of rootNode.children) {
+      if (this._walkRecurseTopDown(child, rootNode, callback) === false) return false;
+    }
+
+    return true;
   }
-
-  /*
-  _walkRecurseBottomUp: (node, parentNode, callback) =>
-    this._walkRecurseBottomUp child, node, callback for child in node.children
-    callback node, parentNode
-    return
-
-  walkBottomUp: (callback) ->
-    this._walkRecurseBottomUp node, null, callback for node in this.root
-    return
-  */
 }
