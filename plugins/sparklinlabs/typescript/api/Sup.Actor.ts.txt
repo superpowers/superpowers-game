@@ -36,14 +36,14 @@ module Sup {
     getChild(name) {
       var foundActor = null;
       player.gameInstance.tree.walkDown(this.__inner, (actor) => {
-        if (actor.name == name) { foundActor = (foundActor) ? foundActor : actor.__outer; }
+        if (actor.name === name && !actor.pendingForDestruction) { foundActor = (foundActor) ? foundActor : actor.__outer; }
       });
       return foundActor;
     }
 
     getChildren() {
       var children = [];
-      this.__inner.children.forEach( (child) => { children.push(child.__outer); } );
+      this.__inner.children.forEach( (child) => { if (!child.pendingForDestruction) children.push(child.__outer); } );
       return children;
     }
 
@@ -60,7 +60,7 @@ module Sup {
       this.__inner.setGlobalPosition(tmpVector3);
       return this;
     }
-    
+
     getX() { return this.__inner.getGlobalPosition().x; }
     setX(x) {
       let position = this.__inner.getGlobalPosition();
@@ -96,7 +96,7 @@ module Sup {
       this.__inner.setLocalPosition(tmpVector3);
       return this;
     }
-    
+
     getLocalX() { return this.__inner.getLocalPosition().x; }
     setLocalX(x) {
       let position = this.__inner.getLocalPosition();
@@ -227,7 +227,7 @@ module Sup {
       this.__inner.setGlobalEulerAngles(tmpEuler);
       return this;
     }
-    
+
     getEulerX() { return this.__inner.getGlobalEulerAngles().x; }
     setEulerX(x) {
       let eulerAngles = this.__inner.getGlobalEulerAngles();
@@ -265,7 +265,7 @@ module Sup {
       this.__inner.setLocalEulerAngles(tmpEuler);
       return this;
     }
-    
+
     getLocalEulerX() { return this.__inner.getLocalEulerAngles().x; }
     setLocalEulerX(x) {
       let eulerAngles = this.__inner.getLocalEulerAngles();
