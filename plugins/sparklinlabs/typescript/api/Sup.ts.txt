@@ -55,13 +55,19 @@ module Sup {
 
   export function getActor(name) {
     var foundActor = null;
-    player.gameInstance.tree.walkTopDown( (actor) => { if ( actor.name == name && ! actor.pendingForDestruction ) { foundActor = (foundActor) ? foundActor: actor.__outer; } } )
-    return foundActor
+    player.gameInstance.tree.walkTopDown((actor) => {
+      if (actor.name === name && !actor.pendingForDestruction) {
+        foundActor = actor.__outer;
+        return false;
+      }
+      return true;
+    });
+    return foundActor;
   }
 
   export function destroyAllActors() {
     player.gameInstance.destroyAllActors();
-    player.gameInstance.tree.walkTopDown( (actor) => { actor.__outer.__inner = null; actor.__outer = null; } )
+    player.gameInstance.tree.walkTopDown((actor) => { actor.__outer.__inner = null; actor.__outer = null; return true; });
   }
 
   export class ActorComponent {
