@@ -1,8 +1,8 @@
 module Sup {
 
-  var tmpVector3 = new SupEngine.THREE.Vector3();
-  var tmpQuaternion = new SupEngine.THREE.Quaternion();
-  var tmpEuler = new SupEngine.THREE.Euler();
+  let tmpVector3 = new SupEngine.THREE.Vector3();
+  let tmpQuaternion = new SupEngine.THREE.Quaternion();
+  let tmpEuler = new SupEngine.THREE.Euler();
 
   export class Actor {
     __inner: any;
@@ -11,8 +11,8 @@ module Sup {
     // INSERT_COMPONENT_ACCESSORS
 
     constructor(name, parent, options) {
-      var innerParent = (parent) ? parent.__inner : null;
-      var actor = new SupEngine.Actor(player.gameInstance, name, innerParent, options);
+      let innerParent = (parent) ? parent.__inner : null;
+      let actor = new SupEngine.Actor(player.gameInstance, name, innerParent, options);
       this.__inner = actor;
       this.__behaviors = {};
       actor.__outer = this;

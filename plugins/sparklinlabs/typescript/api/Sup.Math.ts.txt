@@ -1,13 +1,13 @@
 module Sup {
 
-  var degToRad = window.Math.PI / 180;
-  var radToDeg = 180 / window.Math.PI;
+  let degToRad = window.Math.PI / 180;
+  let radToDeg = 180 / window.Math.PI;
 
-  var tmpVector3 = new SupEngine.THREE.Vector3();
+  let tmpVector3 = new SupEngine.THREE.Vector3();
 
   export module Math {
 
-    export function clamp(v, min, max) { return window.Math.max( min, window.Math.min(max, v) ) }
+    export function clamp(v, min, max) { return window.Math.max(min, window.Math.min(max, v)); }
 
     export function lerp(a, b, v) { return a + (b - a) * v; }
 
@@ -25,7 +25,7 @@ module Sup {
     }
 
     export module Random {
-      export function integer(min, max) { return window.Math.floor( window.Math.random() * (max + 1 - min) ) + min }
+      export function integer(min, max) { return window.Math.floor(window.Math.random() * (max + 1 - min)) + min; }
       export function sample(collection) { return collection[integer(0, collection.length - 1)]; }
     }
 
@@ -76,9 +76,9 @@ module Sup {
       multiplyScalar(m) { this.x *= m; this.y *= m; this.z *= m; return this; }
 
       cross(v) {
-        var x = this.x;
-        var y = this.y;
-        var z = this.z;
+        let x = this.x;
+        let y = this.y;
+        let z = this.z;
 
         this.x = y * v.z - z * v.y;
         this.y = z * v.x - x * v.z;
@@ -89,7 +89,7 @@ module Sup {
       dot(v) { return this.x * v.x + this.y * v.y + this.z * v.z; }
 
       normalize() {
-        var length = this.length()
+        let length = this.length()
         this.x /= length; this.y /= length; this.z /= length;
         return this;
       }
@@ -102,15 +102,15 @@ module Sup {
       }
 
       rotate(q) {
-        var qx = q.x;
-        var qy = q.y;
-        var qz = q.z;
-        var qw = q.w;
+        let qx = q.x;
+        let qy = q.y;
+        let qz = q.z;
+        let qw = q.w;
 
-        var ix =  qw * this.x + qy * this.z - qz * this.y;
-        var iy =  qw * this.y + qz * this.x - qx * this.z;
-        var iz =  qw * this.z + qx * this.y - qy * this.x;
-        var iw = - qx * this.x - qy * this.y - qz * this.z;
+        let ix =  qw * this.x + qy * this.z - qz * this.y;
+        let iy =  qw * this.y + qz * this.x - qx * this.z;
+        let iz =  qw * this.z + qx * this.y - qy * this.x;
+        let iw = - qx * this.x - qy * this.y - qz * this.z;
 
         this.x = ix * qw + iw * - qx + iy * - qz - iz * - qy;
         this.y = iy * qw + iw * - qy + iz * - qx - ix * - qz;
@@ -121,7 +121,7 @@ module Sup {
       length() { return window.Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z); }
       distanceTo(v) { return v.clone().subtract(this).length(); }
       angleTo(v) {
-        var theta = this.dot( v ) / ( this.length() * v.length() );
+        let theta = this.dot( v ) / ( this.length() * v.length() );
 		    return window.Math.acos( Math.clamp( theta, - 1, 1 ) );
       }
 
@@ -151,22 +151,22 @@ module Sup {
       clone() { return new Quaternion(this.x, this.y, this.z, this.w); }
 
       setFromAxisAngle(axis, angle) {
-        var s = window.Math.sin(angle / 2);
+        let s = window.Math.sin(angle / 2);
 
     		this.x = axis.x * s;
     		this.y = axis.y * s;
     		this.z = axis.z * s;
     		this.w = window.Math.cos(angle / 2);
-        return this
+        return this;
       }
 
       setFromYawPitchRoll(yaw, pitch, roll) {
-        var c1 = window.Math.cos(pitch / 2);
-        var c2 = window.Math.cos(yaw / 2);
-        var c3 = window.Math.cos(roll / 2);
-        var s1 = window.Math.sin(pitch / 2);
-        var s2 = window.Math.sin(yaw / 2);
-        var s3 = window.Math.sin(roll / 2);
+        let c1 = window.Math.cos(pitch / 2);
+        let c2 = window.Math.cos(yaw / 2);
+        let c3 = window.Math.cos(roll / 2);
+        let s1 = window.Math.sin(pitch / 2);
+        let s2 = window.Math.sin(yaw / 2);
+        let s3 = window.Math.sin(roll / 2);
 
         this.x = s1 * c2 * c3 + c1 * s2 * s3;
         this.y = c1 * s2 * c3 - s1 * c2 * s3;
@@ -176,15 +176,15 @@ module Sup {
       }
 
       multiplyQuaternions(a, b) {
-        var qax = a.x;
-        var qay = a.y;
-        var qaz = a.z;
-        var qaw = a.w;
+        let qax = a.x;
+        let qay = a.y;
+        let qaz = a.z;
+        let qaw = a.w;
 
-        var qbx = b.x;
-        var qby = b.y;
-        var qbz = b.z;
-        var qbw = b.w;
+        let qbx = b.x;
+        let qby = b.y;
+        let qbz = b.z;
+        let qbw = b.w;
 
         this.x = qax * qbw + qaw * qbx + qay * qbz - qaz * qby;
         this.y = qay * qbw + qaw * qby + qaz * qbx - qax * qbz;
@@ -201,12 +201,12 @@ module Sup {
         if (t === 0) return this;
         if (t === 1) return this.copy(q);
 
-        var x = this.x;
-        var y = this.y;
-        var z = this.z;
-        var w = this.w;
+        let x = this.x;
+        let y = this.y;
+        let z = this.z;
+        let w = this.w;
 
-        var cosHalfTheta = w * q.w + x * q.x + y * q.y + z * q.z;
+        let cosHalfTheta = w * q.w + x * q.x + y * q.y + z * q.z;
 
         if (cosHalfTheta < 0) {
           this.w = -q.w;
@@ -226,8 +226,8 @@ module Sup {
           return this;
         }
 
-        var halfTheta = window.Math.acos(cosHalfTheta);
-        var sinHalfTheta = window.Math.sqrt(1.0 - cosHalfTheta * cosHalfTheta);
+        let halfTheta = window.Math.acos(cosHalfTheta);
+        let sinHalfTheta = window.Math.sqrt(1.0 - cosHalfTheta * cosHalfTheta);
 
         if (window.Math.abs(sinHalfTheta) < 0.001) {
           this.w = 0.5 * (w + this.w);
@@ -237,7 +237,7 @@ module Sup {
           return this;
         }
 
-        var ratioA = window.Math.sin((1 - t) * halfTheta) / sinHalfTheta,
+        let ratioA = window.Math.sin((1 - t) * halfTheta) / sinHalfTheta,
         ratioB = window.Math.sin(t * halfTheta) / sinHalfTheta;
 
         this.w = (w * ratioA + this.w * ratioB);

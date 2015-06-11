@@ -32,29 +32,30 @@ module Sup {
   export class Folder extends Asset {}
 
   export function get(path, arg1, arg2) {
-    var type = arg1;
-    var options = (arg2 !== undefined) ? arg2 : { ignoreMissing: false };
+    let type = arg1;
+    let options = (arg2 !== undefined) ? arg2 : { ignoreMissing: false };
 
     if (arg1 != null && Object.getPrototypeOf(arg1) == Object.prototype) {
       type = null;
       options = arg1;
     }
 
-    var entry = player.entriesByPath[path];
+    let entry = player.entriesByPath[path];
+    let outerAsset: any = null;
 
-    if (entry) { var outerAsset = player.getOuterAsset(entry.id); }
+    if (entry) { outerAsset = player.getOuterAsset(entry.id); }
     else if(!options.ignoreMissing) throw new Error(`Invalid asset path: ${path}`);
 
-    if (type != null && outerAsset !=null) {
-      var typeName = type.name.charAt(0).toLowerCase() + type.name.slice(1);
+    if (type != null && outerAsset != null) {
+      let typeName = type.name.charAt(0).toLowerCase() + type.name.slice(1);
       if (typeName != outerAsset.type) throw new Error(`Invalid asset type: got ${outerAsset.type} but asked for ${typeName}`);
     }
 
-    return (outerAsset) ? outerAsset : null
+    return outerAsset;
   }
 
   export function getActor(name) {
-    var foundActor = null;
+    let foundActor = null;
     player.gameInstance.tree.walkTopDown((actor) => {
       if (actor.name === name && !actor.pendingForDestruction) {
         foundActor = actor.__outer;
@@ -93,7 +94,7 @@ module Sup {
 
       super(actor.__outer);
 
-      var funcs = {};
+      let funcs = {};
       funcs["awake"]  = (this.awake)  ? this.awake.bind(this) : null;
       funcs["start"]  = (this.start)  ? this.start.bind(this) : null;
       funcs["update"] = (this.update) ? this.update.bind(this) : null;
