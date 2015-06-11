@@ -784,7 +784,7 @@ function onGlobalSearch() {
   }
 
   let selection = ui.editor.getDoc().getSelection();
-  SupClient.dialogs.prompt("Search in all TypeScript scripts", "Find in project", selection, "Search", (text) => {
+  SupClient.dialogs.prompt("Search in all TypeScript scripts.", "Find in project", selection, "Search", (text) => {
     if (text == null) {
       ui.editor.focus();
       return;
