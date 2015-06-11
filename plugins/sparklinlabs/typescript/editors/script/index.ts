@@ -88,8 +88,8 @@ function start() {
     },
     "Ctrl-Space": "autocomplete",
     "Cmd-Space": "autocomplete",
-    "Shift-Ctrl-F": () => { onGlobalResearch(); },
-    "Shift-Cmd-F": () => { onGlobalResearch(); }
+    "Shift-Ctrl-F": () => { onGlobalSearch(); },
+    "Shift-Cmd-F": () => { onGlobalSearch(); }
   }
 
   let textArea = <HTMLTextAreaElement>document.querySelector(".code-editor");
@@ -777,14 +777,14 @@ function scheduleCompletion() {
   }, 100);
 }
 
-function onGlobalResearch() {
+function onGlobalSearch() {
   if (window.parent == null) {
     //TODO: find a way so it works ? or display an information saying that you can't ?
     return;
   }
-  
+
   let selection = ui.editor.getDoc().getSelection();
-  SupClient.dialogs.prompt("Global research", "Find in project", selection, "Search", (text) => {
+  SupClient.dialogs.prompt("Search in all TypeScript scripts", "Find in project", selection, "Search", (text) => {
     if (text == null) {
       ui.editor.focus();
       return;
