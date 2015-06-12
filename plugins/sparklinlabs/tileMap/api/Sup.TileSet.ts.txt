@@ -1,7 +1,7 @@
 module Sup {
   export class TileSet extends Asset {
     getTileProperties(tile) {
-      var tilesPerRow = this.__inner.data.texture.image.width / this.__inner.data.gridSize;
+      var tilesPerRow = this.__inner.data.texture.image.width / this.__inner.data.grid.width;
 
       var x = tile % tilesPerRow;
       var y = window.Math.floor(tile / tilesPerRow);
@@ -10,7 +10,7 @@ module Sup {
       return properties;
     }
     setTileProperty(tile, propertyName, propertyValue) {
-      var tilesPerRow = this.__inner.data.texture.image.width / this.__inner.data.gridSize;
+      var tilesPerRow = this.__inner.data.texture.image.width / this.__inner.data.grid.width;
 
       var x = tile % tilesPerRow;
       var y = window.Math.floor(tile / tilesPerRow);
