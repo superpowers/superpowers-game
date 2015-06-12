@@ -106,7 +106,7 @@ module ArcadePhysics2D {
                   gotCollision = true;
                   body1.velocity.y = -body1.velocity.y * body1.bounceY;
                   body1.position.y = y * mapBody.mapToSceneFactor.y + mapBody.position.y - body1.height / 2;
-                  body1.touches.bottom = true;
+                  body1.touches.top = true;
                   return;
                 }
               }
@@ -114,7 +114,7 @@ module ArcadePhysics2D {
           }
         }
 
-          function checkX(mapBody: ArcadeBody2D) {
+        function checkX(mapBody: ArcadeBody2D) {
           if (body1.deltaX() < 0) {
             let x = Math.floor((body1.position.x - mapBody.position.x - body1.width / 2) / mapBody.mapToSceneFactor.x);
             let y = body1.position.y - mapBody.position.y - body1.height / 2;
@@ -159,7 +159,7 @@ module ArcadePhysics2D {
                   gotCollision = true;
                   body1.velocity.x = -body1.velocity.x * body1.bounceX;
                   body1.position.x = x * mapBody.mapToSceneFactor.x + mapBody.position.x - body1.width / 2;
-                  body1.touches.left = true;
+                  body1.touches.right = true;
                   return true;
                 }
               }
