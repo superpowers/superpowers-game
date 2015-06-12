@@ -85,6 +85,27 @@ onmessage = (event: MessageEvent) => {
       if (info != null) (<any>postMessage)({ type: "quickInfo", text: ts.displayPartsToString(info.displayParts) });
       break;
 
+    case "getDefinitionAt":
+      console.log(scripts.fileNames);
+      let definition = service.getDefinitionAtPosition(event.data.name, event.data.start)[0];
+      if (definition.fileName === "lib.d.ts") {
+        //TODO: open the api browser at the proper page
+      } else {
+        console.log(definition);
+        let file = scripts.files[definition.fileName].text;
+        let textParts = file.split("\n");
+        let line = 0;
+        let position = 0;
+        while (position + textParts[line].length <= definition.textSpan.start) {
+          position += textParts[line].length + 1;
+          line += 1;
+        }
+
+        let fileName = definition.fileName.slice(0, definition.fileName.length - 3);
+        (<any>postMessage)({ type: "definition", fileName, line, ch: definition.textSpan.start - position });
+      }
+      break;
+
     default:
       throw new Error(`Unexpected message type: ${event.data.type}`);
   }

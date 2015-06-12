@@ -89,7 +89,22 @@ function start() {
     "Ctrl-Space": "autocomplete",
     "Cmd-Space": "autocomplete",
     "Shift-Ctrl-F": () => { onGlobalSearch(); },
-    "Shift-Cmd-F": () => { onGlobalSearch(); }
+    "Shift-Cmd-F": () => { onGlobalSearch(); },
+    "F8": () => {
+      let cursor = ui.editor.getDoc().getCursor();
+      let token = ui.editor.getTokenAt(cursor);
+      if (token.string === ".") token.start = token.end;
+
+      let start = 0;
+      for (let i = 0; i < cursor.line; i++) start += ui.editor.getDoc().getLine(i).length + 1;
+      start += cursor.ch;
+
+      typescriptWorker.postMessage({
+        type: "getDefinitionAt",
+        name: fileNamesByScriptId[info.assetId],
+        start
+      });
+    }
   }
 
   let textArea = <HTMLTextAreaElement>document.querySelector(".code-editor");
@@ -124,8 +139,8 @@ function start() {
   (<any>ui.editor).on("keyup", (instance: any, event: any) => {
     clearInfoPopup();
 
-    // Ignore Ctrl, Cmd, Escape, Return, Tab, arrow keys
-    if (event.ctrlKey || event.metaKey || [27, 9, 13, 37, 38, 39, 40, 16].indexOf(event.keyCode) !== -1) return;
+    // Ignore Ctrl, Cmd, Escape, Return, Tab, arrow keys, F8
+    if (event.ctrlKey || event.metaKey || [27, 9, 13, 37, 38, 39, 40, 119, 16].indexOf(event.keyCode) !== -1) return;
 
     // If the completion popup is active, the hint() method will automatically
     // call for more autocomplete, so we don't need to do anything here.
@@ -137,7 +152,7 @@ function start() {
   ui.infoElement.classList.add("popup-info");
 
   document.addEventListener("mouseout", (event) => { clearInfoPopup(); });
-  
+
   let previousMousePosition = { x: -1, y: -1 };
   document.addEventListener("mousemove", (event) => {
     // On some systems, Chrome (at least v43) generates
@@ -217,6 +232,7 @@ var entriesSubscriber = {
       if (entry.type !== "script") return;
 
       var scriptName = `${data.projectClient.entries.getPathFromId(entry.id)}.ts`;
+      console.log(scriptName);
       fileNames.push(scriptName);
       fileNamesByScriptId[entry.id] = scriptName;
       data.projectClient.subAsset(entry.id, "script", scriptSubscriber);
@@ -520,9 +536,13 @@ typescriptWorker.onmessage = (event: MessageEvent) => {
         ui.infoElement.textContent = event.data.text;
         ui.editor.addWidget(ui.infoPosition, ui.infoElement, false)
       }
-      /*if (token.string !== "" && token.string !== " ") {
+      break;
 
-      }*/
+    case "definition":
+      if (window.parent != null) {
+        let entry = SupClient.findEntryByPath(data.projectClient.entries.pub, event.data.fileName);
+        window.parent.postMessage({ type: "openEntry", id: entry.id, options: { line: event.data.line, ch: event.data.ch } }, (<any>window.location).origin);
+      }
       break;
   }
 };
