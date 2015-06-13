@@ -1,4 +1,4 @@
-declare var TWEEN;
+declare let TWEEN;
 
 module Sup {
   export class Tween extends ActorComponent {
@@ -10,20 +10,20 @@ module Sup {
       super(actor);
       this.tween = new TWEEN.Tween( object );
 
-      var self = this
+      let self = this;
       this.tween.onComplete( function() {
         self.destroy();
       });
       this.timer = -1;
 
-      var funcs = {};
+      let funcs = {};
       funcs["update"] = this.update.bind(this)
       this.__inner = new SupEngine.componentClasses.Behavior(actor.__inner, funcs);
     }
     update() {
       if (this.timer == -1 ) { return; }
 
-      this.timer += 1 / SupEngine.GameInstance.framesPerSecond
+      this.timer += 1 / Game.getFPS();
       this.tween.update(this.timer * 1000);
     }
 
@@ -50,7 +50,7 @@ module Sup {
       return this;
     }
     onComplete( complete ) {
-      var self = this
+      let self = this
       this.tween.onComplete( function() {
         complete(this);
         self.destroy();
