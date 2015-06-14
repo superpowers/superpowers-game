@@ -12,7 +12,7 @@ export default class GameInstance extends EventEmitter {
   framesPerSecond = 60;
   ratio: number;
   layers: string[] = [ "Default" ];
-  
+
   tree = new ActorTree();
   cachedActors: Actor[] = [];
   renderComponents: Camera[] = [];

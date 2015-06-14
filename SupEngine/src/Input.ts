@@ -130,7 +130,7 @@ export default class Input {
   _onMouseMove = (event: any) => {
     event.preventDefault();
 
-    let rect = event.target.getBoundingClientRect()
+    let rect = event.target.getBoundingClientRect();
     this.newMousePosition = { x: event.clientX - rect.left, y: event.clientY - rect.top };
   }
 
@@ -215,9 +215,14 @@ export default class Input {
   }
 
   _doExitCallback = () => {
+    // NOTE: It seems window.onbeforeunload might be called twice
+    // in some circumstances so we check if the callback was cleared already
+    // http://stackoverflow.com/questions/8711393/onbeforeunload-fires-twice
+    if (this._exitCallback == null) return;
+
     this._exitCallback();
     this._exitCallback = null;
-    
+
     let nwDispatcher = (<any>window).nwDispatcher;
     if (nwDispatcher != null) {
       let gui = (<any>window).nwDispatcher.requireNwGui();
