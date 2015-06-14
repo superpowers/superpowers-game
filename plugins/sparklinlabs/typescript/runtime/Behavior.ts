@@ -1,11 +1,21 @@
 export function setupComponent(player: SupRuntime.Player, component: any, config: any) {
   if (config.propertyValues == null) return;
 
-  let behaviorInfo = player.resources.behaviorProperties.behaviors[config.behaviorName]
+  let behaviorInfo = player.resources.behaviorProperties.behaviors[config.behaviorName];
 
   for (let name in config.propertyValues) {
     let valueInfo = config.propertyValues[name];
-    let behaviorPropertyInfo = behaviorInfo.propertiesByName[name]
+
+    let ancestorBehaviorInfo = behaviorInfo;
+    let behaviorPropertyInfo: any;
+
+    while (ancestorBehaviorInfo != null) {
+      behaviorPropertyInfo = ancestorBehaviorInfo.propertiesByName[name];
+      if (behaviorPropertyInfo != null) break;
+
+      ancestorBehaviorInfo = player.resources.behaviorProperties.behaviors[ancestorBehaviorInfo.parentBehavior];
+    }
+
     if (behaviorPropertyInfo == null) {
       console.warn(`Tried to set a property named ${name} on behavior class ${component.__outer.constructor.name} but no such property is declared. Skipping.`);
       continue;

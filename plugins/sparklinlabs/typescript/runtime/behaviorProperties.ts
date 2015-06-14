@@ -4,7 +4,7 @@ export function loadResource(player: SupRuntime.Player, resourceName: string, ca
 
     for (let behaviorName in data.behaviors) {
       let behavior = data.behaviors[behaviorName];
-      behavior.propertiesByName = {}
+      behavior.propertiesByName = {};
       for (let property of behavior.properties) behavior.propertiesByName[property.name] = property;
     }
 
