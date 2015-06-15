@@ -125,6 +125,12 @@ onEditCommands.moveLayer = (id: string, newIndex: number) => {
   let layer = data.tileMapUpdater.tileMapAsset.layers.byId[tileSetArea.selectedLayerId];
   let z = (pub.layers.indexOf(layer) + 0.5) * pub.layerDepthOffset
   mapArea.patternActor.setLocalPosition(new SupEngine.THREE.Vector3(0, 0, z));
+
+  for (let layerIndex = 0; layerIndex < data.tileMapUpdater.tileMapAsset.pub.layers.length; layerIndex++) {
+    let layerId = data.tileMapUpdater.tileMapAsset.pub.layers[layerIndex].id;
+    let indexSpanElt = <HTMLSpanElement>ui.layersTreeView.treeRoot.querySelector(`[data-id="${layerId}"] .index`);
+    indexSpanElt.textContent = `${layerIndex} -`;
+  }
 };
 
 // Tile Set

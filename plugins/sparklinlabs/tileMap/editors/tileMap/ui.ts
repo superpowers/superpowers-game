@@ -294,18 +294,22 @@ export function setupLayer(layer: TileMapLayerPub, index: number) {
   (<any>liElt.dataset).id = layer.id;
 
   let displayCheckbox = document.createElement("input");
-  displayCheckbox.className = "display";
+  displayCheckbox.classList.add("display");
   displayCheckbox.type = "checkbox";
   displayCheckbox.checked = true;
   displayCheckbox.addEventListener("change", () => {
     data.tileMapUpdater.tileMapRenderer.layerVisibleById[layer.id] = displayCheckbox.checked;
   });
   displayCheckbox.addEventListener("click", (event) => { event.stopPropagation(); });
-
   liElt.appendChild(displayCheckbox);
 
+  let indexSpan = document.createElement("span");
+  indexSpan.classList.add("index");
+  indexSpan.textContent = `${index} -`
+  liElt.appendChild(indexSpan);
+
   let nameSpan = document.createElement("span");
-  nameSpan.className = "name";
+  nameSpan.classList.add("name");
   nameSpan.textContent = layer.name;
   liElt.appendChild(nameSpan);
 
