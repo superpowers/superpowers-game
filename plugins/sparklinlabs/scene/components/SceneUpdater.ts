@@ -17,8 +17,9 @@ export default class SceneUpdater {
   sceneAsset: SceneAsset;
 
   bySceneNodeId: { [id: string]: {
-    actor: SupEngine.Actor,
-    bySceneComponentId: { [id: string]: { component: any; componentUpdater: any } }
+    actor: SupEngine.Actor;
+    bySceneComponentId: { [id: string]: { component: any; componentUpdater: any } };
+    prefabUpdater: SceneUpdater;
   } } = {};
 
   sceneSubscriber = {
@@ -28,13 +29,13 @@ export default class SceneUpdater {
   };
 
   constructor(projectClient: SupClient.ProjectClient, engine: { gameInstance: SupEngine.GameInstance; actor: SupEngine.Actor; }, config: any,
-  receiveAssetCallbacks: any, editAssetCallbacks: any) {
+  receiveAssetCallbacks?: any, editAssetCallbacks?: any) {
 
     this.projectClient = projectClient;
     this.receiveAssetCallbacks = receiveAssetCallbacks;
     this.editAssetCallbacks = editAssetCallbacks;
 
-    this.gameInstance = (engine.gameInstance != null) ? engine.gameInstance : engine.actor.gameInstance;
+    this.gameInstance = engine.gameInstance;
     this.rootActor = engine.actor;
     this.sceneAssetId = config.sceneAssetId;
 
@@ -92,6 +93,9 @@ export default class SceneUpdater {
       case "scale":
         this.bySceneNodeId[id].actor.setLocalScale(value);
         break;
+      case "prefabId":
+        this.bySceneNodeId[id].prefabUpdater.config_setProperty("prefabId", value);
+        break;
     }
   }
 
@@ -146,7 +150,7 @@ export default class SceneUpdater {
 
   config_setProperty(path: string, value: any) {
     switch (path) {
-      case "sceneAssetId":
+      case "prefabId":
         if (this.sceneAssetId != null) this.projectClient.unsubAsset(this.sceneAssetId, this.sceneSubscriber);
         this.sceneAssetId = value;
 
@@ -174,7 +178,10 @@ export default class SceneUpdater {
     (<any>nodeActor).sceneNodeId = node.id;
     new TransformMarker(nodeActor);
 
-    this.bySceneNodeId[node.id] = { actor: nodeActor, bySceneComponentId: {} };
+    this.bySceneNodeId[node.id] = { actor: nodeActor, bySceneComponentId: {}, prefabUpdater: null };
+    if (node.prefabId != null)
+      this.bySceneNodeId[node.id].prefabUpdater = new SceneUpdater(this.projectClient,
+        { gameInstance: this.gameInstance, actor: nodeActor }, { sceneAssetId: node.prefabId });
 
     if (node.components != null) for (let component of node.components) this._createNodeActorComponent(node, component, nodeActor);
     return nodeActor;

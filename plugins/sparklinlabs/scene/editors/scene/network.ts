@@ -2,7 +2,7 @@ import info from "./info";
 import ui, {
   setCameraMode, createNodeElement, setupSelectedNode, createComponentElement,
   setInspectorPosition, setInspectorOrientation, setInspectorScale,
-  setInspectorVisible, setInspectorLayer,
+  setInspectorVisible, setInspectorLayer, setInspectorPrefabId,
   setupInspectorLayers } from "./ui";
 import engine, { setupHelpers } from "./engine";
 
@@ -49,7 +49,7 @@ var gameSettingSubscriber = {
     data.gameSettingsResource = resource;
     setupInspectorLayers();
   },
-  
+
   onResourceEdited: (resourceId: string, command: string, propertyName: string) => {
     if (propertyName == "customLayers") setupInspectorLayers();
   }
@@ -96,7 +96,7 @@ onEditCommands.moveNode = (id: string, parentId: string, index: number) => {
     setInspectorOrientation(<THREE.Quaternion>node.orientation);
     setInspectorScale(<THREE.Vector3>node.scale);
   }
-  
+
   // TODO: Only refresh if selection is affected
   setupHelpers();
 }
@@ -124,15 +124,18 @@ onEditCommands.setNodeProperty = (id: string, path: string, value: any) => {
     case "layer":
       if (isInspected) setInspectorLayer(value);
       break;
+    case "prefabId":
+      if (isInspected) setInspectorPrefabId(value);
+      break;
   }
-  
+
   // TODO: Only refresh if selection is affected
   setupHelpers();
 }
 
 onEditCommands.duplicateNode = (rootNode: Node, newNodes: DuplicatedNode[]) => {
   for (let newNode of newNodes) onEditCommands.addNode(newNode.node, newNode.parentId, newNode.index);
-  
+
   // TODO: Only refresh if selection is affected
   setupHelpers();
 }
@@ -155,7 +158,7 @@ onEditCommands.addComponent = (nodeId: string, nodeComponent: Component, index: 
     // TODO: Take index into account
     ui.inspectorElt.querySelector(".components").appendChild(componentElt);
   }
-  
+
   // TODO: Only refresh if selection is affected
   setupHelpers();
 }
@@ -167,7 +170,7 @@ onEditCommands.editComponent = (nodeId: string, componentId: string, command: st
     let commandCallback = (<any>componentEditor)[`config_${command}`];
     if (commandCallback != null) commandCallback.call(componentEditor, ...args);
   }
-  
+
   // TODO: Only refresh if selection is affected
   setupHelpers();
 }
@@ -182,7 +185,7 @@ onEditCommands.removeComponent = (nodeId: string, componentId: string) => {
     let componentElt = <HTMLDivElement>ui.inspectorElt.querySelector(`.components > div[data-component-id='${componentId}']`);
     componentElt.parentElement.removeChild(componentElt);
   }
-  
+
   // TODO: Only refresh if selection is affected
   setupHelpers();
 }

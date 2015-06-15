@@ -19,15 +19,18 @@ let ui: {
   deleteNodeButton?: HTMLButtonElement;
 
   inspectorElt?: HTMLDivElement;
+  inspectorTbodyElt?: HTMLTableElement;
 
   transform?: {
     positionElts: HTMLInputElement[];
     orientationElts: HTMLInputElement[];
     scaleElts: HTMLInputElement[];
   };
-  
+
   visibleCheckbox?: HTMLInputElement;
   layerSelect?: HTMLSelectElement;
+  prefabRow?: HTMLTableRowElement;
+  prefabInput?: HTMLInputElement;
 
   availableComponents?: { [name: string]: string };
   componentEditors?: { [id: string]: SupClient.ComponentEditorObject };
@@ -63,6 +66,7 @@ ui.deleteNodeButton.addEventListener("click", onDeleteNodeClick);
 
 // Inspector
 ui.inspectorElt = <HTMLDivElement>document.querySelector(".inspector");
+ui.inspectorTbodyElt = <HTMLTableElement>ui.inspectorElt.querySelector("tbody");
 
 ui.transform = {
   positionElts: <any>ui.inspectorElt.querySelectorAll(".transform .position input"),
@@ -76,6 +80,9 @@ ui.visibleCheckbox.addEventListener("change", onVisibleChange);
 ui.layerSelect = <HTMLSelectElement>ui.inspectorElt.querySelector(".layer select");
 ui.layerSelect.addEventListener("change", onLayerChange);
 
+ui.prefabRow = <HTMLTableRowElement>ui.inspectorElt.querySelector(".prefab");
+ui.prefabInput = <HTMLInputElement>ui.inspectorElt.querySelector(".prefab input");
+ui.prefabInput.addEventListener("input", onPrefabInput);
 
 for (let transformType in ui.transform) {
   let inputs: HTMLInputElement[] = (<any>ui).transform[transformType];
@@ -94,23 +101,16 @@ ui.cameraSpeedSlider.value = engine.cameraControls.movementSpeed;
 
 ui.availableComponents = {};
 export function uiStart() {
-  for (let componentName in SupClient.componentEditorClasses) {
-    if (componentName !== "Prefab") ui.availableComponents[componentName] = componentName;
-  }
+  for (let componentName in SupClient.componentEditorClasses) ui.availableComponents[componentName] = componentName;
 }
 
 export function createNodeElement(node: Node) {
   let liElt = document.createElement("li");
   (<any>liElt.dataset).id = node.id;
 
-  if (node.components[0] != null && node.components[0].type === "Prefab") {
-    let prefabSpan = document.createElement("span");
-    prefabSpan.textContent = "P";
-    liElt.appendChild(prefabSpan);
-  }
-
   let nameSpan = document.createElement("span");
-  nameSpan.className = "name";
+  nameSpan.classList.add("name");
+  if (node.prefabId != null) nameSpan.classList.add("prefab");
   nameSpan.textContent = node.name;
   liElt.appendChild(nameSpan);
 
@@ -152,7 +152,7 @@ function onNodeActivate() { ui.nodesTreeView.selectedNodes[0].classList.toggle("
 
 export function setupSelectedNode() {
   setupHelpers();
-  
+
   // Clear component editors
   for (let componentId in ui.componentEditors) ui.componentEditors[componentId].destroy();
   ui.componentEditors = {};
@@ -176,17 +176,22 @@ export function setupSelectedNode() {
   setInspectorPosition(<THREE.Vector3>node.position);
   setInspectorOrientation(<THREE.Quaternion>node.orientation);
   setInspectorScale(<THREE.Vector3>node.scale);
-    
+
   ui.visibleCheckbox.checked = node.visible;
   ui.layerSelect.value = <any>node.layer;
-  
+
   // If it's a prefab, disable various buttons
-  let isPrefab = node.components[0] != null && node.components[0].type === "Prefab";
+  let isPrefab = node.prefabId != null;
   ui.newNodeButton.disabled = isPrefab;
   ui.newPrefabButton.disabled = isPrefab;
   ui.renameNodeButton.disabled = false;
   ui.duplicateNodeButton.disabled = false;
   ui.deleteNodeButton.disabled = false;
+
+  if (isPrefab) {
+    if (ui.prefabRow.parentElement == null) ui.inspectorTbodyElt.appendChild(ui.prefabRow);
+    setInspectorPrefabId(node.prefabId);
+  } else if (ui.prefabRow.parentElement != null) ui.inspectorTbodyElt.removeChild(ui.prefabRow);
 
   // Setup component editors
   let componentsElt = <HTMLDivElement>ui.inspectorElt.querySelector(".components");
@@ -270,6 +275,10 @@ export function setupInspectorLayers() {
 
     optionElt = <HTMLOptionElement>optionElt.nextElementSibling;
   }
+}
+
+export function setInspectorPrefabId(prefabId: string) {
+  ui.prefabInput.value = prefabId === "-1" ? "" : data.projectClient.entries.getPathFromId(prefabId);
 }
 
 function onNewNodeClick() {
@@ -375,16 +384,32 @@ function onTransformInputChange(event: any) {
 
 function onVisibleChange(event: any) {
   if (ui.nodesTreeView.selectedNodes.length !== 1) return;
-  
+
   let nodeId = ui.nodesTreeView.selectedNodes[0].dataset.id;
   socket.emit("edit:assets", info.assetId, "setNodeProperty", nodeId, "visible", event.target.checked, (err: string) => { if (err != null) alert(err); });
 }
 
 function onLayerChange(event: any) {
   if (ui.nodesTreeView.selectedNodes.length !== 1) return;
-  
+
   let nodeId = ui.nodesTreeView.selectedNodes[0].dataset.id;
   socket.emit("edit:assets", info.assetId, "setNodeProperty", nodeId, "layer", parseInt(event.target.value), (err: string) => { if (err != null) alert(err); });
+}
+
+function onPrefabInput(event: any) {
+  if (ui.nodesTreeView.selectedNodes.length !== 1) return;
+
+  let nodeId = ui.nodesTreeView.selectedNodes[0].dataset.id;
+
+  if (event.target.value === "") {
+    socket.emit("edit:assets", info.assetId, "setNodeProperty", nodeId, "prefabId", "-1", (err: string) => { if (err != null) alert(err); });
+  }
+  else {
+    let entry = SupClient.findEntryByPath(data.projectClient.entries.pub, event.target.value);
+    if (entry != null && entry.type === "scene") {
+      socket.emit("edit:assets", info.assetId, "setNodeProperty", nodeId, "prefabId", entry.id, (err: string) => { if (err != null) alert(err); });
+    }
+  }
 }
 
 export function createComponentElement(nodeId: string, component: Component) {

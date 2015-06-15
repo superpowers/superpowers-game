@@ -26,8 +26,7 @@ html
     .sidebar
       .nodes-buttons
         button.new-node New Actor
-        // Disabled until we figure out whether prefabs should be components
-        button(style="display: none;").new-prefab New Prefab
+        button.new-prefab New Prefab
         button(disabled).rename-node Rename
         button(disabled).duplicate-node Duplicate
         button(disabled).delete-node Delete
@@ -66,6 +65,10 @@ html
             td
               select
                 option(value="0") Default
+          tr.prefab
+            th.label Prefab
+            td
+              input
         .components-buttons
           button.new-component New Component
         .components

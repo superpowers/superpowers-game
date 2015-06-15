@@ -10,6 +10,7 @@ export interface Node extends SupCore.data.base.TreeNode {
   scale: { x: number; y: number; z: number };
   visible: boolean;
   layer: number;
+  prefabId: string;
 }
 
 export default class SceneNodes extends SupCore.data.base.TreeById {
@@ -51,6 +52,7 @@ export default class SceneNodes extends SupCore.data.base.TreeById {
 
     visible: { type: "boolean", mutable: true },
     layer: { type: "integer", min: 0, mutable: true },
+    prefabId: { type: "string?", mutable: true },
 
     components: { type: "array?" }
   }
@@ -72,7 +74,7 @@ export default class SceneNodes extends SupCore.data.base.TreeById {
         node.visible = true;
         node.layer = 0;
       }
-      if (node.components != null) this.componentsByNodeId[node.id] = new SceneComponents(node.components, this.sceneAsset);
+      this.componentsByNodeId[node.id] = new SceneComponents(node.components, this.sceneAsset);
     });
   }
 
@@ -99,14 +101,14 @@ export default class SceneNodes extends SupCore.data.base.TreeById {
     let node = this.byId[id];
     if (node == null) { callback(`Invalid node id: ${id}`); return; }
 
-    if (node.components != null) {
-      this.walkNode(node, null, (node) => {
-        for (let componentId in this.componentsByNodeId[node.id].configsById) {
-          this.componentsByNodeId[node.id].configsById[componentId].destroy();
-        }
-        delete this.componentsByNodeId[node.id];
-      });
-    }
+    if (node.prefabId != null && node.prefabId !== "-1") this.emit("removeDependencies", [ node.prefabId ], `${id}_${node.prefabId}`);
+
+    this.walkNode(node, null, (node) => {
+      for (let componentId in this.componentsByNodeId[node.id].configsById) {
+        this.componentsByNodeId[node.id].configsById[componentId].destroy();
+      }
+      delete this.componentsByNodeId[node.id];
+    });
 
     super.remove(id, callback);
   }
@@ -135,5 +137,74 @@ export default class SceneNodes extends SupCore.data.base.TreeById {
 
   client_addComponent(id: string, component: any, index: number) {
     this.componentsByNodeId[id].client_add(component, index);
+  }
+
+  setProperty(id: string, key: string, value: any, callback: (err: string, value?: any) => any) {
+    let oldDepId: string;
+
+    let finish = () => {
+      super.setProperty(id, key, value, (err, actualValue) => {
+        if (err != null) { callback(err); return; }
+
+        if (key === "prefabId") {
+          if (oldDepId != "-1") this.emit("removeDependencies", [ oldDepId ], `${id}_${oldDepId}`);
+          if (actualValue != "-1") this.emit("addDependencies", [ actualValue ], `${id}_${actualValue}`);
+        }
+        callback(null, actualValue);
+      });
+    }
+
+    if (key !== "prefabId") {
+      finish();
+      return;
+    }
+
+    // Check for prefabId
+    oldDepId = this.byId[id].prefabId;
+    if (value == "-1") {
+      finish();
+      return;
+    }
+
+    if (value === this.sceneAsset.id) {
+      callback("A prefab can't reference itself");
+      return;
+    }
+
+    // Check for infinite loop
+    let canUseScene = true;
+    let aquiringScene = 0;
+
+    let checkScene = (sceneId: string) => {
+      aquiringScene++;
+      this.sceneAsset.serverData.assets.acquire(sceneId, this, (error: Error, asset: SceneAsset) => {
+        this.sceneAsset.serverData.assets.release(sceneId, this);
+
+        // Check the scene has only one root actor
+        if (asset.pub.nodes.length !== 1) {
+          callback("A prefab must have only one root actor");
+          return;
+        }
+
+        let walk = (node: Node) => {
+          if (! canUseScene) return;
+
+          if (node.prefabId != null && node.prefabId !== "-1") {
+            if (node.prefabId === this.sceneAsset.id) canUseScene = false;
+            else checkScene(node.prefabId);
+          }
+          for (let child of node.children) walk(child);
+        }
+
+        for (let node of asset.pub.nodes) walk(node);
+
+        aquiringScene--;
+        if (aquiringScene === 0) {
+          if (canUseScene) finish();
+          else callback("Cannot use this scene, it will create an infinite loop");
+        }
+      });
+    }
+    checkScene(value);
   }
 }

@@ -26,9 +26,8 @@ module Sup {
 
     let walk = (node, parentActor) => {
       let actor: Actor;
-      let isPrefab = (node.components[0] != null && node.components[0].type === "Prefab");
-      if (isPrefab) {
-        let prefabAsset = player.getOuterAsset(node.components[0].config.sceneAssetId);
+      if (node.prefabId != null) {
+        let prefabAsset = player.getOuterAsset(node.prefabId);
         if (prefabAsset != null) {
           actor = appendScene(prefabAsset, parentActor, false)[0];
           actor.__inner.name = node.name;

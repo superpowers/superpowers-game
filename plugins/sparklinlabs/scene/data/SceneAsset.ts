@@ -12,7 +12,6 @@ import * as _ from "lodash";
 
 import { Component } from "./SceneComponents";
 import SceneNodes, { Node } from "./SceneNodes";
-import PrefabConfig from "./PrefabConfig";
 
 export interface DuplicatedNode {
   node: Node;
@@ -43,6 +42,12 @@ export default class SceneAsset extends SupCore.data.base.Asset {
     this.componentPathsByDependentAssetId = {};
     this.nodes = new SceneNodes(this.pub.nodes, this);
 
+    this.nodes.on("addDependencies", (depIds: string[], componentPath: string) => { this._onAddComponentDependencies(componentPath, depIds); });
+    this.nodes.on("removeDependencies", (depIds: string[], componentPath: string) => { this._onRemoveComponentDependencies(componentPath, depIds); });
+
+    for (let node of this.nodes.pub)
+      if (node.prefabId != null && node.prefabId !== "-1") this._onAddComponentDependencies(`${node.id}_${node.prefabId}`, [node.prefabId]);
+
     for (let nodeId in this.nodes.componentsByNodeId) {
       let components = this.nodes.componentsByNodeId[nodeId];
       for (let componentId in components.configsById) {
@@ -70,7 +75,7 @@ export default class SceneAsset extends SupCore.data.base.Asset {
   server_addNode(client: any, name: string, options: any, callback: (err: string, node: Node, parentId: string, index: number) => any) {
     let parentId = (options != null) ? options.parentId : null;
     let parentNode = this.nodes.byId[parentId];
-    if (parentNode != null && parentNode.components[0] != null && parentNode.components[0].type === "Prefab") {
+    if (parentNode != null && parentNode.prefabId != null) {
       callback("Can't create children node on prefabs", null, null, null);
       return
     }
@@ -88,30 +93,16 @@ export default class SceneAsset extends SupCore.data.base.Asset {
       position: (options != null && options.transform != null && options.transform.position != null) ? options.transform.position : { x: 0, y: 0, z: 0 },
       orientation: (options != null && options.transform != null && options.transform.orientation != null) ? options.transform.orientation : { x: 0, y: 0, z: 0, w: 1 },
       scale: (options != null && options.transform != null && options.transform.scale != null) ? options.transform.scale : { x: 1, y: 1, z: 1 },
-      visible: true, layer: 0
+      visible: true, layer: 0, prefabId: (options.prefab) ? "-1" : null
     };
 
     let index = (options != null) ? options.index : null;
     this.nodes.add(sceneNode, parentId, index, (err, actualIndex) => {
       if (err != null) { callback(err, null, null, null); return; }
+      //TODO: handle addDependecies from node itself for prefab asset
 
-      if (options.prefab) {
-        let prefabComponent: Component = { type: "Prefab", config: PrefabConfig.create() };
-
-        this.nodes.addComponent(sceneNode.id, prefabComponent, 0, (err, componentActualIndex) => {
-          let config = this.nodes.componentsByNodeId[sceneNode.id].configsById[prefabComponent.id];
-
-          let componentPath = `${sceneNode.id}_${prefabComponent.id}`;
-          config.on("addDependencies", (depIds: string[]) => { this._onAddComponentDependencies(componentPath, depIds); });
-          config.on("removeDependencies", (depIds: string[]) => { this._onRemoveComponentDependencies(componentPath, depIds); });
-
-          callback(null, sceneNode, parentId, actualIndex);
-          this.emit("change");
-        });
-      } else {
-        callback(null, sceneNode, parentId, actualIndex);
-        this.emit("change");
-      }
+      callback(null, sceneNode, parentId, actualIndex);
+      this.emit("change");
     });
   }
 
@@ -224,7 +215,7 @@ export default class SceneAsset extends SupCore.data.base.Asset {
       position: _.cloneDeep(referenceNode.position),
       orientation: _.cloneDeep(referenceNode.orientation),
       scale: _.cloneDeep(referenceNode.scale),
-      visible: referenceNode.visible, layer: referenceNode.layer
+      visible: referenceNode.visible, layer: referenceNode.layer,prefabId: referenceNode.prefabId
     }
     let parentId = (this.nodes.parentNodesById[id] != null) ? this.nodes.parentNodesById[id].id : null;
 
@@ -232,17 +223,18 @@ export default class SceneAsset extends SupCore.data.base.Asset {
       this.nodes.add(newNode, parentId, index, (err, actualIndex) => {
         if (err != null) { callback(err, null, null); return; }
 
-        if (newNode.components != null) {
-          for (let componentId in this.nodes.componentsByNodeId[newNode.id].configsById) {
-            let config = this.nodes.componentsByNodeId[newNode.id].configsById[componentId];
-            let componentPath = `${newNode.id}_${componentId}`;
-            ((config: SupCore.data.base.ComponentConfig, componentPath: string) => {
-              config.on("addDependencies", (depIds: string[]) => { this._onAddComponentDependencies(componentPath, depIds); });
-              config.on("removeDependencies", (depIds: string[]) => { this._onRemoveComponentDependencies(componentPath, depIds); });
-            })(config, componentPath);
-            config.restore()
-          }
+        //TODO: handle addDependecies from node itself for prefab asset
+
+        for (let componentId in this.nodes.componentsByNodeId[newNode.id].configsById) {
+          let config = this.nodes.componentsByNodeId[newNode.id].configsById[componentId];
+          let componentPath = `${newNode.id}_${componentId}`;
+          ((config: SupCore.data.base.ComponentConfig, componentPath: string) => {
+            config.on("addDependencies", (depIds: string[]) => { this._onAddComponentDependencies(componentPath, depIds); });
+            config.on("removeDependencies", (depIds: string[]) => { this._onRemoveComponentDependencies(componentPath, depIds); });
+          })(config, componentPath);
+          config.restore()
         }
+
         newNodes.push({
           node: newNode,
           parentId: parentId,
@@ -262,7 +254,7 @@ export default class SceneAsset extends SupCore.data.base.Asset {
             position: _.cloneDeep(childNode.position),
             orientation: _.cloneDeep(childNode.orientation),
             scale: _.cloneDeep(childNode.scale),
-            visible: childNode.visible, layer: childNode.layer
+            visible: childNode.visible, layer: childNode.layer, prefabId: childNode.prefabId
           };
           addNode(node, newNode.id, childIndex, childNode.children);
         }
@@ -335,7 +327,7 @@ export default class SceneAsset extends SupCore.data.base.Asset {
     if (componentConfigClass == null) { callback("Invalid component type", null, null, null); return; }
 
     let node = this.nodes.byId[nodeId];
-    
+
     if (componentType === "Prefab" && node.components.length > 0) { callback("Can't turn an actor with components into a prefab", null, null, null); return; }
     if (node != null && node.components[0] != null && node.components[0].type === "Prefab") { callback("Can't add component on prefabs", null, null, null); return; }
 
