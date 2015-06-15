@@ -69,7 +69,7 @@ module ArcadePhysics2D {
             let testedWidth = body1.width - epsilon;
             let totalPoints = Math.ceil(testedWidth / mapBody.mapToSceneFactor.x) + 1;
             for (let point = 0; point <= totalPoints; point++) {
-              for (let layer in mapBody.layersIndex) {
+              for (let layer of mapBody.layersIndex) {
                 let tile = mapBody.tileMapAsset.getTileAt(layer, Math.floor((x + point * testedWidth / totalPoints) / mapBody.mapToSceneFactor.x), y);
 
                 let collide = false;
@@ -93,7 +93,7 @@ module ArcadePhysics2D {
             let testedWidth = body1.width - epsilon;
             let totalPoints = Math.ceil(testedWidth / mapBody.mapToSceneFactor.x) + 1;
             for (let point = 0; point <= totalPoints; point++) {
-              for (let layer in mapBody.layersIndex) {
+              for (let layer of mapBody.layersIndex) {
                 let tile = mapBody.tileMapAsset.getTileAt(layer, Math.floor((x + point * testedWidth / totalPoints) / mapBody.mapToSceneFactor.x), y);
 
                 let collide = false;
@@ -121,7 +121,7 @@ module ArcadePhysics2D {
             let testedHeight = body1.height - epsilon;
             let totalPoints = Math.ceil(testedHeight / mapBody.mapToSceneFactor.x) + 1;
             for (let point = 0; point <= totalPoints; point++) {
-              for (let layer in mapBody.layersIndex) {
+              for (let layer of mapBody.layersIndex) {
                 let tile = mapBody.tileMapAsset.getTileAt(layer, x, Math.floor((y + point * testedHeight / totalPoints) / mapBody.mapToSceneFactor.y));
 
                 let collide = false;
@@ -146,7 +146,7 @@ module ArcadePhysics2D {
             let testedHeight = body1.height - epsilon;
             let totalPoints = Math.ceil(testedHeight / mapBody.mapToSceneFactor.y) + 1;
             for (let point = 0; point <= totalPoints; point++) {
-              for (let layer in mapBody.layersIndex) {
+              for (let layer of mapBody.layersIndex) {
                 let tile = mapBody.tileMapAsset.getTileAt(layer, x, Math.floor((y + point * testedHeight / totalPoints) / mapBody.mapToSceneFactor.y));
 
                 let collide = false;

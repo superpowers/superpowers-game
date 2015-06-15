@@ -69,8 +69,8 @@ export default class ArcadeBody2D extends SupEngine.ActorComponent {
     }
     this.tileSetPropertyName = config.tileSetPropertyName;
     if (config.layersIndex != null) {
-      let layers = config.layersIndex.split(",");
-      for (let layer in layers) this.layersIndex.push(parseInt(layer));
+      let layers = <string[]>config.layersIndex.split(",");
+      for (let layer of layers) this.layersIndex.push(parseInt(layer.trim()));
     } else {
       for (let i = 0; i < this.tileMapAsset.__inner.data.layers.length; i++) this.layersIndex.push(i);
     }
