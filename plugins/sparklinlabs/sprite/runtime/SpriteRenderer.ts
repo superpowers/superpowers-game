@@ -6,6 +6,8 @@ export function setupComponent(player: SupRuntime.Player, component: any, config
   component.color.r = (hex >> 16 & 255) / 255;
   component.color.g = (hex >> 8 & 255) / 255;
   component.color.b = (hex & 255) / 255;
+  component.horizontalFlip = config.horizontalFlip;
+  component.verticalFlip = config.verticalFlip;
 
   if (config.spriteAssetId != null) {
     let sprite = player.getOuterAsset(config.spriteAssetId).__inner;
