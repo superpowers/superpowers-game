@@ -54,7 +54,7 @@ export default class TileMapSettingsEditor {
     this.fields["grid.width"].addEventListener("change", (event: any) => {
       this.projectClient.socket.emit("edit:resources", "tileMapSettings", "setProperty", "grid.width", parseInt(event.target.value), (err: string) => { if (err != null) alert(err); });
     });
-    
+
     this.fields["grid.height"].addEventListener("change", (event: any) => {
       this.projectClient.socket.emit("edit:resources", "tileMapSettings", "setProperty", "grid.height", parseInt(event.target.value), (err: string) => { if (err != null) alert(err); });
     });
@@ -66,11 +66,14 @@ export default class TileMapSettingsEditor {
     this.resource = resource;
 
     for (let setting in resource.pub) {
-      this.fields[setting].value = (<any>resource.pub)[setting];
+      if (setting === "grid") {
+        this.fields["grid.width"].value = resource.pub.grid.width.toString();
+        this.fields["grid.height"].value = resource.pub.grid.height.toString();
+      } else this.fields[setting].value = (<any>resource.pub)[setting];
     }
   }
 
-  onResourceEdited = (resourceId: string, command: string, propertyName: string) => {
-    this.fields[propertyName].value = (<any>this.resource.pub)[propertyName];
+  onResourceEdited = (resourceId: string, command: string, propertyName: string, value: any) => {
+    this.fields[propertyName].value = value;
   }
 }
