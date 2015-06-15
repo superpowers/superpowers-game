@@ -22,6 +22,16 @@ export default class SceneComponents extends SupCore.data.base.ListById {
 
     for (let item of this.pub) {
       let componentConfigClass = SupCore.data.componentConfigClasses[item.type];
+
+      if (componentConfigClass == null) {
+        if (sceneAsset != null) {
+          let scenePath = sceneAsset.serverData.entries.getPathFromId(sceneAsset.id);
+          throw new Error(`Could not find component config class for type ${item.type} in scene ${scenePath} of project ${sceneAsset.serverData.manifest.pub.name} (${sceneAsset.serverData.manifest.pub.id})`);
+        } else {
+          throw new Error(`Could not find component config class for type ${item.type}`);
+        }
+      }
+
       this.configsById[item.id] = new componentConfigClass(item.config, this.sceneAsset);
     }
   }
