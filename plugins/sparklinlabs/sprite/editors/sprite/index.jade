@@ -19,8 +19,8 @@ html
           span.animation-name
           button(disabled).animation-play ▐ ▌
           input(disabled, type='range', value=0).animation-slider
-          input(type="checkbox" checked).animation-loop
-          span Loop
+          input#loop-checkbox(type="checkbox" checked).animation-loop
+          label(for="loop-checkbox") Loop
 
     .sidebar
       table
