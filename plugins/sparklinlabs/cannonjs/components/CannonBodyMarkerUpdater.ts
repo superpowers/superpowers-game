@@ -31,7 +31,9 @@ class CannonBodyMarkerUpdater {
     this.bodyRenderer.setOffset({x: this.config.offsetX, y: this.config.offsetY, z: this.config.offsetZ});
   }
 
-  config_setProperty(path:string, value:any) {
+  destroy() {}
+
+  config_setProperty(path: string, value: any) {
     this.config[path] = value;
 
     if (["halfWidth", "halfHeight", "halfDepth"].indexOf(path) !== -1 || (path === "shape" && value === "box")) {
