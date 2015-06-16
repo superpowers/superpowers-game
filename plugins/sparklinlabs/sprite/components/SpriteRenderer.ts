@@ -93,12 +93,16 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
 
   setHorizontalFlip(horizontalFlip: boolean) {
     this.horizontalFlip = horizontalFlip;
+    if (this.asset == null) return;
+
     if (this.animationName == null) this.setFrame(0);
     else if (! this.isAnimationPlaying) this.updateFrame();
   }
 
   setVerticalFlip(verticalFlip: boolean) {
     this.verticalFlip = verticalFlip;
+    if (this.asset == null) return;
+
     if (this.animationName == null) this.setFrame(0);
     else if (! this.isAnimationPlaying) this.updateFrame();
   }
