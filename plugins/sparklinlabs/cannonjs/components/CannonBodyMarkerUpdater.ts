@@ -1,14 +1,11 @@
 import CannonBodyMarker from "./CannonBodyMarker";
 
-export default
-class CannonBodyMarkerUpdater {
-
+export default class CannonBodyMarkerUpdater {
   client:SupClient.ProjectClient;
   bodyRenderer:CannonBodyMarker;
   config:any;
 
-  constructor(client:SupClient.ProjectClient, bodyRenderer:CannonBodyMarker, config:any) {
-
+  constructor(client: SupClient.ProjectClient, bodyRenderer: CannonBodyMarker, config: any) {
     this.client = client;
     this.bodyRenderer = bodyRenderer;
     this.config = config;
@@ -28,7 +25,7 @@ class CannonBodyMarkerUpdater {
         this.bodyRenderer.setCylinder(this.config.radius, this.config.height);
         break
     }
-    this.bodyRenderer.setOffset({x: this.config.offsetX, y: this.config.offsetY, z: this.config.offsetZ});
+    this.bodyRenderer.setOffset({ x: this.config.offsetX, y: this.config.offsetY, z: this.config.offsetZ });
   }
 
   destroy() {}
@@ -57,6 +54,5 @@ class CannonBodyMarkerUpdater {
       this.bodyRenderer.setSphere(this.config.radius);
       this.bodyRenderer.setOffset({x: this.config.offsetX, y: this.config.offsetY, z: this.config.offsetZ});
     }
-
   }
 }
