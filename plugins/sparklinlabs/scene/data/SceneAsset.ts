@@ -46,7 +46,7 @@ export default class SceneAsset extends SupCore.data.base.Asset {
     this.nodes.on("removeDependencies", (depIds: string[], componentPath: string) => { this._onRemoveComponentDependencies(componentPath, depIds); });
 
     for (let node of this.nodes.pub)
-      if (node.prefabId != null && node.prefabId !== "-1") this._onAddComponentDependencies(`${node.id}_${node.prefabId}`, [node.prefabId]);
+      if (node.prefabId != null && node.prefabId.length > 0) this._onAddComponentDependencies(`${node.id}_${node.prefabId}`, [node.prefabId]);
 
     for (let nodeId in this.nodes.componentsByNodeId) {
       let components = this.nodes.componentsByNodeId[nodeId];
@@ -93,13 +93,12 @@ export default class SceneAsset extends SupCore.data.base.Asset {
       position: (options != null && options.transform != null && options.transform.position != null) ? options.transform.position : { x: 0, y: 0, z: 0 },
       orientation: (options != null && options.transform != null && options.transform.orientation != null) ? options.transform.orientation : { x: 0, y: 0, z: 0, w: 1 },
       scale: (options != null && options.transform != null && options.transform.scale != null) ? options.transform.scale : { x: 1, y: 1, z: 1 },
-      visible: true, layer: 0, prefabId: (options.prefab) ? "-1" : null
+      visible: true, layer: 0, prefabId: (options.prefab) ? "" : null
     };
 
     let index = (options != null) ? options.index : null;
     this.nodes.add(sceneNode, parentId, index, (err, actualIndex) => {
       if (err != null) { callback(err, null, null, null); return; }
-      //TODO: handle addDependecies from node itself for prefab asset
 
       callback(null, sceneNode, parentId, actualIndex);
       this.emit("change");
@@ -215,15 +214,13 @@ export default class SceneAsset extends SupCore.data.base.Asset {
       position: _.cloneDeep(referenceNode.position),
       orientation: _.cloneDeep(referenceNode.orientation),
       scale: _.cloneDeep(referenceNode.scale),
-      visible: referenceNode.visible, layer: referenceNode.layer,prefabId: referenceNode.prefabId
+      visible: referenceNode.visible, layer: referenceNode.layer, prefabId: referenceNode.prefabId
     }
     let parentId = (this.nodes.parentNodesById[id] != null) ? this.nodes.parentNodesById[id].id : null;
 
     let addNode = (newNode: Node, parentId: string, index: number, children: Node[]) => {
       this.nodes.add(newNode, parentId, index, (err, actualIndex) => {
         if (err != null) { callback(err, null, null); return; }
-
-        //TODO: handle addDependecies from node itself for prefab asset
 
         for (let componentId in this.nodes.componentsByNodeId[newNode.id].configsById) {
           let config = this.nodes.componentsByNodeId[newNode.id].configsById[componentId];

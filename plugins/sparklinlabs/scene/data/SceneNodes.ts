@@ -101,7 +101,7 @@ export default class SceneNodes extends SupCore.data.base.TreeById {
     let node = this.byId[id];
     if (node == null) { callback(`Invalid node id: ${id}`); return; }
 
-    if (node.prefabId != null && node.prefabId !== "-1") this.emit("removeDependencies", [ node.prefabId ], `${id}_${node.prefabId}`);
+    if (node.prefabId != null && node.prefabId.length > 0) this.emit("removeDependencies", [ node.prefabId ], `${id}_${node.prefabId}`);
 
     this.walkNode(node, null, (node) => {
       for (let componentId in this.componentsByNodeId[node.id].configsById) {
@@ -147,8 +147,8 @@ export default class SceneNodes extends SupCore.data.base.TreeById {
         if (err != null) { callback(err); return; }
 
         if (key === "prefabId") {
-          if (oldDepId != "-1") this.emit("removeDependencies", [ oldDepId ], `${id}_${oldDepId}`);
-          if (actualValue != "-1") this.emit("addDependencies", [ actualValue ], `${id}_${actualValue}`);
+          if (oldDepId.length > 0) this.emit("removeDependencies", [ oldDepId ], `${id}_${oldDepId}`);
+          if (actualValue.length > 0) this.emit("addDependencies", [ actualValue ], `${id}_${actualValue}`);
         }
         callback(null, actualValue);
       });
@@ -161,7 +161,7 @@ export default class SceneNodes extends SupCore.data.base.TreeById {
 
     // Check for prefabId
     oldDepId = this.byId[id].prefabId;
-    if (value == "-1") {
+    if (value.length === 0) {
       finish();
       return;
     }
@@ -189,7 +189,7 @@ export default class SceneNodes extends SupCore.data.base.TreeById {
         let walk = (node: Node) => {
           if (! canUseScene) return;
 
-          if (node.prefabId != null && node.prefabId !== "-1") {
+          if (node.prefabId != null && node.prefabId.length > 0) {
             if (node.prefabId === this.sceneAsset.id) canUseScene = false;
             else checkScene(node.prefabId);
           }

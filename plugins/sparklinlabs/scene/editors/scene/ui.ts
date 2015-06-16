@@ -278,7 +278,7 @@ export function setupInspectorLayers() {
 }
 
 export function setInspectorPrefabId(prefabId: string) {
-  ui.prefabInput.value = prefabId === "-1" ? "" : data.projectClient.entries.getPathFromId(prefabId);
+  ui.prefabInput.value = prefabId.length === 0 ? "" : data.projectClient.entries.getPathFromId(prefabId);
 }
 
 function onNewNodeClick() {
@@ -402,7 +402,7 @@ function onPrefabInput(event: any) {
   let nodeId = ui.nodesTreeView.selectedNodes[0].dataset.id;
 
   if (event.target.value === "") {
-    socket.emit("edit:assets", info.assetId, "setNodeProperty", nodeId, "prefabId", "-1", (err: string) => { if (err != null) alert(err); });
+    socket.emit("edit:assets", info.assetId, "setNodeProperty", nodeId, "prefabId", "", (err: string) => { if (err != null) alert(err); });
   }
   else {
     let entry = SupClient.findEntryByPath(data.projectClient.entries.pub, event.target.value);
