@@ -215,15 +215,16 @@ export default class SpriteRendererUpdater {
           else this.spriteRenderer.setAnimation(null);
         }
         break;
-      
+
       case "looping":
         this.looping = value;
         if (this.animationId != null) this._playAnimation();
-        
+        break;
+
       case "horizontalFlip":
         this.spriteRenderer.setHorizontalFlip(value);
         break;
-        
+
       case "verticalFlip":
         this.spriteRenderer.setVerticalFlip(value);
         break;
