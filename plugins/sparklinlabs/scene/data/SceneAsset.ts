@@ -128,7 +128,7 @@ export default class SceneAsset extends SupCore.data.base.Asset {
     if (node == null) { callback(`Invalid node id: ${id}`, null, null, null); return; }
 
     let parentNode = this.nodes.byId[parentId];
-    if (parentNode != null && parentNode.components[0] != null && parentNode.components[0].type === "Prefab") {
+    if (parentNode != null && parentNode.prefabId != null) {
       callback("Can't move children node on prefabs", null, null, null);
       return
     }
@@ -328,8 +328,7 @@ export default class SceneAsset extends SupCore.data.base.Asset {
 
     let node = this.nodes.byId[nodeId];
 
-    if (componentType === "Prefab" && node.components.length > 0) { callback("Can't turn an actor with components into a prefab", null, null, null); return; }
-    if (node != null && node.components[0] != null && node.components[0].type === "Prefab") { callback("Can't add component on prefabs", null, null, null); return; }
+    if (node != null && node.prefabId != null) { callback("Can't add component on prefabs", null, null, null); return; }
 
     let component: Component = {
       type: componentType,
