@@ -17,11 +17,11 @@ module Sup {
       super.destroy();
     }
 
-    getSprite() { return this.__inner.asset.__outer }
+    getSprite() { return (this.__inner.asset != null) ? this.__inner.asset.__outer : null; }
     setSprite(asset, materialIndex) {
       let material: string;
       if (materialIndex != null) material = materialTypes[materialIndex];
-      this.__inner.setSprite(asset.__inner, material);
+      this.__inner.setSprite((asset != null) ? asset.__inner : null, material);
       return this;
     }
     getMaterialType() { return materialTypes.indexOf(this.__inner.materialType); }
