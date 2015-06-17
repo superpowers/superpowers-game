@@ -9,6 +9,23 @@ let gltfConst = {
   FLOAT: 5126
 }
 
+interface GLTFFile {
+  accessors: { [name: string]: GLTFAccessor; };
+  animations: { [name: string]: any; };
+  asset: GLTFAsset;
+  bufferViews: { [name: string]: GLTFBufferView; };
+  buffers: { [path: string]: any; };
+  materials: { [name: string]: any; };
+  meshes: { [name: string]: any; };
+  nodes: { [name: string]: any; };
+  programs: { [name: string]: any; };
+  scene: string;
+  scenes: { [name: string]: any; };
+  shaders: { [path: string]: any; };
+  skins: { [name: string]: any; };
+  techniques: { [name: string]: any; };
+}
+
 interface GLTFAccessor {
   bufferView: string;
   byteOffset: number;
@@ -16,6 +33,13 @@ interface GLTFAccessor {
   componentType: number;
   count: number;
   type: string;
+}
+
+interface GLTFAsset {
+  generator: string;
+  premultipliedAlpha: boolean;
+  profile: string;
+  version: number;
 }
 
 interface GLTFBufferView {
@@ -72,7 +96,7 @@ export function importModel(files: File[], callback: ImportCallback) {
     }
   }
 
-  let onGLTFRead = (err: Error, gltf: any) => {
+  let onGLTFRead = (err: Error, gltf: GLTFFile) => {
     if (err != null) { callback([ createLogError("Could not parse as JSON", gltfFile.name) ]); return; }
     if(Object.keys(gltf.meshes).length > 1) { callback([ createLogError("Only a single mesh is supported") ], gltfFile.name); return; }
 
