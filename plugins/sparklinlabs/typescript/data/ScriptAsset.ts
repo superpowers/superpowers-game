@@ -162,7 +162,15 @@ export default class ScriptAsset extends SupCore.data.base.Asset {
       if (err != null) { callback(err); return; }
       fs.writeFile(path.join(assetPath, "script.txt"), text, { encoding: "utf8" }, (err) => {
         if (err != null) { callback(err); return; }
-        fs.writeFile(path.join(assetPath, "draft.txt"), draft, { encoding: "utf8" }, callback);
+
+        if (this.hasDraft) {
+          fs.writeFile(path.join(assetPath, "draft.txt"), draft, { encoding: "utf8" }, callback);
+        } else {
+          fs.unlink(path.join(assetPath, "draft.txt"), (err) => {
+            if (err != null && err.code !== "ENOENT") { callback(err); return; }
+            callback(null);
+          });
+        }
       });
     });
   }
