@@ -17,7 +17,7 @@ interface GLTFFile {
   buffers: { [path: string]: any; };
   materials: { [name: string]: any; };
   meshes: { [name: string]: any; };
-  nodes: { [name: string]: any; };
+  nodes: { [name: string]: GLTFNode; };
   programs: { [name: string]: any; };
   scene: string;
   scenes: { [name: string]: any; };
@@ -49,7 +49,19 @@ interface GLTFBufferView {
   target: number;
 }
 
-function convertAxisAngleToQuaternion(rotations: Float32Array, count: number) {
+interface GLTFNode {
+  children: string[];
+  name: string;
+  matrix?: number[];
+  translation?: number[];
+  rotation?: number[];
+  scale?: number[];
+
+  instanceSkin?: any;
+  jointName?: any;
+}
+
+function convertAxisAngleToQuaternionArray(rotations: Uint8Array, count: number) {
   let q = new THREE.Quaternion;
   let axis = new THREE.Vector3;
 
@@ -63,6 +75,26 @@ function convertAxisAngleToQuaternion(rotations: Float32Array, count: number) {
     rotations[i * 4 + 2] = q.z;
     rotations[i * 4 + 3] = q.w;
   }
+}
+
+function convertAxisAngleToQuaternion(rotation: number[]) {
+  let q = new THREE.Quaternion;
+  let axis = new THREE.Vector3;
+
+  axis.set(rotation[0], rotation[1], rotation[2]).normalize();
+  q.setFromAxisAngle(axis, rotation[3]);
+  return q;
+}
+
+function getNodeMatrix(node: GLTFNode): THREE.Matrix4 {
+  let matrix = new THREE.Matrix4;
+  if (node.matrix != null) return matrix.fromArray(node.matrix);
+
+  return matrix.compose(
+    new THREE.Vector3(node.translation[0], node.translation[1], node.translation[2]),
+    convertAxisAngleToQuaternion(node.rotation),
+    new THREE.Vector3(node.scale[0], node.scale[1], node.scale[2])
+  );
 }
 
 export function importModel(files: File[], callback: ImportCallback) {
@@ -122,7 +154,6 @@ export function importModel(files: File[], callback: ImportCallback) {
     for (let childName of rootNode.children) {
       let node = gltf.nodes[childName];
 
-      // FIXME: is it sometimes node.meshes?
       if(node.instanceSkin != null && node.instanceSkin.meshes != null && node.instanceSkin.meshes.length > 0) {
         meshName = node.instanceSkin.meshes[0];
         rootBoneNames = node.instanceSkin.skeletons;
@@ -182,6 +213,17 @@ export function importModel(files: File[], callback: ImportCallback) {
       {
         let positionBufferView: GLTFBufferView = gltf.bufferViews[positionAccessor.bufferView];
         let start = positionBufferView.byteOffset + positionAccessor.byteOffset;
+
+        let bindShapeMatrix = new THREE.Matrix4().fromArray(skin.bindShapeMatrix);
+        let positionArray = new Float32Array(buffers[positionBufferView.buffer], start, positionAccessor.count * 3);
+        for (let i = 0; i <positionAccessor.count; i++) {
+          let pos = new THREE.Vector3(positionArray[i * 3 + 0], positionArray[i * 3 + 1], positionArray[i * 3 + 2]);
+          pos.applyMatrix4(bindShapeMatrix);
+          positionArray[i * 3 + 0] = pos.x;
+          positionArray[i * 3 + 1] = pos.y;
+          positionArray[i * 3 + 2] = pos.z;
+        }
+
         attributes["position"] = buffers[positionBufferView.buffer].slice(start, start + positionAccessor.count * positionAccessor.byteStride);
       }
 
@@ -252,26 +294,16 @@ export function importModel(files: File[], callback: ImportCallback) {
 
         for (let i = 0; i < skin.jointNames.length; i++) {
           let jointName = skin.jointNames[i];
-          let boneNodeInfo = gltf.nodes[jointName];
-
-          if (boneNodeInfo.matrix == null) {
-            convertAxisAngleToQuaternion(boneNodeInfo.rotation, 1);
-
-            boneNodeInfo.matrix = new THREE.Matrix4().compose(
-              new THREE.Vector3(boneNodeInfo.translation[0], boneNodeInfo.translation[1], boneNodeInfo.translation[2]),
-              new THREE.Quaternion(boneNodeInfo.rotation[0], boneNodeInfo.rotation[1], boneNodeInfo.rotation[2], boneNodeInfo.rotation[3]),
-              new THREE.Vector3(boneNodeInfo.scale[0], boneNodeInfo.scale[1], boneNodeInfo.scale[2])
-            ).toArray();
-          }
-
-          let bone = { name: boneNodeInfo.jointName, matrix: boneNodeInfo.matrix, parentIndex: <number>null };
+          let boneNode = gltf.nodes[jointName];
+          let bone = { name: boneNode.jointName, matrix: getNodeMatrix(boneNode).toArray(), parentIndex: <number>null };
           bones.push(bone);
         }
 
         for (let i = 0; i < skin.jointNames.length; i++) {
           let jointName = skin.jointNames[i];
           for (let childJointName of gltf.nodes[jointName].children) {
-            bones[skin.jointNames.indexOf(childJointName)].parentIndex = i;
+            let boneIndex = skin.jointNames.indexOf(childJointName);
+            if (boneIndex !== -1) bones[boneIndex].parentIndex = i;
           }
         }
       }
@@ -325,9 +357,7 @@ export function importModel(files: File[], callback: ImportCallback) {
             let outputBufferView: GLTFBufferView = gltf.bufferViews[outputAccessor.bufferView];
             let outputArray = new Float32Array(buffers[outputBufferView.buffer], outputBufferView.byteOffset + outputAccessor.byteOffset, outputAccessor.count * componentsCount);
 
-            console.log( outputParameterName, outputAccessor.count, bones.length );
-
-            if (outputParameterName == "rotation") convertAxisAngleToQuaternion(outputArray, outputAccessor.count);
+            if (outputParameterName == "rotation") convertAxisAngleToQuaternionArray(outputArray, outputAccessor.count);
 
             for (let i = 0; i < timeArray.length; i++) {
               let time = timeArray[i];

@@ -36,11 +36,11 @@ function start() {
   // Show skeleton
   let showSkeletonCheckbox = <HTMLInputElement>document.querySelector(".show-skeleton");
   showSkeletonCheckbox.addEventListener("change", onShowSkeletonChange);
-  
+
   // Opacity
   ui.opacityCheckbox = <HTMLInputElement>document.querySelector("input.opacity-checkbox");
   ui.opacityCheckbox.addEventListener("click", onCheckOpacity);
-  
+
   ui.opacityInput = <HTMLInputElement>document.querySelector("input.property-opacity");
   ui.opacityInput.addEventListener("input", onChangeOpacity);
 
