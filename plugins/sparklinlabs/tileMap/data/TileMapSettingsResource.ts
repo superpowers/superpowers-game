@@ -50,8 +50,8 @@ export default class TileMapSettingsResource extends SupCore.data.base.Resource 
 
     super.init(callback);
   }
-  
-  // TODO: Remove these at some point, new config setting introduced in Superpowers 0.8
+
+  // TODO: Remove this overload at some point, new grid.width and .height settings introduced in Superpowers 0.8
   load(resourcePath: string) {
     fs.readFile(path.join(resourcePath, "resource.json"), { encoding: "utf8" }, (err, json) => {
       if (err != null) {
@@ -64,11 +64,11 @@ export default class TileMapSettingsResource extends SupCore.data.base.Resource 
       }
 
       this.pub = JSON.parse(json);
-      if (this.pub["gridSize"] != null) {
-        this.pub.grid = { width: this.pub["gridSize"], height: this.pub["gridSize"] };
-        delete this.pub["gridSize"];
+      if ((<any>this.pub)["gridSize"] != null) {
+        this.pub.grid = { width: (<any>this.pub)["gridSize"], height: (<any>this.pub)["gridSize"] };
+        delete (<any>this.pub)["gridSize"];
       }
-      
+
       this.setup();
       this.emit("load");
     });

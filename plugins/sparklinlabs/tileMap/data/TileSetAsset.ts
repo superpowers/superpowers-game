@@ -52,13 +52,13 @@ export default class TileSetAsset extends SupCore.data.base.Asset {
   load(assetPath: string) {
     fs.readFile(path.join(assetPath, "asset.json"), { encoding: "utf8" }, (err, json) => {
       this.pub = JSON.parse(json);
-      
+
       // TODO: Remove these at some point, new config setting introduced in Superpowers 0.8
-      if (this.pub["gridSize"] != null) {
-        this.pub.grid = { width: this.pub["gridSize"], height: this.pub["gridSize"]};
-        delete this.pub["gridSize"];
+      if ((<any>this.pub)["gridSize"] != null) {
+        this.pub.grid = { width: (<any>this.pub)["gridSize"], height: (<any>this.pub)["gridSize"]};
+        delete (<any>this.pub)["gridSize"];
       }
-      
+
       fs.readFile(path.join(assetPath, "image.dat"), (err, buffer) => {
         this.pub.image = buffer;
         this.setup();
