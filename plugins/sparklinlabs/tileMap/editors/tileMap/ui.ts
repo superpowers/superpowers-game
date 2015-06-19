@@ -315,3 +315,11 @@ export function setupLayer(layer: TileMapLayerPub, index: number) {
 
   ui.layersTreeView.insertAt(liElt, "item", data.tileMapUpdater.tileMapAsset.pub.layers.length - 1 - index);
 }
+
+export function refreshLayersId() {
+  for (let layerIndex = 0; layerIndex < data.tileMapUpdater.tileMapAsset.pub.layers.length; layerIndex++) {
+    let layerId = data.tileMapUpdater.tileMapAsset.pub.layers[layerIndex].id;
+    let indexSpanElt = <HTMLSpanElement>ui.layersTreeView.treeRoot.querySelector(`[data-id="${layerId}"] .index`);
+    indexSpanElt.textContent = `${layerIndex} -`;
+  }
+}

@@ -1,5 +1,5 @@
 import info from "./info";
-import ui, { setupLayer, selectBrush } from "./ui";
+import ui, { setupLayer, selectBrush, refreshLayersId } from "./ui";
 import mapArea, { setupPattern } from "./mapArea";
 import tileSetArea from "./tileSetArea";
 
@@ -92,6 +92,8 @@ onEditCommands.newLayer = (layerPub: TileMapLayerPub, index: number) => {
   let layer = data.tileMapUpdater.tileMapAsset.layers.byId[tileSetArea.selectedLayerId];
   let z = (pub.layers.indexOf(layer) + 0.5) * pub.layerDepthOffset
   mapArea.patternActor.setLocalPosition(new SupEngine.THREE.Vector3(0, 0, z));
+
+  refreshLayersId();
 };
 
 onEditCommands.renameLayer = (id: string, newName: string) => {
@@ -114,6 +116,8 @@ onEditCommands.deleteLayer = (id: string, index: number) => {
   let layer = data.tileMapUpdater.tileMapAsset.layers.byId[tileSetArea.selectedLayerId];
   let z = (pub.layers.indexOf(layer) + 0.5) * pub.layerDepthOffset
   mapArea.patternActor.setLocalPosition(new SupEngine.THREE.Vector3(0, 0, z));
+
+  refreshLayersId();
 };
 
 onEditCommands.moveLayer = (id: string, newIndex: number) => {
@@ -126,11 +130,7 @@ onEditCommands.moveLayer = (id: string, newIndex: number) => {
   let z = (pub.layers.indexOf(layer) + 0.5) * pub.layerDepthOffset
   mapArea.patternActor.setLocalPosition(new SupEngine.THREE.Vector3(0, 0, z));
 
-  for (let layerIndex = 0; layerIndex < data.tileMapUpdater.tileMapAsset.pub.layers.length; layerIndex++) {
-    let layerId = data.tileMapUpdater.tileMapAsset.pub.layers[layerIndex].id;
-    let indexSpanElt = <HTMLSpanElement>ui.layersTreeView.treeRoot.querySelector(`[data-id="${layerId}"] .index`);
-    indexSpanElt.textContent = `${layerIndex} -`;
-  }
+  refreshLayersId();
 };
 
 // Tile Set
