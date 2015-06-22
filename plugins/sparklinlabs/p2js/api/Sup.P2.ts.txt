@@ -10,7 +10,8 @@ module Sup {
 
       constructor( actor, options ) {
         super( actor );
-        this.__inner = new SupEngine.componentClasses.P2Body( actor.__inner, options );
+        this.__inner = new SupEngine.componentClasses.P2Body(actor.__inner);
+        if (options != null) this.__inner.setup(options);
         this.__inner.__outer = this;
         this.body = this.__inner.body;
         this.actor.p2Body = this;

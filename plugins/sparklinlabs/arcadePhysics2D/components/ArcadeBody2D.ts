@@ -31,8 +31,6 @@ export default class ArcadeBody2D extends SupEngine.ActorComponent {
   constructor(actor: SupEngine.Actor, type: string, config: any) {
     super(actor, "ArcadeBody2D");
 
-    if (type === "box") this.setupBox(config);
-    else if (type === "tileMap") this.setupTileMap(config);
     (<any>SupEngine).ArcadePhysics2D.allBodies.push( this );
   }
 

@@ -14,14 +14,11 @@ export default class P2Body extends SupEngine.ActorComponent {
   actorPosition: THREE.Vector3;
   actorAngles: THREE.Euler;
 
-  constructor(actor: SupEngine.Actor, config: any={}) {
+  constructor(actor: SupEngine.Actor) {
     super(actor, "P2Body");
 
     this.body = new (<any>window).p2.Body();
     (<any>SupEngine).P2.World.addBody(this.body);
-    if (config.shape == null) return;
-
-    this.setup(config);
   }
 
   setup(config: any) {

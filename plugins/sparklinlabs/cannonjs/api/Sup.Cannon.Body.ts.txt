@@ -8,9 +8,10 @@ module Sup {
     export class Body extends ActorComponent {
       body: any;
 
-      constructor( actor, options ) {
-        super( actor );
-        this.__inner = new SupEngine.componentClasses.CannonBody( actor.__inner, options );
+      constructor(actor, options) {
+        super(actor);
+        this.__inner = new SupEngine.componentClasses.CannonBody(actor.__inner);
+        if (options != null) this.__inner.setup(options);
         this.__inner.__outer = this;
         this.body = this.__inner.body;
         this.actor.cannonBody = this;

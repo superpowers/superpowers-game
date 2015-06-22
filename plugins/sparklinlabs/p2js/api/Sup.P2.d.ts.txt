@@ -8,7 +8,7 @@ declare module Sup {
     class Body extends ActorComponent {
       body: p2.Body;
 
-      constructor( actor: Sup.Actor, options?: any );
+      constructor(actor: Sup.Actor, options: any);
     }
   }
 }

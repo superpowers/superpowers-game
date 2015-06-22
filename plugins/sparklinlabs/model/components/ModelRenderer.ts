@@ -63,10 +63,8 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
 
   skeletonHelper: THREE.SkeletonHelper;
 
-  constructor(actor: SupEngine.Actor, modelAsset?: any, materialType="basic") {
+  constructor(actor: SupEngine.Actor) {
     super(actor, "ModelRenderer");
-
-    if (modelAsset != null) this.setModel(modelAsset, materialType);
   }
 
   _clearMesh() {

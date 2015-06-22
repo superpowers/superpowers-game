@@ -31,10 +31,8 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
   animationLooping: boolean;
   animationTimer: number;
 
-  constructor(actor: SupEngine.Actor, spriteAsset?: any, materialType="basic") {
+  constructor(actor: SupEngine.Actor) {
     super(actor, "SpriteRenderer");
-
-    if (spriteAsset != null) this.setSprite(spriteAsset, materialType);
   }
 
   setSprite(asset: any, materialType?: string) {

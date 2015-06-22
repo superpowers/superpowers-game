@@ -20,16 +20,8 @@ export default class TileMapRenderer extends SupEngine.ActorComponent {
   tilesPerRow: number;
   tilesPerColumn: number;
 
-  constructor(actor: SupEngine.Actor, tileMap: TileMap, tileSet: TileSet, overrideTexture?: THREE.Texture) {
+  constructor(actor: SupEngine.Actor) {
     super(actor, "TileMapRenderer");
-
-    this.tileMap = tileMap;
-    this.tileSet = tileSet;
-
-    if (this.tileSet != null) {
-      this._setupTexture((overrideTexture != null) ? overrideTexture : this.tileSet.data.texture);
-      if (this.tileMap != null) this._createLayerMeshes();
-    }
   }
 
   setTileMap(asset: TileMap) {

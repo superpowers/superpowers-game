@@ -8,7 +8,7 @@ declare module Sup {
     class Body extends ActorComponent {
       body: CANNON.Body;
 
-      constructor( actor: Sup.Actor, options?: any );
+      constructor( actor: Sup.Actor, options: any );
     }
   }
 }

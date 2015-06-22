@@ -23,7 +23,6 @@ export default  class CameraMarker extends SupEngine.ActorComponent {
     this.viewport = { x: 0, y: 0, width: 1, height: 1 };
 
     this.projectionNeedsUpdate = true;
-    if (config != null) this.setConfig(config);
 
     let geometry = new THREE.Geometry();
     for (let i = 0; i < 24; i++) geometry.vertices.push(new THREE.Vector3(0,0,0));

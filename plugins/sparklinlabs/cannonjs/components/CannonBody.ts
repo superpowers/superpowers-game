@@ -16,16 +16,11 @@ class CannonBody extends SupEngine.ActorComponent {
   height:number;
   shape:string;
 
-  constructor(actor:SupEngine.Actor, config:any) {
+  constructor(actor:SupEngine.Actor) {
     super(actor, "CannonBody");
-
-    if (config == null) config = {};
 
     this.body = new (<any>window).CANNON.Body();
     (<any>SupEngine).Cannon.World.addBody(this.body);
-
-    if (config.shape != null) this.setup(config)
-
   }
 
   setup(config:any) {
