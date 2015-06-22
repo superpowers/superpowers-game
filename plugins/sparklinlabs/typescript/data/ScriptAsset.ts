@@ -77,7 +77,7 @@ export default class ScriptAsset extends SupCore.data.base.Asset {
         behaviorName.slice(index + 2);
     }
 
-    if (! _.endsWith(behaviorName, "Behavior")) behaviorName += "Behavior";
+    if (!_.endsWith(behaviorName, "Behavior")) behaviorName += "Behavior";
 
     let defaultContent = [
       `class ${behaviorName} extends Sup.Behavior {`,

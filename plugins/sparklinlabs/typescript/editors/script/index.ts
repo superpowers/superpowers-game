@@ -80,9 +80,7 @@ function start() {
     "Shift-Cmd-Z": () => { onRedo(); },
     "Ctrl-Y": () => { onRedo(); },
     "Cmd-Y": () => { onRedo(); },
-    "Ctrl-S": () => {
-      socket.emit("edit:assets", info.assetId, "saveText", (err: string) => { if (err != null) { alert(err); SupClient.onDisconnected(); }});
-    },
+    "Ctrl-S": saveText,
     "Cmd-S": () => {
       socket.emit("edit:assets", info.assetId, "saveText", (err: string) => { if (err != null) { alert(err); SupClient.onDisconnected(); }});
     },
@@ -207,9 +205,17 @@ function start() {
   let errorPaneResizeHandle = new PerfectResize(ui.errorPane, "bottom");
   errorPaneResizeHandle.on("drag", () => { ui.editor.refresh(); });
 
+  let saveButton = ui.errorPane.querySelector(".draft button");
   let errorPaneToggleButton = ui.errorPane.querySelector("button.toggle");
 
-  ui.errorPaneStatus.addEventListener("click", () => {
+  saveButton.addEventListener("click", (event: MouseEvent) => {
+    event.preventDefault();
+    saveText();
+  });
+
+  ui.errorPaneStatus.addEventListener("click", (event: any) => {
+    if (event.target.tagName === "BUTTON" && event.target.parentElement.className === "draft") return;
+
     let collapsed = ui.errorPane.classList.toggle("collapsed");
     errorPaneToggleButton.textContent = collapsed ? "+" : "–";
     errorPaneResizeHandle.handleElt.classList.toggle("disabled", collapsed);
@@ -320,6 +326,7 @@ var scriptSubscriber = {
     if (asset.id === info.assetId) {
       data.asset = asset;
 
+      (<any>ui.errorPaneStatus.classList.toggle)("has-draft", data.asset.hasDraft);
       ui.editor.getDoc().setValue(data.asset.pub.draft);
       ui.editor.getDoc().clearHistory();
       ui.editor.setOption("readOnly", false);
@@ -369,6 +376,8 @@ var scriptSubscriber = {
 
 var onAssetCommands: any = {};
 onAssetCommands.editText = (operationData: OT.OperationData) => {
+  ui.errorPaneStatus.classList.add("has-draft");
+
   if (data.clientId === operationData.userId) {
     if (ui.pendingOperation != null) {
       socket.emit("edit:assets", info.assetId, "editText", ui.pendingOperation.serialize(), data.asset.document.operations.length, (err: string) => {
@@ -394,6 +403,10 @@ onAssetCommands.editText = (operationData: OT.OperationData) => {
   ui.redoStack = transformStack(ui.redoStack, operation);
 
   applyOperation(operation.clone(), "network", false);
+}
+
+onAssetCommands.saveText = () => {
+  ui.errorPaneStatus.classList.remove("has-draft");
 }
 
 function transformStack(stack: OT.TextOperation[], operation: OT.TextOperation) {
@@ -579,6 +592,10 @@ function startAutocomplete() {
 }
 
 // User interface
+function saveText() {
+  socket.emit("edit:assets", info.assetId, "saveText", (err: string) => { if (err != null) { alert(err); SupClient.onDisconnected(); }});
+}
+
 function refreshErrors(errors: Array<{file: string; position: {line: number; character: number;}; length: number; message: string}>) {
   // Remove all previous erros
   for (let textMarker of ui.editor.getDoc().getAllMarks()) {

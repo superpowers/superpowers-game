@@ -58,14 +58,23 @@ body
     display flex
     align-items center
 
+    &.has-draft
+      background-color #37d
+      .draft { display: block; }
+
     &.has-errors
       background-color #a44
+
+    .draft
+      display none
+      padding-left 0.25em
+      color rgba(255,255,255,0.5)
 
     .info
       flex 1
       padding 0.5em
 
-    button
+    button.toggle
       width 30px
       background transparent
       border none
