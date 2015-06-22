@@ -93,9 +93,9 @@ ui.newComponentButton = <HTMLButtonElement>document.querySelector("button.new-co
 ui.newComponentButton.addEventListener("click", onNewComponentClick);
 
 ui.cameraMode = "3D";
-ui.cameraModeButton = <HTMLButtonElement>document.querySelector("button.toggle-camera-button");
+ui.cameraModeButton = <HTMLButtonElement>document.getElementById("toggle-camera-button");
 ui.cameraModeButton.addEventListener("click", onChangeCameraMode);
-ui.cameraSpeedSlider = <HTMLInputElement>document.querySelector("input.camera-speed-slider");
+ui.cameraSpeedSlider = <HTMLInputElement>document.getElementById("camera-speed-slider");
 ui.cameraSpeedSlider.addEventListener("input", onChangeCameraSpeed);
 ui.cameraSpeedSlider.value = engine.cameraControls.movementSpeed;
 
@@ -475,13 +475,13 @@ export function setCameraMode(mode: string) {
   engine.gameInstance.destroyComponent(engine.cameraControls);
   ui.cameraMode = mode;
 
+  (<HTMLDivElement>document.querySelector(".controls .camera-speed")).style.display = ui.cameraMode === "3D" ? "" : "none";
+
   if (ui.cameraMode === "3D") {
-    ui.cameraSpeedSlider.style.display = "";
     engine.cameraComponent.setOrthographicMode(false);
     engine.cameraControls = new SupEngine.editorComponentClasses["Camera3DControls"](engine.cameraActor, engine.cameraComponent);
     engine.cameraControls.movementSpeed = ui.cameraSpeedSlider.value;
   } else {
-    ui.cameraSpeedSlider.style.display = "none";
     engine.cameraActor.setLocalOrientation(new SupEngine.THREE.Quaternion().setFromAxisAngle(new SupEngine.THREE.Vector3(0, 1, 0), 0))
     engine.cameraComponent.setOrthographicMode(true);
     engine.cameraControls = new SupEngine.editorComponentClasses["Camera2DControls"](engine.cameraActor, engine.cameraComponent, {

@@ -19,9 +19,22 @@ html
     .main
       canvas(tabindex="0")
       .controls
-        label(for="toggle-camera-button") Camera Mode
-        button.toggle-camera-button 3D
-        input(type="range", min=0.05, max=2.0, step=0.05).camera-speed-slider
+        .camera-mode
+          .label Camera Mode
+          button#toggle-camera-button 3D
+        .camera-speed
+          .label Camera Speed
+          input#camera-speed-slider(type="range",min="0.05",max="2.0",step="0.05")
+        .transform-mode
+          .label Transform
+          input#transform-mode-translate(type="radio",name="transformMode",value="translate",checked)
+          label(for="transform-mode-translate") Move
+          input#transform-mode-rotate(type="radio",name="transformMode",value="rotate")
+          label(for="transform-mode-rotate") Rotate
+          input#transform-mode-scale(type="radio",name="transformMode",value="scale")
+          label(for="transform-mode-scale") Scale
+          input#transform-mode-local(type="checkbox")
+          label(for="transform-mode-local") Local
 
     .sidebar
       .nodes-buttons

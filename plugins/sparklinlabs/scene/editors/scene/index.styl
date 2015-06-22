@@ -12,13 +12,28 @@ body
     background #000
     flex 1
 
-  .controls
-    height 30px
-    padding 5px
-    display inline-flex
+.controls
+  display flex
+  flex-shrink 0
+  align-items center
+  height 30px
+  overflow hidden
+  white-space nowrap
 
-    label
-      padding 2px
+  > div
+    display flex
+    align-items center
+    height 30px
+    padding 0 0.5em
+    flex auto 0 0
+
+    &:not(:first-child)
+      border-left 1px solid #ccc
+
+  > div > .label
+    text-transform uppercase
+    margin-right 0.5em
+    color #666
 
 .sidebar
   width 250px
