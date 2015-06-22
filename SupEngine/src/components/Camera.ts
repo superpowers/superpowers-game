@@ -74,6 +74,7 @@ export default class Camera extends ActorComponent {
     this.viewport.width = width;
     this.viewport.height = height;
     this.projectionNeedsUpdate = true;
+    this._computeAspectRatio();
   }
 
   setDepth(depth: number) {
