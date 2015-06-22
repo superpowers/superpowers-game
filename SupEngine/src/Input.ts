@@ -1,8 +1,9 @@
-export default class Input {
+import { EventEmitter } from "events";
+
+export default class Input extends EventEmitter {
   static maxTouches = 10;
 
   canvas: HTMLCanvasElement;
-  _exitCallback: Function;
 
   mouseButtons: Array<{isDown: boolean; wasJustPressed: boolean; wasJustReleased: boolean;}> = [];
   mouseButtonsDown: boolean[] = [];
@@ -20,7 +21,11 @@ export default class Input {
   gamepadsButtons: Array<Array<{isDown: boolean; wasJustPressed: boolean; wasJustReleased: boolean;}>> = [];
   gamepadsAxes: Array<number[]> = [];
 
-  constructor(canvas: HTMLCanvasElement, options: { exitCallback?: Function } = {}) {
+  exited = false;
+
+  constructor(canvas: HTMLCanvasElement, options: { enableOnExit?: boolean } = {}) {
+    super();
+
     if (options == null) options = {};
 
     this.canvas = canvas;
@@ -49,8 +54,7 @@ export default class Input {
     }
 
     // On exit
-    if (options.exitCallback != null) {
-      this._exitCallback = options.exitCallback;
+    if (options.enableOnExit) {
       let nwDispatcher = (<any>window).nwDispatcher;
       if (nwDispatcher != null) {
         try { nwDispatcher.requireNwGui().Window.get().on("close", this._doExitCallback); }
@@ -66,6 +70,8 @@ export default class Input {
   }
 
   destroy() {
+    this.removeAllListeners();
+
     this.canvas.removeEventListener("mousemove", this._onMouseMove);
     this.canvas.removeEventListener("mousedown", this._onMouseDown);
     document.removeEventListener("mouseup", this._onMouseUp);
@@ -79,14 +85,6 @@ export default class Input {
 
     this.canvas.removeEventListener("keydown", this._onKeyDown);
     document.removeEventListener("keyup", this._onKeyUp);
-
-    if (this._exitCallback != null) {
-      let nwDispatcher = (<any>window).nwDispatcher;
-      if (nwDispatcher != null) {
-        try { nwDispatcher.requireNwGui().Window.get().removeListener("close", this._exitCallback); }
-        catch(e) {}
-      }
-    }
 
     window.removeEventListener("blur", this._onBlur);
   }
@@ -218,10 +216,10 @@ export default class Input {
     // NOTE: It seems window.onbeforeunload might be called twice
     // in some circumstances so we check if the callback was cleared already
     // http://stackoverflow.com/questions/8711393/onbeforeunload-fires-twice
-    if (this._exitCallback == null) return;
+    if (this.exited) return;
 
-    this._exitCallback();
-    this._exitCallback = null;
+    this.emit("exit");
+    this.exited = true;
 
     let nwDispatcher = (<any>window).nwDispatcher;
     if (nwDispatcher != null) {

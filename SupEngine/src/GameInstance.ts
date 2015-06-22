@@ -28,8 +28,6 @@ export default class GameInstance extends EventEmitter {
 
   debug: boolean;
   skipRendering = false;
-  exitCallback: Function;
-  exited = false;
 
   constructor(canvas: HTMLCanvasElement, options: { debug?: boolean; enableOnExit?: boolean; layers?: string[]; } = {}) {
     super();
@@ -38,8 +36,7 @@ export default class GameInstance extends EventEmitter {
     this.debug = options.debug === true;
 
     // Exit callback is only enabled when playing the actual game, not in most editors
-    let enableOnExit = (options.enableOnExit != null) ? options.enableOnExit : false;
-    this.input = new Input(canvas, options.enableOnExit ? { exitCallback: this._doExitCallback } : null);
+    this.input = new Input(canvas, { enableOnExit: options.enableOnExit });
 
     // Setup layers
     if (options.layers != null) this.layers = options.layers;
@@ -63,7 +60,7 @@ export default class GameInstance extends EventEmitter {
     let updates = 0;
     while (accumulatedTime >= updateInterval) {
       this.update();
-      if (this.exited) break;
+      if (this.input.exited) break;
       accumulatedTime -= updateInterval;
       updates++;
     }
@@ -106,7 +103,7 @@ export default class GameInstance extends EventEmitter {
     this.actorsToBeDestroyed.forEach((actor) => { this._doActorDestruction(actor); });
     this.actorsToBeDestroyed.length = 0;
 
-    if (this.exited) { this.threeRenderer.clear(); return; }
+    if (this.input.exited) { this.threeRenderer.clear(); return; }
     if (this.skipRendering) { this.skipRendering = false; this.update(); return; }
   }
 
@@ -197,11 +194,4 @@ export default class GameInstance extends EventEmitter {
 
     actor._destroy();
   }
-
-  _doExitCallback = () => {
-    if (this.exitCallback != null) {
-      this.exitCallback();
-      this.exitCallback = null;
-    }
-  };
 }
