@@ -5,6 +5,8 @@ export default class TextRendererEditor {
   fields: {[key: string]: any} = {};
   colorPicker: HTMLInputElement;
   fontAssetId: string;
+  
+  pendingModification = 0;
 
   constructor(tbody: HTMLTableSectionElement, config: any, projectClient: SupClient.ProjectClient, editConfig: any) {
     this.editConfig = editConfig;
@@ -18,7 +20,13 @@ export default class TextRendererEditor {
 
     var textRow = SupClient.table.appendRow(tbody, "Text");
     this.fields["text"] = SupClient.table.appendTextAreaField(textRow.valueCell, config.text);
-    this.fields["text"].addEventListener("input", (event: any) => { this.editConfig("setProperty", "text", event.target.value); });
+    this.fields["text"].addEventListener("input", (event: any) => {
+      this.pendingModification += 1;
+      this.editConfig("setProperty", "text", event.target.value, (err: string) => {
+        this.pendingModification -= 1;
+        if (err != null) alert(err);
+      });
+    });
 
     var alignmentRow = SupClient.table.appendRow(tbody, "Alignment");
     this.fields["alignment"] = SupClient.table.appendSelectBox(alignmentRow.valueCell, {"left": "Left", "center": "Center", "right": "Right"}, config.alignment);
@@ -60,6 +68,8 @@ export default class TextRendererEditor {
     } else if (path === "color") {
       this.fields["color"].value = value;
       this.colorPicker.value = (value != null) ? `#${value}` : "#ffffff";
+    } else if (path === "text") {
+      if (this.pendingModification === 0) this.fields["text"].value = value;
     } else this.fields[path].value = value;
   }
 
