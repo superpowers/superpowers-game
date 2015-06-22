@@ -1,10 +1,17 @@
 module Sup {
   export module Input {
+    export function on(eventName: string, callback: Function) {
+      player.gameInstance.input.on(eventName, callback);
+    }
+
+    export function off(eventName: string, callback: Function) {
+      player.gameInstance.input.removeListener(eventName, callback);
+    }
+
 
     export function getScreenSize() {
       return { "x": player.canvas.clientWidth, "y": player.canvas.clientHeight };
     }
-
 
     export function getMouseVisible() {
       return player.canvas.style.cursor != "none";
@@ -39,7 +46,6 @@ module Sup {
       if ( player.gameInstance.input.mouseButtons[button] == null ) { throw new Error("Invalid button index") }
       return player.gameInstance.input.mouseButtons[button].wasJustReleased
     }
-
 
     export function getTouchPosition(index) {
       var position = player.gameInstance.input.touches[index].position;

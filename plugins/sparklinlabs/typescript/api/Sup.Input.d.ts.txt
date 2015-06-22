@@ -1,6 +1,12 @@
 declare module Sup {
   module Input {
+    function on(eventName: string, callback: Function);
+    function on(eventName: "exit", callback: () => void);
+    function off(eventName: string, callback: Function);
+    function off(eventName: "exit", callback: () => void);
+
     function getScreenSize(): { x: number; y: number; };
+
     function getMouseVisible(): boolean;
     function setMouseVisible(visible: boolean);
 

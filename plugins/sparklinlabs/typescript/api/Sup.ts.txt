@@ -3,19 +3,15 @@ module Sup {
   export function log(message, ...optionalParams) { console.log.apply(console, [ message ].concat(optionalParams)); }
 
   export function exit() {
-    if (player.gameInstance.exitCallback != null) {
-      player.gameInstance.exitCallback();
-      player.gameInstance.exitCallback = null;
-    }
-
+    if (player.gameInstance.input.exited) return;
+    player.input.emit("exit");
+    player.gameInstance.input.exited = true;
     player.gameInstance.destroyAllActors();
-    player.gameInstance.exited = true;
 
     // Close window only if running release mode in NW.js
-    if (! player.gameInstance.debug && window.nwDispatcher != null)
+    if (!player.gameInstance.debug && window.nwDispatcher != null)
       window.nwDispatcher.requireNwGui().Window.get().close();
   }
-  export function onExit(callback) { player.gameInstance.exitCallback = callback; }
 
   export class Asset {
     name: string;
