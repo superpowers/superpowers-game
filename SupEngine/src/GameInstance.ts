@@ -147,7 +147,7 @@ export default class GameInstance extends EventEmitter {
       this.emit("resize", { width, height });
     }
   }
-  
+
   setActiveLayer(layer: number) {
     for (let cachedActor of this.cachedActors) cachedActor.setActiveLayer(layer);
   }

@@ -8,7 +8,7 @@ export default class Camera extends ActorComponent {
 
   threeCamera: THREE.OrthographicCamera|THREE.PerspectiveCamera;
   viewport = { x: 0, y: 0, width: 1, height: 1 };
-  
+
   layers: number[] = [];
   depth = 0;
   nearClippingPlane = 0.1;
@@ -23,7 +23,7 @@ export default class Camera extends ActorComponent {
 
     this.setOrthographicMode(false);
 
-    this._computeAspectRatio()
+    this._computeAspectRatio();
     this.actor.gameInstance.on("resize", this._computeAspectRatio);
   }
 
@@ -40,7 +40,7 @@ export default class Camera extends ActorComponent {
 
   _computeAspectRatio = () => {
     let canvas = this.actor.gameInstance.threeRenderer.domElement;
-    this.cachedRatio = (canvas.clientWidth * this.viewport.width) / (canvas.clientHeight * this.viewport.height)
+    this.cachedRatio = (canvas.clientWidth * this.viewport.width) / (canvas.clientHeight * this.viewport.height);
     this.projectionNeedsUpdate = true;
   }
 
@@ -75,7 +75,7 @@ export default class Camera extends ActorComponent {
     this.viewport.height = height;
     this.projectionNeedsUpdate = true;
   }
-  
+
   setDepth(depth: number) {
     this.depth = depth;
   }
@@ -124,7 +124,7 @@ export default class Camera extends ActorComponent {
       this.viewport.x * canvas.width    , (1 - this.viewport.y - this.viewport.height) * canvas.height,
       this.viewport.width * canvas.width, this.viewport.height * canvas.height
     );
-    
+
     if (this.layers.length > 0) {
       for (let layer of this.layers) {
         this.actor.gameInstance.setActiveLayer(layer);
