@@ -29,8 +29,7 @@ engine.cameraComponent = new SupEngine.componentClasses["Camera"](engine.cameraA
 engine.cameraComponent.layers = [ 0, -1 ];
 engine.cameraControls = new SupEngine.editorComponentClasses["Camera3DControls"](engine.cameraActor, engine.cameraComponent);
 
-engine.selectionBoxActor = new SupEngine.Actor(engine.gameInstance, "Selection Box");
-engine.selectionBoxActor.layer = -1;
+engine.selectionBoxActor = new SupEngine.Actor(engine.gameInstance, "Selection Box", null, { layer: -1 });
 engine.selectionBoxComponent = new SupEngine.editorComponentClasses["SelectionBox"](engine.selectionBoxActor);
 
 engine.tickAnimationFrameId = requestAnimationFrame(tick);
