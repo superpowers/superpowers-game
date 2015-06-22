@@ -57,7 +57,7 @@ mapArea.gridRenderer = new SupEngine.editorComponentClasses["GridRenderer"](mapA
 mapArea.patternData = [];
 mapArea.patternDataWidth = 1;
 mapArea.patternActor = new SupEngine.Actor(mapArea.gameInstance, "Pattern");
-mapArea.patternRenderer = new TileMapRenderer(mapArea.patternActor, null, null);
+mapArea.patternRenderer = new TileMapRenderer(mapArea.patternActor);
 mapArea.patternBackgroundActor = new SupEngine.Actor(mapArea.gameInstance, "Pattern Background");
 mapArea.patternBackgroundRenderer = new SupEngine.editorComponentClasses["FlatColorRenderer"](mapArea.patternBackgroundActor);
 

@@ -17,7 +17,7 @@ export default  class CameraMarker extends SupEngine.ActorComponent {
   projectionNeedsUpdate: boolean;
   line: THREE.Line;
 
-  constructor(actor: SupEngine.Actor, config: any) {
+  constructor(actor: SupEngine.Actor) {
     super(actor, "Marker");
 
     this.viewport = { x: 0, y: 0, width: 1, height: 1 };

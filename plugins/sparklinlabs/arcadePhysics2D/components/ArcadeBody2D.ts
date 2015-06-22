@@ -28,7 +28,7 @@ export default class ArcadeBody2D extends SupEngine.ActorComponent {
 
   touches = { top: false, bottom: false, right: false, left: false };
 
-  constructor(actor: SupEngine.Actor, type: string, config: any) {
+  constructor(actor: SupEngine.Actor, type: string) {
     super(actor, "ArcadeBody2D");
 
     (<any>SupEngine).ArcadePhysics2D.allBodies.push( this );

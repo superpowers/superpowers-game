@@ -24,7 +24,7 @@ function onConnected() {
   data.projectClient = new SupClient.ProjectClient(socket, { subEntries: true });
 
   let tileMapActor = new SupEngine.Actor(mapArea.gameInstance, "Tile Map");
-  let tileMapRenderer = new TileMapRenderer(tileMapActor, null, null);
+  let tileMapRenderer = new TileMapRenderer(tileMapActor);
   let config = { tileMapAssetId: info.assetId, tileSetAssetId: <string>null };
   let receiveCallbacks = { tileMap: onTileMapAssetReceived, tileSet: onTileSetAssetReceived };
   let editCallbacks = { tileMap: onEditCommands, tileSet: onTileSetEditCommands };
