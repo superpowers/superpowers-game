@@ -1,31 +1,32 @@
 @import "nib"
 
 body
+  height auto
+
   display flex
   flex-flow column
 
   .search, .results
-    padding 1em
+    padding 0.5em
 
   .search button
     margin 0 1em 0 1em
 
   .results
+    padding-top 0
     display flex
     flex-flow column
 
     > span
       cursor pointer
-      height 60px
-      padding 5px
-      margin-bottom 5px
+      padding 0.5em
+      margin-top 0.25em
       background-color #444
       color #fff
 
   table
     width 100%
     border-collapse collapse
-    margin 0.5em 0 0.5em 0
 
     &.collapsed
       display none

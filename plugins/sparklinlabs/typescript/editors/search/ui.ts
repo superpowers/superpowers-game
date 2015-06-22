@@ -161,7 +161,7 @@ function refreshStatus() {
     files += 1;
   }
 
-  if (results === 0) ui.statusSpan.textContent = "No result found";
+  if (results === 0) ui.statusSpan.textContent = "No results found";
   else {
     let resultPlurial = results > 1 ? "s" : "";
     let filePlurial = files > 1 ? "s" : ""
