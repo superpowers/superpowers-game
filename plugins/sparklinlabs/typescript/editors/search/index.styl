@@ -9,8 +9,12 @@ body
   .search, .results
     padding 0.5em
 
-  .search button
-    margin 0 1em 0 1em
+  .search
+    display flex
+    align-items center
+    #match-case-checkbox { margin-left: 0.5em; }
+    button { margin: 0 0.5em; }
+    span { color: #666; }
 
   .results
     padding-top 0

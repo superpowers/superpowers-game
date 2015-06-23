@@ -827,7 +827,7 @@ function onGlobalSearch() {
       return;
     }
     window.parent.postMessage({ type: "openTool", name: "search", options: { text } }, (<any>window.location).origin);
-  })
+  });
 }
 
 function onUndo() {

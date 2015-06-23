@@ -3,16 +3,23 @@ import { data } from "./network";
 
 let ui: {
   textToSearch?: string;
+  searchRegExp?: RegExp;
+
   resultsPane?: HTMLDivElement;
   searchInput?: HTMLInputElement;
+  matchCaseCheckbox?: HTMLInputElement;
   statusSpan?: HTMLSpanElement;
 } = {};
 export default ui;
 
 ui.resultsPane = <HTMLDivElement>document.querySelector(".results");
+
 ui.searchInput = <HTMLInputElement>document.querySelector(".search input");
 ui.searchInput.focus();
 ui.searchInput.addEventListener("keydown", (event: any) => { if (event.keyCode === 13) search(); })
+
+ui.matchCaseCheckbox = <HTMLInputElement>document.getElementById("match-case-checkbox");
+
 document.querySelector(".search button").addEventListener("click", (event: any) => { search(); });
 ui.statusSpan = <HTMLSpanElement>document.querySelector(".search span");
 
@@ -29,12 +36,21 @@ window.addEventListener("message", (event: any) => {
   }
 });
 
+let escapeRegExp = (text: string) => text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+
 function search() {
   while (ui.resultsPane.children.length !== 0) {
     let child = <HTMLSpanElement>ui.resultsPane.children[0];
     child.parentElement.removeChild(child);
   }
+
+  ui.searchRegExp = null;
   ui.textToSearch = ui.searchInput.value;
+
+  if (ui.textToSearch.length > 0) {
+   ui.searchRegExp = new RegExp(escapeRegExp(ui.textToSearch), `g${ui.matchCaseCheckbox.checked ? "" : "i"}`);
+  }
+
   for (let assetId in data.assetsById) searchAsset(assetId);
 }
 
@@ -43,11 +59,10 @@ export function searchAsset(assetId: string) {
   let name = data.projectClient.entries.getPathFromId(assetId);
 
   let results: number[] = [];
-  if (ui.textToSearch !== "") {
-    let index = asset.pub.draft.indexOf(ui.textToSearch);
-    while (index !== -1) {
-      results.push(index);
-      index = asset.pub.draft.indexOf(ui.textToSearch, index + 1);
+  if (ui.searchRegExp != null) {
+    let match: any;
+    while ((match = ui.searchRegExp.exec(asset.pub.draft)) != null) {
+      results.push(match.index);
     }
   }
 
@@ -119,16 +134,14 @@ export function searchAsset(assetId: string) {
       rankInLine = 0;
     }
 
-    let positionInLine = -1;
-    for (let i = 0; i <= rankInLine; i++)
-      positionInLine = textParts[line].indexOf(ui.textToSearch, positionInLine + 1);
+    let column = result - position;
 
     let rowElt = document.createElement("tr");
     tableElt.appendChild(rowElt);
     let dataset = <any>rowElt.dataset;
     dataset.id = assetId;
     dataset.line = line;
-    dataset.ch = positionInLine;
+    dataset.ch = column;
 
     let lineElt = document.createElement("td");
     rowElt.appendChild(lineElt);
@@ -138,15 +151,15 @@ export function searchAsset(assetId: string) {
     rowElt.appendChild(textElt);
 
     let startElt = document.createElement("span");
-    startElt.textContent = textParts[line].slice(0, positionInLine);
+    startElt.textContent = textParts[line].slice(0, column);
     textElt.appendChild(startElt);
 
     let wordElt = document.createElement("span");
-    wordElt.textContent = ui.textToSearch;
+    wordElt.textContent = textParts[line].slice(column, column + ui.textToSearch.length);
     textElt.appendChild(wordElt);
 
     let endElt = document.createElement("span");
-    endElt.textContent = textParts[line].slice(positionInLine + ui.textToSearch.length);
+    endElt.textContent = textParts[line].slice(column + ui.textToSearch.length);
     textElt.appendChild(endElt);
   }
   refreshStatus();
