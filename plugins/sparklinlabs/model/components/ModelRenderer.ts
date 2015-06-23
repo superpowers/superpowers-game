@@ -1,5 +1,7 @@
 let THREE = SupEngine.THREE;
 let tmpBoneMatrix = new THREE.Matrix4;
+let tmpVec = new THREE.Vector3;
+let tmpQuat = new THREE.Quaternion;
 
 import ModelRendererUpdater from "./ModelRendererUpdater";
 
@@ -328,19 +330,19 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
       if (boneKeyFrames.translation != null) {
         let { prevKeyFrame, nextKeyFrame, t } = getInterpolationData(boneKeyFrames.translation, time);
         bone.position.fromArray(prevKeyFrame.value);
-        bone.position.lerp(new THREE.Vector3().fromArray(nextKeyFrame.value), t);
+        bone.position.lerp(tmpVec.fromArray(nextKeyFrame.value), t);
       }
 
       if (boneKeyFrames.rotation != null) {
         let { prevKeyFrame, nextKeyFrame, t } = getInterpolationData(boneKeyFrames.rotation, time);
         bone.quaternion.fromArray(prevKeyFrame.value);
-        bone.quaternion.slerp(new THREE.Quaternion().fromArray(nextKeyFrame.value), t);
+        bone.quaternion.slerp(tmpQuat.fromArray(nextKeyFrame.value), t);
       }
 
       if (boneKeyFrames.scale != null) {
         let { prevKeyFrame, nextKeyFrame, t } = getInterpolationData(boneKeyFrames.scale, time);
         bone.scale.fromArray(prevKeyFrame.value);
-        bone.scale.lerp(new THREE.Vector3().fromArray(nextKeyFrame.value), t);
+        bone.scale.lerp(tmpVec.fromArray(nextKeyFrame.value), t);
       }
     }
 
