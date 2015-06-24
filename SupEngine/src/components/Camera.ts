@@ -101,7 +101,6 @@ export default class Camera extends ActorComponent {
 
     if (this.projectionNeedsUpdate) {
       this.projectionNeedsUpdate = false;
-      this.threeCamera.updateProjectionMatrix();
 
       if (this.isOrthographic) {
         let orthographicCamera = <THREE.OrthographicCamera>this.threeCamera;
