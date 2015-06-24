@@ -7,6 +7,7 @@ export default class Camera extends ActorComponent {
   orthographicScale = 10;
 
   threeCamera: THREE.OrthographicCamera|THREE.PerspectiveCamera;
+  unifiedThreeCamera: THREE.Camera;
   viewport = { x: 0, y: 0, width: 1, height: 1 };
 
   layers: number[] = [];
@@ -20,6 +21,12 @@ export default class Camera extends ActorComponent {
 
   constructor(actor: Actor) {
     super(actor, "Camera");
+
+    this.unifiedThreeCamera = <any>{
+      matrixWorld: null,
+      projectionMatrix: null,
+      updateMatrixWorld: () => {},
+    };
 
     this.setOrthographicMode(false);
 
@@ -54,6 +61,9 @@ export default class Camera extends ActorComponent {
         this.nearClippingPlane, this.farClippingPlane);
     }
     else this.threeCamera = new THREE.PerspectiveCamera(this.fov, this.cachedRatio, this.nearClippingPlane, this.farClippingPlane);
+
+    this.unifiedThreeCamera.matrixWorld = this.threeCamera.matrixWorld;
+    this.unifiedThreeCamera.projectionMatrix = this.threeCamera.projectionMatrix;
 
     this.projectionNeedsUpdate = true;
   }
@@ -108,7 +118,6 @@ export default class Camera extends ActorComponent {
         orthographicCamera.right = this.orthographicScale * this.cachedRatio / 2;
         orthographicCamera.top = this.orthographicScale / 2;
         orthographicCamera.bottom = -this.orthographicScale / 2;
-
         orthographicCamera.updateProjectionMatrix();
       }
       else {
