@@ -1,9 +1,13 @@
-import { data } from "./network";
+import info from "./info";
+import { socket, data } from "./network";
 import ui, { setupSelectedNode } from "./ui";
 
 let THREE = SupEngine.THREE;
 import { Node } from "../../data/SceneNodes";
 import { Component } from "../../data/SceneComponents";
+
+import SelectionBox from "../../components/SelectionBox";
+import TransformHandle from "../../components/TransformHandle";
 
 let engine: {
   gameInstance?: SupEngine.GameInstance;
@@ -12,8 +16,9 @@ let engine: {
   cameraComponent?: any;
   cameraControls?: any;
 
-  selectionBoxActor?: SupEngine.Actor;
+  selectionActor?: SupEngine.Actor;
   selectionBoxComponent?: any;
+  transformHandleComponent?: any;
 
   tickAnimationFrameId?: number;
 } = {};
@@ -27,10 +32,12 @@ engine.cameraActor.setLocalPosition(new THREE.Vector3(0, 0, 10));
 
 engine.cameraComponent = new SupEngine.componentClasses["Camera"](engine.cameraActor);
 engine.cameraComponent.layers = [ 0, -1 ];
-engine.cameraControls = new SupEngine.editorComponentClasses["Camera3DControls"](engine.cameraActor, engine.cameraComponent);
 
-engine.selectionBoxActor = new SupEngine.Actor(engine.gameInstance, "Selection Box", null, { layer: -1 });
-engine.selectionBoxComponent = new SupEngine.editorComponentClasses["SelectionBox"](engine.selectionBoxActor);
+engine.selectionActor = new SupEngine.Actor(engine.gameInstance, "Selection Box", null, { layer: -1 });
+engine.selectionBoxComponent = new SelectionBox(engine.selectionActor);
+engine.transformHandleComponent = new TransformHandle(engine.selectionActor, engine.cameraComponent.unifiedThreeCamera);
+
+engine.cameraControls = new SupEngine.editorComponentClasses["Camera3DControls"](engine.cameraActor, engine.cameraComponent);
 
 engine.tickAnimationFrameId = requestAnimationFrame(tick);
 
@@ -65,7 +72,20 @@ canvasElt.addEventListener("mouseup", onMouseUp);
 let mousePosition = new THREE.Vector2;
 let raycaster = new THREE.Raycaster;
 
+let draggingControls = false;
+
+engine.transformHandleComponent.control.addEventListener("mouseDown", () => {
+  draggingControls = true;
+});
+
+engine.transformHandleComponent.control.addEventListener("mouseUp", onTransformChange);
+
 function onMouseUp(event: MouseEvent) {
+  if (draggingControls) {
+    draggingControls = false;
+    return;
+  }
+
   if (event.button !== 0) return;
 
   let rect = canvasElt.getBoundingClientRect();
@@ -111,9 +131,59 @@ function onMouseUp(event: MouseEvent) {
 
 export function setupHelpers() {
   let nodeElt = ui.nodesTreeView.selectedNodes[0];
-  if (nodeElt != null && ui.nodesTreeView.selectedNodes.length == 1) {
+  if (nodeElt != null && ui.nodesTreeView.selectedNodes.length === 1) {
     engine.selectionBoxComponent.setTarget(data.sceneUpdater.bySceneNodeId[nodeElt.dataset.id].actor);
+    engine.transformHandleComponent.setTarget(data.sceneUpdater.bySceneNodeId[nodeElt.dataset.id].actor);
   } else {
     engine.selectionBoxComponent.setTarget(null);
+    engine.transformHandleComponent.setTarget(null);
   }
+}
+
+function onTransformChange() {
+  let nodeId = engine.transformHandleComponent.target.sceneNodeId;
+  let target = <SupEngine.Actor>engine.transformHandleComponent.target;
+  let object = <THREE.Object3D>engine.transformHandleComponent.control.object;
+
+  let transformType: string;
+  let value: any;
+
+  switch(engine.transformHandleComponent.mode) {
+    case "translate": {
+      transformType = "position";
+
+      let position = object.getWorldPosition();
+      if (target.parent != null) {
+        let mtx = target.parent.getGlobalMatrix();
+        mtx.getInverse(mtx);
+        position.applyMatrix4(mtx);
+      }
+      value = { x: position.x, y: position.y, z: position.z };
+      break;
+    }
+
+    case "rotate": {
+      transformType = "orientation";
+
+      let orientation = object.getWorldQuaternion();
+      if (target.parent != null) {
+        let q = target.parent.getGlobalOrientation().inverse();
+        orientation.multiply(q);
+      }
+      value = { x: orientation.x, y: orientation.y, z: orientation.z, w: orientation.w };
+      break;
+    }
+
+    case "scale": {
+      transformType = "scale";
+      value = { x: object.scale.x, y: object.scale.y, z: object.scale.z };
+      break;
+    }
+  }
+
+  socket.emit("edit:assets", info.assetId, "setNodeProperty", nodeId, transformType, value, onNodePropertySet);
+}
+
+function onNodePropertySet(err: string) {
+  if (err != null) alert(err);
 }

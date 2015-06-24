@@ -99,9 +99,23 @@ ui.cameraSpeedSlider = <HTMLInputElement>document.getElementById("camera-speed-s
 ui.cameraSpeedSlider.addEventListener("input", onChangeCameraSpeed);
 ui.cameraSpeedSlider.value = engine.cameraControls.movementSpeed;
 
+document.querySelector(".main .controls .transform-mode").addEventListener("click", onTransformModeClick);
+
 ui.availableComponents = {};
 export function uiStart() {
   for (let componentName in SupClient.componentEditorClasses) ui.availableComponents[componentName] = componentName;
+}
+
+function onTransformModeClick(event: any) {
+  if (event.target.tagName !== "INPUT") return;
+
+  if (event.target.id === "transform-space") {
+    engine.transformHandleComponent.setSpace(event.target.checked ? "local" : "world");
+  } else {
+    let transformSpaceCheckbox = <HTMLInputElement>document.getElementById("transform-space");
+    transformSpaceCheckbox.disabled = event.target.value === "scale";
+    engine.transformHandleComponent.setMode(event.target.value);
+  }
 }
 
 export function createNodeElement(node: Node) {
@@ -490,6 +504,8 @@ export function setCameraMode(mode: string) {
       zoomMax: 100,
     });
   }
+
+  engine.transformHandleComponent.control.camera = engine.cameraComponent.threeCamera;
 
   ui.cameraModeButton.textContent = ui.cameraMode;
 }

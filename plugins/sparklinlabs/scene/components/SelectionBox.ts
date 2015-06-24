@@ -15,10 +15,10 @@ export default class SelectionBox extends SupEngine.ActorComponent {
     this.line.updateMatrixWorld(false);
     this.line.visible = false;
   }
-  
+
   setTarget(actor: SupEngine.Actor) {
     this.target = actor;
-    
+
     if (this.target != null) {
       this.line.visible = true;
       this.move();
@@ -27,7 +27,7 @@ export default class SelectionBox extends SupEngine.ActorComponent {
       this.line.visible = false;
     }
   }
-  
+
   move() {
     this.actor.threeObject.position.copy(this.target.getGlobalPosition());
     this.actor.threeObject.quaternion.copy(this.target.getGlobalOrientation());
@@ -36,11 +36,11 @@ export default class SelectionBox extends SupEngine.ActorComponent {
 
   resize() {
     this.line.visible = true;
-    
+
     let vec = new THREE.Vector3();
     let box = new THREE.Box3();
     let inverseTargetMatrixWorld = new THREE.Matrix4().compose(this.target.getGlobalPosition(), this.target.getGlobalOrientation(), <THREE.Vector3>{ x: 1, y: 1, z: 1 });
-    
+
     inverseTargetMatrixWorld.getInverse(inverseTargetMatrixWorld);
 
     this.target.threeObject.traverse((node) => {
@@ -48,7 +48,7 @@ export default class SelectionBox extends SupEngine.ActorComponent {
 
       if (geometry != null) {
         node.updateMatrixWorld(false);
-        
+
 				if (geometry instanceof THREE.Geometry) {
 					let vertices = geometry.vertices;
 
@@ -56,7 +56,7 @@ export default class SelectionBox extends SupEngine.ActorComponent {
             vec.copy(vertices[i]).applyMatrix4(node.matrixWorld).applyMatrix4(inverseTargetMatrixWorld);
 						box.expandByPoint(vec);
 					}
-          
+
         } else if (geometry instanceof THREE.BufferGeometry && (<any>geometry.attributes)["position"] != null) {
 					let positions: Float32Array = (<any>geometry.attributes)["position"].array;
 
@@ -68,10 +68,10 @@ export default class SelectionBox extends SupEngine.ActorComponent {
 				}
       }
     });
-    
+
     let min = box.min;
     let max = box.max;
-    
+
     // Front
     this.geometry.vertices[0].set(max.x, min.y, min.z);
     this.geometry.vertices[1].set(min.x, min.y, min.z);
