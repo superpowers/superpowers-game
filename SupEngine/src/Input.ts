@@ -8,8 +8,9 @@ export default class Input extends EventEmitter {
   mouseButtons: Array<{isDown: boolean; wasJustPressed: boolean; wasJustReleased: boolean;}> = [];
   mouseButtonsDown: boolean[] = [];
   mousePosition = { x: 0, y: 0 };
-  newMousePosition: {x: number; y: number;};
-  mouseDelta    = { x: 0, y: 0 };
+  newMousePosition: { x: number; y: number; };
+  mouseDelta = { x: 0, y: 0 };
+  newMouseDelta = { x: 0, y: 0 };
   newScrollDelta: number;
 
   touches: Array<{isDown: boolean; wasStarted: boolean; wasEnded: boolean; position: {x: number; y: number;}}> = [];
@@ -140,6 +141,8 @@ export default class Input extends EventEmitter {
 
     this.mouseDelta.x = 0;
     this.mouseDelta.y = 0;
+    this.newMouseDelta.x = 0;
+    this.newMouseDelta.y = 0;
 
     // Touch
     for (let i = 0; i < Input.maxTouches; i++) {
@@ -160,7 +163,13 @@ export default class Input extends EventEmitter {
     }
   }
 
-  lockMouse() { this._wantsPointerLock = true; }
+
+  lockMouse() {
+    this._wantsPointerLock = true;
+    this.newMouseDelta.x = 0;
+    this.newMouseDelta.y = 0;
+  }
+
   unlockMouse() {
     this._wantsPointerLock = false;
     this._wasPointerLocked = false;
@@ -197,6 +206,7 @@ export default class Input extends EventEmitter {
       this._wasPointerLocked = false;
     }
   }
+
 
   goFullscreen() { this._wantsFullscreen = true; }
   exitFullscreen() {
@@ -236,13 +246,26 @@ export default class Input extends EventEmitter {
     }
   }
 
+
   _onBlur = () => { this.reset(); }
 
   _onMouseMove = (event: any) => {
     event.preventDefault();
 
-    let rect = event.target.getBoundingClientRect();
-    this.newMousePosition = { x: event.clientX - rect.left, y: event.clientY - rect.top };
+    if (this._wantsPointerLock) {
+      if (this._wasPointerLocked) {
+        let delta = { x: 0, y: 0 };
+        if (event.movementX != null) { delta.x = event.movementX; delta.y = event.movementY; }
+        else if (event.webkitMovementX != null) { delta.x = event.webkitMovementX; delta.y = event.webkitMovementY; }
+        else if (event.mozMovementX == null) { delta.x = event.mozMovementX; delta.y = event.mozMovementY; }
+
+        this.newMouseDelta.x += delta.x;
+        this.newMouseDelta.y += delta.y;
+      }
+    } else {
+      let rect = event.target.getBoundingClientRect();
+      this.newMousePosition = { x: event.clientX - rect.left, y: event.clientY - rect.top };
+    }
   }
 
   _onMouseDown = (event: MouseEvent) => {
@@ -352,15 +375,19 @@ export default class Input extends EventEmitter {
     this.mouseButtonsDown[6] = this.newScrollDelta < 0;
     if (this.newScrollDelta !== 0) this.newScrollDelta = 0;
 
-    if (this.newMousePosition != null) {
+    if (this._wantsPointerLock) {
+      this.mouseDelta.x = this.newMouseDelta.x;
+      this.mouseDelta.y = this.newMouseDelta.y;
+      this.newMouseDelta.x = 0;
+      this.newMouseDelta.y = 0;
+    } else if (this.newMousePosition != null) {
       this.mouseDelta.x = this.newMousePosition.x - this.mousePosition.x;
       this.mouseDelta.y = this.newMousePosition.y - this.mousePosition.y;
 
       this.mousePosition.x = this.newMousePosition.x;
       this.mousePosition.y = this.newMousePosition.y;
       this.newMousePosition = null;
-    }
-    else {
+    } else {
       this.mouseDelta.x = 0;
       this.mouseDelta.y = 0;
     }
