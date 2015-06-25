@@ -1,14 +1,24 @@
 declare module Sup {
   module Input {
     function on(eventName: string, callback: Function);
-    function on(eventName: "exit", callback: () => void);
     function off(eventName: string, callback: Function);
-    function off(eventName: "exit", callback: () => void);
+
+    function on(eventName: "exit", callback: () => void);
 
     function getScreenSize(): { x: number; y: number; };
 
     function getMouseVisible(): boolean;
     function setMouseVisible(visible: boolean);
+
+    function lockMouse();
+    function unlockMouse();
+    // state can be "active" or "suspended"
+    function on(eventName: "mouseLockStateChange", callback: (state: string) => void);
+
+    function goFullscreen();
+    function exitFullscreen();
+    // state can be "active" or "suspended"
+    function on(eventName: "fullscreenStateChange", callback: (state: string) => void);
 
     function getMousePosition(): { x: number; y: number; };
     function getMouseDelta(): { x: number; y: number; };
@@ -20,8 +30,7 @@ declare module Sup {
     function isTouchDown(index: number): boolean;
     function wasTouchStarted(index: number): boolean;
     function wasTouchEnded(index: number): boolean;
-    function vibrate(pattern: number): void;
-    function vibrate(pattern: Array<number>): void;
+    function vibrate(pattern: number|number[]): void;
 
     // Valid key names (based on window.KeyEvent.DOM_VK_*):
     // CANCEL, HELP, BACK_SPACE, TAB, CLEAR, RETURN, SHIFT, CONTROL, ALT,
