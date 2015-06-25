@@ -205,11 +205,7 @@ export default class ModelRendererUpdater {
 
       case "animationId":
         this.animationId = value;
-
-        if (this.modelAsset != null) {
-          if (this.animationId != null) this._playAnimation();
-          else this.modelRenderer.setAnimation(null);
-        }
+        this._setModel();
         break;
 
       case "castShadow":
@@ -242,8 +238,7 @@ export default class ModelRendererUpdater {
 
       case "materialType":
         this.materialType = value;
-        if (this.modelAsset != null) this.modelRenderer.setModel(this.modelAsset.pub, this.materialType);
-        if (this.animationId != null) this._playAnimation();
+        this._setModel();
         break;
 
       case "shaderAssetId":

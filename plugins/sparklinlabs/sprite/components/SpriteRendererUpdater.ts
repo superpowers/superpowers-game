@@ -238,11 +238,7 @@ export default class SpriteRendererUpdater {
 
       case "animationId":
         this.animationId = value;
-
-        if (this.spriteAsset != null) {
-          if (this.animationId != null) this._playAnimation();
-          else this.spriteRenderer.setAnimation(null);
-        }
+        this._setSprite();
         break;
 
       case "looping":
