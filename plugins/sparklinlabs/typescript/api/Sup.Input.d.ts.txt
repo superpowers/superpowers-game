@@ -12,12 +12,12 @@ declare module Sup {
 
     function lockMouse();
     function unlockMouse();
-    // state can be "active" or "suspended"
+    // The "state" callback parameter can be "active" or "suspended"
     function on(eventName: "mouseLockStateChange", callback: (state: string) => void);
 
     function goFullscreen();
     function exitFullscreen();
-    // state can be "active" or "suspended"
+    // The "state" callback parameter can be "active" or "suspended"
     function on(eventName: "fullscreenStateChange", callback: (state: string) => void);
 
     function getMousePosition(): { x: number; y: number; };
@@ -41,6 +41,9 @@ declare module Sup {
     // MULTIPLY, ADD, SEPARATOR, SUBTRACT, DECIMAL, DIVIDE,
     // F1 to F24, NUM_LOCK, SCROLL_LOCK, COMMA, PERIOD, SLASH, BACK_QUOTE,
     // OPEN_BRACKET, BACK_SLASH, CLOSE_BRACKET, QUOTE, META
+    //
+    // Additionnally, ANY will return true for any key
+    // and NONE will return true for no keys
     function isKeyDown(keyName: string): boolean;
     function wasKeyJustPressed(keyName: string): boolean;
     function wasKeyJustReleased(keyName: string): boolean;
