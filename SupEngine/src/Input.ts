@@ -23,6 +23,11 @@ export default class Input extends EventEmitter {
 
   exited = false;
 
+  _wantsPointerLock = false;
+  _wantsFullscreen = false;
+  _wasPointerLocked = false;
+  _wasFullscreen = false;
+
   constructor(canvas: HTMLCanvasElement, options: { enableOnExit?: boolean } = {}) {
     super();
 
@@ -37,6 +42,22 @@ export default class Input extends EventEmitter {
     this.canvas.addEventListener("contextmenu", this._onContextMenu);
     this.canvas.addEventListener("DOMMouseScroll", this._onMouseWheel);
     this.canvas.addEventListener("mousewheel", this._onMouseWheel);
+
+    if ("onpointerlockchange" in document) document.addEventListener('pointerlockchange', this._onPointerLockChange, false);
+    else if ("onmozpointerlockchange" in document) document.addEventListener('mozpointerlockchange', this._onPointerLockChange, false);
+    else if ("onwebkitpointerlockchange" in document) document.addEventListener('webkitpointerlockchange', this._onPointerLockChange, false);
+
+    if ("onpointerlockerror" in document) document.addEventListener('pointerlockerror', this._onPointerLockError, false);
+    else if ("onmozpointerlockerror" in document) document.addEventListener('mozpointerlockerror', this._onPointerLockError, false);
+    else if ("onwebkitpointerlockerror" in document) document.addEventListener('webkitpointerlockerror', this._onPointerLockError, false);
+
+    if ("onfullscreenchange" in document) document.addEventListener('fullscreenchange', this._onFullscreenChange, false);
+    else if ("onmozfullscreenchange" in document) document.addEventListener('mozfullscreenchange', this._onFullscreenChange, false);
+    else if ("onwebkitfullscreenchange" in document) document.addEventListener('webkitfullscreenchange', this._onFullscreenChange, false);
+
+    if ("onfullscreenerror" in document) document.addEventListener('fullscreenerror', this._onFullscreenError, false);
+    else if ("onmozfullscreenerror" in document) document.addEventListener('mozfullscreenerror', this._onFullscreenError, false);
+    else if ("onwebkitfullscreenerror" in document) document.addEventListener('webkitfullscreenerror', this._onFullscreenError, false);
 
     // Touch
     this.canvas.addEventListener("touchstart", this._onTouchStart);
@@ -78,6 +99,22 @@ export default class Input extends EventEmitter {
     this.canvas.removeEventListener("contextmenu", this._onContextMenu);
     this.canvas.removeEventListener("DOMMouseScroll", this._onMouseWheel);
     this.canvas.removeEventListener("mousewheel", this._onMouseWheel);
+
+    if ("onpointerlockchange" in document) document.removeEventListener('pointerlockchange', this._onPointerLockChange, false);
+    else if ("onmozpointerlockchange" in document) document.removeEventListener('mozpointerlockchange', this._onPointerLockChange, false);
+    else if ("onwebkitpointerlockchange" in document) document.removeEventListener('webkitpointerlockchange', this._onPointerLockChange, false);
+
+    if ("onpointerlockerror" in document) document.removeEventListener('pointerlockerror', this._onPointerLockError, false);
+    else if ("onmozpointerlockerror" in document) document.removeEventListener('mozpointerlockerror', this._onPointerLockError, false);
+    else if ("onwebkitpointerlockerror" in document) document.removeEventListener('webkitpointerlockerror', this._onPointerLockError, false);
+
+    if ("onfullscreenchange" in document) document.removeEventListener('fullscreenchange', this._onFullscreenChange, false);
+    else if ("onmozfullscreenchange" in document) document.removeEventListener('mozfullscreenchange', this._onFullscreenChange, false);
+    else if ("onwebkitfullscreenchange" in document) document.removeEventListener('webkitfullscreenchange', this._onFullscreenChange, false);
+
+    if ("onfullscreenerror" in document) document.removeEventListener('fullscreenerror', this._onFullscreenError, false);
+    else if ("onmozfullscreenerror" in document) document.removeEventListener('mozfullscreenerror', this._onFullscreenError, false);
+    else if ("onwebkitfullscreenerror" in document) document.removeEventListener('webkitfullscreenerror', this._onFullscreenError, false);
 
     this.canvas.removeEventListener("touchstart", this._onTouchStart);
     this.canvas.removeEventListener("touchend", this._onTouchEnd);
@@ -123,6 +160,82 @@ export default class Input extends EventEmitter {
     }
   }
 
+  lockMouse() { this._wantsPointerLock = true; }
+  unlockMouse() {
+    this._wantsPointerLock = false;
+    this._wasPointerLocked = false;
+    if (!this._isPointerLocked()) return;
+
+    if ((<any>document).exitPointerLock) (<any>document).exitPointerLock();
+    else if ((<any>document).webkitExitPointerLock) (<any>document).webkitExitPointerLock();
+    else if ((<any>document).mozExitPointerLock) (<any>document).mozExitPointerLock();
+  }
+
+  _isPointerLocked() {
+    return (<any>document).pointerLockElement === this.canvas ||
+      (<any>document).webkitPointerLockElement === this.canvas ||
+      (<any>document).mozPointerLockElement === this.canvas;
+  }
+
+  _doPointerLock() {
+    if ((<any>this.canvas).requestPointerLock) (<any>this.canvas).requestPointerLock();
+    else if ((<any>this.canvas).webkitRequestPointerLock) (<any>this.canvas).webkitRequestPointerLock();
+    else if ((<any>this.canvas).mozRequestPointerLock) (<any>this.canvas).mozRequestPointerLock();
+  }
+
+  _onPointerLockChange = () => {
+    let isPointerLocked = this._isPointerLocked();
+    if (this._wasPointerLocked != isPointerLocked) {
+      this.emit("mouseLockStateChange", isPointerLocked ? "active" : "suspended");
+      this._wasPointerLocked = isPointerLocked;
+    }
+  }
+
+  _onPointerLockError = () => {
+    if (this._wasPointerLocked) {
+      this.emit("mouseLockStateChange", "suspended");
+      this._wasPointerLocked = false;
+    }
+  }
+
+  goFullscreen() { this._wantsFullscreen = true; }
+  exitFullscreen() {
+    this._wantsFullscreen = false;
+    this._wasFullscreen = false;
+    if (!this._isFullscreen()) return;
+
+    if((<any>document).exitFullscreen) (<any>document).exitFullscreen();
+    else if((<any>document).webkitExitFullscreen) (<any>document).webkitExitFullscreen();
+    else if((<any>document).mozCancelFullScreen) (<any>document).mozCancelFullScreen();
+  }
+
+  _isFullscreen() {
+    return (<any>document).fullscreenElement === this.canvas ||
+      (<any>document).webkitFullscreenElement === this.canvas ||
+      (<any>document).mozFullScreenElement === this.canvas;
+  }
+
+  _doGoFullscreen() {
+    if ((<any>this.canvas).requestFullscreen) (<any>this.canvas).requestFullscreen();
+    else if ((<any>this.canvas).webkitRequestFullscreen) (<any>this.canvas).webkitRequestFullscreen();
+    else if ((<any>this.canvas).mozRequestFullScreen) (<any>this.canvas).mozRequestFullScreen();
+  }
+
+  _onFullscreenChange = () => {
+    let isFullscreen = this._isFullscreen();
+    if (this._wasFullscreen != isFullscreen) {
+      this.emit("fullscreenStateChange", isFullscreen ? "active" : "suspended");
+      this._wasFullscreen = isFullscreen;
+    }
+  }
+
+  _onFullscreenError = () => {
+    if (this._wasFullscreen) {
+      this.emit("fullscreenStateChange", "suspended");
+      this._wasFullscreen = false;
+    }
+  }
+
   _onBlur = () => { this.reset(); }
 
   _onMouseMove = (event: any) => {
@@ -136,11 +249,17 @@ export default class Input extends EventEmitter {
     event.preventDefault();
     this.canvas.focus();
     this.mouseButtonsDown[event.button] = true;
+
+    if (this._wantsFullscreen && !this._wasFullscreen) this._doGoFullscreen();
+    if (this._wantsPointerLock && !this._wasPointerLocked) this._doPointerLock();
   }
 
   _onMouseUp = (event: MouseEvent) => {
     if (this.mouseButtonsDown[event.button]) event.preventDefault();
     this.mouseButtonsDown[event.button] = false;
+
+    if (this._wantsFullscreen && !this._wasFullscreen) this._doGoFullscreen();
+    if (this._wantsPointerLock && !this._wasPointerLocked) this._doPointerLock();
   }
 
   _onContextMenu = (event: Event) => {
