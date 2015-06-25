@@ -451,7 +451,7 @@ export function createComponentElement(nodeId: string, component: Component) {
 }
 
 function onNewComponentClick() {
-  SupClient.dialogs.select("Select the type of component to create.", ui.availableComponents, "Create", (type) => {
+  SupClient.dialogs.select("Select the type of component to create.", ui.availableComponents, "Create", { size: 5 }, (type) => {
     if (type == null) return;
 
     let nodeId = ui.nodesTreeView.selectedNodes[0].dataset.id;
