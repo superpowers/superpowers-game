@@ -48,6 +48,8 @@ declare module Sup {
     function wasKeyJustPressed(keyName: string): boolean;
     function wasKeyJustReleased(keyName: string): boolean;
 
+    function getTextEntered(): string;
+
     function isGamepadButtonDown(gamepad: number, button: number): boolean;
     function wasGamepadButtonJustPressed(gamepad: number, button: number): boolean;
     function wasGamepadButtonJustReleased(gamepad: number, button: number): boolean;

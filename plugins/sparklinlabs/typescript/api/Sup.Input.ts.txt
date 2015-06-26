@@ -125,6 +125,9 @@ module Sup {
     }
 
 
+    export function getTextEntered() { return player.gameInstance.input.textEntered; }
+
+
     export function isGamepadButtonDown(gamepad, key) {
       if (player.gameInstance.input.gamepadsButtons[gamepad][key] == null) { throw new Error("Invalid gamepad info"); }
       return player.gameInstance.input.gamepadsButtons[gamepad][key].isDown;
