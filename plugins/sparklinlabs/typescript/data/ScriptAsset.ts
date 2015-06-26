@@ -78,35 +78,42 @@ export default class ScriptAsset extends SupCore.data.base.Asset {
 
     if (!_.endsWith(behaviorName, "Behavior")) behaviorName += "Behavior";
 
-    let defaultContent = [
-      `class ${behaviorName} extends Sup.Behavior {`,
-      "  awake() {",
-      "    ",
-      "  }",
-      "",
-      "  update() {",
-      "    ",
-      "  }",
-     "}",
-     `Sup.registerBehavior(${behaviorName});`,
-     ""
-    ].join("\n");
+    this.serverData.resources.acquire("textEditorSettings", null, (err: Error, textEditorSettings: any) => {
+      this.serverData.resources.release("textEditorSettings", null);
+      
+      let tab: string;
+      if (textEditorSettings.pub.softTab) {
+        tab = "";
+        for (let i = 0; i < textEditorSettings.pub.tabSize; i++) tab = tab + " ";
+      } else tab = "\t";
+      let defaultContent = 
+`class ${behaviorName} extends Sup.Behavior {
+${tab}awake() {
+${tab}${tab}
+${tab}}
 
-    this.pub = {
-      text: defaultContent,
-      draft: defaultContent,
-      revisionId: 0
-    }
-
-    this.serverData.resources.acquire("behaviorProperties", null, (err: Error, behaviorProperties: BehaviorPropertiesResource) => {
-      if (behaviorProperties.pub.behaviors[behaviorName] == null) {
-        let behaviors: { [behaviorName: string]: { properties: Array<{name: string; type: string}>; parentBehavior: string; } } = {};
-        behaviors[behaviorName] = { properties: [], parentBehavior: null };
-        behaviorProperties.setScriptBehaviors(this.id, behaviors);
+${tab}update() {
+${tab}${tab}
+${tab}}
+}
+Sup.registerBehavior(${behaviorName});
+`;
+      this.pub = {
+        text: defaultContent,
+        draft: defaultContent,
+        revisionId: 0
       }
 
-      this.serverData.resources.release("behaviorProperties", null);
-      super.init(options, callback);
+      this.serverData.resources.acquire("behaviorProperties", null, (err: Error, behaviorProperties: BehaviorPropertiesResource) => {
+        if (behaviorProperties.pub.behaviors[behaviorName] == null) {
+          let behaviors: { [behaviorName: string]: { properties: Array<{name: string; type: string}>; parentBehavior: string; } } = {};
+          behaviors[behaviorName] = { properties: [], parentBehavior: null };
+          behaviorProperties.setScriptBehaviors(this.id, behaviors);
+        }
+
+        this.serverData.resources.release("behaviorProperties", null);
+        super.init(options, callback);
+      });
     });
   }
 
