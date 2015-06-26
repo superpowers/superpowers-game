@@ -42,18 +42,18 @@ module Sup {
     }
 
     export function isMouseButtonDown(button) {
-      if ( player.gameInstance.input.mouseButtons[button] == null ) { throw new Error("Invalid button index") }
-      return player.gameInstance.input.mouseButtons[button].isDown
+      if (player.gameInstance.input.mouseButtons[button] == null) { throw new Error("Invalid button index"); }
+      return player.gameInstance.input.mouseButtons[button].isDown;
     }
 
     export function wasMouseButtonJustPressed(button) {
-      if ( player.gameInstance.input.mouseButtons[button] == null ) { throw new Error("Invalid button index") }
-      return player.gameInstance.input.mouseButtons[button].wasJustPressed
+      if (player.gameInstance.input.mouseButtons[button] == null) { throw new Error("Invalid button index"); }
+      return player.gameInstance.input.mouseButtons[button].wasJustPressed;
     }
 
     export function wasMouseButtonJustReleased(button) {
-      if ( player.gameInstance.input.mouseButtons[button] == null ) { throw new Error("Invalid button index") }
-      return player.gameInstance.input.mouseButtons[button].wasJustReleased
+      if (player.gameInstance.input.mouseButtons[button] == null) { throw new Error("Invalid button index"); }
+      return player.gameInstance.input.mouseButtons[button].wasJustReleased;
     }
 
 
@@ -63,18 +63,18 @@ module Sup {
     }
 
     export function isTouchDown(index) {
-      if ( player.gameInstance.input.touches[index] == null ) { throw new Error("Invalid touch index") }
-      return player.gameInstance.input.touches[index].isDown
+      if (player.gameInstance.input.touches[index] == null) { throw new Error("Invalid touch index"); }
+      return player.gameInstance.input.touches[index].isDown;
     }
 
     export function wasTouchStarted(index) {
-      if ( player.gameInstance.input.touches[index] == null ) { throw new Error("Invalid touch index") }
-      return player.gameInstance.input.touches[index].wasStarted
+      if (player.gameInstance.input.touches[index] == null) { throw new Error("Invalid touch index"); }
+      return player.gameInstance.input.touches[index].wasStarted;
     }
 
     export function wasTouchEnded(index) {
-      if ( player.gameInstance.input.touches[index] == null ) { throw new Error("Invalid touch index") }
-      return player.gameInstance.input.touches[index].wasEnded
+      if (player.gameInstance.input.touches[index] == null) { throw new Error("Invalid touch index"); }
+      return player.gameInstance.input.touches[index].wasEnded;
     }
 
     export function vibrate(pattern) { window.navigator.vibrate(pattern); }
@@ -84,29 +84,28 @@ module Sup {
       if (keyName === "ANY") {
         for (let key of player.gameInstance.input.keyboardButtons) if (key.isDown) return true;
         return false;
-
       } else if (keyName === "NONE") {
         for (let key of player.gameInstance.input.keyboardButtons) if (key.isDown) return false;
         return true;
+      } else if (player.gameInstance.input.keyboardButtons[window.KeyEvent[`DOM_VK_${keyName}`]] == null) {
+        throw new Error("Invalid key name");
+      }
 
-      } else if ( player.gameInstance.input.keyboardButtons[window.KeyEvent["DOM_VK_" + keyName ]] == null ) { throw new Error("Invalid key name") }
-      return player.gameInstance.input.keyboardButtons[window.KeyEvent["DOM_VK_" + keyName ]].isDown
+      return player.gameInstance.input.keyboardButtons[window.KeyEvent[`DOM_VK_${keyName}`]].isDown
     }
 
     export function wasKeyJustPressed(keyName) {
       if (keyName === "ANY") {
         for (let key of player.gameInstance.input.keyboardButtons) if (key.wasJustPressed) return true;
         return false;
-
       } else if (keyName === "NONE") {
         for (let key of player.gameInstance.input.keyboardButtons) if (key.wasJustPressed) return false;
         return true;
-
-      } else if ( player.gameInstance.input.keyboardButtons[window.KeyEvent["DOM_VK_" + keyName ]] == null ) {
-        throw new Error("Invalid key name")
+      } else if (player.gameInstance.input.keyboardButtons[window.KeyEvent[`DOM_VK_${keyName}`]] == null) {
+        throw new Error("Invalid key name");
       }
 
-      return player.gameInstance.input.keyboardButtons[window.KeyEvent["DOM_VK_" + keyName ]].wasJustPressed;
+      return player.gameInstance.input.keyboardButtons[window.KeyEvent[`DOM_VK_${keyName}`]].wasJustPressed;
     }
 
     export function wasKeyJustReleased(keyName) {
@@ -118,30 +117,32 @@ module Sup {
         for (let key of player.gameInstance.input.keyboardButtons) if (key.wasJustReleased) return false;
         return true;
 
-      } else if ( player.gameInstance.input.keyboardButtons[window.KeyEvent["DOM_VK_" + keyName ]] == null ) { throw new Error("Invalid key name") }
-      return player.gameInstance.input.keyboardButtons[window.KeyEvent["DOM_VK_" + keyName ]].wasJustReleased;
+      } else if (player.gameInstance.input.keyboardButtons[window.KeyEvent[`DOM_VK_${keyName}`]] == null) {
+        throw new Error("Invalid key name");
+      }
+
+      return player.gameInstance.input.keyboardButtons[window.KeyEvent[`DOM_VK_${keyName}`]].wasJustReleased;
     }
 
 
     export function isGamepadButtonDown(gamepad, key) {
-      if ( player.gameInstance.input.gamepadsButtons[gamepad][key] == null ) { throw new Error("Invalid gamepad info") }
+      if (player.gameInstance.input.gamepadsButtons[gamepad][key] == null) { throw new Error("Invalid gamepad info"); }
       return player.gameInstance.input.gamepadsButtons[gamepad][key].isDown;
     }
 
     export function wasGamepadButtonJustPressed(gamepad, key) {
-      if ( player.gameInstance.input.gamepadsButtons[gamepad][key] == null ) { throw new Error("Invalid gamepad info") }
+      if (player.gameInstance.input.gamepadsButtons[gamepad][key] == null) { throw new Error("Invalid gamepad info"); }
       return player.gameInstance.input.gamepadsButtons[gamepad][key].wasJustPressed;
     }
 
     export function wasGamepadButtonJustReleased(gamepad, key) {
-      if ( player.gameInstance.input.gamepadsButtons[gamepad][key] == null ) { throw new Error("Invalid gamepad info") }
+      if (player.gameInstance.input.gamepadsButtons[gamepad][key] == null) { throw new Error("Invalid gamepad info"); }
       return player.gameInstance.input.gamepadsButtons[gamepad][key].wasJustReleased;
     }
 
     export function getGamepadAxisValue(gamepad, axis) {
-      if ( player.gameInstance.input.gamepadsAxes[gamepad][axis] == null ) { throw new Error("Invalid gamepad info") }
+      if (player.gameInstance.input.gamepadsAxes[gamepad][axis] == null) { throw new Error("Invalid gamepad info"); }
       return player.gameInstance.input.gamepadsAxes[gamepad][axis];
     }
-
   }
 }
