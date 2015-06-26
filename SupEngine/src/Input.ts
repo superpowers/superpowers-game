@@ -344,16 +344,17 @@ export default class Input extends EventEmitter {
     }
   }
 
+  // Whitelisted control keys generate text entered
+  static whitelistedControlKeys = [ 8 /* backspace \b */, 9 /* tab \t */, 13 /* enter \r */, 32 /* space */ ];
+
   // TODO: stop using keyCode when KeyboardEvent.code is supported more widely
   // See https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent.code
-
   _onKeyDown = (event: KeyboardEvent) => {
     // NOTE: Key codes in range 33-47 are Page Up/Down, Home/End, arrow keys, etc.
     if (event.keyCode < 48) {
       event.preventDefault();
 
-      // Key codes <= 32 include Backspace (8 - \b), Space (32), Enter (13 - \n), etc.
-      if (event.keyCode <= 32) this.newTextEntered += String.fromCharCode(event.keyCode);
+      if (Input.whitelistedControlKeys.indexOf(event.keyCode) !== -1) this.newTextEntered += String.fromCharCode(event.keyCode);
     }
 
     this.keyboardButtonsDown[event.keyCode] = true;
