@@ -18,6 +18,8 @@ export default class Input extends EventEmitter {
 
   keyboardButtons: Array<{isDown: boolean; wasJustPressed: boolean; wasJustReleased: boolean;}> = [];
   keyboardButtonsDown: boolean[] = [];
+  textEntered = "";
+  newTextEntered = "";
 
   gamepadsButtons: Array<Array<{isDown: boolean; wasJustPressed: boolean; wasJustReleased: boolean;}>> = [];
   gamepadsAxes: Array<number[]> = [];
@@ -67,6 +69,7 @@ export default class Input extends EventEmitter {
 
     // Keyboard
     this.canvas.addEventListener("keydown", this._onKeyDown);
+    this.canvas.addEventListener("keypress", this._onKeyPress);
     document.addEventListener("keyup", this._onKeyUp);
 
     // Gamepad
@@ -88,7 +91,7 @@ export default class Input extends EventEmitter {
     }
 
     window.addEventListener("blur", this._onBlur);
-    this.reset()
+    this.reset();
   }
 
   destroy() {
@@ -122,6 +125,7 @@ export default class Input extends EventEmitter {
     this.canvas.removeEventListener("touchmove", this._onTouchMove);
 
     this.canvas.removeEventListener("keydown", this._onKeyDown);
+    this.canvas.removeEventListener("keypress", this._onKeyPress);
     document.removeEventListener("keyup", this._onKeyUp);
 
     window.removeEventListener("blur", this._onBlur);
@@ -155,6 +159,9 @@ export default class Input extends EventEmitter {
       this.keyboardButtons[i] = { isDown: false, wasJustPressed: false, wasJustReleased: false };
       this.keyboardButtonsDown[i] = false;
     }
+
+    this.textEntered = "";
+    this.newTextEntered = "";
 
     // Gamepads
     for (let i = 0; i < 4; i++) {
@@ -341,13 +348,24 @@ export default class Input extends EventEmitter {
   // See https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent.code
 
   _onKeyDown = (event: KeyboardEvent) => {
-    if (event.keyCode !== (<any>window)["KeyEvent"].DOM_VK_F12 &&
-        event.keyCode !== (<any>window)["KeyEvent"].DOM_VK_F4 &&
-        event.keyCode !== (<any>window)["KeyEvent"].DOM_VK_F5)
-
+    // NOTE: Key codes in range 33-47 are Page Up/Down, Home/End, arrow keys, etc.
+    if (event.keyCode < 48) {
       event.preventDefault();
 
+      // Key codes <= 32 include Backspace (8 - \b), Space (32), Enter (13 - \n), etc.
+      if (event.keyCode <= 32) this.newTextEntered += String.fromCharCode(event.keyCode);
+    }
+
     this.keyboardButtonsDown[event.keyCode] = true;
+    return event.keyCode >= 48;
+  }
+
+  _onKeyPress = (event: KeyboardEvent) => {
+    if (event.keyCode > 0 && event.keyCode < 32) return;
+
+    if (event.char != null) this.newTextEntered += event.char;
+    else if (event.charCode !== 0) this.newTextEntered += String.fromCharCode(event.charCode);
+    else this.newTextEntered += String.fromCharCode(event.keyCode);
   }
 
   _onKeyUp = (event: KeyboardEvent) => {
@@ -418,6 +436,9 @@ export default class Input extends EventEmitter {
       keyboardButton.wasJustPressed = ! wasDown && keyboardButton.isDown;
       keyboardButton.wasJustReleased = wasDown && ! keyboardButton.isDown;
     }
+
+    this.textEntered = this.newTextEntered;
+    this.newTextEntered = "";
 
     let nav: any = navigator;
     let gamepads = (nav.getGamepads != null) ? nav.getGamepads() : null;
