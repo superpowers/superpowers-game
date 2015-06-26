@@ -1,0 +1,8 @@
+{
+  "name": "superpowers-sparklinlabs-text-editor-widget-plugin",
+  "version": "1.0.0",
+  "dependencies": {
+    "codemirror": "^4.12.0",
+    "operational-transform": "^0.2.3"
+  }
+}

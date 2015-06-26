@@ -1,4 +1,4 @@
-///<reference path="./operational-transform.d.ts"/>
+///<reference path="../../textEditorWidget/operational-transform.d.ts"/>
 ///<reference path="../node_modules/typescript/bin/typescriptServices.d.ts"/>
 
 import * as OT from "operational-transform";
@@ -172,7 +172,7 @@ export default class ScriptAsset extends SupCore.data.base.Asset {
     });
   }
 
-  server_editText(client: any, operationData: OT.OperationData, revisionIndex: number, callback: (err: string, operationData?: any, revisionIndex?: number) => any) {
+  server_editText(client: any, operationData: OperationData, revisionIndex: number, callback: (err: string, operationData?: any, revisionIndex?: number) => any) {
     if (operationData.userId !== client.id) { callback("Invalid client id"); return; }
 
     let operation = new OT.TextOperation();
@@ -193,7 +193,7 @@ export default class ScriptAsset extends SupCore.data.base.Asset {
     this.emit("change");
   }
 
-  client_editText(operationData: OT.OperationData, revisionIndex: number) {
+  client_editText(operationData: OperationData, revisionIndex: number) {
     let operation = new OT.TextOperation();
     operation.deserialize(operationData);
     this.document.apply(operation, revisionIndex);

@@ -8,11 +8,6 @@ declare module "operational-transform" {
     getRevisionId(): number;
   }
 
-  interface OperationData {
-    userId: number;
-    ops: Array<{type: string; attributes: any}>;
-  }
-
   class TextOperation {
     userId: number;
     ops: TextOp[];
@@ -41,4 +36,9 @@ declare module "operational-transform" {
 
     constructor(type: string, attributes: any);
   }
+}
+
+interface OperationData {
+  userId: number;
+  ops: Array<{type: string; attributes: any}>;
 }

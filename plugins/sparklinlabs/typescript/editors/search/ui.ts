@@ -36,7 +36,7 @@ window.addEventListener("message", (event: any) => {
   }
 });
 
-let escapeRegExp = (text: string) => text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+function escapeRegExp(text: string) { return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&"); }
 
 function search() {
   while (ui.resultsPane.children.length !== 0) {

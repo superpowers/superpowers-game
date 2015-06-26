@@ -1,5 +1,6 @@
 ///<reference path="./typings/tsd.d.ts"/>
 ///<reference path="./node_modules/typescript/bin/typescript.d.ts"/>
+///<reference path="../textEditorWidget/widget.d.ts"/>
 ///<reference path="../../../typings/tsd.d.ts"/>
 ///<reference path="../../../SupAPI/SupAPI.d.ts"/>
 ///<reference path="../../../SupClient/SupClient.d.ts"/>
