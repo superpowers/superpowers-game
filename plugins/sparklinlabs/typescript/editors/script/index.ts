@@ -380,7 +380,7 @@ onAssetCommands.editText = (operationData: OT.OperationData) => {
 
   if (data.clientId === operationData.userId) {
     if (ui.pendingOperation != null) {
-      socket.emit("edit:assets", info.assetId, "editText", ui.pendingOperation.serialize(), data.asset.document.operations.length, (err: string) => {
+      socket.emit("edit:assets", info.assetId, "editText", ui.pendingOperation.serialize(), data.asset.document.getRevisionId(), (err: string) => {
         if (err != null) { alert(err); SupClient.onDisconnected(); }
       });
 
@@ -772,7 +772,7 @@ function onEditText(instance: CodeMirror.Editor, changes: CodeMirror.EditorChang
   }
 
   if (ui.sentOperation == null) {
-    socket.emit("edit:assets", info.assetId, "editText", operationToSend.serialize(), data.asset.document.operations.length, (err: string) => {
+    socket.emit("edit:assets", info.assetId, "editText", operationToSend.serialize(), data.asset.document.getRevisionId(), (err: string) => {
       if (err != null) { alert(err); SupClient.onDisconnected(); }
     });
 

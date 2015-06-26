@@ -58,7 +58,6 @@ export default class ScriptAsset extends SupCore.data.base.Asset {
   hasDraft: boolean;
 
   constructor(id: string, pub: any, serverData?: any) {
-    this.document = new OT.Document();
     super(id, pub, ScriptAsset.schema, serverData);
   }
 
@@ -112,9 +111,7 @@ export default class ScriptAsset extends SupCore.data.base.Asset {
   }
 
   setup() {
-    this.document.text = this.pub.draft;
-    for (let i = 0; i < this.pub.revisionId; i++) (<any>this.document.operations).push(0);
-
+    this.document = new OT.Document(this.pub.draft, this.pub.revisionId);
     this.hasDraft = this.pub.text !== this.pub.draft;
   }
 
@@ -187,7 +184,7 @@ export default class ScriptAsset extends SupCore.data.base.Asset {
     this.pub.draft = this.document.text;
     this.pub.revisionId++;
 
-    callback(null, operation.serialize(), this.document.operations.length - 1);
+    callback(null, operation.serialize(), this.document.getRevisionId() - 1);
 
     if (!this.hasDraft) {
       this.hasDraft = true;

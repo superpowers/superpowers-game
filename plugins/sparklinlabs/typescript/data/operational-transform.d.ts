@@ -3,8 +3,9 @@ declare module "operational-transform" {
     text: string;
     operations: TextOperation[];
 
-    constructor();
+    constructor(text: string, revisionId: number);
     apply(operation: TextOperation, revision: number): TextOperation;
+    getRevisionId(): number;
   }
 
   interface OperationData {
