@@ -1,5 +1,5 @@
 import info from "./info";
-import ui, { refreshErrors } from "./ui";
+import ui, { setupEditor, refreshErrors } from "./ui";
 
 import * as async from "async";
 import ScriptAsset from "../../data/ScriptAsset";
@@ -34,9 +34,11 @@ function start() {
 
 let onEditCommands: any = {};
 function onWelcomed(clientId: number) {
-  ui.editor.clientId = clientId;
   data.projectClient = new SupClient.ProjectClient(socket);
   data.projectClient.subEntries(entriesSubscriber);
+
+  setupEditor();
+  ui.editor.clientId = clientId;
 }
 
 var entriesSubscriber = {

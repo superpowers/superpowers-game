@@ -1,3 +1,5 @@
+import TextEditorSettingsResource from "../data/TextEditorSettingsResource";
+
 import * as OT from "operational-transform";
 
 (<any>window).CodeMirror = require("codemirror");
@@ -11,6 +13,7 @@ require("codemirror/keymap/sublime");
 require("codemirror/mode/javascript/javascript");
 
 class TextEditorWidget {
+  textEditorResource: TextEditorSettingsResource
   codeMirrorInstance: CodeMirror.EditorFromTextArea;
 
   editCallback: EditCallback;
@@ -30,12 +33,14 @@ class TextEditorWidget {
   sentOperation: OT.TextOperation;
   pendingOperation: OT.TextOperation;
 
-  constructor(textArea: HTMLTextAreaElement, options: TextEditorWidgetOptions) {
+  useSoftTab = true;
+
+  constructor(projectClient: SupClient.ProjectClient, textArea: HTMLTextAreaElement, options: TextEditorWidgetOptions) {
     let extraKeys: { [name: string]: string|Function } = {
       "F9": () => {},
       "Tab": (cm: any) => {
-        if (cm.getSelection() !== "") cm.execCommand("indentMore");
-        else cm.replaceSelection(Array(cm.getOption("indentUnit") + 1).join(" "));
+        if (this.useSoftTab) cm.execCommand("insertSoftTab");
+        else cm.execCommand("insertTab");
       },
       "Cmd-X": () => { document.execCommand("cut"); },
       "Cmd-C": () => { document.execCommand("copy"); },
@@ -69,6 +74,8 @@ class TextEditorWidget {
 
     this.codeMirrorInstance.on("changes", <any>this.edit);
     this.codeMirrorInstance.on("beforeChange", this.beforeChange);
+    
+    projectClient.subResource("textEditorSettings", this);
   }
 
   setup(text: string) {
@@ -300,6 +307,20 @@ class TextEditorWidget {
 
   clear() {
     if (this.undoTimeout != null) clearTimeout(this.undoTimeout);
+  }
+
+  onResourceReceived = (resourceId: string, resource: TextEditorSettingsResource) => {
+    this.textEditorResource = resource;
+
+    this.codeMirrorInstance.setOption("tabSize", resource.pub.tabSize);
+    this.useSoftTab = resource.pub.softTab;
+  }
+
+  onResourceEdited = (resourceId: string, command: string, propertyName: string) => {
+    switch(propertyName) {
+      case "tabSize": this.codeMirrorInstance.setOption("tabSize", this.textEditorResource.pub.tabSize); break;
+      case "softTab": this.useSoftTab = this.textEditorResource.pub.softTab; break;
+    }
   }
 }
 export = TextEditorWidget;

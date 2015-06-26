@@ -46,33 +46,47 @@ if (nwDispatcher != null) {
 }
 
 // Setup editor
-let textArea = <HTMLTextAreaElement>document.querySelector(".code-editor");
-ui.editor = new TextEditorWidget(textArea, {
-  extraKeys: {
-    "Ctrl-Space": "autocomplete",
-    "Cmd-Space": "autocomplete",
-    "Shift-Ctrl-F": () => { onGlobalSearch(); },
-    "Shift-Cmd-F": () => { onGlobalSearch(); },
-    "F8": () => {
-      let cursor = ui.editor.codeMirrorInstance.getDoc().getCursor();
-      let token = ui.editor.codeMirrorInstance.getTokenAt(cursor);
-      if (token.string === ".") token.start = token.end;
+export function setupEditor() {
+  let textArea = <HTMLTextAreaElement>document.querySelector(".code-editor");
+  ui.editor = new TextEditorWidget(data.projectClient, textArea, {
+    extraKeys: {
+      "Ctrl-Space": "autocomplete",
+      "Cmd-Space": "autocomplete",
+      "Shift-Ctrl-F": () => { onGlobalSearch(); },
+      "Shift-Cmd-F": () => { onGlobalSearch(); },
+      "F8": () => {
+        let cursor = ui.editor.codeMirrorInstance.getDoc().getCursor();
+        let token = ui.editor.codeMirrorInstance.getTokenAt(cursor);
+        if (token.string === ".") token.start = token.end;
 
-      let start = 0;
-      for (let i = 0; i < cursor.line; i++) start += ui.editor.codeMirrorInstance.getDoc().getLine(i).length + 1;
-      start += cursor.ch;
+        let start = 0;
+        for (let i = 0; i < cursor.line; i++) start += ui.editor.codeMirrorInstance.getDoc().getLine(i).length + 1;
+        start += cursor.ch;
 
-      data.typescriptWorker.postMessage({
-        type: "getDefinitionAt",
-        name: data.fileNamesByScriptId[info.assetId],
-        start
-      });
-    }
-  },
-  editCallback: onEditText,
-  sendOperationCallback: onSendOperation,
-  saveCallback: onSaveText
-});
+        data.typescriptWorker.postMessage({
+          type: "getDefinitionAt",
+          name: data.fileNamesByScriptId[info.assetId],
+          start
+        });
+      }
+    },
+    editCallback: onEditText,
+    sendOperationCallback: onSendOperation,
+    saveCallback: onSaveText
+  });
+
+  (<any>ui.editor.codeMirrorInstance).on("keyup", (instance: any, event: any) => {
+    clearInfoPopup();
+
+    // Ignore Ctrl, Cmd, Escape, Return, Tab, arrow keys, F8
+    if (event.ctrlKey || event.metaKey || [27, 9, 13, 37, 38, 39, 40, 119, 16].indexOf(event.keyCode) !== -1) return;
+
+    // If the completion popup is active, the hint() method will automatically
+    // call for more autocomplete, so we don't need to do anything here.
+    if ((<any>ui.editor.codeMirrorInstance).state.completionActive != null && (<any>ui.editor.codeMirrorInstance).state.completionActive.active()) return;
+    scheduleCompletion();
+  });
+}
 
 let localVersionNumber = 0;
 function onEditText(text: string, origin: string) {
@@ -265,18 +279,6 @@ function clearInfoPopup() {
 
 // Completion
 (<any>CodeMirror).commands.autocomplete = (cm: CodeMirror.Editor) => { scheduleCompletion(); };
-
-(<any>ui.editor.codeMirrorInstance).on("keyup", (instance: any, event: any) => {
-  clearInfoPopup();
-
-  // Ignore Ctrl, Cmd, Escape, Return, Tab, arrow keys, F8
-  if (event.ctrlKey || event.metaKey || [27, 9, 13, 37, 38, 39, 40, 119, 16].indexOf(event.keyCode) !== -1) return;
-
-  // If the completion popup is active, the hint() method will automatically
-  // call for more autocomplete, so we don't need to do anything here.
-  if ((<any>ui.editor.codeMirrorInstance).state.completionActive != null && (<any>ui.editor.codeMirrorInstance).state.completionActive.active()) return;
-  scheduleCompletion();
-});
 
 function hint(instance: any, callback: any) {
   let cursor = ui.editor.codeMirrorInstance.getDoc().getCursor();
