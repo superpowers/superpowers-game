@@ -6,11 +6,19 @@ import ArcadeBody2DUpdater from "./ArcadeBody2DUpdater";
 export default class ArcadeBody2DMarker extends SupEngine.ActorComponent {
   static Updater = ArcadeBody2DUpdater;
 
+  markerActor: SupEngine.Actor;
   offset = new THREE.Vector3(0, 0, 0);
   line: THREE.Line;
 
   constructor(actor: SupEngine.Actor) {
     super(actor, "ArcadeBody2DMarker");
+
+    this.markerActor = new SupEngine.Actor(this.actor.gameInstance, `Marker`, null, { layer: -1 });
+  }
+
+  update() {
+    super.update();
+    this.markerActor.setGlobalPosition(this.actor.getGlobalPosition());
   }
 
   setBox(width: number, height: number) {
@@ -27,7 +35,7 @@ export default class ArcadeBody2DMarker extends SupEngine.ActorComponent {
 
     this.line = new THREE.Line(geometry, material);
     this.line.position.copy(this.offset);
-    this.actor.threeObject.add(this.line);
+    this.markerActor.threeObject.add(this.line);
     this.line.updateMatrixWorld(false);
   }
 
@@ -43,7 +51,7 @@ export default class ArcadeBody2DMarker extends SupEngine.ActorComponent {
   }
 
   _clearRenderer() {
-    this.actor.threeObject.remove(this.line);
+    this.markerActor.threeObject.remove(this.line);
     this.line.geometry.dispose();
     this.line.material.dispose();
     this.line = null;
@@ -51,6 +59,8 @@ export default class ArcadeBody2DMarker extends SupEngine.ActorComponent {
 
   _destroy() {
     if (this.line != null) this._clearRenderer();
+    this.actor.gameInstance.destroyActor(this.markerActor);
+    this.markerActor = null;
     super._destroy();
   }
 }
