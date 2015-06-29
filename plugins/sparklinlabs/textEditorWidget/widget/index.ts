@@ -39,8 +39,11 @@ class TextEditorWidget {
     let extraKeys: { [name: string]: string|Function } = {
       "F9": () => {},
       "Tab": (cm: any) => {
-        if (this.useSoftTab) cm.execCommand("insertSoftTab");
-        else cm.execCommand("insertTab");
+        if (cm.getSelection() !== "") cm.execCommand("indentMore")
+        else {
+          if (this.useSoftTab) cm.execCommand("insertSoftTab");
+          else cm.execCommand("insertTab");
+        }
       },
       "Cmd-X": () => { document.execCommand("cut"); },
       "Cmd-C": () => { document.execCommand("copy"); },
@@ -63,10 +66,11 @@ class TextEditorWidget {
     this.saveCallback = options.saveCallback;
 
     this.codeMirrorInstance = CodeMirror.fromTextArea(textArea, {
+      // theme: "monokai",
       lineNumbers: true, matchBrackets: true, styleActiveLine: true, autoCloseBrackets: true,
       gutters: ["line-error-gutter", "CodeMirror-linenumbers"],
-      tabSize: 2, keyMap: "sublime", // , theme: "monokai"
-      extraKeys: extraKeys,
+      indentWithTabs: false, indentUnit: 2, tabSize: 2, 
+      extraKeys: extraKeys, keyMap: "sublime",
       viewportMargin: Infinity,
       mode: "text/typescript",
       readOnly: true
@@ -313,13 +317,21 @@ class TextEditorWidget {
     this.textEditorResource = resource;
 
     this.codeMirrorInstance.setOption("tabSize", resource.pub.tabSize);
+    this.codeMirrorInstance.setOption("indentUnit", resource.pub.tabSize);
+    this.codeMirrorInstance.setOption("indentWithTabs", !resource.pub.softTab);
     this.useSoftTab = resource.pub.softTab;
   }
 
   onResourceEdited = (resourceId: string, command: string, propertyName: string) => {
     switch(propertyName) {
-      case "tabSize": this.codeMirrorInstance.setOption("tabSize", this.textEditorResource.pub.tabSize); break;
-      case "softTab": this.useSoftTab = this.textEditorResource.pub.softTab; break;
+      case "tabSize":
+        this.codeMirrorInstance.setOption("tabSize", this.textEditorResource.pub.tabSize);
+        this.codeMirrorInstance.setOption("indentUnit", this.textEditorResource.pub.tabSize);
+        break;
+      case "softTab":
+        this.useSoftTab = this.textEditorResource.pub.softTab;
+        this.codeMirrorInstance.setOption("indentWithTabs", !this.textEditorResource.pub.softTab);
+        break;
     }
   }
 }
