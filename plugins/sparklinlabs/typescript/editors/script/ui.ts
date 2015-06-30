@@ -38,7 +38,7 @@ if (nwDispatcher != null) {
   menu.append(new gui.MenuItem({ label: "Copy (Ctrl-C)", click: () => { document.execCommand("copy"); } }));
   menu.append(new gui.MenuItem({ label: "Paste (Ctrl-V)", click: () => { document.execCommand("paste"); } }));
 
-  document.querySelector(".code-editor-container").addEventListener("contextmenu", (event: any) => {
+  document.querySelector(".text-editor-container").addEventListener("contextmenu", (event: any) => {
     event.preventDefault();
     menu.popup(event.screenX - gui.Window.get().x, event.screenY - gui.Window.get().y);
     return false;
@@ -47,8 +47,9 @@ if (nwDispatcher != null) {
 
 // Setup editor
 export function setupEditor() {
-  let textArea = <HTMLTextAreaElement>document.querySelector(".code-editor");
+  let textArea = <HTMLTextAreaElement>document.querySelector(".text-editor");
   ui.editor = new TextEditorWidget(data.projectClient, textArea, {
+    mode: "text/typescript",
     extraKeys: {
       "Ctrl-Space": "autocomplete",
       "Cmd-Space": "autocomplete",

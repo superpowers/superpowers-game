@@ -1,4 +1,5 @@
 /// <reference path="typings/codemirror/codemirror.d.ts" />
+/// <reference path="./operational-transform.d.ts" />
 
 interface EditCallback {
   (text: string, origin: string): void;
@@ -8,8 +9,9 @@ interface SendOperationCallback {
 }
 
 interface TextEditorWidgetOptions {
-  extraKeys: { [name: string]: string|Function };
-  editCallback: EditCallback;
+  extraKeys?: { [name: string]: string|Function };
+  editCallback?: EditCallback;
+  mode: string;
   sendOperationCallback: SendOperationCallback;
   saveCallback: Function;
 }

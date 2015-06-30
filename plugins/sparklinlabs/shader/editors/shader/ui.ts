@@ -7,8 +7,8 @@ import Attributes, { AttributePub } from "../../data/Attributes";
 let ui: {
   uniformsList?: HTMLTableElement;
   attributesList?: HTMLTableElement;
-  vertexTextArea?: HTMLTextAreaElement;
-  fragmentTextArea?: HTMLTextAreaElement;
+  vertexEditor?: TextEditorWidget;
+  fragmentEditor?: TextEditorWidget;
 
   previewTypeSelect?: HTMLSelectElement;
 } = {};
@@ -94,8 +94,6 @@ export function setUniformValueInputs(id: string) {
       break;
   }
 }
-
-
 
 function setArrayUniformInputs(id: string, parentElt: HTMLDivElement, name: string) {
   let uniform = data.shaderAsset.uniforms.byId[id];
@@ -186,19 +184,31 @@ newAttributeInput.addEventListener("keyup", (event: any) => {
   }
 })
 
-ui.vertexTextArea = <HTMLTextAreaElement>document.querySelector(".vertex textarea");
-ui.vertexTextArea.addEventListener("change", (event: any) => {
-  socket.emit("edit:assets", info.assetId, "setProperty", "vertexShader", event.target.value, (err: string) => {
-    if (err != null) alert(err);
+export function setupEditors() {
+  let vertexTextArea = <HTMLTextAreaElement>document.querySelector(".vertex textarea");
+  ui.vertexEditor = new TextEditorWidget(data.projectClient, vertexTextArea, {
+    mode: "x-shader/x-vertex",
+    sendOperationCallback: () => {/*TODO: editText (with draft state)*/},
+    saveCallback: () => {
+      let text = ui.vertexEditor.codeMirrorInstance.getDoc().getValue();
+      socket.emit("edit:assets", info.assetId, "setProperty", "vertexShader", text, (err: string) => {
+        if (err != null) alert(err);
+      });
+    }
   });
-})
-
-ui.fragmentTextArea = <HTMLTextAreaElement>document.querySelector(".fragment textarea");
-ui.fragmentTextArea.addEventListener("change", (event: any) => {
-  socket.emit("edit:assets", info.assetId, "setProperty", "fragmentShader", event.target.value, (err: string) => {
-    if (err != null) alert(err);
+  
+  let fragmentTextArea = <HTMLTextAreaElement>document.querySelector(".fragment textarea");
+  ui.fragmentEditor = new TextEditorWidget(data.projectClient, fragmentTextArea, {
+    mode: "x-shader/x-fragment",
+    sendOperationCallback: () => {/*TODO: editText (with draft state)*/},
+    saveCallback: () => {
+      let text = ui.fragmentEditor.codeMirrorInstance.getDoc().getValue();
+      socket.emit("edit:assets", info.assetId, "setProperty", "fragmentShader", text, (err: string) => {
+        if (err != null) alert(err);
+      });
+    }
   });
-})
+}
 
 ui.previewTypeSelect = <HTMLSelectElement>document.querySelector(".preview select");
 ui.previewTypeSelect.addEventListener("change", () => { setupPreview(); });

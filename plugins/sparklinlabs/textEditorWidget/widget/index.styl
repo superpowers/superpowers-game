@@ -4,3 +4,24 @@
 @require '../node_modules/codemirror/addon/dialog/dialog.css'
 @require '../node_modules/codemirror/addon/hint/show-hint.css'
 // @require '../node_modules/codemirror/theme/monokai.css'
+
+.text-editor-container
+  position relative
+  flex 1
+  min-height 100px
+
+  textarea
+    opacity 0
+
+.text-editor + .CodeMirror
+  position absolute
+  top 0
+  left 0
+  right 0
+  bottom 0
+  height auto
+  font-size 14px
+
+.text-editor + .CodeMirror, .CodeMirror-hints
+  font-family "Consolas", monospace
+ 

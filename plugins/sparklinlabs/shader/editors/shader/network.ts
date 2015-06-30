@@ -1,5 +1,5 @@
 import info from "./info";
-import ui, { setupUniform, setUniformValueInputs, setupAttribute } from "./ui";
+import ui, { setupUniform, setUniformValueInputs, setupAttribute, setupEditors } from "./ui";
 import {setupPreview } from "./engine";
 import ShaderAsset from "../../data/ShaderAsset";
 import { UniformPub } from "../../data/Uniforms";
@@ -14,8 +14,9 @@ socket.on("disconnect", SupClient.onDisconnected);
 
 function onConnected() {
   data = { projectClient: new SupClient.ProjectClient(socket) };
+  setupEditors();
 
-  data.projectClient.subAsset(info.assetId, "shader", { onAssetReceived, onAssetEdited, onAssetTrashed })
+  data.projectClient.subAsset(info.assetId, "shader", { onAssetReceived, onAssetEdited, onAssetTrashed });
 }
 
 function onAssetReceived(assetId: string, asset: ShaderAsset) {
@@ -23,8 +24,8 @@ function onAssetReceived(assetId: string, asset: ShaderAsset) {
 
   for (let uniform of asset.pub.uniforms) setupUniform(uniform);
   for (let attribute of asset.pub.attributes) setupAttribute(attribute);
-  ui.vertexTextArea.value = asset.pub.vertexShader;
-  ui.fragmentTextArea.value = asset.pub.fragmentShader;
+  ui.vertexEditor.setup(asset.pub.vertexShader);
+  ui.fragmentEditor.setup(asset.pub.fragmentShader);
 
   setupPreview();
 }
@@ -40,10 +41,11 @@ function onAssetEdited(id: string, command: string, ...args: any[]) {
 onEditCommands.setProperty = (path: string, value: any) => {
   switch (path) {
     case "vertexShader":
-      ui.vertexTextArea.value = value;
+      //TODO: apply operationData
+      //ui.vertexTextArea.value = value;
       break;
     case "fragmentShader":
-      ui.fragmentTextArea.value = value;
+      //ui.fragmentTextArea.value = value;
       break;
   }
 }

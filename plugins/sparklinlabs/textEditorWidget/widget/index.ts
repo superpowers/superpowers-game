@@ -11,6 +11,7 @@ require("codemirror/addon/hint/show-hint");
 require("codemirror/addon/selection/active-line");
 require("codemirror/keymap/sublime");
 require("codemirror/mode/javascript/javascript");
+require("codemirror/mode/clike/clike");
 
 class TextEditorWidget {
   textEditorResource: TextEditorSettingsResource
@@ -57,8 +58,10 @@ class TextEditorWidget {
       "Ctrl-S": () => { this.saveCallback(); },
       "Cmd-S": () => { this.saveCallback(); }
     }
-    for (let keyName in options.extraKeys) {
-      extraKeys[keyName] = options.extraKeys[keyName];
+    if (options.extraKeys != null) {
+      for (let keyName in options.extraKeys) {
+        extraKeys[keyName] = options.extraKeys[keyName];
+      }
     }
 
     this.editCallback = options.editCallback;
@@ -72,7 +75,7 @@ class TextEditorWidget {
       indentWithTabs: false, indentUnit: 2, tabSize: 2, 
       extraKeys: extraKeys, keyMap: "sublime",
       viewportMargin: Infinity,
-      mode: "text/typescript",
+      mode: options.mode,
       readOnly: true
     });
 
@@ -97,7 +100,8 @@ class TextEditorWidget {
   }
 
   edit = (instance: CodeMirror.Editor, changes: CodeMirror.EditorChange[]) => {
-    this.editCallback(this.codeMirrorInstance.getDoc().getValue(), (<any>changes[0]).origin);
+    if (this.editCallback != null)
+      this.editCallback(this.codeMirrorInstance.getDoc().getValue(), (<any>changes[0]).origin);
 
     let undoRedo = false;
     let operationToSend: OT.TextOperation;
