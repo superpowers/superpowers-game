@@ -25,13 +25,36 @@ export default class ShaderAsset extends SupCore.data.base.Asset {
   }
 
   init(options: any, callback: Function) {
-    this.pub = {
-      uniforms: [],
-      attributes: [],
-      vertexShader: "",
-      fragmentShader: ""
-    };
-    super.init(options, callback);
+    this.serverData.resources.acquire("textEditorSettings", null, (err: Error, textEditorSettings: any) => {
+      this.serverData.resources.release("textEditorSettings", null);
+      
+      let tab: string;
+      if (textEditorSettings.pub.softTab) {
+        tab = "";
+        for (let i = 0; i < textEditorSettings.pub.tabSize; i++) tab = tab + " ";
+      } else tab = "\t";
+      this.pub = {
+        uniforms: [],
+        attributes: [],
+        vertexShader:
+`varying vec2 vUv;
+
+void main() {
+${tab}vUv = uv;
+${tab}gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);
+}
+`,
+      fragmentShader:
+`uniform sampler2D map;
+varying vec2 vUv;
+
+void main() {
+${tab}gl_FragColor = texture2D(map, vUv);
+}
+`
+      };
+      super.init(options, callback);
+    });
   }
 
   setup() {
