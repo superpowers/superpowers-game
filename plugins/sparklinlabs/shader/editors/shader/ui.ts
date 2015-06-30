@@ -4,6 +4,8 @@ import { setupPreview } from "./engine";
 import Uniforms, { UniformPub } from "../../data/Uniforms";
 import Attributes, { AttributePub } from "../../data/Attributes";
 
+let PerfectResize = require("perfect-resize");
+
 let ui: {
   uniformsList?: HTMLTableElement;
   attributesList?: HTMLTableElement;
@@ -184,6 +186,20 @@ newAttributeInput.addEventListener("keyup", (event: any) => {
   }
 })
 
+let shadersPane = document.querySelector(".shaders");
+let shaderPaneResizeHandle = new PerfectResize(shadersPane, "bottom");
+shaderPaneResizeHandle.on("drag", () => {
+  ui.vertexEditor.codeMirrorInstance.refresh();
+  ui.fragmentEditor.codeMirrorInstance.refresh();
+});
+
+let fragmentShadersPane = shadersPane.querySelector(".fragment");
+let fragmentShaderPaneResizeHandle = new PerfectResize(fragmentShadersPane, "right");
+fragmentShaderPaneResizeHandle.on("drag", () => {
+  ui.vertexEditor.codeMirrorInstance.refresh();
+  ui.fragmentEditor.codeMirrorInstance.refresh();
+});
+
 export function setupEditors() {
   let vertexTextArea = <HTMLTextAreaElement>document.querySelector(".vertex textarea");
   ui.vertexEditor = new TextEditorWidget(data.projectClient, vertexTextArea, {
@@ -210,5 +226,8 @@ export function setupEditors() {
   });
 }
 
-ui.previewTypeSelect = <HTMLSelectElement>document.querySelector(".preview select");
+let previewPane = document.querySelector(".preview");
+new PerfectResize(previewPane, "right");
+ui.previewTypeSelect = <HTMLSelectElement>previewPane.querySelector("select");
 ui.previewTypeSelect.addEventListener("change", () => { setupPreview(); });
+

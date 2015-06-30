@@ -13,12 +13,14 @@ body
     padding 5px
     display flex
     flex-flow row
-    border-bottom 1px solid #ccc
+    min-height 200px
   
   .left
     flex 1
     display flex
     flex-flow column
+    padding-right 5px
+    min-width 300px
 
   .uniforms, .attributes
     flex 1
@@ -62,9 +64,11 @@ body
         border none
 
   .preview
-    flex 1
     display flex
     flex-flow column
+    padding-left 5px
+    width 50%
+    min-width 300px
     
     .title
       display flex
@@ -78,12 +82,20 @@ body
       background-color black
 
   .shaders
-    flex 1
     padding 5px
     display flex
+    min-height 200px
+    height 50%
 
     .vertex, .fragment
-      flex 1
       display flex
       flex-flow column
       margin 0 2px 0 2px
+      min-width 300px
+      
+    .vertex
+      padding-right 5px
+      flex 1
+      
+    .fragment
+      width 50%
