@@ -46,9 +46,9 @@ if (nwDispatcher != null) {
 }
 
 // Setup editor
-export function setupEditor() {
+export function setupEditor(clientId: number) {
   let textArea = <HTMLTextAreaElement>document.querySelector(".text-editor");
-  ui.editor = new TextEditorWidget(data.projectClient, textArea, {
+  ui.editor = new TextEditorWidget(data.projectClient, clientId, textArea, {
     mode: "text/typescript",
     extraKeys: {
       "Ctrl-Space": "autocomplete",

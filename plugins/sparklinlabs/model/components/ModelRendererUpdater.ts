@@ -183,7 +183,7 @@ export default class ModelRendererUpdater {
   }
 
   _onShaderAssetEdited(id: string, command: string, ...args: any[]) {
-    this._setModel();
+    if (command !== "editVertexShader" && command !== "editFragmentShader") this._setModel();
   }
 
   _onShaderAssetTrashed() {

@@ -36,7 +36,7 @@ class TextEditorWidget {
 
   useSoftTab = true;
 
-  constructor(projectClient: SupClient.ProjectClient, textArea: HTMLTextAreaElement, options: TextEditorWidgetOptions) {
+  constructor(projectClient: SupClient.ProjectClient, clientId: number, textArea: HTMLTextAreaElement, options: TextEditorWidgetOptions) {
     let extraKeys: { [name: string]: string|Function } = {
       "F9": () => {},
       "Tab": (cm: any) => {
@@ -82,10 +82,11 @@ class TextEditorWidget {
     this.codeMirrorInstance.on("changes", <any>this.edit);
     this.codeMirrorInstance.on("beforeChange", this.beforeChange);
     
+    this.clientId = clientId;
     projectClient.subResource("textEditorSettings", this);
   }
 
-  setup(text: string) {
+  setText(text: string) {
     this.codeMirrorInstance.getDoc().setValue(text);
     this.codeMirrorInstance.getDoc().clearHistory();
     this.codeMirrorInstance.setOption("readOnly", false);

@@ -200,26 +200,34 @@ fragmentShaderPaneResizeHandle.on("drag", () => {
   ui.fragmentEditor.codeMirrorInstance.refresh();
 });
 
-export function setupEditors() {
+export function setupEditors(clientId: number) {
   let vertexTextArea = <HTMLTextAreaElement>document.querySelector(".vertex textarea");
-  ui.vertexEditor = new TextEditorWidget(data.projectClient, vertexTextArea, {
+  ui.vertexEditor = new TextEditorWidget(data.projectClient, clientId, vertexTextArea, {
     mode: "x-shader/x-vertex",
-    sendOperationCallback: () => {/*TODO: editText (with draft state)*/},
+    sendOperationCallback: (operation: OperationData) => {
+      socket.emit("edit:assets", info.assetId, "editVertexShader", operation, data.shaderAsset.vertexDocument.getRevisionId(), (err: string) => {
+        if (err != null) { alert(err); SupClient.onDisconnected(); }
+      });
+    },
     saveCallback: () => {
       let text = ui.vertexEditor.codeMirrorInstance.getDoc().getValue();
-      socket.emit("edit:assets", info.assetId, "setProperty", "vertexShader", text, (err: string) => {
+      socket.emit("edit:assets", info.assetId, "saveVertexShader", (err: string) => {
         if (err != null) alert(err);
       });
     }
   });
   
   let fragmentTextArea = <HTMLTextAreaElement>document.querySelector(".fragment textarea");
-  ui.fragmentEditor = new TextEditorWidget(data.projectClient, fragmentTextArea, {
+  ui.fragmentEditor = new TextEditorWidget(data.projectClient, clientId, fragmentTextArea, {
     mode: "x-shader/x-fragment",
-    sendOperationCallback: () => {/*TODO: editText (with draft state)*/},
+    sendOperationCallback: (operation: OperationData) => {
+      socket.emit("edit:assets", info.assetId, "editFragmentShader", operation, data.shaderAsset.fragmentDocument.getRevisionId(), (err: string) => {
+        if (err != null) { alert(err); SupClient.onDisconnected(); }
+      });
+    },
     saveCallback: () => {
       let text = ui.fragmentEditor.codeMirrorInstance.getDoc().getValue();
-      socket.emit("edit:assets", info.assetId, "setProperty", "fragmentShader", text, (err: string) => {
+      socket.emit("edit:assets", info.assetId, "saveFragmentShader", (err: string) => {
         if (err != null) alert(err);
       });
     }

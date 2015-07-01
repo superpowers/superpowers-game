@@ -1,6 +1,6 @@
 import info from "./info";
 import ui, { setupUniform, setUniformValueInputs, setupAttribute, setupEditors } from "./ui";
-import {setupPreview } from "./engine";
+import { setupPreview } from "./engine";
 import ShaderAsset from "../../data/ShaderAsset";
 import { UniformPub } from "../../data/Uniforms";
 import { AttributePub } from "../../data/Attributes";
@@ -8,13 +8,12 @@ import { AttributePub } from "../../data/Attributes";
 export let data: { projectClient?: SupClient.ProjectClient, shaderAsset?: ShaderAsset };
 
 export let socket = SupClient.connect(info.projectId);
-socket.on("connect", onConnected);
+socket.on("welcome", onWelcomed);
 socket.on("disconnect", SupClient.onDisconnected);
 
-
-function onConnected() {
+function onWelcomed(clientId: number) {
   data = { projectClient: new SupClient.ProjectClient(socket) };
-  setupEditors();
+  setupEditors(clientId);
 
   data.projectClient.subAsset(info.assetId, "shader", { onAssetReceived, onAssetEdited, onAssetTrashed });
 }
@@ -24,8 +23,8 @@ function onAssetReceived(assetId: string, asset: ShaderAsset) {
 
   for (let uniform of asset.pub.uniforms) setupUniform(uniform);
   for (let attribute of asset.pub.attributes) setupAttribute(attribute);
-  ui.vertexEditor.setup(asset.pub.vertexShader);
-  ui.fragmentEditor.setup(asset.pub.fragmentShader);
+  ui.vertexEditor.setText(asset.pub.vertexShader.draft);
+  ui.fragmentEditor.setText(asset.pub.fragmentShader.draft);
 
   setupPreview();
 }
@@ -35,19 +34,7 @@ function onAssetEdited(id: string, command: string, ...args: any[]) {
   let commandFunction = onEditCommands[`${command}`];
   if (commandFunction != null) commandFunction.apply(this, args);
 
-  setupPreview();
-}
-
-onEditCommands.setProperty = (path: string, value: any) => {
-  switch (path) {
-    case "vertexShader":
-      //TODO: apply operationData
-      //ui.vertexTextArea.value = value;
-      break;
-    case "fragmentShader":
-      //ui.fragmentTextArea.value = value;
-      break;
-  }
+  if (command !== "editVertexShader" && command !== "editFragmentShader") setupPreview();
 }
 
 onEditCommands.newUniform = (uniform: UniformPub) => { setupUniform(uniform); }
@@ -94,6 +81,13 @@ onEditCommands.setAttributeProperty = (id: string, key: string, value: any) => {
   let rowElt = <HTMLDivElement>ui.attributesList.querySelector(`[data-id='${id}']`);
   let fieldElt = <HTMLInputElement>rowElt.querySelector(`.${key}`);
   fieldElt.value = value;
+}
+
+onEditCommands.editVertexShader = (operationData: OperationData) => {
+  ui.vertexEditor.receiveEditText(operationData);
+}
+onEditCommands.editFragmentShader = (operationData: OperationData) => {
+  ui.fragmentEditor.receiveEditText(operationData);
 }
 
 function onAssetTrashed() {

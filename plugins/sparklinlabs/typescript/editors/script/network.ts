@@ -37,8 +37,7 @@ function onWelcomed(clientId: number) {
   data.projectClient = new SupClient.ProjectClient(socket);
   data.projectClient.subEntries(entriesSubscriber);
 
-  setupEditor();
-  ui.editor.clientId = clientId;
+  setupEditor(clientId);
 }
 
 var entriesSubscriber = {
@@ -135,7 +134,7 @@ var scriptSubscriber = {
       data.asset = asset;
 
       (<any>ui.errorPaneStatus.classList.toggle)("has-draft", data.asset.hasDraft);
-      ui.editor.setup(data.asset.pub.draft);
+      ui.editor.setText(data.asset.pub.draft);
       if (info.line != null && info.ch != null)
         ui.editor.codeMirrorInstance.getDoc().setCursor({ line: info.line, ch: info.ch });
     }

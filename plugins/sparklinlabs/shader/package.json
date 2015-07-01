@@ -1,0 +1,7 @@
+{
+  "name": "superpowers-sparklinlabs-shader-plugin",
+  "version": "1.0.0",
+  "dependencies": {
+    "operational-transform": "^0.2.3"
+  }
+}

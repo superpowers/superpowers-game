@@ -20,8 +20,8 @@ declare class TextEditorWidget {
   codeMirrorInstance: CodeMirror.EditorFromTextArea;
   clientId: number;
 
-  constructor(projectClient: SupClient.ProjectClient,textArea: HTMLTextAreaElement, options: TextEditorWidgetOptions);
-  setup(text: string): void;
+  constructor(projectClient: SupClient.ProjectClient, clientId: number, textArea: HTMLTextAreaElement, options: TextEditorWidgetOptions);
+  setText(text: string): void;
   receiveEditText(operationData: OperationData): void;
   clear(): void;
 }

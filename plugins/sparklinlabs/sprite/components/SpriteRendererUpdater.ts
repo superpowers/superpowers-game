@@ -216,7 +216,7 @@ export default class SpriteRendererUpdater {
   }
   
   _onShaderAssetEdited(id: string, command: string, ...args: any[]) {
-    this._setSprite();
+    if (command !== "editVertexShader" && command !== "editFragmentShader") this._setSprite();
   }
 
   _onShaderAssetTrashed() {

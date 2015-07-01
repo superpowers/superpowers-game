@@ -142,10 +142,7 @@ Sup.registerBehavior(${behaviorName});
         this.pub.text = text;
 
         fs.readFile(path.join(assetPath, "draft.txt"), { encoding: "utf8" }, (err, draft) => {
-          // Temporary asset migration
-          if (draft == null) draft = this.pub.text;
-
-          this.pub.draft = draft;
+          this.pub.draft = (draft != null) ? draft : this.pub.text;
           this.setup();
           this.emit("load");
         });

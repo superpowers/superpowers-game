@@ -89,8 +89,8 @@ export function createShaderMaterial(asset: ShaderAssetPub, texture: THREE.Textu
   let previewMaterial = new THREE.ShaderMaterial({
     uniforms,
     attributes,
-    vertexShader: replaceShaderChunk(asset.vertexShader),
-    fragmentShader: replaceShaderChunk(asset.fragmentShader),
+    vertexShader: replaceShaderChunk(asset.vertexShader.text),
+    fragmentShader: replaceShaderChunk(asset.fragmentShader.text),
     transparent: true
   });
   (<any>previewMaterial).map = texture;
