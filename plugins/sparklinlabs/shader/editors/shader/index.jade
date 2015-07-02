@@ -12,7 +12,7 @@ html
     .top
       .left
         .uniforms
-          span Uniforms
+          span.header Uniforms
           .list
             table
               tr.grey
@@ -32,7 +32,7 @@ html
             input(placeholder="New uniform")
 
         .attributes
-          span Attributes
+          span.header Attributes
           .list
             table
               tr.grey
@@ -45,7 +45,7 @@ html
 
       .preview
         .title
-          span Preview
+          span.header Preview
           select
             option Plane
             option Box
@@ -56,11 +56,11 @@ html
 
     .shaders
       .vertex
-        span Vertex Shader
+        span.header Vertex Shader
         .text-editor-container
           textarea(disabled).text-editor
       .fragment
-        span Fragment Shader
+        span.header Fragment Shader
         .text-editor-container
           textarea(disabled).text-editor
 
