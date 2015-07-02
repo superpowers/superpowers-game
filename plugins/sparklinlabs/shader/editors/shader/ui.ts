@@ -13,6 +13,8 @@ let ui: {
   fragmentEditor?: TextEditorWidget;
 
   previewTypeSelect?: HTMLSelectElement;
+  previewAssetInput?: HTMLInputElement;
+  previewEntry?: { id: string; type: string; };
 } = {};
 export default ui;
 
@@ -237,5 +239,22 @@ export function setupEditors(clientId: number) {
 let previewPane = document.querySelector(".preview");
 new PerfectResize(previewPane, "right");
 ui.previewTypeSelect = <HTMLSelectElement>previewPane.querySelector("select");
-ui.previewTypeSelect.addEventListener("change", () => { setupPreview(); });
+ui.previewTypeSelect.addEventListener("change", () => {
+  ui.previewAssetInput.style.display = (ui.previewTypeSelect.value === "Asset") ? "initial" : "none";
+  setupPreview();
+});
 
+ui.previewAssetInput = <HTMLInputElement>previewPane.querySelector("input");
+ui.previewAssetInput.addEventListener("input", (event: any) => {
+  if (event.target.value === "") {
+    ui.previewEntry = null;
+    setupPreview();
+    return;
+  }
+  
+  let entry = SupClient.findEntryByPath(data.projectClient.entries.pub, event.target.value);
+  if (entry == null || (entry.type !== "sprite" && entry.type !== "model")) return;
+  
+  ui.previewEntry = entry;
+  setupPreview();
+});

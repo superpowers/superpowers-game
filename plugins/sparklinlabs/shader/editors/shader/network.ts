@@ -5,14 +5,14 @@ import ShaderAsset from "../../data/ShaderAsset";
 import { UniformPub } from "../../data/Uniforms";
 import { AttributePub } from "../../data/Attributes";
 
-export let data: { projectClient?: SupClient.ProjectClient, shaderAsset?: ShaderAsset };
+export let data: { projectClient?: SupClient.ProjectClient, shaderAsset?: ShaderAsset, previewComponentUpdater?: any };
 
 export let socket = SupClient.connect(info.projectId);
 socket.on("welcome", onWelcomed);
 socket.on("disconnect", SupClient.onDisconnected);
 
 function onWelcomed(clientId: number) {
-  data = { projectClient: new SupClient.ProjectClient(socket) };
+  data = { projectClient: new SupClient.ProjectClient(socket, { subEntries: true }) };
   setupEditors(clientId);
 
   data.projectClient.subAsset(info.assetId, "shader", { onAssetReceived, onAssetEdited, onAssetTrashed });
@@ -34,7 +34,8 @@ function onAssetEdited(id: string, command: string, ...args: any[]) {
   let commandFunction = onEditCommands[`${command}`];
   if (commandFunction != null) commandFunction.apply(this, args);
 
-  if (command !== "editVertexShader" && command !== "editFragmentShader") setupPreview();
+  if (ui.previewTypeSelect.value !== "Asset" && command !== "editVertexShader" && command !== "editFragmentShader")
+    setupPreview();
 }
 
 onEditCommands.newUniform = (uniform: UniformPub) => { setupUniform(uniform); }

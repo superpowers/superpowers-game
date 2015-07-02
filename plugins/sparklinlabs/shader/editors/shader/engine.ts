@@ -1,4 +1,5 @@
 import ui from "./ui";
+import info from "./info";
 import { data } from "./network";
 import { createShaderMaterial } from "../../components/Shader";
 
@@ -20,10 +21,15 @@ let previewActor: SupEngine.Actor;
 let material: THREE.ShaderMaterial;
 
 export function setupPreview() {
-  if (previewActor != null) gameInstance.destroyActor(previewActor); 
-  previewActor = new SupEngine.Actor(gameInstance, "Preview");
-  previewActor.setLocalPosition(new THREE.Vector3(0, 0, 0));
+  if (previewActor != null) gameInstance.destroyActor(previewActor);
+  if (data.previewComponentUpdater != null) {
+    data.previewComponentUpdater.destroy();
+    data.previewComponentUpdater = null;
+  }
 
+  if (ui.previewTypeSelect.value === "Asset" && ui.previewEntry == null) return;
+
+  previewActor = new SupEngine.Actor(gameInstance, "Preview");
   let previewGeometry: THREE.BufferGeometry;
   switch (ui.previewTypeSelect.value) {
     case "Plane":
@@ -35,11 +41,29 @@ export function setupPreview() {
     case "Sphere":
       previewGeometry = new THREE.BufferGeometry().fromGeometry(new THREE.SphereGeometry(2, 12, 12));
       break;
+    case "Asset":
+      let componentClassName: string;
+      let config = { materialType: "shader", shaderAssetId: info.assetId, spriteAssetId: <string>null, modelAssetId: <string>null }; 
+      if (ui.previewEntry.type === "sprite") {
+        componentClassName = "SpriteRenderer";
+        config.spriteAssetId = ui.previewEntry.id;
+      } else {
+        componentClassName = "ModelRenderer";
+        config.modelAssetId = ui.previewEntry.id;
+      }
+    
+      let componentClass = SupEngine.componentClasses[componentClassName];
+      let component = new componentClass(previewActor);
+      data.previewComponentUpdater = new componentClass.Updater(
+        data.projectClient,
+        component,
+        config
+      );
+      return;
   }
   material = createShaderMaterial(data.shaderAsset.pub, texture, previewGeometry);
   let spherePreviewMesh = new THREE.Mesh(previewGeometry, material);
   previewActor.threeObject.add(spherePreviewMesh);
-  spherePreviewMesh.updateMatrixWorld(false);
 }
 
 let tickAnimationFrameId = requestAnimationFrame(tick);
