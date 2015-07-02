@@ -26,6 +26,10 @@ export function setupPreview() {
     data.previewComponentUpdater.destroy();
     data.previewComponentUpdater = null;
   }
+  if (material != null) {
+    material.dispose();
+    material = null;
+  }
 
   if (ui.previewTypeSelect.value === "Asset" && ui.previewEntry == null) return;
 
@@ -80,6 +84,9 @@ function tick(timestamp=0) {
 
   if (updates === 0) return;
 
-  if (material != null) material.uniforms.time.value += 1 / gameInstance.framesPerSecond;
+  if (material != null) {
+    for (let i = 0; i < updates; i++)
+      material.uniforms.time.value += 1 / gameInstance.framesPerSecond;
+  }
   gameInstance.draw();
 }
