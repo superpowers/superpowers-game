@@ -86,12 +86,13 @@ onmessage = (event: MessageEvent) => {
       break;
 
     case "getDefinitionAt":
-      console.log(scripts.fileNames);
-      let definition = service.getDefinitionAtPosition(event.data.name, event.data.start)[0];
+      let definitions = service.getDefinitionAtPosition(event.data.name, event.data.start);
+      if (definitions == null) return;
+
+      let definition = definitions[0];
       if (definition.fileName === "lib.d.ts") {
         //TODO: open the api browser at the proper page
       } else {
-        console.log(definition);
         let file = scripts.files[definition.fileName].text;
         let textParts = file.split("\n");
         let line = 0;
