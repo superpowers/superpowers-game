@@ -47,13 +47,13 @@ export default class ArcadeBody2DEditor {
     });
 
     let offsetX = SupClient.table.appendRow(this.tbody, "Offset X");
-    this.boxFields["offsetX"] = SupClient.table.appendNumberField(offsetX.valueCell, config.offsetX, 0);
+    this.boxFields["offsetX"] = SupClient.table.appendNumberField(offsetX.valueCell, config.offsetX);
     this.boxFields["offsetX"].addEventListener("change", (event: any) => {
       this.editConfig("setProperty", "offsetX", parseFloat(event.target.value));
     });
 
     let offsetY = SupClient.table.appendRow(this.tbody, "Offset Y");
-    this.boxFields["offsetY"] = SupClient.table.appendNumberField(offsetY.valueCell, config.offsetY, 0);
+    this.boxFields["offsetY"] = SupClient.table.appendNumberField(offsetY.valueCell, config.offsetY);
     this.boxFields["offsetY"].addEventListener("change", (event: any) => {
       this.editConfig("setProperty", "offsetY", parseFloat(event.target.value));
     });
