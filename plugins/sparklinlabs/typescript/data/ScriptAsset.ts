@@ -135,44 +135,34 @@ Sup.registerBehavior(${behaviorName});
   }
 
   load(assetPath: string) {
-    fs.readFile(path.join(assetPath, "asset.json"), { encoding: "utf8" }, (err, json) => {
-      this.pub = JSON.parse(json);
+    // TODO: Remove these at some point, asset migration introduced in Superpowers 0.10
+    fs.unlink(path.join(assetPath, "asset.json"), (err) => {});
 
-      fs.readFile(path.join(assetPath, "script.txt"), { encoding: "utf8" }, (err, text) => {
-        this.pub.text = text;
+    this.pub = { revisionId: 0, text: "", draft: "" };
 
-        fs.readFile(path.join(assetPath, "draft.txt"), { encoding: "utf8" }, (err, draft) => {
-          this.pub.draft = (draft != null) ? draft : this.pub.text;
-          this.setup();
-          this.emit("load");
-        });
+    fs.readFile(path.join(assetPath, "script.txt"), { encoding: "utf8" }, (err, text) => {
+      this.pub.text = text;
+
+      fs.readFile(path.join(assetPath, "draft.txt"), { encoding: "utf8" }, (err, draft) => {
+        this.pub.draft = (draft != null) ? draft : this.pub.text;
+        this.setup();
+        this.emit("load");
       });
     });
   }
 
   save(assetPath: string, callback: (err: Error) => any) {
-    let text = this.pub.text; delete this.pub.text;
-    let draft = this.pub.draft; delete this.pub.draft;
-
-    let json = JSON.stringify(this.pub, null, 2);
-
-    this.pub.text = text;
-    this.pub.draft = draft;
-
-    fs.writeFile(path.join(assetPath, "asset.json"), json, { encoding: "utf8" }, (err) => {
+    fs.writeFile(path.join(assetPath, "script.txt"), this.pub.text, { encoding: "utf8" }, (err) => {
       if (err != null) { callback(err); return; }
-      fs.writeFile(path.join(assetPath, "script.txt"), text, { encoding: "utf8" }, (err) => {
-        if (err != null) { callback(err); return; }
 
-        if (this.hasDraft) {
-          fs.writeFile(path.join(assetPath, "draft.txt"), draft, { encoding: "utf8" }, callback);
-        } else {
-          fs.unlink(path.join(assetPath, "draft.txt"), (err) => {
-            if (err != null && err.code !== "ENOENT") { callback(err); return; }
-            callback(null);
-          });
-        }
-      });
+      if (this.hasDraft) {
+        fs.writeFile(path.join(assetPath, "draft.txt"), this.pub.draft, { encoding: "utf8" }, callback);
+      } else {
+        fs.unlink(path.join(assetPath, "draft.txt"), (err) => {
+          if (err != null && err.code !== "ENOENT") { callback(err); return; }
+          callback(null);
+        });
+      }
     });
   }
 
