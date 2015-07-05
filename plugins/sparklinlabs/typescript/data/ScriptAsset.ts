@@ -138,13 +138,13 @@ Sup.registerBehavior(${behaviorName});
     // TODO: Remove these at some point, asset migration introduced in Superpowers 0.10
     fs.unlink(path.join(assetPath, "asset.json"), (err) => {});
 
-    this.pub = { revisionId: 0, text: "", draft: "" };
+    // NOTE: We must not set this.pub with temporary values here, otherwise
+    // the asset will be considered loaded by Dictionary.acquire
+    // and the acquire callback will be called immediately
 
     fs.readFile(path.join(assetPath, "script.txt"), { encoding: "utf8" }, (err, text) => {
-      this.pub.text = text;
-
       fs.readFile(path.join(assetPath, "draft.txt"), { encoding: "utf8" }, (err, draft) => {
-        this.pub.draft = (draft != null) ? draft : this.pub.text;
+        this.pub = { revisionId: 0, text, draft: (draft != null) ? draft : this.pub.text };
         this.setup();
         this.emit("load");
       });
