@@ -144,7 +144,7 @@ Sup.registerBehavior(${behaviorName});
 
     fs.readFile(path.join(assetPath, "script.txt"), { encoding: "utf8" }, (err, text) => {
       fs.readFile(path.join(assetPath, "draft.txt"), { encoding: "utf8" }, (err, draft) => {
-        this.pub = { revisionId: 0, text, draft: (draft != null) ? draft : this.pub.text };
+        this.pub = { revisionId: 0, text, draft: (draft != null) ? draft : text };
         this.setup();
         this.emit("load");
       });
