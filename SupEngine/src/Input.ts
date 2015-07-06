@@ -1,5 +1,12 @@
 import { EventEmitter } from "events";
 
+interface KeyState {
+  isDown: boolean;
+  wasJustPressed: boolean;
+  wasJustAutoRepeated: boolean;
+  wasJustReleased: boolean;
+}
+
 export default class Input extends EventEmitter {
   static maxTouches = 10;
 
@@ -16,8 +23,9 @@ export default class Input extends EventEmitter {
   touches: Array<{isDown: boolean; wasStarted: boolean; wasEnded: boolean; position: {x: number; y: number;}}> = [];
   touchesDown: boolean[] = [];
 
-  keyboardButtons: Array<{isDown: boolean; wasJustPressed: boolean; wasJustReleased: boolean;}> = [];
+  keyboardButtons: KeyState[] = [];
   keyboardButtonsDown: boolean[] = [];
+  autoRepeatedKey: number = null;
   textEntered = "";
   newTextEntered = "";
 
@@ -156,7 +164,7 @@ export default class Input extends EventEmitter {
 
     // Keyboard
     for (let i = 0; i <= 255; i++) {
-      this.keyboardButtons[i] = { isDown: false, wasJustPressed: false, wasJustReleased: false };
+      this.keyboardButtons[i] = { isDown: false, wasJustPressed: false, wasJustAutoRepeated: false, wasJustReleased: false };
       this.keyboardButtonsDown[i] = false;
     }
 
@@ -344,21 +352,17 @@ export default class Input extends EventEmitter {
     }
   }
 
-  // Whitelisted control keys generate text entered
-  static whitelistedControlKeys = [ 8 /* backspace \b */, 9 /* tab \t */, 13 /* enter \r */, 32 /* space */ ];
-
   // TODO: stop using keyCode when KeyboardEvent.code is supported more widely
   // See https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent.code
   _onKeyDown = (event: KeyboardEvent) => {
-    // NOTE: Key codes in range 33-47 are Page Up/Down, Home/End, arrow keys, etc.
-    if (event.keyCode < 48) {
-      event.preventDefault();
+    // NOTE: Key codes in range 33-47 are Page Up/Down, Home/End, arrow keys, Insert/Delete, etc.
+    let isControlKey = event.keyCode < 48 && event.keyCode != 32;
+    if (isControlKey) event.preventDefault();
 
-      if (Input.whitelistedControlKeys.indexOf(event.keyCode) !== -1) this.newTextEntered += String.fromCharCode(event.keyCode);
-    }
+    if (!this.keyboardButtonsDown[event.keyCode]) this.keyboardButtonsDown[event.keyCode] = true;
+    else this.autoRepeatedKey = event.keyCode;
 
-    this.keyboardButtonsDown[event.keyCode] = true;
-    return event.keyCode >= 48;
+    return !isControlKey;
   }
 
   _onKeyPress = (event: KeyboardEvent) => {
@@ -435,7 +439,13 @@ export default class Input extends EventEmitter {
       keyboardButton.isDown = this.keyboardButtonsDown[i];
 
       keyboardButton.wasJustPressed = ! wasDown && keyboardButton.isDown;
+      keyboardButton.wasJustAutoRepeated = false;
       keyboardButton.wasJustReleased = wasDown && ! keyboardButton.isDown;
+    }
+
+    if (this.autoRepeatedKey != null) {
+      this.keyboardButtons[this.autoRepeatedKey].wasJustAutoRepeated = true;
+      this.autoRepeatedKey = null;
     }
 
     this.textEntered = this.newTextEntered;
