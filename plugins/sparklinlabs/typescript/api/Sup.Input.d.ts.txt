@@ -45,7 +45,7 @@ declare module Sup {
     // Additionnally, ANY will return true for any key
     // and NONE will return true for no keys
     function isKeyDown(keyName: string): boolean;
-    function wasKeyJustPressed(keyName: string): boolean;
+    function wasKeyJustPressed(keyName: string, options?: { autoRepeat?: boolean; }): boolean;
     function wasKeyJustReleased(keyName: string): boolean;
 
     function getTextEntered(): string;
