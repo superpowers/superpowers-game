@@ -135,7 +135,7 @@ function onCheckOpacity(event: any) {
 }
 
 function onSetGridWidth(event: any) {
-  let texture = data.spriteUpdater.spriteAsset.pub.texture;
+  let texture = data.spriteUpdater.spriteAsset.pub.textures["map"];
   if (texture == null) return;
 
   SupClient.dialogs.prompt("How many frames per row?", null, "1", "Set grid width", (framesPerRow) => {
@@ -151,7 +151,7 @@ function onSetGridWidth(event: any) {
 }
 
 function onSetGridHeight(event: any) {
-  let texture = data.spriteUpdater.spriteAsset.pub.texture;
+  let texture = data.spriteUpdater.spriteAsset.pub.textures["map"];
   if (texture == null) return;
 
   SupClient.dialogs.prompt("How many frames per column?", null, "1", "Set grid height", (framesPerColumn) => {
@@ -279,13 +279,13 @@ export function setupProperty(path: string, value: any) {
 
   if (path === "filtering" && spritesheetArea.spriteRenderer.asset != null) {
     if (pub.filtering === "pixelated") {
-      spritesheetArea.spritesheet.texture.magFilter = SupEngine.THREE.NearestFilter;
-      spritesheetArea.spritesheet.texture.minFilter = SupEngine.THREE.NearestFilter;
+      spritesheetArea.spritesheet.textures["map"].magFilter = SupEngine.THREE.NearestFilter;
+      spritesheetArea.spritesheet.textures["map"].minFilter = SupEngine.THREE.NearestFilter;
     } else {
-      spritesheetArea.spritesheet.texture.magFilter = SupEngine.THREE.LinearFilter;
-      spritesheetArea.spritesheet.texture.minFilter = SupEngine.THREE.LinearMipMapLinearFilter;
+      spritesheetArea.spritesheet.textures["map"].magFilter = SupEngine.THREE.LinearFilter;
+      spritesheetArea.spritesheet.textures["map"].minFilter = SupEngine.THREE.LinearMipMapLinearFilter;
     }
-    spritesheetArea.spritesheet.texture.needsUpdate = true;
+    spritesheetArea.spritesheet.textures["map"].needsUpdate = true;
   }
 
   if (path === "opacity") {
@@ -313,7 +313,7 @@ export function setupProperty(path: string, value: any) {
 
   if (path === "grid.width" || path === "grid.height") {
     spritesheetArea.gridRenderer.setRatio({ x: pub.pixelsPerUnit / pub.grid.width, y: pub.pixelsPerUnit / pub.grid.height });
-    spritesheetArea.gridRenderer.resize(pub.texture.image.width / pub.grid.width, pub.texture.image.height / pub.grid.height);
+    spritesheetArea.gridRenderer.resize(pub.textures["map"].image.width / pub.grid.width, pub.textures["map"].image.height / pub.grid.height);
     updateSelection();
   }
 }

@@ -58,7 +58,7 @@ export function updateSelection() {
   let animation = data.spriteUpdater.spriteAsset.animations.byId[ui.selectedAnimationId];
   let width = pub.grid.width / pub.pixelsPerUnit;
   let height = pub.grid.height / pub.pixelsPerUnit;
-  let framesPerRow = pub.texture.image.width / pub.grid.width;
+  let framesPerRow = pub.textures["map"].image.width / pub.grid.width;
   spritesheetArea.selectionRenderer.setup(width, height, animation.startFrameIndex, animation.endFrameIndex, framesPerRow);
 }
 

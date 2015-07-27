@@ -70,32 +70,32 @@ export default class SpriteRendererUpdater {
     this.spriteAsset = asset;
     if (this.spriteRenderer.opacity == null) this.spriteRenderer.opacity = asset.pub.opacity;
 
-    let image = (asset.pub.texture != null) ? asset.pub.texture.image : null;
+    let image = (asset.pub.textures != null) ? asset.pub.textures["map"].image : null;
     if (image == null) {
       image = new Image();
 
-      asset.pub.texture = new THREE.Texture(image);
+      asset.pub.textures = { map: new THREE.Texture(image) };
       if (asset.pub.filtering === "pixelated") {
-        asset.pub.texture.magFilter = THREE.NearestFilter;
-        asset.pub.texture.minFilter = THREE.NearestFilter;
+        asset.pub.textures["map"].magFilter = THREE.NearestFilter;
+        asset.pub.textures["map"].minFilter = THREE.NearestFilter;
       }
 
       if (this.url != null) URL.revokeObjectURL(this.url);
 
-      let typedArray = new Uint8Array((<any>asset.pub.image));
+      let typedArray = new Uint8Array((<any>asset.pub.maps["map"]));
       let blob = new Blob([ typedArray ], { type: "image/*" });
       this.url = URL.createObjectURL(blob);
       image.src = this.url
     }
 
     if (! image.complete) {
-      if ((<any>asset.pub.image).byteLength === 0) {
+      if ((<any>asset.pub.maps["map"]).byteLength === 0) {
         if (this.receiveAssetCallbacks != null) this.receiveAssetCallbacks.sprite();
       }
       else {
         let onImageLoaded = () => {
           image.removeEventListener("load", onImageLoaded);
-          asset.pub.texture.needsUpdate = true;
+          asset.pub.textures["map"].needsUpdate = true;
           this._setSprite();
           if (this.receiveAssetCallbacks != null) this.receiveAssetCallbacks.sprite();
         };
@@ -142,13 +142,13 @@ export default class SpriteRendererUpdater {
   _onEditCommand_upload() {
     if (this.url != null) URL.revokeObjectURL(this.url);
 
-    let typedArray = new Uint8Array((<any>this.spriteAsset.pub.image));
+    let typedArray = new Uint8Array((<any>this.spriteAsset.pub.maps["map"]));
     let blob = new Blob([ typedArray ], { type: "image/*" });
     this.url = URL.createObjectURL(blob);
-    let image = this.spriteAsset.pub.texture.image;
+    let image = this.spriteAsset.pub.textures["map"].image;
     image.src = this.url;
     image.addEventListener("load", () => {
-      this.spriteAsset.pub.texture.needsUpdate = true;
+      this.spriteAsset.pub.textures["map"].needsUpdate = true;
       this.spriteRenderer.setSprite(this.spriteAsset.pub, this.materialType);
 
       if (this.editAssetCallbacks != null) this.editAssetCallbacks.sprite.upload();
@@ -160,13 +160,13 @@ export default class SpriteRendererUpdater {
     switch(path) {
       case "filtering":
         if (this.spriteAsset.pub.filtering === "pixelated") {
-          this.spriteAsset.pub.texture.magFilter = THREE.NearestFilter;
-          this.spriteAsset.pub.texture.minFilter = THREE.NearestFilter;
+          this.spriteAsset.pub.textures["map"].magFilter = THREE.NearestFilter;
+          this.spriteAsset.pub.textures["map"].minFilter = THREE.NearestFilter;
         } else {
-          this.spriteAsset.pub.texture.magFilter = THREE.LinearFilter;
-          this.spriteAsset.pub.texture.minFilter = THREE.LinearMipMapLinearFilter;
+          this.spriteAsset.pub.textures["map"].magFilter = THREE.LinearFilter;
+          this.spriteAsset.pub.textures["map"].minFilter = THREE.LinearMipMapLinearFilter;
         }
-        this.spriteAsset.pub.texture.needsUpdate = true;
+        this.spriteAsset.pub.textures["map"].needsUpdate = true;
         break;
 
       case "opacity":

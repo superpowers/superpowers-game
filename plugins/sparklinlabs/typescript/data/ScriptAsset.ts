@@ -136,7 +136,7 @@ Sup.registerBehavior(${behaviorName});
 
   load(assetPath: string) {
     // TODO: Remove these at some point, asset migration introduced in Superpowers 0.10
-    fs.unlink(path.join(assetPath, "asset.json"), (err) => {});
+    fs.unlink(path.join(assetPath, "asset.json"));
 
     // NOTE: We must not set this.pub with temporary values here, otherwise
     // the asset will be considered loaded by Dictionary.acquire

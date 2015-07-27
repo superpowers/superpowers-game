@@ -51,7 +51,7 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
     if (this.materialType === "shader")
       this.material = SupEngine.componentClasses["Shader"].createShaderMaterial(
         customShader,
-        this.asset.texture,
+        this.asset.textures["map"],
         this.geometry
       );
 
@@ -60,7 +60,7 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
       if (this.materialType === "basic") material = new THREE.MeshBasicMaterial();
       else if (this.materialType === "phong") material = new THREE.MeshPhongMaterial();
 
-      material.map = this.asset.texture;
+      material.map = this.asset.textures["map"];
       material.alphaTest = this.asset.alphaTest;
       material.side = THREE.DoubleSide;
       material.color.setRGB(this.color.r, this.color.g, this.color.b);

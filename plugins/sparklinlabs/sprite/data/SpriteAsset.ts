@@ -1,11 +1,12 @@
 import * as path from "path";
 import * as fs from "fs";
+import * as async from "async";
 
 import SpriteAnimations, { SpriteAnimationPub } from "./SpriteAnimations";
 
 interface SpriteAssetPub {
-  texture?: any;
-  image: Buffer;
+  textures?: { [name: string]: any; };
+  maps: { [name: string]: Buffer; };
   filtering: string;
   pixelsPerUnit: number;
   framesPerSecond: number;
@@ -21,7 +22,12 @@ interface SpriteAssetPub {
 export default class SpriteAsset extends SupCore.data.base.Asset {
 
   static schema = {
-    image: { type: "buffer" },
+    maps: {
+      type: "hash",
+      values: {
+        type: "buffer",
+      }
+    },
     filtering: { type: "enum", items: [ "pixelated", "smooth"], mutable: true },
     pixelsPerUnit: { type: "number", min: 1, mutable: true },
     framesPerSecond: { type: "number", min: 1, mutable: true },
@@ -57,7 +63,7 @@ export default class SpriteAsset extends SupCore.data.base.Asset {
   init(options: any, callback: Function) {
     this.serverData.resources.acquire("spriteSettings", null, (err: Error, spriteSettings: any) => {
       this.pub = {
-        image: new Buffer(0),
+        maps: { map: new Buffer(0) },
         filtering: spriteSettings.pub.filtering,
         pixelsPerUnit: spriteSettings.pub.pixelsPerUnit,
         framesPerSecond: spriteSettings.pub.framesPerSecond,
@@ -81,40 +87,91 @@ export default class SpriteAsset extends SupCore.data.base.Asset {
 
   load(assetPath: string) {
     fs.readFile(path.join(assetPath, "asset.json"), { encoding: "utf8" }, (err, json) => {
-      this.pub = JSON.parse(json);
+      let pub: SpriteAssetPub = JSON.parse(json);
 
       // TODO: Remove these at some point, new config setting introduced in Superpowers 0.8
-      if (typeof this.pub.opacity === "undefined") this.pub.opacity = 1;
+      if (typeof pub.opacity === "undefined") pub.opacity = 1;
 
-      fs.readFile(path.join(assetPath, "image.dat"), (err, buffer) => {
-        this.pub.image = buffer;
+      let mapsName: string[] = <any>pub.maps;
+      // TODO: Remove these at some point, asset migration introduced in Superpowers 0.11
+      if (mapsName == null) mapsName = ["map"];
+      
+      pub.maps = {};
+      async.series([
+        (callback) => {
+          async.each(mapsName, (key, cb) => {
+            fs.readFile(path.join(assetPath, `map-${key}.dat`), (err, buffer) => {
+              // TODO: Handle error but ignore ENOENT
+              if (err != null) {
+                // TODO: Remove these at some point, asset migration introduced in Superpowers 0.11
+                if (err.code === "ENOENT" && key === "map") {
+                  fs.readFile(path.join(assetPath, "image.dat"), (err, buffer) => {
+                    pub.maps[key] = buffer;
+                    
+                    fs.writeFile(path.join(assetPath, `map-${key}.dat`), buffer);
+                    fs.unlink(path.join(assetPath, "image.dat"));
+                    cb();
+                  });
+                } else cb();
+                return;
+              }
+              pub.maps[key] = buffer;
+              cb();
+            });
+          }, (err) => { callback(err, null); });
+        }
+
+      ], (err) => {
+        this.pub = pub;
         this.setup();
         this.emit("load");
       });
     });
   }
 
-  save(assetPath: string, callback: Function) {
-    let buffer = this.pub.image;
-    delete this.pub.image;
+  save(assetPath: string, saveCallback: Function) {
+    let maps = this.pub.maps;
+    let mapsName = <string[]>[];
+    for (let key in maps) {
+      if (maps[key] != null) mapsName.push(key);
+    }
+    (<any>this.pub).maps = mapsName;
     let json = JSON.stringify(this.pub, null, 2);
-    this.pub.image = buffer;
-    fs.writeFile(path.join(assetPath, "asset.json"), json, { encoding: "utf8" }, () => {
-      fs.writeFile(path.join(assetPath, "image.dat"), buffer, callback);
-    });
+    this.pub.maps = maps;
+    
+    async.series<Error>([
+      (callback) => { fs.writeFile(path.join(assetPath, "asset.json"), json, { encoding: "utf8" }, (err) => { callback(err, null); }); },
+
+      (callback) => {
+        async.each(mapsName, (key, cb) => {
+          let value = maps[key];
+
+          if (value == null) {
+            fs.unlink(path.join(assetPath, `map-${key}.dat`), (err) => {
+              if (err != null && err.code !== "ENOENT") { cb(err); return; }
+              cb();
+            });
+            return;
+          }
+
+          fs.writeFile(path.join(assetPath, `map-${key}.dat`), value, cb);
+        }, (err) => { callback(err, null); });
+      }
+
+    ], (err) => { saveCallback(err); });
   }
 
-  server_upload(client: any, image: any, callback: (err: string, image?: any) => any) {
-    if (! (image instanceof Buffer)) { callback("Image must be an ArrayBuffer"); return; }
+  server_upload(client: any, buffer: any, callback: (err: string, buffer?: any) => any) {
+    if (! (buffer instanceof Buffer)) { callback("buffer must be an ArrayBuffer"); return; }
 
-    this.pub.image = image;
+    this.pub.maps["map"] = buffer;
 
-    callback(null, image);
+    callback(null, buffer);
     this.emit("change");
   }
 
-  client_upload(image: any) {
-    this.pub.image = image;
+  client_upload(buffer: any) {
+    this.pub.maps["map"] = buffer;
   }
 
   server_newAnimation(client: any, name: string, callback: (err: string, animation?: SpriteAnimationPub, actualIndex?: number) => any) {

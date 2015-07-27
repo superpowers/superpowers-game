@@ -28,30 +28,31 @@ function onConnected() {
 
 function onAssetReceived() {
   let pub = data.spriteUpdater.spriteAsset.pub;
+  let texture = pub.textures["map"];
 
   spritesheetArea.spritesheet = {
-    texture: ((<any>pub.image).byteLength !== 0) ? pub.texture.clone() : null,
+    textures: { map: ((<any>pub.maps["map"]).byteLength !== 0) ? texture.clone() : null },
     filtering: pub.filtering,
     pixelsPerUnit: pub.pixelsPerUnit,
     framesPerSecond: pub.framesPerSecond,
     alphaTest: pub.alphaTest,
 
-    grid: { width: pub.texture.image.width, height: pub.texture.image.height },
+    grid: { width: texture.image.width, height: texture.image.height },
     origin: { x: 0, y: 1 },
     animations: <any>[]
   };
 
-  if ((<any>pub.image).byteLength !== 0) {
-    spritesheetArea.spritesheet.texture.needsUpdate = true;
+  if ((<any>pub.maps["map"]).byteLength !== 0) {
+    spritesheetArea.spritesheet.textures["map"].needsUpdate = true;
     spritesheetArea.spriteRenderer.setSprite(spritesheetArea.spritesheet);
 
-    ui.imageLabel.width.textContent = pub.texture.image.width;
-    ui.imageLabel.height.textContent = pub.texture.image.height;
+    ui.imageLabel.width.textContent = texture.image.width;
+    ui.imageLabel.height.textContent = texture.image.height;
   }
 
   spritesheetArea.gridRenderer.setGrid({
-    width: pub.texture.image.width / pub.grid.width,
-    height: pub.texture.image.height / pub.grid.height,
+    width: texture.image.width / pub.grid.width,
+    height: texture.image.height / pub.grid.height,
     orthographicScale: 5,
     direction: -1,
     ratio: { x: pub.pixelsPerUnit / pub.grid.width, y: pub.pixelsPerUnit / pub.grid.height }
@@ -74,21 +75,22 @@ function onAssetReceived() {
 
 onEditCommands.upload = () => {
   let pub = data.spriteUpdater.spriteAsset.pub;
+  let texture = pub.textures["map"];
 
   let asset = spritesheetArea.spritesheet;
-  asset.texture = pub.texture.clone();
-  asset.texture.needsUpdate = true;
-  asset.grid.width = pub.texture.image.width;
-  asset.grid.height = pub.texture.image.height;
+  asset.textures["map"] = texture.clone();
+  asset.textures["map"].needsUpdate = true;
+  asset.grid.width = texture.image.width;
+  asset.grid.height = texture.image.height;
   asset.pixelsPerUnit = pub.pixelsPerUnit;
   spritesheetArea.spriteRenderer.setSprite(asset);
 
-  spritesheetArea.gridRenderer.resize(pub.texture.image.width / pub.grid.width, pub.texture.image.height / pub.grid.height);
+  spritesheetArea.gridRenderer.resize(texture.image.width / pub.grid.width, texture.image.height / pub.grid.height);
 
   updateSelectedAnimation();
 
-  ui.imageLabel.width.textContent = pub.texture.image.width;
-  ui.imageLabel.height.textContent = pub.texture.image.height;
+  ui.imageLabel.width.textContent = texture.image.width;
+  ui.imageLabel.height.textContent = texture.image.height;
 };
 
 onEditCommands.setProperty = (path: string, value: any) => { setupProperty(path, value); };
