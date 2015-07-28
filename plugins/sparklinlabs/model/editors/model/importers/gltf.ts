@@ -380,7 +380,7 @@ export function importModel(files: File[], callback: ImportCallback) {
       }
 
       readFile(imageFiles[Object.keys(imageFiles)[0]], "arraybuffer", (err, data) => {
-        maps["diffuse"] = data;
+        maps["map"] = data;
         callback(null, { attributes, bones, maps, animation, upAxisMatrix: upAxisMatrix.toArray() });
       });
     });

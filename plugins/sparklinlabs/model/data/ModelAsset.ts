@@ -44,7 +44,7 @@ export default class ModelAsset extends SupCore.data.base.Asset {
       type: "hash",
       properties: {
         // TODO: Each map should have filters, etc.
-        diffuse: { type: "buffer?", mutable: true }
+        map: { type: "buffer?", mutable: true }
       }
     },
     animations: { type: "array" },
@@ -62,7 +62,7 @@ export default class ModelAsset extends SupCore.data.base.Asset {
     this.pub = {
       attributes: { position: null, index: null, color: null, uv: null, normal: null },
       bones: null,
-      maps: { diffuse: null },
+      maps: { map: null },
       animations: [],
       opacity: null
     };
@@ -76,14 +76,18 @@ export default class ModelAsset extends SupCore.data.base.Asset {
 
   load(assetPath: string) {
     fs.readFile(path.join(assetPath, "asset.json"), { encoding: "utf8" }, (err, json) => {
-      this.pub = JSON.parse(json);
+      let pub = JSON.parse(json);
       
       // TODO: Remove these at some point, new config setting introduced in Superpowers 0.8
-      if (typeof this.pub.opacity === "undefined") this.pub.opacity = 1;
+      if (typeof pub.opacity === "undefined") pub.opacity = 1;
+      
+      // TODO: Remove these at some point, asset migration introduced in Superpowers 0.11
+      if (pub.maps.length === 1 && pub.maps[0] === "diffuse") pub.maps = ["map"];
 
-      this.pub.attributes = {};
-      this.pub.maps = {};
-      if (this.pub.animations == null) this.pub.animations = [];
+      pub.attributes = {};
+      let mapsName: string[] = pub.maps;
+      pub.maps = {};
+      if (pub.animations == null) pub.animations = [];
 
       async.series([
 
@@ -92,24 +96,36 @@ export default class ModelAsset extends SupCore.data.base.Asset {
                 fs.readFile(path.join(assetPath, `attr-${key}.dat`), (err, buffer) => {
                     // TODO: Handle error but ignore ENOENT
                     if (err != null) { cb(); return; }
-                    this.pub.attributes[key] = buffer;
+                    pub.attributes[key] = buffer;
                     cb();
                 });
             }, (err) => { callback(err, null); });
         },
 
         (callback) => {
-          async.each(Object.keys(ModelAsset.schema.maps.properties), (key, cb) => {
+          async.each(mapsName, (key, cb) => {
             fs.readFile(path.join(assetPath, `map-${key}.dat`), (err, buffer) => {
               // TODO: Handle error but ignore ENOENT
-              if (err != null) { cb(); return; }
-              this.pub.maps[key] = buffer;
+              if (err != null) {
+                // TODO: Remove these at some point, asset migration introduced in Superpowers 0.11
+                if (err.code === "ENOENT" && key === "map") {
+                  fs.readFile(path.join(assetPath, `map-diffuse.dat`), (err, buffer) => {
+                    pub.maps[key] = buffer;
+                    fs.writeFile(path.join(assetPath, `map-map.dat`), buffer);
+                    fs.unlink(path.join(assetPath, `map-diffuse.dat`));
+                    cb();
+                  });
+                } else cb();
+                return;
+              }
+              pub.maps[key] = buffer;
               cb();
             });
           }, (err) => { callback(err, null); });
         }
 
       ], (err) => {
+        this.pub = pub;
         this.setup();
         this.emit("load");
       });
@@ -131,7 +147,7 @@ export default class ModelAsset extends SupCore.data.base.Asset {
       if (attributes[key] != null) this.pub.attributes.push(key);
     }
 
-    this.pub.maps = [];
+    this.pub.maps = []
     for (let key in maps) {
       if (maps[key] != null) this.pub.maps.push(key);
     }
@@ -161,7 +177,7 @@ export default class ModelAsset extends SupCore.data.base.Asset {
       },
 
       (callback) => {
-        async.each(Object.keys(ModelAsset.schema.maps.properties), (key, cb) => {
+        async.each(Object.keys(maps), (key, cb) => {
           let value = maps[key];
 
           if (value == null) {

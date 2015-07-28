@@ -28,10 +28,10 @@ function start() {
   modelFileSelect.addEventListener("change", onModelFileSelectChange);
   document.querySelector(".model button.upload").addEventListener("click", () => { modelFileSelect.click(); });
 
-  // Diffuse map upload
-  let diffuseMapFileSelect = <HTMLInputElement>document.querySelector(".diffuse-map input.file-select")
-  diffuseMapFileSelect.addEventListener("change", onDiffuseMapFileSelectChange);
-  document.querySelector(".diffuse-map button.upload").addEventListener("click", () => { diffuseMapFileSelect.click(); });
+  // Primary map upload
+  let primaryMapFileSelect = <HTMLInputElement>document.querySelector(".map input.file-select")
+  primaryMapFileSelect.addEventListener("change", onPrimaryMapFileSelectChange);
+  document.querySelector(".map button.upload").addEventListener("click", () => { primaryMapFileSelect.click(); });
 
   // Show skeleton
   let showSkeletonCheckbox = <HTMLInputElement>document.querySelector(".show-skeleton");
@@ -221,7 +221,7 @@ function onModelFileSelectChange(event: any) {
   });
 }
 
-function onDiffuseMapFileSelectChange(event: Event) {
+function onPrimaryMapFileSelectChange(event: Event) {
   ui.errorsTBody.innerHTML = "";
   ui.errorPaneInfo.textContent = "No errors";
   ui.errorPaneStatus.classList.remove("has-errors");
@@ -231,7 +231,7 @@ function onDiffuseMapFileSelectChange(event: Event) {
 
 
 
-    socket.emit("edit:assets", info.assetId, "setMaps", { diffuse: reader.result }, (err: string) => {
+    socket.emit("edit:assets", info.assetId, "setMaps", { map: reader.result }, (err: string) => {
       if (err != null) { alert(err); return; }
     });
   };
