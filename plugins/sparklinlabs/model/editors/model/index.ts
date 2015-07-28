@@ -57,6 +57,10 @@ function start() {
   document.querySelector("button.rename-animation").addEventListener("click", onRenameAnimationClick);
   document.querySelector("button.delete-animation").addEventListener("click", onDeleteAnimationClick);
 
+  // Advanced textures
+  let texturesPanes = document.querySelector(".advanced-textures");
+  new PerfectResize(texturesPanes, "bottom");
+
   // Setup 3D viewport
   let canvasElt = <HTMLCanvasElement>document.querySelector("canvas");
   ui.gameInstance = new SupEngine.GameInstance(canvasElt);

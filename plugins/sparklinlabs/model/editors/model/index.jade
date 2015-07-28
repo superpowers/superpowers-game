@@ -46,7 +46,7 @@ html
           th Show skeleton
           td
             input.show-skeleton(type="checkbox")
-        
+
         tr
           th
             span Opacity
@@ -54,6 +54,8 @@ html
           td
             input(type="number" min="0" max="1" step="0.1").property-opacity
 
+      .header
+        span Animations
       .animations-buttons
         button.new-animation New
         form(style="display: none")
@@ -63,6 +65,45 @@ html
         button(disabled).delete-animation Delete
 
       .animations-tree-view
+
+      .advanced-textures
+        .header
+          span Textures
+
+        table
+          tr
+            th Map
+            td
+              input
+          tr
+            th Light map
+            td
+              input
+          tr
+            th Specular map
+            td
+              input
+          tr
+            th Alpha map
+            td
+              input
+          tr
+            th Normal map (Phong)
+            td
+              input
+
+        .textures-buttons
+          button.new-animation New
+          form(style="display: none")
+            input.file-select.upload-animation(type="file",multiple)
+          button(disabled).upload-animation Upload
+          button(disabled).rename-animation Rename
+          button(disabled).delete-animation Delete
+        .textures-tree-view
+
+      .advanced-textures-checkbox
+        span Advanced textures
+        input(type="checkbox")
 
     script(src="/core/SupCore.js")
     script(src="../../data.js")

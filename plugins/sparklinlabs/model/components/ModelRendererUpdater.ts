@@ -95,7 +95,7 @@ export default class ModelRendererUpdater {
         texture.magFilter = SupEngine.THREE.NearestFilter;
         texture.minFilter = SupEngine.THREE.NearestFilter;
 
-        let typedArray = new Uint8Array(buffer);
+        let typedArray = new Uint8Array((<any>buffer));
         let blob = new Blob([ typedArray ], { type: "image/*" });
         image.src = this.mapObjectURLs[key] = URL.createObjectURL(blob);
       }
@@ -114,7 +114,7 @@ export default class ModelRendererUpdater {
       this.modelRenderer.setModel(null);
       return;
     }
-    
+
     this.modelRenderer.setModel(this.modelAsset.pub, this.materialType, this.shaderPub);
     if (this.animationId != null) this._playAnimation();
   }
@@ -161,7 +161,7 @@ export default class ModelRendererUpdater {
     this.modelRenderer.updateAnimationsByName();
     this._playAnimation();
   }
-  
+
   _onEditCommand_setProperty(path: string, value: any) {
     switch(path) {
       case "opacity":
@@ -216,7 +216,7 @@ export default class ModelRendererUpdater {
         this.modelRenderer.threeMesh.receiveShadow = value;
         this.modelRenderer.threeMesh.material.needsUpdate = true;
         break;
-      
+
       case "overrideOpacity":
         this.overrideOpacity = value;
         this.modelRenderer.setOpacity(value ? null : this.modelAsset.pub.opacity);

@@ -20,6 +20,12 @@ body
   display flex
   flex-flow column
 
+  .header
+    background-color #444
+    color #fff
+    text-align center
+    padding 2px
+
   table
     padding 10px
 
@@ -32,7 +38,8 @@ body
 
     td
       display inline-flex
-    
+      width 80px
+
     .opacity-checkbox
       width 15px
 
@@ -48,6 +55,7 @@ body
   .animations-tree-view
     border-top 1px solid #aaa
     flex 1
+    min-height 100px
     position relative
     background #fff
     overflow-y auto
@@ -62,6 +70,31 @@ body
     input
       width 50px
       margin-right 5px
+
+  .advanced-textures
+    display none
+    flex-flow column
+    min-height 250px
+    height 350px
+
+    .textures-buttons
+      display flex
+
+      button
+        flex 1
+        font-size smaller
+        white-space nowrap
+
+    .textures-tree-view
+      border-top 1px solid #aaa
+      flex 1
+      position relative
+      background #fff
+      overflow-y auto
+
+  .advanced-textures-checkbox
+    border-top 1px solid #aaa
+    padding 5px
 
 .error-pane
   display flex

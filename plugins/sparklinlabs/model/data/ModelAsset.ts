@@ -10,6 +10,25 @@ interface Animation {
   keyFrames: any;
 }
 
+interface ModelAssetPub {
+  upAxisMatrix: number[];
+  attributes: { [name: string]: Buffer; };
+  bones: { name: string; parentIndex: number; matrix: number[] }[];
+  textures?: { [name: string]: any; };
+  maps: { [name: string]: Buffer; };
+
+  animations: Animation[];
+
+  opacity: number;
+
+  advancedTextures: boolean;
+  map: string;
+  lightMap: string;
+  specularMap: string;
+  alphaMap: string;
+  normalMap: string;
+}
+
 export default class ModelAsset extends SupCore.data.base.Asset {
 
   static schema = {
@@ -48,11 +67,19 @@ export default class ModelAsset extends SupCore.data.base.Asset {
       }
     },
     animations: { type: "array" },
-    
-    opacity: { type: "number?", min: 0, max: 1, mutable: true }
+
+    opacity: { type: "number?", min: 0, max: 1, mutable: true },
+
+    advancedTextures: { type: "boolean", mutable: true },
+    map: { type: "string?", mutable: true },
+    lightMap: { type: "string?", mutable: true },
+    specularMap: { type: "string?", mutable: true },
+    alphaMap: { type: "string?", mutable: true },
+    normalMap: { type: "string?", mutable: true }
   };
 
   animations: ModelAnimations;
+  pub: ModelAssetPub;
 
   constructor(id: string, pub: any, serverData: any) {
     super(id, pub, ModelAsset.schema, serverData);
@@ -60,11 +87,27 @@ export default class ModelAsset extends SupCore.data.base.Asset {
 
   init(options: any, callback: Function) {
     this.pub = {
-      attributes: { position: null, index: null, color: null, uv: null, normal: null },
+      upAxisMatrix: null,
+      attributes: {
+        position: null,
+        index: null,
+        color: null,
+        uv: null,
+        normal: null,
+        skinIndex:  null,
+        skinWeight: null
+      },
       bones: null,
       maps: { map: null },
       animations: [],
-      opacity: null
+      opacity: null,
+
+      advancedTextures: false,
+      map: "map",
+      lightMap: null,
+      specularMap: null,
+      alphaMap: null,
+      normalMap: null,
     };
 
     super.init(options, callback);
@@ -77,12 +120,16 @@ export default class ModelAsset extends SupCore.data.base.Asset {
   load(assetPath: string) {
     fs.readFile(path.join(assetPath, "asset.json"), { encoding: "utf8" }, (err, json) => {
       let pub = JSON.parse(json);
-      
+
       // TODO: Remove these at some point, new config setting introduced in Superpowers 0.8
       if (typeof pub.opacity === "undefined") pub.opacity = 1;
-      
+
       // TODO: Remove these at some point, asset migration introduced in Superpowers 0.11
       if (pub.maps.length === 1 && pub.maps[0] === "diffuse") pub.maps = ["map"];
+      if (pub.advancedTextures == null) {
+        pub.advancedTextures = false;
+        pub.map = "map";
+      }
 
       pub.attributes = {};
       let mapsName: string[] = pub.maps;
@@ -139,17 +186,17 @@ export default class ModelAsset extends SupCore.data.base.Asset {
   }
 
   save(assetPath: string, saveCallback: Function) {
-    let attributes = this.pub.attributes;
+    let attributes: any = this.pub.attributes;
     let maps = this.pub.maps;
 
-    this.pub.attributes = [];
+    (<any>this.pub).attributes = [];
     for (let key in attributes) {
-      if (attributes[key] != null) this.pub.attributes.push(key);
+      if (attributes[key] != null) (<any>this.pub).attributes.push(key);
     }
 
-    this.pub.maps = []
+    (<any>this.pub).maps = []
     for (let key in maps) {
-      if (maps[key] != null) this.pub.maps.push(key);
+      if (maps[key] != null) (<any>this.pub).maps.push(key);
     }
 
     let json = JSON.stringify(this.pub, null, 2);
