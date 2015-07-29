@@ -132,7 +132,7 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
     if (this.materialType === "shader")
       this.material = SupEngine.componentClasses["Shader"].createShaderMaterial(
         customShader,
-        this.asset.textures.map,
+        this.asset.textures[this.asset.mapSlots["map"]],
         geometry
       );
 
@@ -141,7 +141,7 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
       if (this.materialType === "basic") material = new THREE.MeshBasicMaterial();
       else if (this.materialType === "phong") material = new THREE.MeshPhongMaterial();
 
-      material.map = this.asset.textures.map;
+      material.map = this.asset.textures[this.asset.mapSlots["map"]];
       material.alphaTest = 0.1;
       material.side = THREE.DoubleSide;
       material.color.setRGB(this.color.r, this.color.g, this.color.b);
@@ -204,7 +204,7 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
       if (material != null) material.needsUpdate = true;
     })
   }
-  
+
   setOpacity(opacity: number) {
     this.opacity = opacity;
     if (this.opacity != null) {
@@ -366,7 +366,7 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
       let uniforms = (<THREE.ShaderMaterial>this.material).uniforms;
       if (uniforms != null) uniforms.time.value += 1 / this.actor.gameInstance.framesPerSecond;
     }
-    
+
     if (this.hasPoseBeenUpdated) {
       this.hasPoseBeenUpdated = false;
       return;
@@ -383,6 +383,6 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
     this.animationTimer += 1;
     this.updatePose();
   }
-  
+
   setVisible(visible: boolean) { if (this.threeMesh != null) this.threeMesh.visible = visible; }
 }

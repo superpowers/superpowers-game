@@ -1,6 +1,7 @@
 import * as path from "path";
 import * as fs from "fs";
 import * as async from "async";
+import * as _ from "lodash";
 
 import ModelAnimations from "./ModelAnimations";
 interface Animation {
@@ -22,11 +23,7 @@ interface ModelAssetPub {
   opacity: number;
 
   advancedTextures: boolean;
-  map: string;
-  lightMap: string;
-  specularMap: string;
-  alphaMap: string;
-  normalMap: string;
+  mapSlots: { [name: string]: string; };
 }
 
 export default class ModelAsset extends SupCore.data.base.Asset {
@@ -61,21 +58,24 @@ export default class ModelAsset extends SupCore.data.base.Asset {
 
     maps: {
       type: "hash",
-      properties: {
-        // TODO: Each map should have filters, etc.
-        map: { type: "buffer?", mutable: true }
-      }
+      values: { type: "buffer?" }
     },
     animations: { type: "array" },
 
     opacity: { type: "number?", min: 0, max: 1, mutable: true },
 
     advancedTextures: { type: "boolean", mutable: true },
-    map: { type: "string?", mutable: true },
-    lightMap: { type: "string?", mutable: true },
-    specularMap: { type: "string?", mutable: true },
-    alphaMap: { type: "string?", mutable: true },
-    normalMap: { type: "string?", mutable: true }
+
+    mapSlots: {
+      type: "hash",
+      properties: {
+        map: { type: "string?", mutable: true },
+        light: { type: "string?", mutable: true },
+        specular: { type: "string?", mutable: true },
+        alpha: { type: "string?", mutable: true },
+        normal: { type: "string?", mutable: true }
+      }
+    }
   };
 
   animations: ModelAnimations;
@@ -98,16 +98,18 @@ export default class ModelAsset extends SupCore.data.base.Asset {
         skinWeight: null
       },
       bones: null,
-      maps: { map: null },
+      maps: { map: new Buffer(0) },
       animations: [],
       opacity: null,
 
       advancedTextures: false,
-      map: "map",
-      lightMap: null,
-      specularMap: null,
-      alphaMap: null,
-      normalMap: null,
+      mapSlots: {
+        map: "map",
+        light: null,
+        specular: null,
+        alpha: null,
+        normal: null
+      }
     };
 
     super.init(options, callback);
@@ -119,20 +121,27 @@ export default class ModelAsset extends SupCore.data.base.Asset {
 
   load(assetPath: string) {
     fs.readFile(path.join(assetPath, "asset.json"), { encoding: "utf8" }, (err, json) => {
-      let pub = JSON.parse(json);
+      let pub: ModelAssetPub = JSON.parse(json);
 
       // TODO: Remove these at some point, new config setting introduced in Superpowers 0.8
       if (typeof pub.opacity === "undefined") pub.opacity = 1;
 
       // TODO: Remove these at some point, asset migration introduced in Superpowers 0.11
-      if (pub.maps.length === 1 && pub.maps[0] === "diffuse") pub.maps = ["map"];
+      let maps: string[] = <any>pub.maps;
+      if (maps.length === 1 && maps[0] === "diffuse") (<any>pub).maps = ["map"];
       if (pub.advancedTextures == null) {
         pub.advancedTextures = false;
-        pub.map = "map";
+        pub.mapSlots = {
+          map: "map",
+          light: null,
+          specular: null,
+          alpha: null,
+          normal: null
+        }
       }
 
       pub.attributes = {};
-      let mapsName: string[] = pub.maps;
+      let mapsName: string[] = _.clone(<any>pub.maps);
       pub.maps = {};
       if (pub.animations == null) pub.animations = [];
 
@@ -284,7 +293,7 @@ export default class ModelAsset extends SupCore.data.base.Asset {
 
     for (let key in maps) {
       let value = maps[key];
-      if ((<any>ModelAsset.schema.maps.properties)[key] == null) { callback(`Unsupported map type: ${key}`); return; }
+      if (this.pub.maps[key] == null) { callback(`The map ${key} doesn't exist`); return; }
       if (value != null && !(value instanceof Buffer)) { callback(`Value for ${key} must be an ArrayBuffer or null`); return; }
     }
 
@@ -296,6 +305,72 @@ export default class ModelAsset extends SupCore.data.base.Asset {
 
   client_setMaps(maps: any) {
     for (let key in maps) this.pub.maps[key] = maps[key];
+  }
+
+  server_newMap(client: any, name: string, callback: (err: string, name: string) => any) {
+    if (name == null || typeof name !== "string") { callback("Name of the map must be a string", null); return; }
+    if (this.pub.maps[name] != null) { callback(`The map ${name} already exists`, null); return; }
+
+    this.pub.maps[name] = new Buffer(0);
+    callback(null, name);
+    this.emit("change");
+  }
+
+  client_newMap(name: string) {
+    this.pub.maps[name] = new Buffer(0);
+  }
+
+  server_deleteMap(client: any, name: string, callback: (err: string, name: string) => any) {
+    if (name == null || typeof name !== "string") { callback("Name of the map must be a string", null); return; }
+    if (this.pub.maps[name] == null) { callback(`The map ${name} doesn't exist`, null); return; }
+
+    this.client_deleteMap(name);
+    callback(null, name);
+    this.emit("change");
+  }
+
+  client_deleteMap(name: string) {
+    for (let slotName in this.pub.mapSlots) {
+      let map = this.pub.mapSlots[slotName];
+      if (map === name) this.pub.mapSlots[slotName] = null;
+    }
+
+    //NOTE: do not delete, the key must exist so the file can be deleted from the disk when the asset is saved
+    this.pub.maps[name] = null;
+  }
+
+  server_renameMap(client: any, oldName: string, newName: string, callback: (err: string, oldName: string, newName: string) => any) {
+    if (oldName == null || typeof oldName !== "string") { callback("Name of the map must be a string", null, null); return; }
+    if (newName == null || typeof newName !== "string") { callback("New name of the map must be a string", null, null); return; }
+    if (this.pub.maps[newName] != null) { callback(`The map ${newName} already exists`, null, null); return; }
+
+    this.client_renameMap(oldName, newName);
+    callback(null, oldName, newName);
+    this.emit("change");
+  }
+
+  client_renameMap(oldName: string, newName: string) {
+    this.pub.maps[newName] = this.pub.maps[oldName];
+    this.pub.maps[oldName] = null;
+
+    for (let slotName in this.pub.mapSlots) {
+      let map = this.pub.mapSlots[slotName];
+      if (map === oldName) this.pub.mapSlots[slotName] = newName;
+    }
+  }
+
+  server_setMapSlot(client: any, slot: string, map: string, callback: (err: string, slot: string, map: string) => any) {
+    if (slot == null || typeof slot !== "string") { callback("Name of the slot must be a string", null, null); return; }
+    if (map != null && typeof map !== "string") { callback("Name of the map must be a string", null, null); return; }
+    if (map != null && this.pub.maps[map] == null) { callback(`The map ${map} doesn't exist`, null, null); return; }
+
+    this.pub.mapSlots[slot] = map;
+    callback(null, slot, map);
+    this.emit("change");
+  }
+
+  client_setMapSlot(slot: string, map: string) {
+    this.pub.mapSlots[slot] = map;
   }
 
   // Animations

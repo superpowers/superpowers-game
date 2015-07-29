@@ -43,6 +43,11 @@ html
               input.file-select(type="file",accept="image/*")
 
         tr
+          th Advanced textures
+          td
+            input.advanced-textures-checkbox(type="checkbox")
+
+        tr
           th Show skeleton
           td
             input.show-skeleton(type="checkbox")
@@ -74,36 +79,32 @@ html
           tr
             th Map
             td
-              input
+              input.map-map
           tr
             th Light map
             td
-              input
+              input.map-light
           tr
             th Specular map
             td
-              input
+              input.map-specular
           tr
             th Alpha map
             td
-              input
+              input.map-alpha
           tr
             th Normal map (Phong)
             td
-              input
+              input.map-normal
 
         .textures-buttons
-          button.new-animation New
+          button.new-map New
           form(style="display: none")
-            input.file-select.upload-animation(type="file",multiple)
-          button(disabled).upload-animation Upload
-          button(disabled).rename-animation Rename
-          button(disabled).delete-animation Delete
+            input.file-select.upload-map(type="file",multiple)
+          button(disabled).upload-map Upload
+          button(disabled).rename-map Rename
+          button(disabled).delete-map Delete
         .textures-tree-view
-
-      .advanced-textures-checkbox
-        span Advanced textures
-        input(type="checkbox")
 
     script(src="/core/SupCore.js")
     script(src="../../data.js")

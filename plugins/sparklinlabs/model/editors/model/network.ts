@@ -1,5 +1,5 @@
 import info from "./info";
-import ui, { setupAnimation, updateSelectedAnimation } from "./ui";
+import ui, { setupAnimation, updateSelectedAnimation, setupOpacity, setupAdvancedTextures, setupMap } from "./ui";
 import engine from "./engine";
 
 import ModelRenderer from "../../components/ModelRenderer";
@@ -28,9 +28,38 @@ function onConnected() {
 }
 
 function onAssetReceived() {
-  for (let index = 0; index < data.modelUpdater.modelAsset.pub.animations.length; index++) {
-    let animation = data.modelUpdater.modelAsset.pub.animations[index];
+  let pub = data.modelUpdater.modelAsset.pub;
+  for (let index = 0; index < pub.animations.length; index++) {
+    let animation = pub.animations[index];
     setupAnimation(animation, index);
+  }
+
+  setupOpacity(pub.opacity);
+
+  setupAdvancedTextures(pub.advancedTextures);
+  for (let mapName in pub.maps) if (pub.maps[mapName] != null) setupMap(mapName);
+  for (let slotName in pub.mapSlots) ui.mapSlotsInput[slotName].value = pub.mapSlots[slotName] != null ? pub.mapSlots[slotName] : "";
+}
+
+export function editAsset(...args: any[]) {
+  let callback: Function;
+  if (typeof args[args.length-1] === "function") callback = args.pop();
+
+  args.push((err: string) => {
+    if (err != null) { alert(err); return; }
+    if (callback != null) callback();
+  });
+  socket.emit("edit:assets", info.assetId, ...args);
+}
+
+onEditCommands.setProperty = (path: string, value: any) => {
+  switch (path) {
+    case "opacity":
+      setupOpacity(value);
+      break;
+    case "advancedTextures":
+      setupAdvancedTextures(value);
+      break;
   }
 }
 
@@ -57,12 +86,30 @@ onEditCommands.setAnimationProperty = (id: string, key: string, value: any) => {
   }
 };
 
-onEditCommands.setProperty = (path: string, value: any) => {
-  switch (path) {
-    case "opacity":
-      ui.opacityInput.value = value;
-      ui.opacityInput.disabled = value == null;
-      ui.opacityCheckbox.checked = value != null
-      break;
-  }
+onEditCommands.newMap = (name: string) => {
+  setupMap(name);
+}
+
+onEditCommands.renameMap = (oldName: string, newName: string) => {
+  let pub = data.modelUpdater.modelAsset.pub;
+
+  let textureElt = <HTMLLIElement>ui.texturesTreeView.treeRoot.querySelector(`[data-name="${oldName}"]`);
+  (<any>textureElt.dataset).name = newName;
+  textureElt.querySelector("span").textContent = newName;
+
+  for (let slotName in pub.mapSlots)
+    if (ui.mapSlotsInput[slotName].value === oldName) ui.mapSlotsInput[slotName].value = newName;
+}
+
+onEditCommands.deleteMap = (name: string) => {
+  let textureElt = ui.texturesTreeView.treeRoot.querySelector(`[data-name="${name}"]`);
+  ui.texturesTreeView.remove(textureElt);
+
+  let pub = data.modelUpdater.modelAsset.pub;
+  for (let slotName in pub.mapSlots)
+    if (ui.mapSlotsInput[slotName].value === name) ui.mapSlotsInput[slotName].value = "";
+}
+
+onEditCommands.setMapSlot = (slot: string, map: string) => {
+  ui.mapSlotsInput[slot].value = map != null ? map : "";
 }

@@ -82,8 +82,8 @@ export default class ModelRendererUpdater {
     }
 
     async.each(Object.keys(this.modelAsset.pub.maps), (key, cb) => {
-      let buffer = this.modelAsset.pub.maps[key];
-      if (buffer == null) { cb(); return; }
+      let buffer: any = this.modelAsset.pub.maps[key];
+      if (buffer == null || buffer.byteLength === 0) { cb(); return; }
 
       let texture = this.modelAsset.pub.textures[key];
       let image: HTMLImageElement = (texture != null) ? texture.image : null;
@@ -95,16 +95,14 @@ export default class ModelRendererUpdater {
         texture.magFilter = SupEngine.THREE.NearestFilter;
         texture.minFilter = SupEngine.THREE.NearestFilter;
 
-        let typedArray = new Uint8Array((<any>buffer));
+        let typedArray = new Uint8Array(buffer);
         let blob = new Blob([ typedArray ], { type: "image/*" });
         image.src = this.mapObjectURLs[key] = URL.createObjectURL(blob);
       }
 
       if (!image.complete) {
         image.addEventListener("load", () => { texture.needsUpdate = true; cb(); return });
-      } else {
-        cb();
-      }
+      } else cb();
 
     }, callback);
   }
@@ -161,6 +159,12 @@ export default class ModelRendererUpdater {
     this.modelRenderer.updateAnimationsByName();
     this._playAnimation();
   }
+
+  _onEditCommand_setMapSlot(slot: string, name: string) {
+    if (slot === "map") this._setModel();
+  }
+
+  _onEditCommand_deleteMap(name: string) { this._setModel(); }
 
   _onEditCommand_setProperty(path: string, value: any) {
     switch(path) {
