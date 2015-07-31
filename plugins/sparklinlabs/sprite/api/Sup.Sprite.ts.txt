@@ -1,11 +1,10 @@
 module Sup {
   export class Sprite extends Asset {
-
     getPixelsPerUnit() { return this.__inner.pixelsPerUnit; }
     getRendering() { return this.__inner.filtering; }
     getFramesPerSecond() { return this.__inner.framesPerSecond; }
     getAlphaTest() { return this.__inner.alphaTest; }
-    getGrid() { return this.__inner.grid; }
-    getOrigin() { return {x: this.__inner.origin.x * 100, y: this.__inner.origin.y * 100}; }
+    getGridSize() { return { width: this.__inner.grid.width, height: this.__inner.grid.height }; }
+    getOrigin() { return { x: this.__inner.origin.x * 100, y: this.__inner.origin.y * 100 }; }
   }
 }

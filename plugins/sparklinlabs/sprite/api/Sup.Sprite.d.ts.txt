@@ -6,7 +6,7 @@ declare module Sup {
     getRendering(): string;
     getFramesPerSecond(): number;
     getAlphaTest(): number;
-    getGrid(): {width: number; height: number};
-    getOrigin(): {x: number; y: number;};
+    getGridSize(): { width: number; height: number; };
+    getOrigin(): { x: number; y: number; };
   }
 }

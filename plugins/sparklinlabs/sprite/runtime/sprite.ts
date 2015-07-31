@@ -1,7 +1,7 @@
 export function loadAsset(player: SupRuntime.Player, entry: any, callback: (err: Error, asset?: any) => any) {
   player.getAssetData(`assets/${entry.id}/asset.json`, "json", (err, data) => {
     data.textures = {};
-    
+
     let img = new Image();
 
     img.onload = () => {

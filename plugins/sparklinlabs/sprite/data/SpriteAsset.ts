@@ -95,7 +95,7 @@ export default class SpriteAsset extends SupCore.data.base.Asset {
       let mapsName: string[] = <any>pub.maps;
       // TODO: Remove these at some point, asset migration introduced in Superpowers 0.11
       if (mapsName == null) mapsName = ["map"];
-      
+
       pub.maps = {};
       async.series([
         (callback) => {
@@ -107,7 +107,7 @@ export default class SpriteAsset extends SupCore.data.base.Asset {
                 if (err.code === "ENOENT" && key === "map") {
                   fs.readFile(path.join(assetPath, "image.dat"), (err, buffer) => {
                     pub.maps[key] = buffer;
-                    
+
                     fs.writeFile(path.join(assetPath, `map-${key}.dat`), buffer);
                     fs.unlink(path.join(assetPath, "image.dat"));
                     cb();
@@ -138,7 +138,7 @@ export default class SpriteAsset extends SupCore.data.base.Asset {
     (<any>this.pub).maps = mapsName;
     let json = JSON.stringify(this.pub, null, 2);
     this.pub.maps = maps;
-    
+
     async.series<Error>([
       (callback) => { fs.writeFile(path.join(assetPath, "asset.json"), json, { encoding: "utf8" }, (err) => { callback(err, null); }); },
 
