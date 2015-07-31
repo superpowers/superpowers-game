@@ -29,12 +29,11 @@ function parse(filename: string, text: string, callback: ImportCallback) {
     // Ignore empty lines and comments
     if (line.length === 0 || line[0] === "#") continue;
 
-    let command = line.substring(0, line.indexOf(" "));
-    let valueStrings = line.substring(line.indexOf(" ") + 1).split(" ");
+    let [ command, ...valueStrings ] = line.split(/\s+/);
 
     switch (command) {
       case "v": {
-        if (valueStrings.length !== 3) throw new Error(`Invalid v command: found ${valueStrings.length} values, expected 3`);
+        if (valueStrings.length !== 3) { callback([ createLogError(`Invalid v command: found ${valueStrings.length} values, expected 3`, filename, lineIndex) ]); return; }
         let values: number[] = [];
         for (let valueString of valueStrings) values.push(+valueString);
         positionsByIndex.push(values);
@@ -42,7 +41,7 @@ function parse(filename: string, text: string, callback: ImportCallback) {
       }
 
       case "vt": {
-        if (valueStrings.length !== 2) throw new Error(`Invalid vt command: found ${valueStrings.length} values, expected 2`);
+        if (valueStrings.length !== 2) { callback([ createLogError(`Invalid vt command: found ${valueStrings.length} values, expected 2`, filename, lineIndex) ]); return; }
         let values: number[] = [];
         for (let valueString of valueStrings) values.push(+valueString);
         uvsByIndex.push(values);
@@ -50,7 +49,7 @@ function parse(filename: string, text: string, callback: ImportCallback) {
       }
 
       case "vn": {
-        if (valueStrings.length !== 3) throw new Error(`Invalid vn command: found ${valueStrings.length} values, expected 3`);
+        if (valueStrings.length !== 3) { callback([ createLogError(`Invalid vn command: found ${valueStrings.length} values, expected 3`, filename, lineIndex) ]); return; }
         let values: number[] = [];
         for (let valueString of valueStrings) values.push(+valueString);
         normalsByIndex.push(values);
