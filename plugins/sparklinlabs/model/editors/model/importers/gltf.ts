@@ -57,8 +57,13 @@ interface GLTFNode {
   rotation?: number[];
   scale?: number[];
 
-  instanceSkin?: any;
-  jointName?: any;
+  meshes?: string[];
+  instanceSkin?: {
+    meshes: string[];
+    skeletons: string[];
+    skin: string;
+  };
+  jointName?: string;
 }
 
 function convertAxisAngleToQuaternionArray(rotations: Uint8Array, count: number) {
@@ -148,7 +153,7 @@ export function importModel(files: File[], callback: ImportCallback) {
     }
 
     let meshName: string = null;
-    let rootBoneNames: string[] = null;
+    // let rootBoneNames: string[] = null;
     let skin: any = null;
 
     for (let childName of rootNode.children) {
@@ -156,8 +161,13 @@ export function importModel(files: File[], callback: ImportCallback) {
 
       if(node.instanceSkin != null && node.instanceSkin.meshes != null && node.instanceSkin.meshes.length > 0) {
         meshName = node.instanceSkin.meshes[0];
-        rootBoneNames = node.instanceSkin.skeletons;
+        // rootBoneNames = node.instanceSkin.skeletons;
         skin = gltf.skins[node.instanceSkin.skin];
+        break;
+      }
+      
+      if (node.meshes != null && node.meshes.length > 0) {
+        meshName = node.meshes[0];
         break;
       }
     }
@@ -213,15 +223,17 @@ export function importModel(files: File[], callback: ImportCallback) {
       {
         let positionBufferView: GLTFBufferView = gltf.bufferViews[positionAccessor.bufferView];
         let start = positionBufferView.byteOffset + positionAccessor.byteOffset;
-
-        let bindShapeMatrix = new THREE.Matrix4().fromArray(skin.bindShapeMatrix);
-        let positionArray = new Float32Array(buffers[positionBufferView.buffer], start, positionAccessor.count * 3);
-        for (let i = 0; i <positionAccessor.count; i++) {
-          let pos = new THREE.Vector3(positionArray[i * 3 + 0], positionArray[i * 3 + 1], positionArray[i * 3 + 2]);
-          pos.applyMatrix4(bindShapeMatrix);
-          positionArray[i * 3 + 0] = pos.x;
-          positionArray[i * 3 + 1] = pos.y;
-          positionArray[i * 3 + 2] = pos.z;
+        
+        if (skin != null) {
+          let bindShapeMatrix = new THREE.Matrix4().fromArray(skin.bindShapeMatrix);
+          let positionArray = new Float32Array(buffers[positionBufferView.buffer], start, positionAccessor.count * 3);
+          for (let i = 0; i <positionAccessor.count; i++) {
+            let pos = new THREE.Vector3(positionArray[i * 3 + 0], positionArray[i * 3 + 1], positionArray[i * 3 + 2]);
+            pos.applyMatrix4(bindShapeMatrix);
+            positionArray[i * 3 + 0] = pos.x;
+            positionArray[i * 3 + 1] = pos.y;
+            positionArray[i * 3 + 2] = pos.z;
+          }
         }
 
         attributes["position"] = buffers[positionBufferView.buffer].slice(start, start + positionAccessor.count * positionAccessor.byteStride);
