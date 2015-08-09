@@ -142,7 +142,7 @@ function onModelFileSelectChange(event: any) {
       fileCell.textContent = entry.file;
       logRow.appendChild(fileCell);
 
-      if (entry.type == "warning") warningsCount++;
+      if (entry.type === "warning") warningsCount++;
 
       if (entry.type !== "error") {
         ui.errorsTBody.appendChild(logRow);

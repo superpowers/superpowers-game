@@ -134,7 +134,7 @@ export default class ModelRendererUpdater {
     }
   }
 
-  _onEditCommand_setAttributes() {
+  _onEditCommand_setModel() {
     this._setModel();
   }
 
