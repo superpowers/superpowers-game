@@ -142,6 +142,10 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
       else if (this.materialType === "phong") material = new THREE.MeshPhongMaterial();
 
       material.map = this.asset.textures[this.asset.mapSlots["map"]];
+      material.lightMap = this.asset.textures[this.asset.mapSlots["light"]];
+      material.specularMap = this.asset.textures[this.asset.mapSlots["specular"]];
+      material.alphaMap = this.asset.textures[this.asset.mapSlots["alpha"]];
+      if (this.materialType === "phong") (<THREE.MeshPhongMaterial>material).normalMap = this.asset.textures[this.asset.mapSlots["normal"]];
       material.alphaTest = 0.1;
       material.side = THREE.DoubleSide;
       material.color.setRGB(this.color.r, this.color.g, this.color.b);

@@ -160,9 +160,7 @@ export default class ModelRendererUpdater {
     this._playAnimation();
   }
 
-  _onEditCommand_setMapSlot(slot: string, name: string) {
-    if (slot === "map") this._setModel();
-  }
+  _onEditCommand_setMapSlot(slot: string, name: string) { this._setModel(); }
 
   _onEditCommand_deleteMap(name: string) { this._setModel(); }
 
