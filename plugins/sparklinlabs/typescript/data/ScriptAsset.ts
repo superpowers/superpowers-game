@@ -80,13 +80,13 @@ export default class ScriptAsset extends SupCore.data.base.Asset {
 
     this.serverData.resources.acquire("textEditorSettings", null, (err: Error, textEditorSettings: any) => {
       this.serverData.resources.release("textEditorSettings", null);
-      
+
       let tab: string;
       if (textEditorSettings.pub.softTab) {
         tab = "";
         for (let i = 0; i < textEditorSettings.pub.tabSize; i++) tab = tab + " ";
       } else tab = "\t";
-      let defaultContent = 
+      let defaultContent =
 `class ${behaviorName} extends Sup.Behavior {
 ${tab}awake() {
 ${tab}${tab}
@@ -143,23 +143,49 @@ Sup.registerBehavior(${behaviorName});
     // the asset will be considered loaded by Dictionary.acquire
     // and the acquire callback will be called immediately
 
-    fs.readFile(path.join(assetPath, "script.txt"), { encoding: "utf8" }, (err, text) => {
-      fs.readFile(path.join(assetPath, "draft.txt"), { encoding: "utf8" }, (err, draft) => {
-        this.pub = { revisionId: 0, text, draft: (draft != null) ? draft : text };
-        this.setup();
-        this.emit("load");
+    let readDraft = (text: string) => {
+      fs.readFile(path.join(assetPath, "draft.ts"), { encoding: "utf8" }, (err, draft) => {
+        // TODO: Remove these at some point, asset migration introduced in Superpowers 0.11
+        if (err != null && err.code === "ENOENT") {
+          fs.readFile(path.join(assetPath, "draft.txt"), { encoding: "utf8" }, (err, draft) => {
+            this.pub = { revisionId: 0, text, draft: (draft != null) ? draft : text };
+            this.setup();
+            this.emit("load");
+
+            if (draft != null) {
+              if (draft !== text) fs.writeFile(path.join(assetPath, "draft.ts"), draft, { encoding: "utf8" });
+              fs.unlink(path.join(assetPath, "draft.txt"), (err) => {});
+            }
+
+          });
+        } else {
+          this.pub = { revisionId: 0, text, draft: (draft != null) ? draft : text };
+          this.setup();
+          this.emit("load");
+        }
       });
+    }
+
+    fs.readFile(path.join(assetPath, "script.ts"), { encoding: "utf8" }, (err, text) => {
+      // TODO: Remove these at some point, asset migration introduced in Superpowers 0.11
+      if (err != null && err.code === "ENOENT") {
+        fs.readFile(path.join(assetPath, "script.txt"), { encoding: "utf8" }, (err, text) => {
+          readDraft(text);
+          fs.writeFile(path.join(assetPath, "script.ts"), text, { encoding: "utf8" });
+          fs.unlink(path.join(assetPath, "script.txt"), (err) => {});
+        });
+      } else readDraft(text);
     });
   }
 
   save(assetPath: string, callback: (err: Error) => any) {
-    fs.writeFile(path.join(assetPath, "script.txt"), this.pub.text, { encoding: "utf8" }, (err) => {
+    fs.writeFile(path.join(assetPath, "script.ts"), this.pub.text, { encoding: "utf8" }, (err) => {
       if (err != null) { callback(err); return; }
 
       if (this.hasDraft) {
-        fs.writeFile(path.join(assetPath, "draft.txt"), this.pub.draft, { encoding: "utf8" }, callback);
+        fs.writeFile(path.join(assetPath, "draft.ts"), this.pub.draft, { encoding: "utf8" }, callback);
       } else {
-        fs.unlink(path.join(assetPath, "draft.txt"), (err) => {
+        fs.unlink(path.join(assetPath, "draft.ts"), (err) => {
           if (err != null && err.code !== "ENOENT") { callback(err); return; }
           callback(null);
         });
