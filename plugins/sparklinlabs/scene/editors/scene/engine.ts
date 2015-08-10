@@ -75,7 +75,7 @@ engine.transformHandleComponent.control.addEventListener("mouseDown", () => {
   draggingControls = true;
 });
 
-engine.transformHandleComponent.control.addEventListener("mouseUp", onTransformChange);
+engine.transformHandleComponent.control.addEventListener("objectChange", onTransformChange);
 
 function onMouseUp(event: MouseEvent) {
   if (draggingControls) {

@@ -830,6 +830,7 @@ var THREE = SupEngine.THREE;
 			var pointer = event.changedTouches ? event.changedTouches[0] : event;
 
 			var planeIntersect = intersectObjects( pointer, [ scope.gizmo[_mode].activePlane ] );
+			if (planeIntersect === false) return;
 
 			point.copy( planeIntersect.point );
 
