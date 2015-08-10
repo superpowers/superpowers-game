@@ -78,16 +78,16 @@ export function setUniformValueInputs(id: string) {
 
   switch(uniform.type) {
     case "f":
-      let inputElt = document.createElement("input");
-      inputElt.type = "number";
-      inputElt.classList.add("float");
-      inputElt.addEventListener("change", (event: any) => {
+      let floatInputElt = document.createElement("input");
+      floatInputElt.type = "number";
+      floatInputElt.classList.add("float");
+      floatInputElt.addEventListener("change", (event: any) => {
         socket.emit("edit:assets", info.assetId, "setUniformProperty", id, "value", parseFloat(event.target.value), (err: string) => {
           if (err != null) alert(err);
         });
       })
-      inputElt.value = uniform.value;
-      valueRowElt.appendChild(inputElt);
+      floatInputElt.value = uniform.value;
+      valueRowElt.appendChild(floatInputElt);
       break;
 
     case "c":
@@ -95,6 +95,18 @@ export function setUniformValueInputs(id: string) {
     case "v3":
     case "v4":
       setArrayUniformInputs(id, valueRowElt, uniform.type);
+      break;
+
+    case "t":
+      let textInputElt = document.createElement("input");
+      textInputElt.classList.add("text");
+      textInputElt.addEventListener("change", (event: any) => {
+        socket.emit("edit:assets", info.assetId, "setUniformProperty", id, "value", event.target.value, (err: string) => {
+          if (err != null) alert(err);
+        });
+      })
+      textInputElt.value = uniform.value;
+      valueRowElt.appendChild(textInputElt);
       break;
   }
 }
@@ -218,7 +230,7 @@ export function setupEditors(clientId: number) {
       });
     }
   });
-  
+
   let fragmentTextArea = <HTMLTextAreaElement>document.querySelector(".fragment textarea");
   ui.fragmentEditor = new TextEditorWidget(data.projectClient, clientId, fragmentTextArea, {
     mode: "x-shader/x-fragment",
@@ -251,10 +263,10 @@ ui.previewAssetInput.addEventListener("input", (event: any) => {
     setupPreview();
     return;
   }
-  
+
   let entry = SupClient.findEntryByPath(data.projectClient.entries.pub, event.target.value);
   if (entry == null || (entry.type !== "sprite" && entry.type !== "model")) return;
-  
+
   ui.previewEntry = entry;
   setupPreview();
 });

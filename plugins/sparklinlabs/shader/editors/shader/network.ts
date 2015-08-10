@@ -53,14 +53,18 @@ onEditCommands.setUniformProperty = (id: string, key: string, value: any) => {
         floatInputElt.value = value;
         break;
 
-      case "c": 
+      case "c":
       case "v2":
       case "v3":
       case "v4":
         setUniformValues(rowElt, type, value);
         break;
+      case "t":
+        let textInputElt = <HTMLInputElement>rowElt.querySelector(".text");
+        textInputElt.value = value;
+        break;
     }
-    
+
   } else {
     let fieldElt = <HTMLInputElement>rowElt.querySelector(`.${key}`);
     fieldElt.value = value;

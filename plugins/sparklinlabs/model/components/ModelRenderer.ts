@@ -78,6 +78,7 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
     this.actor.threeObject.remove(this.threeMesh);
     this.threeMesh.traverse((obj: any) => { if (obj.dispose != null) obj.dispose() });
     this.threeMesh = null;
+    this.material.dispose();
     this.material = null;
   }
 
@@ -132,7 +133,7 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
     if (this.materialType === "shader")
       this.material = SupEngine.componentClasses["Shader"].createShaderMaterial(
         customShader,
-        this.asset.textures[this.asset.mapSlots["map"]],
+        this.asset.textures,
         geometry
       );
 

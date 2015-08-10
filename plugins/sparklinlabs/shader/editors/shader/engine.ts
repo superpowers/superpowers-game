@@ -13,15 +13,18 @@ cameraActor.setLocalPosition(new THREE.Vector3(0, 0, 10));
 let cameraComponent = new SupEngine.componentClasses["Camera"](cameraActor);
 let cameraControls = new SupEngine.editorComponentClasses["Camera3DControls"](cameraActor, cameraComponent);
 
-let texture = THREE.ImageUtils.loadTexture("/plugins/sparklinlabs/shader/editors/shader/leonard.png");
-texture.magFilter = THREE.NearestFilter;
-texture.minFilter = THREE.NearestFilter;
+let leonardTexture = THREE.ImageUtils.loadTexture("/plugins/sparklinlabs/shader/editors/shader/leonard.png");
+leonardTexture.magFilter = THREE.NearestFilter;
+leonardTexture.minFilter = THREE.NearestFilter;
 
 let previewActor: SupEngine.Actor;
 let material: THREE.ShaderMaterial;
 
 export function setupPreview() {
-  if (previewActor != null) gameInstance.destroyActor(previewActor);
+  if (previewActor != null) {
+    gameInstance.destroyActor(previewActor);
+    previewActor = null;
+  }
   if (data.previewComponentUpdater != null) {
     data.previewComponentUpdater.destroy();
     data.previewComponentUpdater = null;
@@ -65,9 +68,8 @@ export function setupPreview() {
       );
       return;
   }
-  material = createShaderMaterial(data.shaderAsset.pub, texture, previewGeometry);
-  let spherePreviewMesh = new THREE.Mesh(previewGeometry, material);
-  previewActor.threeObject.add(spherePreviewMesh);
+  material = createShaderMaterial(data.shaderAsset.pub, { map: leonardTexture }, previewGeometry);
+  previewActor.threeObject.add(new THREE.Mesh(previewGeometry, material));
 }
 
 let tickAnimationFrameId = requestAnimationFrame(tick);

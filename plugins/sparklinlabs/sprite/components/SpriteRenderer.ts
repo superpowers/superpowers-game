@@ -51,7 +51,7 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
     if (this.materialType === "shader")
       this.material = SupEngine.componentClasses["Shader"].createShaderMaterial(
         customShader,
-        this.asset.textures["map"],
+        this.asset.textures,
         this.geometry
       );
 
@@ -262,7 +262,7 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
       let uniforms = (<THREE.ShaderMaterial>this.material).uniforms;
       if (uniforms != null) uniforms.time.value += 1 / this.actor.gameInstance.framesPerSecond;
     }
-    
+
     if (this.hasFrameBeenUpdated) {
       this.hasFrameBeenUpdated = false;
       return;

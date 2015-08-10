@@ -56,7 +56,7 @@ export default class ShaderAsset extends SupCore.data.base.Asset {
   init(options: any, callback: Function) {
     this.serverData.resources.acquire("textEditorSettings", null, (err: Error, textEditorSettings: any) => {
       this.serverData.resources.release("textEditorSettings", null);
-      
+
       let tab: string;
       if (textEditorSettings.pub.softTab) {
         tab = "";
@@ -80,7 +80,7 @@ ${tab}gl_FragColor = texture2D(map, vUv);
 }
 `
       this.pub = {
-        uniforms: [],
+        uniforms: [{ id: "0", name: "map", type: "t", value: "map" }],
         attributes: [],
         vertexShader: {
           text: defaultVertexContent,

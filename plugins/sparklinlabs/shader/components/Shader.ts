@@ -1,7 +1,7 @@
 let THREE = SupEngine.THREE;
 import { ShaderAssetPub } from "../data/ShaderAsset";
 
-export function createShaderMaterial(asset: ShaderAssetPub, texture: THREE.Texture, geometry: THREE.BufferGeometry) {
+export function createShaderMaterial(asset: ShaderAssetPub, textures: { [name: string]: THREE.Texture }, geometry: THREE.BufferGeometry) {
   if (asset == null) return null;
 
   function replaceShaderChunk(shader: string) {
@@ -19,7 +19,6 @@ export function createShaderMaterial(asset: ShaderAssetPub, texture: THREE.Textu
   }
 
   let uniforms: { [name: string]: { type: string; value: any}} = {};
-  uniforms["map"] = { type: "t", value: texture };
   uniforms["time"] = { type: "f", value: 0.0 };
 
   for (let uniform of asset.uniforms) {
@@ -39,6 +38,13 @@ export function createShaderMaterial(asset: ShaderAssetPub, texture: THREE.Textu
         break;
       case "v4":
         value = new THREE.Vector4(uniform.value[0], uniform.value[1], uniform.value[2], uniform.value[3]);
+        break;
+      case "t":
+        value = textures[uniform.value];
+        if (value == null) {
+          console.warn(`Texture "${uniform.name}" is null`);
+          continue;
+        }
         break;
     }
 
@@ -86,14 +92,11 @@ export function createShaderMaterial(asset: ShaderAssetPub, texture: THREE.Textu
     geometry.addAttribute(attribute.name, new THREE.BufferAttribute(new Float32Array(values), itemSize));
   }
 
-  let previewMaterial = new THREE.ShaderMaterial({
+  return new THREE.ShaderMaterial({
     uniforms,
     attributes,
     vertexShader: replaceShaderChunk(asset.vertexShader.text),
     fragmentShader: replaceShaderChunk(asset.fragmentShader.text),
     transparent: true
   });
-  (<any>previewMaterial).map = texture;
-
-  return previewMaterial;
 }

@@ -9,7 +9,7 @@ export default class Uniforms extends SupCore.data.base.ListById {
 
   static schema = {
     name: { type: "string", minLength: 1, maxLength: 80, mutable: true },
-    type: { type: "enum", items: ["f", "c", "v2", "v3", "v4"], mutable: true },
+    type: { type: "enum", items: ["f", "c", "v2", "v3", "v4", "t"], mutable: true },
     value: { type: "any", mutable: true }
   }
 
@@ -19,7 +19,7 @@ export default class Uniforms extends SupCore.data.base.ListById {
   constructor(pub: any) {
     super(pub, Uniforms.schema);
   }
-  
+
   setProperty(id: string, key: string, value: any, callback: (err: string, value: any) => any) {
     if (key === "value") {
       function checkArray(value: any, size: number) {
@@ -42,10 +42,11 @@ export default class Uniforms extends SupCore.data.base.ListById {
         case "v2":
           if (!checkArray(value, 2)) { callback("Invalid value", null); return; }
           break;
-          break;
         case "v4":
           if (!checkArray(value, 4)) { callback("Invalid value", null); return; }
           break;
+        case "t":
+          if (typeof value !== "string") { callback("Invalid value", null); return; }
           break;
       }
     }
@@ -72,6 +73,7 @@ export default class Uniforms extends SupCore.data.base.ListById {
       case "v2": item.value = [0, 0]; break;
       case "v3": item.value = [0, 0, 0]; break;
       case "v4": item.value = [0, 0, 0, 0]; break;
+      case "t": item.value = "map"; break;
     }
   }
 }
