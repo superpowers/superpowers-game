@@ -40,7 +40,7 @@ declare module SupEngine {
 
     constructor(canvas: HTMLCanvasElement, options?: { debug?: boolean; enableOnExit?: boolean; layers?: string[]; });
     setRatio(ratio?: number): void;
-    tick(accumulatedTime: number): { updates: number; timeLeft: number; };
+    tick(accumulatedTime: number, callback?: Function): { updates: number; timeLeft: number; };
     update(): void;
     draw(): void;
     clear(): void;

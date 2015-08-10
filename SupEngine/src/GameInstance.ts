@@ -49,7 +49,7 @@ export default class GameInstance extends EventEmitter {
     this.threeScene.autoUpdate = false;
   }
 
-  tick(accumulatedTime: number): { updates: number; timeLeft: number; }  {
+  tick(accumulatedTime: number, callback?: Function): { updates: number; timeLeft: number; }  {
     let updateInterval = 1 / this.framesPerSecond * 1000;
     let maxAccumulatedTime = 5 * updateInterval;
 
@@ -60,6 +60,7 @@ export default class GameInstance extends EventEmitter {
     let updates = 0;
     while (accumulatedTime >= updateInterval) {
       this.update();
+      if (callback != null) callback();
       if (this.input.exited) break;
       accumulatedTime -= updateInterval;
       updates++;
