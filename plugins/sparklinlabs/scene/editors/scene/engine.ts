@@ -19,8 +19,6 @@ let engine: {
   selectionActor?: SupEngine.Actor;
   selectionBoxComponent?: any;
   transformHandleComponent?: any;
-
-  tickAnimationFrameId?: number;
 } = {};
 export default engine;
 
@@ -39,30 +37,29 @@ engine.transformHandleComponent = new TransformHandle(engine.selectionActor, eng
 
 engine.cameraControls = new SupEngine.editorComponentClasses["Camera3DControls"](engine.cameraActor, engine.cameraComponent);
 
-engine.tickAnimationFrameId = requestAnimationFrame(tick);
+requestAnimationFrame(tick);
 
 let lastTimestamp = 0;
 let accumulatedTime = 0;
 function tick(timestamp=0) {
-  engine.tickAnimationFrameId = requestAnimationFrame(tick);
-
   accumulatedTime += timestamp - lastTimestamp;
   lastTimestamp = timestamp;
-  let { updates, timeLeft } = engine.gameInstance.tick(accumulatedTime);
+  let { updates, timeLeft } = engine.gameInstance.tick(accumulatedTime, update);
   accumulatedTime = timeLeft;
 
-  if (updates > 0) {
-    if (ui.cameraMode === "3D" && engine.gameInstance.input.keyboardButtons[(<any>window).KeyEvent.DOM_VK_CONTROL].isDown) {
-      if (engine.gameInstance.input.mouseButtons[5].isDown) {
-        ui.cameraSpeedSlider.value = (parseFloat(ui.cameraSpeedSlider.value) + 2 * parseFloat(ui.cameraSpeedSlider.step)).toString();
-        engine.cameraControls.movementSpeed = ui.cameraSpeedSlider.value;
-      } else if (engine.gameInstance.input.mouseButtons[6].isDown) {
-        ui.cameraSpeedSlider.value = (parseFloat(ui.cameraSpeedSlider.value) - 2 * parseFloat(ui.cameraSpeedSlider.step)).toString();
-        engine.cameraControls.movementSpeed = ui.cameraSpeedSlider.value;
-      }
-    }
+  if (updates > 0) engine.gameInstance.draw();
+  requestAnimationFrame(tick);
+}
 
-    engine.gameInstance.draw();
+function update() {
+  if (ui.cameraMode === "3D" && engine.gameInstance.input.keyboardButtons[(<any>window).KeyEvent.DOM_VK_CONTROL].isDown) {
+    if (engine.gameInstance.input.mouseButtons[5].isDown) {
+      ui.cameraSpeedSlider.value = (parseFloat(ui.cameraSpeedSlider.value) + 2 * parseFloat(ui.cameraSpeedSlider.step)).toString();
+      engine.cameraControls.movementSpeed = ui.cameraSpeedSlider.value;
+    } else if (engine.gameInstance.input.mouseButtons[6].isDown) {
+      ui.cameraSpeedSlider.value = (parseFloat(ui.cameraSpeedSlider.value) - 2 * parseFloat(ui.cameraSpeedSlider.step)).toString();
+      engine.cameraControls.movementSpeed = ui.cameraSpeedSlider.value;
+    }
   }
 }
 

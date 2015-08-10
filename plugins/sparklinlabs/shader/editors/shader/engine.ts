@@ -47,7 +47,7 @@ export function setupPreview() {
       break;
     case "Asset":
       let componentClassName: string;
-      let config = { materialType: "shader", shaderAssetId: info.assetId, spriteAssetId: <string>null, modelAssetId: <string>null }; 
+      let config = { materialType: "shader", shaderAssetId: info.assetId, spriteAssetId: <string>null, modelAssetId: <string>null };
       if (ui.previewEntry.type === "sprite") {
         componentClassName = "SpriteRenderer";
         config.spriteAssetId = ui.previewEntry.id;
@@ -55,7 +55,7 @@ export function setupPreview() {
         componentClassName = "ModelRenderer";
         config.modelAssetId = ui.previewEntry.id;
       }
-    
+
       let componentClass = SupEngine.componentClasses[componentClassName];
       let component = new componentClass(previewActor);
       data.previewComponentUpdater = new componentClass.Updater(
@@ -82,11 +82,9 @@ function tick(timestamp=0) {
   let { updates, timeLeft } = gameInstance.tick(accumulatedTime);
   accumulatedTime = timeLeft;
 
-  if (updates === 0) return;
-
-  if (material != null) {
+  if (updates !== 0 && material != null)
     for (let i = 0; i < updates; i++)
       material.uniforms.time.value += 1 / gameInstance.framesPerSecond;
-  }
+
   gameInstance.draw();
 }

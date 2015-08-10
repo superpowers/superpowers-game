@@ -61,14 +61,3 @@ export function updateSelection() {
   let framesPerRow = pub.textures["map"].image.width / pub.grid.width;
   spritesheetArea.selectionRenderer.setup(width, height, animation.startFrameIndex, animation.endFrameIndex, framesPerRow);
 }
-
-let lastTimestamp = 0;
-let accumulatedTime = 0;
-export function handleSpritesheetArea(timestamp: number) {
-  accumulatedTime += timestamp - lastTimestamp;
-  lastTimestamp = timestamp;
-  let { updates, timeLeft } = spritesheetArea.gameInstance.tick(accumulatedTime);
-  accumulatedTime = timeLeft;
-
-  if (updates > 0) spritesheetArea.gameInstance.draw();
-}
