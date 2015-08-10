@@ -48,14 +48,15 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
 
     this.geometry = new THREE.PlaneBufferGeometry(this.asset.grid.width, this.asset.grid.height);
 
-    if (this.materialType === "shader")
+    if (this.materialType === "shader") {
       this.material = SupEngine.componentClasses["Shader"].createShaderMaterial(
         customShader,
         this.asset.textures,
         this.geometry
       );
+      (<any>this.material).map = this.asset.textures["map"];
 
-    else {
+    } else {
       let material: THREE.MeshBasicMaterial|THREE.MeshPhongMaterial
       if (this.materialType === "basic") material = new THREE.MeshBasicMaterial();
       else if (this.materialType === "phong") material = new THREE.MeshPhongMaterial();
