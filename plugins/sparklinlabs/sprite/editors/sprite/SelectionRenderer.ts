@@ -7,7 +7,7 @@ export default class SelectionRenderer extends SupEngine.ActorComponent {
     super(actor, "SelectionRenderer");
   }
 
-  setup(width: number, height: number, start: number, end: number, framesPerRow: number) {
+  setup(width: number, height: number, start: number, end: number, frameOrder: string, framesPerDirection: number) {
     this.clearMesh();
 
     for (let i = start; i <= end; i++) {
@@ -22,8 +22,14 @@ export default class SelectionRenderer extends SupEngine.ActorComponent {
       let mesh = new THREE.Mesh(geometry, material);
       this.meshes.push(mesh);
 
-      let x = i % framesPerRow;
-      let y = Math.floor(i / framesPerRow);
+      let x: number, y: number;
+      if (frameOrder === "rows") {
+        x = i % framesPerDirection;
+        y = Math.floor(i / framesPerDirection);
+      } else {
+        x = Math.floor(i / framesPerDirection);
+        y = i % framesPerDirection;
+      }
       mesh.position.setX((x+0.5) * width);
       mesh.position.setY(-(y+0.5) * height);
       mesh.updateMatrixWorld(false);

@@ -154,9 +154,16 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
   setFrame(frame: number) {
     let map: THREE.Texture = (<any>this.material).map;
 
-    let framesPerRow = Math.floor(map.image.width / this.asset.grid.width);
-    let frameX = frame % framesPerRow
-    let frameY = Math.floor(frame / framesPerRow)
+    let frameX: number, frameY: number;
+    if (this.asset.frameOrder === "rows") {
+      let framesPerRow = Math.floor(map.image.width / this.asset.grid.width);
+      frameX = frame % framesPerRow;
+      frameY = Math.floor(frame / framesPerRow);
+    } else {
+      let framesPerColumn = Math.floor(map.image.height / this.asset.grid.height);
+      frameX = Math.floor(frame / framesPerColumn);
+      frameY = frame % framesPerColumn;
+    }
 
     let left   = (frameX     * this.asset.grid.width) / map.image.width;
     let right  = ((frameX+1) * this.asset.grid.width) / map.image.width;

@@ -12,6 +12,7 @@ interface SpriteAssetPub {
   framesPerSecond: number;
   opacity: number;
   alphaTest: number;
+  frameOrder: string;
 
   grid: { width: number; height: number;};
   origin: { x: number; y: number; };
@@ -33,6 +34,7 @@ export default class SpriteAsset extends SupCore.data.base.Asset {
     framesPerSecond: { type: "number", min: 1, mutable: true },
     opacity: { type: "number?", min: 0, max: 1, mutable: true },
     alphaTest: { type: "number", min: 0, max: 1, mutable: true },
+    frameOrder: { type: "enum", items: [ "rows", "columns"], mutable: true },
 
     grid: {
       type: "hash",
@@ -69,6 +71,7 @@ export default class SpriteAsset extends SupCore.data.base.Asset {
         framesPerSecond: spriteSettings.pub.framesPerSecond,
         opacity: null,
         alphaTest: spriteSettings.pub.alphaTest,
+        frameOrder: "rows",
 
         grid: { width: 100, height: 100 },
         origin: { x: 0.5, y: 0.5 },
@@ -95,6 +98,7 @@ export default class SpriteAsset extends SupCore.data.base.Asset {
       let mapsName: string[] = <any>pub.maps;
       // TODO: Remove these at some point, asset migration introduced in Superpowers 0.11
       if (mapsName == null) mapsName = ["map"];
+      if (pub.frameOrder == null) pub.frameOrder = "rows";
 
       pub.maps = {};
       async.series([

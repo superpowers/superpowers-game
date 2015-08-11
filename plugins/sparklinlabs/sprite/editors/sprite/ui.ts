@@ -27,7 +27,7 @@ document.querySelector("button.upload").addEventListener("click", () => { fileSe
 
 document.querySelector("button.download").addEventListener("click", onDownloadSpritesheet);
 
-ui.allSettings = ["filtering", "pixelsPerUnit", "framesPerSecond", "opacity", "alphaTest", "grid.width", "grid.height", "origin.x", "origin.y"]
+ui.allSettings = ["filtering", "pixelsPerUnit", "framesPerSecond", "opacity", "alphaTest", "frameOrder", "grid.width", "grid.height", "origin.x", "origin.y"]
 ui.settings = {};
 ui.allSettings.forEach((setting: string) => {
   let parts = setting.split(".");
@@ -46,6 +46,7 @@ ui.allSettings.forEach((setting: string) => {
 
   switch (setting) {
     case "filtering":
+    case "frameOrder":
       settingObj.addEventListener("change", (event: any) => {
         socket.emit("edit:assets", info.assetId, "setProperty", setting, event.target.value, (err: string) => { if (err != null) alert(err); });
       });
@@ -316,6 +317,8 @@ export function setupProperty(path: string, value: any) {
     spritesheetArea.gridRenderer.resize(pub.textures["map"].image.width / pub.grid.width, pub.textures["map"].image.height / pub.grid.height);
     updateSelection();
   }
+
+  if (path === "frameOrder") updateSelection();
 }
 
 export function setupAnimation(animation: any, index: number) {

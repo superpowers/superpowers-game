@@ -10,7 +10,7 @@ let spritesheetArea: {
   spriteRenderer?: SpriteRenderer;
   spritesheet?: any;
   gridRenderer?: any;
-  selectionRenderer?: any;
+  selectionRenderer?: SelectionRenderer;
 } = {};
 export default spritesheetArea;
 
@@ -58,6 +58,12 @@ export function updateSelection() {
   let animation = data.spriteUpdater.spriteAsset.animations.byId[ui.selectedAnimationId];
   let width = pub.grid.width / pub.pixelsPerUnit;
   let height = pub.grid.height / pub.pixelsPerUnit;
-  let framesPerRow = pub.textures["map"].image.width / pub.grid.width;
-  spritesheetArea.selectionRenderer.setup(width, height, animation.startFrameIndex, animation.endFrameIndex, framesPerRow);
+  let framesPerDirection: number;
+  if (pub.frameOrder === "rows") framesPerDirection = pub.textures["map"].image.width / pub.grid.width;
+  else framesPerDirection = pub.textures["map"].image.height / pub.grid.height;
+  spritesheetArea.selectionRenderer.setup(
+    width, height,
+    animation.startFrameIndex, animation.endFrameIndex,
+    pub.frameOrder, framesPerDirection
+  );
 }
