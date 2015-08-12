@@ -1,7 +1,7 @@
 import * as async from "async";
 
 export function loadAsset(player: SupRuntime.Player, entry: any, callback: (err: Error, asset?: any) => any) {
-  player.getAssetData(`assets/${entry.id}/asset.json`, "json", (err: Error, data: any) => {
+  player.getAssetData(`assets/${entry.id}/model.json`, "json", (err: Error, data: any) => {
 
     let attributesList = data.attributes;
     data.attributes = {};

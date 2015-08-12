@@ -29,13 +29,37 @@ export default class SceneAsset extends SupCore.data.base.Asset {
   componentPathsByDependentAssetId: { [assetId: string]: string[] };
   nodes: SceneNodes;
 
-  constructor(id: string, pub: any, serverData: SupCore.data.ProjectServerData) {
+  constructor(id: string, pub: any, serverData: ProjectServerData) {
     super(id, pub, SceneAsset.schema, serverData);
   }
 
   init(options: any, callback: Function) {
     this.pub = { nodes: [] };
     super.init(options, callback);
+  }
+
+  load(assetPath: string) {
+    fs.readFile(path.join(assetPath, "scene.json"), { encoding: "utf8" },(err, json) => {
+      if (err != null && err.code === "ENOENT") {
+        fs.readFile(path.join(assetPath, "asset.json"), { encoding: "utf8" },(err, json) => {
+          fs.rename(path.join(assetPath, "asset.json"), path.join(assetPath, "scene.json"), (err) => {
+            this.pub = JSON.parse(json);
+            this.setup();
+            this.emit("load");
+          });
+
+        });
+      } else {
+        this.pub = JSON.parse(json);
+        this.setup();
+        this.emit("load");
+      }
+    });
+  }
+
+  save(assetPath: string, callback: (err: Error) => any) {
+    let json = JSON.stringify(this.pub, null, 2);
+    fs.writeFile(path.join(assetPath, "scene.json"), json, { encoding: "utf8" }, callback);
   }
 
   setup() {

@@ -60,6 +60,29 @@ export default class TileMapAsset extends SupCore.data.base.Asset {
     });
   }
 
+  load(assetPath: string) {
+    fs.readFile(path.join(assetPath, "tilemap.json"), { encoding: "utf8" },(err, json) => {
+      if (err != null && err.code === "ENOENT") {
+        fs.readFile(path.join(assetPath, "asset.json"), { encoding: "utf8" },(err, json) => {
+          fs.rename(path.join(assetPath, "asset.json"), path.join(assetPath, "tilemap.json"), (err) => {
+            this.pub = JSON.parse(json);
+            this.setup();
+            this.emit("load");
+          });
+        });
+      } else {
+        this.pub = JSON.parse(json);
+        this.setup();
+        this.emit("load");
+      }
+    });
+  }
+
+  save(assetPath: string, callback: (err: Error) => any) {
+    let json = JSON.stringify(this.pub, null, 2);
+    fs.writeFile(path.join(assetPath, "tilemap.json"), json, { encoding: "utf8" }, callback);
+  }
+
   setup() {
     this.layers = new TileMapLayers(this.pub.layers);
   }

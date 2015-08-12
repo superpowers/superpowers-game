@@ -89,9 +89,8 @@ export default class SpriteAsset extends SupCore.data.base.Asset {
   }
 
   load(assetPath: string) {
-    fs.readFile(path.join(assetPath, "asset.json"), { encoding: "utf8" }, (err, json) => {
-      let pub: SpriteAssetPub = JSON.parse(json);
-
+    let pub: SpriteAssetPub;
+    let loadMaps = () => {
       // TODO: Remove these at some point, new config setting introduced in Superpowers 0.8
       if (typeof pub.opacity === "undefined") pub.opacity = 1;
 
@@ -130,6 +129,20 @@ export default class SpriteAsset extends SupCore.data.base.Asset {
         this.setup();
         this.emit("load");
       });
+    };
+
+    fs.readFile(path.join(assetPath, "sprite.json"), { encoding: "utf8" }, (err, json) => {
+      if (err != null && err.code === "ENOENT") {
+        fs.readFile(path.join(assetPath, "asset.json"), { encoding: "utf8" }, (err, json) => {
+          fs.rename(path.join(assetPath, "asset.json"), path.join(assetPath, "sprite.json"), (err) => {
+            pub = JSON.parse(json);
+            loadMaps();
+          });
+        });
+      } else {
+        pub = JSON.parse(json);
+        loadMaps();
+      }
     });
   }
 
@@ -144,7 +157,7 @@ export default class SpriteAsset extends SupCore.data.base.Asset {
     this.pub.maps = maps;
 
     async.series<Error>([
-      (callback) => { fs.writeFile(path.join(assetPath, "asset.json"), json, { encoding: "utf8" }, (err) => { callback(err, null); }); },
+      (callback) => { fs.writeFile(path.join(assetPath, "sprite.json"), json, { encoding: "utf8" }, (err) => { callback(err, null); }); },
 
       (callback) => {
         async.each(mapsName, (key, cb) => {

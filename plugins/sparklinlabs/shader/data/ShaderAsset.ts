@@ -105,21 +105,22 @@ ${tab}gl_FragColor = texture2D(map, vUv);
   }
 
   load(assetPath: string) {
-    fs.readFile(path.join(assetPath, "asset.json"), { encoding: "utf8" }, (err, json) => {
-      this.pub = JSON.parse(json);
+    let pub: ShaderAssetPub;
 
+    let loadShaders = () => {
       // TODO: Remove these at some point, asset migration from Superpowers 0.10
-      if (typeof this.pub.vertexShader === "string") {
-        this.pub.vertexShader = {
-          text: <any>this.pub.vertexShader,
-          draft: <any>this.pub.vertexShader,
+      if (typeof pub.vertexShader === "string") {
+        pub.vertexShader = {
+          text: <any>pub.vertexShader,
+          draft: <any>pub.vertexShader,
           revisionId: 0
         }
-        this.pub.fragmentShader = {
-          text: <any>this.pub.fragmentShader,
-          draft: <any>this.pub.fragmentShader,
+        pub.fragmentShader = {
+          text: <any>pub.fragmentShader,
+          draft: <any>pub.fragmentShader,
           revisionId: 0
         }
+        this.pub = pub;
         this.setup();
         this.emit("load");
         return;
@@ -128,31 +129,47 @@ ${tab}gl_FragColor = texture2D(map, vUv);
       async.series([
         (cb: (err: Error) => any) => {
           fs.readFile(path.join(assetPath, "vertexShader.txt"), { encoding: "utf8" }, (err, text) => {
-            this.pub.vertexShader.text = text;
+            pub.vertexShader.text = text;
             cb(null);
           });
         },
         (cb: (err: Error) => any) => {
           fs.readFile(path.join(assetPath, "vertexShaderDraft.txt"), { encoding: "utf8" }, (err, draft) => {
-            this.pub.vertexShader.draft = (draft != null) ? draft : this.pub.vertexShader.text;
+            pub.vertexShader.draft = (draft != null) ? draft : pub.vertexShader.text;
             cb(null);
           });
         },
         (cb: (err: Error) => any) => {
           fs.readFile(path.join(assetPath, "fragmentShader.txt"), { encoding: "utf8" }, (err, text) => {
-            this.pub.fragmentShader.text = text;
+            pub.fragmentShader.text = text;
             cb(null);
           });
         },
         (cb: (err: Error) => any) => {
           fs.readFile(path.join(assetPath, "fragmentShaderDraft.txt"), { encoding: "utf8" }, (err, draft) => {
-            this.pub.fragmentShader.draft = (draft != null) ? draft : this.pub.fragmentShader.text;
+            pub.fragmentShader.draft = (draft != null) ? draft : pub.fragmentShader.text;
 
+            this.pub = pub;
             this.setup();
             this.emit("load");
           });
         }
       ]);
+    }
+
+    fs.readFile(path.join(assetPath, "shader.json"), { encoding: "utf8" }, (err, json) => {
+      // TODO: Remove these at some point, asset migration introduced in Superpowers 0.11
+      if (err != null && err.code === "ENOENT") {
+        fs.readFile(path.join(assetPath, "asset.json"), { encoding: "utf8" }, (err, json) => {
+          fs.rename(path.join(assetPath, "asset.json"), path.join(assetPath, "shader.json"), (err) => {
+            pub = JSON.parse(json);
+            loadShaders();
+          });
+        });
+      } else {
+        pub = JSON.parse(json);
+        loadShaders();
+      }
     });
   }
 
@@ -171,7 +188,7 @@ ${tab}gl_FragColor = texture2D(map, vUv);
 
     async.series([
       (cb: (err: Error) => any) => {
-        fs.writeFile(path.join(assetPath, "asset.json"), json, { encoding: "utf8" }, (err) => {
+        fs.writeFile(path.join(assetPath, "shader.json"), json, { encoding: "utf8" }, (err) => {
           if (err != null) cb(err);
           else cb(null);
         });

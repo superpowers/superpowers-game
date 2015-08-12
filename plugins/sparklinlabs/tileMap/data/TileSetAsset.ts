@@ -50,20 +50,34 @@ export default class TileSetAsset extends SupCore.data.base.Asset {
   }
 
   load(assetPath: string) {
-    fs.readFile(path.join(assetPath, "asset.json"), { encoding: "utf8" }, (err, json) => {
-      this.pub = JSON.parse(json);
-
+    let pub: TileSetAssetPub;
+    let loadAsset = () => {
       // TODO: Remove these at some point, new config setting introduced in Superpowers 0.8
-      if ((<any>this.pub)["gridSize"] != null) {
-        this.pub.grid = { width: (<any>this.pub)["gridSize"], height: (<any>this.pub)["gridSize"]};
-        delete (<any>this.pub)["gridSize"];
+      if ((<any>pub)["gridSize"] != null) {
+        pub.grid = { width: (<any>pub)["gridSize"], height: (<any>pub)["gridSize"]};
+        delete (<any>pub)["gridSize"];
       }
 
       fs.readFile(path.join(assetPath, "image.dat"), (err, buffer) => {
-        this.pub.image = buffer;
+        pub.image = buffer;
+        this.pub = pub;
         this.setup();
         this.emit("load");
       });
+    }
+
+    fs.readFile(path.join(assetPath, "tileset.json"), { encoding: "utf8" }, (err, json) => {
+      if (err != null && err.code === "ENOENT") {
+        fs.readFile(path.join(assetPath, "asset.json"), { encoding: "utf8" },(err, json) => {
+          fs.rename(path.join(assetPath, "asset.json"), path.join(assetPath, "tileset.json"), (err) => {
+            pub = JSON.parse(json);
+            loadAsset();
+          });
+        });
+      } else {
+        pub = JSON.parse(json);
+        loadAsset();
+      }
     });
   }
 
@@ -72,7 +86,7 @@ export default class TileSetAsset extends SupCore.data.base.Asset {
     delete this.pub.image;
     let json = JSON.stringify(this.pub, null, 2);
     this.pub.image = buffer;
-    fs.writeFile(path.join(assetPath, "asset.json"), json, { encoding: "utf8" }, () => {
+    fs.writeFile(path.join(assetPath, "tileset.json"), json, { encoding: "utf8" }, () => {
       fs.writeFile(path.join(assetPath, "image.dat"), buffer, callback);
     });
   }

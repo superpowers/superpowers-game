@@ -120,9 +120,9 @@ export default class ModelAsset extends SupCore.data.base.Asset {
   }
 
   load(assetPath: string) {
-    fs.readFile(path.join(assetPath, "asset.json"), { encoding: "utf8" }, (err, json) => {
-      let pub: ModelAssetPub = JSON.parse(json);
+    let pub: ModelAssetPub;
 
+    let loadAttributesMaps = () => {
       // TODO: Remove these at some point, new config setting introduced in Superpowers 0.8
       if (typeof pub.opacity === "undefined") pub.opacity = 1;
 
@@ -185,6 +185,21 @@ export default class ModelAsset extends SupCore.data.base.Asset {
         this.setup();
         this.emit("load");
       });
+    }
+
+    fs.readFile(path.join(assetPath, "model.json"), { encoding: "utf8" }, (err, json) => {
+      // TODO: Remove these at some point, asset migration introduced in Superpowers 0.11
+      if (err != null && err.code === "ENOENT") {
+        fs.readFile(path.join(assetPath, "asset.json"), { encoding: "utf8" }, (err, json) => {
+          fs.rename(path.join(assetPath, "asset.json"), path.join(assetPath, "model.json"), (err) => {
+            pub = JSON.parse(json);
+            loadAttributesMaps();
+          });
+        });
+      } else {
+        pub = JSON.parse(json);
+        loadAttributesMaps();
+      }
     });
 
     /*(callback) => {
@@ -214,7 +229,7 @@ export default class ModelAsset extends SupCore.data.base.Asset {
 
     async.series<Error>([
 
-      (callback) => { fs.writeFile(path.join(assetPath, "asset.json"), json, { encoding: "utf8" }, (err) => { callback(err, null); }); },
+      (callback) => { fs.writeFile(path.join(assetPath, "model.json"), json, { encoding: "utf8" }, (err) => { callback(err, null); }); },
 
       (callback) => {
         async.each(Object.keys(ModelAsset.schema.attributes.properties), (key, cb) => {

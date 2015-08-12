@@ -1,5 +1,5 @@
 export function loadAsset(player: SupRuntime.Player, entry: any, callback: (err: Error, asset?: any) => any) {
-  player.getAssetData(`assets/${entry.id}/asset.json`, "json", (err, data) => {
+  player.getAssetData(`assets/${entry.id}/shader.json`, "json", (err, data) => {
     player.getAssetData(`assets/${entry.id}/vertexShader.txt`, "text", (err, vertexShader) => {
       data.vertexShader.text = vertexShader;
       player.getAssetData(`assets/${entry.id}/fragmentShader.txt`, "text", (err, fragmentShader) => {

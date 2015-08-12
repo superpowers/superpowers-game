@@ -6,7 +6,7 @@ export function loadAsset(player: SupRuntime.Player, entry: any, callback: (err:
     return;
   }
 
-  player.getAssetData(`assets/${entry.id}/asset.json`, "json", (err, data) => {
+  player.getAssetData(`assets/${entry.id}/sound.json`, "json", (err, data) => {
     player.getAssetData(`assets/${entry.id}/sound.dat`, "arraybuffer", (err, soundData) => {
       if (err != null) { callback(err); return; }
 
