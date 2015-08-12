@@ -26,7 +26,7 @@ let canvasElt = <HTMLCanvasElement>document.querySelector("canvas");
 
 engine.gameInstance = new SupEngine.GameInstance(canvasElt);
 engine.cameraActor = new SupEngine.Actor(engine.gameInstance, "Camera");
-engine.cameraActor.setLocalPosition(new THREE.Vector3(0, 0, 10));
+engine.cameraActor.setLocalPosition(new THREE.Vector3(0, 0, 5));
 
 engine.cameraComponent = new SupEngine.componentClasses["Camera"](engine.cameraActor);
 engine.cameraComponent.layers = [ 0, -1 ];
