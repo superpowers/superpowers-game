@@ -1,0 +1,40 @@
+doctype html
+html
+  head
+    link(rel="stylesheet",href="/client/styles/reset.css")
+    link(rel="stylesheet",href="/client/styles/perfectResize.css")
+    link(rel="stylesheet",href="/client/styles/treeView.css")
+    link(rel="stylesheet",href="/client/styles/dialogs.css")
+    link(rel="stylesheet",href="index.css")
+
+  body
+    .main
+      canvas(tabindex="0")
+      .controls
+        .transform-mode
+          .label Transform
+          input#transform-mode-translate(type="radio",name="transformMode",value="translate",checked)
+          label(for="transform-mode-translate") Move
+          input#transform-mode-rotate(type="radio",name="transformMode",value="rotate")
+          label(for="transform-mode-rotate") Rotate
+          input#transform-mode-scale(type="radio",name="transformMode",value="scale")
+          label(for="transform-mode-scale") Scale
+          input#transform-space(type="checkbox")
+          label(for="transform-space") Local
+
+    .sidebar
+      .nodes-buttons
+        button.new-node New Node
+        button(disabled).rename-node Rename
+        button(disabled).duplicate-node Duplicate
+        button(disabled).delete-node Delete
+
+      .nodes-tree-view
+      .inspector.no-selection
+
+    script(src="/core/SupCore.js")
+    script(src="../../data.js")
+    script(src="/system/SupEngine.js")
+    script(src="../../components.js")
+    script(src="/client/SupClient.js")
+    script(src="index.js")

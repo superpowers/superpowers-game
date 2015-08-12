@@ -1,0 +1,160 @@
+@import "nib"
+
+body
+  display flex
+
+.main
+  flex 1
+  display flex
+  flex-flow column
+
+  canvas
+    background #000
+    flex 1
+
+.controls
+  display flex
+  align-items center
+  height 30px
+  overflow hidden
+  white-space nowrap
+
+  > div
+    display flex
+    align-items center
+    height 30px
+    padding 0 0.5em
+    flex auto 0 0
+
+    &:not(:first-child)
+      border-left 1px solid #ccc
+
+  > div > .label
+    text-transform uppercase
+    margin-right 0.5em
+    color #666
+
+.sidebar
+  width 250px
+  min-width 200px
+  max-width 500px
+  border-right 1px solid #aaa
+
+  display flex
+  flex-flow column
+
+.nodes-buttons
+  display flex
+
+  button
+    flex 1
+    font-size smaller
+    white-space nowrap
+
+.nodes-tree-view
+  min-height 100px
+  height 300px
+  position relative
+  background #fff
+  overflow-y auto
+
+  .tree
+    position absolute
+
+  .name
+    white-space pre
+    flex 1
+    text-overflow ellipsis
+    overflow-x hidden
+
+    &.prefab
+      color #44d
+
+  button
+    font-size smaller
+    border none
+    margin-right 0.25em
+
+  li:not(:hover)
+    button.show { display: none; }
+
+.inspector
+  min-height 100px
+  overflow-y auto
+  flex 1
+  .transform
+    padding 0.25em
+
+    .label
+      padding 0.25em
+
+    .values
+      display flex
+
+      > input
+        flex 1
+      > input:not(:last-of-type)
+        border-right 1px solid #ccc
+
+  &.no-selection
+    visibility hidden
+
+.inspector table
+  width 100%
+  border-collapse collapse
+  font-size 12px
+
+  th, td
+    border 1px solid #ccc
+
+  th
+    text-align left
+    white-space nowrap
+    overflow-x hidden
+    text-overflow ellipsis
+    font-weight normal
+    background #eee
+    padding 0 0.5em
+
+    > div
+      display flex
+      align-items center
+    > div > div
+      flex 1
+      white-space nowrap
+      overflow-x hidden
+      text-overflow ellipsis
+      max-width 100px
+
+    &:only-child
+      background #777
+      color #eee
+      padding 0.5em
+
+  td input, td select, td textarea
+    width 100%
+    margin 0
+    padding 0.5em 0.25em
+    border none
+
+  td select
+    padding 0.25em 0
+
+  td input[type=checkbox]
+    width auto
+    margin 0.5em
+    cursor pointer
+
+  td
+    .inputs
+      display flex
+      align-items center
+
+      input:not(:last-of-type)
+        border-right 1px solid #ccc
+
+    .list input:not(:last-of-type)
+      border-bottom 1px solid #ccc
+
+  td input.color
+    font-family "Consolas", monospace
