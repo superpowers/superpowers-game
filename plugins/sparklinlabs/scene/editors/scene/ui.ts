@@ -174,7 +174,7 @@ export function setupSelectedNode() {
   // Setup transform
   let nodeElt = ui.nodesTreeView.selectedNodes[0];
   if (nodeElt == null || ui.nodesTreeView.selectedNodes.length !== 1) {
-    ui.inspectorElt.classList.add("noSelection");
+    ui.inspectorElt.classList.add("no-selection");
 
     ui.newNodeButton.disabled = false;
     ui.newPrefabButton.disabled = false;
@@ -184,7 +184,7 @@ export function setupSelectedNode() {
     return;
   }
 
-  ui.inspectorElt.classList.remove("noSelection");
+  ui.inspectorElt.classList.remove("no-selection");
 
   let node = data.sceneUpdater.sceneAsset.nodes.byId[nodeElt.dataset.id];
   setInspectorPosition(<THREE.Vector3>node.position);
