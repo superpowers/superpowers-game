@@ -4,6 +4,7 @@ import * as async from "async";
 interface Asset {
   id: string;
   name: string;
+  path: string;
   type: string;
   children?: any[];
 }
@@ -72,8 +73,8 @@ export default class Player {
           children = [];
           for (let child of asset.children) { children.push(child.name); }
         }
-        this.assetsToLoad.push({ id: asset.id, name: `${parent}${asset.name}`, type: asset.type, children: children });
-        parent += `${asset.name}/`;
+        this.assetsToLoad.push({ id: asset.id, name: asset.name, path: `${parent}${asset.name}`, type: asset.type, children: children });
+        parent += `${asset.name}__`;
         if (asset.children == null) return;
         for (let child of asset.children) { walk(child, parent); }
       }
@@ -117,10 +118,10 @@ export default class Player {
     let assetsLoaded = 0;
 
     let onAssetLoaded = (err: any, entry: any, asset: any) => {
-      if (err != null) { callback(new Error(`Failed to load asset ${entry.name}: ${err.message}`)); return; }
+      if (err != null) { callback(new Error(`Failed to load asset ${entry.path}: ${err.message}`)); return; }
 
       this.entriesById[entry.id] = entry;
-      this.entriesByPath[entry.name] = entry;
+      this.entriesByPath[entry.path] = entry;
       this._assetsById[entry.id] = asset;
 
       progressCallback();
@@ -217,7 +218,7 @@ export default class Player {
 
     if (outerAsset == null && asset != null) {
       if (entry.type == null) {
-        outerAsset = { name: entry.name, type: "folder", children: entry.children };
+        outerAsset = { name: entry.name, path: entry.path, type: "folder", children: entry.children };
       }
       else {
         let plugin = SupRuntime.plugins[this.entriesById[assetId].type];
@@ -226,6 +227,7 @@ export default class Player {
           (plugin.createOuterAsset != null) ? plugin.createOuterAsset(this, asset) : asset;
 
         outerAsset.name = entry.name;
+        outerAsset.path = entry.path;
         outerAsset.type = entry.type;
       }
     }
