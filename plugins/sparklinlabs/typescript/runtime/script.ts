@@ -118,8 +118,8 @@ ${jsGlobals.script}
 
 export function loadAsset(player: SupRuntime.Player, entry: any, callback: (err: Error, asset?: any) => any) {
   scriptNames.push(`${entry.name}.ts`);
-  player.getAssetData(`assets/${entry.id}/script.ts`, "text", (err, script) => {
-    scripts[`${entry.name}.ts`] = `${script}\n`
+  player.getAssetData(`assets/${entry.id}-${entry.path}/script.ts`, "text", (err, script) => {
+    scripts[`${entry.name}.ts`] = `${script}\n`;
     callback(null, script);
   });
 }

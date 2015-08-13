@@ -5,6 +5,7 @@ declare module Sup {
 
   class Asset {
     name: string;
+    path: string;
     type: string;
     children: Array<string>;
     constructor(inner: {[key:string]: any;});

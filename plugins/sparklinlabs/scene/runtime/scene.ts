@@ -1,5 +1,5 @@
 export function loadAsset(player: SupRuntime.Player, entry: any, callback: (err: Error, data?: any) => any) {
-  player.getAssetData(`assets/${entry.id}/scene.json`, "json", callback);
+  player.getAssetData(`assets/${entry.id}-${entry.path}/scene.json`, "json", callback);
 }
 
 export function createOuterAsset(player: SupRuntime.Player, asset: any) {
