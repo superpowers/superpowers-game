@@ -45,9 +45,9 @@ export function editAsset(...args: any[]) {
   let callback: Function;
   if (typeof args[args.length-1] === "function") callback = args.pop();
 
-  args.push((err: string) => {
+  args.push((err: string, id: string) => {
     if (err != null) { alert(err); return; }
-    if (callback != null) callback();
+    if (callback != null) callback(id);
   });
   socket.emit("edit:assets", info.assetId, ...args);
 }

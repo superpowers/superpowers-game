@@ -201,7 +201,7 @@ function onNewAnimationClick() {
   SupClient.dialogs.prompt("Enter a name for the animation.", null, "Animation", "Create", (name) => {
     if (name == null) return;
 
-    editAsset("newAnimation", name, null, null, (err: string, animationId: string) => {
+    editAsset("newAnimation", name, null, null, (animationId: string) => {
       ui.animationsTreeView.clearSelection();
       ui.animationsTreeView.addToSelection(ui.animationsTreeView.treeRoot.querySelector(`li[data-id="${animationId}"]`));
       updateSelectedAnimation();

@@ -92,12 +92,12 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
     if (this.asset != null) this._clearMesh();
     this.asset = null;
     this.animation = null;
-    this.animationsByName = {};
 
     if (asset == null || asset.attributes.position == null) return;
 
     this.asset = asset;
     if (materialType != null) this.materialType = materialType;
+    this.updateAnimationsByName();
 
     let geometry = new THREE.BufferGeometry;
 
@@ -185,10 +185,8 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
       (<THREE.SkinnedMesh>this.threeMesh).bind(new THREE.Skeleton(bones, undefined, useVertexTexture));
       this.material.skinning = true;
 
-      this.updateAnimationsByName();
-    } else {
-      this.threeMesh = new THREE.Mesh(geometry, this.material);
-    }
+
+    } else this.threeMesh = new THREE.Mesh(geometry, this.material);
 
     this.setCastShadow(this.castShadow);
     this.threeMesh.receiveShadow = this.receiveShadow;
