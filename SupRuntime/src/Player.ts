@@ -5,6 +5,7 @@ interface Asset {
   id: string;
   name: string;
   path: string;
+  storagePath: string;
   type: string;
   children?: any[];
 }
@@ -73,8 +74,9 @@ export default class Player {
           children = [];
           for (let child of asset.children) { children.push(child.name); }
         }
-        this.assetsToLoad.push({ id: asset.id, name: asset.name, path: `${parent}${asset.name}`, type: asset.type, children: children });
-        parent += `${asset.name}__`;
+        let path = `${parent}${asset.name}`;
+        this.assetsToLoad.push({ id: asset.id, name: asset.name, path, storagePath: `${asset.id}-${path.replace(new RegExp("/", "g"), "__")}`, type: asset.type, children });
+        parent += `${asset.name}/`;
         if (asset.children == null) return;
         for (let child of asset.children) { walk(child, parent); }
       }
