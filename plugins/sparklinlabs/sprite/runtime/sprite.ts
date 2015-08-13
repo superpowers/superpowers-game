@@ -1,5 +1,5 @@
 export function loadAsset(player: SupRuntime.Player, entry: any, callback: (err: Error, asset?: any) => any) {
-  player.getAssetData(`assets/${entry.id}-${entry.path}/sprite.json`, "json", (err, data) => {
+  player.getAssetData(`assets/${entry.storagePath}/sprite.json`, "json", (err, data) => {
     data.textures = {};
 
     let img = new Image();
@@ -18,7 +18,7 @@ export function loadAsset(player: SupRuntime.Player, entry: any, callback: (err:
 
     img.onerror = () => { callback(null, data); };
 
-    img.src = `${player.dataURL}assets/${entry.id}-${entry.path}/map-map.dat`;
+    img.src = `${player.dataURL}assets/${entry.storagePath}/map-map.dat`;
   });
 }
 

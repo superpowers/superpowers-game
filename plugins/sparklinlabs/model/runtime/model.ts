@@ -1,12 +1,12 @@
 import * as async from "async";
 
 export function loadAsset(player: SupRuntime.Player, entry: any, callback: (err: Error, asset?: any) => any) {
-  player.getAssetData(`assets/${entry.id}-${entry.path}/model.json`, "json", (err: Error, data: any) => {
+  player.getAssetData(`assets/${entry.storagePath}/model.json`, "json", (err: Error, data: any) => {
 
     let attributesList = data.attributes;
     data.attributes = {};
     async.each(attributesList, (key: string, cb: Function) => {
-      player.getAssetData(`assets/${entry.id}-${entry.path}/attr-${key}.dat`, "arraybuffer", (err: Error, buffer: ArrayBuffer) => {
+      player.getAssetData(`assets/${entry.storagePath}/attr-${key}.dat`, "arraybuffer", (err: Error, buffer: ArrayBuffer) => {
         data.attributes[key] = buffer;
         cb(); return
       });
@@ -26,7 +26,7 @@ export function loadAsset(player: SupRuntime.Player, entry: any, callback: (err:
         };
 
         image.onerror = () => { cb(); };
-        image.src = `${player.dataURL}assets/${entry.id}-${entry.path}/map-${key}.dat`;
+        image.src = `${player.dataURL}assets/${entry.storagePath}/map-${key}.dat`;
       }, () => { callback(null, data); });
     });
   });

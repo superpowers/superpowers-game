@@ -2,7 +2,7 @@
 declare let FontFace: any;
 
 export function loadAsset(player: SupRuntime.Player, entry: any, callback: (err: Error, asset?: any) => any) {
-  player.getAssetData(`assets/${entry.id}-${entry.path}/asset.json`, "json", (err, data) => {
+  player.getAssetData(`assets/${entry.storagePath}/asset.json`, "json", (err, data) => {
     if (data.isBitmap) {
       let img = new Image();
 
@@ -19,14 +19,14 @@ export function loadAsset(player: SupRuntime.Player, entry: any, callback: (err:
       };
 
       img.onerror = () => { callback(null, data); };
-      img.src = `${player.dataURL}assets/${entry.id}-${entry.path}/bitmap.dat`;
+      img.src = `${player.dataURL}assets/${entry.storagePath}/bitmap.dat`;
 
     } else {
       data.name = `Font${entry.id}`;
 
       let font: any /* FontFace */;
       try {
-        font = new FontFace(data.name, `url(${player.dataURL}assets/${entry.id}-${entry.path}/font.dat)`);
+        font = new FontFace(data.name, `url(${player.dataURL}assets/${entry.storagePath}/font.dat)`);
         (<any>document).fonts.add(font);
       } catch(e) {}
 
