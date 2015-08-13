@@ -14,7 +14,7 @@ html
       .error-pane.collapsed
         .status
           .info No errors
-          button.toggle +
+          button.toggle.plus +
 
         .errors(disabled)
           table
@@ -43,11 +43,6 @@ html
               input.file-select(type="file",accept="image/*")
 
         tr
-          th Advanced textures
-          td
-            input.advanced-textures-checkbox(type="checkbox")
-
-        tr
           th Show skeleton
           td
             input.show-skeleton(type="checkbox")
@@ -71,40 +66,41 @@ html
 
       .animations-tree-view
 
-      .advanced-textures
+      .advanced-textures.collapsed
         .header
-          span Textures
+          span Advanced Textures
+          button.plus +
+        .content
+          table
+            tr
+              th Map
+              td
+                input.map-map
+            tr
+              th Light map
+              td
+                input.map-light
+            tr
+              th Specular map
+              td
+                input.map-specular
+            tr
+              th Alpha map
+              td
+                input.map-alpha
+            tr
+              th Normal map (Phong)
+              td
+                input.map-normal
 
-        table
-          tr
-            th Map
-            td
-              input.map-map
-          tr
-            th Light map
-            td
-              input.map-light
-          tr
-            th Specular map
-            td
-              input.map-specular
-          tr
-            th Alpha map
-            td
-              input.map-alpha
-          tr
-            th Normal map (Phong)
-            td
-              input.map-normal
-
-        .textures-buttons
-          button.new-map New
-          form(style="display: none")
-            input.file-select.upload-map(type="file",multiple)
-          button(disabled).upload-map Upload
-          button(disabled).rename-map Rename
-          button(disabled).delete-map Delete
-        .textures-tree-view
+          .textures-buttons
+            button.new-map New
+            form(style="display: none")
+              input.file-select.upload-map(type="file",multiple)
+            button(disabled).upload-map Upload
+            button(disabled).rename-map Rename
+            button(disabled).delete-map Delete
+          .textures-tree-view
 
     script(src="/core/SupCore.js")
     script(src="../../data.js")

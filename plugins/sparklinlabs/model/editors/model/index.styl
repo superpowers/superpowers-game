@@ -72,10 +72,17 @@ body
       margin-right 5px
 
   .advanced-textures
-    display none
-    flex-flow column
     min-height 250px
     height 350px
+
+    .content
+      display flex
+      flex-flow column
+
+    &.collapsed
+      min-height 0 !important
+      height auto !important
+      .content { display: none; }
 
     .textures-buttons
       display flex
@@ -91,6 +98,28 @@ body
       position relative
       background #fff
       overflow-y auto
+
+button.plus
+  width 30px
+  background transparent
+  border none
+  opacity 0.5
+  font-size 20px
+  font-weight bold
+  cursor pointer
+  color #fff
+
+  &:hover
+    opacity 1
+    background-color rgba(0,0,0,0.1)
+
+  &:active
+    background-color #fff
+    color #444
+
+  &:disabled
+    opacity 0.2
+    cursor default
 
 .error-pane
   display flex
@@ -111,28 +140,6 @@ body
     .info
       flex 1
       padding 0.5em
-
-    button
-      width 30px
-      background transparent
-      border none
-      opacity 0.5
-      font-size 20px
-      font-weight bold
-      cursor pointer
-      color #fff
-
-      &:hover
-        opacity 1
-        background-color rgba(0,0,0,0.1)
-
-      &:active
-        background-color #fff
-        color #444
-
-      &:disabled
-        opacity 0.2
-        cursor default
 
   .errors
     flex 1

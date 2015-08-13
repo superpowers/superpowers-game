@@ -20,7 +20,7 @@ let ui: {
   errorsTBody?: HTMLTableSectionElement;
 
   mapUploadButton?: HTMLInputElement;
-  texturesCheckbox?: HTMLInputElement;
+  texturesToogleButton?: HTMLInputElement;
   texturesPane?: HTMLDivElement;
   texturesTreeView?: any;
   selectedTextureName?: string;
@@ -69,10 +69,13 @@ document.querySelector("button.delete-animation").addEventListener("click", onDe
 
 // Advanced textures
 ui.texturesPane = <HTMLDivElement>document.querySelector(".advanced-textures");
-new PerfectResize(ui.texturesPane, "bottom");
+let texturePaneResizeHandle = new PerfectResize(ui.texturesPane, "bottom");
 
-ui.texturesCheckbox = <HTMLInputElement>document.querySelector(".advanced-textures-checkbox");
-ui.texturesCheckbox.addEventListener("click", onCheckAdvancedTextures);
+ui.texturesToogleButton = <HTMLInputElement>document.querySelector(".advanced-textures button.plus");
+ui.texturesToogleButton.addEventListener("click", () => {
+  let advancedTextures = !data.modelUpdater.modelAsset.pub.advancedTextures;
+  editAsset("setProperty", "advancedTextures", advancedTextures);
+});
 
 ui.texturesTreeView = new TreeView(document.querySelector(".textures-tree-view"));
 ui.texturesTreeView.on("selectionChange", updateSelectedMap);
@@ -195,7 +198,6 @@ function onPrimaryMapFileSelectChange(event: Event) {
 function onShowSkeletonChange(event: Event) { data.modelUpdater.modelRenderer.setShowSkeleton((<HTMLInputElement>event.target).checked); }
 function onCheckOpacity(event: any) { editAsset("setProperty", "opacity", (event.target.checked) ? 1 : null); }
 function onChangeOpacity(event: any) { editAsset("setProperty", "opacity", parseFloat(event.target.value)); }
-function onCheckAdvancedTextures(event: any) { editAsset("setProperty", "advancedTextures", event.target.checked); }
 
 function onNewAnimationClick() {
   SupClient.dialogs.prompt("Enter a name for the animation.", null, "Animation", "Create", (name) => {
@@ -375,7 +377,8 @@ export function setupOpacity(opacity: number) {
 }
 
 export function setupAdvancedTextures(advancedTextures: boolean) {
-  ui.mapUploadButton.disabled = advancedTextures;
-  ui.texturesCheckbox.checked = advancedTextures;
-  ui.texturesPane.style.display = advancedTextures ? "flex" : "none";
+  ui.mapUploadButton.disabled = !advancedTextures;
+  ui.texturesPane.classList.toggle("collapsed", advancedTextures);
+  ui.texturesToogleButton.textContent = advancedTextures ? "+" : "–";
+  texturePaneResizeHandle.handleElt.classList.toggle("disabled", advancedTextures);
 }
