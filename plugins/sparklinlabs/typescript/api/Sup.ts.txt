@@ -4,7 +4,7 @@ module Sup {
 
   export function exit() {
     if (player.gameInstance.input.exited) return;
-    player.input.emit("exit");
+    player.gameInstance.input.emit("exit");
     player.gameInstance.input.exited = true;
     player.gameInstance.destroyAllActors();
 
