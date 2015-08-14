@@ -20,62 +20,69 @@ module Sup {
         super.destroy();
       }
 
-      setMovable( movable ) {
+      setMovable(movable) {
         this.__inner.movable = movable;
-        return this
+        return this;
       }
-      getMovable() { return this.__inner.movable }
+      getMovable() { return this.__inner.movable; }
 
-      setSize( width, height ) {
+      setSize(width, height) {
         this.__inner.width = width;
         this.__inner.height = height;
-        return this
+        return this;
       }
-      getSize() { return { width: this.__inner.width, height: this.__inner.height}}
+      getSize() { return { width: this.__inner.width, height: this.__inner.height}; }
 
       warpPosition(position) { this.__inner.warpPosition(position); }
 
-      setVelocity( velocity ) {
+      setVelocity(velocity) {
         this.__inner.velocity.x = velocity.x;
         this.__inner.velocity.y = velocity.y;
-        return this
+        this.__inner.velocity.z = velocity.z;
+        return this;
       }
-      getVelocity() { return new Sup.Math.Vector3( this.__inner.velocity.x, this.__inner.velocity.y, 0 ) }
+      getVelocity() { return new Sup.Math.Vector3(this.__inner.velocity.x, this.__inner.velocity.y, this.__inner.velocity.z) }
 
-      setVelocityMin( velocityMin ) {
+      setVelocityMin(velocityMin) {
         this.__inner.velocityMin.x = velocityMin.x;
         this.__inner.velocityMin.y = velocityMin.y;
-        return this
+        return this;
       }
-      getVelocityMin() { return new Sup.Math.Vector3( this.__inner.velocityMin.x, this.__inner.velocityMin.y, 0 ) }
+      getVelocityMin() { return new Sup.Math.Vector3(this.__inner.velocityMin.x, this.__inner.velocityMin.y, 0) }
 
-      setVelocityMax( velocityMax ) {
+      setVelocityMax(velocityMax) {
         this.__inner.velocityMax.x = velocityMax.x;
         this.__inner.velocityMax.y = velocityMax.y;
-        return this
+        return this;
       }
-      getVelocityMax() { return new Sup.Math.Vector3( this.__inner.velocityMax.x, this.__inner.velocityMax.y, 0 ) }
+      getVelocityMax() { return new Sup.Math.Vector3(this.__inner.velocityMax.x, this.__inner.velocityMax.y, 0) }
 
-      setVelocityMultiplier( velocityMultiplier ) {
+      setVelocityMultiplier(velocityMultiplier) {
         this.__inner.velocityMultiplier.x = velocityMultiplier.x;
         this.__inner.velocityMultiplier.y = velocityMultiplier.y;
-        return this
+        return this;
       }
-      getVelocityMultiplier() { return new Sup.Math.Vector3( this.__inner.velocityMultiplier.x, this.__inner.velocityMultiplier.y, 1 ) }
+      getVelocityMultiplier() { return new Sup.Math.Vector3(this.__inner.velocityMultiplier.x, this.__inner.velocityMultiplier.y, 1) }
 
-      setAngularVelocity( angularVelocity ) {
+      setAngularVelocity(angularVelocity) {
         this.__inner.angularVelocity = angularVelocity;
-        return this
+        return this;
       }
       getAngularVelocity() { return this.__inner.angularVelocity }
 
-      setAngularVelocityMultiplier( angularVelocityMultiplier ) {
+      setAngularVelocityMultiplier(angularVelocityMultiplier) {
         this.__inner.angularVelocityMultiplier = angularVelocityMultiplier
-        return this
+        return this;
       }
-      getAngularVelocityMultiplier() { return this.__inner.angularVelocityMultiplier }
+      getAngularVelocityMultiplier() { return this.__inner.angularVelocityMultiplier; }
 
-      getTouches() { return this.__inner.touches }
+      getTouches() {
+        return {
+          left: this.__inner.touches.left, right : this.__inner.touches.right,
+          top : this.__inner.touches.top , bottom: this.__inner.touches.bottom,
+          back: this.__inner.touches.top , front : this.__inner.touches.bottom,
+        };
+      }
     }
   }
 }

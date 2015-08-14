@@ -31,7 +31,7 @@ export default class ArcadeBody2D extends SupEngine.ActorComponent {
   constructor(actor: SupEngine.Actor, type: string) {
     super(actor, "ArcadeBody2D");
 
-    (<any>SupEngine).ArcadePhysics2D.allBodies.push( this );
+    (<any>SupEngine).ArcadePhysics2D.allBodies.push(this);
   }
 
   setupBox(config: any) {
@@ -48,13 +48,14 @@ export default class ArcadeBody2D extends SupEngine.ActorComponent {
     this.actorPosition = this.actor.getGlobalPosition();
     this.position = this.actorPosition.clone();
     this.position.x += this.offsetX;
-    this.position.y += this.offsetY;
+    if ((<any>SupEngine).ArcadePhysics2D.plane === "XY") this.position.y += this.offsetY;
+    else this.position.z += this.offsetY;
     this.previousPosition = this.position.clone();
 
     this.velocity = new THREE.Vector3(0, 0, 0);
-    this.velocityMin = new THREE.Vector3(-Infinity, -Infinity, 0);
-    this.velocityMax = new THREE.Vector3(Infinity, Infinity, 0);
-    this.velocityMultiplier = new THREE.Vector3(1, 1, 0);
+    this.velocityMin = new THREE.Vector3(-Infinity, -Infinity, -Infinity);
+    this.velocityMax = new THREE.Vector3(Infinity, Infinity, Infinity);
+    this.velocityMultiplier = new THREE.Vector3(1, 1, 1);
   }
 
   setupTileMap(config: any) {
@@ -83,31 +84,41 @@ export default class ArcadeBody2D extends SupEngine.ActorComponent {
 
     this.velocity.x += (<any>SupEngine).ArcadePhysics2D.gravity.x;
     this.velocity.x *= this.velocityMultiplier.x;
+    this.velocity.x = Math.min(Math.max(this.velocity.x, this.velocityMin.x), this.velocityMax.x);
 
-    this.velocity.y += (<any>SupEngine).ArcadePhysics2D.gravity.y;
-    this.velocity.y *= this.velocityMultiplier.y;
-    if (this.velocity.length() !== 0) {
-      this.velocity.x = Math.min( Math.max( this.velocity.x, this.velocityMin.x ), this.velocityMax.x );
-      this.velocity.y = Math.min( Math.max( this.velocity.y, this.velocityMin.y ), this.velocityMax.y );
-      this.position.add(this.velocity);
-      this.refreshActorPosition();
+    if ((<any>SupEngine).ArcadePhysics2D.plane === "XY") {
+      this.velocity.y += (<any>SupEngine).ArcadePhysics2D.gravity.y;
+      this.velocity.y *= this.velocityMultiplier.y;
+      this.velocity.y = Math.min(Math.max(this.velocity.y, this.velocityMin.y), this.velocityMax.y);
+    } else if ((<any>SupEngine).ArcadePhysics2D.plane === "XZ") {
+      this.velocity.z += (<any>SupEngine).ArcadePhysics2D.gravity.z;
+      this.velocity.z *= this.velocityMultiplier.z;
+      this.velocity.z = Math.min(Math.max(this.velocity.z, this.velocityMin.z), this.velocityMax.z);
     }
+    this.position.add(this.velocity);
+    this.refreshActorPosition();
   }
 
   warpPosition(position: THREE.Vector3) {
     this.position.x = position.x + this.offsetX;
-    this.position.y = position.y + this.offsetY;
+    this.position.y = position.y;
+    this.position.z = position.z;
+    if ((<any>SupEngine).ArcadePhysics2D.plane === "XY") this.position.y += this.offsetY;
+    else this.position.z += this.offsetY;
     this.refreshActorPosition();
   }
 
   refreshActorPosition() {
     this.actorPosition.x = this.position.x - this.offsetX;
-    this.actorPosition.y = this.position.y - this.offsetY;
+    this.actorPosition.y = this.position.y;
+    this.actorPosition.z = this.position.z;
+    if ((<any>SupEngine).ArcadePhysics2D.plane === "XY") this.actorPosition.y -= this.offsetY;
+    else this.actorPosition.z -= this.offsetY;
     this.actor.setGlobalPosition(this.actorPosition.clone());
   }
 
   _destroy() {
-    (<any>SupEngine).ArcadePhysics2D.allBodies.splice( (<any>SupEngine).ArcadePhysics2D.allBodies.indexOf( this ), 1 );
+    (<any>SupEngine).ArcadePhysics2D.allBodies.splice((<any>SupEngine).ArcadePhysics2D.allBodies.indexOf(this), 1);
     super._destroy();
   }
 
@@ -115,6 +126,9 @@ export default class ArcadeBody2D extends SupEngine.ActorComponent {
   left() { return this.position.x - this.width / 2; }
   top() { return this.position.y + this.height / 2; }
   bottom() { return this.position.y - this.height / 2; }
+  front() { return this.position.z + this.height / 2; }
+  back() { return this.position.z - this.height / 2; }
   deltaX() { return this.position.x - this.previousPosition.x; }
   deltaY() { return this.position.y - this.previousPosition.y; }
+  deltaZ() { return this.position.z - this.previousPosition.z; }
 }

@@ -5,34 +5,53 @@ import ArcadeBody2DMarker from "./ArcadeBody2DMarker";
 
 module ArcadePhysics2D {
   export let allBodies: ArcadeBody2D[] = [];
-  export let gravity = new THREE.Vector3( 0, 0, 0 );
+  export let gravity = new THREE.Vector3(0, 0, 0);
+  export let plane = "XY";
 
-  export function intersects( body1: ArcadeBody2D, body2: ArcadeBody2D ) {
+  export function intersects(body1: ArcadeBody2D, body2: ArcadeBody2D) {
     if (body2.type === "tileMap") return checkTileMap(body1, body2, { moveBody: false });
 
     if (body1.right() < body2.left()) return false;
-    if (body1.bottom() > body2.top()) return false;
     if (body1.left() > body2.right()) return false;
-    if (body1.top() < body2.bottom()) return false;
+    if (plane === "XY") {
+      if (body1.bottom() > body2.top()) return false;
+      if (body1.top() < body2.bottom()) return false;
+    } else if (plane === "XZ") {
+      if (body1.back() > body2.front()) return false;
+      if (body1.front() < body2.back()) return false;
+    }
     return true;
   }
 
   function detachFromBox(body1: ArcadeBody2D, body2: ArcadeBody2D) {
     let insideX = body1.position.x - body2.position.x;
-    if (insideX >= 0) insideX -= ( body1.width + body2.width ) / 2;
-    else insideX += ( body1.width + body2.width ) / 2;
+    if (insideX >= 0) insideX -= (body1.width + body2.width) / 2;
+    else insideX += (body1.width + body2.width) / 2;
 
     let insideY = body1.position.y - body2.position.y;
-    if (insideY >= 0) insideY -= ( body1.height + body2.height ) / 2;
-    else insideY += ( body1.height + body2.height ) / 2;
+    if (insideY >= 0) insideY -= (body1.height + body2.height) / 2;
+    else insideY += (body1.height + body2.height) / 2;
 
-    if (Math.abs( insideY ) <= Math.abs( insideX )) {
+    let insideZ = body1.position.z - body2.position.z;
+    if (insideZ >= 0) insideZ -= (body1.height + body2.height) / 2;
+    else insideZ += (body1.height + body2.height) / 2;
+
+    if (plane === "XY" && Math.abs(insideY) <= Math.abs(insideX)) {
       if (body1.deltaY() / insideY > 0) {
         body1.velocity.y = -body1.velocity.y * body1.bounceY;
         body1.position.y -= insideY;
 
         if (body1.position.y > body2.position.y) body1.touches.bottom = true;
         else body1.touches.top = true;
+      }
+    } else if (plane === "XZ" && Math.abs(insideZ) <= Math.abs(insideX)) {
+      console.log(insideZ);
+      if (body1.deltaZ() / insideZ > 0) {
+        body1.velocity.z = -body1.velocity.z * body1.bounceY;
+        body1.position.z -= insideZ;
+
+        if (body1.position.z > body2.position.z) body1.touches.top = true;
+        else body1.touches.bottom = true;
       }
     }
     else {
@@ -47,6 +66,38 @@ module ArcadePhysics2D {
   }
 
   function checkTileMap(body1: ArcadeBody2D, body2: ArcadeBody2D, options: { moveBody: boolean; }) {
+    function checkX() {
+      let x = (body1.deltaX() < 0) ?
+        Math.floor((body1.position.x - body2.position.x - body1.width / 2) / body2.mapToSceneFactor.x) :
+        Math.floor((body1.position.x - body2.position.x + body1.width / 2 - epsilon) / body2.mapToSceneFactor.x);
+      let y = (plane === "XY") ?
+          body1.position.y - body2.position.y - body1.height / 2 :
+        -(body1.position.z - body2.position.z) - body1.height / 2;
+      let testedHeight = body1.height - epsilon;
+      let totalPoints = Math.ceil(testedHeight / body2.mapToSceneFactor.y) + 1;
+      for (let point = 0; point <= totalPoints; point++) {
+        for (let layer of body2.layersIndex) {
+          let tile = body2.tileMapAsset.getTileAt(layer, x, Math.floor((y + point * testedHeight / totalPoints) / body2.mapToSceneFactor.y));
+
+          let collide = false;
+          if (body2.tileSetPropertyName != null) collide = body2.tileSetAsset.getTileProperties(tile)[body2.tileSetPropertyName] != null;
+          else if (tile !== -1) collide = true;
+          if (!collide) continue;
+
+          body1.velocity.x = -body1.velocity.x * body1.bounceX;
+          if (body1.deltaX() < 0) {
+            if (options.moveBody) body1.position.x = (x + 1) * body2.mapToSceneFactor.x + body2.position.x + body1.width / 2;
+            body1.touches.left = true;
+          } else {
+            if (options.moveBody) body1.position.x = x * body2.mapToSceneFactor.x + body2.position.x - body1.width / 2;
+            body1.touches.right = true;
+          }
+          return true;
+        }
+      }
+      return false;
+    }
+
     function checkY() {
       let x = body1.position.x - body2.position.x - body1.width / 2;
       let y = (body1.deltaY() < 0) ?
@@ -77,29 +128,29 @@ module ArcadePhysics2D {
       return false;
     }
 
-    function checkX() {
-      let x = (body1.deltaX() < 0) ?
-        Math.floor((body1.position.x - body2.position.x - body1.width / 2) / body2.mapToSceneFactor.x) :
-        Math.floor((body1.position.x - body2.position.x + body1.width / 2 - epsilon) / body2.mapToSceneFactor.x);
-      let y = body1.position.y - body2.position.y - body1.height / 2;
-      let testedHeight = body1.height - epsilon;
-      let totalPoints = Math.ceil(testedHeight / body2.mapToSceneFactor.y) + 1;
+    function checkZ() {
+      let x = body1.position.x - body2.position.x - body1.width / 2;
+      let z = (body1.deltaZ() < 0) ?
+        Math.ceil((body1.position.z - body2.position.z - body1.height / 2) / body2.mapToSceneFactor.y) :
+        Math.ceil((body1.position.z - body2.position.z + body1.height / 2) / body2.mapToSceneFactor.y);
+      let testedWidth = body1.width - epsilon;
+      let totalPoints = Math.ceil(testedWidth / body2.mapToSceneFactor.x) + 1;
       for (let point = 0; point <= totalPoints; point++) {
         for (let layer of body2.layersIndex) {
-          let tile = body2.tileMapAsset.getTileAt(layer, x, Math.floor((y + point * testedHeight / totalPoints) / body2.mapToSceneFactor.y));
+          let tile = body2.tileMapAsset.getTileAt(layer, Math.floor((x + point * testedWidth / totalPoints) / body2.mapToSceneFactor.x), -z);
 
           let collide = false;
           if (body2.tileSetPropertyName != null) collide = body2.tileSetAsset.getTileProperties(tile)[body2.tileSetPropertyName] != null;
           else if (tile !== -1) collide = true;
           if (!collide) continue;
 
-          body1.velocity.x = -body1.velocity.x * body1.bounceX;
-          if (body1.deltaX() < 0) {
-            if (options.moveBody) body1.position.x = (x + 1) * body2.mapToSceneFactor.x + body2.position.x + body1.width / 2;
-            body1.touches.left = true;
+          body1.velocity.z = -body1.velocity.z * body1.bounceY;
+          if (body1.deltaZ() < 0) {
+            if (options.moveBody) body1.position.z = z * body2.mapToSceneFactor.y + body1.height / 2 + body2.position.z;
+            body1.touches.top = true;
           } else {
-            if (options.moveBody) body1.position.x = x * body2.mapToSceneFactor.x + body2.position.x - body1.width / 2;
-            body1.touches.right = true;
+            if (options.moveBody) body1.position.z = (z - 1) * body2.mapToSceneFactor.y - body1.height / 2 + body2.position.z;
+            body1.touches.bottom = true;
           }
           return true;
         }
@@ -108,16 +159,54 @@ module ArcadePhysics2D {
     }
 
     let gotCollision = false;
-    let yPosition = body1.position.y;
-    let ySpeed = body1.velocity.y;
+    if (plane === "XY") {
+      if (Math.abs(gravity.y) > Math.abs(gravity.x) || Math.abs(body1.deltaY()) >= Math.abs(body1.deltaX())) {
+        let yPosition = body1.position.y;
+        let ySpeed = body1.velocity.y;
+        if (checkY()) gotCollision = true;
+        if (checkX()) {
+          gotCollision = true;
 
-    if (checkY()) gotCollision = true;
-    if (checkX()) {
-      gotCollision = true;
+          body1.position.y = yPosition;
+          body1.velocity.y = ySpeed;
+          checkY();
+        }
+      } else {
+        let xPosition = body1.position.x;
+        let xSpeed = body1.velocity.x;
+        if (checkX()) gotCollision = true;
+        if (checkY()) {
+          gotCollision = true;
 
-      body1.position.y = yPosition;
-      body1.velocity.y = ySpeed;
-      checkY();
+          body1.position.x = xPosition;
+          body1.velocity.x = xSpeed;
+          checkX();
+        }
+      }
+    } else if (plane === "XZ") {
+      if (Math.abs(body1.deltaX()) > Math.abs(body1.deltaZ())) {
+        let xPosition = body1.position.x;
+        let xSpeed = body1.velocity.x;
+        if (checkX()) gotCollision = true;
+        if (checkZ()) {
+          gotCollision = true;
+
+          body1.position.x = xPosition;
+          body1.velocity.x = xSpeed;
+          checkX();
+        }
+      } else {
+        let zPosition = body1.position.z;
+        let zSpeed = body1.velocity.z;
+        if (checkZ()) gotCollision = true;
+        if (checkX()) {
+          gotCollision = true;
+
+          body1.position.z = zPosition;
+          body1.velocity.z = zSpeed;
+          checkZ();
+        }
+      }
     }
     return gotCollision;
   }

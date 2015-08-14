@@ -9,6 +9,7 @@ export default class ArcadeBody2DMarker extends SupEngine.ActorComponent {
   markerActor: SupEngine.Actor;
   offset = new THREE.Vector3(0, 0, 0);
   line: THREE.Line;
+  plane = "XY";
 
   constructor(actor: SupEngine.Actor) {
     super(actor, "ArcadeBody2DMarker");
@@ -25,11 +26,23 @@ export default class ArcadeBody2DMarker extends SupEngine.ActorComponent {
     if (this.line != null) this._clearRenderer();
 
     let geometry = new THREE.Geometry();
-    geometry.vertices.push(new THREE.Vector3(-width / 2, -height / 2, 0.01));
-    geometry.vertices.push(new THREE.Vector3( width / 2, -height / 2, 0.01));
-    geometry.vertices.push(new THREE.Vector3( width / 2,  height / 2, 0.01));
-    geometry.vertices.push(new THREE.Vector3(-width / 2,  height / 2, 0.01));
-    geometry.vertices.push(new THREE.Vector3(-width / 2, -height / 2, 0.01));
+    if (this.plane === "XY") {
+      geometry.vertices.push(
+        new THREE.Vector3(-width / 2, -height / 2, 0.01),
+        new THREE.Vector3( width / 2, -height / 2, 0.01),
+        new THREE.Vector3( width / 2,  height / 2, 0.01),
+        new THREE.Vector3(-width / 2,  height / 2, 0.01),
+        new THREE.Vector3(-width / 2, -height / 2, 0.01)
+      );
+    } else if (this.plane === "XZ") {
+      geometry.vertices.push(
+        new THREE.Vector3(-width / 2, 0.01, -height / 2),
+        new THREE.Vector3( width / 2, 0.01, -height / 2),
+        new THREE.Vector3( width / 2, 0.01,  height / 2),
+        new THREE.Vector3(-width / 2, 0.01,  height / 2),
+        new THREE.Vector3(-width / 2, 0.01, -height / 2)
+      );
+    }
 
     let material = new THREE.LineBasicMaterial({color: 0xf459e4});
 

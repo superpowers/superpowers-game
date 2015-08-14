@@ -32,7 +32,7 @@ declare module Sup {
       getVelocityMax(): Sup.Math.Vector3;
       setVelocityMultiplier( velocityMultiplier: Sup.Math.Vector3 ): Body;
       getVelocityMultiplier(): Sup.Math.Vector3;
-      getTouches(): { top: boolean; bottom: boolean; right: boolean; left: boolean };
+      getTouches(): { top: boolean; bottom: boolean; right: boolean; left: boolean; front: boolean; back: boolean; };
     }
   }
 }
