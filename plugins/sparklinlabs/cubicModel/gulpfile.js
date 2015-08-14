@@ -41,7 +41,7 @@ function makeBrowserify(source, destination, output) {
 }
 
 makeBrowserify("./data/index.js", "./public", "data");
-//makeBrowserify("./components/index.js", "./public", "components");
+makeBrowserify("./components/index.js", "./public", "components");
 //makeBrowserify("./componentEditors/index.js", "./public", "componentEditors");
 //makeBrowserify("./runtime/index.js", "./public", "runtime");
 //makeBrowserify("./api/index.js", "./public", "api");

@@ -12,7 +12,7 @@ export interface Node extends SupCore.data.base.TreeNode {
   }
 }
 
-export default class SceneNodes extends SupCore.data.base.TreeById {
+export default class CubicModelNodes extends SupCore.data.base.TreeById {
 
   static schema = {
     name: { type: "string", minLength: 1, maxLength: 80, mutable: true },
@@ -64,7 +64,7 @@ export default class SceneNodes extends SupCore.data.base.TreeById {
   cubicModelAsset: CubicModelAsset;
 
   constructor(pub: any, cubicModelAsset: CubicModelAsset) {
-    super(pub, SceneNodes.schema);
+    super(pub, CubicModelNodes.schema);
     this.cubicModelAsset = cubicModelAsset;
   }
 }

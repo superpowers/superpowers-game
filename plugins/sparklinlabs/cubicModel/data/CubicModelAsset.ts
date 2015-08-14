@@ -6,6 +6,7 @@ import * as _ from "lodash";
 import CubicModelNodes, { Node } from "./CubicModelNodes";
 
 interface CubicModelAssetPub {
+  unitRatio: number;
   nodes: Node[];
 }
 
@@ -17,17 +18,19 @@ export default class CubicModelAsset extends SupCore.data.base.Asset {
   };
 
   pub: CubicModelAssetPub;
+  nodes: CubicModelNodes;
 
   constructor(id: string, pub: any, serverData: any) {
     super(id, pub, CubicModelAsset.schema, serverData);
   }
 
   init(options: any, callback: Function) {
-    this.pub = { unitRatio: 16 /* TODO: get default from settings! */, nodes: [] };
+    this.pub = { unitRatio: 16 /* TODO: get default from settings resource! */, nodes: [] };
     super.init(options, callback);
   }
 
   setup() {
+    this.nodes = new CubicModelNodes(this.pub.nodes, this);
   }
 
   load(assetPath: string) {

@@ -138,7 +138,7 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
       );
 
     } else {
-      let material: THREE.MeshBasicMaterial|THREE.MeshPhongMaterial
+      let material: THREE.MeshBasicMaterial|THREE.MeshPhongMaterial;
       if (this.materialType === "basic") material = new THREE.MeshBasicMaterial();
       else if (this.materialType === "phong") material = new THREE.MeshPhongMaterial();
 

@@ -1,7 +1,7 @@
 import info from "./info";
 import { data/*, editAsset*/ } from "./network";
 
-import CubicModelAsset from "../../data/CubicModelAsset";
+import { Node } from "../../data/CubicModelNodes";
 
 let PerfectResize = require("perfect-resize");
 let TreeView = require("dnd-tree-view");
@@ -9,7 +9,12 @@ let TreeView = require("dnd-tree-view");
 let ui: {
   nodesTreeView?: any;
   
-  /*opacityCheckbox?: HTMLInputElement;
+  /*newNodeButton?: HTMLButtonElement;
+  renameNodeButton?: HTMLButtonElement;
+  duplicateNodeButton?: HTMLButtonElement;
+  deleteNodeButton?: HTMLButtonElement;
+  
+  opacityCheckbox?: HTMLInputElement;
   opacityInput?: HTMLInputElement;
 
   animationsTreeView?: any;
@@ -37,12 +42,58 @@ SupClient.setupHotkeys();
 new PerfectResize(document.querySelector(".sidebar"), "right");
 new PerfectResize(document.querySelector(".nodes-tree-view"), "top");
 
-/*
 // Setup tree view
 ui.nodesTreeView = new TreeView(document.querySelector(".nodes-tree-view"), onNodeDrop);
-ui.nodesTreeView.on("activate", onNodeActivate);
-ui.nodesTreeView.on("selectionChange", () => { setupSelectedShape(); });
+//ui.nodesTreeView.on("activate", onNodeActivate);
+//ui.nodesTreeView.on("selectionChange", () => { setupSelectedShape(); });
 
+export function createNodeElement(node: Node) {
+  let liElt = document.createElement("li");
+  (<any>liElt.dataset).id = node.id;
+
+  let nameSpan = document.createElement("span");
+  nameSpan.classList.add("name");
+  nameSpan.textContent = node.name;
+  liElt.appendChild(nameSpan);
+
+  /*let visibleButton = document.createElement("button");
+  visibleButton.textContent = "Hide";
+  visibleButton.classList.add("show");
+  visibleButton.addEventListener("click", (event: any) => {
+    event.stopPropagation();
+    let actor = data.cubicModelUpdater.byCubicModelNodeId[event.target.parentElement.dataset["id"]].actor;
+    actor.threeObject.visible = !actor.threeObject.visible;
+    visibleButton.textContent = (actor.threeObject.visible) ? "Hide" : "Show";
+    if (actor.threeObject.visible) visibleButton.classList.add("show");
+    else visibleButton.classList.remove("show");
+  });
+  liElt.appendChild(visibleButton);*/
+
+  return liElt;
+}
+
+function onNodeDrop(dropInfo: any, orderedNodes: any) {
+  /*
+  let dropPoint = SupClient.getTreeViewDropPoint(dropInfo, data.cubicModelUpdater.cubicModelAsset.nodes);
+
+  let nodeIds: string[] = [];
+  for (let node of orderedNodes ) nodeIds.push(node.dataset.id);
+
+  let sourceParentNode = data.cubicModelUpdater.cubicModelAsset.nodes.parentNodesById[nodeIds[0]];
+  let sourceChildren = (sourceParentNode != null && sourceParentNode.children != null) ? sourceParentNode.children : data.cubicModelUpdater.cubicModelAsset.nodes.pub;
+  let sameParent = (sourceParentNode != null && dropPoint.parentId === sourceParentNode.id);
+
+  let i = 0;
+  for (let id of nodeIds) {
+    socket.emit("edit:assets", info.assetId, "moveNode", id, dropPoint.parentId, dropPoint.index + i, (err: string) => { if (err != null) alert(err); });
+    if (! sameParent || sourceChildren.indexOf(data.cubicModelUpdater.cubicModelAsset.nodes.byId[id]) >= dropPoint.index) i++;
+  }
+  return false;
+  */
+}
+
+
+/*
 ui.newNodeButton = <HTMLButtonElement>document.querySelector("button.new-node");
 ui.newNodeButton.addEventListener("click", onNewNodeClick);
 ui.newPrefabButton = <HTMLButtonElement>document.querySelector("button.new-prefab");
