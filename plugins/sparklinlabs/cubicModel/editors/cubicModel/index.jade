@@ -23,6 +23,11 @@ html
           label(for="transform-space") Local
 
     .sidebar
+      table.settings
+        tr
+          th Unit ratio
+          td
+            input(type="number")
       .nodes-buttons
         button.new-node New Node
         button(disabled).rename-node Rename
@@ -31,6 +36,34 @@ html
 
       .nodes-tree-view
       .inspector.no-selection
+        table
+          tr.position
+            th.label  Position
+            td
+              .inputs
+                input(type="number").x
+                input(type="number").y
+                input(type="number").z
+          tr.orientation
+            th.label Orientation
+            td
+              .inputs
+                input(type="number").x
+                input(type="number").y
+                input(type="number").z
+          tr.scale
+            th.label Scale
+            td
+              .inputs
+                input(type="number").x
+                input(type="number").y
+                input(type="number").z
+          tr
+            th Shape
+          tr
+            th Type
+            td
+              select
 
     script(src="/core/SupCore.js")
     script(src="../../data.js")

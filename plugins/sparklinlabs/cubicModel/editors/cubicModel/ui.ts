@@ -3,17 +3,27 @@ import { data/*, editAsset*/ } from "./network";
 
 import { Node } from "../../data/CubicModelNodes";
 
+let THREE = SupEngine.THREE;
 let PerfectResize = require("perfect-resize");
 let TreeView = require("dnd-tree-view");
 
 let ui: {
   nodesTreeView?: any;
   
-  /*newNodeButton?: HTMLButtonElement;
+  newNodeButton?: HTMLButtonElement;
   renameNodeButton?: HTMLButtonElement;
   duplicateNodeButton?: HTMLButtonElement;
   deleteNodeButton?: HTMLButtonElement;
-  
+
+  inspectorElt?: HTMLDivElement;
+
+  transform?: {
+    positionElts: HTMLInputElement[];
+    orientationElts: HTMLInputElement[];
+    scaleElts: HTMLInputElement[];
+  };
+
+  /*
   opacityCheckbox?: HTMLInputElement;
   opacityInput?: HTMLInputElement;
 
@@ -31,8 +41,8 @@ let ui: {
   texturesTreeView?: any;
   selectedTextureName?: string;
 
-  mapSlotsInput?: { [name: string]: HTMLInputElement };*/
-
+  mapSlotsInput?: { [name: string]: HTMLInputElement };
+  */
 } = {};
 export default ui;
 
@@ -45,7 +55,7 @@ new PerfectResize(document.querySelector(".nodes-tree-view"), "top");
 // Setup tree view
 ui.nodesTreeView = new TreeView(document.querySelector(".nodes-tree-view"), onNodeDrop);
 //ui.nodesTreeView.on("activate", onNodeActivate);
-//ui.nodesTreeView.on("selectionChange", () => { setupSelectedShape(); });
+ui.nodesTreeView.on("selectionChange", () => { setupSelectedNode(); });
 
 export function createNodeElement(node: Node) {
   let liElt = document.createElement("li");
@@ -92,32 +102,99 @@ function onNodeDrop(dropInfo: any, orderedNodes: any) {
   */
 }
 
+export function setupSelectedNode() {
+  //setupHelpers();
 
-/*
+  // Setup transform
+  let nodeElt = ui.nodesTreeView.selectedNodes[0];
+  if (nodeElt == null || ui.nodesTreeView.selectedNodes.length !== 1) {
+    ui.inspectorElt.classList.add("no-selection");
+
+    ui.newNodeButton.disabled = false;
+    ui.renameNodeButton.disabled = true;
+    ui.duplicateNodeButton.disabled = true;
+    ui.deleteNodeButton.disabled = true;
+    return;
+  }
+
+  ui.inspectorElt.classList.remove("no-selection");
+
+  let node = data.cubicModelUpdater.cubicModelAsset.nodes.byId[nodeElt.dataset.id];
+  setInspectorPosition(<THREE.Vector3>node.position);
+  setInspectorOrientation(<THREE.Quaternion>node.orientation);
+  setInspectorScale(<THREE.Vector3>node.scale);
+
+  // Setup shape editor
+  let shapeElt = <HTMLDivElement>ui.inspectorElt.querySelector(".shape");
+  shapeElt.innerHTML = "";
+}
+
+function roundForInspector(number: number) { return parseFloat(number.toFixed(3)); }
+
+export function setInspectorPosition(position: THREE.Vector3) {
+  let values = [
+    roundForInspector(position.x).toString(),
+    roundForInspector(position.y).toString(),
+    roundForInspector(position.z).toString()
+  ];
+
+  for (let i = 0; i < 3; i++) {
+    // NOTE: This helps avoid clearing selection when possible
+    if (ui.transform.positionElts[i].value !== values[i]) {
+      ui.transform.positionElts[i].value = values[i];
+    }
+  }
+}
+
+export function setInspectorOrientation(orientation: THREE.Quaternion) {
+  let euler = new THREE.Euler().setFromQuaternion(orientation);
+
+  let values = [
+    roundForInspector(THREE.Math.radToDeg(euler.x)).toString(),
+    roundForInspector(THREE.Math.radToDeg(euler.y)).toString(),
+    roundForInspector(THREE.Math.radToDeg(euler.z)).toString()
+  ];
+
+  for (let i = 0; i < 3; i++) {
+    // NOTE: This helps avoid clearing selection when possible
+    if (ui.transform.orientationElts[i].value !== values[i]) {
+      ui.transform.orientationElts[i].value = values[i];
+    }
+  }
+}
+
+export function setInspectorScale(scale: THREE.Vector3) {
+  let values = [
+    roundForInspector(scale.x).toString(),
+    roundForInspector(scale.y).toString(),
+    roundForInspector(scale.z).toString()
+  ];
+
+  for (let i = 0; i < 3; i++) {
+    // NOTE: This helps avoid clearing selection when possible
+    if (ui.transform.scaleElts[i].value !== values[i]) {
+      ui.transform.scaleElts[i].value = values[i];
+    }
+  }
+}
+
 ui.newNodeButton = <HTMLButtonElement>document.querySelector("button.new-node");
-ui.newNodeButton.addEventListener("click", onNewNodeClick);
-ui.newPrefabButton = <HTMLButtonElement>document.querySelector("button.new-prefab");
-ui.newPrefabButton.addEventListener("click", onNewPrefabClick);
+//ui.newNodeButton.addEventListener("click", onNewNodeClick);
 ui.renameNodeButton = <HTMLButtonElement>document.querySelector("button.rename-node");
-ui.renameNodeButton.addEventListener("click", onRenameNodeClick);
+//ui.renameNodeButton.addEventListener("click", onRenameNodeClick);
 ui.duplicateNodeButton = <HTMLButtonElement>document.querySelector("button.duplicate-node");
-ui.duplicateNodeButton.addEventListener("click", onDuplicateNodeClick);
+//ui.duplicateNodeButton.addEventListener("click", onDuplicateNodeClick);
 ui.deleteNodeButton = <HTMLButtonElement>document.querySelector("button.delete-node");
-ui.deleteNodeButton.addEventListener("click", onDeleteNodeClick);
+//ui.deleteNodeButton.addEventListener("click", onDeleteNodeClick);
 
 // Inspector
 ui.inspectorElt = <HTMLDivElement>document.querySelector(".inspector");
-ui.inspectorTbodyElt = <HTMLTableElement>ui.inspectorElt.querySelector("tbody");
 
 ui.transform = {
   positionElts: <any>ui.inspectorElt.querySelectorAll(".transform .position input"),
   orientationElts: <any>ui.inspectorElt.querySelectorAll(".transform .orientation input"),
   scaleElts: <any>ui.inspectorElt.querySelectorAll(".transform .scale input"),
 };
-
-ui.visibleCheckbox = <HTMLInputElement>ui.inspectorElt.querySelector(".visible input");
-ui.visibleCheckbox.addEventListener("change", onVisibleChange);
-*/
 
 /*
 // Model upload
