@@ -8,7 +8,7 @@ module ArcadePhysics2D {
   export let gravity = new THREE.Vector3( 0, 0, 0 );
 
   export function intersects( body1: ArcadeBody2D, body2: ArcadeBody2D ) {
-    if (body2.type === "tileMap") throw new Error("ArcadePhysics2D.intersects isn't supported for tileMap")
+    if (body2.type === "tileMap") return checkTileMap(body1, body2, { moveBody: false });
 
     if (body1.right() < body2.left()) return false;
     if (body1.bottom() > body2.top()) return false;
@@ -17,7 +17,112 @@ module ArcadePhysics2D {
     return true;
   }
 
-  export function collides( body1: ArcadeBody2D, bodies: ArcadeBody2D[] ) {
+  function detachFromBox(body1: ArcadeBody2D, body2: ArcadeBody2D) {
+    let insideX = body1.position.x - body2.position.x;
+    if (insideX >= 0) insideX -= ( body1.width + body2.width ) / 2;
+    else insideX += ( body1.width + body2.width ) / 2;
+
+    let insideY = body1.position.y - body2.position.y;
+    if (insideY >= 0) insideY -= ( body1.height + body2.height ) / 2;
+    else insideY += ( body1.height + body2.height ) / 2;
+
+    if (Math.abs( insideY ) <= Math.abs( insideX )) {
+      if (body1.deltaY() / insideY > 0) {
+        body1.velocity.y = -body1.velocity.y * body1.bounceY;
+        body1.position.y -= insideY;
+
+        if (body1.position.y > body2.position.y) body1.touches.bottom = true;
+        else body1.touches.top = true;
+      }
+    }
+    else {
+      if (body1.deltaX() / insideX > 0) {
+        body1.velocity.x = -body1.velocity.x * body1.bounceX;
+        body1.position.x -= insideX;
+
+        if (body1.position.x > body2.position.x) body1.touches.left = true;
+        else body1.touches.right = true;
+      }
+    }
+  }
+
+  function checkTileMap(body1: ArcadeBody2D, body2: ArcadeBody2D, options: { moveBody: boolean; }) {
+    function checkY() {
+      let x = body1.position.x - body2.position.x - body1.width / 2;
+      let y = (body1.deltaY() < 0) ?
+        Math.floor((body1.position.y - body2.position.y - body1.height / 2) / body2.mapToSceneFactor.y) :
+        Math.floor((body1.position.y - body2.position.y + body1.height / 2 - epsilon) / body2.mapToSceneFactor.y);
+      let testedWidth = body1.width - epsilon;
+      let totalPoints = Math.ceil(testedWidth / body2.mapToSceneFactor.x) + 1;
+      for (let point = 0; point <= totalPoints; point++) {
+        for (let layer of body2.layersIndex) {
+          let tile = body2.tileMapAsset.getTileAt(layer, Math.floor((x + point * testedWidth / totalPoints) / body2.mapToSceneFactor.x), y);
+
+          let collide = false;
+          if (body2.tileSetPropertyName != null) collide = body2.tileSetAsset.getTileProperties(tile)[body2.tileSetPropertyName] != null;
+          else if (tile !== -1) collide = true;
+          if (!collide) continue;
+
+          body1.velocity.y = -body1.velocity.y * body1.bounceY;
+          if (body1.deltaY() < 0) {
+            if (options.moveBody) body1.position.y = (y + 1) * body2.mapToSceneFactor.y + body2.position.y + body1.height / 2;
+            body1.touches.bottom = true;
+          } else {
+            if (options.moveBody) body1.position.y = y * body2.mapToSceneFactor.y + body2.position.y - body1.height / 2;
+            body1.touches.top = true;
+          }
+          return true;
+        }
+      }
+      return false;
+    }
+
+    function checkX() {
+      let x = (body1.deltaX() < 0) ?
+        Math.floor((body1.position.x - body2.position.x - body1.width / 2) / body2.mapToSceneFactor.x) :
+        Math.floor((body1.position.x - body2.position.x + body1.width / 2 - epsilon) / body2.mapToSceneFactor.x);
+      let y = body1.position.y - body2.position.y - body1.height / 2;
+      let testedHeight = body1.height - epsilon;
+      let totalPoints = Math.ceil(testedHeight / body2.mapToSceneFactor.y) + 1;
+      for (let point = 0; point <= totalPoints; point++) {
+        for (let layer of body2.layersIndex) {
+          let tile = body2.tileMapAsset.getTileAt(layer, x, Math.floor((y + point * testedHeight / totalPoints) / body2.mapToSceneFactor.y));
+
+          let collide = false;
+          if (body2.tileSetPropertyName != null) collide = body2.tileSetAsset.getTileProperties(tile)[body2.tileSetPropertyName] != null;
+          else if (tile !== -1) collide = true;
+          if (!collide) continue;
+
+          body1.velocity.x = -body1.velocity.x * body1.bounceX;
+          if (body1.deltaX() < 0) {
+            if (options.moveBody) body1.position.x = (x + 1) * body2.mapToSceneFactor.x + body2.position.x + body1.width / 2;
+            body1.touches.left = true;
+          } else {
+            if (options.moveBody) body1.position.x = x * body2.mapToSceneFactor.x + body2.position.x - body1.width / 2;
+            body1.touches.right = true;
+          }
+          return true;
+        }
+      }
+      return false;
+    }
+
+    let gotCollision = false;
+    let yPosition = body1.position.y;
+    let ySpeed = body1.velocity.y;
+
+    if (checkY()) gotCollision = true;
+    if (checkX()) {
+      gotCollision = true;
+
+      body1.position.y = yPosition;
+      body1.velocity.y = ySpeed;
+      checkY();
+    }
+    return gotCollision;
+  }
+
+  export function collides(body1: ArcadeBody2D, bodies: ArcadeBody2D[]) {
     if (body1.type === "tileMap" || ! body1.movable) throw new Error("The first body must be a movable box in ArcadePhysics2D.collides");
 
     body1.touches.top = false;
@@ -26,159 +131,20 @@ module ArcadePhysics2D {
     body1.touches.left = false;
 
     let gotCollision = false;
-    for (let otherBody of bodies) {
-      if (otherBody === body1) continue;
+    for (let body2 of bodies) {
+      if (body2 === body1) continue;
 
-      if (otherBody.type === "box") {
-        if (intersects( body1, otherBody ) !== false) {
+      if (body2.type === "box") {
+        if (intersects(body1, body2)) {
           gotCollision = true;
-
-          let insideX = body1.position.x - otherBody.position.x;
-          if (insideX >= 0) insideX -= ( body1.width + otherBody.width ) / 2;
-          else insideX += ( body1.width + otherBody.width ) / 2;
-
-          let insideY = body1.position.y - otherBody.position.y;
-          if (insideY >= 0) insideY -= ( body1.height + otherBody.height ) / 2;
-          else insideY += ( body1.height + otherBody.height ) / 2;
-
-          if (Math.abs( insideY ) <= Math.abs( insideX )) {
-            if (body1.deltaY() / insideY > 0) {
-              body1.velocity.y = -body1.velocity.y * body1.bounceY;
-              body1.position.y -= insideY;
-
-              if (body1.position.y > otherBody.position.y) body1.touches.bottom = true;
-              else body1.touches.top = true;
-            }
-          }
-          else {
-            if (body1.deltaX() / insideX > 0) {
-              body1.velocity.x = -body1.velocity.x * body1.bounceX;
-              body1.position.x -= insideX;
-
-              if (body1.position.x > otherBody.position.x) body1.touches.left = true;
-              else body1.touches.right = true;
-            }
-          }
+          detachFromBox(body1, body2);
         }
 
-      } else if (otherBody.type === "tileMap") {
-        function checkY(mapBody: ArcadeBody2D) {
-          if (body1.deltaY() < 0) {
-            let x = body1.position.x - mapBody.position.x - body1.width / 2;
-            let y = Math.floor((body1.position.y - mapBody.position.y - body1.height / 2) / mapBody.mapToSceneFactor.y);
-            let testedWidth = body1.width - epsilon;
-            let totalPoints = Math.ceil(testedWidth / mapBody.mapToSceneFactor.x) + 1;
-            for (let point = 0; point <= totalPoints; point++) {
-              for (let layer of mapBody.layersIndex) {
-                let tile = mapBody.tileMapAsset.getTileAt(layer, Math.floor((x + point * testedWidth / totalPoints) / mapBody.mapToSceneFactor.x), y);
-
-                let collide = false;
-                if (mapBody.tileSetPropertyName != null) {
-                  let solidProperty = mapBody.tileSetAsset.getTileProperties(tile)[mapBody.tileSetPropertyName]
-                  if (solidProperty != null) collide = true;
-                } else if (tile !== -1) collide = true;
-
-                if (collide) {
-                  gotCollision = true;
-                  body1.velocity.y = -body1.velocity.y * body1.bounceY;
-                  body1.position.y = (y + 1) * mapBody.mapToSceneFactor.y + mapBody.position.y + body1.height / 2;
-                  body1.touches.bottom = true;
-                  return;
-                }
-              }
-            }
-          } else if (body1.deltaY() > 0) {
-            let x = body1.position.x - mapBody.position.x - body1.width / 2;
-            let y = Math.floor((body1.position.y - mapBody.position.y + body1.height / 2 - epsilon) / mapBody.mapToSceneFactor.y);
-            let testedWidth = body1.width - epsilon;
-            let totalPoints = Math.ceil(testedWidth / mapBody.mapToSceneFactor.x) + 1;
-            for (let point = 0; point <= totalPoints; point++) {
-              for (let layer of mapBody.layersIndex) {
-                let tile = mapBody.tileMapAsset.getTileAt(layer, Math.floor((x + point * testedWidth / totalPoints) / mapBody.mapToSceneFactor.x), y);
-
-                let collide = false;
-                if (mapBody.tileSetPropertyName != null) {
-                  let solidProperty = mapBody.tileSetAsset.getTileProperties(tile)[mapBody.tileSetPropertyName]
-                  if (solidProperty != null) collide = true;
-                } else if (tile !== -1) collide = true;
-
-                if (collide) {
-                  gotCollision = true;
-                  body1.velocity.y = -body1.velocity.y * body1.bounceY;
-                  body1.position.y = y * mapBody.mapToSceneFactor.y + mapBody.position.y - body1.height / 2;
-                  body1.touches.top = true;
-                  return;
-                }
-              }
-            }
-          }
-        }
-
-        function checkX(mapBody: ArcadeBody2D) {
-          if (body1.deltaX() < 0) {
-            let x = Math.floor((body1.position.x - mapBody.position.x - body1.width / 2) / mapBody.mapToSceneFactor.x);
-            let y = body1.position.y - mapBody.position.y - body1.height / 2;
-            let testedHeight = body1.height - epsilon;
-            let totalPoints = Math.ceil(testedHeight / mapBody.mapToSceneFactor.x) + 1;
-            for (let point = 0; point <= totalPoints; point++) {
-              for (let layer of mapBody.layersIndex) {
-                let tile = mapBody.tileMapAsset.getTileAt(layer, x, Math.floor((y + point * testedHeight / totalPoints) / mapBody.mapToSceneFactor.y));
-
-                let collide = false;
-                if (mapBody.tileSetPropertyName != null) {
-                  let solidProperty = mapBody.tileSetAsset.getTileProperties(tile)[mapBody.tileSetPropertyName]
-                  if (solidProperty != null) collide = true;
-                } else if (tile !== -1) collide = true;
-
-                if (collide) {
-                  gotCollision = true;
-                  body1.velocity.x = -body1.velocity.x * body1.bounceX;
-                  body1.position.x = (x + 1) * mapBody.mapToSceneFactor.x + mapBody.position.x + body1.width / 2;
-                  body1.touches.left = true;
-                  return true;
-                }
-              }
-            }
-
-          } else if (body1.deltaX() > 0) {
-            let x = Math.floor((body1.position.x - mapBody.position.x + body1.width / 2 - epsilon) / mapBody.mapToSceneFactor.x);
-            let y = body1.position.y - mapBody.position.y - body1.height / 2;
-            let testedHeight = body1.height - epsilon;
-            let totalPoints = Math.ceil(testedHeight / mapBody.mapToSceneFactor.y) + 1;
-            for (let point = 0; point <= totalPoints; point++) {
-              for (let layer of mapBody.layersIndex) {
-                let tile = mapBody.tileMapAsset.getTileAt(layer, x, Math.floor((y + point * testedHeight / totalPoints) / mapBody.mapToSceneFactor.y));
-
-                let collide = false;
-                if (mapBody.tileSetPropertyName != null) {
-                  let solidProperty = mapBody.tileSetAsset.getTileProperties(tile)[mapBody.tileSetPropertyName]
-                  if (solidProperty != null) collide = true;
-                } else if (tile !== -1) collide = true;
-
-                if (collide) {
-                  gotCollision = true;
-                  body1.velocity.x = -body1.velocity.x * body1.bounceX;
-                  body1.position.x = x * mapBody.mapToSceneFactor.x + mapBody.position.x - body1.width / 2;
-                  body1.touches.right = true;
-                  return true;
-                }
-              }
-            }
-          }
-          return false;
-        }
-
-        let yPosition = body1.position.y;
-        let ySpeed = body1.velocity.y;
-
-        checkY(otherBody);
-        if (checkX(otherBody)) {
-          body1.position.y = yPosition;
-          body1.velocity.y = ySpeed;
-          checkY(otherBody);
-        }
+      } else if (body2.type === "tileMap") {
+        if (checkTileMap(body1, body2, { moveBody: true })) gotCollision = true;
       }
     }
+
     if (gotCollision) body1.refreshActorPosition();
     return gotCollision;
   }
