@@ -34,26 +34,25 @@ export default class ArcadeBody2DEditor {
       this.editConfig("setProperty", "movable", event.target.checked);
     });
 
-    let widthRow = SupClient.table.appendRow(this.tbody, "Width");
-    this.boxFields["width"] = SupClient.table.appendNumberField(widthRow.valueCell, config.width, 0);
+    let sizeRow = SupClient.table.appendRow(this.tbody, "Size");
+    let sizeFields = SupClient.table.appendNumberFields(sizeRow.valueCell, [config.width, config.height]);
+    this.boxFields["width"] = sizeFields[0];
     this.boxFields["width"].addEventListener("change", (event: any) => {
       this.editConfig("setProperty", "width", parseFloat(event.target.value));
     });
-
-    let heightRow = SupClient.table.appendRow(this.tbody, "Height");
-    this.boxFields["height"] = SupClient.table.appendNumberField(heightRow.valueCell, config.height, 0);
+    this.boxFields["height"] = sizeFields[1];
     this.boxFields["height"].addEventListener("change", (event: any) => {
       this.editConfig("setProperty", "height", parseFloat(event.target.value));
     });
 
-    let offsetX = SupClient.table.appendRow(this.tbody, "Offset X");
-    this.boxFields["offsetX"] = SupClient.table.appendNumberField(offsetX.valueCell, config.offsetX);
+    let offsetRow = SupClient.table.appendRow(this.tbody, "Offset");
+    let offsetFields = SupClient.table.appendNumberFields(offsetRow.valueCell, [config.offsetX, config.offsetY]);
+    this.boxFields["offsetX"] = offsetFields[0];
     this.boxFields["offsetX"].addEventListener("change", (event: any) => {
       this.editConfig("setProperty", "offsetX", parseFloat(event.target.value));
     });
 
-    let offsetY = SupClient.table.appendRow(this.tbody, "Offset Y");
-    this.boxFields["offsetY"] = SupClient.table.appendNumberField(offsetY.valueCell, config.offsetY);
+    this.boxFields["offsetY"] = offsetFields[1];
     this.boxFields["offsetY"].addEventListener("change", (event: any) => {
       this.editConfig("setProperty", "offsetY", parseFloat(event.target.value));
     });
@@ -110,10 +109,14 @@ export default class ArcadeBody2DEditor {
     if (this.typeField.value === "box") {
       for (let fieldName in this.tileMapFields) this.tbody.removeChild(this.tileMapFields[fieldName].parentElement.parentElement);
       if (onlyRemove) return;
-      for (let fieldName in this.boxFields) this.tbody.appendChild(this.boxFields[fieldName].parentElement.parentElement);
+      this.tbody.appendChild(this.boxFields["movable"].parentElement.parentElement);
+      this.tbody.appendChild(this.boxFields["width"].parentElement.parentElement.parentElement);
+      this.tbody.appendChild(this.boxFields["offsetX"].parentElement.parentElement.parentElement);
 
     } else {
-      for (let fieldName in this.boxFields) this.tbody.removeChild(this.boxFields[fieldName].parentElement.parentElement);
+      this.tbody.removeChild(this.boxFields["movable"].parentElement.parentElement);
+      this.tbody.removeChild(this.boxFields["width"].parentElement.parentElement.parentElement);
+      this.tbody.removeChild(this.boxFields["offsetX"].parentElement.parentElement.parentElement);
       if (onlyRemove) return;
       for (let fieldName in this.tileMapFields) this.tbody.appendChild(this.tileMapFields[fieldName].parentElement.parentElement);
     }

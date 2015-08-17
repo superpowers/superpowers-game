@@ -47,14 +47,14 @@ export default class ArcadeBody2DMarker extends SupEngine.ActorComponent {
     let material = new THREE.LineBasicMaterial({color: 0xf459e4});
 
     this.line = new THREE.Line(geometry, material);
-    this.line.position.copy(this.offset);
     this.markerActor.threeObject.add(this.line);
-    this.line.updateMatrixWorld(false);
+    this.setOffset();
   }
 
-  setOffset(x: number, y: number) {
-    this.offset.set(x, y, 0);
-    this.line.position.copy(this.offset);
+  setOffset(x?: number, y?: number) {
+    if (x != null && y != null) this.offset.set(x, y, 0);
+    if (this.plane === "XY") this.line.position.set(this.offset.x, this.offset.y, 0);
+    else this.line.position.set(this.offset.x, 0, this.offset.y);
     this.line.updateMatrixWorld(false);
   }
 

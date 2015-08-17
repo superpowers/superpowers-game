@@ -45,7 +45,6 @@ module ArcadePhysics2D {
         else body1.touches.top = true;
       }
     } else if (plane === "XZ" && Math.abs(insideZ) <= Math.abs(insideX)) {
-      console.log(insideZ);
       if (body1.deltaZ() / insideZ > 0) {
         body1.velocity.z = -body1.velocity.z * body1.bounceY;
         body1.position.z -= insideZ;

@@ -2,14 +2,14 @@ interface BoxOptions {
   movable: boolean;
   width: number;
   height: number;
+  offset?: { x: number; y: number; }|{ x: number; z: number };
   bounceX?: number;
   bounceY?: number
 }
 
 interface TileMapOptions {
   tileMapAsset: Sup.TileMap;
-  tileSetPropertyName: string;
-  tileSetAsset?: Sup.TileSet;
+  tileSetPropertyName?: string;
   layersIndex?: string;
 }
 
@@ -18,19 +18,21 @@ declare module Sup {
     enum BodyType { Box, TileMap }
 
     class Body extends ActorComponent {
-      constructor( actor: Sup.Actor, type: BodyType, options: BoxOptions|TileMapOptions );
-      setMovable( movable: boolean ): Body;
+      constructor(actor: Sup.Actor, type: BodyType, options: BoxOptions|TileMapOptions);
+      setMovable(movable: boolean): Body;
       getMovable(): boolean;
-      setSize( width: number, height: number ): Body;
+      setSize(width: number, height: number): Body;
       getSize(): { width: number; height: number; };
+      setOffset(offset: { x: number; y: number; }|{ x: number; z: number }): Body;
+      getOffset(): { x: number; y?: number; z?: number; };
       warpPosition(position: Sup.Math.Vector3): Body;
-      setVelocity( velocity: Sup.Math.Vector3 ): Body;
+      setVelocity(velocity: Sup.Math.Vector3): Body;
       getVelocity(): Sup.Math.Vector3;
-      setVelocityMin( velocityMin: Sup.Math.Vector3 ): Body;
+      setVelocityMin(velocityMin: Sup.Math.Vector3): Body;
       getVelocityMin(): Sup.Math.Vector3;
-      setVelocityMax( velocityMax: Sup.Math.Vector3 ): Body;
+      setVelocityMax(velocityMax: Sup.Math.Vector3): Body;
       getVelocityMax(): Sup.Math.Vector3;
-      setVelocityMultiplier( velocityMultiplier: Sup.Math.Vector3 ): Body;
+      setVelocityMultiplier(velocityMultiplier: Sup.Math.Vector3): Body;
       getVelocityMultiplier(): Sup.Math.Vector3;
       getTouches(): { top: boolean; bottom: boolean; right: boolean; left: boolean; front: boolean; back: boolean; };
     }

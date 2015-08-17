@@ -9,7 +9,7 @@ module Sup {
         this.__inner = new SupEngine.componentClasses.ArcadeBody2D(actor.__inner);
         if (type === Sup.ArcadePhysics2D.BodyType.Box) this.__inner.setupBox(options);
         else if (type === Sup.ArcadePhysics2D.BodyType.TileMap) {
-          if (options.tileSetAsset == null) options.tileSetAsset = player.getOuterAsset(options.tileMapAsset.__inner.data.tileSetId);
+          options.tileSetAsset = player.getOuterAsset(options.tileMapAsset.__inner.data.tileSetId);
           this.__inner.setupTileMap(options);
         }
         this.__inner.__outer = this;
@@ -32,6 +32,19 @@ module Sup {
         return this;
       }
       getSize() { return { width: this.__inner.width, height: this.__inner.height}; }
+
+      setOffset(offset) {
+        this.__inner.offsetX = offset.x;
+        this.__inner.offsetY = (SupEngine.ArcadePhysics2D.plane === "XY") ? offset.y : offset.z;
+        this.__inner.refreshActorPosition();
+        return this;
+      }
+      getOffset() {
+        let offset: any = { x: this.__inner.offsetX };
+        if (SupEngine.ArcadePhysics2D.plane === "XY") offset.y = this.__inner.offsetY;
+        else offset.z = this.__inner.offsetY;
+        return offset;
+      }
 
       warpPosition(position) { this.__inner.warpPosition(position); }
 
