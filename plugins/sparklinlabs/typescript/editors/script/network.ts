@@ -136,7 +136,7 @@ var scriptSubscriber = {
       (<any>ui.errorPaneStatus.classList.toggle)("has-draft", data.asset.hasDraft);
       ui.editor.setText(data.asset.pub.draft);
       if (info.line != null && info.ch != null)
-        ui.editor.codeMirrorInstance.getDoc().setCursor({ line: info.line, ch: info.ch });
+        ui.editor.codeMirrorInstance.getDoc().setCursor({ line: parseInt(info.line), ch: parseInt(info.ch) });
     }
 
     if (!allScriptsReceived) {
