@@ -46,39 +46,8 @@ html
             input(type="number" min="1").property-pixelsPerUnit
 
         tr
-          th Frames /&nbsp;second
-          td
-            input(type="number" min="1").property-framesPerSecond
-
-        tr
-          th
-            span Opacity
-            input(type="checkbox").opacity-checkbox
-          td
-            input(type="number" min="0" max="1" step="0.1").property-opacity
-
-        tr
-          th Alpha test
-          td
-            input(type="number" min="0" max="1" step="0.1").property-alphaTest
-
-        tr
-          th Frame order
-          td
-            select.property-frameOrder
-              option(value='rows') Rows
-              option(value='columns') Columns
-
-        tr
-          th Image
-        tr
-          th.nested Width
-          td
-            label.image-width 0
-        tr
-          th.nested Height
-          td
-            label.image-height 0
+          th Size
+          td.image-size
 
         tr
           th Grid
@@ -94,22 +63,82 @@ html
             button.set-grid-height Set
 
         tr
-          th Origin
-        tr
-          th.nested X (%)
+          th Origin (%)
           td
+            span X
             input.property-origin-x(type='number')
-        tr
-          th.nested Y (%)
-          td
+            span Y
             input.property-origin-y(type='number')
 
+        tr
+          th Frames /&nbsp;second
+          td
+            input(type="number" min="1").property-framesPerSecond
+
+        tr
+          th Frame order
+          td
+            select.property-frameOrder
+              option(value='rows') Rows
+              option(value='columns') Columns
+
+        tr
+          th
+            span Opacity
+            input(type="checkbox").opacity-checkbox
+          td
+            input(type="number" min="0" max="1" step="0.1").property-opacity
+
+        tr
+          th Alpha test
+          td
+            input(type="number" min="0" max="1" step="0.1").property-alphaTest
+
+      .header
+        span Animations
       .animations-buttons
         button.new-animation New
         button(disabled).rename-animation Rename
         button(disabled).delete-animation Delete
 
       .animations-tree-view
+
+      .advanced-textures.collapsed
+        .header
+          span Advanced Textures
+          button.plus +
+        .content
+          table
+            tr
+              th Map
+              td
+                input.map-map
+            tr
+              th Light map
+              td
+                input.map-light
+            tr
+              th Specular map
+              td
+                input.map-specular
+            tr
+              th Alpha map
+              td
+                input.map-alpha
+            tr
+              th Normal map (Phong)
+              td
+                input.map-normal
+
+          .textures-buttons
+            button.new-map New
+            form(style="display: none")
+              input.file-select.upload-map(type="file",multiple)
+            button(disabled).upload-map Upload
+            button(disabled).download-map Download
+            button(disabled).rename-map Rename
+            button(disabled).delete-map Delete
+          .textures-tree-view
 
     script(src="/core/SupCore.js")
     script(src="../../data.js")

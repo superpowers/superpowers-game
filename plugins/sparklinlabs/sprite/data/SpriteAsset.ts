@@ -18,6 +18,9 @@ interface SpriteAssetPub {
   origin: { x: number; y: number; };
 
   animations: SpriteAnimationPub[];
+
+  advancedTextures: boolean;
+  mapSlots: { [name: string]: string; };
 }
 
 export default class SpriteAsset extends SupCore.data.base.Asset {
@@ -52,7 +55,20 @@ export default class SpriteAsset extends SupCore.data.base.Asset {
       }
     },
 
-    animations: { type: "array" }
+    animations: { type: "array" },
+
+    advancedTextures: { type: "boolean", mutable: true },
+
+    mapSlots: {
+      type: "hash",
+      properties: {
+        map: { type: "string?", mutable: true },
+        light: { type: "string?", mutable: true },
+        specular: { type: "string?", mutable: true },
+        alpha: { type: "string?", mutable: true },
+        normal: { type: "string?", mutable: true }
+      }
+    }
   };
 
   animations: SpriteAnimations;
@@ -76,7 +92,16 @@ export default class SpriteAsset extends SupCore.data.base.Asset {
         grid: { width: 100, height: 100 },
         origin: { x: 0.5, y: 0.5 },
 
-        animations: []
+        animations: [],
+
+        advancedTextures: false,
+        mapSlots: {
+          map: "map",
+          light: null,
+          specular: null,
+          alpha: null,
+          normal: null
+        }
       };
 
       this.serverData.resources.release("spriteSettings", null);
@@ -98,6 +123,16 @@ export default class SpriteAsset extends SupCore.data.base.Asset {
       // TODO: Remove these at some point, asset migration introduced in Superpowers 0.11
       if (mapsName == null) mapsName = ["map"];
       if (pub.frameOrder == null) pub.frameOrder = "rows";
+      if (pub.advancedTextures == null) {
+        pub.advancedTextures = false;
+        pub.mapSlots = {
+          map: "map",
+          light: null,
+          specular: null,
+          alpha: null,
+          normal: null
+        }
+      }
 
       pub.maps = {};
       async.series([
@@ -178,17 +213,92 @@ export default class SpriteAsset extends SupCore.data.base.Asset {
     ], (err) => { saveCallback(err); });
   }
 
-  server_upload(client: any, buffer: any, callback: (err: string, buffer?: any) => any) {
-    if (! (buffer instanceof Buffer)) { callback("buffer must be an ArrayBuffer"); return; }
+  server_setMaps(client: any, maps: any, callback: (err: string, maps?: any) => any) {
+    if (maps == null || typeof maps !== "object") { callback("Maps must be an object"); return; }
 
-    this.pub.maps["map"] = buffer;
+    for (let key in maps) {
+      let value = maps[key];
+      if (this.pub.maps[key] == null) { callback(`The map ${key} doesn't exist`); return; }
+      if (value != null && !(value instanceof Buffer)) { callback(`Value for ${key} must be an ArrayBuffer or null`); return; }
+    }
 
-    callback(null, buffer);
+    for (let key in maps) this.pub.maps[key] = maps[key];
+
+    callback(null, maps);
     this.emit("change");
   }
 
-  client_upload(buffer: any) {
-    this.pub.maps["map"] = buffer;
+  client_setMaps(maps: any) {
+    for (let key in maps) this.pub.maps[key] = maps[key];
+  }
+
+  server_newMap(client: any, name: string, callback: (err: string, name: string) => any) {
+    if (name == null || typeof name !== "string") { callback("Name of the map must be a string", null); return; }
+    if (this.pub.maps[name] != null) { callback(`The map ${name} already exists`, null); return; }
+
+    this.pub.maps[name] = new Buffer(0);
+    callback(null, name);
+    this.emit("change");
+  }
+
+  client_newMap(name: string) {
+    this.pub.maps[name] = new Buffer(0);
+  }
+
+  server_deleteMap(client: any, name: string, callback: (err: string, name: string) => any) {
+    if (name == null || typeof name !== "string") { callback("Name of the map must be a string", null); return; }
+    if (this.pub.maps[name] == null) { callback(`The map ${name} doesn't exist`, null); return; }
+
+    if (this.pub.mapSlots["map"] === name) { callback(`The main map can't be deleted`, null); return; }
+
+    this.client_deleteMap(name);
+    callback(null, name);
+    this.emit("change");
+  }
+
+  client_deleteMap(name: string) {
+    for (let slotName in this.pub.mapSlots) {
+      let map = this.pub.mapSlots[slotName];
+      if (map === name) this.pub.mapSlots[slotName] = null;
+    }
+
+    //NOTE: do not delete, the key must exist so the file can be deleted from the disk when the asset is saved
+    this.pub.maps[name] = null;
+  }
+
+  server_renameMap(client: any, oldName: string, newName: string, callback: (err: string, oldName: string, newName: string) => any) {
+    if (oldName == null || typeof oldName !== "string") { callback("Name of the map must be a string", null, null); return; }
+    if (newName == null || typeof newName !== "string") { callback("New name of the map must be a string", null, null); return; }
+    if (this.pub.maps[newName] != null) { callback(`The map ${newName} already exists`, null, null); return; }
+
+    this.client_renameMap(oldName, newName);
+    callback(null, oldName, newName);
+    this.emit("change");
+  }
+
+  client_renameMap(oldName: string, newName: string) {
+    this.pub.maps[newName] = this.pub.maps[oldName];
+    this.pub.maps[oldName] = null;
+
+    for (let slotName in this.pub.mapSlots) {
+      let map = this.pub.mapSlots[slotName];
+      if (map === oldName) this.pub.mapSlots[slotName] = newName;
+    }
+  }
+
+  server_setMapSlot(client: any, slot: string, map: string, callback: (err: string, slot: string, map: string) => any) {
+    if (slot == null || typeof slot !== "string") { callback("Name of the slot must be a string", null, null); return; }
+    if (map != null && typeof map !== "string") { callback("Name of the map must be a string", null, null); return; }
+    if (map != null && this.pub.maps[map] == null) { callback(`The map ${map} doesn't exist`, null, null); return; }
+    if (slot === "map" && map == null) { callback(`The main map can't be empty`, null, null); return; }
+
+    this.pub.mapSlots[slot] = map;
+    callback(null, slot, map);
+    this.emit("change");
+  }
+
+  client_setMapSlot(slot: string, map: string) {
+    this.pub.mapSlots[slot] = map;
   }
 
   server_newAnimation(client: any, name: string, callback: (err: string, animation?: SpriteAnimationPub, actualIndex?: number) => any) {

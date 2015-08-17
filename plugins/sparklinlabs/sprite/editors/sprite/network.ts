@@ -1,5 +1,5 @@
 import info from "./info";
-import ui, { setupProperty, setupAnimation, updateSelectedAnimation } from "./ui";
+import ui, { setupProperty, setupAnimation, updateSelectedAnimation, setupAdvancedTextures, setupMap } from "./ui";
 import animationArea, { centerCamera as centerAnimationCamera } from "./animationArea";
 import spritesheetArea, { updateSelection, centerCamera as centerSpritesheetCamera } from "./spritesheetArea";
 
@@ -28,26 +28,27 @@ function onConnected() {
 
 function onAssetReceived() {
   let pub = data.spriteUpdater.spriteAsset.pub;
-  let texture = pub.textures["map"];
+  let texture = pub.textures[pub.mapSlots["map"]];
+  let map = pub.maps[pub.mapSlots["map"]];
 
   spritesheetArea.spritesheet = {
-    textures: { map: ((<any>pub.maps["map"]).byteLength !== 0) ? texture.clone() : null },
+    textures: { map: ((<any>map).byteLength !== 0) ? texture.clone() : null },
     filtering: pub.filtering,
     pixelsPerUnit: pub.pixelsPerUnit,
     framesPerSecond: pub.framesPerSecond,
     alphaTest: pub.alphaTest,
+    mapSlots: { map: "map" },
 
     grid: { width: texture.image.width, height: texture.image.height },
     origin: { x: 0, y: 1 },
     animations: <any>[]
   };
 
-  if ((<any>pub.maps["map"]).byteLength !== 0) {
+  if ((<any>map).byteLength !== 0) {
     spritesheetArea.spritesheet.textures["map"].needsUpdate = true;
     spritesheetArea.spriteRenderer.setSprite(spritesheetArea.spritesheet);
 
-    ui.imageLabel.width.textContent = texture.image.width;
-    ui.imageLabel.height.textContent = texture.image.height;
+    ui.imageLabel.textContent = `${texture.image.width}x${texture.image.height} px`;
   }
 
   spritesheetArea.gridRenderer.setGrid({
@@ -71,29 +72,27 @@ function onAssetReceived() {
   pub.animations.forEach((animation: any, index: number) => {
     setupAnimation(animation, index);
   });
+
+  setupAdvancedTextures(pub.advancedTextures);
+  for (let mapName in pub.maps) if (pub.maps[mapName] != null) setupMap(mapName);
+  for (let slotName in pub.mapSlots) ui.mapSlotsInput[slotName].value = pub.mapSlots[slotName] != null ? pub.mapSlots[slotName] : "";
 }
 
-onEditCommands.upload = () => {
-  let pub = data.spriteUpdater.spriteAsset.pub;
-  let texture = pub.textures["map"];
+export function editAsset(...args: any[]) {
+  let callback: Function;
+  if (typeof args[args.length-1] === "function") callback = args.pop();
 
-  let asset = spritesheetArea.spritesheet;
-  asset.textures["map"] = texture.clone();
-  asset.textures["map"].needsUpdate = true;
-  asset.grid.width = texture.image.width;
-  asset.grid.height = texture.image.height;
-  asset.pixelsPerUnit = pub.pixelsPerUnit;
-  spritesheetArea.spriteRenderer.setSprite(asset);
+  args.push((err: string, id: string) => {
+    if (err != null) { alert(err); return; }
+    if (callback != null) callback(id);
+  });
+  socket.emit("edit:assets", info.assetId, ...args);
+}
 
-  spritesheetArea.gridRenderer.resize(texture.image.width / pub.grid.width, texture.image.height / pub.grid.height);
-
-  updateSelectedAnimation();
-
-  ui.imageLabel.width.textContent = texture.image.width;
-  ui.imageLabel.height.textContent = texture.image.height;
+onEditCommands.setProperty = (path: string, value: any) => {
+  if (path === "advancedTextures") setupAdvancedTextures(value);
+  else setupProperty(path, value);
 };
-
-onEditCommands.setProperty = (path: string, value: any) => { setupProperty(path, value); };
 onEditCommands.newAnimation = (animation: any, index: number) => { setupAnimation(animation, index); };
 
 onEditCommands.deleteAnimation = (id: string) => {
@@ -123,3 +122,56 @@ onEditCommands.setAnimationProperty = (id: string, key: string, value: any) => {
       break;
   }
 };
+
+function updateSpritesheet() {
+  let pub = data.spriteUpdater.spriteAsset.pub;
+  let texture = pub.textures[pub.mapSlots["map"]];
+
+  let asset = spritesheetArea.spritesheet;
+  asset.textures["map"] = texture.clone();
+  asset.textures["map"].needsUpdate = true;
+  asset.grid.width = texture.image.width;
+  asset.grid.height = texture.image.height;
+  asset.pixelsPerUnit = pub.pixelsPerUnit;
+  spritesheetArea.spriteRenderer.setSprite(asset);
+  spritesheetArea.gridRenderer.resize(texture.image.width / pub.grid.width, texture.image.height / pub.grid.height);
+
+  updateSelectedAnimation();
+  ui.imageLabel.textContent = `${texture.image.width}x${texture.image.height} px`;
+}
+
+onEditCommands.setMaps = (maps: any) => {
+  for (let mapName in maps) {
+    if (mapName !== data.spriteUpdater.spriteAsset.pub.mapSlots["map"]) continue;
+    updateSpritesheet();
+  }
+};
+
+onEditCommands.newMap = (name: string) => {
+  setupMap(name);
+}
+
+onEditCommands.renameMap = (oldName: string, newName: string) => {
+  let pub = data.spriteUpdater.spriteAsset.pub;
+
+  let textureElt = <HTMLLIElement>ui.texturesTreeView.treeRoot.querySelector(`[data-name="${oldName}"]`);
+  (<any>textureElt.dataset).name = newName;
+  textureElt.querySelector("span").textContent = newName;
+
+  for (let slotName in pub.mapSlots)
+    if (ui.mapSlotsInput[slotName].value === oldName) ui.mapSlotsInput[slotName].value = newName;
+}
+
+onEditCommands.deleteMap = (name: string) => {
+  let textureElt = ui.texturesTreeView.treeRoot.querySelector(`[data-name="${name}"]`);
+  ui.texturesTreeView.remove(textureElt);
+
+  let pub = data.spriteUpdater.spriteAsset.pub;
+  for (let slotName in pub.mapSlots)
+    if (ui.mapSlotsInput[slotName].value === name) ui.mapSlotsInput[slotName].value = "";
+}
+
+onEditCommands.setMapSlot = (slot: string, map: string) => {
+  ui.mapSlotsInput[slot].value = map != null ? map : "";
+  if (slot === "map") updateSpritesheet();
+}

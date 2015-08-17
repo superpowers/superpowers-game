@@ -1,8 +1,11 @@
 import info from "./info";
-import { socket, data } from "./network";
+import { data, editAsset } from "./network";
 import animationArea from "./animationArea";
 import spritesheetArea, { updateSelection } from "./spritesheetArea";
 
+import SpriteAsset from "../../data/SpriteAsset";
+
+let PerfectResize = require("perfect-resize");
 let TreeView = require("dnd-tree-view");
 
 let ui: {
@@ -10,12 +13,19 @@ let ui: {
   settings?: { [name: string]: any; };
   opacityCheckbox?: HTMLInputElement;
 
-  imageLabel?: { width: HTMLLabelElement; height: HTMLLabelElement; };
+  imageLabel?: HTMLTableDataCellElement;
 
   animationsTreeView?: any;
   selectedAnimationId?: string;
   animationPlay?: HTMLButtonElement;
   animationSlider?: HTMLInputElement;
+
+  texturesPane?: HTMLDivElement;
+  texturesToogleButton?: HTMLInputElement;
+  texturesTreeView?: any;
+  selectedTextureName?: string;
+
+  mapSlotsInput?: { [name: string]: HTMLInputElement };
 } = {};
 export default ui;
 
@@ -25,7 +35,10 @@ let fileSelect = <HTMLInputElement>document.querySelector("input.file-select");
 fileSelect.addEventListener("change", onFileSelectChange);
 document.querySelector("button.upload").addEventListener("click", () => { fileSelect.click(); });
 
-document.querySelector("button.download").addEventListener("click", onDownloadSpritesheet);
+document.querySelector("button.download").addEventListener("click", () => {
+  let textureName = data.spriteUpdater.spriteAsset.pub.mapSlots["map"];
+  downloadTexture(textureName);
+});
 
 ui.allSettings = ["filtering", "pixelsPerUnit", "framesPerSecond", "opacity", "alphaTest", "frameOrder", "grid.width", "grid.height", "origin.x", "origin.y"]
 ui.settings = {};
@@ -47,28 +60,20 @@ ui.allSettings.forEach((setting: string) => {
   switch (setting) {
     case "filtering":
     case "frameOrder":
-      settingObj.addEventListener("change", (event: any) => {
-        socket.emit("edit:assets", info.assetId, "setProperty", setting, event.target.value, (err: string) => { if (err != null) alert(err); });
-      });
+      settingObj.addEventListener("change", (event: any) => { editAsset("setProperty", setting, event.target.value); });
       break;
 
     case "opacity":
     case "alphaTest":
-      settingObj.addEventListener("change", (event: any) => {
-        socket.emit("edit:assets", info.assetId, "setProperty", setting, parseFloat(event.target.value), (err: string) => { if (err != null) alert(err); });
-      });
+      settingObj.addEventListener("change", (event: any) => { editAsset("setProperty", setting, parseFloat(event.target.value)); });
       break;
 
     default:
-      if (setting.indexOf("origin") !== -1) {
-        settingObj.addEventListener("change", (event: any) => {
-          socket.emit("edit:assets", info.assetId, "setProperty", setting, event.target.value / 100, (err: string) => { if (err != null) alert(err); });
-        });
-      } else {
-        settingObj.addEventListener("change", (event: any) => {
-          socket.emit("edit:assets", info.assetId, "setProperty", setting, parseInt(event.target.value), (err: string) => { if (err != null) alert(err); });
-        });
-      }
+      if (setting.indexOf("origin") !== -1)
+        settingObj.addEventListener("change", (event: any) => { editAsset("setProperty", setting, event.target.value / 100); });
+      else
+        settingObj.addEventListener("change", (event: any) => { editAsset("setProperty", setting, parseInt(event.target.value)); });
+      break;
   }
 });
 ui.opacityCheckbox = <HTMLInputElement>document.querySelector("input.opacity-checkbox");
@@ -76,10 +81,7 @@ ui.opacityCheckbox.addEventListener("click", onCheckOpacity);
 document.querySelector("button.set-grid-width").addEventListener("click", onSetGridWidth);
 document.querySelector("button.set-grid-height").addEventListener("click", onSetGridHeight);
 
-ui.imageLabel = {
-  width: <HTMLLabelElement>document.querySelector("label.image-width"),
-  height: <HTMLLabelElement>document.querySelector("label.image-height")
-}
+ui.imageLabel = <HTMLTableDataCellElement>document.querySelector("td.image-size");
 
 // Animations
 ui.animationsTreeView = new TreeView(document.querySelector(".animations-tree-view"), onAnimationDrop);
@@ -99,28 +101,59 @@ document.querySelector("input.animation-loop").addEventListener("change", (event
   data.spriteUpdater.config_setProperty("looping", event.target.checked);
 });
 
+// Advanced textures
+ui.texturesPane = <HTMLDivElement>document.querySelector(".advanced-textures");
+let texturePaneResizeHandle = new PerfectResize(ui.texturesPane, "bottom");
+
+ui.texturesToogleButton = <HTMLInputElement>document.querySelector(".advanced-textures button.plus");
+ui.texturesToogleButton.addEventListener("click", () => {
+  let advancedTextures = !data.spriteUpdater.spriteAsset.pub.advancedTextures;
+  editAsset("setProperty", "advancedTextures", advancedTextures);
+});
+
+ui.texturesTreeView = new TreeView(document.querySelector(".textures-tree-view"));
+ui.texturesTreeView.on("selectionChange", updateSelectedMap);
+
+ui.mapSlotsInput = {};
+for (let slotName in SpriteAsset.schema.mapSlots.properties) {
+  ui.mapSlotsInput[slotName] = <HTMLInputElement>document.querySelector(`.map-${slotName}`);
+  (<any>ui.mapSlotsInput[slotName].dataset).name = slotName;
+  ui.mapSlotsInput[slotName].addEventListener("input", onEditMapSlot);
+}
+
+document.querySelector("button.new-map").addEventListener("click", onNewMapClick);
+let mapFileSelect = <HTMLInputElement>document.querySelector(".upload-map.file-select");
+mapFileSelect.addEventListener("change", onMapFileSelectChange);
+document.querySelector("button.upload-map").addEventListener("click", () => { mapFileSelect.click(); });
+document.querySelector("button.download-map").addEventListener("click", () => {
+  if (ui.texturesTreeView.selectedNodes.length !== 1) return;
+
+  let selectedNode = ui.texturesTreeView.selectedNodes[0];
+  let textureName = selectedNode.dataset.name;
+
+  downloadTexture(textureName);
+});
+document.querySelector("button.rename-map").addEventListener("click", onRenameMapClick);
+document.querySelector("button.delete-map").addEventListener("click", onDeleteMapClick);
+
 function onFileSelectChange(event: any) {
   if (event.target.files.length === 0) return;
 
   let reader = new FileReader();
-  reader.onload = (event: any) => {
-    socket.emit("edit:assets", info.assetId, "upload", event.target.result, (err: string) => {
-      if (err != null) alert(err);
-    });
-  };
+  reader.onload = (event: any) => { editAsset("setMaps", { map: event.target.result }); };
 
   reader.readAsArrayBuffer(event.target.files[0]);
   event.target.parentElement.reset();
 }
 
-function onDownloadSpritesheet(event: any) {
+function downloadTexture(textureName: string) {
   SupClient.dialogs.prompt("Enter a name for the image.", null, "Image", "Download", (name) => {
     if (name == null) return;
 
     let a = document.createElement("a");
     document.body.appendChild(a);
     a.style.display = "none";
-    a.href = data.spriteUpdater.url;
+    a.href = data.spriteUpdater.mapObjectURLs[textureName];
 
     (<any>a).download = name + ".png";
     a.click();
@@ -130,9 +163,7 @@ function onDownloadSpritesheet(event: any) {
 
 function onCheckOpacity(event: any) {
   let opacity = (event.target.checked) ? 1 : null;
-  socket.emit("edit:assets", info.assetId, "setProperty", "opacity", opacity, (err: string) => {
-    if (err != null) alert(err);
-  });
+  editAsset("setProperty", "opacity", opacity);
 }
 
 function onSetGridWidth(event: any) {
@@ -145,9 +176,7 @@ function onSetGridWidth(event: any) {
     let framesPerRowNum = parseInt(framesPerRow);
     if (isNaN(framesPerRowNum)) return;
 
-    socket.emit("edit:assets", info.assetId, "setProperty", "grid.width", Math.floor(texture.image.width / framesPerRowNum), (err: string) => {
-      if (err != null) alert(err);
-    });
+    editAsset("setProperty", "grid.width", Math.floor(texture.image.width / framesPerRowNum));
   });
 }
 
@@ -161,9 +190,7 @@ function onSetGridHeight(event: any) {
     let framesPerColumnNum = parseInt(framesPerColumn);
     if (isNaN(framesPerColumnNum)) return;
 
-    socket.emit("edit:assets", info.assetId, "setProperty", "grid.height", Math.floor(texture.image.height / framesPerColumnNum), (err: string) => {
-      if (err != null) alert(err);
-    });
+    editAsset("setProperty", "grid.height", Math.floor(texture.image.height / framesPerColumnNum));
   });
 }
 
@@ -171,9 +198,7 @@ function onNewAnimationClick() {
   SupClient.dialogs.prompt("Enter a name for the animation.", null, "Animation", "Create", (name) => {
     if (name == null) return;
 
-    socket.emit("edit:assets", info.assetId, "newAnimation", name, (err: string, animationId: string) => {
-      if (err != null) { alert(err); return; }
-
+    editAsset("newAnimation", name, (animationId: string) => {
       ui.animationsTreeView.clearSelection();
       ui.animationsTreeView.addToSelection(ui.animationsTreeView.treeRoot.querySelector(`li[data-id='${animationId}']`));
       updateSelectedAnimation();
@@ -190,9 +215,7 @@ function onRenameAnimationClick() {
   SupClient.dialogs.prompt("Enter a new name for the animation.", null, animation.name, "Rename", (newName) => {
     if (newName == null) return;
 
-    socket.emit("edit:assets", info.assetId, "setAnimationProperty", animation.id, "name", newName, (err: string) => {
-      if (err != null) alert(err);
-    });
+    editAsset("setAnimationProperty", animation.id, "name", newName);
   });
 }
 
@@ -201,11 +224,7 @@ function onDeleteAnimationClick() {
   SupClient.dialogs.confirm("Are you sure you want to delete the selected animations?", "Delete", (confirm) => {
     if (! confirm) return;
 
-    ui.animationsTreeView.selectedNodes.forEach((selectedNode: any) => {
-      socket.emit("edit:assets", info.assetId, "deleteAnimation", selectedNode.dataset.id, (err: string) => {
-        if (err != null) alert(err);
-      });
-    });
+    ui.animationsTreeView.selectedNodes.forEach((selectedNode: any) => { editAsset("deleteAnimation", selectedNode.dataset.id); });
   });
 }
 
@@ -215,11 +234,7 @@ function onAnimationDrop(dropInfo: any, orderedNodes: any[]) {
 
   let index = SupClient.getListViewDropIndex(dropInfo, data.spriteUpdater.spriteAsset.animations);
 
-  animationIds.forEach((id, i) => {
-    socket.emit("edit:assets", info.assetId, "moveAnimation", id, index + i, (err: string) => {
-      if (err != null) alert(err);
-    });
-  })
+  animationIds.forEach((id, i) => { editAsset("moveAnimation", id, index + i); });
   return false;
 }
 
@@ -270,7 +285,6 @@ function onChangeAnimationTime() {
 
 export function setupProperty(path: string, value: any) {
   let parts = path.split(".");
-
   let obj = ui.settings;
   parts.slice(0, parts.length - 1).forEach((part) => { obj = obj[part]; });
   if (path.indexOf("origin") !== -1) value *= 100;
@@ -314,7 +328,8 @@ export function setupProperty(path: string, value: any) {
 
   if (path === "grid.width" || path === "grid.height") {
     spritesheetArea.gridRenderer.setRatio({ x: pub.pixelsPerUnit / pub.grid.width, y: pub.pixelsPerUnit / pub.grid.height });
-    spritesheetArea.gridRenderer.resize(pub.textures["map"].image.width / pub.grid.width, pub.textures["map"].image.height / pub.grid.height);
+    let image = pub.textures[pub.mapSlots["map"]].image;
+    spritesheetArea.gridRenderer.resize(image.width / pub.grid.width, image.height / pub.grid.height);
     updateSelection();
   }
 
@@ -337,9 +352,7 @@ export function setupAnimation(animation: any, index: number) {
   liElt.appendChild(startFrameIndexInput);
 
   startFrameIndexInput.addEventListener("change", (event: any) => {
-    socket.emit("edit:assets", info.assetId, "setAnimationProperty", animation.id, "startFrameIndex", parseInt(event.target.value), (err: string) => {
-      if (err != null) alert(err);
-    });
+    editAsset("setAnimationProperty", animation.id, "startFrameIndex", parseInt(event.target.value));
   });
 
   let endFrameIndexInput = document.createElement("input")
@@ -349,10 +362,89 @@ export function setupAnimation(animation: any, index: number) {
   liElt.appendChild(endFrameIndexInput);
 
   endFrameIndexInput.addEventListener("change", (event: any) => {
-    socket.emit("edit:assets", info.assetId, "setAnimationProperty", animation.id, "endFrameIndex", parseInt(event.target.value), (err: string) => {
-      if (err != null) alert(err);
-    });
+    editAsset("setAnimationProperty", animation.id, "endFrameIndex", parseInt(event.target.value));
   });
 
   ui.animationsTreeView.insertAt(liElt, "item", index, null);
+}
+
+function onEditMapSlot(event: any) {
+  if (event.target.value !== "" && data.spriteUpdater.spriteAsset.pub.maps[event.target.value] == null) return;
+  let slot = event.target.value !== "" ? event.target.value : null;
+  editAsset("setMapSlot", event.target.dataset.name, slot)
+}
+
+function onNewMapClick() {
+  SupClient.dialogs.prompt("Enter a new name for the map.", null, "map", "Create", (name) => {
+    if (name == null) return;
+
+    editAsset("newMap", name);
+  });
+}
+
+function onMapFileSelectChange(event: any) {
+  let reader = new FileReader;
+  let maps: any = {};
+  reader.onload = (event) => {
+    maps[ui.selectedTextureName] = reader.result;
+    editAsset("setMaps", maps);
+  };
+
+  let element = <HTMLInputElement>event.target;
+  reader.readAsArrayBuffer(element.files[0]);
+  (<HTMLFormElement>element.parentElement).reset();
+  return
+}
+
+function onRenameMapClick() {
+  if (ui.texturesTreeView.selectedNodes.length !== 1) return;
+
+  let selectedNode = ui.texturesTreeView.selectedNodes[0];
+  let textureName = selectedNode.dataset.name;
+
+  SupClient.dialogs.prompt("Enter a new name for the texture.", null, textureName, "Rename", (newName) => {
+    if (newName == null) return;
+
+    editAsset("renameMap", textureName, newName);
+  });
+}
+
+function onDeleteMapClick() {
+  if (ui.texturesTreeView.selectedNodes.length === 0) return;
+
+  SupClient.dialogs.confirm("Are you sure you want to delete the selected textures?", "Delete", (confirm) => {
+    if (!confirm) return;
+
+    for (let selectedNode of ui.texturesTreeView.selectedNodes) editAsset("deleteMap", selectedNode.dataset.name);
+  });
+}
+
+export function setupAdvancedTextures(advancedTextures: boolean) {
+  (<any>ui.texturesPane.classList).toggle("collapsed", advancedTextures);
+  ui.texturesToogleButton.textContent = advancedTextures ? "+" : "–";
+  texturePaneResizeHandle.handleElt.classList.toggle("disabled", advancedTextures);
+}
+
+export function updateSelectedMap() {
+  let selectedMapElt = ui.texturesTreeView.selectedNodes[0]
+  if (selectedMapElt != null) ui.selectedTextureName = selectedMapElt.dataset.name;
+  else ui.selectedTextureName = null;
+
+  let buttons = document.querySelectorAll(".textures-buttons button");
+  for (let i = 0; i < buttons.length; i++) {
+    let button = <HTMLButtonElement>buttons[i];
+    button.disabled = ui.selectedTextureName == null && button.className !== "new-map";
+  }
+}
+
+export function setupMap(mapName: string) {
+  let liElt = document.createElement("li");
+  (<any>liElt.dataset).name = mapName;
+
+  let nameSpan = document.createElement("span");
+  nameSpan.className = "name";
+  nameSpan.textContent = mapName;
+  liElt.appendChild(nameSpan);
+
+  ui.texturesTreeView.insertAt(liElt, "item", 0, null);
 }

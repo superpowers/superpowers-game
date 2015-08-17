@@ -53,6 +53,12 @@ body
   width 250px
   border-left 1px solid #aaa
 
+  .header
+    background-color #444
+    color #fff
+    text-align center
+    padding 2px
+
   table
     padding 10px
 
@@ -76,8 +82,40 @@ body
       width 60px
       margin-right 10px
 
+    .property-origin-x, .property-origin-y
+      width 40px
+      margin-left 10px
+
     .opacity-checkbox
       width 15px
+
+  .advanced-textures
+    min-height 250px
+    height 350px
+
+    .content
+      display flex
+      flex-flow column
+
+    &.collapsed
+      min-height 0 !important
+      height auto !important
+      .content { display: none; }
+
+    .textures-buttons
+      display flex
+
+      button
+        flex 1
+        font-size smaller
+        white-space nowrap
+
+    .textures-tree-view
+      border-top 1px solid #aaa
+      flex 1
+      position relative
+      background #fff
+      overflow-y auto
 
   // Animations tab
   .animations-buttons
@@ -94,6 +132,7 @@ body
     position relative
     background #fff
     overflow-y auto
+    min-height 100px
 
     .tree
       position absolute
@@ -105,3 +144,25 @@ body
     input
       width 50px
       margin-right 5px
+
+button.plus
+  width 30px
+  background transparent
+  border none
+  opacity 0.5
+  font-size 20px
+  font-weight bold
+  cursor pointer
+  color #fff
+
+  &:hover
+    opacity 1
+    background-color rgba(0,0,0,0.1)
+
+  &:active
+    background-color #fff
+    color #444
+
+  &:disabled
+    opacity 0.2
+    cursor default

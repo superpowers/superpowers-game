@@ -1,3 +1,4 @@
+import * as async from "async";
 let THREE = SupEngine.THREE;
 import SpriteAsset from "../data/SpriteAsset";
 import SpriteRenderer from "./SpriteRenderer";
@@ -18,14 +19,14 @@ export default class SpriteRendererUpdater {
   shaderAssetId: string;
   shaderPub: any;
   overrideOpacity = false;
-  url: string;
+  mapObjectURLs: { [mapName: string]: string } = {};
 
   spriteSubscriber = {
     onAssetReceived: this._onSpriteAssetReceived.bind(this),
     onAssetEdited: this._onSpriteAssetEdited.bind(this),
     onAssetTrashed: this._onSpriteAssetTrashed.bind(this)
   };
-  
+
   shaderSubscriber = {
     onAssetReceived: this._onShaderAssetReceived.bind(this),
     onAssetEdited: this._onShaderAssetEdited.bind(this),
@@ -67,54 +68,54 @@ export default class SpriteRendererUpdater {
   }
 
   _onSpriteAssetReceived(assetId: string, asset: SpriteAsset) {
-    this.spriteAsset = asset;
     if (this.spriteRenderer.opacity == null) this.spriteRenderer.opacity = asset.pub.opacity;
-
-    let image = (asset.pub.textures != null) ? asset.pub.textures["map"].image : null;
-    if (image == null) {
-      image = new Image();
-
-      asset.pub.textures = { map: new THREE.Texture(image) };
-      if (asset.pub.filtering === "pixelated") {
-        asset.pub.textures["map"].magFilter = THREE.NearestFilter;
-        asset.pub.textures["map"].minFilter = THREE.NearestFilter;
-      }
-
-      if (this.url != null) URL.revokeObjectURL(this.url);
-
-      let typedArray = new Uint8Array((<any>asset.pub.maps["map"]));
-      let blob = new Blob([ typedArray ], { type: "image/*" });
-      this.url = URL.createObjectURL(blob);
-      image.src = this.url
-    }
-
-    if (! image.complete) {
-      if ((<any>asset.pub.maps["map"]).byteLength === 0) {
-        if (this.receiveAssetCallbacks != null) this.receiveAssetCallbacks.sprite();
-      }
-      else {
-        let onImageLoaded = () => {
-          image.removeEventListener("load", onImageLoaded);
-          asset.pub.textures["map"].needsUpdate = true;
-          this._setSprite();
-          if (this.receiveAssetCallbacks != null) this.receiveAssetCallbacks.sprite();
-        };
-
-        image.addEventListener("load", onImageLoaded);
-      }
-    }
-    else {
+    this.spriteAsset = asset;
+    this._prepareMaps(() => {
       this._setSprite();
       if (this.receiveAssetCallbacks != null) this.receiveAssetCallbacks.sprite();
-    }
+    });
   }
-  
+
+  _prepareMaps(callback: () => any) {
+    this.spriteAsset.pub.textures = {};
+
+    for (let key in this.mapObjectURLs) {
+      URL.revokeObjectURL(this.mapObjectURLs[key]);
+      delete this.mapObjectURLs[key];
+    }
+
+    async.each(Object.keys(this.spriteAsset.pub.maps), (key, cb) => {
+      let buffer: any = this.spriteAsset.pub.maps[key];
+      if (buffer == null || buffer.byteLength === 0) { cb(); return; }
+
+      let texture = this.spriteAsset.pub.textures[key];
+      let image: HTMLImageElement = (texture != null) ? texture.image : null;
+
+      if (image == null) {
+        image = new Image;
+        texture = this.spriteAsset.pub.textures[key] = new THREE.Texture(image);
+
+        texture.magFilter = SupEngine.THREE.NearestFilter;
+        texture.minFilter = SupEngine.THREE.NearestFilter;
+
+        let typedArray = new Uint8Array(buffer);
+        let blob = new Blob([ typedArray ], { type: "image/*" });
+        image.src = this.mapObjectURLs[key] = URL.createObjectURL(blob);
+      }
+
+      if (!image.complete) {
+        image.addEventListener("load", () => { texture.needsUpdate = true; cb(); return });
+      } else cb();
+
+    }, callback);
+  }
+
   _setSprite() {
     if (this.spriteAsset == null || (this.materialType === "shader" && this.shaderPub == null)) {
       this.spriteRenderer.setSprite(null);
       return;
     }
-    
+
     this.spriteRenderer.setSprite(this.spriteAsset.pub, this.materialType, this.shaderPub);
     if (this.animationId != null) this._playAnimation();
   }
@@ -139,22 +140,17 @@ export default class SpriteRendererUpdater {
     }
   }
 
-  _onEditCommand_upload() {
-    if (this.url != null) URL.revokeObjectURL(this.url);
-
-    let typedArray = new Uint8Array((<any>this.spriteAsset.pub.maps["map"]));
-    let blob = new Blob([ typedArray ], { type: "image/*" });
-    this.url = URL.createObjectURL(blob);
-    let image = this.spriteAsset.pub.textures["map"].image;
-    image.src = this.url;
-    image.addEventListener("load", () => {
-      this.spriteAsset.pub.textures["map"].needsUpdate = true;
-      this.spriteRenderer.setSprite(this.spriteAsset.pub, this.materialType);
-
-      if (this.editAssetCallbacks != null) this.editAssetCallbacks.sprite.upload();
+  _onEditCommand_setMaps() {
+    // TODO: Only update the maps that changed, don't recreate the whole model
+    this._prepareMaps(() => {
+      this._setSprite();
     });
     return false
   }
+
+  _onEditCommand_setMapSlot(slot: string, name: string) { this._setSprite(); }
+
+  _onEditCommand_deleteMap(name: string) { this._setSprite(); }
 
   _onEditCommand_setProperty(path: string, value: any) {
     switch(path) {
@@ -209,12 +205,12 @@ export default class SpriteRendererUpdater {
     // FIXME: the updater shouldn't be dealing with SupClient.onAssetTrashed directly
     if (this.editAssetCallbacks != null) SupClient.onAssetTrashed();
   }
-  
+
   _onShaderAssetReceived(assetId: string, asset: { pub: any} ) {
     this.shaderPub = asset.pub;
     this._setSprite();
   }
-  
+
   _onShaderAssetEdited(id: string, command: string, ...args: any[]) {
     if (command !== "editVertexShader" && command !== "editFragmentShader") this._setSprite();
   }
@@ -287,7 +283,7 @@ export default class SpriteRendererUpdater {
         this.materialType = value;
         this._setSprite();
         break;
-        
+
       case "shaderAssetId":
         if (this.shaderAssetId != null) this.client.unsubAsset(this.shaderAssetId, this.shaderSubscriber);
         this.shaderAssetId = value;
