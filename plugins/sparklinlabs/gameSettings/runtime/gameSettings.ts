@@ -6,7 +6,10 @@ export function init(player: SupRuntime.Player, callback: Function) {
     player.gameInstance.setRatio(player.resources.gameSettings.ratioNumerator / player.resources.gameSettings.ratioDenominator);
   }
   
-  player.gameInstance.layers = player.gameInstance.layers.concat(player.resources.gameSettings.customLayers);
+  // NOTE: Custom layers were introduced in Superpowers 0.8
+  if (player.resources.gameSettings.customLayers != null) {
+    player.gameInstance.layers = player.gameInstance.layers.concat(player.resources.gameSettings.customLayers);
+  }
   
   callback();
 }
