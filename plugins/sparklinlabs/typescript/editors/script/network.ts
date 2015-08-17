@@ -6,26 +6,26 @@ import ScriptAsset from "../../data/ScriptAsset";
 
 export let data: {
   projectClient?: SupClient.ProjectClient;
-  
+
   typescriptWorker: Worker;
 
   assetsById?: {[id: string]: ScriptAsset};
   asset?: ScriptAsset;
-  
+
   fileNames?: string[];
   files?: { [name: string]: { id: string; text: string; version: string; } };
   fileNamesByScriptId?: { [name: string]: string };
 } = {
   typescriptWorker: new Worker("typescriptWorker.js"),
-  
+
   assetsById: {},
-  
+
   fileNames: [],
   files: {},
   fileNamesByScriptId: {}
 };
 
-export let socket: SocketIOClient.Socket; 
+export let socket: SocketIOClient.Socket;
 function start() {
   socket = SupClient.connect(info.projectId);
   socket.on("welcome", onWelcomed);
