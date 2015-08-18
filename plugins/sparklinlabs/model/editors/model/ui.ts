@@ -20,6 +20,7 @@ let ui: {
   errorsTBody?: HTMLTableSectionElement;
 
   mapUploadButton?: HTMLInputElement;
+  mapDownloadButton?: HTMLInputElement;
   texturesToogleButton?: HTMLInputElement;
   texturesPane?: HTMLDivElement;
   texturesTreeView?: any;
@@ -42,6 +43,11 @@ let primaryMapFileSelect = <HTMLInputElement>document.querySelector(".map input.
 primaryMapFileSelect.addEventListener("change", onPrimaryMapFileSelectChange);
 ui.mapUploadButton = <HTMLInputElement>document.querySelector(".map button.upload");
 ui.mapUploadButton.addEventListener("click", () => { primaryMapFileSelect.click(); });
+ui.mapDownloadButton = <HTMLInputElement>document.querySelector(".map button.download");
+ui.mapDownloadButton.addEventListener("click", () => {
+  let textureName = data.modelUpdater.modelAsset.pub.mapSlots["map"];
+  downloadTexture(textureName);
+});
 
 // Show skeleton
 let showSkeletonCheckbox = <HTMLInputElement>document.querySelector(".show-skeleton");
@@ -91,6 +97,14 @@ document.querySelector("button.new-map").addEventListener("click", onNewMapClick
 let mapFileSelect = <HTMLInputElement>document.querySelector(".upload-map.file-select");
 mapFileSelect.addEventListener("change", onMapFileSelectChange);
 document.querySelector("button.upload-map").addEventListener("click", () => { mapFileSelect.click(); });
+document.querySelector("button.download-map").addEventListener("click", () => {
+  if (ui.texturesTreeView.selectedNodes.length !== 1) return;
+
+  let selectedNode = ui.texturesTreeView.selectedNodes[0];
+  let textureName = selectedNode.dataset.name;
+
+  downloadTexture(textureName);
+});
 document.querySelector("button.rename-map").addEventListener("click", onRenameMapClick);
 document.querySelector("button.delete-map").addEventListener("click", onDeleteMapClick);
 
@@ -193,6 +207,21 @@ function onPrimaryMapFileSelectChange(event: Event) {
   reader.readAsArrayBuffer(element.files[0]);
   (<HTMLFormElement>element.parentElement).reset();
   return
+}
+
+function downloadTexture(textureName: string) {
+  SupClient.dialogs.prompt("Enter a name for the image.", null, "Image", "Download", (name) => {
+    if (name == null) return;
+
+    let a = document.createElement("a");
+    document.body.appendChild(a);
+    a.style.display = "none";
+    a.href = data.modelUpdater.mapObjectURLs[textureName];
+
+    (<any>a).download = name + ".png";
+    a.click();
+    document.body.removeChild(a);
+  });
 }
 
 function onShowSkeletonChange(event: Event) { data.modelUpdater.modelRenderer.setShowSkeleton((<HTMLInputElement>event.target).checked); }
@@ -378,6 +407,7 @@ export function setupOpacity(opacity: number) {
 
 export function setupAdvancedTextures(advancedTextures: boolean) {
   ui.mapUploadButton.disabled = !advancedTextures;
+  ui.mapDownloadButton.disabled = !advancedTextures;
   ui.texturesPane.classList.toggle("collapsed", advancedTextures);
   ui.texturesToogleButton.textContent = advancedTextures ? "+" : "–";
   texturePaneResizeHandle.handleElt.classList.toggle("disabled", advancedTextures);
