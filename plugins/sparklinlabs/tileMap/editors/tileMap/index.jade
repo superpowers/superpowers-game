@@ -48,27 +48,27 @@ html
         tr
           th(title="G") Grid
           td
-            input(type='checkbox' checked).grid-checkbox
+            input(type="checkbox",checked).grid-checkbox
 
           th(title="I") Highlight
           td
-            input(type='checkbox').highlight-checkbox
+            input(type="checkbox").highlight-checkbox
 
         tr
           th
           td
-          td(colspan=2)
-            input(type='range', value=40, min=0, max=100).highlight-slider
+          td(colspan="2")
+            input(type="range",value="40",min="0",max="100"").highlight-slider
 
       .buttons
-        input(type='radio' name='Tool' id='Brush' checked)
-        label(title="B" for='Brush') Brush
-        input(type='radio' name='Tool' id='Fill')
-        label(title="F" for='Fill') Fill
-        input(type='radio' name='Tool' id='Selection')
-        label(title="S" for='Selection') Selection
-        input(type='radio' name='Tool' id='Eraser')
-        label(title="E" for='Eraser') Eraser
+        input(type="radio",name="Tool",id="Brush",checked)
+        label(title="B",for="Brush") Brush
+        input(type="radio",name="Tool",id="Fill")
+        label(title="F",for="Fill") Fill
+        input(type="radio",name="Tool",id="Selection")
+        label(title="S",for="Selection") Selection
+        input(type="radio",name="Tool",id="Eraser")
+        label(title="E",for="Eraser") Eraser
 
       canvas(tabindex="0").tileSet
 
