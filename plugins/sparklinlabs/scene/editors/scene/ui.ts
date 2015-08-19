@@ -183,7 +183,7 @@ export function setupSelectedNode() {
   // Setup transform
   let nodeElt = ui.nodesTreeView.selectedNodes[0];
   if (nodeElt == null || ui.nodesTreeView.selectedNodes.length !== 1) {
-    ui.inspectorElt.classList.add("no-selection");
+    ui.inspectorElt.hidden = true;
 
     ui.newNodeButton.disabled = false;
     ui.newPrefabButton.disabled = false;
@@ -193,7 +193,7 @@ export function setupSelectedNode() {
     return;
   }
 
-  ui.inspectorElt.classList.remove("no-selection");
+  ui.inspectorElt.hidden = false;
 
   let node = data.sceneUpdater.sceneAsset.nodes.byId[nodeElt.dataset.id];
   setInspectorPosition(<THREE.Vector3>node.position);
