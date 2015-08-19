@@ -3,9 +3,10 @@ export default class TextRendererEditor {
   editConfig: any;
 
   fields: {[key: string]: any} = {};
+  fontButtonElt: HTMLButtonElement;
   colorPicker: HTMLInputElement;
   fontAssetId: string;
-  
+
   pendingModification = 0;
 
   constructor(tbody: HTMLTableSectionElement, config: any, projectClient: SupClient.ProjectClient, editConfig: any) {
@@ -14,9 +15,15 @@ export default class TextRendererEditor {
     this.fontAssetId = config.fontAssetId;
 
     var fontRow = SupClient.table.appendRow(tbody, "Font");
-    var fontName = (config.fontAssetId != null) ? this.projectClient.entries.getPathFromId(this.fontAssetId) : ""
-    this.fields["fontAssetId"] = SupClient.table.appendTextField(fontRow.valueCell, fontName);
+    var fontName = (config.fontAssetId != null) ? this.projectClient.entries.getPathFromId(this.fontAssetId) : "";
+    let fontFields = SupClient.table.appendAssetField(fontRow.valueCell, fontName);
+    this.fields["fontAssetId"] = fontFields.textField;
     this.fields["fontAssetId"].addEventListener("input", this._onChangeFontAsset);
+    this.fontButtonElt = fontFields.buttonElt;
+    this.fontButtonElt.addEventListener("click", (event) => {
+      window.parent.postMessage({ type: "openEntry", id: this.fontAssetId }, (<any>window.location).origin);
+    });
+    this.fontButtonElt.disabled = this.fontAssetId == null;
 
     var textRow = SupClient.table.appendRow(tbody, "Text");
     this.fields["text"] = SupClient.table.appendTextAreaField(textRow.valueCell, config.text);
@@ -63,6 +70,8 @@ export default class TextRendererEditor {
 
   config_setProperty(path: string, value: any) {
     if (path === "fontAssetId") {
+      this.fontAssetId = value;
+      this.fontButtonElt.disabled = this.fontAssetId == null;
       if (value != null) this.fields["fontAssetId"].value = this.projectClient.entries.getPathFromId(value);
       else this.fields["fontAssetId"].value = "";
     } else if (path === "color") {

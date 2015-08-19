@@ -31,6 +31,7 @@ let ui: {
   layerSelect?: HTMLSelectElement;
   prefabRow?: HTMLTableRowElement;
   prefabInput?: HTMLInputElement;
+  prefabOpenElt?: HTMLButtonElement;
 
   availableComponents?: { [name: string]: string };
   componentEditors?: { [id: string]: SupClient.ComponentEditorObject };
@@ -83,6 +84,14 @@ ui.layerSelect.addEventListener("change", onLayerChange);
 ui.prefabRow = <HTMLTableRowElement>ui.inspectorElt.querySelector(".prefab");
 ui.prefabInput = <HTMLInputElement>ui.inspectorElt.querySelector(".prefab input");
 ui.prefabInput.addEventListener("input", onPrefabInput);
+
+ui.prefabOpenElt = <HTMLButtonElement>ui.inspectorElt.querySelector(".prefab button");
+ui.prefabOpenElt.addEventListener("click", (event) => {
+  let selectedNode = ui.nodesTreeView.selectedNodes[0];
+  let node = data.sceneUpdater.sceneAsset.nodes.byId[selectedNode.dataset.id];
+  let id = node.prefabId;
+  window.parent.postMessage({ type: "openEntry", id }, (<any>window.location).origin);
+})
 
 for (let transformType in ui.transform) {
   let inputs: HTMLInputElement[] = (<any>ui).transform[transformType];
@@ -293,6 +302,7 @@ export function setupInspectorLayers() {
 
 export function setInspectorPrefabId(prefabId: string) {
   ui.prefabInput.value = prefabId.length === 0 ? "" : data.projectClient.entries.getPathFromId(prefabId);
+  ui.prefabOpenElt.disabled = prefabId.length === 0;
 }
 
 function onNewNodeClick() {

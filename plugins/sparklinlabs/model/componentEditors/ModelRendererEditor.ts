@@ -11,6 +11,7 @@ export default class ModelRendererEditor {
   shaderAssetId: string;
 
   modelTextField: HTMLInputElement;
+  modelButtonElt: HTMLButtonElement;
   animationSelectBox: HTMLSelectElement;
   castShadowField: HTMLInputElement;
   receiveShadowField: HTMLInputElement;
@@ -24,6 +25,7 @@ export default class ModelRendererEditor {
 
   materialSelectBox: HTMLSelectElement;
   shaderTextField: HTMLInputElement;
+  shaderButtonElt: HTMLButtonElement;
 
   asset: ModelAsset;
 
@@ -36,9 +38,15 @@ export default class ModelRendererEditor {
     this.shaderAssetId = config.shaderAssetId;
 
     let modelRow = SupClient.table.appendRow(tbody, "Model");
-    this.modelTextField = SupClient.table.appendTextField(modelRow.valueCell, "");
+    let modelFields = SupClient.table.appendAssetField(modelRow.valueCell, "");
+    this.modelTextField = modelFields.textField;
     this.modelTextField.addEventListener("input", this._onChangeModelAsset);
     this.modelTextField.disabled = true;
+    this.modelButtonElt = modelFields.buttonElt;
+    this.modelButtonElt.addEventListener("click", (event) => {
+      window.parent.postMessage({ type: "openEntry", id: this.modelAssetId }, (<any>window.location).origin);
+    });
+    this.modelButtonElt.disabled = this.modelAssetId == null;
 
     let animationRow = SupClient.table.appendRow(tbody, "Animation");
     this.animationSelectBox = SupClient.table.appendSelectBox(animationRow.valueCell, { "": "(None)" });
@@ -121,9 +129,15 @@ export default class ModelRendererEditor {
     this.materialSelectBox.disabled = true;
 
     let shaderRow = SupClient.table.appendRow(tbody, "Shader");
-    this.shaderTextField = SupClient.table.appendTextField(shaderRow.valueCell, "");
+    let shaderFields = SupClient.table.appendAssetField(shaderRow.valueCell, "");
+    this.shaderTextField = shaderFields.textField;
     this.shaderTextField.addEventListener("input", this._onChangeShaderAsset);
     this.shaderTextField.disabled = true;
+    this.shaderButtonElt = shaderFields.buttonElt;
+    this.shaderButtonElt.addEventListener("click", (event) => {
+      window.parent.postMessage({ type: "openEntry", id: this.shaderAssetId }, (<any>window.location).origin);
+    });
+    this.shaderButtonElt.disabled = this.shaderAssetId == null;
     this._updateShaderField(config.materialType);
 
     this.projectClient.subEntries(this);
@@ -144,6 +158,7 @@ export default class ModelRendererEditor {
       case "modelAssetId":
         if (this.modelAssetId != null) this.projectClient.unsubAsset(this.modelAssetId, this);
         this.modelAssetId = value;
+        this.modelButtonElt.disabled = this.modelAssetId == null;
         this.animationSelectBox.disabled = true;
 
         if (this.modelAssetId != null) {
@@ -193,8 +208,9 @@ export default class ModelRendererEditor {
         this._updateShaderField(value);
         break;
 
-      case "shader":
+      case "shaderAssetId":
         this.shaderAssetId = value;
+        this.shaderButtonElt.disabled = this.shaderAssetId == null;
         if (value != null) this.shaderTextField.value = this.projectClient.entries.getPathFromId(value);
         else this.shaderTextField.value = "";
         break;
@@ -288,7 +304,7 @@ export default class ModelRendererEditor {
   }
 
   _updateShaderField(materialType: string) {
-    let shaderRow = this.shaderTextField.parentElement.parentElement;
+    let shaderRow = this.shaderTextField.parentElement.parentElement.parentElement;
     if (materialType === "shader") {
       if (shaderRow.parentElement == null) this.tbody.appendChild(shaderRow);
     } else if (shaderRow.parentElement != null) shaderRow.parentElement.removeChild(shaderRow);

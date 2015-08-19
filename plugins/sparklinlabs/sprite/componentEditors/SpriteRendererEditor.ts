@@ -11,6 +11,7 @@ export default class SpriteRendererEditor {
   shaderAssetId: string;
 
   spriteTextField: HTMLInputElement;
+  spriteButtonElt: HTMLButtonElement;
   animationSelectBox: HTMLSelectElement;
   horizontalFlipField: HTMLInputElement;
   verticalFlipField: HTMLInputElement;
@@ -23,6 +24,7 @@ export default class SpriteRendererEditor {
   opacityField: HTMLInputElement;
   materialSelectBox: HTMLSelectElement;
   shaderTextField: HTMLInputElement;
+  shaderButtonElt: HTMLButtonElement;
 
   asset: SpriteAsset;
 
@@ -35,9 +37,15 @@ export default class SpriteRendererEditor {
     this.shaderAssetId = config.shaderAssetId;
 
     let spriteRow = SupClient.table.appendRow(tbody, "Sprite");
-    this.spriteTextField = SupClient.table.appendTextField(spriteRow.valueCell, "");
+    let spriteFields = SupClient.table.appendAssetField(spriteRow.valueCell, "");
+    this.spriteTextField = spriteFields.textField;
     this.spriteTextField.addEventListener("input", this._onChangeSpriteAsset);
     this.spriteTextField.disabled = true;
+    this.spriteButtonElt = spriteFields.buttonElt;
+    this.spriteButtonElt.addEventListener("click", (event) => {
+      window.parent.postMessage({ type: "openEntry", id: this.spriteAssetId }, (<any>window.location).origin);
+    });
+    this.spriteButtonElt.disabled = this.spriteAssetId == null;
 
     let animationRow = SupClient.table.appendRow(tbody, "Animation");
     this.animationSelectBox = SupClient.table.appendSelectBox(animationRow.valueCell, { "": "(None)" });
@@ -143,9 +151,15 @@ export default class SpriteRendererEditor {
     this.materialSelectBox.disabled = true;
 
     let shaderRow = SupClient.table.appendRow(tbody, "Shader");
-    this.shaderTextField = SupClient.table.appendTextField(shaderRow.valueCell, "");
+    let shaderFields = SupClient.table.appendAssetField(shaderRow.valueCell, "");
+    this.shaderTextField = shaderFields.textField;
     this.shaderTextField.addEventListener("input", this._onChangeShaderAsset);
     this.shaderTextField.disabled = true;
+    this.shaderButtonElt = shaderFields.buttonElt;
+    this.shaderButtonElt.addEventListener("click", (event) => {
+      window.parent.postMessage({ type: "openEntry", id: this.shaderAssetId }, (<any>window.location).origin);
+    });
+    this.shaderButtonElt.disabled = this.shaderAssetId == null;
     this._updateShaderField(config.materialType);
 
     this.projectClient.subEntries(this);
@@ -164,6 +178,7 @@ export default class SpriteRendererEditor {
       case "spriteAssetId":
         if (this.spriteAssetId != null) this.projectClient.unsubAsset(this.spriteAssetId, this);
         this.spriteAssetId = value;
+        this.spriteButtonElt.disabled = this.spriteAssetId == null;
         this.animationSelectBox.disabled = true;
 
         if (this.spriteAssetId != null) {
@@ -220,6 +235,7 @@ export default class SpriteRendererEditor {
 
       case "shader":
         this.shaderAssetId = value;
+        this.shaderButtonElt.disabled = this.shaderAssetId == null;
         if (value != null) this.shaderTextField.value = this.projectClient.entries.getPathFromId(value);
         else this.shaderTextField.value = "";
         break;
@@ -313,7 +329,7 @@ export default class SpriteRendererEditor {
   }
 
   _updateShaderField(materialType: string) {
-    let shaderRow = this.shaderTextField.parentElement.parentElement;
+    let shaderRow = this.shaderTextField.parentElement.parentElement.parentElement;
     if (materialType === "shader") {
       if (shaderRow.parentElement == null) this.tbody.appendChild(shaderRow);
     } else if (shaderRow.parentElement != null) shaderRow.parentElement.removeChild(shaderRow);

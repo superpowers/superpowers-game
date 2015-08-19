@@ -6,6 +6,7 @@ export default class TileMapRendererEditor {
   tileSetAssetId: string;
 
   tileMapTextField: HTMLInputElement;
+  tileMapButtonElt: HTMLButtonElement;
   tileSetTextField: HTMLInputElement;
 
   constructor(tbody: HTMLTableSectionElement, config: any, projectClient: SupClient.ProjectClient, editConfig: any) {
@@ -16,8 +17,14 @@ export default class TileMapRendererEditor {
     this.tileSetAssetId = config.tileSetAssetId;
 
     let tileMapRow = SupClient.table.appendRow(tbody, "Map");
-    this.tileMapTextField = SupClient.table.appendTextField(tileMapRow.valueCell, "");
+    let tileMapFields = SupClient.table.appendAssetField(tileMapRow.valueCell, "");
+    this.tileMapTextField = tileMapFields.textField;
     this.tileMapTextField.disabled = true;
+    this.tileMapButtonElt = tileMapFields.buttonElt;
+    this.tileMapButtonElt.addEventListener("click", (event) => {
+      window.parent.postMessage({ type: "openEntry", id: this.tileMapAssetId }, (<any>window.location).origin);
+    });
+    this.tileMapButtonElt.disabled = this.tileMapAssetId == null;
 
     let tileSetRow = SupClient.table.appendRow(tbody, "Tile Set");
     this.tileSetTextField = SupClient.table.appendTextField(tileSetRow.valueCell, "");
@@ -39,6 +46,7 @@ export default class TileMapRendererEditor {
     switch (path) {
       case "tileMapAssetId":
         this.tileMapAssetId = value;
+        this.tileMapButtonElt.disabled = this.tileMapAssetId == null;
         this.tileMapTextField.value = this.projectClient.entries.getPathFromId(this.tileMapAssetId);
         break;
       case "tileSetAssetId":
