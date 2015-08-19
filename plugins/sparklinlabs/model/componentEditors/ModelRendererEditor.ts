@@ -17,7 +17,7 @@ export default class ModelRendererEditor {
 
   colorField: HTMLInputElement;
   colorPicker: HTMLInputElement;
-  
+
   overrideOpacityField: HTMLInputElement;
   transparentField: HTMLInputElement;
   opacityField: HTMLInputElement;
@@ -45,18 +45,29 @@ export default class ModelRendererEditor {
     this.animationSelectBox.addEventListener("change", this._onChangeModelAnimation);
     this.animationSelectBox.disabled = true;
 
-    let castShadowRow = SupClient.table.appendRow(tbody, "Cast Shadow");
-    this.castShadowField = SupClient.table.appendBooleanField(castShadowRow.valueCell, config.castShadow);
+    let shadowRow = SupClient.table.appendRow(tbody, "Shadow");
+    let shadowDiv = <any>document.createElement("div");
+    shadowDiv.classList.add("inputs");
+    shadowRow.valueCell.appendChild(shadowDiv);
+
+    let castSpan = document.createElement("span");
+    castSpan.style.marginLeft = "5px";
+    castSpan.textContent = "Cast";
+    shadowDiv.appendChild(castSpan);
+    this.castShadowField = SupClient.table.appendBooleanField(shadowDiv, config.castShadow);
     this.castShadowField.addEventListener("change", (event: any) => {
       this.editConfig("setProperty", "castShadow", event.target.checked);
-    })
+    });
     this.castShadowField.disabled = true;
 
-    let receiveShadowRow = SupClient.table.appendRow(tbody, "Receive Shadow");
-    this.receiveShadowField = SupClient.table.appendBooleanField(receiveShadowRow.valueCell, config.receiveShadow);
+    let receiveSpan = document.createElement("span");
+    receiveSpan.style.marginLeft = "5px";
+    receiveSpan.textContent = "Receive";
+    shadowDiv.appendChild(receiveSpan);
+    this.receiveShadowField = SupClient.table.appendBooleanField(shadowDiv, config.receiveShadow);
     this.receiveShadowField.addEventListener("change", (event: any) => {
       this.editConfig("setProperty", "receiveShadow", event.target.checked);
-    })
+    });
     this.receiveShadowField.disabled = true;
 
     let colorRow = SupClient.table.appendRow(tbody, "Color");
@@ -73,7 +84,7 @@ export default class ModelRendererEditor {
       this.editConfig("setProperty", "color", event.target.value.slice(1));
     });
     this.colorPicker.disabled = true;
-    
+
     let opacityRow = SupClient.table.appendRow(tbody, "Opacity", { checkbox: true } );
     this.overrideOpacityField = opacityRow.checkbox;
     this.overrideOpacityField.checked = config.overrideOpacity;
@@ -108,7 +119,7 @@ export default class ModelRendererEditor {
       this.editConfig("setProperty", "materialType", event.target.value);
     })
     this.materialSelectBox.disabled = true;
-    
+
     let shaderRow = SupClient.table.appendRow(tbody, "Shader");
     this.shaderTextField = SupClient.table.appendTextField(shaderRow.valueCell, "");
     this.shaderTextField.addEventListener("input", this._onChangeShaderAsset);
@@ -162,7 +173,7 @@ export default class ModelRendererEditor {
         this.colorField.value = value;
         this.colorPicker.value = `#${value}`;
         break;
-        
+
       case "overrideOpacity":
         this.overrideOpacityField.checked = value;
         this.transparentField.disabled = ! value;

@@ -43,12 +43,12 @@ export default class SpriteRendererEditor {
     this.animationSelectBox = SupClient.table.appendSelectBox(animationRow.valueCell, { "": "(None)" });
     this.animationSelectBox.addEventListener("change", this._onChangeSpriteAnimation);
     this.animationSelectBox.disabled = true;
-    
+
     let flipRow = SupClient.table.appendRow(tbody, "Flip");
     let flipDiv = <any>document.createElement("div");
     flipDiv.classList.add("inputs");
     flipRow.valueCell.appendChild(flipDiv);
-    
+
     let horizontalSpan = document.createElement("span");
     horizontalSpan.style.marginLeft = "5px";
     horizontalSpan.textContent = "H";
@@ -57,7 +57,7 @@ export default class SpriteRendererEditor {
     this.horizontalFlipField.addEventListener("change", (event: any) => {
       this.editConfig("setProperty", "horizontalFlip", event.target.checked);
     });
-    
+
     let verticalSpan = document.createElement("span");
     verticalSpan.style.marginLeft = "5px";
     verticalSpan.textContent = "V";
@@ -67,18 +67,29 @@ export default class SpriteRendererEditor {
       this.editConfig("setProperty", "verticalFlip", event.target.checked);
     });
 
-    let castShadowRow = SupClient.table.appendRow(tbody, "Cast Shadow");
-    this.castShadowField = SupClient.table.appendBooleanField(castShadowRow.valueCell, config.castShadow);
+    let shadowRow = SupClient.table.appendRow(tbody, "Shadow");
+    let shadowDiv = <any>document.createElement("div");
+    shadowDiv.classList.add("inputs");
+    shadowRow.valueCell.appendChild(shadowDiv);
+
+    let castSpan = document.createElement("span");
+    castSpan.style.marginLeft = "5px";
+    castSpan.textContent = "Cast";
+    shadowDiv.appendChild(castSpan);
+    this.castShadowField = SupClient.table.appendBooleanField(shadowDiv, config.castShadow);
     this.castShadowField.addEventListener("change", (event: any) => {
       this.editConfig("setProperty", "castShadow", event.target.checked);
-    })
+    });
     this.castShadowField.disabled = true;
 
-    let receiveShadowRow = SupClient.table.appendRow(tbody, "Receive Shadow");
-    this.receiveShadowField = SupClient.table.appendBooleanField(receiveShadowRow.valueCell, config.receiveShadow);
+    let receiveSpan = document.createElement("span");
+    receiveSpan.style.marginLeft = "5px";
+    receiveSpan.textContent = "Receive";
+    shadowDiv.appendChild(receiveSpan);
+    this.receiveShadowField = SupClient.table.appendBooleanField(shadowDiv, config.receiveShadow);
     this.receiveShadowField.addEventListener("change", (event: any) => {
       this.editConfig("setProperty", "receiveShadow", event.target.checked);
-    })
+    });
     this.receiveShadowField.disabled = true;
 
     let colorRow = SupClient.table.appendRow(tbody, "Color");
@@ -130,7 +141,7 @@ export default class SpriteRendererEditor {
       this.editConfig("setProperty", "materialType", event.target.value);
     })
     this.materialSelectBox.disabled = true;
-    
+
     let shaderRow = SupClient.table.appendRow(tbody, "Shader");
     this.shaderTextField = SupClient.table.appendTextField(shaderRow.valueCell, "");
     this.shaderTextField.addEventListener("input", this._onChangeShaderAsset);
@@ -166,7 +177,7 @@ export default class SpriteRendererEditor {
         if (! this.animationSelectBox.disabled) this.animationSelectBox.value = (value != null) ? value : "";
         this.animationId = value;
         break;
-      
+
       case "horizontalFlip":
         this.horizontalFlipField.checked = value;
         break;
@@ -206,7 +217,7 @@ export default class SpriteRendererEditor {
         this.materialSelectBox.value = value;
         this._updateShaderField(value);
         break;
-        
+
       case "shader":
         this.shaderAssetId = value;
         if (value != null) this.shaderTextField.value = this.projectClient.entries.getPathFromId(value);
@@ -229,7 +240,7 @@ export default class SpriteRendererEditor {
       this.spriteTextField.value = entries.getPathFromId(this.spriteAssetId);
       this.projectClient.subAsset(this.spriteAssetId, "sprite", this);
     }
-    
+
     if (entries.byId[this.shaderAssetId] != null) {
       this.shaderTextField.value = entries.getPathFromId(this.shaderAssetId);
     }
@@ -245,7 +256,7 @@ export default class SpriteRendererEditor {
   }
   onSetEntryProperty(id: string, key: string, value: any) {
     if (key !== "name") return;
-    
+
     if (id === this.spriteAssetId) {
       this.spriteTextField.value = this.projectClient.entries.getPathFromId(this.spriteAssetId);
     } else if (id === this.shaderAssetId) {
@@ -300,7 +311,7 @@ export default class SpriteRendererEditor {
       this.animationSelectBox.removeChild(child);
     }
   }
-  
+
   _updateShaderField(materialType: string) {
     let shaderRow = this.shaderTextField.parentElement.parentElement;
     if (materialType === "shader") {
@@ -326,7 +337,7 @@ export default class SpriteRendererEditor {
     let animationId = (event.target.value === "") ? null : event.target.value;
     this.editConfig("setProperty", "animationId", animationId);
   }
-  
+
   _onChangeShaderAsset = (event: any) => {
     if (event.target.value === "") this.editConfig("setProperty", "shaderAssetId", null);
     else {
