@@ -1,24 +1,28 @@
+import * as async from "async";
+
 export function loadAsset(player: SupRuntime.Player, entry: any, callback: (err: Error, asset?: any) => any) {
   player.getAssetData(`assets/${entry.storagePath}/sprite.json`, "json", (err, data) => {
     data.textures = {};
 
-    let img = new Image();
+    let mapsList = data.maps;
+      data.textures = {};
+      async.each(mapsList, (key: string, cb: Function) => {
+        let image = new Image();
 
-    img.onload = () => {
-      data.textures["map"] = new SupEngine.THREE.Texture(img);
-      data.textures["map"].needsUpdate = true;
+        image.onload = () => {
+          let texture = data.textures[key] = new SupEngine.THREE.Texture(image);
+          texture.needsUpdate = true;
 
-      if (data.filtering === "pixelated") {
-        data.textures["map"].magFilter = SupEngine.THREE.NearestFilter;
-        data.textures["map"].minFilter = SupEngine.THREE.NearestFilter;
-      }
+          if (data.filtering === "pixelated") {
+            texture.magFilter = SupEngine.THREE.NearestFilter;
+            texture.minFilter = SupEngine.THREE.NearestFilter;
+          }
+          cb();
+        };
 
-      callback(null, data);
-    };
-
-    img.onerror = () => { callback(null, data); };
-
-    img.src = `${player.dataURL}assets/${entry.storagePath}/map-map.dat`;
+        image.onerror = () => { cb(); };
+        image.src = `${player.dataURL}assets/${entry.storagePath}/map-${key}.dat`;
+      }, () => { callback(null, data); });
   });
 }
 
