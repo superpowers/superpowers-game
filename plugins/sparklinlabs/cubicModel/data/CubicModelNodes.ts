@@ -9,6 +9,7 @@ export interface Node extends SupCore.data.base.TreeNode {
   
   shape: {
     type: string;
+    offset: { x: number; y: number; z: number; }
   }
 }
 

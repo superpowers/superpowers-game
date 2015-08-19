@@ -22,27 +22,16 @@ let ui: {
     orientationElts: HTMLInputElement[];
     scaleElts: HTMLInputElement[];
   };
-
-  /*
-  opacityCheckbox?: HTMLInputElement;
-  opacityInput?: HTMLInputElement;
-
-  animationsTreeView?: any;
-  selectedAnimationId?: string;
-
-  errorPane?: HTMLDivElement;
-  errorPaneStatus?: HTMLDivElement;
-  errorPaneInfo?: HTMLDivElement;
-  errorsTBody?: HTMLTableSectionElement;
-
-  mapUploadButton?: HTMLInputElement;
-  texturesCheckbox?: HTMLInputElement;
-  texturesPane?: HTMLDivElement;
-  texturesTreeView?: any;
-  selectedTextureName?: string;
-
-  mapSlotsInput?: { [name: string]: HTMLInputElement };
-  */
+  
+  shape?: {
+    typeElt: HTMLSelectElement;
+    offsetElts: HTMLInputElement[];
+    
+    box: {
+      tbodyElt: HTMLTableSectionElement;
+      sizeElts: HTMLInputElement[];
+    }
+  }
 } = {};
 export default ui;
 
@@ -108,7 +97,7 @@ export function setupSelectedNode() {
   // Setup transform
   let nodeElt = ui.nodesTreeView.selectedNodes[0];
   if (nodeElt == null || ui.nodesTreeView.selectedNodes.length !== 1) {
-    ui.inspectorElt.classList.add("no-selection");
+    ui.inspectorElt.hidden = true;
 
     ui.newNodeButton.disabled = false;
     ui.renameNodeButton.disabled = true;
@@ -117,7 +106,7 @@ export function setupSelectedNode() {
     return;
   }
 
-  ui.inspectorElt.classList.remove("no-selection");
+  ui.inspectorElt.hidden = false;
 
   let node = data.cubicModelUpdater.cubicModelAsset.nodes.byId[nodeElt.dataset.id];
   setInspectorPosition(<THREE.Vector3>node.position);
@@ -125,8 +114,20 @@ export function setupSelectedNode() {
   setInspectorScale(<THREE.Vector3>node.scale);
 
   // Setup shape editor
-  let shapeElt = <HTMLDivElement>ui.inspectorElt.querySelector(".shape");
-  shapeElt.innerHTML = "";
+  ui.shape.typeElt.value = node.shape.type;
+
+  setInspectorShapeOffset(<THREE.Vector3>node.shape.offset);
+  
+  ui.shape.box.tbodyElt.hidden = node.shape.type !== "box"; 
+  if (!ui.shape.box.tbodyElt.hidden) {
+    let boxShape: any = node.shape;
+    
+    setInspectorBoxSize(<THREE.Vector3>{
+      x: boxShape.width,
+      y: boxShape.height, 
+      z: boxShape.depth
+    });
+  }
 }
 
 function roundForInspector(number: number) { return parseFloat(number.toFixed(3)); }
@@ -178,6 +179,32 @@ export function setInspectorScale(scale: THREE.Vector3) {
   }
 }
 
+export function setInspectorShapeOffset(offset: THREE.Vector3) {
+  let values = [
+    roundForInspector(offset.x).toString(),
+    roundForInspector(offset.y).toString(),
+    roundForInspector(offset.z).toString()
+  ];
+
+  for (let i = 0; i < 3; i++) {
+    // NOTE: This helps avoid clearing selection when possible
+    if (ui.shape.offsetElts[i].value !== values[i]) {
+      ui.shape.offsetElts[i].value = values[i];
+    }
+  }
+}
+
+export function setInspectorBoxSize(size: THREE.Vector3) {
+  let values = [ size.x.toString(), size.y.toString(), size.z.toString() ];
+
+  for (let i = 0; i < 3; i++) {
+    // NOTE: This helps avoid clearing selection when possible
+    if (ui.shape.box.sizeElts[i].value !== values[i]) {
+      ui.shape.box.sizeElts[i].value = values[i];
+    }
+  }
+}
+
 ui.newNodeButton = <HTMLButtonElement>document.querySelector("button.new-node");
 //ui.newNodeButton.addEventListener("click", onNewNodeClick);
 ui.renameNodeButton = <HTMLButtonElement>document.querySelector("button.rename-node");
@@ -194,6 +221,15 @@ ui.transform = {
   positionElts: <any>ui.inspectorElt.querySelectorAll(".transform .position input"),
   orientationElts: <any>ui.inspectorElt.querySelectorAll(".transform .orientation input"),
   scaleElts: <any>ui.inspectorElt.querySelectorAll(".transform .scale input"),
+};
+
+ui.shape = {
+  typeElt: <any>ui.inspectorElt.querySelector(".shape .type select"),
+  offsetElts: <any>ui.inspectorElt.querySelectorAll(".shape .offset input"),
+  box: {
+    tbodyElt: <any>ui.inspectorElt.querySelector(".box-shape"),
+    sizeElts: <any>ui.inspectorElt.querySelectorAll(".box-shape .size input")
+  }
 };
 
 /*
