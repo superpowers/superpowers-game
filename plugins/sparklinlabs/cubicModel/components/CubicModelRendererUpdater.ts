@@ -34,22 +34,22 @@ export default class CubicModelRendererUpdater {
   destroy() {
     if (this.cubicModelAssetId != null) this.client.unsubAsset(this.cubicModelAssetId, this.cubicModelSubscriber);
   }
-  
+
   _onCubicModelAssetReceived(assetId: string, asset: CubicModelAsset) {
     this.cubicModelAsset = asset;
     this._setCubicModel();
     if (this.receiveAssetCallbacks != null) this.receiveAssetCallbacks.cubicModel();
   }
-  
+
   _setCubicModel() {
     if (this.cubicModelAsset == null) {
       this.cubicModelRenderer.setModel(null);
       return;
     }
-    
+
     this.cubicModelRenderer.setModel(this.cubicModelAsset.pub);
   }
-  
+
   _onCubicModelAssetEdited(id: string, command: string, ...args: any[]) {
     let commandCallback = (<any>this)[`_onEditCommand_${command}`];
     if (commandCallback != null) commandCallback.apply(this, args);

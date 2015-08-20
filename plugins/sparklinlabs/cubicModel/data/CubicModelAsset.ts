@@ -53,6 +53,31 @@ export default class CubicModelAsset extends SupCore.data.base.Asset {
     ], (err) => { saveCallback(err); });
   }
 
+  server_addNode(client: any, name: string, options: any, callback: (err: string, node: Node, parentId: string, index: number) => any) {
+    let parentId = (options != null) ? options.parentId : null;
+    let parentNode = this.nodes.byId[parentId];
+    
+    let node: Node = {
+      id: null, name: name, children: <Node[]>[],
+      position: (options != null && options.transform != null && options.transform.position != null) ? options.transform.position : { x: 0, y: 0, z: 0 },
+      orientation: (options != null && options.transform != null && options.transform.orientation != null) ? options.transform.orientation : { x: 0, y: 0, z: 0, w: 1 },
+      scale: (options != null && options.transform != null && options.transform.scale != null) ? options.transform.scale : { x: 1, y: 1, z: 1 },
+      shape: (options != null && options.shape != null) ? options.shape : { type: "none", offset: { x: 0, y: 0, z: 0 }, settings: null }
+    };
+
+    let index = (options != null) ? options.index : null;
+    this.nodes.add(node, parentId, index, (err, actualIndex) => {
+      if (err != null) { callback(err, null, null, null); return; }
+
+      callback(null, node, parentId, actualIndex);
+      this.emit("change");
+    });
+  }
+
+  client_addNode(node: Node, parentId: string, index: number) {
+    this.nodes.client_add(node, parentId, index);
+  }
+
   /*
   server_setModel(client: any, upAxisMatrix: number[], attributes: { [name: string]: any }, bones: any[], callback: (err: string, upAxisMatrix?: number[], attributes?: { [name: string]: any }, bones?: any[]) => any) {
     // Validate up matrix

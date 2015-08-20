@@ -19,8 +19,8 @@ html
           label(for="transform-mode-translate-pivot") Move pivot
           input#transform-mode-rotate(type="radio",name="transformMode",value="rotate")
           label(for="transform-mode-rotate") Rotate
-          input#transform-mode-scale(type="radio",name="transformMode",value="scale")
-          label(for="transform-mode-scale") Scale
+          input#transform-mode-stretch(type="radio",name="transformMode",value="stretch")
+          label(for="transform-mode-stretch") Stretch
           input#transform-space(type="checkbox")
           label(for="transform-space") Local
           input#transform-drag-pivot-with-shape(type="checkbox")
@@ -56,13 +56,6 @@ html
                   input(type="number").x
                   input(type="number").y
                   input(type="number").z
-            tr.scale
-              th.label Scale
-              td
-                .inputs
-                  input(type="number").x
-                  input(type="number").y
-                  input(type="number").z
           tbody.shape
             tr
               th(colspan="2") Shape
@@ -70,7 +63,7 @@ html
               th Type
               td
                 select
-                  option(value="") (None)
+                  // option(value="") (None)
                   option(value="box") Box
             tr.offset
               th Offset
@@ -82,6 +75,13 @@ html
           tbody.box-shape
             tr.size
               th Size
+              td
+                .inputs
+                  input(type="number").width
+                  input(type="number").height
+                  input(type="number").depth
+            tr.stretch
+              th Stretch
               td
                 .inputs
                   input(type="number").width

@@ -37,7 +37,7 @@ function onAssetReceived() {
 
     if (node.children != null && node.children.length > 0) {
       liElt.classList.add("collapsed");
-      for (let child of node.children) walk(child, node, liElt)
+      for (let child of node.children) walk(child, node, liElt);
     }
   }
   for (let node of data.cubicModelUpdater.cubicModelAsset.nodes.pub) walk(node, null, null);

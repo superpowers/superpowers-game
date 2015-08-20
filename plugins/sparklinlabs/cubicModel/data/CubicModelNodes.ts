@@ -9,7 +9,8 @@ export interface Node extends SupCore.data.base.TreeNode {
   
   shape: {
     type: string;
-    offset: { x: number; y: number; z: number; }
+    offset: { x: number; y: number; z: number; };
+    settings: any;
   }
 }
 
@@ -53,7 +54,20 @@ export default class CubicModelNodes extends SupCore.data.base.TreeById {
     shape: {
       type: "hash",
       properties: {
-        type: { type: "string" }
+        type: { type: "string", mutable: true },
+        offset: {
+          mutable: true,
+          type: "hash",
+          properties: {
+            x: { type: "number", mutable: true },
+            y: { type: "number", mutable: true },
+            z: { type: "number", mutable: true },
+          }
+        },
+        settings: {
+          mutable: true,
+          type: "any"
+        }
       }
     }
   }
