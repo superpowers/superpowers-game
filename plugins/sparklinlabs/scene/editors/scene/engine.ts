@@ -61,9 +61,9 @@ function update() {
       engine.cameraControls.movementSpeed = ui.cameraSpeedSlider.value;
     }
   }
-}
 
-canvasElt.addEventListener("mouseup", onMouseUp);
+  if (engine.gameInstance.input.mouseButtons[0].wasJustReleased) mouseUp();
+}
 
 // Mouse picking
 let mousePosition = new THREE.Vector2;
@@ -77,19 +77,14 @@ engine.transformHandleComponent.control.addEventListener("mouseDown", () => {
 
 engine.transformHandleComponent.control.addEventListener("objectChange", onTransformChange);
 
-function onMouseUp(event: MouseEvent) {
+function mouseUp() {
   if (draggingControls) {
     draggingControls = false;
     return;
   }
 
-  if (event.button !== 0) return;
-
-  let rect = canvasElt.getBoundingClientRect();
-  mousePosition.set(
-    (( event.clientX - rect.left ) / rect.width * 2) - 1,
-    -(( event.clientY - rect.top ) / rect.height * 2) + 1
-  );
+  mousePosition.x =   engine.gameInstance.input.mousePosition.x / canvasElt.clientWidth * 2 - 1;
+  mousePosition.y = -(engine.gameInstance.input.mousePosition.y / canvasElt.clientHeight * 2 - 1);
 
   raycaster.setFromCamera(mousePosition, engine.cameraComponent.threeCamera);
 
