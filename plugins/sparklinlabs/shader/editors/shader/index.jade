@@ -52,11 +52,15 @@ html
 
     .shaders
       .vertex
-        span.header Vertex Shader
+        .header
+          span Vertex Shader
+          button(disabled title="Ctrl+S") Save
         .text-editor-container
           textarea(disabled).text-editor
       .fragment
-        span.header Fragment Shader
+        .header
+          span.Fragment Shader
+          button(disabled title="Ctrl+S") Save
         .text-editor-container
           textarea(disabled).text-editor
 

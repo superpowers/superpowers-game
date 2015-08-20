@@ -24,9 +24,22 @@ function onAssetReceived(assetId: string, asset: ShaderAsset) {
   for (let uniform of asset.pub.uniforms) setupUniform(uniform);
   for (let attribute of asset.pub.attributes) setupAttribute(attribute);
   ui.vertexEditor.setText(asset.pub.vertexShader.draft);
+  ui.vertexSaveElt.disabled = asset.pub.vertexShader.draft === asset.pub.vertexShader.text;
   ui.fragmentEditor.setText(asset.pub.fragmentShader.draft);
+  ui.fragmentSaveElt.disabled = asset.pub.fragmentShader.draft === asset.pub.fragmentShader.text;
 
   setupPreview();
+}
+
+export function editAsset(...args: any[]) {
+  let callback: Function;
+  if (typeof args[args.length-1] === "function") callback = args.pop();
+
+  args.push((err: string, id: string) => {
+    if (err != null) { alert(err); return; }
+    if (callback != null) callback(id);
+  });
+  socket.emit("edit:assets", info.assetId, ...args);
 }
 
 let onEditCommands: any = {};
@@ -90,10 +103,14 @@ onEditCommands.setAttributeProperty = (id: string, key: string, value: any) => {
 
 onEditCommands.editVertexShader = (operationData: OperationData) => {
   ui.vertexEditor.receiveEditText(operationData);
+  ui.vertexSaveElt.disabled = false;
 }
+onEditCommands.saveVertexShader = () => { ui.vertexSaveElt.disabled = true; }
 onEditCommands.editFragmentShader = (operationData: OperationData) => {
   ui.fragmentEditor.receiveEditText(operationData);
+  ui.fragmentSaveElt.disabled = false;
 }
+onEditCommands.saveFragmentShader = () => { ui.fragmentSaveElt.disabled = true; }
 
 function onAssetTrashed() {
   SupClient.onAssetTrashed();

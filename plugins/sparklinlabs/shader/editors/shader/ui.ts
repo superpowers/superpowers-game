@@ -1,5 +1,5 @@
 import info from "./info";
-import { socket, data } from "./network";
+import { data, editAsset } from "./network";
 import { setupPreview } from "./engine";
 import Uniforms, { UniformPub } from "../../data/Uniforms";
 import Attributes, { AttributePub } from "../../data/Attributes";
@@ -10,7 +10,9 @@ let ui: {
   uniformsList?: HTMLTableElement;
   attributesList?: HTMLTableElement;
   vertexEditor?: TextEditorWidget;
+  vertexSaveElt?: HTMLButtonElement;
   fragmentEditor?: TextEditorWidget;
+  fragmentSaveElt?: HTMLButtonElement;
 
   previewTypeSelect?: HTMLSelectElement;
   previewAssetInput?: HTMLInputElement;
@@ -30,16 +32,8 @@ export function setupUniform(uniform: UniformPub) {
   let nameInputElt = document.createElement("input");
   nameInputElt.classList.add("name");
   nameInputElt.addEventListener("change", (event: any) => {
-    if (event.target.value === "") {
-      socket.emit("edit:assets", info.assetId, "deleteUniform", (<any>rowElt.dataset).id, (err: string) => {
-      if (err != null) alert(err);
-    });
-      return;
-    }
-
-    socket.emit("edit:assets", info.assetId, "setUniformProperty", (<any>rowElt.dataset).id, "name", event.target.value, (err: string) => {
-      if (err != null) alert(err);
-    });
+    if (event.target.value === "") editAsset("deleteUniform", (<any>rowElt.dataset).id);
+    else editAsset("setUniformProperty", (<any>rowElt.dataset).id, "name", event.target.value);
   })
   nameInputElt.value = uniform.name;
   nameElt.appendChild(nameInputElt);
@@ -54,9 +48,7 @@ export function setupUniform(uniform: UniformPub) {
   }
   selectTypeElt.classList.add("type");
   selectTypeElt.addEventListener("change", (event: any) => {
-    socket.emit("edit:assets", info.assetId, "setUniformProperty", (<any>rowElt.dataset).id, "type", event.target.value, (err: string) => {
-      if (err != null) alert(err);
-    });
+    editAsset("setUniformProperty", (<any>rowElt.dataset).id, "type", event.target.value);
   })
   selectTypeElt.value = uniform.type;
   typeElt.appendChild(selectTypeElt);
@@ -81,11 +73,7 @@ export function setUniformValueInputs(id: string) {
       let floatInputElt = document.createElement("input");
       floatInputElt.type = "number";
       floatInputElt.classList.add("float");
-      floatInputElt.addEventListener("change", (event: any) => {
-        socket.emit("edit:assets", info.assetId, "setUniformProperty", id, "value", parseFloat(event.target.value), (err: string) => {
-          if (err != null) alert(err);
-        });
-      })
+      floatInputElt.addEventListener("change", (event: any) => { editAsset("setUniformProperty", id, "value", parseFloat(event.target.value)); })
       floatInputElt.value = uniform.value;
       valueRowElt.appendChild(floatInputElt);
       break;
@@ -100,11 +88,7 @@ export function setUniformValueInputs(id: string) {
     case "t":
       let textInputElt = document.createElement("input");
       textInputElt.classList.add("text");
-      textInputElt.addEventListener("change", (event: any) => {
-        socket.emit("edit:assets", info.assetId, "setUniformProperty", id, "value", event.target.value, (err: string) => {
-          if (err != null) alert(err);
-        });
-      })
+      textInputElt.addEventListener("change", (event: any) => { editAsset("setUniformProperty", id, "value", event.target.value); })
       textInputElt.value = uniform.value;
       valueRowElt.appendChild(textInputElt);
       break;
@@ -124,9 +108,7 @@ function setArrayUniformInputs(id: string, parentElt: HTMLDivElement, name: stri
         let elt = <HTMLInputElement>parentElt.querySelector(`.${name}_${j}`);
         values.push(parseFloat(elt.value));
       }
-      socket.emit("edit:assets", info.assetId, "setUniformProperty", id, "value", values, (err: string) => {
-        if (err != null) alert(err);
-      });
+      editAsset("setUniformProperty", id, "value", values);
     })
     inputElt.value = uniform.value[i];
     parentElt.appendChild(inputElt);
@@ -136,9 +118,7 @@ function setArrayUniformInputs(id: string, parentElt: HTMLDivElement, name: stri
 let newUniformInput = <HTMLInputElement>document.querySelector(".new-uniform input");
 newUniformInput.addEventListener("keyup", (event: any) => {
   if (event.keyCode === 13) {
-    socket.emit("edit:assets", info.assetId, "newUniform", event.target.value, (err: string) => {
-      if (err != null) alert(err);
-    });
+    editAsset("newUniform", event.target.value);
     event.target.value = "";
   }
 })
@@ -153,16 +133,8 @@ export function setupAttribute(attribute: AttributePub) {
   let nameInputElt = document.createElement("input");
   nameInputElt.classList.add("name");
   nameInputElt.addEventListener("change", (event: any) => {
-    if (event.target.value === "") {
-      socket.emit("edit:assets", info.assetId, "deleteAttribute", (<any>rowElt.dataset).id, (err: string) => {
-      if (err != null) alert(err);
-    });
-      return;
-    }
-
-    socket.emit("edit:assets", info.assetId, "setAttributeProperty", (<any>rowElt.dataset).id, "name", event.target.value, (err: string) => {
-      if (err != null) alert(err);
-    });
+    if (event.target.value === "") editAsset("deleteAttribute", (<any>rowElt.dataset).id);
+    else editAsset("setAttributeProperty", (<any>rowElt.dataset).id, "name", event.target.value);
   })
   nameInputElt.value = attribute.name;
   nameElt.appendChild(nameInputElt);
@@ -176,11 +148,7 @@ export function setupAttribute(attribute: AttributePub) {
     selectTypeElt.appendChild(optionElt);
   }
   selectTypeElt.classList.add("type");
-  selectTypeElt.addEventListener("change", (event: any) => {
-    socket.emit("edit:assets", info.assetId, "setAttributeProperty", (<any>rowElt.dataset).id, "type", event.target.value, (err: string) => {
-      if (err != null) alert(err);
-    });
-  })
+  selectTypeElt.addEventListener("change", (event: any) => { editAsset("setAttributeProperty", (<any>rowElt.dataset).id, "type", event.target.value); })
   selectTypeElt.value = attribute.type;
   typeElt.appendChild(selectTypeElt);
   rowElt.appendChild(typeElt);
@@ -193,9 +161,7 @@ export function setupAttribute(attribute: AttributePub) {
 let newAttributeInput = <HTMLInputElement>document.querySelector(".new-attribute input");
 newAttributeInput.addEventListener("keyup", (event: any) => {
   if (event.keyCode === 13) {
-    socket.emit("edit:assets", info.assetId, "newAttribute", event.target.value, (err: string) => {
-      if (err != null) alert(err);
-    });
+    editAsset("newAttribute", event.target.value);
     event.target.value = "";
   }
 })
@@ -214,37 +180,28 @@ fragmentShaderPaneResizeHandle.on("drag", () => {
   ui.fragmentEditor.codeMirrorInstance.refresh();
 });
 
+ui.vertexSaveElt = <HTMLButtonElement>document.querySelector(".vertex button");
+ui.vertexSaveElt.addEventListener("click", (event) => { editAsset("saveVertexShader"); });
+ui.fragmentSaveElt = <HTMLButtonElement>document.querySelector(".fragment button");
+ui.fragmentSaveElt.addEventListener("click", (event) => { editAsset("saveFragmentShader"); });
+
 export function setupEditors(clientId: number) {
   let vertexTextArea = <HTMLTextAreaElement>document.querySelector(".vertex textarea");
   ui.vertexEditor = new TextEditorWidget(data.projectClient, clientId, vertexTextArea, {
     mode: "x-shader/x-vertex",
     sendOperationCallback: (operation: OperationData) => {
-      socket.emit("edit:assets", info.assetId, "editVertexShader", operation, data.shaderAsset.vertexDocument.getRevisionId(), (err: string) => {
-        if (err != null) { alert(err); SupClient.onDisconnected(); }
-      });
+      editAsset("editVertexShader", operation, data.shaderAsset.vertexDocument.getRevisionId());
     },
-    saveCallback: () => {
-      let text = ui.vertexEditor.codeMirrorInstance.getDoc().getValue();
-      socket.emit("edit:assets", info.assetId, "saveVertexShader", (err: string) => {
-        if (err != null) alert(err);
-      });
-    }
+    saveCallback: () => { editAsset("saveVertexShader"); }
   });
 
   let fragmentTextArea = <HTMLTextAreaElement>document.querySelector(".fragment textarea");
   ui.fragmentEditor = new TextEditorWidget(data.projectClient, clientId, fragmentTextArea, {
     mode: "x-shader/x-fragment",
     sendOperationCallback: (operation: OperationData) => {
-      socket.emit("edit:assets", info.assetId, "editFragmentShader", operation, data.shaderAsset.fragmentDocument.getRevisionId(), (err: string) => {
-        if (err != null) { alert(err); SupClient.onDisconnected(); }
-      });
+      editAsset("editFragmentShader", operation, data.shaderAsset.fragmentDocument.getRevisionId());
     },
-    saveCallback: () => {
-      let text = ui.fragmentEditor.codeMirrorInstance.getDoc().getValue();
-      socket.emit("edit:assets", info.assetId, "saveFragmentShader", (err: string) => {
-        if (err != null) alert(err);
-      });
-    }
+    saveCallback: () => { editAsset("saveFragmentShader"); }
   });
 }
 
