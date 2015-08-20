@@ -17,7 +17,6 @@ let light = new THREE.AmbientLight(0xcfcfcf);
 engine.gameInstance.threeScene.add(light);
 
 let spotLight = new THREE.PointLight(0xffffff, 0.2);
-spotLight.position.set(0, 0, -5);
 cameraActor.threeObject.add(spotLight);
 spotLight.updateMatrixWorld(false);
 
