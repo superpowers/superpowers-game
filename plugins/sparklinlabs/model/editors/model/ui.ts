@@ -406,10 +406,10 @@ export function setupOpacity(opacity: number) {
 }
 
 export function setupAdvancedTextures(advancedTextures: boolean) {
-  ui.mapUploadButton.disabled = !advancedTextures;
-  ui.mapDownloadButton.disabled = !advancedTextures;
+  ui.mapUploadButton.disabled = advancedTextures;
+  ui.mapDownloadButton.disabled = advancedTextures;
   // NOTE: .toggle signature lacks the second argument in TypeScript 1.5 alpha
-  (<any>ui.texturesPane.classList).toggle("collapsed", advancedTextures);
-  ui.texturesToogleButton.textContent = advancedTextures ? "+" : "–";
-  texturePaneResizeHandle.handleElt.classList.toggle("disabled", advancedTextures);
+  (<any>ui.texturesPane.classList).toggle("collapsed", !advancedTextures);
+  ui.texturesToogleButton.textContent = !advancedTextures ? "+" : "–";
+  texturePaneResizeHandle.handleElt.classList.toggle("disabled", !advancedTextures);
 }

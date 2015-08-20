@@ -420,9 +420,9 @@ function onDeleteMapClick() {
 }
 
 export function setupAdvancedTextures(advancedTextures: boolean) {
-  (<any>ui.texturesPane.classList).toggle("collapsed", advancedTextures);
-  ui.texturesToogleButton.textContent = advancedTextures ? "+" : "–";
-  texturePaneResizeHandle.handleElt.classList.toggle("disabled", advancedTextures);
+  (<any>ui.texturesPane.classList).toggle("collapsed", !advancedTextures);
+  ui.texturesToogleButton.textContent = !advancedTextures ? "+" : "–";
+  texturePaneResizeHandle.handleElt.classList.toggle("disabled", !advancedTextures);
 }
 
 export function updateSelectedMap() {
