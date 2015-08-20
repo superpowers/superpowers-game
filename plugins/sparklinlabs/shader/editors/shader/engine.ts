@@ -72,12 +72,11 @@ export function setupPreview() {
   previewActor.threeObject.add(new THREE.Mesh(previewGeometry, material));
 }
 
-let tickAnimationFrameId = requestAnimationFrame(tick);
 let lastTimestamp = 0;
 let accumulatedTime = 0;
 let frame = 0;
 function tick(timestamp=0) {
-  tickAnimationFrameId = requestAnimationFrame(tick);
+  requestAnimationFrame(tick);
 
   accumulatedTime += timestamp - lastTimestamp;
   lastTimestamp = timestamp;
@@ -90,3 +89,4 @@ function tick(timestamp=0) {
 
   gameInstance.draw();
 }
+requestAnimationFrame(tick);

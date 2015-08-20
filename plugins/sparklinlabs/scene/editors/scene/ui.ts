@@ -308,18 +308,18 @@ export function setInspectorPrefabId(prefabId: string) {
 function onNewNodeClick() {
   SupClient.dialogs.prompt("Enter a name for the actor.", null, "Actor", "Create", (name) => {
     if (name == null) return;
-    queryNewNode(name, false);
+    createNewNode(name, false);
   });
 }
 
 function onNewPrefabClick() {
   SupClient.dialogs.prompt("Enter a name for the prefab.", null, "Prefab", "Create", (name) => {
     if (name == null) return;
-    queryNewNode(name, true);
+    createNewNode(name, true);
   });
 }
 
-function queryNewNode(name: string, prefab: boolean) {
+function createNewNode(name: string, prefab: boolean) {
   let options = SupClient.getTreeViewInsertionPoint(ui.nodesTreeView);
 
   let offset = new THREE.Vector3(0, 0, -5).applyQuaternion(engine.cameraActor.getGlobalOrientation());

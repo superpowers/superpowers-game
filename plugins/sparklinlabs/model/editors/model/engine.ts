@@ -2,7 +2,6 @@ let THREE = SupEngine.THREE;
 
 let engine: {
   gameInstance?: SupEngine.GameInstance;
-  tickAnimationFrameId?: number;
 } = {};
 export default engine;
 
@@ -31,6 +30,6 @@ function tick(timestamp=0) {
   accumulatedTime = timeLeft;
 
   if (updates > 0) engine.gameInstance.draw();
-  engine.tickAnimationFrameId = requestAnimationFrame(tick);
+  requestAnimationFrame(tick);
 }
-engine.tickAnimationFrameId = requestAnimationFrame(tick);
+requestAnimationFrame(tick);
