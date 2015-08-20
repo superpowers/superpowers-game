@@ -249,7 +249,7 @@ export function importModel(files: File[], callback: ImportCallback) {
 
         let normalBufferView: GLTFBufferView = gltf.bufferViews[normalAccessor.bufferView];
         let start = normalBufferView.byteOffset + normalAccessor.byteOffset;
-        attributes["normal"] = buffers[normalBufferView.buffer].slice(start, start + normalAccessor.count * 4);
+        attributes["normal"] = buffers[normalBufferView.buffer].slice(start, start + normalAccessor.count * normalAccessor.byteStride);
       }
 
       // UV
@@ -283,7 +283,7 @@ export function importModel(files: File[], callback: ImportCallback) {
 
         let skinIndexBufferView: GLTFBufferView = gltf.bufferViews[skinIndexAccessor.bufferView];
         let start = skinIndexBufferView.byteOffset + skinIndexAccessor.byteOffset;
-        attributes["skinIndex"] = buffers[skinIndexBufferView.buffer].slice(start, start + skinIndexAccessor.count * 4 * 4);
+        attributes["skinIndex"] = buffers[skinIndexBufferView.buffer].slice(start, start + skinIndexAccessor.count * skinIndexAccessor.byteStride);
       }
 
       // Skin weights
@@ -296,7 +296,7 @@ export function importModel(files: File[], callback: ImportCallback) {
 
         let skinWeightBufferView: GLTFBufferView = gltf.bufferViews[skinWeightAccessor.bufferView];
         let start = skinWeightBufferView.byteOffset + skinWeightAccessor.byteOffset;
-        attributes["skinWeight"] = buffers[skinWeightBufferView.buffer].slice(start, start + skinWeightAccessor.count * 4 * 4);
+        attributes["skinWeight"] = buffers[skinWeightBufferView.buffer].slice(start, start + skinWeightAccessor.count * skinWeightAccessor.byteStride);
       }
 
       // Bones

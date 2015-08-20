@@ -130,14 +130,14 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
       geometry.addAttribute("skinWeight", new THREE.BufferAttribute(buffer, 4));
     }
 
-    if (this.materialType === "shader")
+    if (this.materialType === "shader") {
       this.material = SupEngine.componentClasses["Shader"].createShaderMaterial(
         customShader,
         this.asset.textures,
         geometry
       );
 
-    else {
+    } else {
       let material: THREE.MeshBasicMaterial|THREE.MeshPhongMaterial
       if (this.materialType === "basic") material = new THREE.MeshBasicMaterial();
       else if (this.materialType === "phong") material = new THREE.MeshPhongMaterial();
