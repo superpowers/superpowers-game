@@ -55,12 +55,15 @@ export function updateSelection() {
   if (ui.selectedAnimationId == null) return;
 
   let pub = data.spriteUpdater.spriteAsset.pub;
+  let texture = pub.textures[pub.mapSlots["map"]];
+  if (texture == null) return;
+
   let animation = data.spriteUpdater.spriteAsset.animations.byId[ui.selectedAnimationId];
   let width = pub.grid.width / pub.pixelsPerUnit;
   let height = pub.grid.height / pub.pixelsPerUnit;
   let framesPerDirection: number;
-  if (pub.frameOrder === "rows") framesPerDirection = pub.textures["map"].image.width / pub.grid.width;
-  else framesPerDirection = pub.textures["map"].image.height / pub.grid.height;
+  if (pub.frameOrder === "rows") framesPerDirection = texture.image.width / pub.grid.width;
+  else framesPerDirection = texture.image.height / pub.grid.height;
   spritesheetArea.selectionRenderer.setup(
     width, height,
     animation.startFrameIndex, animation.endFrameIndex,

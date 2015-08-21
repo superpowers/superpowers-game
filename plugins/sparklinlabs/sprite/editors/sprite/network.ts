@@ -32,35 +32,39 @@ function onAssetReceived() {
   let map = pub.maps[pub.mapSlots["map"]];
 
   spritesheetArea.spritesheet = {
-    textures: { map: ((<any>map).byteLength !== 0) ? texture.clone() : null },
+    textures: { map: texture != null ? texture.clone() : null },
     filtering: pub.filtering,
     pixelsPerUnit: pub.pixelsPerUnit,
     framesPerSecond: pub.framesPerSecond,
     alphaTest: pub.alphaTest,
     mapSlots: { map: "map" },
 
-    grid: { width: texture.image.width, height: texture.image.height },
+    grid: { width: 0, height: 0 },
     origin: { x: 0, y: 1 },
     animations: <any>[]
   };
 
-  if ((<any>map).byteLength !== 0) {
+  if (texture != null) {
+    spritesheetArea.spritesheet.grid.width = texture.image.width;
+    spritesheetArea.spritesheet.grid.height = texture.image.height;
     spritesheetArea.spritesheet.textures["map"].needsUpdate = true;
     spritesheetArea.spriteRenderer.setSprite(spritesheetArea.spritesheet);
 
     ui.imageLabel.textContent = `${texture.image.width}x${texture.image.height} px`;
   }
 
+  centerAnimationCamera();
+  centerSpritesheetCamera();
+
+  let width = texture != null ? texture.image.width / pub.grid.width : 1;
+  let height = texture != null ? texture.image.height / pub.grid.height : 1;
+
   spritesheetArea.gridRenderer.setGrid({
-    width: texture.image.width / pub.grid.width,
-    height: texture.image.height / pub.grid.height,
+    width, height,
     orthographicScale: 5,
     direction: -1,
     ratio: { x: pub.pixelsPerUnit / pub.grid.width, y: pub.pixelsPerUnit / pub.grid.height }
   });
-
-  centerAnimationCamera();
-  centerSpritesheetCamera();
 
   ui.allSettings.forEach((setting: string) => {
     let parts = setting.split(".");
@@ -126,6 +130,7 @@ onEditCommands.setAnimationProperty = (id: string, key: string, value: any) => {
 function updateSpritesheet() {
   let pub = data.spriteUpdater.spriteAsset.pub;
   let texture = pub.textures[pub.mapSlots["map"]];
+  if (texture == null) return;
 
   let asset = spritesheetArea.spritesheet;
   asset.textures["map"] = texture.clone();
@@ -140,16 +145,9 @@ function updateSpritesheet() {
   ui.imageLabel.textContent = `${texture.image.width}x${texture.image.height} px`;
 }
 
-onEditCommands.setMaps = (maps: any) => {
-  for (let mapName in maps) {
-    if (mapName !== data.spriteUpdater.spriteAsset.pub.mapSlots["map"]) continue;
-    updateSpritesheet();
-  }
-};
+onEditCommands.setMaps = () => { updateSpritesheet() };
 
-onEditCommands.newMap = (name: string) => {
-  setupMap(name);
-}
+onEditCommands.newMap = (name: string) => { setupMap(name); }
 
 onEditCommands.renameMap = (oldName: string, newName: string) => {
   let pub = data.spriteUpdater.spriteAsset.pub;

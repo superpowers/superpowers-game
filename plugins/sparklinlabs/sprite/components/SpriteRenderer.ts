@@ -42,7 +42,7 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
     if (materialType != null) this.materialType = materialType;
     this.animationName = null;
     this.animationsByName = {};
-    if (this.asset == null) return;
+    if (this.asset == null || this.asset.textures[this.asset.mapSlots["map"]] == null) return;
 
     this.updateAnimationsByName();
 

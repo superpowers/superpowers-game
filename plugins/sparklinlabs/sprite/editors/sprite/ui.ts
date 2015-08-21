@@ -328,8 +328,11 @@ export function setupProperty(path: string, value: any) {
 
   if (path === "grid.width" || path === "grid.height") {
     spritesheetArea.gridRenderer.setRatio({ x: pub.pixelsPerUnit / pub.grid.width, y: pub.pixelsPerUnit / pub.grid.height });
-    let image = pub.textures[pub.mapSlots["map"]].image;
-    spritesheetArea.gridRenderer.resize(image.width / pub.grid.width, image.height / pub.grid.height);
+    let texture = pub.textures[pub.mapSlots["map"]];
+    if (texture != null) {
+      let image = texture.image;
+      spritesheetArea.gridRenderer.resize(image.width / pub.grid.width, image.height / pub.grid.height);
+    }
     updateSelection();
   }
 

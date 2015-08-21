@@ -140,12 +140,13 @@ export default class SpriteRendererUpdater {
     }
   }
 
-  _onEditCommand_setMaps() {
+  _onEditCommand_setMaps(maps: any) {
     // TODO: Only update the maps that changed, don't recreate the whole model
     this._prepareMaps(() => {
       this._setSprite();
+      this.editAssetCallbacks.sprite["setMaps"]();
     });
-    return false
+    return false;
   }
 
   _onEditCommand_setMapSlot(slot: string, name: string) { this._setSprite(); }
