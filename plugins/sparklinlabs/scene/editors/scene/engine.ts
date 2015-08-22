@@ -63,6 +63,8 @@ function update() {
   }
 
   if (engine.gameInstance.input.mouseButtons[0].wasJustReleased) mouseUp();
+
+  engine.transformHandleComponent.control.snap = engine.gameInstance.input.keyboardButtons[(<any>window).KeyEvent.DOM_VK_CONTROL].isDown ? true : null;
 }
 
 // Mouse picking
