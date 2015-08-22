@@ -194,8 +194,10 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
     this.threeMesh.receiveShadow = this.receiveShadow;
 
     this.actor.threeObject.add(this.threeMesh);
-    this.threeMesh.geometry.computeVertexNormals();
-    this.threeMesh.geometry.computeFaceNormals();
+    if (geometry.getAttribute("normal") == null) {
+      this.threeMesh.geometry.computeVertexNormals();
+      this.threeMesh.geometry.computeFaceNormals();
+    }
     this.threeMesh.updateMatrixWorld(false);
   }
 
