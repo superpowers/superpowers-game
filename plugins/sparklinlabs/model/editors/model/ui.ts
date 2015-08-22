@@ -8,6 +8,7 @@ let PerfectResize = require("perfect-resize");
 let TreeView = require("dnd-tree-view");
 
 let ui: {
+  unitRatioInput?: HTMLInputElement;
   opacityCheckbox?: HTMLInputElement;
   opacityInput?: HTMLInputElement;
 
@@ -52,6 +53,10 @@ ui.mapDownloadButton.addEventListener("click", () => {
 // Show skeleton
 let showSkeletonCheckbox = <HTMLInputElement>document.querySelector(".show-skeleton");
 showSkeletonCheckbox.addEventListener("change", onShowSkeletonChange);
+
+// Unit Ratio
+ui.unitRatioInput = <HTMLInputElement>document.querySelector("input.property-unitRatio");
+ui.unitRatioInput.addEventListener("input", onChangeUnitRatio);
 
 // Opacity
 ui.opacityCheckbox = <HTMLInputElement>document.querySelector("input.opacity-checkbox");
@@ -225,6 +230,7 @@ function downloadTexture(textureName: string) {
 }
 
 function onShowSkeletonChange(event: Event) { data.modelUpdater.modelRenderer.setShowSkeleton((<HTMLInputElement>event.target).checked); }
+function onChangeUnitRatio(event: any) { editAsset("setProperty", "unitRatio", parseFloat(event.target.value)); }
 function onCheckOpacity(event: any) { editAsset("setProperty", "opacity", (event.target.checked) ? 1 : null); }
 function onChangeOpacity(event: any) { editAsset("setProperty", "opacity", parseFloat(event.target.value)); }
 

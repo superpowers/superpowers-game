@@ -166,6 +166,9 @@ export default class ModelRendererUpdater {
 
   _onEditCommand_setProperty(path: string, value: any) {
     switch(path) {
+      case "unitRatio":
+        this.modelRenderer.setUnitRatio(value);
+        break;
       case "opacity":
         if (! this.overrideOpacity) this.modelRenderer.setOpacity(value);
         break;

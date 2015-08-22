@@ -12,6 +12,7 @@ interface Animation {
 }
 
 interface ModelAssetPub {
+  unitRatio: number;
   upAxisMatrix: number[];
   attributes: { [name: string]: Buffer; };
   bones: { name: string; parentIndex: number; matrix: number[] }[];
@@ -29,6 +30,7 @@ interface ModelAssetPub {
 export default class ModelAsset extends SupCore.data.base.Asset {
 
   static schema = {
+    unitRatio: { type: "number", min: 1, mutable: true },
     upAxisMatrix: { type: "array", length: 16, items: { type: "number" } },
     attributes: {
       type: "hash",
@@ -87,6 +89,7 @@ export default class ModelAsset extends SupCore.data.base.Asset {
 
   init(options: any, callback: Function) {
     this.pub = {
+      unitRatio: 100,
       upAxisMatrix: null,
       attributes: {
         position: null,
@@ -139,6 +142,7 @@ export default class ModelAsset extends SupCore.data.base.Asset {
           normal: null
         }
       }
+      if (pub.unitRatio == null) pub.unitRatio = 1;
 
       pub.attributes = {};
       let mapsName: string[] = _.clone(<any>pub.maps);

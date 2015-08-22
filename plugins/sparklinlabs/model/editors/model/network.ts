@@ -34,6 +34,7 @@ function onAssetReceived() {
     setupAnimation(animation, index);
   }
 
+  ui.unitRatioInput.value = pub.unitRatio.toString();
   setupOpacity(pub.opacity);
 
   setupAdvancedTextures(pub.advancedTextures);
@@ -54,6 +55,9 @@ export function editAsset(...args: any[]) {
 
 onEditCommands.setProperty = (path: string, value: any) => {
   switch (path) {
+    case "unitRatio":
+      ui.unitRatioInput.value = value.toString();
+      break;
     case "opacity":
       setupOpacity(value);
       break;

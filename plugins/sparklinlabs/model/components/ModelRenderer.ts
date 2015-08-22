@@ -188,6 +188,8 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
 
     } else this.threeMesh = new THREE.Mesh(geometry, this.material);
 
+
+    this.setUnitRatio(asset.unitRatio);
     this.setCastShadow(this.castShadow);
     this.threeMesh.receiveShadow = this.receiveShadow;
 
@@ -218,6 +220,11 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
       this.material.opacity = 1;
     }
     this.material.needsUpdate = true;
+   }
+
+   setUnitRatio(unitRatio: number) {
+     let ratio = 1 / unitRatio;
+     this.threeMesh.scale.set(ratio, ratio, ratio);
    }
 
   setShowSkeleton(show: boolean) {
