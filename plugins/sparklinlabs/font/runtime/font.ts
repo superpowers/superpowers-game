@@ -26,7 +26,7 @@ export function loadAsset(player: SupRuntime.Player, entry: any, callback: (err:
 
       let font: any /* FontFace */;
       try {
-        font = new FontFace(data.name, `url(${player.dataURL}assets/${entry.storagePath}/font.dat)`);
+        font = new FontFace(data.name, `url(${player.dataURL}assets/${encodeURIComponent(entry.storagePath)}/font.dat)`);
         (<any>document).fonts.add(font);
       } catch(e) {}
 
