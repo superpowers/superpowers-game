@@ -1,7 +1,7 @@
 import info from "./info";
 import { data, editAsset } from "./network";
 
-import importModel from "./importers/index";
+import importModel, { ImportLogEntry } from "./importers/index";
 import ModelAsset from "../../data/ModelAsset";
 
 let PerfectResize = require("perfect-resize");
@@ -130,6 +130,65 @@ ui.errorPaneStatus.addEventListener("click", () => {
   errorPaneResizeHandle.handleElt.classList.toggle("disabled", collapsed);
 });
 
+function setImportLog(log: ImportLogEntry[]) {
+  let errorsCount = 0;
+  let warningsCount = 0;
+  let lastErrorRow: HTMLTableRowElement = null;
+
+  if (log == null) log = [];
+
+  for (let entry of log) {
+    // console.log(entry.file, entry.line, entry.type, entry.message);
+
+    let logRow = document.createElement("tr");
+
+    let positionCell = document.createElement("td");
+    positionCell.textContent = (entry.line != null) ? (entry.line + 1).toString() : "";
+    logRow.appendChild(positionCell);
+
+    let typeCell = document.createElement("td");
+    typeCell.textContent = entry.type;
+    logRow.appendChild(typeCell);
+
+    let messageCell = document.createElement("td");
+    messageCell.textContent = entry.message;
+    logRow.appendChild(messageCell);
+
+    let fileCell = document.createElement("td");
+    fileCell.textContent = entry.file;
+    logRow.appendChild(fileCell);
+
+    if (entry.type === "warning") warningsCount++;
+
+    if (entry.type !== "error") {
+      ui.errorsTBody.appendChild(logRow);
+      continue;
+    }
+
+    ui.errorsTBody.insertBefore(logRow, (lastErrorRow != null) ? lastErrorRow.nextElementSibling : ui.errorsTBody.firstChild);
+    lastErrorRow = logRow;
+    errorsCount++;
+  }
+
+  let errorsAndWarningsInfo: string[] = [];
+  if (errorsCount > 1) errorsAndWarningsInfo.push(`${errorsCount} errors`);
+  else if (errorsCount > 0) errorsAndWarningsInfo.push(`1 error`);
+  else errorsAndWarningsInfo.push("No errors");
+
+  if (warningsCount > 1) errorsAndWarningsInfo.push(`${warningsCount} warnings`);
+  else if (warningsCount > 0) errorsAndWarningsInfo.push(`${warningsCount} warnings`);
+
+  if (data == null || errorsCount > 0) {
+    let info = (data == null) ? `Import failed — ` : "";
+    ui.errorPaneInfo.textContent = info + errorsAndWarningsInfo.join(", ");
+    ui.errorPaneStatus.classList.add("has-errors");
+    return;
+  }
+
+  ui.errorPaneInfo.textContent = errorsAndWarningsInfo.join(", ");
+  ui.errorPaneStatus.classList.remove("has-errors");
+} 
+
 function onModelFileSelectChange(event: any) {
   if (event.target.files.length === 0) return;
 
@@ -138,65 +197,12 @@ function onModelFileSelectChange(event: any) {
   importModel(event.target.files, (log, data) => {
     event.target.parentElement.reset();
 
-    let errorsCount = 0;
-    let warningsCount = 0;
-    let lastErrorRow: HTMLTableRowElement = null;
-
-    if (log == null) log = [];
-    for (let entry of log) {
-      // console.log(entry.file, entry.line, entry.type, entry.message);
-
-      let logRow = document.createElement("tr");
-
-      let positionCell = document.createElement("td");
-      positionCell.textContent = (entry.line != null) ? (entry.line + 1).toString() : "";
-      logRow.appendChild(positionCell);
-
-      let typeCell = document.createElement("td");
-      typeCell.textContent = entry.type;
-      logRow.appendChild(typeCell);
-
-      let messageCell = document.createElement("td");
-      messageCell.textContent = entry.message;
-      logRow.appendChild(messageCell);
-
-      let fileCell = document.createElement("td");
-      fileCell.textContent = entry.file;
-      logRow.appendChild(fileCell);
-
-      if (entry.type === "warning") warningsCount++;
-
-      if (entry.type !== "error") {
-        ui.errorsTBody.appendChild(logRow);
-        continue;
-      }
-
-      ui.errorsTBody.insertBefore(logRow, (lastErrorRow != null) ? lastErrorRow.nextElementSibling : ui.errorsTBody.firstChild);
-      lastErrorRow = logRow;
-      errorsCount++;
+    setImportLog(log);
+    
+    if (data != null) {
+      editAsset("setModel", data.upAxisMatrix, data.attributes, data.bones);
+      if (data.maps != null) editAsset("setMaps", data.maps);
     }
-
-    let errorsAndWarningsInfo: string[] = [];
-    if (errorsCount > 1) errorsAndWarningsInfo.push(`${errorsCount} errors`);
-    else if (errorsCount > 0) errorsAndWarningsInfo.push(`1 error`);
-    else errorsAndWarningsInfo.push("No errors");
-
-    if (warningsCount > 1) errorsAndWarningsInfo.push(`${warningsCount} warnings`);
-    else if (warningsCount > 0) errorsAndWarningsInfo.push(`${warningsCount} warnings`);
-
-    if (data == null || errorsCount > 0) {
-      let info = (data == null) ? `Import failed — ` : "";
-      ui.errorPaneInfo.textContent = info + errorsAndWarningsInfo.join(", ");
-      ui.errorPaneStatus.classList.add("has-errors");
-      return;
-    }
-
-    ui.errorPaneInfo.textContent = errorsAndWarningsInfo.join(", ");
-    ui.errorPaneStatus.classList.remove("has-errors");
-
-    editAsset("setModel", data.upAxisMatrix, data.attributes, data.bones);
-
-    if (data.maps != null) editAsset("setMaps", data.maps);
   });
 }
 
@@ -254,16 +260,13 @@ function onAnimationFileSelectChange(event: any) {
   importModel(event.target.files, (log, data) => {
     event.target.parentElement.reset();
 
-    for(let entry in log) {
-      console.log(entry.file, entry.line, entry.type, entry.message);
+    setImportLog(log);
+
+    if (data != null) {
+      if (data.animation == null) { alert("No animation found in imported files"); return; }
+      // TODO: Check if bones are compatible
+      editAsset("setAnimation", animationId, data.animation.duration, data.animation.keyFrames);
     }
-
-    if (data == null) { alert("Import failed. See console for details."); return; }
-    if (data.animation == null) { alert("No animation found in imported files"); return; }
-
-    // TODO: Check if bones are compatible
-
-    editAsset("setAnimation", animationId, data.animation.duration, data.animation.keyFrames);
   });
 }
 
