@@ -182,15 +182,15 @@ export function importModel(files: File[], callback: ImportCallback) {
       let bufferInfo = gltf.buffers[name];
 
       // Remove path info from the URI
-      let filename = bufferInfo.uri;
+      let filename = decodeURI(bufferInfo.uri);
       if (filename.indexOf("/") !== -1) filename = filename.substring(filename.lastIndexOf("/") + 1);
       else if (filename.indexOf("\\") !== -1) filename = filename.substring(filename.lastIndexOf("\\") + 1);
 
       let bufferFile = bufferFiles[filename];
-      if (bufferFile == null) { cb(new Error(`Missing buffer file: ${filename}`)); return; }
+      if (bufferFile == null) { cb(new Error(`Missing buffer file: ${filename} (${bufferInfo.uri})`)); return; }
 
       readFile(bufferFile, "arraybuffer", (err: Error, buffer: ArrayBuffer) => {
-        if (err != null) { cb(new Error(`Could not read buffer file: ${filename}`)); return; }
+        if (err != null) { cb(new Error(`Could not read buffer file: ${filename} (${bufferInfo.uri})`)); return; }
         buffers[name] = buffer;
         cb(null);
       });
