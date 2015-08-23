@@ -42,7 +42,7 @@ function parse(filename: string, text: string, callback: ImportCallback) {
 
       case "vt": {
         if (valueStrings.length < 2) { callback([ createLogError(`Invalid vt command: found ${valueStrings.length} values, expected 2`, filename, lineIndex) ]); return; }
-        if (valueStrings.length > 3) log.push(createLogWarning(`Ignoring extra texture coordinates (${valueStrings.length} found, using 2), only U and V are supported.`, filename, lineIndex));
+        if (valueStrings.length > 2) log.push(createLogWarning(`Ignoring extra texture coordinates (${valueStrings.length} found, using 2), only U and V are supported.`, filename, lineIndex));
         let values: number[] = [];
         for (let i = 0; i < valueStrings.length; i++) values.push(+valueStrings[i]);
         uvsByIndex.push(values);
