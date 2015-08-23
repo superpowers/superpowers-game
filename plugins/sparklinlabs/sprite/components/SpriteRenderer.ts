@@ -67,11 +67,11 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
       material.alphaMap = this.asset.textures[this.asset.mapSlots["alpha"]];
       if (this.materialType === "phong") (<THREE.MeshPhongMaterial>material).normalMap = this.asset.textures[this.asset.mapSlots["normal"]];
       material.alphaTest = this.asset.alphaTest;
-      material.side = THREE.DoubleSide;
       material.color.setRGB(this.color.r, this.color.g, this.color.b);
       this.material = material;
       this.setOpacity(this.opacity);
     }
+    this.material.side = THREE.DoubleSide;
 
     this.threeMesh = new THREE.Mesh(this.geometry, this.material);
     this.setCastShadow(this.castShadow);

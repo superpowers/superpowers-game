@@ -18,7 +18,7 @@ export function createShaderMaterial(asset: ShaderAssetPub, textures: { [name: s
     return shader;
   }
 
-  let uniforms: { [name: string]: { type: string; value: any}} = {};
+  let uniforms: { [name: string]: { type: string; value: any}} = THREE.UniformsUtils.clone(THREE.UniformsLib[ "lights" ]);
   uniforms["time"] = { type: "f", value: 0.0 };
 
   for (let uniform of asset.uniforms) {
@@ -97,6 +97,7 @@ export function createShaderMaterial(asset: ShaderAssetPub, textures: { [name: s
     attributes,
     vertexShader: replaceShaderChunk(asset.vertexShader.text),
     fragmentShader: replaceShaderChunk(asset.fragmentShader.text),
-    transparent: true
+    transparent: true,
+    lights: true
   });
 }

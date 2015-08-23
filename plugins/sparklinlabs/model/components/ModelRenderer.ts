@@ -148,11 +148,11 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
       material.alphaMap = this.asset.textures[this.asset.mapSlots["alpha"]];
       if (this.materialType === "phong") (<THREE.MeshPhongMaterial>material).normalMap = this.asset.textures[this.asset.mapSlots["normal"]];
       material.alphaTest = 0.1;
-      material.side = THREE.DoubleSide;
       material.color.setRGB(this.color.r, this.color.g, this.color.b);
       this.material = material;
       this.setOpacity(this.opacity);
     }
+    this.material.side = THREE.DoubleSide;
 
     if(this.asset.bones != null) {
       this.threeMesh = new THREE.SkinnedMesh(geometry, this.material);
