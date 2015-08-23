@@ -19,7 +19,7 @@ export function setupComponent(player: SupRuntime.Player, component: any, config
     if (config.materialType === "shader") {
       if (config.shaderAssetId != null) {
         let shaderAsset = player.getOuterAsset(config.shaderAssetId);
-        if (shader == null) return;
+        if (shaderAsset == null) return;
         shader = shaderAsset.__inner;
       }
     }
