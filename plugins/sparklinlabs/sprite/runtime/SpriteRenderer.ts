@@ -10,16 +10,21 @@ export function setupComponent(player: SupRuntime.Player, component: any, config
   component.verticalFlip = config.verticalFlip;
 
   if (config.spriteAssetId != null) {
-    let sprite = player.getOuterAsset(config.spriteAssetId).__inner;
-    if (! config.overrideOpacity) component.opacity = sprite.opacity;
-    
+    let sprite = player.getOuterAsset(config.spriteAssetId);
+    if (sprite == null) return;
+
+    if (! config.overrideOpacity) component.opacity = sprite.__inner.opacity;
+
     let shader: any;
-    if (config.shaderAssetId != null) shader = player.getOuterAsset(config.shaderAssetId).__inner;
-    component.setSprite(sprite, config.materialType, shader);
+    if (config.materialType === "shader" && config.shaderAssetId != null) {
+      shader = player.getOuterAsset(config.shaderAssetId);
+      if (shader == null) return;
+    }
+    component.setSprite(sprite.__inner, config.materialType, shader.__inner);
 
     if (config.animationId != null) {
       // FIXME: should we load sprite with SupCore.data?
-      sprite.animations.every((animation: any) => {
+      sprite.__inner.animations.every((animation: any) => {
         if (animation.id === config.animationId) {
           component.setAnimation(animation.name);
           return false;
