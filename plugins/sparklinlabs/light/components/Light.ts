@@ -38,6 +38,7 @@ export default class Light extends SupEngine.ActorComponent {
         spotLight.target.position.copy(this.target);
         spotLight.target.updateMatrixWorld(false);
         spotLight.shadowCameraNear = 0.1;
+        spotLight.shadowCamera = new THREE.PerspectiveCamera( spotLight.shadowCameraFov, spotLight.shadowMapWidth / spotLight.shadowMapHeight, spotLight.shadowCameraNear, spotLight.shadowCameraFar );
         this.light = spotLight;
         this.setCastShadow(this.castShadow);
         break;
@@ -51,6 +52,7 @@ export default class Light extends SupEngine.ActorComponent {
         directionalLight.shadowCameraRight = 100;
         directionalLight.shadowCameraTop = 100;
         directionalLight.shadowCameraBottom = -100;
+        directionalLight.shadowCamera = new THREE.OrthographicCamera( directionalLight.shadowCameraLeft, directionalLight.shadowCameraRight, directionalLight.shadowCameraTop, directionalLight.shadowCameraBottom, directionalLight.shadowCameraNear, directionalLight.shadowCameraFar );
         this.light = directionalLight;
         this.setCastShadow(this.castShadow);
         break;
@@ -115,6 +117,6 @@ export default class Light extends SupEngine.ActorComponent {
     }
     super._destroy();
   }
-  
+
   setVisible(visible: boolean) { this.light.visible = visible; }
 }
