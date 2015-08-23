@@ -17,6 +17,9 @@ export default class TileMapRendererUpdater {
 
   tileMapAssetId: string;
   tileSetAssetId: string;
+  materialType: string;
+  shaderAssetId: string;
+  shaderPub: any;
   url: string;
 
   tileMapSubscriber: {
@@ -31,6 +34,12 @@ export default class TileMapRendererUpdater {
     onAssetTrashed: (assetId: string) => any
   };
 
+  shaderSubscriber = {
+    onAssetReceived: this._onShaderAssetReceived.bind(this),
+    onAssetEdited: this._onShaderAssetEdited.bind(this),
+    onAssetTrashed: this._onShaderAssetTrashed.bind(this)
+  };
+
   tileMapAsset: TileMapAsset;
   tileSetAsset: TileSetAsset;
   tileSetThreeTexture: THREE.Texture;
@@ -43,7 +52,9 @@ export default class TileMapRendererUpdater {
 
     this.tileMapAssetId = config.tileMapAssetId;
     this.tileSetAssetId = config.tileSetAssetId;
-    this.tileSetThreeTexture = null
+    this.materialType = config.materialType;
+    this.shaderAssetId = config.shaderAssetId;
+    this.tileSetThreeTexture = null;
 
     this.tileMapSubscriber = {
       onAssetReceived: this._onTileMapAssetReceived,
@@ -57,7 +68,10 @@ export default class TileMapRendererUpdater {
       onAssetTrashed: this._onTileSetAssetTrashed
     }
 
+    this.tileMapRenderer.receiveShadow = config.receiveShadow;
+
     if (this.tileMapAssetId != null) this.client.subAsset(this.tileMapAssetId, "tileMap", this.tileMapSubscriber);
+    if (this.shaderAssetId != null) this.client.subAsset(this.shaderAssetId, "shader", this.shaderSubscriber);
   }
 
   destroy() {
@@ -66,11 +80,21 @@ export default class TileMapRendererUpdater {
       this.client.unsubAsset(this.tileSetAssetId, this.tileSetSubscriber);
       this.tileSetThreeTexture.dispose();
     }
+    if (this.shaderAssetId != null) this.client.unsubAsset(this.shaderAssetId, this.shaderSubscriber);
+  }
+
+  _setTileMap() {
+    if (this.tileMapAsset == null || (this.materialType === "shader" && this.shaderPub == null)) {
+      this.tileMapRenderer.setTileMap(null);
+      return;
+    }
+
+    this.tileMapRenderer.setTileMap(new TileMap(this.tileMapAsset.pub), this.materialType, this.shaderPub);
   }
 
   _onTileMapAssetReceived = (assetId: string, asset: TileMapAsset) => {
     this.tileMapAsset = asset;
-    this.tileMapRenderer.setTileMap(new TileMap(this.tileMapAsset.pub));
+    this._setTileMap();
 
     if (this.tileMapAsset.pub.tileSetId != null)
       this.client.subAsset(this.tileMapAsset.pub.tileSetId, "tileSet", this.tileSetSubscriber);
@@ -100,9 +124,7 @@ export default class TileMapRendererUpdater {
     if (this.tileSetAssetId != null) this.client.subAsset(this.tileSetAssetId, "tileSet", this.tileSetSubscriber);
   }
 
-  _onEditCommand_resizeMap() {
-    this.tileMapRenderer.setTileMap(new TileMap(this.tileMapAsset.pub));
-  }
+  _onEditCommand_resizeMap() { this._setTileMap(); }
 
   _onEditCommand_moveMap() {
     this.tileMapRenderer.refreshEntireMap();
@@ -121,7 +143,7 @@ export default class TileMapRendererUpdater {
   }
 
   _onEditCommand_newLayer(layer: TileMapLayerPub, index: number) {
-    this.tileMapRenderer.addLayer(layer, index);
+    this.tileMapRenderer.addLayer(layer.id, index);
   }
 
   _onEditCommand_deleteLayer(id: string, index: number) {
@@ -207,6 +229,20 @@ export default class TileMapRendererUpdater {
     this.tileMapRenderer.setTileSet(null, null);
   }
 
+  _onShaderAssetReceived(assetId: string, asset: { pub: any} ) {
+    this.shaderPub = asset.pub;
+    this._setTileMap();
+  }
+
+  _onShaderAssetEdited(id: string, command: string, ...args: any[]) {
+    if (command !== "editVertexShader" && command !== "editFragmentShader") this._setTileMap();
+  }
+
+  _onShaderAssetTrashed() {
+    this.shaderPub = null;
+    this._setTileMap();
+  }
+
   config_setProperty(path: string, value: any) {
     switch (path) {
       case "tileMapAssetId":
@@ -226,8 +262,30 @@ export default class TileMapRendererUpdater {
 
         if (this.tileMapAssetId != null) this.client.subAsset(this.tileMapAssetId, "tileMap", this.tileMapSubscriber);
         break;
-
       // case "tileSetAssetId":
+
+      case "castShadow":
+        this.tileMapRenderer.setCastShadow(value);
+        break;
+
+      case "receiveShadow":
+        this.tileMapRenderer.setReceiveShadow(value);
+        break;
+
+      case "materialType":
+        this.materialType = value;
+        this._setTileMap();
+        break;
+
+      case "shaderAssetId":
+        if (this.shaderAssetId != null) this.client.unsubAsset(this.shaderAssetId, this.shaderSubscriber);
+        this.shaderAssetId = value;
+
+        this.shaderPub = null;
+        this.tileMapRenderer.setTileMap(null);
+
+        if (this.shaderAssetId != null) this.client.subAsset(this.shaderAssetId, "shader", this.shaderSubscriber);
+        break;
     }
   }
 }

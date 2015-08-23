@@ -233,7 +233,7 @@ export default class SpriteRendererEditor {
         this._updateShaderField(value);
         break;
 
-      case "shader":
+      case "shaderAssetId":
         this.shaderAssetId = value;
         this.shaderButtonElt.disabled = this.shaderAssetId == null;
         if (value != null) this.shaderTextField.value = this.projectClient.entries.getPathFromId(value);

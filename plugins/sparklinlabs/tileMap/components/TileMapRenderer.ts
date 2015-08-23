@@ -12,6 +12,11 @@ export default class TileMapRenderer extends SupEngine.ActorComponent {
   tileMap: TileMap;
   tileSet: TileSet;
 
+  castShadow = false;
+  receiveShadow = false;
+  materialType = "basic";
+  customShader: any;
+
   tileSetTexture: THREE.Texture;
   layerMeshes: THREE.Mesh[];
   layerMeshesById: { [id: string]: THREE.Mesh };
@@ -24,10 +29,12 @@ export default class TileMapRenderer extends SupEngine.ActorComponent {
     super(actor, "TileMapRenderer");
   }
 
-  setTileMap(asset: TileMap) {
+  setTileMap(asset: TileMap, materialType?: string, customShader?: any) {
     if (this.layerMeshes != null) this._clearLayerMeshes();
 
     this.tileMap = asset;
+    if (materialType != null) this.materialType = materialType;
+    this.customShader = customShader;
     if (this.tileSet == null || this.tileMap == null) return;
 
     this._createLayerMeshes();
@@ -51,10 +58,11 @@ export default class TileMapRenderer extends SupEngine.ActorComponent {
     this.layerMeshesById = {};
     this.layerVisibleById = {};
 
-    for (let layerIndex = 0; layerIndex < this.tileMap.data.layers.length; layerIndex++) {
-      let layer = this.tileMap.data.layers[layerIndex];
-      this.addLayer(layer, layerIndex);
+    for (let layerIndex = 0; layerIndex < this.tileMap.getLayersCount(); layerIndex++) {
+      let layerId = this.tileMap.getLayerId(layerIndex);
+      this.addLayer(layerId, layerIndex);
     }
+    this.setCastShadow(this.castShadow);
 
     this.tileMap.on("setTileAt", this._onSetTileAt);
   }
@@ -90,24 +98,43 @@ export default class TileMapRenderer extends SupEngine.ActorComponent {
     super._destroy();
   }
 
-  addLayer(layer: TileMapLayerPub, layerIndex: number) {
-    let width = this.tileMap.data.width * this.tileSet.data.grid.width;
-    let height = this.tileMap.data.height * this.tileSet.data.grid.height;
-    let geometry = new TileLayerGeometry(width, height, this.tileMap.data.width, this.tileMap.data.height);
-    let material = new THREE.MeshBasicMaterial({ map: this.tileSetTexture, alphaTest: 0.1, side: THREE.DoubleSide, transparent: true });
-    let layerMesh = new THREE.Mesh(geometry, material);
+  addLayer(layerId: string, layerIndex: number) {
+    let width = this.tileMap.getWidth() * this.tileSet.data.grid.width;
+    let height = this.tileMap.getHeight() * this.tileSet.data.grid.height;
+    let geometry = new TileLayerGeometry(width, height, this.tileMap.getWidth(), this.tileMap.getHeight());
 
-    let scaleRatio = 1 / this.tileMap.data.pixelsPerUnit;
+    let material: THREE.MeshBasicMaterial|THREE.MeshPhongMaterial;
+    if (this.materialType === "shader") {
+      material = SupEngine.componentClasses["Shader"].createShaderMaterial(
+        this.customShader,
+        { map: this.tileSetTexture },
+        geometry
+      );
+      (<any>material).map = this.tileSetTexture;
+
+    } else {
+      if (this.materialType === "basic") material = new THREE.MeshBasicMaterial();
+      else if (this.materialType === "phong") material = new THREE.MeshPhongMaterial();
+      material.map = this.tileSetTexture;
+      material.alphaTest = 0.1;
+      material.side = THREE.DoubleSide;
+      material.transparent = true;
+    }
+
+    let layerMesh = new THREE.Mesh(geometry, material);
+    layerMesh.receiveShadow = this.receiveShadow;
+
+    let scaleRatio = 1 / this.tileMap.getPixelsPerUnit();
     layerMesh.scale.set(scaleRatio, scaleRatio, 1);
     layerMesh.updateMatrixWorld(false);
 
     this.layerMeshes.splice(layerIndex, 0, layerMesh);
-    this.layerMeshesById[layer.id] = layerMesh;
-    this.layerVisibleById[layer.id] = true;
+    this.layerMeshesById[layerId] = layerMesh;
+    this.layerVisibleById[layerId] = true;
     this.actor.threeObject.add(layerMesh);
 
-    for (let y = 0; y < this.tileMap.data.height; y++) {
-      for (let x = 0; x < this.tileMap.data.width; x++) {
+    for (let y = 0; y < this.tileMap.getHeight(); y++) {
+      for (let x = 0; x < this.tileMap.getWidth(); x++) {
         this.refreshTileAt(layerIndex, x, y);
       }
     }
@@ -133,9 +160,27 @@ export default class TileMapRenderer extends SupEngine.ActorComponent {
     this.refreshLayersDepth();
   }
 
+  setCastShadow(castShadow: boolean) {
+    this.castShadow = castShadow;
+    for (let layerMesh of this.layerMeshes) layerMesh.castShadow = castShadow;
+    if (! castShadow) return;
+
+    this.actor.gameInstance.threeScene.traverse((object: any) => {
+      let material: THREE.Material = object.material;
+      if (material != null) material.needsUpdate = true;
+    })
+  }
+
+  setReceiveShadow(receiveShadow: boolean) {
+    this.receiveShadow = receiveShadow;
+    for (let layerMesh of this.layerMeshes) {
+      layerMesh.receiveShadow = receiveShadow;
+      layerMesh.material.needsUpdate = true;
+    }
+  }
+
   refreshPixelsPerUnit(pixelsPerUnit: number) {
-    this.tileMap.data.pixelsPerUnit = pixelsPerUnit;
-    let scaleRatio = 1 / this.tileMap.data.pixelsPerUnit;
+    let scaleRatio = 1 / this.tileMap.getPixelsPerUnit();
     for (let layerMesh of this.layerMeshes) {
       layerMesh.scale.set(scaleRatio, scaleRatio, 1);
       layerMesh.updateMatrixWorld(false);
@@ -145,15 +190,15 @@ export default class TileMapRenderer extends SupEngine.ActorComponent {
   refreshLayersDepth() {
     for (let layerMeshIndex = 0; layerMeshIndex < this.layerMeshes.length; layerMeshIndex++) {
       let layerMesh = this.layerMeshes[layerMeshIndex];
-      layerMesh.position.setZ(layerMeshIndex * this.tileMap.data.layerDepthOffset);
+      layerMesh.position.setZ(layerMeshIndex * this.tileMap.getLayersDepthOffset());
       layerMesh.updateMatrixWorld(false);
     }
   }
 
   refreshEntireMap() {
-    for (let layerIndex = 0; layerIndex < this.tileMap.data.layers.length; layerIndex++) {
-      for (let y = 0; y < this.tileMap.data.height; y++) {
-        for (let x = 0; x < this.tileMap.data.width; x++) {
+    for (let layerIndex = 0; layerIndex < this.tileMap.getLayersCount(); layerIndex++) {
+      for (let y = 0; y < this.tileMap.getWidth(); y++) {
+        for (let x = 0; x < this.tileMap.getHeight(); x++) {
           this.refreshTileAt(layerIndex, x, y);
         }
       }
@@ -194,7 +239,7 @@ export default class TileMapRenderer extends SupEngine.ActorComponent {
       top = temp;
     }
 
-    let quadIndex = (x + y * this.tileMap.data.width);
+    let quadIndex = (x + y * this.tileMap.getWidth());
     let layerMesh = this.layerMeshes[layerIndex];
     let uvs = (<any>layerMesh.geometry).getAttribute("uv");
     uvs.needsUpdate = true;

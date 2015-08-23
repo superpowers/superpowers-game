@@ -25,7 +25,7 @@ function onConnected() {
 
   let tileMapActor = new SupEngine.Actor(mapArea.gameInstance, "Tile Map");
   let tileMapRenderer = new TileMapRenderer(tileMapActor);
-  let config = { tileMapAssetId: info.assetId, tileSetAssetId: <string>null };
+  let config = { tileMapAssetId: info.assetId, tileSetAssetId: <string>null, materialType: "basic" };
   let receiveCallbacks = { tileMap: onTileMapAssetReceived, tileSet: onTileSetAssetReceived };
   let editCallbacks = { tileMap: onEditCommands, tileSet: onTileSetEditCommands };
 

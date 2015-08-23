@@ -1,19 +1,25 @@
 interface TileMapRendererConfigPub {
-  tileMapAssetId: string;
-  tileSetAssetId: string;
+  tileMapAssetId: string; tileSetAssetId: string;
+  castShadow: boolean; receiveShadow: boolean;
+  materialType: string; shaderAssetId: string;
 }
 
 export default class TileMapRendererConfig extends SupCore.data.base.ComponentConfig {
 
   static schema = {
     tileMapAssetId: { type: "string?", min: 0, mutable: true },
-    tileSetAssetId: { type: "string?", min: 0, mutable: true }
+    tileSetAssetId: { type: "string?", min: 0, mutable: true },
+    castShadow: { type: "boolean", mutable: true },
+    receiveShadow: { type: "boolean", mutable: true },
+    materialType: { type: "enum", items: ["basic", "phong", "shader"], mutable: true },
+    shaderAssetId: { type: "string?", min: 0, mutable: true }
   };
 
   static create() {
     let newConfig: TileMapRendererConfigPub = {
-      tileMapAssetId: null,
-      tileSetAssetId: null
+      tileMapAssetId: null, tileSetAssetId: null,
+      castShadow: false, receiveShadow: false,
+      materialType: "basic", shaderAssetId: null
     }
     return newConfig;
   };
@@ -24,6 +30,11 @@ export default class TileMapRendererConfig extends SupCore.data.base.ComponentCo
     // TODO: Remove these casts at some point, legacy stuff from Superpowers 0.4
     if (typeof pub.tileMapAssetId === "number") pub.tileMapAssetId = pub.tileMapAssetId.toString();
     if (typeof pub.tileSetAssetId === "number") pub.tileSetAssetId = pub.tileSetAssetId.toString();
+
+    // TODO: Remove these casts at some point, legacy stuff from Superpowers 0.11
+    if (pub.castShadow == null) pub.castShadow = false;
+    if (pub.receiveShadow == null) pub.receiveShadow = false;
+    if (pub.materialType == null) pub.materialType = "basic";
 
     super(pub, TileMapRendererConfig.schema);
   }

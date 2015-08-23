@@ -59,8 +59,8 @@ export default class TileLayerGeometry extends THREE.BufferGeometry {
 
         // Top left corner
         indices[offset3 + 3] = ref + 0;
-        indices[offset3 + 4] = ref + 3;
-        indices[offset3 + 5] = ref + 2;
+        indices[offset3 + 4] = ref + 2;
+        indices[offset3 + 5] = ref + 3;
 
         offset  += 4 * 3;
         offset2 += 4 * 2;

@@ -281,12 +281,10 @@ export function handleMapArea() {
 
     } else if (ui.fillToolButton.checked) {
       let edits: Edits[] = [];
-      let layerData = mapArea.patternRenderer.tileMap.data.layers[0].data;
 
       for (let y = 0; y < pub.height; y++) {
         for (let x = 0; x < pub.width; x++) {
-          let index = y * pub.width + x;
-          let tileValue = layerData[index];
+          let tileValue = mapArea.patternRenderer.tileMap.getTileAt(0, x, y);
 
           let emptyTile = true;
           for (let i = 0; i < TileMapAsset.emptyTile.length; i++) {

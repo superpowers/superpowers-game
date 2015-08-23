@@ -6,7 +6,7 @@ import TileMapAsset, { TileMapAssetPub } from "../data/TileMapAsset";
 export default class TileMap extends EventEmitter {
   static emptyTile = [ -1, -1, false, false, 0 ];
 
-  data: TileMapAssetPub;
+  private data: TileMapAssetPub;
 
   constructor(data: TileMapAssetPub) {
     super();
@@ -16,6 +16,9 @@ export default class TileMap extends EventEmitter {
   getWidth() { return this.data.width; }
   getHeight() { return this.data.height; }
   getPixelsPerUnit() { return this.data.pixelsPerUnit; }
+  getLayersDepthOffset() { return this.data.layerDepthOffset; }
+  getLayersCount() { return this.data.layers.length; }
+  getLayerId(index: number) { return this.data.layers[index].id; }
 
   setTileAt(layer: number, x: number, y: number, value: (number|boolean)[]) {
     if (x < 0 || y < 0 || x >= this.data.width || y >= this.data.height) return;
