@@ -227,6 +227,7 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
    setUnitRatio(unitRatio: number) {
      let ratio = 1 / unitRatio;
      this.threeMesh.scale.set(ratio, ratio, ratio);
+     this.threeMesh.updateMatrixWorld(false);
    }
 
   setShowSkeleton(show: boolean) {
