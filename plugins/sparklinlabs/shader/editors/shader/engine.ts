@@ -20,7 +20,7 @@ leonardTexture.minFilter = THREE.NearestFilter;
 let previewActor: SupEngine.Actor;
 let material: THREE.ShaderMaterial;
 
-export function setupPreview() {
+export function setupPreview(options = { useDraft: false }) {
   if (previewActor != null) {
     gameInstance.destroyActor(previewActor);
     previewActor = null;
@@ -68,8 +68,10 @@ export function setupPreview() {
       );
       return;
   }
-  material = createShaderMaterial(data.shaderAsset.pub, { map: leonardTexture }, previewGeometry);
+  material = createShaderMaterial(data.shaderAsset.pub, { map: leonardTexture }, previewGeometry, options);
   previewActor.threeObject.add(new THREE.Mesh(previewGeometry, material));
+  gameInstance.update();
+  gameInstance.draw();
 }
 
 let lastTimestamp = 0;

@@ -24,9 +24,13 @@ function onAssetReceived(assetId: string, asset: ShaderAsset) {
   for (let uniform of asset.pub.uniforms) setupUniform(uniform);
   for (let attribute of asset.pub.attributes) setupAttribute(attribute);
   ui.vertexEditor.setText(asset.pub.vertexShader.draft);
-  ui.vertexSaveElt.disabled = asset.pub.vertexShader.draft === asset.pub.vertexShader.text;
+  let hasVertexDraft = asset.pub.vertexShader.draft !== asset.pub.vertexShader.text;
+  (<any>ui.vertexHeader.classList).toggle("has-draft", hasVertexDraft);
+  ui.vertexSaveElt.disabled = !hasVertexDraft;
   ui.fragmentEditor.setText(asset.pub.fragmentShader.draft);
-  ui.fragmentSaveElt.disabled = asset.pub.fragmentShader.draft === asset.pub.fragmentShader.text;
+  let hasFragmentDraft = asset.pub.fragmentShader.draft !== asset.pub.fragmentShader.text;
+  (<any>ui.fragmentHeader.classList).toggle("has-draft", hasFragmentDraft);
+  ui.fragmentSaveElt.disabled = !hasFragmentDraft;
 
   setupPreview();
 }
@@ -103,14 +107,25 @@ onEditCommands.setAttributeProperty = (id: string, key: string, value: any) => {
 
 onEditCommands.editVertexShader = (operationData: OperationData) => {
   ui.vertexEditor.receiveEditText(operationData);
+  (<any>ui.vertexHeader.classList).toggle("has-draft", true);
   ui.vertexSaveElt.disabled = false;
 }
-onEditCommands.saveVertexShader = () => { ui.vertexSaveElt.disabled = true; }
+onEditCommands.saveVertexShader = () => {
+  (<any>ui.vertexHeader.classList).toggle("has-draft", false);
+  (<any>ui.vertexHeader.classList).toggle("has-errors", false);
+  ui.vertexSaveElt.disabled = true;
+}
+
 onEditCommands.editFragmentShader = (operationData: OperationData) => {
   ui.fragmentEditor.receiveEditText(operationData);
+  (<any>ui.fragmentHeader.classList).toggle("has-draft", true);
   ui.fragmentSaveElt.disabled = false;
 }
-onEditCommands.saveFragmentShader = () => { ui.fragmentSaveElt.disabled = true; }
+onEditCommands.saveFragmentShader = () => {
+  (<any>ui.fragmentHeader.classList).toggle("has-draft", false);
+  (<any>ui.fragmentHeader.classList).toggle("has-errors", false);
+  ui.fragmentSaveElt.disabled = true;
+}
 
 function onAssetTrashed() {
   SupClient.onAssetTrashed();

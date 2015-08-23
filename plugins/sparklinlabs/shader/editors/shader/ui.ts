@@ -10,8 +10,10 @@ let ui: {
   uniformsList?: HTMLTableElement;
   attributesList?: HTMLTableElement;
   vertexEditor?: TextEditorWidget;
+  vertexHeader?:HTMLDivElement;
   vertexSaveElt?: HTMLButtonElement;
   fragmentEditor?: TextEditorWidget;
+  fragmentHeader?:HTMLDivElement;
   fragmentSaveElt?: HTMLButtonElement;
 
   previewTypeSelect?: HTMLSelectElement;
@@ -173,6 +175,26 @@ shaderPaneResizeHandle.on("drag", () => {
   ui.fragmentEditor.codeMirrorInstance.refresh();
 });
 
+function onSaveVertex() {
+  try { setupPreview({ useDraft: true }); }
+  catch (e) {
+    (<any>ui.vertexHeader.classList).toggle("has-errors", true);
+    setupPreview();
+    return;
+  }
+  editAsset("saveVertexShader");
+}
+
+function onSaveFragment() {
+  try { setupPreview({ useDraft: true }); }
+  catch (e) {
+    (<any>ui.fragmentHeader.classList).toggle("has-errors", true);
+    setupPreview();
+    return;
+  }
+  editAsset("saveFragmentShader");
+}
+
 let fragmentShadersPane = shadersPane.querySelector(".fragment");
 let fragmentShaderPaneResizeHandle = new PerfectResize(fragmentShadersPane, "right");
 fragmentShaderPaneResizeHandle.on("drag", () => {
@@ -181,9 +203,11 @@ fragmentShaderPaneResizeHandle.on("drag", () => {
 });
 
 ui.vertexSaveElt = <HTMLButtonElement>document.querySelector(".vertex button");
-ui.vertexSaveElt.addEventListener("click", (event) => { editAsset("saveVertexShader"); });
+ui.vertexHeader = <HTMLDivElement>document.querySelector(".vertex .header");
+ui.vertexSaveElt.addEventListener("click", onSaveVertex);
 ui.fragmentSaveElt = <HTMLButtonElement>document.querySelector(".fragment button");
-ui.fragmentSaveElt.addEventListener("click", (event) => { editAsset("saveFragmentShader"); });
+ui.fragmentHeader = <HTMLDivElement>document.querySelector(".fragment .header");
+ui.fragmentSaveElt.addEventListener("click", onSaveFragment);
 
 export function setupEditors(clientId: number) {
   let vertexTextArea = <HTMLTextAreaElement>document.querySelector(".vertex textarea");
@@ -192,7 +216,7 @@ export function setupEditors(clientId: number) {
     sendOperationCallback: (operation: OperationData) => {
       editAsset("editVertexShader", operation, data.shaderAsset.vertexDocument.getRevisionId());
     },
-    saveCallback: () => { editAsset("saveVertexShader"); }
+    saveCallback: onSaveVertex
   });
 
   let fragmentTextArea = <HTMLTextAreaElement>document.querySelector(".fragment textarea");
@@ -201,7 +225,7 @@ export function setupEditors(clientId: number) {
     sendOperationCallback: (operation: OperationData) => {
       editAsset("editFragmentShader", operation, data.shaderAsset.fragmentDocument.getRevisionId());
     },
-    saveCallback: () => { editAsset("saveFragmentShader"); }
+    saveCallback: onSaveFragment
   });
 }
 
