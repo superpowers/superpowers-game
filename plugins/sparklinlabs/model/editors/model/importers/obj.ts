@@ -22,9 +22,9 @@ function parse(filename: string, text: string, callback: ImportCallback) {
   let uvsByIndex: number[][] = [];
   let normalsByIndex: number[][] = [];
 
-  let lines = text.split("\n");
+  let lines = text.replace(/\r\n/g, "\n").split("\n");
   for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
-    let line = lines[lineIndex];
+    let line = lines[lineIndex].trim();
 
     // Ignore empty lines and comments
     if (line.length === 0 || line[0] === "#") continue;
@@ -41,9 +41,10 @@ function parse(filename: string, text: string, callback: ImportCallback) {
       }
 
       case "vt": {
-        if (valueStrings.length !== 2) { callback([ createLogError(`Invalid vt command: found ${valueStrings.length} values, expected 2`, filename, lineIndex) ]); return; }
+        if (valueStrings.length < 2) { callback([ createLogError(`Invalid vt command: found ${valueStrings.length} values, expected 2`, filename, lineIndex) ]); return; }
+        if (valueStrings.length > 3) log.push(createLogWarning(`Ignoring extra texture coordinates (${valueStrings.length} found, using 2), only U and V are supported.`, filename, lineIndex));
         let values: number[] = [];
-        for (let valueString of valueStrings) values.push(+valueString);
+        for (let i = 0; i < valueStrings.length; i++) values.push(+valueStrings[i]);
         uvsByIndex.push(values);
         break;
       }
