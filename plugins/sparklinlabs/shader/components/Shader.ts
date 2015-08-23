@@ -92,8 +92,8 @@ export function createShaderMaterial(asset: ShaderAssetPub, textures: { [name: s
     geometry.addAttribute(attribute.name, new THREE.BufferAttribute(new Float32Array(values), itemSize));
   }
 
-  let vertexShader = options.useDraft ? asset.vertexShader.draft : asset.vertexShader.text;
-  let fragmentShader = options.useDraft ? asset.fragmentShader.draft : asset.fragmentShader.text;
+  let vertexShader = replaceShaderChunk(options.useDraft ? asset.vertexShader.draft : asset.vertexShader.text);
+  let fragmentShader = replaceShaderChunk(options.useDraft ? asset.fragmentShader.draft : asset.fragmentShader.text);
 
   return new THREE.ShaderMaterial({
     uniforms, attributes,
