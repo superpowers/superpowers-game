@@ -16,11 +16,14 @@ export function setupComponent(player: SupRuntime.Player, component: any, config
     if (! config.overrideOpacity) component.opacity = sprite.__inner.opacity;
 
     let shader: any;
-    if (config.materialType === "shader" && config.shaderAssetId != null) {
-      shader = player.getOuterAsset(config.shaderAssetId);
-      if (shader == null) return;
+    if (config.materialType === "shader") {
+      if (config.shaderAssetId != null) {
+        let shaderAsset = player.getOuterAsset(config.shaderAssetId);
+        if (shader == null) return;
+        shader = shaderAsset.__inner;
+      }
     }
-    component.setSprite(sprite.__inner, config.materialType, shader.__inner);
+    component.setSprite(sprite.__inner, config.materialType, shader);
 
     if (config.animationId != null) {
       // FIXME: should we load sprite with SupCore.data?
