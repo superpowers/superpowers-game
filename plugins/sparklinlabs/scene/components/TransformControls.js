@@ -775,8 +775,7 @@ var THREE = SupEngine.THREE;
 		}
 
 		function onPointerDown( event ) {
-
-			if ( scope.object === undefined || _dragging === true ) return;
+      if ( event.button !== 0 || scope.object === undefined || _dragging === true ) return;
 
 			var pointer = event.changedTouches ? event.changedTouches[ 0 ] : event;
 
@@ -822,7 +821,7 @@ var THREE = SupEngine.THREE;
 
 		function onPointerMove( event ) {
 
-			if ( scope.object === undefined || scope.axis === null || _dragging === false ) return;
+			if ( event.button !== 0 || scope.object === undefined || scope.axis === null || _dragging === false ) return;
 
 			event.preventDefault();
 			event.stopPropagation();
@@ -991,6 +990,7 @@ var THREE = SupEngine.THREE;
 		}
 
 		function onPointerUp( event ) {
+      if (event.button !== 0) return;
 
 			if ( _dragging && ( scope.axis !== null ) ) {
 				mouseUpEvent.mode = _mode;
