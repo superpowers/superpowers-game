@@ -8,12 +8,9 @@ module Sup {
 
     constructor(actor, object) {
       super(actor);
-      this.tween = new TWEEN.Tween( object );
+      this.tween = new TWEEN.Tween(object);
 
-      let self = this;
-      this.tween.onComplete( function() {
-        self.destroy();
-      });
+      this.tween.onComplete(() => { this.destroy(); });
       this.timer = -1;
 
       let funcs = {};
@@ -21,37 +18,37 @@ module Sup {
       this.__inner = new SupEngine.componentClasses.Behavior(actor.__inner, funcs);
     }
     update() {
-      if (this.timer == -1 ) { return; }
+      if (this.timer == -1) { return; }
 
       this.timer += 1 / Game.getFPS();
       this.tween.update(this.timer * 1000);
     }
 
-    to( object, duration ) {
-      this.tween.to( object, duration )
+    to(object, duration) {
+      this.tween.to(object, duration)
       return this;
     }
-    easing( easing ) {
-      this.tween.easing( easing )
+    easing(easing) {
+      this.tween.easing(easing)
       return this;
     }
-    yoyo( yoyo ) {
-      this.tween.yoyo( yoyo );
+    yoyo(yoyo) {
+      this.tween.yoyo(yoyo);
       return this;
     }
-    repeat( times ) {
-      this.tween.repeat( times );
+    repeat(times) {
+      this.tween.repeat(times);
       return this;
     }
-    onUpdate( update ) {
-      this.tween.onUpdate( function() {
+    onUpdate(update) {
+      this.tween.onUpdate(function() {
         update(this);
       });
       return this;
     }
-    onComplete( complete ) {
+    onComplete(complete) {
       let self = this
-      this.tween.onComplete( function() {
+      this.tween.onComplete(function() {
         complete(this);
         self.destroy();
       });
@@ -61,6 +58,10 @@ module Sup {
       this.timer = 0;
       this.tween.start(this.timer);
       return this;
+    }
+    stop() {
+      this.tween.stop();
+      this.timer = -1;
     }
   }
 }

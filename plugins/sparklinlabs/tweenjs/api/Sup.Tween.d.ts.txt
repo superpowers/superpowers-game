@@ -9,5 +9,6 @@ declare module Sup {
     onUpdate( onUpdate: Function ): Tween;
     onComplete( onComplete: Function ): Tween;
     start(): Tween;
+    stop(): Tween;
   }
 }
