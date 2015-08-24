@@ -10,6 +10,8 @@ export function setupComponent(player: SupRuntime.Player, component: any, config
       shader = shaderAsset.__inner;
     }
   }
+  component.castShadow = config.castShadow;
+  component.receiveShadow = config.receiveShadow;
   component.setTileMap(tileMap.__inner, config.materialType, shader);
 
   let tileSetId = (config.tileSetAssetId != null) ? config.tileSetAssetId : tileMap.__inner.data.tileSetId;
