@@ -35,6 +35,7 @@ module Sup {
           let result: any = appendScene(prefabAsset, parentActor, false);
           actor = result.actors[0];
           actor.__inner.name = node.name;
+          actor.__inner.threeObject.visible = node.visible;
 
           let localPosition = actor.__inner.getLocalPosition();
           actor.__inner.setLocalPosition(tmpVector3.set(node.position.x, node.position.y, node.position.z).add(localPosition));
