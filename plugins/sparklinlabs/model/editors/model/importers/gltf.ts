@@ -155,22 +155,30 @@ export function importModel(files: File[], callback: ImportCallback) {
     let meshName: string = null;
     // let rootBoneNames: string[] = null;
     let skin: any = null;
-
-    for (let childName of rootNode.children) {
-      let node = gltf.nodes[childName];
-
-      if(node.instanceSkin != null && node.instanceSkin.meshes != null && node.instanceSkin.meshes.length > 0) {
-        meshName = node.instanceSkin.meshes[0];
-        // rootBoneNames = node.instanceSkin.skeletons;
-        skin = gltf.skins[node.instanceSkin.skin];
-        break;
+    
+    let nodesByJointName: { [jointName: string]: GLTFNode } = {};
+    
+    let walkNode = (rootNode: GLTFNode) => {
+      if (rootNode.jointName != null) nodesByJointName[rootNode.jointName] = rootNode;
+            
+      if (meshName == null) {
+        if(rootNode.instanceSkin != null && rootNode.instanceSkin.meshes != null && rootNode.instanceSkin.meshes.length > 0) {
+          meshName = rootNode.instanceSkin.meshes[0];
+          // rootBoneNames = rootNode.instanceSkin.skeletons;
+          skin = gltf.skins[rootNode.instanceSkin.skin];
+        }
+        
+        else if (rootNode.meshes != null && rootNode.meshes.length > 0) {
+          meshName = rootNode.meshes[0];
+        }
       }
       
-      if (node.meshes != null && node.meshes.length > 0) {
-        meshName = node.meshes[0];
-        break;
+      for (let childName of rootNode.children) {
+        walkNode(gltf.nodes[childName]);
       }
     }
+    
+    for (let rootNodeName of gltf.scenes[gltf.scene].nodes) walkNode(gltf.nodes[rootNodeName]);
 
     if (meshName == null) { callback([ createLogError("No mesh found", gltfFile.name) ]); return; }
 
@@ -306,14 +314,14 @@ export function importModel(files: File[], callback: ImportCallback) {
 
         for (let i = 0; i < skin.jointNames.length; i++) {
           let jointName = skin.jointNames[i];
-          let boneNode = gltf.nodes[jointName];
+          let boneNode = nodesByJointName[jointName];
           let bone = { name: boneNode.jointName, matrix: getNodeMatrix(boneNode).toArray(), parentIndex: <number>null };
           bones.push(bone);
         }
 
         for (let i = 0; i < skin.jointNames.length; i++) {
           let jointName = skin.jointNames[i];
-          for (let childJointName of gltf.nodes[jointName].children) {
+          for (let childJointName of nodesByJointName[jointName].children) {
             let boneIndex = skin.jointNames.indexOf(childJointName);
             if (boneIndex !== -1) bones[boneIndex].parentIndex = i;
           }
@@ -387,13 +395,13 @@ export function importModel(files: File[], callback: ImportCallback) {
       let maps: { [name: string]: ArrayBuffer } = {};
 
       if(Object.keys(imageFiles).length === 0) {
-        callback(null, { attributes, bones, maps, animation, upAxisMatrix: upAxisMatrix.toArray() });
+        callback(null, { attributes, bones, maps, animation, upAxisMatrix: (upAxisMatrix != null) ? upAxisMatrix.toArray() : null });
         return;
       }
 
       readFile(imageFiles[Object.keys(imageFiles)[0]], "arraybuffer", (err, data) => {
         maps["map"] = data;
-        callback(null, { attributes, bones, maps, animation, upAxisMatrix: upAxisMatrix.toArray() });
+        callback(null, { attributes, bones, maps, animation, upAxisMatrix: (upAxisMatrix != null) ? upAxisMatrix.toArray() : null });
       });
     });
   }
