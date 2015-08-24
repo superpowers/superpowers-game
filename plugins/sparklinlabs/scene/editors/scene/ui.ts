@@ -10,6 +10,8 @@ let TreeView = require("dnd-tree-view");
 let PerfectResize = require("perfect-resize");
 
 let ui: {
+  canvasElt?: HTMLCanvasElement;
+  treeViewElt?: HTMLDivElement;
   nodesTreeView?: any;
 
   newNodeButton?: HTMLButtonElement;
@@ -45,8 +47,19 @@ export default ui;
 
 SupClient.setupHotkeys();
 
+ui.canvasElt = <HTMLCanvasElement>document.querySelector("canvas");
+
 // Hotkeys
 document.addEventListener("keydown", (event) => {
+  if (document.querySelector(".dialog") != null) return;
+  let activeElement = document.activeElement;
+  while (activeElement != null) {
+    console.log(activeElement);
+    if (activeElement == ui.canvasElt || activeElement == ui.treeViewElt) break;
+    activeElement = activeElement.parentElement;
+  }
+  if (activeElement == null) return;
+
   if (event.keyCode === 78 && (event.ctrlKey || event.metaKey)) { // CTRL-N
     event.preventDefault();
     onNewNodeClick();
@@ -78,7 +91,8 @@ new PerfectResize(document.querySelector(".sidebar"), "right");
 new PerfectResize(document.querySelector(".nodes-tree-view"), "top");
 
 // Setup tree view
-ui.nodesTreeView = new TreeView(document.querySelector(".nodes-tree-view"), onNodeDrop);
+ui.treeViewElt = <HTMLDivElement>document.querySelector(".nodes-tree-view");
+ui.nodesTreeView = new TreeView(ui.treeViewElt, onNodeDrop);
 ui.nodesTreeView.on("activate", onNodeActivate);
 ui.nodesTreeView.on("selectionChange", () => { setupSelectedNode(); });
 
