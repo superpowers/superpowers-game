@@ -64,6 +64,27 @@ function update() {
 
   if (engine.gameInstance.input.mouseButtons[0].wasJustReleased) mouseUp();
 
+  if (engine.gameInstance.input.keyboardButtons[(<any>window).KeyEvent.DOM_VK_E].wasJustPressed) {
+    (<HTMLInputElement>document.getElementById(`transform-mode-translate`)).checked = true;
+    engine.transformHandleComponent.setMode("translate");
+  }
+
+  if (engine.gameInstance.input.keyboardButtons[(<any>window).KeyEvent.DOM_VK_R].wasJustPressed) {
+    (<HTMLInputElement>document.getElementById(`transform-mode-rotate`)).checked = true;
+    engine.transformHandleComponent.setMode("rotate");
+  }
+
+  if (engine.gameInstance.input.keyboardButtons[(<any>window).KeyEvent.DOM_VK_T].wasJustPressed) {
+    (<HTMLInputElement>document.getElementById(`transform-mode-scale`)).checked = true;
+    engine.transformHandleComponent.setMode("scale");
+  }
+
+  if (engine.gameInstance.input.keyboardButtons[(<any>window).KeyEvent.DOM_VK_L].wasJustPressed) {
+    let localElt = (<HTMLInputElement>document.getElementById(`transform-space`));
+    localElt.checked = !localElt.checked;
+    engine.transformHandleComponent.setSpace(localElt.checked ? "local" : "world");
+  }
+
   engine.transformHandleComponent.control.snap = engine.gameInstance.input.keyboardButtons[(<any>window).KeyEvent.DOM_VK_CONTROL].isDown ? true : null;
 }
 

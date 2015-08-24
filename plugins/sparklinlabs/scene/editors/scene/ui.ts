@@ -45,6 +45,34 @@ export default ui;
 
 SupClient.setupHotkeys();
 
+// Hotkeys
+document.addEventListener("keydown", (event) => {
+  if (event.keyCode === 78 && (event.ctrlKey || event.metaKey)) { // CTRL-N
+    event.preventDefault();
+    onNewNodeClick();
+  }
+
+  if (event.keyCode === 80 && (event.ctrlKey || event.metaKey)) { // CTRL-O or CTRL-P
+    event.preventDefault();
+    onNewPrefabClick();
+  }
+
+  if (event.keyCode === 113) { // F2
+    event.preventDefault();
+    onRenameNodeClick();
+  }
+
+  if (event.keyCode === 68 && (event.ctrlKey || event.metaKey)) { // Ctrl+D
+    event.preventDefault();
+    onDuplicateNodeClick();
+  }
+
+  if (event.keyCode === 46) { // Delete
+    event.preventDefault();
+    onDeleteNodeClick();
+  }
+});
+
 // Setup resizable panes
 new PerfectResize(document.querySelector(".sidebar"), "right");
 new PerfectResize(document.querySelector(".nodes-tree-view"), "top");

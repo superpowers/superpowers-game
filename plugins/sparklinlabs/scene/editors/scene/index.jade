@@ -28,21 +28,21 @@ html
         .transform-mode
           .label Transform
           input#transform-mode-translate(type="radio",name="transformMode",value="translate",checked)
-          label(for="transform-mode-translate") Move
+          label(for="transform-mode-translate",title="E") Move
           input#transform-mode-rotate(type="radio",name="transformMode",value="rotate")
-          label(for="transform-mode-rotate") Rotate
+          label(for="transform-mode-rotate",title="R") Rotate
           input#transform-mode-scale(type="radio",name="transformMode",value="scale")
-          label(for="transform-mode-scale") Scale
+          label(for="transform-mode-scale",title="T") Scale
           input#transform-space(type="checkbox")
-          label(for="transform-space") Local
+          label(for="transform-space",title="L") Local
 
     .sidebar
       .nodes-buttons
-        button.new-node New Actor
-        button.new-prefab New Prefab
-        button(disabled).rename-node Rename
-        button(disabled).duplicate-node Duplicate
-        button(disabled).delete-node Delete
+        button(title="Ctrl+N").new-node New Actor
+        button(title="Ctrl+P").new-prefab New Prefab
+        button(disabled, title="F2").rename-node Rename
+        button(disabled, title="Ctrl+D").duplicate-node Duplicate
+        button(disabled, title="Suppr").delete-node Delete
 
       .nodes-tree-view
 
