@@ -52,9 +52,8 @@ ui.canvasElt = <HTMLCanvasElement>document.querySelector("canvas");
 // Hotkeys
 document.addEventListener("keydown", (event) => {
   if (document.querySelector(".dialog") != null) return;
-  let activeElement = document.activeElement;
+  let activeElement = <HTMLElement>document.activeElement;
   while (activeElement != null) {
-    console.log(activeElement);
     if (activeElement == ui.canvasElt || activeElement == ui.treeViewElt) break;
     activeElement = activeElement.parentElement;
   }
