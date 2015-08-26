@@ -56,7 +56,7 @@ showSkeletonCheckbox.addEventListener("change", onShowSkeletonChange);
 
 // Unit Ratio
 ui.unitRatioInput = <HTMLInputElement>document.querySelector("input.property-unitRatio");
-ui.unitRatioInput.addEventListener("input", onChangeUnitRatio);
+ui.unitRatioInput.addEventListener("change", onChangeUnitRatio);
 
 // Opacity
 ui.opacityCheckbox = <HTMLInputElement>document.querySelector("input.opacity-checkbox");
@@ -187,7 +187,7 @@ function setImportLog(log: ImportLogEntry[]) {
 
   ui.errorPaneInfo.textContent = errorsAndWarningsInfo.join(", ");
   ui.errorPaneStatus.classList.remove("has-errors");
-} 
+}
 
 function onModelFileSelectChange(event: any) {
   if (event.target.files.length === 0) return;
@@ -198,7 +198,7 @@ function onModelFileSelectChange(event: any) {
     event.target.parentElement.reset();
 
     setImportLog(log);
-    
+
     if (data != null) {
       editAsset("setModel", data.upAxisMatrix, data.attributes, data.bones);
       if (data.maps != null) editAsset("setMaps", data.maps);
