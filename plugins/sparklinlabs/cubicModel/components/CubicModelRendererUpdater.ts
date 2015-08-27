@@ -55,10 +55,15 @@ export default class CubicModelRendererUpdater {
     if (commandCallback != null) commandCallback.apply(this, args);
 
     if (this.editAssetCallbacks != null) {
-      let editCallback = this.editAssetCallbacks.model[command];
+      let editCallback = this.editAssetCallbacks.cubicModel[command];
       if (editCallback != null) editCallback.apply(null, args);
     }
   }
+
+  _onEditCommand_addNode(node: Node, parentId: string, index: number) {
+    //this.cubicModelRenderer.addNode();
+  }
+
 
   _onCubicModelAssetTrashed() {
     this.cubicModelAsset = null;

@@ -42,3 +42,68 @@ function onAssetReceived() {
   }
   for (let node of data.cubicModelUpdater.cubicModelAsset.nodes.pub) walk(node, null, null);
 }
+
+onEditCommands.addNode = (node: Node, parentId: string, index: number) => {
+  let nodeElt = createNodeElement(node);
+  let parentElt: HTMLLIElement;
+  if (parentId != null) parentElt = ui.nodesTreeView.treeRoot.querySelector(`[data-id='${parentId}']`);
+  ui.nodesTreeView.insertAt(nodeElt, "group", index, parentElt);
+}
+
+onEditCommands.moveNode = (id: string, parentId: string, index: number) => {
+  /*
+  // Reparent tree node
+  let nodeElt = ui.nodesTreeView.treeRoot.querySelector(`[data-id='${id}']`);
+  let isInspected = ui.nodesTreeView.selectedNodes.length === 1 && nodeElt === ui.nodesTreeView.selectedNodes[0];
+
+  let parentElt: HTMLLIElement;
+  if (parentId != null) parentElt = ui.nodesTreeView.treeRoot.querySelector(`[data-id='${parentId}']`)
+  ui.nodesTreeView.insertAt(nodeElt, "group", index, parentElt);
+
+  // Refresh inspector
+  if (isInspected) {
+    let node = data.sceneUpdater.sceneAsset.nodes.byId[id];
+    setInspectorPosition(<THREE.Vector3>node.position);
+    setInspectorOrientation(<THREE.Quaternion>node.orientation);
+    setInspectorScale(<THREE.Vector3>node.scale);
+  }
+
+  // TODO: Only refresh if selection is affected
+  setupHelpers();
+  */
+}
+
+onEditCommands.setNodeProperty = (id: string, path: string, value: any) => {
+  /*
+  let nodeElt = ui.nodesTreeView.treeRoot.querySelector(`[data-id='${id}']`);
+  let isInspected = ui.nodesTreeView.selectedNodes.length === 1 && nodeElt === ui.nodesTreeView.selectedNodes[0];
+
+  switch (path) {
+    case "name":
+      nodeElt.querySelector(".name").textContent = value;
+      break;
+    case "position":
+      if (isInspected) setInspectorPosition(<THREE.Vector3>data.sceneUpdater.sceneAsset.nodes.byId[id].position);
+      break;
+    case "orientation":
+      if (isInspected) setInspectorOrientation(<THREE.Quaternion>data.sceneUpdater.sceneAsset.nodes.byId[id].orientation);
+      break;
+    case "scale":
+      if (isInspected) setInspectorScale(<THREE.Vector3>data.sceneUpdater.sceneAsset.nodes.byId[id].scale);
+      break;
+    case "visible":
+      if (isInspected) setInspectorVisible(value);
+      break;
+    case "layer":
+      if (isInspected) setInspectorLayer(value);
+      break;
+    case "prefabId":
+      if (isInspected) setInspectorPrefabId(value);
+      break;
+  }
+
+  // TODO: Only refresh if selection is affected
+  setupHelpers();
+  */
+}
+
