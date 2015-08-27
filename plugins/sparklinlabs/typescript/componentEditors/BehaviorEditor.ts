@@ -36,12 +36,7 @@ export default class BehaviorEditor {
     this.behaviorNameField.setAttribute("list", this.behaviorNamesDataListElt.id);
     this.behaviorNameField.addEventListener("change", this._onChangeBehaviorName);
 
-    this.behaviorPropertiesHeaderRow = document.createElement("tr");
-    let headerTh = document.createElement("th");
-    headerTh.textContent = "Customizable properties";
-    headerTh.colSpan = 2;
-    this.behaviorPropertiesHeaderRow.appendChild(headerTh);
-    this.tbody.appendChild(this.behaviorPropertiesHeaderRow);
+    SupClient.table.appendHeader(this.tbody, "Customizable Properties");
 
     this.propertySettingsByName = {};
 

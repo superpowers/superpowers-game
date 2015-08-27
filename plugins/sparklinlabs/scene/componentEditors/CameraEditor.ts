@@ -43,13 +43,7 @@ export default class CameraEditor {
     let farClippingPlaneRow = SupClient.table.appendRow(tbody, "Far plane");
     this.farClippingPlaneField = SupClient.table.appendNumberField(farClippingPlaneRow.valueCell, config.farClippingPlane, 0.1);
 
-    let viewportHeaderRow = document.createElement("tr");
-    let headerTh = document.createElement("th");
-    headerTh.textContent = "Viewport";
-    headerTh.colSpan = 2;
-    viewportHeaderRow.appendChild(headerTh);
-    tbody.appendChild(viewportHeaderRow);
-
+    SupClient.table.appendHeader(tbody, "Viewport");
     let viewportXRow = SupClient.table.appendRow(tbody, "Top / Left");
     [ this.viewportFields.x, this.viewportFields.y ] = SupClient.table.appendNumberFields(viewportXRow.valueCell, [ config.viewport.x, config.viewport.y ], 0, 1);
     this.viewportFields.x.step = "0.1";
