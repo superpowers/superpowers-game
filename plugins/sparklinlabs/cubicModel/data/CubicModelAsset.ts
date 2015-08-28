@@ -78,6 +78,19 @@ export default class CubicModelAsset extends SupCore.data.base.Asset {
     this.nodes.client_add(node, parentId, index);
   }
 
+  server_setNodeProperty(client: any, id: string, path: string, value: any, callback: (err: string, id: string, path: string, value: any) => any) {
+    this.nodes.setProperty(id, path, value, (err, actualValue) => {
+      if (err != null) { callback(err, null, null, null); return; }
+
+      callback(null, id, path, actualValue);
+      this.emit("change");
+    });
+  }
+
+  client_setNodeProperty(id: string, path: string, value: any) {
+    this.nodes.client_setProperty(id, path, value);
+  }
+
   /*
   server_setModel(client: any, upAxisMatrix: number[], attributes: { [name: string]: any }, bones: any[], callback: (err: string, upAxisMatrix?: number[], attributes?: { [name: string]: any }, bones?: any[]) => any) {
     // Validate up matrix

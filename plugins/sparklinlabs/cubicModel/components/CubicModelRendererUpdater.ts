@@ -50,6 +50,7 @@ export default class CubicModelRendererUpdater {
     this.cubicModelRenderer.setModel(this.cubicModelAsset.pub);
   }
 
+
   _onCubicModelAssetEdited(id: string, command: string, ...args: any[]) {
     let commandCallback = (<any>this)[`_onEditCommand_${command}`];
     if (commandCallback != null) commandCallback.apply(this, args);
@@ -62,6 +63,34 @@ export default class CubicModelRendererUpdater {
 
   _onEditCommand_addNode(node: Node, parentId: string, index: number) {
     //this.cubicModelRenderer.addNode();
+  }
+
+  _onEditCommand_moveNode = (id: string, parentId: string, index: number) => {
+    /*let nodeActor = this.bySceneNodeId[id].actor;
+    let parentNodeActor = (this.bySceneNodeId[parentId] != null) ? this.bySceneNodeId[parentId].actor : null;
+    nodeActor.setParent(parentNodeActor);
+    this._onUpdateMarkerRecursive(id);*/
+  }
+
+  _onEditCommand_setNodeProperty = (id: string, path: string, value: any) => {
+    let rendererNode = this.cubicModelRenderer.byNodeId[id];
+
+    switch (path) {
+      case "position":
+        rendererNode.pivot.position.set(value.x, value.y, value.z);
+        rendererNode.pivot.updateMatrixWorld(false);
+        /*nodeEditorData.actor.setLocalPosition(value);
+        nodeEditorData.markerActor.setGlobalPosition(nodeEditorData.actor.getGlobalPosition());
+        this._onUpdateMarkerRecursive(id);*/
+        break;
+      case "orientation":
+        rendererNode.pivot.quaternion.set(value.x, value.y, value.z, value.w);
+        rendererNode.pivot.updateMatrixWorld(false);
+        /*nodeEditorData.actor.setLocalOrientation(value);
+        nodeEditorData.markerActor.setGlobalOrientation(nodeEditorData.actor.getGlobalOrientation());
+        this._onUpdateMarkerRecursive(id);*/
+        break;
+    }
   }
 
 

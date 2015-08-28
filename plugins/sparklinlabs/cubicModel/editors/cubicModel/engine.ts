@@ -18,11 +18,6 @@ new SupEngine.editorComponentClasses["Camera3DControls"](engine.cameraActor, cam
 let light = new THREE.AmbientLight(0xcfcfcf);
 engine.gameInstance.threeScene.add(light);
 
-let spotLight = new THREE.PointLight(0xffffff, 0.2);
-spotLight.position.set(0, 0, -5);
-engine.cameraActor.threeObject.add(spotLight);
-spotLight.updateMatrixWorld(false);
-
 let lastTimestamp = 0;
 let accumulatedTime = 0;
 function tick(timestamp=0) {

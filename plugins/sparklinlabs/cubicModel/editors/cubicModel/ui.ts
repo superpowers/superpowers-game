@@ -8,6 +8,8 @@ let THREE = SupEngine.THREE;
 let PerfectResize = require("perfect-resize");
 let TreeView = require("dnd-tree-view");
 
+SupClient.setupHotkeys();
+
 let ui: {
   nodesTreeView?: any;
 
@@ -35,8 +37,6 @@ let ui: {
   }
 } = {};
 export default ui;
-
-SupClient.setupHotkeys();
 
 // Setup resizable panes
 new PerfectResize(document.querySelector(".sidebar"), "right");
@@ -235,6 +235,11 @@ ui.shape = {
   }
 };
 
+for (let transformType in ui.transform) {
+  let inputs: HTMLInputElement[] = (<any>ui).transform[transformType];
+  for (let input of inputs) input.addEventListener("change", onTransformInputChange);
+}
+
 function onNewNodeClick() {
   // TODO: Allow choosing shape and default texture color
   SupClient.dialogs.prompt("Enter a name for the node.", null, "Node", "Create", (name) => {
@@ -242,16 +247,18 @@ function onNewNodeClick() {
 
     let options = SupClient.getTreeViewInsertionPoint(ui.nodesTreeView);
 
-    let offset = new THREE.Vector3(0, 0, -5).applyQuaternion(engine.cameraActor.getGlobalOrientation());
+    let offset = new THREE.Vector3(0, 0, -10).applyQuaternion(engine.cameraActor.getGlobalOrientation());
     let position = engine.cameraActor.getGlobalPosition().add(offset);
+
+    let unitRatio = data.cubicModelUpdater.cubicModelAsset.pub.unitRatio;
+
     if (options.parentId != null) {
       let inverseParentMatrix = new THREE.Matrix4().getInverse(data.cubicModelUpdater.cubicModelRenderer.byNodeId[options.parentId].pivot.matrixWorld);
       position.applyMatrix4(inverseParentMatrix);
+    } else {
+      position.multiplyScalar(unitRatio);
     }
-    
-    let unitRatio = data.cubicModelUpdater.cubicModelAsset.pub.unitRatio;
-    position.multiplyScalar(unitRatio);
-    
+
     (<any>options).transform = { position };
     (<any>options).shape = {
       type: "box",
@@ -271,4 +278,26 @@ function onNewNodeClick() {
     });
 
   });
+}
+
+function onTransformInputChange(event: any) {
+  if (ui.nodesTreeView.selectedNodes.length !== 1) return;
+
+  let transformType = event.target.parentElement.parentElement.parentElement.className;
+  let inputs: HTMLInputElement[] = (<any>ui).transform[`${transformType}Elts`];
+
+  let value = {
+    x: parseFloat(inputs[0].value),
+    y: parseFloat(inputs[1].value),
+    z: parseFloat(inputs[2].value),
+  };
+
+  if (transformType === "orientation") {
+    let euler = new THREE.Euler(THREE.Math.degToRad(value.x), THREE.Math.degToRad(value.y), THREE.Math.degToRad(value.z));
+    let quaternion = new THREE.Quaternion().setFromEuler(euler);
+    value = { x: quaternion.x, y: quaternion.y, z: quaternion.z, w: quaternion.w };
+  }
+  let nodeId = ui.nodesTreeView.selectedNodes[0].dataset.id;
+
+  socket.emit("edit:assets", info.assetId, "setNodeProperty", nodeId, transformType, value, (err: string) => { if (err != null) alert(err); });
 }
