@@ -8,13 +8,25 @@ export default class LightUpdater {
   constructor(client: SupClient.ProjectClient, light: Light, config: LightConfigPub) {
     this.light = light;
 
+    this.light.color = parseInt(config.color, 16);
+    this.light.intensity = config.intensity;
+    this.light.distance = config.distance;
+    this.light.angle = config.angle;
+    this.light.target.set(config.target.x, config.target.y, config.target.z);
+    this.light.castShadow = config.castShadow;
+    this.light.shadowMapWidth = config.shadowMapSize.width;
+    this.light.shadowMapHeight = config.shadowMapSize.height;
+    this.light.shadowBias = config.shadowBias;
+    this.light.shadowDarkness = config.shadowDarkness;
+    this.light.shadowCameraNear = config.shadowCameraNearPlane;
+    this.light.shadowCameraFar = config.shadowCameraFarPlane;
+    this.light.shadowCameraFov = config.shadowCameraFov;
+    this.light.shadowCameraLeft = config.shadowCameraSize.left;
+    this.light.shadowCameraRight = config.shadowCameraSize.right;
+    this.light.shadowCameraTop = config.shadowCameraSize.top;
+    this.light.shadowCameraBottom = config.shadowCameraSize.bottom;
+
     this.light.setType(config.type);
-    this.light.setColor(parseInt(config.color, 16));
-    this.light.setIntensity(config.intensity);
-    this.light.setDistance(config.distance);
-    this.light.setAngle(config.angle);
-    this.light.setTarget(config.target.x, config.target.y, config.target.z);
-    this.light.setCastShadow(config.castShadow);
   }
 
   destroy() {}
@@ -47,6 +59,39 @@ export default class LightUpdater {
         break;
       case "castShadow":
         this.light.setCastShadow(value);
+        break;
+      case "shadowMapSize.width":
+        this.light.setShadowMapSize(value, null);
+        break;
+      case "shadowMapSize.height":
+        this.light.setShadowMapSize(null, value);
+        break;
+      case "shadowBias":
+        this.light.setShadowBias(value);
+        break;
+      case "shadowDarkness":
+        this.light.setShadowDarkness(value);
+        break;
+      case "shadowCameraNearPlane":
+        this.light.setShadowCameraNearPlane(value);
+        break;
+      case "shadowCameraFarPlane":
+        this.light.setShadowCameraFarPlane(value);
+        break;
+      case "shadowCameraFov":
+        this.light.setShadowCameraFov(value);
+        break;
+      case "shadowCameraSize.top":
+        this.light.setShadowCameraSize(value, null, null, null);
+        break;
+      case "shadowCameraSize.bottom":
+        this.light.setShadowCameraSize(null, value, null, null);
+        break;
+      case "shadowCameraSize.left":
+        this.light.setShadowCameraSize(null, null, value, null);
+        break;
+      case "shadowCameraSize.right":
+        this.light.setShadowCameraSize(null, null, null, value);
         break;
     }
   }

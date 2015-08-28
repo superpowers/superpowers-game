@@ -14,6 +14,17 @@ export default class Light extends SupEngine.ActorComponent {
   angle = Math.PI / 3;
   target = new THREE.Vector3(0, 0, 0);
   castShadow = false;
+  shadowMapWidth = 512;
+  shadowMapHeight = 512;
+  shadowBias = 0;
+  shadowDarkness = 0.5;
+  shadowCameraNear = 0.1;
+  shadowCameraFar = 100;
+  shadowCameraFov = 50;
+  shadowCameraLeft = -100;
+  shadowCameraRight = 100;
+  shadowCameraTop = 100;
+  shadowCameraBottom = -100;
 
   constructor(actor: SupEngine.Actor) {
     super(actor, "Light");
@@ -46,19 +57,23 @@ export default class Light extends SupEngine.ActorComponent {
         let directionalLight = new THREE.DirectionalLight(this.color, this.intensity);
         directionalLight.target.position.copy(this.target);
         directionalLight.target.updateMatrixWorld(false);
-        directionalLight.shadowCameraNear = 0.1;
-        directionalLight.shadowCameraFar = 100;
-        directionalLight.shadowCameraLeft = -100;
-        directionalLight.shadowCameraRight = 100;
-        directionalLight.shadowCameraTop = 100;
-        directionalLight.shadowCameraBottom = -100;
+        directionalLight.shadowMapWidth = this.shadowMapWidth;
+        directionalLight.shadowMapHeight = this.shadowMapHeight;
+        directionalLight.shadowBias = this.shadowBias;
+        directionalLight.shadowDarkness = this.shadowDarkness;
+        directionalLight.shadowCameraNear = this.shadowCameraNear;
+        directionalLight.shadowCameraFar = this.shadowCameraFar;
+        directionalLight.shadowCameraLeft = this.shadowCameraLeft;
+        directionalLight.shadowCameraRight = this.shadowCameraRight;
+        directionalLight.shadowCameraTop = this.shadowCameraTop;
+        directionalLight.shadowCameraBottom = this.shadowCameraBottom;
         directionalLight.shadowCamera = new THREE.OrthographicCamera( directionalLight.shadowCameraLeft, directionalLight.shadowCameraRight, directionalLight.shadowCameraTop, directionalLight.shadowCameraBottom, directionalLight.shadowCameraNear, directionalLight.shadowCameraFar );
         this.light = directionalLight;
         this.setCastShadow(this.castShadow);
         break;
     }
     this.actor.threeObject.add(this.light);
-    this.light.updateMatrixWorld(true);
+    this.light.updateMatrixWorld(false);
 
     this.actor.gameInstance.threeScene.traverse((object: any) => {
       let material: THREE.Material = object.material;
@@ -98,13 +113,86 @@ export default class Light extends SupEngine.ActorComponent {
 
   setCastShadow(castShadow: boolean) {
     this.castShadow = castShadow;
-    if (this.type === "spot" || this.type === "directional") {
-      (<THREE.SpotLight>this.light).castShadow = this.castShadow;
-      this.actor.gameInstance.threeScene.traverse((object: any) => {
-        let material: THREE.Material = object.material;
-        if (material != null) material.needsUpdate = true;
-      })
-    }
+    if (this.type !== "spot" && this.type !== "directional") return;
+
+    (<THREE.SpotLight>this.light).castShadow = this.castShadow;
+    this.actor.gameInstance.threeScene.traverse((object: any) => {
+      let material: THREE.Material = object.material;
+      if (material != null) material.needsUpdate = true;
+    });
+  }
+
+  setShadowMapSize(width: number, height: number) {
+    if (width != null) this.shadowMapWidth = width;
+    if (height != null) this.shadowMapHeight = height;
+    if (this.type !== "spot" && this.type !== "directional") return;
+
+    (<THREE.SpotLight>this.light).shadowMapWidth = this.shadowMapWidth;
+    (<THREE.SpotLight>this.light).shadowMapHeight = this.shadowMapHeight;
+    this.setType(this.type);
+  }
+
+  setShadowBias(bias: number) {
+    this.shadowBias = bias;
+    if (this.type !== "spot" && this.type !== "directional") return;
+
+    (<THREE.SpotLight>this.light).shadowBias = this.shadowBias;
+  }
+
+  setShadowDarkness(darkness: number) {
+    this.shadowDarkness = darkness;
+    if (this.type !== "spot" && this.type !== "directional") return;
+
+    (<THREE.SpotLight>this.light).shadowDarkness = this.shadowDarkness;
+  }
+
+  setShadowCameraNearPlane(near: number) {
+    this.shadowCameraNear = near;
+    if (this.type !== "spot" && this.type !== "directional") return;
+
+    (<THREE.SpotLight>this.light).shadowCameraNear = this.shadowCameraNear;
+    let camera = (<THREE.PerspectiveCamera>(<THREE.SpotLight>this.light).shadowCamera);
+    camera.near = this.shadowCameraNear;
+    camera.updateProjectionMatrix();
+  }
+
+  setShadowCameraFarPlane(far: number) {
+    this.shadowCameraFar = far;
+    if (this.type !== "spot" && this.type !== "directional") return;
+
+    (<THREE.SpotLight>this.light).shadowCameraFar = this.shadowCameraFar;
+    let camera = (<THREE.PerspectiveCamera>(<THREE.SpotLight>this.light).shadowCamera);
+    camera.far = this.shadowCameraFar;
+    camera.updateProjectionMatrix();
+  }
+
+  setShadowCameraFov(fov: number) {
+    this.shadowCameraFov = fov;
+    if (this.type !== "spot") return;
+
+    (<THREE.SpotLight>this.light).shadowCameraFov = this.shadowCameraFov;
+    let camera = (<THREE.PerspectiveCamera>(<THREE.SpotLight>this.light).shadowCamera);
+    camera.fov = this.shadowCameraFov;
+    camera.updateProjectionMatrix();
+  }
+
+  setShadowCameraSize(top: number, bottom: number, left: number, right: number) {
+    if (top != null) this.shadowCameraTop = top;
+    if (bottom != null) this.shadowCameraBottom = bottom;
+    if (left != null) this.shadowCameraLeft = left;
+    if (right != null) this.shadowCameraRight = right;
+    if (this.type !== "directional") return;
+
+    (<THREE.DirectionalLight>this.light).shadowCameraTop = this.shadowCameraTop;
+    (<THREE.DirectionalLight>this.light).shadowCameraBottom = this.shadowCameraBottom;
+    (<THREE.DirectionalLight>this.light).shadowCameraLeft = this.shadowCameraLeft;
+    (<THREE.DirectionalLight>this.light).shadowCameraRight = this.shadowCameraRight;
+    let camera = (<THREE.OrthographicCamera>(<THREE.SpotLight>this.light).shadowCamera);
+    camera.top = this.shadowCameraTop;
+    camera.bottom = this.shadowCameraBottom;
+    camera.left = this.shadowCameraLeft;
+    camera.right = this.shadowCameraRight;
+    camera.updateProjectionMatrix();
   }
 
   _destroy() {
