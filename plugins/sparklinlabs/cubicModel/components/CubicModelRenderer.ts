@@ -74,9 +74,9 @@ export default class CubicModelRenderer extends SupEngine.ActorComponent {
 
       if (node.shape.type === "box") {
         let boxGeometry = new THREE.BoxGeometry(
-          node.shape.settings.width * node.shape.settings.stretch.x,
-          node.shape.settings.height * node.shape.settings.stretch.y,
-          node.shape.settings.depth * node.shape.settings.stretch.z
+          node.shape.settings.size.x * node.shape.settings.stretch.x,
+          node.shape.settings.size.y * node.shape.settings.stretch.y,
+          node.shape.settings.size.z * node.shape.settings.stretch.z
         );
 
         shape = new THREE.Mesh(boxGeometry, material);

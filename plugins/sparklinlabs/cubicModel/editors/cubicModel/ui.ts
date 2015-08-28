@@ -11,31 +11,31 @@ let TreeView = require("dnd-tree-view");
 SupClient.setupHotkeys();
 
 let ui: {
-  nodesTreeView?: any;
+  nodesTreeView: any;
 
-  newNodeButton?: HTMLButtonElement;
-  renameNodeButton?: HTMLButtonElement;
-  duplicateNodeButton?: HTMLButtonElement;
-  deleteNodeButton?: HTMLButtonElement;
+  newNodeButton: HTMLButtonElement;
+  renameNodeButton: HTMLButtonElement;
+  duplicateNodeButton: HTMLButtonElement;
+  deleteNodeButton: HTMLButtonElement;
 
-  inspectorElt?: HTMLDivElement;
+  inspectorElt: HTMLDivElement;
+  shapeTbodyElt: HTMLTableSectionElement;
 
-  transform?: {
-    positionElts: HTMLInputElement[];
-    orientationElts: HTMLInputElement[];
-  };
+  inspectorFields: {
+    position: HTMLInputElement[];
+    orientation: HTMLInputElement[];
 
-  shape?: {
-    typeElt: HTMLSelectElement;
-    offsetElts: HTMLInputElement[];
-
-    box: {
-      tbodyElt: HTMLTableSectionElement;
-      sizeElts: HTMLInputElement[];
-      stretchElts: HTMLInputElement[];
+    shape: {
+      type: HTMLSelectElement;
+      offset: HTMLInputElement[];
+  
+      box: {
+        size: HTMLInputElement[];
+        stretch: HTMLInputElement[];
+      }
     }
   }
-} = {};
+} = <any>{};
 export default ui;
 
 // Setup resizable panes
@@ -44,7 +44,7 @@ new PerfectResize(document.querySelector(".nodes-tree-view"), "top");
 
 // Setup tree view
 ui.nodesTreeView = new TreeView(document.querySelector(".nodes-tree-view"), onNodeDrop);
-//ui.nodesTreeView.on("activate", onNodeActivate);
+ui.nodesTreeView.on("activate", onNodeActivate);
 ui.nodesTreeView.on("selectionChange", () => { setupSelectedNode(); });
 
 export function createNodeElement(node: Node) {
@@ -92,6 +92,8 @@ function onNodeDrop(dropInfo: any, orderedNodes: any) {
   */
 }
 
+function onNodeActivate() { ui.nodesTreeView.selectedNodes[0].classList.toggle("collapsed"); }
+
 export function setupSelectedNode() {
   //setupHelpers();
 
@@ -114,20 +116,15 @@ export function setupSelectedNode() {
   setInspectorOrientation(<THREE.Quaternion>node.orientation);
 
   // Setup shape editor
-  ui.shape.typeElt.value = node.shape.type;
+  ui.inspectorFields.shape.type.value = node.shape.type;
 
   setInspectorShapeOffset(<THREE.Vector3>node.shape.offset);
 
-  ui.shape.box.tbodyElt.hidden = node.shape.type !== "box";
-  if (!ui.shape.box.tbodyElt.hidden) {
+  ui.shapeTbodyElt.hidden = node.shape.type !== "box";
+  if (!ui.shapeTbodyElt.hidden) {
     let boxSettings: any = node.shape.settings;
 
-    setInspectorBoxSize(<THREE.Vector3>{
-      x: boxSettings.width,
-      y: boxSettings.height,
-      z: boxSettings.depth
-    });
-
+    setInspectorBoxSize(<THREE.Vector3>boxSettings.size);
     setInspectorBoxStretch(<THREE.Vector3>boxSettings.stretch);
   }
 }
@@ -143,8 +140,8 @@ export function setInspectorPosition(position: THREE.Vector3) {
 
   for (let i = 0; i < 3; i++) {
     // NOTE: This helps avoid clearing selection when possible
-    if (ui.transform.positionElts[i].value !== values[i]) {
-      ui.transform.positionElts[i].value = values[i];
+    if (ui.inspectorFields.position[i].value !== values[i]) {
+      ui.inspectorFields.position[i].value = values[i];
     }
   }
 }
@@ -160,8 +157,8 @@ export function setInspectorOrientation(orientation: THREE.Quaternion) {
 
   for (let i = 0; i < 3; i++) {
     // NOTE: This helps avoid clearing selection when possible
-    if (ui.transform.orientationElts[i].value !== values[i]) {
-      ui.transform.orientationElts[i].value = values[i];
+    if (ui.inspectorFields.orientation[i].value !== values[i]) {
+      ui.inspectorFields.orientation[i].value = values[i];
     }
   }
 }
@@ -175,8 +172,8 @@ export function setInspectorShapeOffset(offset: THREE.Vector3) {
 
   for (let i = 0; i < 3; i++) {
     // NOTE: This helps avoid clearing selection when possible
-    if (ui.shape.offsetElts[i].value !== values[i]) {
-      ui.shape.offsetElts[i].value = values[i];
+    if (ui.inspectorFields.shape.offset[i].value !== values[i]) {
+      ui.inspectorFields.shape.offset[i].value = values[i];
     }
   }
 }
@@ -186,8 +183,8 @@ export function setInspectorBoxSize(size: THREE.Vector3) {
 
   for (let i = 0; i < 3; i++) {
     // NOTE: This helps avoid clearing selection when possible
-    if (ui.shape.box.sizeElts[i].value !== values[i]) {
-      ui.shape.box.sizeElts[i].value = values[i];
+    if (ui.inspectorFields.shape.box.size[i].value !== values[i]) {
+      ui.inspectorFields.shape.box.size[i].value = values[i];
     }
   }
 }
@@ -201,8 +198,8 @@ export function setInspectorBoxStretch(stretch: THREE.Vector3) {
 
   for (let i = 0; i < 3; i++) {
     // NOTE: This helps avoid clearing selection when possible
-    if (ui.shape.box.stretchElts[i].value !== values[i]) {
-      ui.shape.box.stretchElts[i].value = values[i];
+    if (ui.inspectorFields.shape.box.stretch[i].value !== values[i]) {
+      ui.inspectorFields.shape.box.stretch[i].value = values[i];
     }
   }
 }
@@ -217,28 +214,41 @@ ui.deleteNodeButton = <HTMLButtonElement>document.querySelector("button.delete-n
 //ui.deleteNodeButton.addEventListener("click", onDeleteNodeClick);
 
 // Inspector
-ui.inspectorElt = <HTMLDivElement>document.querySelector(".inspector");
+ui.inspectorElt = <any>document.querySelector(".inspector");
+ui.shapeTbodyElt = <any>ui.inspectorElt.querySelector(".box-shape");
 
-ui.transform = {
-  positionElts: <any>ui.inspectorElt.querySelectorAll(".transform .position input"),
-  orientationElts: <any>ui.inspectorElt.querySelectorAll(".transform .orientation input"),
-  scaleElts: <any>ui.inspectorElt.querySelectorAll(".transform .scale input"),
-};
+ui.inspectorFields = {
+  position: <any>ui.inspectorElt.querySelectorAll(".transform .position input"),
+  orientation: <any>ui.inspectorElt.querySelectorAll(".transform .orientation input"),
 
-ui.shape = {
-  typeElt: <any>ui.inspectorElt.querySelector(".shape .type select"),
-  offsetElts: <any>ui.inspectorElt.querySelectorAll(".shape .offset input"),
-  box: {
-    tbodyElt: <any>ui.inspectorElt.querySelector(".box-shape"),
-    sizeElts: <any>ui.inspectorElt.querySelectorAll(".box-shape .size input"),
-    stretchElts: <any>ui.inspectorElt.querySelectorAll(".box-shape .stretch input")
+  shape: {
+    type: <any>ui.inspectorElt.querySelector(".shape .type select"),
+    offset: <any>ui.inspectorElt.querySelectorAll(".shape .offset input"),
+    box: {
+      size: <any>ui.inspectorElt.querySelectorAll(".box-shape .size input"),
+      stretch: <any>ui.inspectorElt.querySelectorAll(".box-shape .stretch input")
+    }
   }
 };
 
+for (let input of ui.inspectorFields.position) input.addEventListener("change", onInspectorInputChange);
+for (let input of ui.inspectorFields.orientation) input.addEventListener("change", onInspectorInputChange);
+// typeElt
+for (let input of ui.inspectorFields.shape.offset) input.addEventListener("change", onInspectorInputChange);
+for (let input of ui.inspectorFields.shape.box.size) input.addEventListener("change", onInspectorInputChange);
+for (let input of ui.inspectorFields.shape.box.stretch) input.addEventListener("change", onInspectorInputChange);
+
+/*
 for (let transformType in ui.transform) {
   let inputs: HTMLInputElement[] = (<any>ui).transform[transformType];
   for (let input of inputs) input.addEventListener("change", onTransformInputChange);
 }
+
+for (let boxPropertyType in ui.shape.box) {
+  let inputs: HTMLInputElement[] = (<any>ui).shape.box[boxPropertyType];
+  for (let input of inputs) input.addEventListener("change", onTransformInputChange);
+}
+*/
 
 function onNewNodeClick() {
   // TODO: Allow choosing shape and default texture color
@@ -264,7 +274,7 @@ function onNewNodeClick() {
       type: "box",
       offset: { x: 0, y: 0, z: 0 },
       settings: {
-        width: unitRatio, height: unitRatio, depth: unitRatio,
+        size: { x: unitRatio, y: unitRatio, z: unitRatio },
         stretch: { x: 1, y: 1, z: 1 }
       }
     };
@@ -280,24 +290,48 @@ function onNewNodeClick() {
   });
 }
 
-function onTransformInputChange(event: any) {
+function onInspectorInputChange(event: any) {
   if (ui.nodesTreeView.selectedNodes.length !== 1) return;
 
-  let transformType = event.target.parentElement.parentElement.parentElement.className;
-  let inputs: HTMLInputElement[] = (<any>ui).transform[`${transformType}Elts`];
+  // transform, shape or box-shape
+  let context = event.target.parentElement.parentElement.parentElement.parentElement.className;
+  let path: string;
+  let uiFields: any;
 
-  let value = {
-    x: parseFloat(inputs[0].value),
-    y: parseFloat(inputs[1].value),
-    z: parseFloat(inputs[2].value),
-  };
+  if (context === "transform") {
+    path = "";
+    uiFields = ui.inspectorFields;
+  } else if (context === "shape") {
+    path = "shape.";
+    uiFields = ui.inspectorFields.shape;
+  } else if (context === "box-shape") {
+    path = "shape.settings.";
+    uiFields = ui.inspectorFields.shape.box;
+  } else throw new Error("Unsupported inspector input context");
 
-  if (transformType === "orientation") {
-    let euler = new THREE.Euler(THREE.Math.degToRad(value.x), THREE.Math.degToRad(value.y), THREE.Math.degToRad(value.z));
-    let quaternion = new THREE.Quaternion().setFromEuler(euler);
-    value = { x: quaternion.x, y: quaternion.y, z: quaternion.z, w: quaternion.w };
+  let propertyType = event.target.parentElement.parentElement.parentElement.className;
+  let value: any;
+
+  if (context == "shape" && propertyType === "type") {
+    // Single value
+    value = uiFields[propertyType].value; 
+  } else {
+    // Multiple values
+    let inputs: HTMLInputElement[] = uiFields[propertyType];
+
+    value = {
+      x: parseFloat(inputs[0].value),
+      y: parseFloat(inputs[1].value),
+      z: parseFloat(inputs[2].value),
+    };
+
+    if (propertyType === "orientation") {
+      let euler = new THREE.Euler(THREE.Math.degToRad(value.x), THREE.Math.degToRad(value.y), THREE.Math.degToRad(value.z));
+      let quaternion = new THREE.Quaternion().setFromEuler(euler);
+      value = { x: quaternion.x, y: quaternion.y, z: quaternion.z, w: quaternion.w };
+    }
   }
-  let nodeId = ui.nodesTreeView.selectedNodes[0].dataset.id;
 
-  socket.emit("edit:assets", info.assetId, "setNodeProperty", nodeId, transformType, value, (err: string) => { if (err != null) alert(err); });
+  let nodeId = ui.nodesTreeView.selectedNodes[0].dataset.id;
+  socket.emit("edit:assets", info.assetId, "setNodeProperty", nodeId, `${path}${propertyType}`, value, (err: string) => { if (err != null) alert(err); });
 }
