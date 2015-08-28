@@ -152,7 +152,6 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
       this.material = material;
       this.setOpacity(this.opacity);
     }
-    this.material.side = THREE.DoubleSide;
 
     if(this.asset.bones != null) {
       this.threeMesh = new THREE.SkinnedMesh(geometry, this.material);
