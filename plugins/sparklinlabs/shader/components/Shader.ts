@@ -18,7 +18,9 @@ export function createShaderMaterial(asset: ShaderAssetPub, textures: { [name: s
     return shader;
   }
 
-  let uniforms: { [name: string]: { type: string; value: any}} = THREE.UniformsUtils.clone(THREE.UniformsLib[ "lights" ]);
+  let uniforms: { [name: string]: { type: string; value: any}} = {};
+  uniforms = THREE.UniformsUtils.merge([uniforms, THREE.UniformsUtils.clone(THREE.UniformsLib[ "lights" ])])
+  uniforms = THREE.UniformsUtils.merge([uniforms, THREE.UniformsUtils.clone(THREE.UniformsLib[ "shadowmap" ])])
   uniforms["time"] = { type: "f", value: 0.0 };
 
   for (let uniform of asset.uniforms) {
