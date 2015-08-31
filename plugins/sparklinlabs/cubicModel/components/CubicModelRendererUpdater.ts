@@ -74,22 +74,54 @@ export default class CubicModelRendererUpdater {
 
   _onEditCommand_setNodeProperty = (id: string, path: string, value: any) => {
     let rendererNode = this.cubicModelRenderer.byNodeId[id];
-
+    let node = this.cubicModelAsset.nodes.byId[id];
+    
     switch (path) {
-      case "position":
-        rendererNode.pivot.position.set(value.x, value.y, value.z);
+      case "position": {
+        let parentOffset = this.cubicModelAsset.nodes.parentNodesById[id].shape.offset;
+        rendererNode.pivot.position.set(value.x + parentOffset.x, value.y + parentOffset.y, value.z + parentOffset.z);
         rendererNode.pivot.updateMatrixWorld(false);
         /*nodeEditorData.actor.setLocalPosition(value);
         nodeEditorData.markerActor.setGlobalPosition(nodeEditorData.actor.getGlobalPosition());
         this._onUpdateMarkerRecursive(id);*/
         break;
-      case "orientation":
+      }
+      case "orientation": {
         rendererNode.pivot.quaternion.set(value.x, value.y, value.z, value.w);
         rendererNode.pivot.updateMatrixWorld(false);
         /*nodeEditorData.actor.setLocalOrientation(value);
         nodeEditorData.markerActor.setGlobalOrientation(nodeEditorData.actor.getGlobalOrientation());
         this._onUpdateMarkerRecursive(id);*/
         break;
+      }
+      
+      case "shape.offset": {
+        rendererNode.shape.position.set(value.x, value.y, value.z);
+        rendererNode.pivot.updateMatrixWorld(false);
+        break;
+      }
+      
+      default: {
+        switch (node.shape.type) {
+          case "box":
+            
+            switch (path) {
+              case "shape.settings.size": {
+                rendererNode.shape.geometry = new THREE.BoxGeometry(value.x, value.y, value.z);
+                break;
+              }
+              
+              case "shape.settings.stretch": {
+                rendererNode.shape.scale.set(value.x, value.y, value.z);
+                rendererNode.shape.updateMatrixWorld(false);
+                break;
+              }
+            }
+          
+            break;
+        }
+        break;
+      }
     }
   }
 
