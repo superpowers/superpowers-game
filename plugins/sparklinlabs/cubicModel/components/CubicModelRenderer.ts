@@ -5,13 +5,20 @@ let tmpQuat = new THREE.Quaternion;
 
 import CubicModelRendererUpdater from "./CubicModelRendererUpdater";
 
+interface RendererNode {
+  nodeId: string;
+  pivot: THREE.Object3D;
+  shape: THREE.Mesh;
+  children: RendererNode[];
+}
+
 export default class CubicModelRenderer extends SupEngine.ActorComponent {
 
   static Updater = CubicModelRendererUpdater;
 
   asset: any;
   threeRoot: THREE.Object3D;
-  byNodeId: { [nodeId: string]: { pivot: THREE.Object3D; shape: THREE.Mesh; } };
+  byNodeId: { [nodeId: string]: RendererNode };
 
   materialType = "basic";
   //castShadow = false;
@@ -60,18 +67,18 @@ export default class CubicModelRenderer extends SupEngine.ActorComponent {
     // How should we piece together each texture? The ModelAsset should probably maintain the whole texture in memory
     // and dynamically update it?
 
-    let walkNode = (node: any, parentPivot: THREE.Object3D, parentOffset: { x: number; y: number; z: number; }) => {
-      let rendererNode = this._makeNode(node, parentPivot, parentOffset);
-      for (let childNode of node.children) walkNode(childNode, rendererNode.pivot, node.shape.offset);
+    let walkNode = (node: any, parentRendererNode: RendererNode, parentOffset: { x: number; y: number; z: number; }) => {
+      let rendererNode = this._makeNode(node, parentRendererNode, parentOffset);
+      for (let childNode of node.children) walkNode(childNode, rendererNode, node.shape.offset);
     };
 
-    for (let rootNode of asset.nodes) walkNode(rootNode, this.threeRoot, { x: 0, y: 0, z: 0 });
+    for (let rootNode of asset.nodes) walkNode(rootNode, null, { x: 0, y: 0, z: 0 });
 
     this.actor.threeObject.add(this.threeRoot);
     this.threeRoot.updateMatrixWorld(false);
   }
   
-  _makeNode(node: any, parentObject: THREE.Object3D, parentOffset: { x: number; y: number; z: number; }) {
+  _makeNode(node: any, parentRendererNode: RendererNode, parentOffset: { x: number; y: number; z: number; }) {
     let pivot: THREE.Object3D;
 
     let material = new THREE.MeshBasicMaterial;
@@ -80,6 +87,7 @@ export default class CubicModelRenderer extends SupEngine.ActorComponent {
     
     pivot = new THREE.Object3D();
     pivot.name = node.name;
+    (<any>pivot).nodeId = node.id;
 
     let shape: THREE.Mesh;
 
@@ -97,16 +105,20 @@ export default class CubicModelRenderer extends SupEngine.ActorComponent {
       pivot.add(shape);
     }
     
-    let rendererNode = { pivot, shape };
+    let rendererNode = { pivot, shape, nodeId: node.id, children: <RendererNode[]>[] };
     this.byNodeId[node.id] = rendererNode;
+    if (parentRendererNode != null) parentRendererNode.children.push(rendererNode);
 
     pivot.position.set(node.position.x + parentOffset.x, node.position.y + parentOffset.y, node.position.z + parentOffset.z);
     pivot.quaternion.set(node.orientation.x, node.orientation.y, node.orientation.z, node.orientation.w);
     // NOTE: Hierarchical scale is not supported for now, we'll see if the need arises
     //nodeObject.scale.set(node.scale.x, node.scale.y, node.scale.z);
     
-    if (parentObject == null) parentObject = this.threeRoot;
-    parentObject.add(pivot);
+    if (parentRendererNode == null) {
+      this.threeRoot.add(pivot);
+    } else {
+      parentRendererNode.pivot.add(pivot);
+    }
     pivot.updateMatrixWorld(false);
     
     return rendererNode;

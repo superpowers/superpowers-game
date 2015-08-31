@@ -1,6 +1,7 @@
 import info from "./info";
 import ui, {
   createNodeElement,
+  setupSelectedNode,
   setInspectorPosition,
   setInspectorOrientation,
   setInspectorShapeOffset,
@@ -55,7 +56,7 @@ onEditCommands.addNode = (node: Node, parentId: string, index: number) => {
   let parentElt: HTMLLIElement;
   if (parentId != null) parentElt = ui.nodesTreeView.treeRoot.querySelector(`[data-id='${parentId}']`);
   ui.nodesTreeView.insertAt(nodeElt, "group", index, parentElt);
-}
+};
 
 onEditCommands.moveNode = (id: string, parentId: string, index: number) => {
   /*
@@ -78,7 +79,7 @@ onEditCommands.moveNode = (id: string, parentId: string, index: number) => {
   // TODO: Only refresh if selection is affected
   setupHelpers();
   */
-}
+};
 
 onEditCommands.setNodeProperty = (id: string, path: string, value: any) => {
   let nodeElt = ui.nodesTreeView.treeRoot.querySelector(`[data-id='${id}']`);
@@ -113,5 +114,16 @@ onEditCommands.setNodeProperty = (id: string, path: string, value: any) => {
   // TODO: Only refresh if selection is affected
   setupHelpers();
   */
-}
+};
 
+onEditCommands.removeNode = (id: string) => {
+  let nodeElt = ui.nodesTreeView.treeRoot.querySelector(`[data-id='${id}']`);
+  let isInspected = ui.nodesTreeView.selectedNodes.length === 1 && nodeElt === ui.nodesTreeView.selectedNodes[0];
+
+  ui.nodesTreeView.remove(nodeElt);
+  if (isInspected) setupSelectedNode();
+  /*
+  // TODO: Only refresh if selection is affected
+  else setupHelpers();
+  */
+};

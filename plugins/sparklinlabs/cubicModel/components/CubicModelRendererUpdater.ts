@@ -62,9 +62,11 @@ export default class CubicModelRendererUpdater {
   }
 
   _onEditCommand_addNode(node: Node, parentId: string, index: number) {
-    let parentPivot = this.cubicModelRenderer.byNodeId[parentId].pivot;
+    let parentRendererNode = this.cubicModelRenderer.byNodeId[parentId];
     let parentNode = this.cubicModelAsset.nodes.byId[parentId];
-    this.cubicModelRenderer._makeNode(node, parentPivot, parentNode.shape.offset);
+    
+    let offset = (parentNode != null) ? parentNode.shape.offset : { x: 0, y: 0, z: 0 };
+    this.cubicModelRenderer._makeNode(node, parentRendererNode, offset);
   }
 
   _onEditCommand_moveNode = (id: string, parentId: string, index: number) => {
@@ -85,21 +87,16 @@ export default class CubicModelRendererUpdater {
       }
 
       case "position": {
-        let parentOffset = this.cubicModelAsset.nodes.parentNodesById[id].shape.offset;
+        let parentNode = this.cubicModelAsset.nodes.parentNodesById[id];
+        let parentOffset = (parentNode != null) ? parentNode.shape.offset : { x: 0, y: 0, z: 0 };
         rendererNode.pivot.position.set(value.x + parentOffset.x, value.y + parentOffset.y, value.z + parentOffset.z);
         rendererNode.pivot.updateMatrixWorld(false);
-        /*nodeEditorData.actor.setLocalPosition(value);
-        nodeEditorData.markerActor.setGlobalPosition(nodeEditorData.actor.getGlobalPosition());
-        this._onUpdateMarkerRecursive(id);*/
         break;
       }
 
       case "orientation": {
         rendererNode.pivot.quaternion.set(value.x, value.y, value.z, value.w);
         rendererNode.pivot.updateMatrixWorld(false);
-        /*nodeEditorData.actor.setLocalOrientation(value);
-        nodeEditorData.markerActor.setGlobalOrientation(nodeEditorData.actor.getGlobalOrientation());
-        this._onUpdateMarkerRecursive(id);*/
         break;
       }
 
@@ -131,6 +128,29 @@ export default class CubicModelRendererUpdater {
     }
   }
 
+  _onEditCommand_removeNode = (id: string) => {
+    this._recurseClearNode(id);
+  }
+
+  _recurseClearNode(nodeId: string) {
+    let rendererNode = this.cubicModelRenderer.byNodeId[nodeId];
+    for (let childNode of rendererNode.children) this._recurseClearNode(childNode.nodeId);
+
+    let parentPivot = rendererNode.pivot.parent;
+    let parentNodeId = (<any>parentPivot).nodeId;
+    if (parentNodeId != null) {
+      let parentRendererNode = this.cubicModelRenderer.byNodeId[parentNodeId];
+      parentRendererNode.children.splice(parentRendererNode.children.indexOf(rendererNode), 1);
+    } 
+
+    rendererNode.shape.parent.remove(rendererNode.shape);
+    rendererNode.shape.geometry.dispose();
+    rendererNode.shape.material.dispose();
+    
+    rendererNode.pivot.parent.remove(rendererNode.pivot);
+    
+    delete this.cubicModelRenderer.byNodeId[nodeId];
+  }
 
   _onCubicModelAssetTrashed() {
     this.cubicModelAsset = null;
