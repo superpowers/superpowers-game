@@ -16,7 +16,6 @@ let engine: {
   cameraComponent: any;
   cameraControls: any;
 
-  selectionActor: SupEngine.Actor;
   selectionBoxComponent: SelectionBox;
   transformHandleComponent: TransformHandle;
 } = <any>{};
@@ -31,9 +30,11 @@ engine.cameraActor.setLocalPosition(new THREE.Vector3(0, 0, 5));
 engine.cameraComponent = new SupEngine.componentClasses["Camera"](engine.cameraActor);
 engine.cameraComponent.layers = [ 0, -1 ];
 
-engine.selectionActor = new SupEngine.Actor(engine.gameInstance, "Selection Box", null, { layer: -1 });
-engine.selectionBoxComponent = new SelectionBox(engine.selectionActor);
-engine.transformHandleComponent = new TransformHandle(engine.selectionActor, engine.cameraComponent.unifiedThreeCamera);
+let selectionActor = new SupEngine.Actor(engine.gameInstance, "Selection Box", null, { layer: -1 });
+engine.selectionBoxComponent = new SelectionBox(selectionActor);
+
+let transformHandlesActor = new SupEngine.Actor(engine.gameInstance, "Transform Handles", null, { layer: -1 });
+engine.transformHandleComponent = new TransformHandle(transformHandlesActor, engine.cameraComponent.unifiedThreeCamera);
 
 engine.cameraControls = new SupEngine.editorComponentClasses["Camera3DControls"](engine.cameraActor, engine.cameraComponent);
 
