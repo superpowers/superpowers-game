@@ -104,19 +104,20 @@ onEditCommands.moveNode = (id: string, parentId: string, index: number) => {
 onEditCommands.setNodeProperty = (id: string, path: string, value: any) => {
   let nodeElt = ui.nodesTreeView.treeRoot.querySelector(`[data-id='${id}']`);
   let isInspected = ui.nodesTreeView.selectedNodes.length === 1 && nodeElt === ui.nodesTreeView.selectedNodes[0];
+  let node = data.sceneUpdater.sceneAsset.nodes.byId[id];
 
   switch (path) {
     case "name":
       nodeElt.querySelector(".name").textContent = value;
       break;
     case "position":
-      if (isInspected) setInspectorPosition(<THREE.Vector3>data.sceneUpdater.sceneAsset.nodes.byId[id].position);
+      if (isInspected) setInspectorPosition(<THREE.Vector3>node.position);
       break;
     case "orientation":
-      if (isInspected) setInspectorOrientation(<THREE.Quaternion>data.sceneUpdater.sceneAsset.nodes.byId[id].orientation);
+      if (isInspected) setInspectorOrientation(<THREE.Quaternion>node.orientation);
       break;
     case "scale":
-      if (isInspected) setInspectorScale(<THREE.Vector3>data.sceneUpdater.sceneAsset.nodes.byId[id].scale);
+      if (isInspected) setInspectorScale(<THREE.Vector3>node.scale);
       break;
     case "visible":
       if (isInspected) setInspectorVisible(value);
