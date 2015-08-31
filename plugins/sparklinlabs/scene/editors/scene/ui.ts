@@ -10,46 +10,44 @@ let TreeView = require("dnd-tree-view");
 let PerfectResize = require("perfect-resize");
 
 let ui: {
-  canvasElt?: HTMLCanvasElement;
-  treeViewElt?: HTMLDivElement;
-  nodesTreeView?: any;
+  canvasElt: HTMLCanvasElement;
+  treeViewElt: HTMLDivElement;
+  nodesTreeView: any;
 
-  newNodeButton?: HTMLButtonElement;
-  newPrefabButton?: HTMLButtonElement;
-  renameNodeButton?: HTMLButtonElement;
-  duplicateNodeButton?: HTMLButtonElement;
-  deleteNodeButton?: HTMLButtonElement;
+  newNodeButton: HTMLButtonElement;
+  newPrefabButton: HTMLButtonElement;
+  renameNodeButton: HTMLButtonElement;
+  duplicateNodeButton: HTMLButtonElement;
+  deleteNodeButton: HTMLButtonElement;
 
-  inspectorElt?: HTMLDivElement;
-  inspectorTbodyElt?: HTMLTableElement;
+  inspectorElt: HTMLDivElement;
+  inspectorTbodyElt: HTMLTableElement;
 
-  transform?: {
+  transform: {
     positionElts: HTMLInputElement[];
     orientationElts: HTMLInputElement[];
     scaleElts: HTMLInputElement[];
   };
 
-  visibleCheckbox?: HTMLInputElement;
-  layerSelect?: HTMLSelectElement;
-  prefabRow?: HTMLTableRowElement;
-  prefabInput?: HTMLInputElement;
-  prefabOpenElt?: HTMLButtonElement;
+  visibleCheckbox: HTMLInputElement;
+  layerSelect: HTMLSelectElement;
+  prefabRow: HTMLTableRowElement;
+  prefabInput: HTMLInputElement;
+  prefabOpenElt: HTMLButtonElement;
 
-  availableComponents?: { [name: string]: string };
-  componentEditors?: { [id: string]: SupClient.ComponentEditorObject };
-  newComponentButton?: HTMLButtonElement;
+  availableComponents: { [name: string]: string };
+  componentEditors: { [id: string]: SupClient.ComponentEditorObject };
+  newComponentButton: HTMLButtonElement;
 
-  cameraMode?: string;
-  cameraModeButton?: HTMLButtonElement;
-  cameraSpeedSlider?: HTMLInputElement;
-} = {};
+  cameraMode: string;
+  cameraModeButton: HTMLButtonElement;
+  cameraSpeedSlider: HTMLInputElement;
+} = <any>{};
 export default ui;
 
+// Hotkeys
 SupClient.setupHotkeys();
 
-ui.canvasElt = <HTMLCanvasElement>document.querySelector("canvas");
-
-// Hotkeys
 document.addEventListener("keydown", (event) => {
   if (document.querySelector(".dialog") != null) return;
   let activeElement = <HTMLElement>document.activeElement;
@@ -84,6 +82,8 @@ document.addEventListener("keydown", (event) => {
     onDeleteNodeClick();
   }
 });
+
+ui.canvasElt = <HTMLCanvasElement>document.querySelector("canvas");
 
 // Setup resizable panes
 new PerfectResize(document.querySelector(".sidebar"), "right");
