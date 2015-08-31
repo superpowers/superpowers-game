@@ -247,15 +247,16 @@ Sup.registerBehavior(${behaviorName});
       if(results.errors.length > 0) { finish(); return; }
 
       let libSourceFile = results.program.getSourceFile("lib.d.ts");
-      let supTypeSymbols = {
+      let supTypeSymbols: { [fullName: string]: ts.Symbol } = {
         "Sup.Actor": libSourceFile.locals["Sup"].exports["Actor"],
         "Sup.Behavior": libSourceFile.locals["Sup"].exports["Behavior"],
         "Sup.Math.Vector3": libSourceFile.locals["Sup"].exports["Math"].exports["Vector3"],
         "Sup.Asset": libSourceFile.locals["Sup"].exports["Asset"],
       };
 
-      let supTypeSymbolsList: ts.Symbol[] = [];
-      for (let value in supTypeSymbols) supTypeSymbolsList.push(value);
+      let supportedSupPropertyTypes: ts.Symbol[] = [
+        supTypeSymbols["Sup.Math.Vector3"]
+      ];
 
       let behaviors: { [behaviorName: string]: { properties: Array<{ name: string, type: string }>; parentBehavior: string } } = {};
 
@@ -299,10 +300,13 @@ Sup.registerBehavior(${behaviorName});
           let type = results.typeChecker.getTypeAtLocation(member.valueDeclaration);
           let typeName: any; // "unknown"
           let typeSymbol = type.getSymbol();
-          if (supTypeSymbolsList.indexOf(typeSymbol) !== -1) {
-            // TODO: Get full name
-            // Until then, we only support intrinsic types
-            // typeName = typeSymbol.getName()
+          if (supportedSupPropertyTypes.indexOf(typeSymbol) !== -1) {
+            typeName = typeSymbol.getName();
+            let parentSymbol = typeSymbol.parent;
+            while (parentSymbol != null) {
+              typeName = `${parentSymbol.getName()}.${typeName}`;
+              parentSymbol = parentSymbol.parent;
+            }
           }
           else if ((<ts.IntrinsicType>type).intrinsicName != null) typeName = (<ts.IntrinsicType>type).intrinsicName;
 

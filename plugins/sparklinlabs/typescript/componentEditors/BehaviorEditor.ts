@@ -108,11 +108,12 @@ export default class BehaviorEditor {
       // defaultValue = property.value someday
       let defaultValue: any;
       switch (property.type) {
-        case "boolean": { defaultValue = false; break; }
-        case "number": { defaultValue = 0; break; }
-        case "string": { defaultValue = ""; break; }
+        case "boolean": defaultValue = false; break;
+        case "number": defaultValue = 0; break;
+        case "string": defaultValue = ""; break;
+        case "Sup.Math.Vector3": defaultValue = { x: 0, y: 0, z: 0 }; break;
         // TODO: Support more types
-        default: { defaultValue = null; break; }
+        default: defaultValue = null; break;
       }
 
       this.editConfig("setBehaviorPropertyValue", property.name, property.type, defaultValue);
@@ -145,10 +146,10 @@ export default class BehaviorEditor {
       if (propertyValueInfo.type !== property.type) uiType = "incompatibleType";
     }
 
-    let propertyField: HTMLInputElement;
+    let propertyFields: HTMLInputElement[];
     switch (uiType) {
       case "incompatibleType": {
-        propertyField = <HTMLInputElement>propertySetting.valueCell.querySelector("input[type=text]");
+        let propertyField = <HTMLInputElement>propertySetting.valueCell.querySelector("input[type=text]");
         if (propertyField == null) {
           propertySetting.valueCell.innerHTML = "";
           propertyField = SupClient.table.appendTextField(propertySetting.valueCell, "");
@@ -157,11 +158,13 @@ export default class BehaviorEditor {
 
         propertyField.value = `(Incompatible type: ${propertyValueInfo.type})`;
         propertyField.disabled = true;
+        
+        propertyFields = [ propertyField ];
         break;
       }
 
       case "boolean": {
-        propertyField = <HTMLInputElement>propertySetting.valueCell.querySelector("input[type=checkbox]");
+        let propertyField = <HTMLInputElement>propertySetting.valueCell.querySelector("input[type=checkbox]");
         if (propertyField == null) {
           propertySetting.valueCell.innerHTML = "";
           propertyField = SupClient.table.appendBooleanField(propertySetting.valueCell, false);
@@ -170,11 +173,13 @@ export default class BehaviorEditor {
 
         propertyField.checked = propertyValue;
         propertyField.disabled = propertyValueInfo == null;
+        
+        propertyFields = [ propertyField ];
         break;
       }
 
       case "number": {
-        propertyField = <HTMLInputElement>propertySetting.valueCell.querySelector("input[type=number]");
+        let propertyField = <HTMLInputElement>propertySetting.valueCell.querySelector("input[type=number]");
         if (propertyField == null) {
           propertySetting.valueCell.innerHTML = "";
           propertyField = SupClient.table.appendNumberField(propertySetting.valueCell, 0);
@@ -183,11 +188,13 @@ export default class BehaviorEditor {
 
         propertyField.value = propertyValue;
         propertyField.disabled = propertyValueInfo == null;
+        
+        propertyFields = [ propertyField ];
         break;
       }
 
       case "string": {
-        propertyField = <HTMLInputElement>propertySetting.valueCell.querySelector("input[type=text]");
+        let propertyField = <HTMLInputElement>propertySetting.valueCell.querySelector(".");
         if (propertyField == null) {
           propertySetting.valueCell.innerHTML = "";
           propertyField = SupClient.table.appendTextField(propertySetting.valueCell, "");
@@ -196,6 +203,26 @@ export default class BehaviorEditor {
 
         propertyField.value = propertyValue;
         propertyField.disabled = propertyValueInfo == null;
+        
+        propertyFields = [ propertyField ];
+        break;
+      }
+      
+      case "Sup.Math.Vector3": {
+        let vectorContainer = <HTMLDivElement>propertySetting.valueCell.querySelector(".inputs");
+        if (vectorContainer == null) {
+          propertySetting.valueCell.innerHTML = "";
+          propertyFields = SupClient.table.appendNumberFields(propertySetting.valueCell, [ 0, 0, 0 ]);
+
+          for (let field of propertyFields) field.addEventListener("change", this._onChangePropertyValue);
+        } else {
+          propertyFields = Array.prototype.slice.call(vectorContainer.querySelectorAll("input"));
+        }
+        
+        propertyFields[0].value = (propertyValue != null) ? propertyValue.x : "";
+        propertyFields[1].value = (propertyValue != null) ? propertyValue.y : "";
+        propertyFields[2].value = (propertyValue != null) ? propertyValue.z : "";
+        for (let field of propertyFields) field.disabled = propertyValueInfo == null;
         break;
       }
 
@@ -206,8 +233,11 @@ export default class BehaviorEditor {
         return;
       }
     }
-    (<any>propertyField.dataset).behaviorPropertyName = property.name;
-    (<any>propertyField.dataset).behaviorPropertyType = property.type;
+    
+    for (let field of propertyFields) {
+      (<any>field.dataset)["behaviorPropertyName"] = property.name;
+      (<any>field.dataset)["behaviorPropertyType"] = property.type;
+    }
   }
 
   config_setProperty(path: string, value: any) {
@@ -241,10 +271,19 @@ export default class BehaviorEditor {
     let propertyValue: any;
 
     switch (propertyType) {
-      case "boolean": { propertyValue = event.target.checked; break; }
-      case "number": { propertyValue = parseFloat(event.target.value); break }
-      case "string": { propertyValue = event.target.value; break }
-      default: { console.error(`Unsupported property type: ${propertyType}`); break }
+      case "boolean": propertyValue = event.target.checked; break;
+      case "number": propertyValue = parseFloat(event.target.value); break
+      case "string": propertyValue = event.target.value; break
+      case "Sup.Math.Vector3": {
+        let parent =  (<HTMLDivElement>event.target.parentElement);
+        propertyValue = {
+          x: parseFloat((<HTMLInputElement>parent.children[0]).value),
+          y: parseFloat((<HTMLInputElement>parent.children[1]).value),
+          z: parseFloat((<HTMLInputElement>parent.children[2]).value)
+        };
+        break;
+      }
+      default: console.error(`Unsupported property type: ${propertyType}`); break
     }
 
     this.editConfig("setBehaviorPropertyValue", propertyName, propertyType, propertyValue, (err: string) => {
