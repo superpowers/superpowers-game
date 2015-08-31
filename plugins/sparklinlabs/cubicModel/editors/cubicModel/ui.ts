@@ -97,10 +97,10 @@ export function createNodeElement(node: Node) {
   visibleButton.classList.add("show");
   visibleButton.addEventListener("click", (event: any) => {
     event.stopPropagation();
-    let pivot = data.cubicModelUpdater.cubicModelRenderer.byNodeId[event.target.parentElement.dataset["id"]].pivot;
-    pivot.visible = !pivot.visible;
-    visibleButton.textContent = (pivot.visible) ? "Hide" : "Show";
-    if (pivot.visible) visibleButton.classList.add("show");
+    let { shape } = data.cubicModelUpdater.cubicModelRenderer.byNodeId[event.target.parentElement.dataset["id"]];
+    shape.visible = !shape.visible;
+    visibleButton.textContent = (shape.visible) ? "Hide" : "Show";
+    if (shape.visible) visibleButton.classList.add("show");
     else visibleButton.classList.remove("show");
   });
   liElt.appendChild(visibleButton);
