@@ -1,4 +1,4 @@
-interface Functions {
+interface BehaviorFunctions {
   awake?: Function;
   start?: Function;
   update?: Function;
@@ -6,9 +6,9 @@ interface Functions {
 }
 
 export default class Behavior extends SupEngine.ActorComponent {
-  funcs: Functions;
+  funcs: BehaviorFunctions;
 
-  constructor(actor: SupEngine.Actor, funcs: Functions) {
+  constructor(actor: SupEngine.Actor, funcs: BehaviorFunctions) {
     this.funcs = funcs;
     super(actor, "Behavior");
   }
