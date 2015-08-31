@@ -62,8 +62,9 @@ export default class TextRenderer extends SupEngine.ActorComponent {
     let ctx = <CanvasRenderingContext2D>canvas.getContext("2d");
     ctx.font = `${fontSize}px ${this.font.name}`;
     let width = 1;
-    for (let text in texts) width = Math.max(width, ctx.measureText(this.text).width);
-    let height = fontSize * 2 * texts.length;
+    for (let text of texts) width = Math.max(width, ctx.measureText(text).width);
+    
+    let height = fontSize * texts.length;
     canvas.width = width;
     canvas.height = height;
 
@@ -79,8 +80,8 @@ export default class TextRenderer extends SupEngine.ActorComponent {
       case "right": x = width; break;
     }
 
-    for (let index in texts) {
-      ctx.fillText(texts[index], x, (0.5 + (index - (texts.length - 1) / 2 ) / texts.length / 2) * height);
+    for (let index = 0; index < texts.length; index++) {
+      ctx.fillText(texts[index], x, (0.5 + (index - (texts.length - 1) / 2) / texts.length) * height);
     }
 
     this.texture = new THREE.Texture(canvas);
@@ -108,8 +109,8 @@ export default class TextRenderer extends SupEngine.ActorComponent {
       case "right": this.threeMeshes[0].position.setX(-width / 2 / this.font.pixelsPerUnit); break;
     }
     switch (this.options.verticalAlignment) {
-      case "top":    this.threeMeshes[0].position.setY(-height / 4 / this.font.pixelsPerUnit); break;
-      case "bottom": this.threeMeshes[0].position.setY( height / 4 / this.font.pixelsPerUnit); break;
+      case "top":    this.threeMeshes[0].position.setY(-height / 2 / this.font.pixelsPerUnit); break;
+      case "bottom": this.threeMeshes[0].position.setY( height / 2 / this.font.pixelsPerUnit); break;
     }
   }
 
