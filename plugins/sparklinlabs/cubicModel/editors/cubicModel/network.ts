@@ -1,5 +1,12 @@
 import info from "./info";
-import ui, { createNodeElement } from "./ui";
+import ui, {
+  createNodeElement,
+  setInspectorPosition,
+  setInspectorOrientation,
+  setInspectorShapeOffset,
+  setInspectorBoxSize,
+  setInspectorBoxStretch
+} from "./ui";
 import engine from "./engine";
 
 import CubicModelRenderer from "../../components/CubicModelRenderer";
@@ -74,34 +81,35 @@ onEditCommands.moveNode = (id: string, parentId: string, index: number) => {
 }
 
 onEditCommands.setNodeProperty = (id: string, path: string, value: any) => {
-  /*
   let nodeElt = ui.nodesTreeView.treeRoot.querySelector(`[data-id='${id}']`);
   let isInspected = ui.nodesTreeView.selectedNodes.length === 1 && nodeElt === ui.nodesTreeView.selectedNodes[0];
+  let node = data.cubicModelUpdater.cubicModelAsset.nodes.byId[id];
 
   switch (path) {
     case "name":
       nodeElt.querySelector(".name").textContent = value;
       break;
+
     case "position":
-      if (isInspected) setInspectorPosition(<THREE.Vector3>data.sceneUpdater.sceneAsset.nodes.byId[id].position);
+      if (isInspected) setInspectorPosition(<THREE.Vector3>node.position);
       break;
     case "orientation":
-      if (isInspected) setInspectorOrientation(<THREE.Quaternion>data.sceneUpdater.sceneAsset.nodes.byId[id].orientation);
+      if (isInspected) setInspectorOrientation(<THREE.Quaternion>node.orientation);
       break;
-    case "scale":
-      if (isInspected) setInspectorScale(<THREE.Vector3>data.sceneUpdater.sceneAsset.nodes.byId[id].scale);
+
+    case "shape.offset":
+      if (isInspected) setInspectorShapeOffset(<THREE.Vector3>node.shape.offset);
       break;
-    case "visible":
-      if (isInspected) setInspectorVisible(value);
+    case "shape.settings.size":
+      if (isInspected) setInspectorBoxSize(<THREE.Vector3>node.shape.settings.size);
       break;
-    case "layer":
-      if (isInspected) setInspectorLayer(value);
+    case "shape.settings.stretch":
+      if (isInspected) setInspectorBoxStretch(<THREE.Vector3>node.shape.settings.stretch);
       break;
-    case "prefabId":
-      if (isInspected) setInspectorPrefabId(value);
-      break;
+
   }
 
+  /*
   // TODO: Only refresh if selection is affected
   setupHelpers();
   */

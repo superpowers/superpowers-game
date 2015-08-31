@@ -75,8 +75,13 @@ export default class CubicModelRendererUpdater {
   _onEditCommand_setNodeProperty = (id: string, path: string, value: any) => {
     let rendererNode = this.cubicModelRenderer.byNodeId[id];
     let node = this.cubicModelAsset.nodes.byId[id];
-    
+
     switch (path) {
+      case "name": {
+        rendererNode.pivot.name = value;
+        break;
+      }
+
       case "position": {
         let parentOffset = this.cubicModelAsset.nodes.parentNodesById[id].shape.offset;
         rendererNode.pivot.position.set(value.x + parentOffset.x, value.y + parentOffset.y, value.z + parentOffset.z);
@@ -86,6 +91,7 @@ export default class CubicModelRendererUpdater {
         this._onUpdateMarkerRecursive(id);*/
         break;
       }
+
       case "orientation": {
         rendererNode.pivot.quaternion.set(value.x, value.y, value.z, value.w);
         rendererNode.pivot.updateMatrixWorld(false);
@@ -94,17 +100,16 @@ export default class CubicModelRendererUpdater {
         this._onUpdateMarkerRecursive(id);*/
         break;
       }
-      
+
       case "shape.offset": {
         rendererNode.shape.position.set(value.x, value.y, value.z);
         rendererNode.pivot.updateMatrixWorld(false);
         break;
       }
-      
+
       default: {
         switch (node.shape.type) {
           case "box":
-            
             switch (path) {
               case "shape.settings.size": {
                 rendererNode.shape.geometry = new THREE.BoxGeometry(value.x, value.y, value.z);
@@ -117,7 +122,6 @@ export default class CubicModelRendererUpdater {
                 break;
               }
             }
-          
             break;
         }
         break;
