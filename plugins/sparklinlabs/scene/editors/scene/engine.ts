@@ -156,7 +156,7 @@ export function setupHelpers() {
 }
 
 function onTransformChange() {
-  let nodeId = engine.transformHandleComponent.target.sceneNodeId;
+  let nodeId = (<any>engine.transformHandleComponent.target).sceneNodeId;
   let target = <SupEngine.Actor>engine.transformHandleComponent.target;
   let object = <THREE.Object3D>engine.transformHandleComponent.control.object;
 

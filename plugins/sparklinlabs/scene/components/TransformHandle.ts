@@ -39,6 +39,7 @@ export default class TransformHandle extends SupEngine.ActorComponent {
   move() {
     this.actor.threeObject.position.copy(this.target.getGlobalPosition());
     this.actor.threeObject.quaternion.copy(this.target.getGlobalOrientation());
+    this.actor.threeObject.scale.copy(this.target.getLocalScale());
     this.actor.threeObject.updateMatrixWorld(false);
   }
 
