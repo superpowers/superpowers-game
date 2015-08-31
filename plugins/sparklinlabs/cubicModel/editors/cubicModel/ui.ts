@@ -8,9 +8,9 @@ let THREE = SupEngine.THREE;
 let PerfectResize = require("perfect-resize");
 let TreeView = require("dnd-tree-view");
 
-SupClient.setupHotkeys();
-
 let ui: {
+  canvasElt: HTMLCanvasElement;
+  treeViewElt: HTMLDivElement;
   nodesTreeView: any;
 
   newNodeButton: HTMLButtonElement;
@@ -38,11 +38,47 @@ let ui: {
 } = <any>{};
 export default ui;
 
+// Hotkeys
+SupClient.setupHotkeys();
+
+document.addEventListener("keydown", (event) => {
+  if (document.querySelector(".dialog") != null) return;
+  let activeElement = <HTMLElement>document.activeElement;
+  while (activeElement != null) {
+    if (activeElement == ui.canvasElt || activeElement == ui.treeViewElt) break;
+    activeElement = activeElement.parentElement;
+  }
+  if (activeElement == null) return;
+
+  if (event.keyCode === 78 && (event.ctrlKey || event.metaKey)) { // CTRL-N
+    event.preventDefault();
+    onNewNodeClick();
+  }
+
+  if (event.keyCode === 113) { // F2
+    event.preventDefault();
+    onRenameNodeClick();
+  }
+
+  if (event.keyCode === 68 && (event.ctrlKey || event.metaKey)) { // Ctrl+D
+    event.preventDefault();
+    onDuplicateNodeClick();
+  }
+
+  if (event.keyCode === 46) { // Delete
+    event.preventDefault();
+    onDeleteNodeClick();
+  }
+});
+
+ui.canvasElt = <HTMLCanvasElement>document.querySelector("canvas");
+
 // Setup resizable panes
 new PerfectResize(document.querySelector(".sidebar"), "right");
 new PerfectResize(document.querySelector(".nodes-tree-view"), "top");
 
 // Setup tree view
+ui.treeViewElt = <HTMLDivElement>document.querySelector(".nodes-tree-view");
 ui.nodesTreeView = new TreeView(document.querySelector(".nodes-tree-view"), onNodeDrop);
 ui.nodesTreeView.on("activate", onNodeActivate);
 ui.nodesTreeView.on("selectionChange", () => { setupSelectedNode(); });
@@ -56,18 +92,18 @@ export function createNodeElement(node: Node) {
   nameSpan.textContent = node.name;
   liElt.appendChild(nameSpan);
 
-  /*let visibleButton = document.createElement("button");
+  let visibleButton = document.createElement("button");
   visibleButton.textContent = "Hide";
   visibleButton.classList.add("show");
   visibleButton.addEventListener("click", (event: any) => {
     event.stopPropagation();
-    let actor = data.cubicModelUpdater.byCubicModelNodeId[event.target.parentElement.dataset["id"]].actor;
-    actor.threeObject.visible = !actor.threeObject.visible;
-    visibleButton.textContent = (actor.threeObject.visible) ? "Hide" : "Show";
-    if (actor.threeObject.visible) visibleButton.classList.add("show");
+    let pivot = data.cubicModelUpdater.cubicModelRenderer.byNodeId[event.target.parentElement.dataset["id"]].pivot;
+    pivot.visible = !pivot.visible;
+    visibleButton.textContent = (pivot.visible) ? "Hide" : "Show";
+    if (pivot.visible) visibleButton.classList.add("show");
     else visibleButton.classList.remove("show");
   });
-  liElt.appendChild(visibleButton);*/
+  liElt.appendChild(visibleButton);
 
   return liElt;
 }
@@ -102,7 +138,6 @@ export function setupSelectedNode() {
   if (nodeElt == null || ui.nodesTreeView.selectedNodes.length !== 1) {
     ui.inspectorElt.hidden = true;
 
-    ui.newNodeButton.disabled = false;
     ui.renameNodeButton.disabled = true;
     ui.duplicateNodeButton.disabled = true;
     ui.deleteNodeButton.disabled = true;
@@ -127,6 +162,11 @@ export function setupSelectedNode() {
     setInspectorBoxSize(<THREE.Vector3>boxSettings.size);
     setInspectorBoxStretch(<THREE.Vector3>boxSettings.stretch);
   }
+
+  // Enable buttons
+  ui.renameNodeButton.disabled = false;
+  ui.duplicateNodeButton.disabled = false;
+  ui.deleteNodeButton.disabled = false;
 }
 
 function roundForInspector(number: number) { return parseFloat(number.toFixed(3)); }
@@ -207,11 +247,11 @@ export function setInspectorBoxStretch(stretch: THREE.Vector3) {
 ui.newNodeButton = <HTMLButtonElement>document.querySelector("button.new-node");
 ui.newNodeButton.addEventListener("click", onNewNodeClick);
 ui.renameNodeButton = <HTMLButtonElement>document.querySelector("button.rename-node");
-//ui.renameNodeButton.addEventListener("click", onRenameNodeClick);
+ui.renameNodeButton.addEventListener("click", onRenameNodeClick);
 ui.duplicateNodeButton = <HTMLButtonElement>document.querySelector("button.duplicate-node");
 //ui.duplicateNodeButton.addEventListener("click", onDuplicateNodeClick);
 ui.deleteNodeButton = <HTMLButtonElement>document.querySelector("button.delete-node");
-//ui.deleteNodeButton.addEventListener("click", onDeleteNodeClick);
+ui.deleteNodeButton.addEventListener("click", onDeleteNodeClick);
 
 // Inspector
 ui.inspectorElt = <any>document.querySelector(".inspector");
@@ -233,22 +273,12 @@ ui.inspectorFields = {
 
 for (let input of ui.inspectorFields.position) input.addEventListener("change", onInspectorInputChange);
 for (let input of ui.inspectorFields.orientation) input.addEventListener("change", onInspectorInputChange);
-// typeElt
+
 for (let input of ui.inspectorFields.shape.offset) input.addEventListener("change", onInspectorInputChange);
+
 for (let input of ui.inspectorFields.shape.box.size) input.addEventListener("change", onInspectorInputChange);
 for (let input of ui.inspectorFields.shape.box.stretch) input.addEventListener("change", onInspectorInputChange);
 
-/*
-for (let transformType in ui.transform) {
-  let inputs: HTMLInputElement[] = (<any>ui).transform[transformType];
-  for (let input of inputs) input.addEventListener("change", onTransformInputChange);
-}
-
-for (let boxPropertyType in ui.shape.box) {
-  let inputs: HTMLInputElement[] = (<any>ui).shape.box[boxPropertyType];
-  for (let input of inputs) input.addEventListener("change", onTransformInputChange);
-}
-*/
 
 function onNewNodeClick() {
   // TODO: Allow choosing shape and default texture color
@@ -287,6 +317,50 @@ function onNewNodeClick() {
       setupSelectedNode();
     });
 
+  });
+}
+
+function onRenameNodeClick() {
+  if (ui.nodesTreeView.selectedNodes.length !== 1) return;
+
+  let selectedNode = ui.nodesTreeView.selectedNodes[0];
+  let node = data.cubicModelUpdater.cubicModelAsset.nodes.byId[selectedNode.dataset.id];
+
+  SupClient.dialogs.prompt("Enter a new name for the node.", null, node.name, "Rename", (newName) => {
+    if (newName == null) return;
+
+    socket.emit("edit:assets", info.assetId, "setNodeProperty", node.id, "name", newName, (err: string) => { if (err != null) alert(err); });
+  });
+}
+
+function onDuplicateNodeClick() {
+  if (ui.nodesTreeView.selectedNodes.length !== 1) return;
+
+  let selectedNode = ui.nodesTreeView.selectedNodes[0];
+  let node = data.cubicModelUpdater.cubicModelAsset.nodes.byId[selectedNode.dataset.id];
+
+  SupClient.dialogs.prompt("Enter a name for the new node.", null, node.name, "Duplicate", (newName) => {
+    if (newName == null) return;
+    let options = SupClient.getTreeViewInsertionPoint(ui.nodesTreeView);
+
+    socket.emit("edit:assets", info.assetId, "duplicateNode", newName, node.id, options.index, (err: string, nodeId: string) => {
+      if (err != null) alert(err);
+
+      ui.nodesTreeView.clearSelection();
+      ui.nodesTreeView.addToSelection(ui.nodesTreeView.treeRoot.querySelector(`li[data-id='${nodeId}']`));
+      setupSelectedNode();
+    });
+  });
+}
+
+function onDeleteNodeClick() {
+  if (ui.nodesTreeView.selectedNodes.length === 0) return;
+  SupClient.dialogs.confirm("Are you sure you want to delete the selected nodes?", "Delete", (confirm) => {
+    if (! confirm) return;
+
+    for (let selectedNode of ui.nodesTreeView.selectedNodes) {
+      socket.emit("edit:assets", info.assetId, "removeNode", selectedNode.dataset.id, (err: string) => { if (err != null) alert(err); });
+    }
   });
 }
 
