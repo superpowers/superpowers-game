@@ -72,7 +72,6 @@ var entriesSubscriber = {
     if (entry.type !== "script") return;
 
     let oldFileName = data.fileNamesByScriptId[id];
-
     let newFileName = `${data.projectClient.entries.getPathFromId(id)}.ts`;
 
     data.fileNames.splice(data.fileNames.indexOf(oldFileName), 1);
@@ -97,15 +96,20 @@ var entriesSubscriber = {
     let entry = data.projectClient.entries.byId[id];
     if (entry.type !== "script" || key !== "name") return;
 
-    let oldScriptName = data.fileNamesByScriptId[id];
-    let newScriptName = `${data.projectClient.entries.getPathFromId(entry.id)}.ts`;
-    if (newScriptName === oldScriptName) return;
+    let oldFileName = data.fileNamesByScriptId[id];
+    let newFileName = `${data.projectClient.entries.getPathFromId(entry.id)}.ts`;
+    if (newFileName === oldFileName) return;
 
-    let scriptIndex = data.fileNames.indexOf(oldScriptName);
-    data.fileNames[scriptIndex] = newScriptName;
-    data.fileNamesByScriptId[id] = newScriptName;
-    data.files[newScriptName] = data.files[oldScriptName];
-    delete data.files[oldScriptName];
+    let scriptIndex = data.fileNames.indexOf(oldFileName);
+    data.fileNames[scriptIndex] = newFileName;
+    data.fileNamesByScriptId[id] = newFileName;
+    let file = data.files[oldFileName];
+    data.files[newFileName] = file;
+    delete data.files[oldFileName];
+
+    data.typescriptWorker.postMessage({ type: "removeFile", fileName: oldFileName });
+    data.typescriptWorker.postMessage({ type: "addFile", fileName: newFileName, index: data.fileNames.indexOf(newFileName), file });
+    scheduleErrorCheck();
   },
 
   onEntryTrashed: (id: string) => {
