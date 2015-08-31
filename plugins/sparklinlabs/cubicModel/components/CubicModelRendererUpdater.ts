@@ -62,7 +62,9 @@ export default class CubicModelRendererUpdater {
   }
 
   _onEditCommand_addNode(node: Node, parentId: string, index: number) {
-    //this.cubicModelRenderer.addNode();
+    let parentPivot = this.cubicModelRenderer.byNodeId[parentId].pivot;
+    let parentNode = this.cubicModelAsset.nodes.byId[parentId];
+    this.cubicModelRenderer._makeNode(node, parentPivot, parentNode.shape.offset);
   }
 
   _onEditCommand_moveNode = (id: string, parentId: string, index: number) => {

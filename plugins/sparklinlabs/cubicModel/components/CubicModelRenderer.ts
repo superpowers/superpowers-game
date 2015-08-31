@@ -60,50 +60,58 @@ export default class CubicModelRenderer extends SupEngine.ActorComponent {
     // How should we piece together each texture? The ModelAsset should probably maintain the whole texture in memory
     // and dynamically update it?
 
-    let walkNode = (node: any, parentObject: THREE.Object3D, parentOffset: { x: number; y: number; z: number; }) => {
-      let pivot: THREE.Object3D;
-
-      let material = new THREE.MeshBasicMaterial;
-      material.side = THREE.DoubleSide;
-      material.color.setRGB(Math.random(), Math.random(), Math.random());
-
-      pivot = new THREE.Object3D();
-      pivot.name = node.name;
-
-      let shape: THREE.Mesh;
-
-      if (node.shape.type === "box") {
-        let boxGeometry = new THREE.BoxGeometry(
-          node.shape.settings.size.x,
-          node.shape.settings.size.y,
-          node.shape.settings.size.z
-        );
-
-        shape = new THREE.Mesh(boxGeometry, material);
-        shape.scale.set(node.shape.settings.stretch.x, node.shape.settings.stretch.y, node.shape.settings.stretch.z);
-      }
-
-      if (shape != null) {
-        shape.position.set(node.shape.offset.x, node.shape.offset.y, node.shape.offset.z);
-        pivot.add(shape);
-      }
-
-      this.byNodeId[node.id] = { pivot, shape };
-
-      pivot.position.set(node.position.x + parentOffset.x, node.position.y + parentOffset.y, node.position.z + parentOffset.z);
-      pivot.quaternion.set(node.orientation.x, node.orientation.y, node.orientation.z, node.orientation.w);
-      // NOTE: Hierarchical scale is not supported for now, we'll see if the need arises
-      //nodeObject.scale.set(node.scale.x, node.scale.y, node.scale.z);
-
-      parentObject.add(pivot);
-
-      for (let childNode of node.children) walkNode(childNode, pivot, node.shape.offset);
+    let walkNode = (node: any, parentPivot: THREE.Object3D, parentOffset: { x: number; y: number; z: number; }) => {
+      let rendererNode = this._makeNode(node, parentPivot, parentOffset);
+      for (let childNode of node.children) walkNode(childNode, rendererNode.pivot, node.shape.offset);
     };
 
     for (let rootNode of asset.nodes) walkNode(rootNode, this.threeRoot, { x: 0, y: 0, z: 0 });
 
     this.actor.threeObject.add(this.threeRoot);
     this.threeRoot.updateMatrixWorld(false);
+  }
+  
+  _makeNode(node: any, parentObject: THREE.Object3D, parentOffset: { x: number; y: number; z: number; }) {
+    let pivot: THREE.Object3D;
+
+    let material = new THREE.MeshBasicMaterial;
+    material.side = THREE.DoubleSide;
+    material.color.setRGB(Math.random(), Math.random(), Math.random());
+    
+    pivot = new THREE.Object3D();
+    pivot.name = node.name;
+
+    let shape: THREE.Mesh;
+
+    if (node.shape.type === "box") {
+      let boxGeometry = new THREE.BoxGeometry(
+        node.shape.settings.size.x,
+        node.shape.settings.size.y,
+        node.shape.settings.size.z
+      );
+
+      shape = new THREE.Mesh(boxGeometry, material);
+      shape.scale.set(node.shape.settings.stretch.x, node.shape.settings.stretch.y, node.shape.settings.stretch.z);
+    }
+
+    if (shape != null) {
+      shape.position.set(node.shape.offset.x, node.shape.offset.y, node.shape.offset.z);
+      pivot.add(shape);
+    }
+    
+    let rendererNode = { pivot, shape };
+    this.byNodeId[node.id] = rendererNode;
+
+    pivot.position.set(node.position.x + parentOffset.x, node.position.y + parentOffset.y, node.position.z + parentOffset.z);
+    pivot.quaternion.set(node.orientation.x, node.orientation.y, node.orientation.z, node.orientation.w);
+    // NOTE: Hierarchical scale is not supported for now, we'll see if the need arises
+    //nodeObject.scale.set(node.scale.x, node.scale.y, node.scale.z);
+    
+    if (parentObject == null) parentObject = this.threeRoot;
+    parentObject.add(pivot);
+    pivot.updateMatrixWorld(false);
+    
+    return rendererNode;
   }
 
   setVisible(visible: boolean) { if (this.threeRoot != null) this.threeRoot.visible = visible; }
