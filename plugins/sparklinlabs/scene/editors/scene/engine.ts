@@ -10,16 +10,16 @@ import SelectionBox from "../../components/SelectionBox";
 import TransformHandle from "../../components/TransformHandle";
 
 let engine: {
-  gameInstance?: SupEngine.GameInstance;
+  gameInstance: SupEngine.GameInstance;
 
-  cameraActor?: SupEngine.Actor;
-  cameraComponent?: any;
-  cameraControls?: any;
+  cameraActor: SupEngine.Actor;
+  cameraComponent: any;
+  cameraControls: any;
 
-  selectionActor?: SupEngine.Actor;
-  selectionBoxComponent?: any;
-  transformHandleComponent?: any;
-} = {};
+  selectionActor: SupEngine.Actor;
+  selectionBoxComponent: SelectionBox;
+  transformHandleComponent: TransformHandle;
+} = <any>{};
 export default engine;
 
 let canvasElt = <HTMLCanvasElement>document.querySelector("canvas");
