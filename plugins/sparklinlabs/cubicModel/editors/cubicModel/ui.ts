@@ -193,6 +193,13 @@ export function setInspectorOrientation(orientation: THREE.Quaternion) {
     roundForInspector(THREE.Math.radToDeg(euler.z)).toString()
   ];
 
+  // Work around weird conversion from quaternion to euler conversion
+  if (values[1] === "180" && values[2] === "180") {
+    values[0] = roundForInspector(180 - THREE.Math.radToDeg(euler.x)).toString();
+    values[1] = "0";
+    values[2] = "0";
+  }
+
   for (let i = 0; i < 3; i++) {
     // NOTE: This helps avoid clearing selection when possible
     if (ui.inspectorFields.orientation[i].value !== values[i]) {
