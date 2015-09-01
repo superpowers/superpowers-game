@@ -22,6 +22,7 @@ function onAssetReceived(assetId: string, asset: ShaderAsset) {
   data.shaderAsset = asset;
 
   for (let uniform of asset.pub.uniforms) setupUniform(uniform);
+  ui.useLightUniformsCheckbox.checked = asset.pub.useLightUniforms;
   for (let attribute of asset.pub.attributes) setupAttribute(attribute);
   ui.vertexEditor.setText(asset.pub.vertexShader.draft);
   let hasVertexDraft = asset.pub.vertexShader.draft !== asset.pub.vertexShader.text;
@@ -53,6 +54,14 @@ function onAssetEdited(id: string, command: string, ...args: any[]) {
 
   if (ui.previewTypeSelect.value !== "Asset" && command !== "editVertexShader" && command !== "editFragmentShader")
     setupPreview();
+}
+
+onEditCommands.setProperty = (path: string, value: any) => {
+  switch (path) {
+    case "useLightUniforms":
+      ui.useLightUniformsCheckbox.checked = value;
+      break;
+  }
 }
 
 onEditCommands.newUniform = (uniform: UniformPub) => { setupUniform(uniform); }

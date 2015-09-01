@@ -16,6 +16,7 @@ interface ShaderCode {
 
 export interface ShaderAssetPub {
   uniforms: UniformPub[];
+  useLightUniforms: boolean;
   attributes: AttributePub[];
   vertexShader: ShaderCode;
   fragmentShader: ShaderCode;
@@ -24,6 +25,7 @@ export interface ShaderAssetPub {
 export default class ShaderAsset extends SupCore.data.base.Asset {
   static schema = {
     uniforms: { type: "array" },
+    useLightUniforms: { type: "boolean", mutable: true },
     attributes: { type: "array" },
     vertexShader: {
       type: "hash",
@@ -81,6 +83,7 @@ ${tab}gl_FragColor = texture2D(map, vUv);
 `
       this.pub = {
         uniforms: [{ id: "0", name: "map", type: "t", value: "map" }],
+        useLightUniforms: false,
         attributes: [],
         vertexShader: {
           text: defaultVertexContent,
@@ -108,6 +111,9 @@ ${tab}gl_FragColor = texture2D(map, vUv);
     let pub: ShaderAssetPub;
 
     let loadShaders = () => {
+      // TODO: Remove these at some point, asset migration from Superpowers 0.11
+      if (pub.useLightUniforms == null) pub.useLightUniforms = false;
+
       // TODO: Remove these at some point, asset migration from Superpowers 0.10
       if (typeof pub.vertexShader === "string") {
         pub.vertexShader = {

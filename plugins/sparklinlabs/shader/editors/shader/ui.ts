@@ -8,6 +8,7 @@ let PerfectResize = require("perfect-resize");
 
 let ui: {
   uniformsList?: HTMLTableElement;
+  useLightUniformsCheckbox?: HTMLInputElement;
   attributesList?: HTMLTableElement;
   vertexEditor?: TextEditorWidget;
   vertexHeader?:HTMLDivElement;
@@ -123,6 +124,11 @@ newUniformInput.addEventListener("keyup", (event: any) => {
     editAsset("newUniform", event.target.value);
     event.target.value = "";
   }
+})
+
+ui.useLightUniformsCheckbox = <HTMLInputElement>document.querySelector("input.use-light-uniforms");
+ui.useLightUniformsCheckbox.addEventListener("change", (event: any) => {
+  editAsset("setProperty", "useLightUniforms", event.target.checked);
 })
 
 ui.attributesList = <HTMLTableElement>document.querySelector(".attributes tbody");
