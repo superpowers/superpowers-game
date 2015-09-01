@@ -59,7 +59,6 @@ onEditCommands.addNode = (node: Node, parentId: string, index: number) => {
 };
 
 onEditCommands.moveNode = (id: string, parentId: string, index: number) => {
-  /*
   // Reparent tree node
   let nodeElt = ui.nodesTreeView.treeRoot.querySelector(`[data-id='${id}']`);
   let isInspected = ui.nodesTreeView.selectedNodes.length === 1 && nodeElt === ui.nodesTreeView.selectedNodes[0];
@@ -70,16 +69,15 @@ onEditCommands.moveNode = (id: string, parentId: string, index: number) => {
 
   // Refresh inspector
   if (isInspected) {
-    let node = data.sceneUpdater.sceneAsset.nodes.byId[id];
+    let node = data.cubicModelUpdater.cubicModelAsset.nodes.byId[id];
     setInspectorPosition(<THREE.Vector3>node.position);
     setInspectorOrientation(<THREE.Quaternion>node.orientation);
-    setInspectorScale(<THREE.Vector3>node.scale);
   }
 
   // TODO: Only refresh if selection is affected
-  setupHelpers();
-  */
-};
+  //setupHelpers();
+}
+
 
 onEditCommands.setNodeProperty = (id: string, path: string, value: any) => {
   let nodeElt = ui.nodesTreeView.treeRoot.querySelector(`[data-id='${id}']`);
