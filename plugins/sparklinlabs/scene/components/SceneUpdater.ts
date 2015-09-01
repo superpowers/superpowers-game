@@ -3,8 +3,6 @@ import SceneAsset, { DuplicatedNode } from "../data/SceneAsset";
 import { Node } from "../data/SceneNodes";
 import { Component } from "../data/SceneComponents";
 
-import TransformMarker from "./TransformMarker";
-
 export default class SceneUpdater {
   projectClient: SupClient.ProjectClient;
 
@@ -198,7 +196,7 @@ export default class SceneUpdater {
     let markerActor = new SupEngine.Actor(this.gameInstance, `${nodeId} Marker`, null, { layer: -1 });
     markerActor.setGlobalPosition(nodeActor.getGlobalPosition());
     markerActor.setGlobalOrientation(nodeActor.getGlobalOrientation());
-    new TransformMarker(markerActor);
+    new SupEngine.editorComponentClasses["TransformMarker"](markerActor);
 
     this.bySceneNodeId[node.id] = { actor: nodeActor, markerActor, bySceneComponentId: {}, prefabUpdater: null };
     if (node.prefabId != null)

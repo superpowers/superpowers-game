@@ -6,9 +6,6 @@ let THREE = SupEngine.THREE;
 import { Node } from "../../data/SceneNodes";
 import { Component } from "../../data/SceneComponents";
 
-import SelectionBox from "../../components/SelectionBox";
-import TransformHandle from "../../components/TransformHandle";
-
 let engine: {
   gameInstance: SupEngine.GameInstance;
 
@@ -31,10 +28,10 @@ engine.cameraComponent = new SupEngine.componentClasses["Camera"](engine.cameraA
 engine.cameraComponent.layers = [ 0, -1 ];
 
 let selectionActor = new SupEngine.Actor(engine.gameInstance, "Selection Box", null, { layer: -1 });
-engine.selectionBoxComponent = new SelectionBox(selectionActor);
+engine.selectionBoxComponent = new SupEngine.editorComponentClasses["SelectionBox"](selectionActor);
 
 let transformHandlesActor = new SupEngine.Actor(engine.gameInstance, "Transform Handles", null, { layer: -1 });
-engine.transformHandleComponent = new TransformHandle(transformHandlesActor, engine.cameraComponent.unifiedThreeCamera);
+engine.transformHandleComponent = new SupEngine.editorComponentClasses["TransformHandle"](transformHandlesActor, engine.cameraComponent.unifiedThreeCamera);
 
 engine.cameraControls = new SupEngine.editorComponentClasses["Camera3DControls"](engine.cameraActor, engine.cameraComponent);
 
