@@ -44,10 +44,11 @@ export default class Camera2DControls extends ActorComponent {
   }
 
   update() {
+    let input = this.actor.gameInstance.input;
     // Move
-    if (this.actor.gameInstance.input.mouseButtons[1].isDown ||
-    (this.actor.gameInstance.input.mouseButtons[0].isDown && this.actor.gameInstance.input.keyboardButtons[(<any>window).KeyEvent.DOM_VK_ALT].isDown)) {
-      let mouseDelta = this.actor.gameInstance.input.mouseDelta;
+    if (input.mouseButtons[1].isDown ||
+    (input.mouseButtons[0].isDown && input.keyboardButtons[(<any>window).KeyEvent.DOM_VK_ALT].isDown)) {
+      let mouseDelta = input.mouseDelta;
       mouseDelta.x /= this.actor.gameInstance.threeRenderer.domElement.width;
       mouseDelta.x *= this.camera.orthographicScale * this.camera.cachedRatio;
 
@@ -56,20 +57,26 @@ export default class Camera2DControls extends ActorComponent {
 
       if (mouseDelta.x !== 0 || mouseDelta.y !== 0) this.camera.actor.moveLocal(new THREE.Vector3(-mouseDelta.x, mouseDelta.y, 0));
     }
-    
+
     // Zoom
     else {
       let newOrthographicScale: number;
-      if (this.actor.gameInstance.input.mouseButtons[5].isDown) {
+      if (input.mouseButtons[5].isDown) {
         newOrthographicScale = Math.max(this.options.zoomMin, this.camera.orthographicScale * this.multiplier / this.options.zoomSpeed);
-      }
-
-      if (this.actor.gameInstance.input.mouseButtons[6].isDown) {
+      } else if (input.mouseButtons[6].isDown) {
         newOrthographicScale = Math.min(this.options.zoomMax, this.camera.orthographicScale * this.multiplier * this.options.zoomSpeed);
+      } else {
+        if (input.mouseButtons[0].isDown && input.keyboardButtons[(<any>window).KeyEvent.DOM_VK_CONTROL].isDown && input.mouseDelta.y !== 0) {
+          newOrthographicScale = this.camera.orthographicScale * this.multiplier
+          if (input.mouseDelta.y > 0) newOrthographicScale *= this.options.zoomSpeed;
+          else newOrthographicScale /= this.options.zoomSpeed;
+          newOrthographicScale = Math.max(this.options.zoomMin, newOrthographicScale);
+          newOrthographicScale = Math.min(this.options.zoomMax, newOrthographicScale);
+        }
       }
 
       if (newOrthographicScale != null && newOrthographicScale !== this.camera.orthographicScale) {
-        let mousePosition = this.actor.gameInstance.input.mousePosition;
+        let mousePosition = input.mousePosition;
         this.changeOrthographicScale(newOrthographicScale, mousePosition.x, mousePosition.y);
       }
     }
