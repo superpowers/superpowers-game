@@ -191,7 +191,7 @@ export default class SpriteAsset extends SupCore.data.base.Asset {
     let json = JSON.stringify(this.pub, null, 2);
     this.pub.maps = maps;
 
-    async.series<Error>([
+    async.series([
       (callback) => { fs.writeFile(path.join(assetPath, "sprite.json"), json, { encoding: "utf8" }, (err) => { callback(err, null); }); },
 
       (callback) => {

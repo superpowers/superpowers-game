@@ -207,7 +207,7 @@ function onNodeDrop(dropInfo: any, orderedNodes: any) {
   let i = 0;
   for (let id of nodeIds) {
     socket.emit("edit:assets", info.assetId, "moveNode", id, dropPoint.parentId, dropPoint.index + i, (err: string) => { if (err != null) alert(err); });
-    if (! sameParent || sourceChildren.indexOf(data.sceneUpdater.sceneAsset.nodes.byId[id]) >= dropPoint.index) i++;
+    if (!sameParent || sourceChildren.indexOf(data.sceneUpdater.sceneAsset.nodes.byId[id]) >= dropPoint.index) i++;
   }
   return false;
 }

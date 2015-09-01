@@ -179,7 +179,7 @@ export default class SceneAsset extends SupCore.data.base.Asset {
   computeGlobalMatrix(node: Node) {
     let matrix = new THREE.Matrix4().compose(<THREE.Vector3>node.position, <THREE.Quaternion>node.orientation, <THREE.Vector3>node.scale);
 
-    let parentNode = this.nodes.parentNodesById[node.id]
+    let parentNode = this.nodes.parentNodesById[node.id];
     if (parentNode != null) {
       let parentGlobalMatrix = this.computeGlobalMatrix(parentNode);
       matrix.multiplyMatrices(parentGlobalMatrix, matrix);
@@ -188,7 +188,7 @@ export default class SceneAsset extends SupCore.data.base.Asset {
   }
 
   applyGlobalMatrix(node: Node, matrix: THREE.Matrix4) {
-    let parentNode = this.nodes.parentNodesById[node.id]
+    let parentNode = this.nodes.parentNodesById[node.id];
     if (parentNode != null) {
       let parentGlobalMatrix = this.computeGlobalMatrix(parentNode);
       matrix.multiplyMatrices(new THREE.Matrix4().getInverse(parentGlobalMatrix), matrix);

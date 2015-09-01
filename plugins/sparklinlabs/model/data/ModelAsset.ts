@@ -231,7 +231,7 @@ export default class ModelAsset extends SupCore.data.base.Asset {
     this.pub.attributes = attributes;
     this.pub.maps = maps;
 
-    async.series<Error>([
+    async.series([
 
       (callback) => { fs.writeFile(path.join(assetPath, "model.json"), json, { encoding: "utf8" }, (err) => { callback(err, null); }); },
 
