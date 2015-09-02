@@ -87,7 +87,7 @@ export default class CubicModelRenderer extends SupEngine.ActorComponent {
     
     pivot = new THREE.Object3D();
     pivot.name = node.name;
-    (<any>pivot).nodeId = node.id;
+    pivot.userData.nodeId = node.id;
 
     let shape: THREE.Mesh;
 

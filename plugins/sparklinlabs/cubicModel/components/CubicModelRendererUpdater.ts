@@ -137,7 +137,7 @@ export default class CubicModelRendererUpdater {
     for (let childNode of rendererNode.children) this._recurseClearNode(childNode.nodeId);
 
     let parentPivot = rendererNode.pivot.parent;
-    let parentNodeId = (<any>parentPivot).nodeId;
+    let parentNodeId: string = parentPivot.userData.nodeId;
     if (parentNodeId != null) {
       let parentRendererNode = this.cubicModelRenderer.byNodeId[parentNodeId];
       parentRendererNode.children.splice(parentRendererNode.children.indexOf(rendererNode), 1);
