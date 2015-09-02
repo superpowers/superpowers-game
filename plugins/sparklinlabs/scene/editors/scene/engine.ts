@@ -195,9 +195,5 @@ function onTransformChange() {
     }
   }
 
-  socket.emit("edit:assets", info.assetId, "setNodeProperty", nodeId, transformType, value, onNodePropertySet);
-}
-
-function onNodePropertySet(err: string) {
-  if (err != null) alert(err);
+  socket.emit("edit:assets", info.assetId, "setNodeProperty", nodeId, transformType, value, (err: string) => { if (err != null) alert(err); });
 }
