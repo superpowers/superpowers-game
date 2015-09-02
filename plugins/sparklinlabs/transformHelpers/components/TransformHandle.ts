@@ -52,6 +52,7 @@ export default class TransformHandle extends SupEngine.ActorComponent {
     this.actor.threeObject.scale.copy(this.target.scale);
     this.actor.threeObject.updateMatrixWorld(false);
 
+    this.control.update();
     this.control.updateMatrixWorld(true);
   }
 
