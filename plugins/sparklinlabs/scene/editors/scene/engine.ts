@@ -26,14 +26,13 @@ engine.cameraActor.setLocalPosition(new THREE.Vector3(0, 0, 5));
 
 engine.cameraComponent = new SupEngine.componentClasses["Camera"](engine.cameraActor);
 engine.cameraComponent.layers = [ 0, -1 ];
+engine.cameraControls = new SupEngine.editorComponentClasses["Camera3DControls"](engine.cameraActor, engine.cameraComponent);
 
 let selectionActor = new SupEngine.Actor(engine.gameInstance, "Selection Box", null, { layer: -1 });
 engine.selectionBoxComponent = new SupEngine.editorComponentClasses["SelectionBox"](selectionActor);
 
 let transformHandlesActor = new SupEngine.Actor(engine.gameInstance, "Transform Handles", null, { layer: -1 });
 engine.transformHandleComponent = new SupEngine.editorComponentClasses["TransformHandle"](transformHandlesActor, engine.cameraComponent.unifiedThreeCamera);
-
-engine.cameraControls = new SupEngine.editorComponentClasses["Camera3DControls"](engine.cameraActor, engine.cameraComponent);
 
 requestAnimationFrame(tick);
 
@@ -145,8 +144,8 @@ function mouseUp() {
 export function setupHelpers() {
   let nodeElt = ui.nodesTreeView.selectedNodes[0];
   if (nodeElt != null && ui.nodesTreeView.selectedNodes.length === 1) {
-    engine.selectionBoxComponent.setTarget(data.sceneUpdater.bySceneNodeId[nodeElt.dataset.id].actor);
-    engine.transformHandleComponent.setTarget(data.sceneUpdater.bySceneNodeId[nodeElt.dataset.id].actor);
+    engine.selectionBoxComponent.setTarget(data.sceneUpdater.bySceneNodeId[nodeElt.dataset.id].actor.threeObject);
+    engine.transformHandleComponent.setTarget(data.sceneUpdater.bySceneNodeId[nodeElt.dataset.id].actor.threeObject);
   } else {
     engine.selectionBoxComponent.setTarget(null);
     engine.transformHandleComponent.setTarget(null);
@@ -154,8 +153,10 @@ export function setupHelpers() {
 }
 
 function onTransformChange() {
-  let nodeId = (<any>engine.transformHandleComponent.target).sceneNodeId;
-  let target = <SupEngine.Actor>engine.transformHandleComponent.target;
+  let nodeElt = ui.nodesTreeView.selectedNodes[0];
+  let nodeId = nodeElt.dataset.id;
+  let target = data.sceneUpdater.bySceneNodeId[nodeId].actor;
+
   let object = <THREE.Object3D>engine.transformHandleComponent.control.object;
 
   let transformType: string;

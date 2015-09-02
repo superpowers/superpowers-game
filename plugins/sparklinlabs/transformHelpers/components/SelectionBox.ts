@@ -3,7 +3,7 @@ let THREE = SupEngine.THREE;
 export default class SelectionBox extends SupEngine.ActorComponent {
   line: THREE.Line;
   geometry: THREE.Geometry;
-  target: SupEngine.Actor;
+  target: THREE.Object3D;
 
   constructor(actor: SupEngine.Actor) {
     super(actor, "SelectionBox");
@@ -16,8 +16,8 @@ export default class SelectionBox extends SupEngine.ActorComponent {
     this.line.visible = false;
   }
 
-  setTarget(actor: SupEngine.Actor) {
-    this.target = actor;
+  setTarget(target: THREE.Object3D) {
+    this.target = target;
 
     if (this.target != null) {
       this.line.visible = true;
@@ -29,8 +29,9 @@ export default class SelectionBox extends SupEngine.ActorComponent {
   }
 
   move() {
-    this.actor.threeObject.position.copy(this.target.getGlobalPosition());
-    this.actor.threeObject.quaternion.copy(this.target.getGlobalOrientation());
+    
+    this.actor.threeObject.position.copy(this.target.getWorldPosition());
+    this.actor.threeObject.quaternion.copy(this.target.getWorldQuaternion());
     this.actor.threeObject.updateMatrixWorld(false);
   }
 
@@ -39,11 +40,11 @@ export default class SelectionBox extends SupEngine.ActorComponent {
 
     let vec = new THREE.Vector3();
     let box = new THREE.Box3();
-    let inverseTargetMatrixWorld = new THREE.Matrix4().compose(this.target.getGlobalPosition(), this.target.getGlobalOrientation(), <THREE.Vector3>{ x: 1, y: 1, z: 1 });
+    let inverseTargetMatrixWorld = new THREE.Matrix4().compose(this.target.getWorldPosition(), this.target.getWorldQuaternion(), <THREE.Vector3>{ x: 1, y: 1, z: 1 });
 
     inverseTargetMatrixWorld.getInverse(inverseTargetMatrixWorld);
 
-    this.target.threeObject.traverse((node) => {
+    this.target.traverse((node) => {
       let geometry: THREE.Geometry|THREE.BufferGeometry = (<any>node).geometry;
 
       if (geometry != null) {

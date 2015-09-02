@@ -4,7 +4,7 @@ import "./TransformControls";
 export default class TransformHandle extends SupEngine.ActorComponent {
   control: any; // : THREE.TransformControls;
 
-  target: SupEngine.Actor;
+  target: THREE.Object3D;
   mode = "translate";
   space = "world";
 
@@ -20,27 +20,39 @@ export default class TransformHandle extends SupEngine.ActorComponent {
     this.control.updateMatrixWorld(true);
   }
 
-  setMode(mode: string) { this.mode = mode; if (this.target != null) this.control.setMode(mode); }
-  setSpace(space: string) { this.space = space; if (this.target != null) this.control.setSpace(space); }
+  setMode(mode: string) {
+    this.mode = mode;
+    if (this.target != null) {
+      this.control.setMode(mode);
+      this.control.setSpace(this.mode === "scale" ? "local" : this.space);
+    }
+  }
 
-  setTarget(actor: SupEngine.Actor) {
-    this.target = actor;
+  setSpace(space: string) {
+    this.space = space;
+    if (this.target != null && this.mode !== "scale") this.control.setSpace(space);
+  }
+
+  setTarget(target: THREE.Object3D) {
+    this.target = target;
 
     if (this.target != null) {
-      this.move();
       this.control.attach(this.actor.threeObject);
-      this.control.setSpace(this.space);
+      this.control.setSpace(this.mode === "scale" ? "local" : this.space);
       this.control.setMode(this.mode);
+      this.move();
     } else {
       this.control.detach(this.actor.threeObject);
     }
   }
 
   move() {
-    this.actor.threeObject.position.copy(this.target.getGlobalPosition());
-    this.actor.threeObject.quaternion.copy(this.target.getGlobalOrientation());
-    this.actor.threeObject.scale.copy(this.target.getLocalScale());
+    this.actor.threeObject.position.copy(this.target.getWorldPosition());
+    this.actor.threeObject.quaternion.copy(this.target.getWorldQuaternion());
+    this.actor.threeObject.scale.copy(this.target.scale);
     this.actor.threeObject.updateMatrixWorld(false);
+
+    this.control.updateMatrixWorld(true);
   }
 
   _destroy() {
