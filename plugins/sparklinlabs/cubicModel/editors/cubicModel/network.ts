@@ -8,7 +8,7 @@ import ui, {
   setInspectorBoxSize,
   setInspectorBoxStretch
 } from "./ui";
-import engine from "./engine";
+import engine, { setupHelpers } from "./engine";
 
 import CubicModelRenderer from "../../components/CubicModelRenderer";
 import CubicModelRendererUpdater from "../../components/CubicModelRendererUpdater";
@@ -75,9 +75,23 @@ onEditCommands.moveNode = (id: string, parentId: string, index: number) => {
   }
 
   // TODO: Only refresh if selection is affected
-  //setupHelpers();
+  setupHelpers();
 }
 
+onEditCommands.moveNodePivot = (id: string, value: { x: number; y: number; z: number; }) => {
+  let nodeElt = ui.nodesTreeView.treeRoot.querySelector(`[data-id='${id}']`);
+  let isInspected = ui.nodesTreeView.selectedNodes.length === 1 && nodeElt === ui.nodesTreeView.selectedNodes[0];
+  let node = data.cubicModelUpdater.cubicModelAsset.nodes.byId[id];
+  
+  if (isInspected) {
+    setInspectorPosition(<THREE.Vector3>node.position);
+    setInspectorOrientation(<THREE.Quaternion>node.orientation);
+    setInspectorShapeOffset(<THREE.Vector3>node.shape.offset);
+  }
+
+  // TODO: Only refresh if selection is affected
+  setupHelpers();
+};
 
 onEditCommands.setNodeProperty = (id: string, path: string, value: any) => {
   let nodeElt = ui.nodesTreeView.treeRoot.querySelector(`[data-id='${id}']`);
@@ -108,10 +122,8 @@ onEditCommands.setNodeProperty = (id: string, path: string, value: any) => {
 
   }
 
-  /*
   // TODO: Only refresh if selection is affected
   setupHelpers();
-  */
 };
 
 onEditCommands.removeNode = (id: string) => {
@@ -120,8 +132,7 @@ onEditCommands.removeNode = (id: string) => {
 
   ui.nodesTreeView.remove(nodeElt);
   if (isInspected) setupSelectedNode();
-  /*
+
   // TODO: Only refresh if selection is affected
-  else setupHelpers();
-  */
+  setupHelpers();
 };

@@ -29,7 +29,6 @@ export default class SelectionBox extends SupEngine.ActorComponent {
   }
 
   move() {
-    
     this.actor.threeObject.position.copy(this.target.getWorldPosition());
     this.actor.threeObject.quaternion.copy(this.target.getWorldQuaternion());
     this.actor.threeObject.updateMatrixWorld(false);

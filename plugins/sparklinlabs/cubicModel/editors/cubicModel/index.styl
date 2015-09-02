@@ -15,24 +15,36 @@ body
 .controls
   display flex
   align-items center
-  height 30px
+  height 31px
   overflow hidden
   white-space nowrap
+  border-top 1px solid rgba(0,0,0,0.3)
 
   > div
     display flex
     align-items center
     height 30px
-    padding 0 0.5em
     flex auto 0 0
 
     &:not(:first-child)
-      border-left 1px solid #ccc
+      border-left 1px solid rgba(0,0,0,0.3)
+  
+  > div > div
+    display flex
+    align-items center
+    height 30px
+    padding-right 0.5em
+    flex auto 0 0
 
-  > div > .label
+  > div > .title
     text-transform uppercase
-    margin-right 0.5em
     color #666
+    padding-left 0.5em
+    margin-right 0.5em
+    background #ddd
+  
+  > div > div > label
+    padding-right 0.5em
 
 .sidebar
   width 250px

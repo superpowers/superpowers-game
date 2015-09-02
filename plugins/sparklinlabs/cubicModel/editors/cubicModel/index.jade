@@ -11,20 +11,24 @@ html
     .main
       canvas(tabindex="0")
       .controls
+        .transform-settings
+          .title Settings
+          div
+            input#translate-pivot-shape(type="checkbox",checked)
+            label(for="translate-pivot-shape") Link shape to pivot
         .transform-mode
-          .label Transform
-          input#transform-mode-translate-shape(type="radio",name="transformMode",value="translateShape",checked)
-          label(for="transform-mode-translate-shape") Move shape
-          input#transform-mode-translate-pivot(type="radio",name="transformMode",value="translatePivot")
-          label(for="transform-mode-translate-pivot") Move pivot
-          input#transform-mode-rotate(type="radio",name="transformMode",value="rotate")
-          label(for="transform-mode-rotate") Rotate
-          input#transform-mode-stretch(type="radio",name="transformMode",value="stretch")
-          label(for="transform-mode-stretch") Stretch
-          input#transform-space(type="checkbox")
-          label(for="transform-space") Local
-          input#transform-drag-pivot-with-shape(type="checkbox")
-          label(for="transform-drag-pivot-with-shape") Drag pivot along with shape
+          .title Transform
+          div
+            input#transform-mode-translate-pivot(type="radio",name="transformMode",value="translate",data-target="pivot",checked)
+            label(for="transform-mode-translate-pivot") Move pivot
+            input#transform-mode-translate-shape(type="radio",name="transformMode",value="translate",data-target="shape")
+            label(for="transform-mode-translate-shape") Move shape
+            input#transform-mode-rotate(type="radio",name="transformMode",value="rotate")
+            label(for="transform-mode-rotate") Rotate
+            input#transform-mode-stretch(type="radio",name="transformMode",value="stretch")
+            label(for="transform-mode-stretch") Stretch
+            input#transform-space(type="checkbox")
+            label(for="transform-space") Local
 
     .sidebar
       table.settings
@@ -93,4 +97,5 @@ html
     script(src="../../data.js")
     script(src="../../components.js")
     script(src="/client/SupClient.js")
+    script(src="/plugins/sparklinlabs/transformHelpers/components.js")
     script(src="index.js")

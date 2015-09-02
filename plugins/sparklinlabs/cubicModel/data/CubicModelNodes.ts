@@ -5,7 +5,6 @@ export interface Node extends SupCore.data.base.TreeNode {
 
   position: { x: number; y: number; z: number };
   orientation: { x: number; y: number; z: number; w: number };
-  scale: { x: number; y: number; z: number };
   
   shape: {
     type: string;

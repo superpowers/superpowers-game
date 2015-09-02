@@ -5,7 +5,7 @@ let tmpQuat = new THREE.Quaternion;
 
 import CubicModelRendererUpdater from "./CubicModelRendererUpdater";
 
-interface RendererNode {
+export interface RendererNode {
   nodeId: string;
   pivot: THREE.Object3D;
   shape: THREE.Mesh;
@@ -123,6 +123,6 @@ export default class CubicModelRenderer extends SupEngine.ActorComponent {
     
     return rendererNode;
   }
-
+  
   setVisible(visible: boolean) { if (this.threeRoot != null) this.threeRoot.visible = visible; }
 }

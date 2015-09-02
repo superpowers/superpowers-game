@@ -16,4 +16,6 @@ interface TransformHandle extends SupEngine.ActorComponent {
 }
 
 interface TransformMarker extends SupEngine.ActorComponent {
+  move(target: THREE.Object3D): void;
+  hide(): void;
 }

@@ -23,6 +23,17 @@ export default class TransformMarker extends SupEngine.ActorComponent {
     this.line.updateMatrixWorld(false);
   }
 
+  move(target: THREE.Object3D) {
+    this.line.visible = true;
+    this.actor.threeObject.position.copy(target.getWorldPosition());
+    this.actor.threeObject.quaternion.copy(target.getWorldQuaternion());
+    this.actor.threeObject.updateMatrixWorld(false);
+  }
+
+  hide() {
+    this.line.visible = false;
+  }
+
   _destroy() {
     this.actor.threeObject.remove(this.line);
     this.line.geometry.dispose();

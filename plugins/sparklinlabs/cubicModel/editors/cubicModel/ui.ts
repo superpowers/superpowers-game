@@ -1,6 +1,6 @@
 import info from "./info";
 import { socket, data } from "./network";
-import engine/*, { setupHelpers }*/ from "./engine";
+import engine, { setupHelpers } from "./engine";
 
 import { Node } from "../../data/CubicModelNodes";
 
@@ -12,6 +12,8 @@ let ui: {
   canvasElt: HTMLCanvasElement;
   treeViewElt: HTMLDivElement;
   nodesTreeView: any;
+  
+  translateMode: string;
 
   newNodeButton: HTMLButtonElement;
   renameNodeButton: HTMLButtonElement;
@@ -129,7 +131,7 @@ function onNodeDrop(dropInfo: any, orderedNodes: any) {
 function onNodeActivate() { ui.nodesTreeView.selectedNodes[0].classList.toggle("collapsed"); }
 
 export function setupSelectedNode() {
-  //setupHelpers();
+  setupHelpers();
 
   // Setup transform
   let nodeElt = ui.nodesTreeView.selectedNodes[0];
@@ -249,6 +251,47 @@ export function setInspectorBoxStretch(stretch: THREE.Vector3) {
   }
 }
 
+// Transform mode
+ui.translateMode = "all";
+document.querySelector(".main .controls .transform-mode").addEventListener("click", onTransformModeClick);
+document.querySelector(".main .controls .transform-settings").addEventListener("click", onTransformSettingsClick);
+
+function onTransformModeClick(event: UIEvent) {
+  let target = <HTMLInputElement>event.target;
+  if (target.tagName !== "INPUT") return;
+
+  if (target.id === "transform-space") {
+    engine.transformHandleComponent.setSpace(target.checked ? "local" : "world");
+  } else {
+    let transformSpaceCheckbox = <HTMLInputElement>document.getElementById("transform-space");
+    transformSpaceCheckbox.disabled = target.value === "scale";
+    engine.transformHandleComponent.setMode(target.value);
+
+    if (target.value === "translate") {
+      ui.translateMode = (<any>target.dataset)["target"];
+      let linkShapeToPivot = (<HTMLInputElement>document.getElementById("translate-pivot-shape")).checked;
+      if (ui.translateMode === "pivot" && linkShapeToPivot) ui.translateMode = "all";
+    }
+  }
+
+  setupHelpers();
+}
+
+function onTransformSettingsClick(event: UIEvent) {
+  let target = <HTMLInputElement>event.target;
+  if (target.tagName !== "INPUT") return;
+
+  if (target.id === "transform-space") {
+    engine.transformHandleComponent.setSpace(target.checked ? "local" : "world");
+  } else if (target.id === "translate-pivot-shape") {
+    let linkShapeToPivot = (<HTMLInputElement>document.getElementById("translate-pivot-shape")).checked;
+    if (ui.translateMode === "pivot" && linkShapeToPivot) ui.translateMode = "all";
+    else if (ui.translateMode === "all" && !linkShapeToPivot) ui.translateMode = "pivot";
+  }
+}
+
+
+// Node buttons
 ui.newNodeButton = <HTMLButtonElement>document.querySelector("button.new-node");
 ui.newNodeButton.addEventListener("click", onNewNodeClick);
 ui.renameNodeButton = <HTMLButtonElement>document.querySelector("button.rename-node");
@@ -371,6 +414,7 @@ function onDeleteNodeClick() {
 
 function onInspectorInputChange(event: any) {
   if (ui.nodesTreeView.selectedNodes.length !== 1) return;
+  let nodeId = ui.nodesTreeView.selectedNodes[0].dataset.id;
 
   // transform, shape or box-shape
   let context = event.target.parentElement.parentElement.parentElement.parentElement.className;
@@ -411,6 +455,10 @@ function onInspectorInputChange(event: any) {
     }
   }
 
-  let nodeId = ui.nodesTreeView.selectedNodes[0].dataset.id;
-  socket.emit("edit:assets", info.assetId, "setNodeProperty", nodeId, `${path}${propertyType}`, value, (err: string) => { if (err != null) alert(err); });
+  if (propertyType !== "position" || ui.translateMode !== "pivot") {
+    socket.emit("edit:assets", info.assetId, "setNodeProperty", nodeId, `${path}${propertyType}`, value, (err: string) => { if (err != null) alert(err); });
+  } else {
+    socket.emit("edit:assets", info.assetId, "moveNodePivot", nodeId, value, (err: string) => { if (err != null) alert(err); });
+  }
+  
 }

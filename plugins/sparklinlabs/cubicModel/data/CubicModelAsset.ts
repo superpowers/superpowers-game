@@ -70,7 +70,6 @@ export default class CubicModelAsset extends SupCore.data.base.Asset {
       id: null, name: name, children: <Node[]>[],
       position: (options != null && options.transform != null && options.transform.position != null) ? options.transform.position : { x: 0, y: 0, z: 0 },
       orientation: (options != null && options.transform != null && options.transform.orientation != null) ? options.transform.orientation : { x: 0, y: 0, z: 0, w: 1 },
-      scale: (options != null && options.transform != null && options.transform.scale != null) ? options.transform.scale : { x: 1, y: 1, z: 1 },
       shape: (options != null && options.shape != null) ? options.shape : { type: "none", offset: { x: 0, y: 0, z: 0 }, settings: null }
     };
 
@@ -101,6 +100,43 @@ export default class CubicModelAsset extends SupCore.data.base.Asset {
     this.nodes.client_setProperty(id, path, value);
   }
 
+  server_moveNodePivot(client: any, id: string, value: { x: number; y: number; z: number; }, callback: (err: string, id: string, value: { x: number; y: number; z: number; }) => any) {
+    let node = this.nodes.byId[id];
+    let oldMatrix = (node != null) ? this.computeGlobalMatrix(node) : null;
+
+    this.nodes.setProperty(id, "position", value, (err, actualValue) => {
+      if (err != null) { callback(err, null, null); return; }
+
+      let newInverseMatrix = this.computeGlobalMatrix(node);
+      newInverseMatrix.getInverse(newInverseMatrix);
+
+      let offset = new THREE.Vector3(node.shape.offset.x, node.shape.offset.y, node.shape.offset.z);
+      offset.applyMatrix4(oldMatrix).applyMatrix4(newInverseMatrix);
+      node.shape.offset.x = offset.x;
+      node.shape.offset.y = offset.y;
+      node.shape.offset.z = offset.z;
+
+      callback(null, id, actualValue);
+      this.emit("change");
+    });
+  }
+
+  client_moveNodePivot(id: string, value: { x: number; y: number; z: number; }) {
+    let node = this.nodes.byId[id];
+    let oldMatrix = (node != null) ? this.computeGlobalMatrix(node) : null;
+
+    this.nodes.client_setProperty(id, "position", value);
+
+    let newInverseMatrix = this.computeGlobalMatrix(node);
+    newInverseMatrix.getInverse(newInverseMatrix);
+
+    let offset = new THREE.Vector3(node.shape.offset.x, node.shape.offset.y, node.shape.offset.z);
+    offset.applyMatrix4(oldMatrix).applyMatrix4(newInverseMatrix);
+    node.shape.offset.x = offset.x;
+    node.shape.offset.y = offset.y;
+    node.shape.offset.z = offset.z;
+  }
+
 
   server_moveNode(client: any, id: string, parentId: string, index: number, callback: (err: string, id: string, parentId: string, index: number) => any) {
     let node = this.nodes.byId[id];
@@ -118,31 +154,56 @@ export default class CubicModelAsset extends SupCore.data.base.Asset {
     });
   }
 
-  computeGlobalMatrix(node: Node) {
-    let matrix = new THREE.Matrix4().compose(<THREE.Vector3>node.position, <THREE.Quaternion>node.orientation, <THREE.Vector3>node.scale);
+  computeGlobalMatrix(node: Node, includeShapeOffset=false) {
+    let defaultScale = new THREE.Vector3(1, 1, 1);
+    let matrix = new THREE.Matrix4().compose(<THREE.Vector3>node.position, <THREE.Quaternion>node.orientation, defaultScale);
 
     let parentNode = this.nodes.parentNodesById[node.id];
-    if (parentNode != null) {
-      let parentGlobalMatrix = this.computeGlobalMatrix(parentNode);
-      matrix.multiplyMatrices(parentGlobalMatrix, matrix);
+    let parentMatrix = new THREE.Matrix4();
+    let parentPosition  = new THREE.Vector3();
+    let parentOffset = new THREE.Vector3();
+    while (parentNode != null) {
+      parentPosition.set(parentNode.position.x,parentNode.position.y,parentNode.position.z);
+      parentOffset.set(parentNode.shape.offset.x, parentNode.shape.offset.y, parentNode.shape.offset.z);
+      parentOffset.applyQuaternion(<THREE.Quaternion>parentNode.orientation);
+      parentPosition.add(parentOffset);
+      parentMatrix.identity().compose(parentPosition, <THREE.Quaternion>parentNode.orientation, defaultScale);
+      matrix.multiplyMatrices(parentMatrix, matrix);
+      parentNode = this.nodes.parentNodesById[parentNode.id];
     }
     return matrix;
   }
 
   applyGlobalMatrix(node: Node, matrix: THREE.Matrix4) {
+    let parentGlobalMatrix = new THREE.Matrix4();
+
     let parentNode = this.nodes.parentNodesById[node.id];
-    if (parentNode != null) {
-      let parentGlobalMatrix = this.computeGlobalMatrix(parentNode);
-      matrix.multiplyMatrices(new THREE.Matrix4().getInverse(parentGlobalMatrix), matrix);
+    let parentMatrix = new THREE.Matrix4();
+    let defaultScale = new THREE.Vector3(1, 1, 1);
+    let parentPosition  = new THREE.Vector3();
+    let parentOffset = new THREE.Vector3();
+    while (parentNode != null) {
+      parentPosition.set(parentNode.position.x,parentNode.position.y,parentNode.position.z);
+      parentOffset.set(parentNode.shape.offset.x, parentNode.shape.offset.y, parentNode.shape.offset.z);
+      parentOffset.applyQuaternion(<THREE.Quaternion>parentNode.orientation);
+      parentPosition.add(parentOffset);
+      parentMatrix.identity().compose(parentPosition, <THREE.Quaternion>parentNode.orientation, defaultScale);
+      parentGlobalMatrix.multiplyMatrices(parentMatrix, parentGlobalMatrix);
+      parentNode = this.nodes.parentNodesById[parentNode.id];
     }
+
+    matrix.multiplyMatrices(parentGlobalMatrix.getInverse(parentGlobalMatrix), matrix);
 
     let position = new THREE.Vector3();
     let orientation = new THREE.Quaternion();
-    let scale = new THREE.Vector3();
-    matrix.decompose(position, orientation, scale);
-    node.position = { x: position.x, y: position.y, z: position.z };
-    node.orientation = { x: orientation.x, y: orientation.y, z: orientation.z, w: orientation.w };
-    node.scale = { x: scale.x, y: scale.y, z: scale.z };
+    matrix.decompose(position, orientation, defaultScale);
+    node.position.x = position.x;
+    node.position.y = position.y;
+    node.position.z = position.z;
+    node.orientation.x = orientation.x;
+    node.orientation.y = orientation.y;
+    node.orientation.z = orientation.z;
+    node.orientation.w = orientation.w;
   }
 
   client_moveNode(id: string, parentId: string, index: number) {
