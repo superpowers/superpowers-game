@@ -45,9 +45,9 @@ var entriesSubscriber = {
     entries.walk((entry) => {
       if (entry.type !== "script") return;
 
-      var scriptName = `${data.projectClient.entries.getPathFromId(entry.id)}.ts`;
-      data.fileNames.push(scriptName);
-      data.fileNamesByScriptId[entry.id] = scriptName;
+      let fileName = `${data.projectClient.entries.getPathFromId(entry.id)}.ts`;
+      data.fileNames.push(fileName);
+      data.fileNamesByScriptId[entry.id] = fileName;
       data.projectClient.subAsset(entry.id, "script", scriptSubscriber);
     })
   },
@@ -65,9 +65,6 @@ var entriesSubscriber = {
     });
     data.fileNamesByScriptId[newEntry.id] = fileName;
     data.projectClient.subAsset(newEntry.id, "script", scriptSubscriber);
-    
-    data.typescriptWorker.postMessage({ type: "addFile", fileName, index: data.fileNames.indexOf(fileName), file });
-    scheduleErrorCheck();
   },
 
   onEntryMoved: (id: string, parentId: string, index: number) => {
