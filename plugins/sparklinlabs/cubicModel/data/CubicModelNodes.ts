@@ -41,16 +41,6 @@ export default class CubicModelNodes extends SupCore.data.base.TreeById {
       }
     },
 
-    scale: {
-      mutable: true,
-      type: "hash",
-      properties: {
-        x: { type: "number", mutable: true },
-        y: { type: "number", mutable: true },
-        z: { type: "number", mutable: true },
-      }
-    },
-
     shape: {
       type: "hash",
       properties: {
