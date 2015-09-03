@@ -194,7 +194,7 @@ export default class BehaviorEditor {
       }
 
       case "string": {
-        let propertyField = <HTMLInputElement>propertySetting.valueCell.querySelector(".");
+        let propertyField = <HTMLInputElement>propertySetting.valueCell.querySelector("input[type=text]");
         if (propertyField == null) {
           propertySetting.valueCell.innerHTML = "";
           propertyField = SupClient.table.appendTextField(propertySetting.valueCell, "");
