@@ -43,6 +43,7 @@ declare module Sup {
       cross(v: Vector3): Vector3;
       dot(v: Vector3): number;
       normalize(): Vector3;
+      negate(): Vector3;
       lerp(v: Vector3, t: number): Vector3;
       rotate(q : Quaternion): Vector3;
       length(): number;
@@ -70,6 +71,17 @@ declare module Sup {
       slerp(q: Quaternion, t: number): Quaternion;
     }
 
+    class Plane {
+      constructor();
+      constructor(normal: Vector3, distance: number);
+      setFromDistance(normal: Vector3, distance: number): Plane;
+      setFromPoint(normal: Vector3, point: Vector3): Plane;
+      getNormal(): Vector3;
+      getDistance(): number;
+      distanceToPoint(point: Vector3): number;
+      projectPoint(point: Vector3): Vector3;
+    }
+
     interface RaycastResult {
       actor: Sup.Actor;
       distance: number;
@@ -86,6 +98,7 @@ declare module Sup {
       setFromCamera(camera: Sup.Camera, position: { x: number; y: number; }): Ray;
       intersectActor(actor: Sup.Actor, recursive?: boolean): RaycastResult[];
       intersectActors(actors: Sup.Actor[]): RaycastResult[];
+      intersectPlane(plane: Plane): { distance: number; point: number; };
     }
   }
 }

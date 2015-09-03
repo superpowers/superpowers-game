@@ -7,17 +7,17 @@ module Sup {
 
   export module Math {
 
-    export function clamp(v, min, max) { return window.Math.max(min, window.Math.min(max, v)); }
+    export function clamp(v: number, min: number, max: number) { return window.Math.max(min, window.Math.min(max, v)); }
 
-    export function lerp(a, b, v) { return a + (b - a) * v; }
+    export function lerp(a: number, b: number, v: number) { return a + (b - a) * v; }
 
-    export function lerpAngle(a, b, v) {
+    export function lerpAngle(a: number, b: number, v: number) {
       a = wrapAngle(a);
       b = wrapAngle(b);
       return a + wrapAngle(b - a) * v;
     }
 
-    export function wrapAngle(a) {
+    export function wrapAngle(a: number) {
       a %= (window.Math.PI * 2);
       if (a < -window.Math.PI) a += window.Math.PI * 2;
       else if (a > window.Math.PI) a -= window.Math.PI * 2;
@@ -25,12 +25,12 @@ module Sup {
     }
 
     export module Random {
-      export function integer(min, max) { return window.Math.floor(window.Math.random() * (max + 1 - min)) + min; }
-      export function sample(collection) { return collection[integer(0, collection.length - 1)]; }
+      export function integer(min: number, max: number) { return window.Math.floor(window.Math.random() * (max + 1 - min)) + min; }
+      export function sample<T>(collection: T[]) { return collection[integer(0, collection.length - 1)]; }
     }
 
-    export function toRadians(degrees) { return degrees * degToRad; }
-    export function toDegrees(radians) { return radians * radToDeg; }
+    export function toRadians(degrees: number) { return degrees * degToRad; }
+    export function toDegrees(radians: number) { return radians * radToDeg; }
 
     export class Vector3 {
       static forward() { return new Vector3( 0,  0,  1); }
@@ -45,41 +45,41 @@ module Sup {
       y: number;
       z: number;
 
-      constructor(x, y, z) {
+      constructor(x?: number, y?: number, z?: number) {
         if (x == null) x = 0;
         this.set(x, y, z);
       }
 
-      set(x, y, z) {
+      set(x: number, y?: number, z?: number) {
         this.x = x;
         this.y = (y != null) ? y : x;
         this.z = (z != null) ? z : x;
         return this;
       }
-      copy(v) { this.x = v.x; this.y = v.y; this.z = v.z; return this; }
+      copy(v: Vector3) { this.x = v.x; this.y = v.y; this.z = v.z; return this; }
       clone() { return new Vector3(this.x, this.y, this.z); }
 
-      add(x, y, z) {
+      add(x: number|Vector3, y?: number, z?: number) {
         if (y == null && z == null) {
-          let v = x;
+          let v = <Vector3>x;
           this.x += v.x; this.y += v.y; this.z += v.z;
         } else {
-          this.x += x; this.y += y; this.z += z;
+          this.x += <number>x; this.y += y; this.z += z;
         }
         return this;
       }
-      subtract(x, y, z) {
+      subtract(x: number|Vector3, y?: number, z?: number) {
         if (y == null && z == null) {
-          let v = x;
+          let v = <Vector3>x;
           this.x -= v.x; this.y -= v.y; this.z -= v.z;
         } else {
-          this.x -= x; this.y -= y; this.z -= z;
+          this.x -= <number>x; this.y -= y; this.z -= z;
         }
         return this;
       }
-      multiplyScalar(m) { this.x *= m; this.y *= m; this.z *= m; return this; }
+      multiplyScalar(m: number) { this.x *= m; this.y *= m; this.z *= m; return this; }
 
-      cross(v) {
+      cross(v: Vector3) {
         let x = this.x;
         let y = this.y;
         let z = this.z;
@@ -90,22 +90,26 @@ module Sup {
         return this;
       }
 
-      dot(v) { return this.x * v.x + this.y * v.y + this.z * v.z; }
+      dot(v: Vector3) { return this.x * v.x + this.y * v.y + this.z * v.z; }
 
       normalize() {
         let length = this.length()
         this.x /= length; this.y /= length; this.z /= length;
         return this;
       }
+      negate() {
+        this.x *= -1; this.y *= -1; this.z *= -1;
+        return this;
+      }
 
-      lerp(v, t) {
+      lerp(v: Vector3, t: number) {
         this.x = this.x * (1 - t) + v.x * t;
         this.y = this.y * (1 - t) + v.y * t;
         this.z = this.z * (1 - t) + v.z * t;
         return this;
       }
 
-      rotate(q) {
+      rotate(q: Quaternion) {
         let qx = q.x;
         let qy = q.y;
         let qz = q.z;
@@ -123,13 +127,13 @@ module Sup {
       }
 
       length() { return window.Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z); }
-      distanceTo(v) { return v.clone().subtract(this).length(); }
-      angleTo(v) {
+      distanceTo(v: Vector3) { return v.clone().subtract(this).length(); }
+      angleTo(v: Vector3) {
         let theta = this.dot( v ) / ( this.length() * v.length() );
 		    return window.Math.acos( Math.clamp( theta, - 1, 1 ) );
       }
 
-      unproject(camera) {
+      unproject(camera: Sup.Camera) {
         tmpVector3.set(this.x, this.y, this.z);
         tmpVector3.unproject(camera.__inner.threeCamera);
         this.set(tmpVector3.x, tmpVector3.y, tmpVector3.z);
@@ -143,18 +147,18 @@ module Sup {
       z: number;
       w: number;
 
-      constructor(x, y, z, w) {
+      constructor(x: number, y: number, z: number, w: number) {
         this.x = (x) ? x : 0;
         this.y = (y) ? y : 0;
         this.z = (z) ? z : 0;
         this.w = (w) ? w : 1;
       }
 
-      set(x, y, z, w) { this.x = x; this.y = y; this.z = z; this.w = w; return this; }
-      copy(q) { this.x = q.x; this.y = q.y; this.z = q.z; this.w = q.w; return this; }
+      set(x: number, y: number, z: number, w: number) { this.x = x; this.y = y; this.z = z; this.w = w; return this; }
+      copy(q: Quaternion) { this.x = q.x; this.y = q.y; this.z = q.z; this.w = q.w; return this; }
       clone() { return new Quaternion(this.x, this.y, this.z, this.w); }
 
-      setFromAxisAngle(axis, angle) {
+      setFromAxisAngle(axis: Vector3, angle: number) {
         let s = window.Math.sin(angle / 2);
 
     		this.x = axis.x * s;
@@ -164,7 +168,7 @@ module Sup {
         return this;
       }
 
-      setFromYawPitchRoll(yaw, pitch, roll) {
+      setFromYawPitchRoll(yaw: number, pitch: number, roll: number) {
         let c1 = window.Math.cos(pitch / 2);
         let c2 = window.Math.cos(yaw / 2);
         let c3 = window.Math.cos(roll / 2);
@@ -179,7 +183,7 @@ module Sup {
         return this;
       }
 
-      multiplyQuaternions(a, b) {
+      multiplyQuaternions(a: Quaternion, b: Quaternion) {
         let qax = a.x;
         let qay = a.y;
         let qaz = a.z;
@@ -198,9 +202,9 @@ module Sup {
         return this;
       }
 
-      multiply(q) { return this.multiplyQuaternions(this, q); }
+      multiply(q: Quaternion) { return this.multiplyQuaternions(this, q); }
 
-      slerp(q, t) {
+      slerp(q: Quaternion, t: number) {
         // Adapted from Three.js
         if (t === 0) return this;
         if (t === 1) return this.copy(q);
@@ -252,6 +256,34 @@ module Sup {
       }
     }
 
+    export class Plane {
+      _normal = new Vector3();
+      _distance: number;
+
+      constructor(normal?: Vector3, distance?: number) {
+        this.setFromDistance(normal, distance);
+      }
+      setFromDistance(normal: Vector3, distance: number) {
+        if (normal != null) this._normal.copy(normal).normalize();
+        if (distance != null) this._distance = distance;
+        return this;
+      }
+      setFromPoint(normal: Vector3, point: Vector3) {
+        this._normal.copy(normal).normalize();
+        this._distance = point.dot(this._normal);
+        return this;
+      }
+      getNormal() { return this._normal.clone(); }
+      getDistance() { return this._distance; }
+      distanceToPoint(point: Vector3) { return this._normal.dot(point) + this._distance; }
+      projectPoint(point: Vector3) {
+        return this._normal.clone()
+          .multiplyScalar(this.distanceToPoint(point))
+          .subtract(point)
+          .negate();
+      }
+    }
+
     interface RaycastResult {
       actor: Sup.Actor;
       distance: number;
@@ -264,13 +296,13 @@ module Sup {
 
       constructor(origin?: Vector3, direction?: Vector3) {
         if (origin != null) this._raycaster.ray.origin.copy(origin);
-        if (direction != null) this._raycaster.ray.direction.copy(direction);
+        if (direction != null) this._raycaster.ray.direction.copy(direction).normalize();
       }
 
       setOrigin(origin: Vector3) { this._raycaster.ray.origin.copy(origin); return this; }
       getOrigin() { return new Vector3(this._raycaster.ray.origin.x, this._raycaster.ray.origin.y, this._raycaster.ray.origin.z); }
 
-      setDirection(direction: Vector3) { this._raycaster.ray.direction.copy(direction); return this; }
+      setDirection(direction: Vector3) { this._raycaster.ray.direction.copy(direction).normalize(); return this; }
       getDirection() { return new Vector3(this._raycaster.ray.direction.x, this._raycaster.ray.direction.y, this._raycaster.ray.direction.z); }
 
       setFromCamera(camera: Sup.Camera, position: { x: number; y: number; }) {
@@ -338,6 +370,23 @@ module Sup {
 
         results.sort((a, b) => { return a.distance - b.distance; });
         return results;
+      }
+
+      intersectPlane(plane: Plane) {
+        let distance: number;
+        let point = new Vector3(this._raycaster.ray.origin.x, this._raycaster.ray.origin.y, this._raycaster.ray.origin.z);
+
+        let denominator = plane.getNormal().dot(this._raycaster.ray.direction);
+        if (denominator === 0) { // normal and direction are perpendicular
+          if (plane.distanceToPoint(this._raycaster.ray.origin) === 0) return { distance: 0, point };
+          else return null;
+        }
+
+        distance = -(this._raycaster.ray.origin.dot(plane.getNormal()) + plane.getDistance()) / denominator;
+        if (distance < 0) return null;
+
+        point.add(this.getDirection().multiplyScalar(distance));
+        return { distance, point };
       }
     }
   }
