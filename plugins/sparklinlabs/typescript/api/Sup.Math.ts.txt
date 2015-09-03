@@ -248,7 +248,7 @@ module Sup {
       }
     }
 
-    interface RayResult {
+    interface RaycastResult {
       actor: Sup.Actor;
       distance: number;
       point: Vector3;
@@ -286,7 +286,7 @@ module Sup {
         }
       }
 
-      _raycast(actor: Sup.Actor, results: RayResult[]) {
+      _raycast(actor: Sup.Actor, results: RaycastResult[]) {
         let result: any;
 
         let walk = (object: any) => {
@@ -314,7 +314,7 @@ module Sup {
       }
 
       intersectActor(actor: Sup.Actor, recursive=false) {
-        let results = <RayResult[]>[];
+        let results = <RaycastResult[]>[];
 
         let walk = (childActor: Sup.Actor) => {
           this._raycast(childActor, results);
@@ -328,7 +328,7 @@ module Sup {
       }
 
       intersectActors(actors: Sup.Actor[]) {
-        let results = <RayResult[]>[];
+        let results = <RaycastResult[]>[];
 
         for (let actor of actors) this._raycast(actor, results);
 

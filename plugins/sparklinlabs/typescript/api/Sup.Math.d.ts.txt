@@ -68,7 +68,7 @@ declare module Sup {
       slerp(q: Quaternion, t: number): Quaternion;
     }
 
-    interface RayResult {
+    interface RaycastResult {
       actor: Sup.Actor;
       distance: number;
       point: Vector3;
@@ -82,8 +82,8 @@ declare module Sup {
       setDirection(direction: Vector3): Ray;
       getDirection(): Vector3;
       setFromCamera(camera: Sup.Camera, position: { x: number; y: number; }): Ray;
-      intersectActor(actor: Sup.Actor, recursive?: boolean): RayResult[];
-      intersectActors(actors: Sup.Actor[]): RayResult[];
+      intersectActor(actor: Sup.Actor, recursive?: boolean): RaycastResult[];
+      intersectActors(actors: Sup.Actor[]): RaycastResult[];
     }
   }
 }
