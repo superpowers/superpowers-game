@@ -27,9 +27,11 @@ declare module Sup {
       y: number;
       z: number;
 
-      constructor(x?: number, y?: number, z?: number);
+      constructor();
+      constructor(x: number, y: number, z: number);
+      constructor(xyz: number);
       set(x: number, y: number, z: number): Vector3;
-      copy(v: Vector3): Vector3;
+      set(xyz: number): Vector3;
       copy(v: {x: number; y: number; z: number;}): Vector3;
       clone(): Vector3;
 

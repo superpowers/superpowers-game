@@ -46,12 +46,16 @@ module Sup {
       z: number;
 
       constructor(x, y, z) {
-        this.x = (x) ? x : 0;
-        this.y = (y) ? y : 0;
-        this.z = (z) ? z : 0;
+        if (x == null) x = 0;
+        this.set(x, y, z);
       }
 
-      set(x, y, z) { this.x = x; this.y = y; this.z = z; return this; }
+      set(x, y, z) {
+        this.x = x;
+        this.y = (y != null) ? y : x;
+        this.z = (z != null) ? z : x;
+        return this;
+      }
       copy(v) { this.x = v.x; this.y = v.y; this.z = v.z; return this; }
       clone() { return new Vector3(this.x, this.y, this.z); }
 
