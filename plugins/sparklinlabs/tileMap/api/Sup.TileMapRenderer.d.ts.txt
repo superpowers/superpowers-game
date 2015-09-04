@@ -1,10 +1,10 @@
 declare module Sup {
   class TileMapRenderer extends ActorComponent {
-    constructor(actor: Actor, asset?: TileMap);
+    constructor(actor: Actor, pathOrAsset?: string|TileMap);
     getTileMap(): TileMap;
-    setTileMap(tileMap: TileMap, replaceTileSet?: boolean); TileMapRenderer;
+    setTileMap(pathOrAsset?: string|TileMap, replaceTileSet?: boolean); TileMapRenderer;
     getTileSet(): TileSet;
-    setTileSet(tileSet: TileSet): TileMapRenderer;
+    setTileSet(pathOrAsset?: string|TileSet): TileMapRenderer;
     getLayerOpacity(layer: number): number;
     setLayerOpacity(layer: number, opacity: number): TileMapRenderer;
   }

@@ -1,9 +1,9 @@
 declare module Sup {
   class SpriteRenderer extends ActorComponent {
-    constructor(actor: Actor, asset?: Sprite, materialType?: SpriteRenderer.MaterialType );
+    constructor(actor: Actor, pathOrAsset?: string|Sprite, materialType?: SpriteRenderer.MaterialType );
 
     getSprite(): Sprite;
-    setSprite(asset: Sprite, materialType?: SpriteRenderer.MaterialType): SpriteRenderer;
+    setSprite(pathOrAsset: string|Sprite, materialType?: SpriteRenderer.MaterialType): SpriteRenderer;
     getMaterialType(): SpriteRenderer.MaterialType;
     setHorizontalFlip(horizontalFlip: boolean): SpriteRenderer;
     getHorizontalFlip(): boolean;

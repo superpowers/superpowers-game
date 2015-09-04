@@ -1,9 +1,9 @@
 declare module Sup {
   class ModelRenderer extends ActorComponent {
-    constructor(actor: Actor, asset?: Model, materialType?: ModelRenderer.MaterialType);
+    constructor(actor: Actor, pathOrAsset?: string|Model, materialType?: ModelRenderer.MaterialType);
 
     getModel(): Model;
-    setModel(asset: Model, materialType?: ModelRenderer.MaterialType): ModelRenderer;
+    setModel(pathOrAsset?: string|Model, materialType?: ModelRenderer.MaterialType): ModelRenderer;
     getMaterialType(): ModelRenderer.MaterialType;
     getOpacity(): number;
     setOpacity(opacity: number): ModelRenderer;

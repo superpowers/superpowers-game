@@ -1,7 +1,7 @@
 declare module Sup {
   module Audio {
     class SoundInstance {
-      constructor(asset: Sound);
+      constructor(pathOrAsset: string|Sound);
       play(): SoundInstance;
       stop(): SoundInstance;
       pause(): SoundInstance;

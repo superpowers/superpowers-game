@@ -2,12 +2,13 @@ module Sup {
   let materialTypes = ["basic", "phong"];
 
   export class SpriteRenderer extends Sup.ActorComponent {
-    constructor(actor, asset, materialIndex) {
+    constructor(actor: Actor, pathOrAsset: string|Sprite, materialIndex: number) {
       super(actor);
       this.__inner = new SupEngine.componentClasses.SpriteRenderer(this.actor.__inner);
-      if (asset != null) {
-        this.__inner.opacity = asset.__inner.opacity;
-        this.setSprite(asset, materialIndex);
+      if (pathOrAsset != null) {
+        let spriteAsset = (typeof pathOrAsset === "string") ? get(pathOrAsset, Sprite) : <Sprite>pathOrAsset; 
+        this.__inner.opacity = spriteAsset.__inner.opacity;
+        this.setSprite(spriteAsset, materialIndex);
       }
       this.__inner.__outer = this;
       this.actor.spriteRenderer = this;
@@ -18,10 +19,12 @@ module Sup {
     }
 
     getSprite() { return (this.__inner.asset != null) ? this.__inner.asset.__outer : null; }
-    setSprite(asset, materialIndex) {
+    setSprite(pathOrAsset: string|Sprite, materialIndex: number) {
       let material: string;
       if (materialIndex != null) material = materialTypes[materialIndex];
-      this.__inner.setSprite((asset != null) ? asset.__inner : null, material);
+
+      let spriteAsset = (typeof pathOrAsset === "string") ? get(pathOrAsset, Sprite) : <Sprite>pathOrAsset;
+      this.__inner.setSprite((spriteAsset != null) ? spriteAsset.__inner : null, material);
       return this;
     }
     getMaterialType() { return materialTypes.indexOf(this.__inner.materialType); }

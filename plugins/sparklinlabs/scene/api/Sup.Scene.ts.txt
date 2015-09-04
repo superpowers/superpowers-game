@@ -1,28 +1,17 @@
 module Sup {
 
-  var tmpVector3 = new SupEngine.THREE.Vector3();
-  var tmpQuaternion = new SupEngine.THREE.Quaternion();
+  let tmpVector3 = new SupEngine.THREE.Vector3();
+  let tmpQuaternion = new SupEngine.THREE.Quaternion();
 
   export class Scene extends Asset {}
 
-  export function loadScene(scenePathOrAsset) {
+  export function loadScene(pathOrAsset) {
     player.gameInstance.destroyAllActors();
-    appendScene(scenePathOrAsset);
+    appendScene(pathOrAsset);
   }
 
-  export function appendScene(scenePathOrAsset, sceneParentActor=null, setupActors=true): any {
-    var sceneAsset: Scene;
-
-    if (typeof scenePathOrAsset === 'string') {
-      var entry = player.entriesByPath[scenePathOrAsset];
-      if (entry == null) throw new Error(`Invalid asset path: ${scenePathOrAsset}`);
-
-      var outerAsset = player.getOuterAsset(entry.id);
-      if (outerAsset.type != 'scene') throw new Error(`Invalid asset type: got ${outerAsset.type}, expected scene`);
-      sceneAsset = <Scene>outerAsset;
-    } else {
-      sceneAsset = <Scene>scenePathOrAsset;
-    }
+  export function appendScene(pathOrAsset: string|Scene, sceneParentActor=null, setupActors=true): any {
+    let sceneAsset = (typeof pathOrAsset === "string") ? get(pathOrAsset, Scene) : <Scene>pathOrAsset;
 
     let actors: Actor[] = [];
     let allComponents = [];

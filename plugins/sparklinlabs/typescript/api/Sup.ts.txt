@@ -28,7 +28,7 @@ module Sup {
 
   export class Folder extends Asset {}
 
-  export function get(path, arg1, arg2) {
+  export function get(path: string, arg1, arg2?) {
     let type = arg1;
     let options = (arg2 !== undefined) ? arg2 : { ignoreMissing: false };
 

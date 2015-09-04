@@ -2,12 +2,13 @@ module Sup {
   let materialTypes = ["basic", "phong"];
 
   export class ModelRenderer extends Sup.ActorComponent {
-    constructor(actor, asset, materialIndex) {
+    constructor(actor: Actor, pathOrAsset: string|Model, materialIndex: number) {
       super(actor);
       this.__inner = new SupEngine.componentClasses.ModelRenderer(this.actor.__inner);
-      if (asset != null) {
-        this.__inner.opacity = asset.__inner.opacity;
-        this.setModel(asset, materialIndex);
+      if (pathOrAsset != null) {
+        let modelAsset = (typeof pathOrAsset === "string") ? get(pathOrAsset, Model) : <Model>pathOrAsset; 
+        this.__inner.opacity = modelAsset.__inner.opacity;
+        this.setModel(modelAsset, materialIndex);
       }
       this.__inner.__outer = this;
       this.actor.modelRenderer = this;
@@ -18,10 +19,12 @@ module Sup {
     }
 
     getModel() { return this.__inner.asset.__outer }
-    setModel(asset, materialIndex) {
+    setModel(pathOrAsset: string|Model, materialIndex: number) {
       let material: string;
       if (materialIndex != null) material = materialTypes[materialIndex];
-      this.__inner.setModel(asset.__inner, material);
+      
+      let modelAsset = (typeof pathOrAsset === "string") ? get(pathOrAsset, Model) : <Model>pathOrAsset;
+      this.__inner.setModel((modelAsset != null) ? modelAsset.__inner : null, material);
       return this;
     }
     getMaterialType() { return materialTypes.indexOf(this.__inner.materialType); }
