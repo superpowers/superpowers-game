@@ -85,6 +85,30 @@ onmessage = (event: MessageEvent) => {
       if (info != null) (<any>postMessage)({ type: "quickInfo", text: ts.displayPartsToString(info.displayParts) });
       break;
 
+    case "getParameterHintAt":
+      let texts: { prefix: string; parameters: string[]; suffix: string; }[];
+      let selectedItemIndex: number;
+      let selectedArgumentIndex: number;
+
+      let help = service.getSignatureHelpItems(event.data.name, event.data.start);
+      if (help != null) {
+        texts = [];
+        selectedItemIndex = help.selectedItemIndex;
+        selectedArgumentIndex = help.argumentIndex;
+
+        for (let item of help.items) {
+          let prefix = ts.displayPartsToString(item.prefixDisplayParts);
+          let parameters: string[] = [];
+          for (let parameter of item.parameters) parameters.push(ts.displayPartsToString(parameter.displayParts));
+          let suffix = ts.displayPartsToString(item.suffixDisplayParts);
+
+          texts.push({ prefix, parameters, suffix });
+        }
+      }
+
+      (<any>postMessage)({ type: "parameterHint", texts, selectedItemIndex, selectedArgumentIndex });
+      break;
+
     case "getDefinitionAt":
       let definitions = service.getDefinitionAtPosition(event.data.name, event.data.start);
       if (definitions == null) return;

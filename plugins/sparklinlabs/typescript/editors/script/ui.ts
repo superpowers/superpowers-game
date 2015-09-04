@@ -5,7 +5,8 @@ let PerfectResize = require("perfect-resize");
 
 let ui: {
   editor?: TextEditorWidget;
-  
+  previousLine?: number;
+
   errorPane?: HTMLDivElement;
   errorPaneStatus?: HTMLDivElement;
   errorPaneInfo?: HTMLDivElement;
@@ -13,10 +14,16 @@ let ui: {
 
   errorCheckTimeout?: number;
   completionTimeout?: number;
-  
+
   infoElement?: HTMLDivElement;
   infoPosition?: { line: number; ch: number; };
   infoTimeout?: number;
+
+  parameterElement?: HTMLDivElement;
+  parameterTimeout?: number;
+  signatureTexts?: { prefix: string; parameters: string[]; suffix: string; }[];
+  selectedSignatureIndex?: number;
+  selectedArgumentIndex?: number;
 } = {};
 export default ui;
 
@@ -51,8 +58,14 @@ export function setupEditor(clientId: number) {
   ui.editor = new TextEditorWidget(data.projectClient, clientId, textArea, {
     mode: "text/typescript",
     extraKeys: {
-      "Ctrl-Space": "autocomplete",
-      "Cmd-Space": "autocomplete",
+      "Ctrl-Space": () => {
+        scheduleParameterHint();
+        scheduleCompletion();
+      },
+      "Cmd-Space": () => {
+        scheduleParameterHint();
+        scheduleCompletion();
+      },
       "Shift-Ctrl-F": () => { onGlobalSearch(); },
       "Shift-Cmd-F": () => { onGlobalSearch(); },
       "F8": () => {
@@ -75,9 +88,13 @@ export function setupEditor(clientId: number) {
     sendOperationCallback: onSendOperation,
     saveCallback: onSaveText
   });
+  ui.previousLine = -1;
 
   (<any>ui.editor.codeMirrorInstance).on("keyup", (instance: any, event: any) => {
     clearInfoPopup();
+
+    // "("" character triggers the parameter hint
+    if (event.keyCode === 53 || (ui.parameterElement.parentElement != null && event.keyCode !== 38 && event.keyCode !== 40)) scheduleParameterHint();
 
     // Ignore Ctrl, Cmd, Escape, Return, Tab, arrow keys, F8
     if (event.ctrlKey || event.metaKey || [27, 9, 13, 37, 38, 39, 40, 119, 16].indexOf(event.keyCode) !== -1) return;
@@ -87,6 +104,13 @@ export function setupEditor(clientId: number) {
     if ((<any>ui.editor.codeMirrorInstance).state.completionActive != null && (<any>ui.editor.codeMirrorInstance).state.completionActive.active()) return;
     scheduleCompletion();
   });
+
+  (<any>ui.editor.codeMirrorInstance).on("cursorActivity", () => {
+    let currentLine = ui.editor.codeMirrorInstance.getDoc().getCursor().line;
+    if (Math.abs(currentLine - ui.previousLine) >= 1) clearParameterPopup();
+    else if (ui.parameterElement.parentElement != null) scheduleParameterHint();
+    ui.previousLine = currentLine;
+  })
 }
 
 let localVersionNumber = 0;
@@ -156,7 +180,7 @@ export function refreshErrors(errors: Array<{file: string; position: {line: numb
   // Display new ones
   for (let error of errors) {
     let errorRow = document.createElement("tr");
-    
+
     (<any>errorRow.dataset).line = error.position.line;
     (<any>errorRow.dataset).character = error.position.character;
 
@@ -216,7 +240,7 @@ function onErrorTBodyClick(event: MouseEvent) {
 
   let assetId: string = (<any>target.dataset).assetId;
   if (assetId == null) return;
-  
+
   let line: string = (<any>target.dataset).line;
   let character: string = (<any>target.dataset).character;
 
@@ -248,6 +272,8 @@ document.addEventListener("mouseout", (event) => { clearInfoPopup(); });
 
 let previousMousePosition = { x: -1, y: -1 };
 document.addEventListener("mousemove", (event) => {
+  if (ui.editor == null) return;
+
   // On some systems, Chrome (at least v43) generates
   // spurious "mousemove" events every second or so.
   if (event.clientX === previousMousePosition.x && event.clientY === previousMousePosition.y) return;
@@ -278,8 +304,117 @@ function clearInfoPopup() {
   if (ui.infoTimeout != null) clearTimeout(ui.infoTimeout);
 }
 
-// Completion
-(<any>CodeMirror).commands.autocomplete = (cm: CodeMirror.Editor) => { scheduleCompletion(); };
+// Parameter hint popup
+ui.parameterElement = <HTMLDivElement>document.querySelector(".popup-parameter");
+ui.parameterElement.parentElement.removeChild(ui.parameterElement);
+
+let parameterPopupKeyMap = {
+  "Esc": () => { clearParameterPopup(); },
+  "Up": () => { updateParameterHint(ui.selectedSignatureIndex - 1); },
+  "Down": () => { updateParameterHint(ui.selectedSignatureIndex + 1); },
+  "Enter": () => {
+    let selectedSignature = ui.signatureTexts[ui.selectedSignatureIndex];
+    if (selectedSignature.parameters.length === 0) return;
+
+    let cursorPosition = ui.editor.codeMirrorInstance.getDoc().getCursor();
+    let text = "";
+
+    for (let parameterIndex = 0; parameterIndex < selectedSignature.parameters.length; parameterIndex++) {
+      if (parameterIndex !== 0) text += ", ";
+      text += selectedSignature.parameters[parameterIndex];
+    }
+    ui.editor.codeMirrorInstance.getDoc().replaceRange(text, cursorPosition, null);
+    let endSelection = { line: cursorPosition.line, ch: cursorPosition.ch + selectedSignature.parameters[0].length };
+    ui.editor.codeMirrorInstance.getDoc().setSelection(cursorPosition, endSelection);
+  },
+  "Tab": () => {
+    let selectedSignature = ui.signatureTexts[ui.selectedSignatureIndex];
+    if (selectedSignature.parameters.length === 0) return;
+    if (ui.selectedArgumentIndex === selectedSignature.parameters.length - 1) return;
+
+    let cursorPosition = ui.editor.codeMirrorInstance.getDoc().getCursor();
+
+    cursorPosition.ch += 2;
+    let endSelection = { line: cursorPosition.line, ch: cursorPosition.ch + selectedSignature.parameters[ui.selectedArgumentIndex + 1].length };
+    ui.editor.codeMirrorInstance.getDoc().setSelection(cursorPosition, endSelection);
+  }
+}
+
+export function showParameterPopup(texts: { prefix: string; parameters: string[]; suffix: string; }[], selectedItemIndex: number, selectedArgumentIndex: number) {
+  ui.signatureTexts = texts;
+  ui.selectedArgumentIndex = selectedArgumentIndex;
+  updateParameterHint(selectedItemIndex)
+
+  let position = ui.editor.codeMirrorInstance.getDoc().getCursor();
+  let coordinates  = ui.editor.codeMirrorInstance.cursorCoords(position, "page");
+
+  ui.parameterElement.style.top = `${Math.round(coordinates.top - 30)}px`;
+  ui.parameterElement.style.left = `${coordinates.left}px`;
+  document.body.appendChild(ui.parameterElement);
+  ui.editor.codeMirrorInstance.addKeyMap(parameterPopupKeyMap);
+}
+
+function updateParameterHint(index: number) {
+  if (index < 0) index = ui.signatureTexts.length - 1;
+  else if (index >= ui.signatureTexts.length) index = 0;
+
+  ui.selectedSignatureIndex = index;
+  ui.parameterElement.querySelector(".item").textContent = `(${index + 1}/${ui.signatureTexts.length})`;
+
+  let text = ui.signatureTexts[index];
+  let prefix = text.prefix;
+  let parameter = "";
+  let suffix = "";
+
+  for (let parameterIndex = 0; parameterIndex < text.parameters.length; parameterIndex++) {
+    let parameterItem = text.parameters[parameterIndex];
+
+    if (parameterIndex < ui.selectedArgumentIndex) {
+      if (parameterIndex !== 0) prefix += ", ";
+      prefix += parameterItem;
+
+    } else if (parameterIndex === ui.selectedArgumentIndex) {
+      if (parameterIndex !== 0) prefix += ", ";
+      parameter = parameterItem;
+
+    } else {
+      if (parameterIndex !== 0) suffix += ", ";
+      suffix += parameterItem;
+    }
+
+  }
+  ui.parameterElement.querySelector(".prefix").textContent = prefix;
+  ui.parameterElement.querySelector(".parameter").textContent = parameter;
+  suffix += text.suffix;
+  ui.parameterElement.querySelector(".suffix").textContent = suffix;
+}
+
+export function clearParameterPopup() {
+  if (ui.parameterElement.parentElement != null) ui.parameterElement.parentElement.removeChild(ui.parameterElement);
+  ui.editor.codeMirrorInstance.removeKeyMap(parameterPopupKeyMap);
+}
+
+function scheduleParameterHint() {
+  if (ui.parameterTimeout != null) clearTimeout(ui.parameterTimeout);
+
+  ui.parameterTimeout = window.setTimeout(() => {
+    let cursor = ui.editor.codeMirrorInstance.getDoc().getCursor();
+    let token = ui.editor.codeMirrorInstance.getTokenAt(cursor);
+    if (token.string === ".") token.start = token.end;
+
+    let start = 0;
+    for (let i = 0; i < cursor.line; i++) start += ui.editor.codeMirrorInstance.getDoc().getLine(i).length + 1;
+    start += cursor.ch;
+
+    data.typescriptWorker.postMessage({
+      type: "getParameterHintAt",
+      name: data.fileNamesByScriptId[info.assetId],
+      start
+    });
+
+    ui.parameterTimeout = null;
+  }, 100);
+}
 
 function hint(instance: any, callback: any) {
   let cursor = ui.editor.codeMirrorInstance.getDoc().getCursor();

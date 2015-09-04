@@ -1,5 +1,5 @@
 import info from "./info";
-import ui, { setupEditor, refreshErrors } from "./ui";
+import ui, { setupEditor, refreshErrors, showParameterPopup, clearParameterPopup } from "./ui";
 
 import * as async from "async";
 import ScriptAsset from "../../data/ScriptAsset";
@@ -261,6 +261,11 @@ data.typescriptWorker.onmessage = (event: MessageEvent) => {
       }
       break;
 
+    case "parameterHint":
+      clearParameterPopup();
+      if (event.data.texts != null) showParameterPopup(event.data.texts, event.data.selectedItemIndex, event.data.selectedArgumentIndex);
+      break;
+
     case "definition":
       if (window.parent != null) {
         let entry = SupClient.findEntryByPath(data.projectClient.entries.pub, event.data.fileName);
@@ -277,6 +282,9 @@ function startErrorCheck() {
   hasScheduledErrorCheck = false;
   data.typescriptWorker.postMessage({ type: "checkForErrors" });
 }
+      activeCompletion = null;
+
+
 
 export function scheduleErrorCheck() {
   if (ui.errorCheckTimeout != null) clearTimeout(ui.errorCheckTimeout);
