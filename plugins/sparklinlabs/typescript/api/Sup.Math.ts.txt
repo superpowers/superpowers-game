@@ -305,9 +305,10 @@ module Sup {
       setDirection(direction: Vector3) { this._raycaster.ray.direction.copy(direction).normalize(); return this; }
       getDirection() { return new Vector3(this._raycaster.ray.direction.x, this._raycaster.ray.direction.y, this._raycaster.ray.direction.z); }
 
-      setFromCamera(camera: Sup.Camera, position: { x: number; y: number; }) {
+      setFromCamera(camera: Sup.Camera, screenPosition: { x: number; y: number; }) {
         let threeCamera = camera.__inner.threeCamera;
         let viewport = camera.__inner.viewport;
+        let position = { x: screenPosition.x, y: screenPosition.y };
         position.x -= viewport.width - 1 + viewport.x / viewport.width;
         position.x /= viewport.width;
         position.y += viewport.height - 1 + viewport.y / viewport.height;

@@ -95,7 +95,7 @@ declare module Sup {
       getOrigin(): Vector3;
       setDirection(direction: Vector3): Ray;
       getDirection(): Vector3;
-      setFromCamera(camera: Sup.Camera, position: { x: number; y: number; }): Ray;
+      setFromCamera(camera: Sup.Camera, screenPosition: { x: number; y: number; }): Ray;
       intersectActor(actor: Sup.Actor, recursive?: boolean): RaycastResult[];
       intersectActors(actors: Sup.Actor[]): RaycastResult[];
       intersectPlane(plane: Plane): { distance: number; point: number; };
