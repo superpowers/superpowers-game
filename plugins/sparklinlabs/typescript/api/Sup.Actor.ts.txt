@@ -372,7 +372,15 @@ module Sup {
       return behavior;
     }
 
-    getBehavior(type) { return this.__behaviors[type["name"]]; }
-  }
+    getBehavior(behaviorClass) {
+      let foundBehavior = this.__behaviors[behaviorClass["name"]];
+      if (foundBehavior != null) return foundBehavior;
 
+      for (let behaviorName in this.__behaviors) {
+        let behavior = this.__behaviors[behaviorName];
+        if (Object.getPrototypeOf(behavior) instanceof behaviorClass) return behavior;
+      }
+      return null;
+    }
+  }
 }
