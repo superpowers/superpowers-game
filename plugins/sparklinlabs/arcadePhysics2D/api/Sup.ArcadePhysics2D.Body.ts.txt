@@ -3,7 +3,7 @@ module Sup {
     export enum BodyType { Box, TileMap };
 
     export class Body extends ActorComponent {
-      constructor(actor, type, options) {
+      constructor(actor: Sup.Actor, type: BodyType, options) {
         super(actor);
 
         this.__inner = new SupEngine.componentClasses.ArcadeBody2D(actor.__inner);
@@ -20,13 +20,13 @@ module Sup {
         super.destroy();
       }
 
-      setMovable(movable) {
+      setMovable(movable: boolean) {
         this.__inner.movable = movable;
         return this;
       }
       getMovable() { return this.__inner.movable; }
 
-      setSize(width, height) {
+      setSize(width: number, height: number) {
         this.__inner.width = width;
         this.__inner.height = height;
         return this;
@@ -46,48 +46,85 @@ module Sup {
         return offset;
       }
 
-      warpPosition(position) { this.__inner.warpPosition(position); }
+      warpPosition(x: Sup.Math.Vector3|number, y?: number, z?: number) {
+        if (y == null && z == null) this.__inner.warpPosition(<Sup.Math.Vector3>x);
+        else this.__inner.warpPosition(new Sup.Math.Vector3(<number>x, y, z));
+        return this;
+      }
 
-      setVelocity(velocity) {
-        this.__inner.velocity.x = velocity.x;
-        this.__inner.velocity.y = velocity.y;
-        this.__inner.velocity.z = velocity.z;
+      setVelocity(x: Sup.Math.Vector3|number, yz?: number) {
+        if (yz == null) {
+          let velocity = <Sup.Math.Vector3>x;
+          this.__inner.velocity.x = velocity.x;
+          if (SupEngine.ArcadePhysics2D.plane === "XY") this.__inner.velocity.y = velocity.y;
+          else this.__inner.velocity.z = velocity.z;
+        } else {
+          this.__inner.velocity.x = <number>x;
+          if (SupEngine.ArcadePhysics2D.plane === "XY") this.__inner.velocity.y = yz;
+          else this.__inner.velocity.z = yz;
+        }
+        return this;
+      }
+      setVelocityX(x: number) {
+        this.__inner.velocity.x = x;
+        return this;
+      }
+      setVelocityY(y: number) {
+        if (SupEngine.ArcadePhysics2D.plane === "XZ") throw new Error("ArcadeBody2D.setVelocityY can't be used with 'XZ' plane");
+        this.__inner.velocity.y = y;
+        return this;
+      }
+      setVelocityZ(z: number) {
+        if (SupEngine.ArcadePhysics2D.plane === "XY") throw new Error("ArcadeBody2D.setVelocityZ can't be used with 'XY' plane");
+        this.__inner.velocity.z = z;
         return this;
       }
       getVelocity() { return new Sup.Math.Vector3(this.__inner.velocity.x, this.__inner.velocity.y, this.__inner.velocity.z) }
 
-      setVelocityMin(velocityMin) {
-        this.__inner.velocityMin.x = velocityMin.x;
-        this.__inner.velocityMin.y = velocityMin.y;
+      setVelocityMin(x: Sup.Math.Vector3|number, yz?: number) {
+        if (yz == null) {
+          let velocityMin = <Sup.Math.Vector3>x;
+          this.__inner.velocityMin.x = velocityMin.x;
+          if (SupEngine.ArcadePhysics2D.plane === "XY") this.__inner.velocityMin.y = velocityMin.y;
+          else this.__inner.velocityMin.z = velocityMin.z;
+        } else {
+          this.__inner.velocityMin.x = x;
+          if (SupEngine.ArcadePhysics2D.plane === "XY") this.__inner.velocityMin.y = yz;
+          else this.__inner.velocityMin.z = yz;
+        }
         return this;
       }
-      getVelocityMin() { return new Sup.Math.Vector3(this.__inner.velocityMin.x, this.__inner.velocityMin.y, 0) }
+      getVelocityMin() { return new Sup.Math.Vector3(this.__inner.velocityMin.x, this.__inner.velocityMin.y, this.__inner.velocityMin.z) }
 
-      setVelocityMax(velocityMax) {
-        this.__inner.velocityMax.x = velocityMax.x;
-        this.__inner.velocityMax.y = velocityMax.y;
+      setVelocityMax(x: Sup.Math.Vector3|number, yz?: number) {
+        if (yz == null) {
+          let velocityMax = <Sup.Math.Vector3>x;
+          this.__inner.velocityMax.x = velocityMax.x;
+          if (SupEngine.ArcadePhysics2D.plane === "XY") this.__inner.velocityMax.y = velocityMax.y;
+          else this.__inner.velocityMax.z = velocityMax.z;
+        } else {
+          this.__inner.velocityMax.x = x;
+          if (SupEngine.ArcadePhysics2D.plane === "XY") this.__inner.velocityMax.y = yz;
+          else this.__inner.velocityMax.z = yz;
+        }
         return this;
       }
-      getVelocityMax() { return new Sup.Math.Vector3(this.__inner.velocityMax.x, this.__inner.velocityMax.y, 0) }
+      getVelocityMax() { return new Sup.Math.Vector3(this.__inner.velocityMax.x, this.__inner.velocityMax.y, this.__inner.velocityMax.z) }
 
-      setVelocityMultiplier(velocityMultiplier) {
-        this.__inner.velocityMultiplier.x = velocityMultiplier.x;
-        this.__inner.velocityMultiplier.y = velocityMultiplier.y;
+      setVelocityMultiplier(x: Sup.Math.Vector3|number, yz?: number) {
+        if (yz == null) {
+          let velocityMultiplier = <Sup.Math.Vector3>x;
+          this.__inner.velocityMultiplier.x = velocityMultiplier.x;
+          if (SupEngine.ArcadePhysics2D.plane === "XY") this.__inner.velocityMultiplier.y = velocityMultiplier.y;
+          else this.__inner.velocityMultiplier.z = velocityMultiplier.z;
+        } else {
+          this.__inner.velocityMultiplier.x = x;
+          if (SupEngine.ArcadePhysics2D.plane === "XY") this.__inner.velocityMultiplier.y = yz;
+          else this.__inner.velocityMultiplier.z = yz;
+        }
         return this;
       }
-      getVelocityMultiplier() { return new Sup.Math.Vector3(this.__inner.velocityMultiplier.x, this.__inner.velocityMultiplier.y, 1) }
-
-      setAngularVelocity(angularVelocity) {
-        this.__inner.angularVelocity = angularVelocity;
-        return this;
-      }
-      getAngularVelocity() { return this.__inner.angularVelocity }
-
-      setAngularVelocityMultiplier(angularVelocityMultiplier) {
-        this.__inner.angularVelocityMultiplier = angularVelocityMultiplier
-        return this;
-      }
-      getAngularVelocityMultiplier() { return this.__inner.angularVelocityMultiplier; }
+      getVelocityMultiplier() { return new Sup.Math.Vector3(this.__inner.velocityMultiplier.x, this.__inner.velocityMultiplier.y, this.__inner.velocityMultiplier.z) }
 
       getTouches() {
         return {

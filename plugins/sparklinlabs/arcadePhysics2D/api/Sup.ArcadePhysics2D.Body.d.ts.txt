@@ -26,13 +26,21 @@ declare module Sup {
       setOffset(offset: { x: number; y: number; }|{ x: number; z: number }): Body;
       getOffset(): { x: number; y?: number; z?: number; };
       warpPosition(position: Sup.Math.Vector3): Body;
+      warpPosition(x: number, y: number, z: number): Body;
       setVelocity(velocity: Sup.Math.Vector3): Body;
+      setVelocity(x: number, yz: number): Body;
+      setVelocityX(x: number): Body;
+      setVelocityY(y: number): Body;
+      setVelocityZ(z: number): Body;
       getVelocity(): Sup.Math.Vector3;
       setVelocityMin(velocityMin: Sup.Math.Vector3): Body;
+      setVelocityMin(x: number, yz: number): Body;
       getVelocityMin(): Sup.Math.Vector3;
       setVelocityMax(velocityMax: Sup.Math.Vector3): Body;
+      setVelocityMax(x: number, yz: number): Body;
       getVelocityMax(): Sup.Math.Vector3;
       setVelocityMultiplier(velocityMultiplier: Sup.Math.Vector3): Body;
+      setVelocityMultiplier(x: number, yz: number): Body;
       getVelocityMultiplier(): Sup.Math.Vector3;
       getTouches(): { top: boolean; bottom: boolean; right: boolean; left: boolean; front: boolean; back: boolean; };
     }
