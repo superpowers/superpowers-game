@@ -64,7 +64,12 @@ export default class TextRenderer extends SupEngine.ActorComponent {
     let width = 1;
     for (let text of texts) width = Math.max(width, ctx.measureText(text).width);
     
-    let height = fontSize * texts.length;
+    // Arbitrary value that should be enough for most fonts
+    // We might want to make it configurable in the future
+    let heightBorder = fontSize * 0.2;
+
+    let heightWithoutBorder = fontSize * texts.length;
+    let height = heightWithoutBorder + heightBorder * 2;
     canvas.width = width;
     canvas.height = height;
 
@@ -81,7 +86,7 @@ export default class TextRenderer extends SupEngine.ActorComponent {
     }
 
     for (let index = 0; index < texts.length; index++) {
-      ctx.fillText(texts[index], x, (0.5 + (index - (texts.length - 1) / 2) / texts.length) * height);
+      ctx.fillText(texts[index], x, heightBorder + (0.5 + (index - (texts.length - 1) / 2) / texts.length) * heightWithoutBorder);
     }
 
     this.texture = new THREE.Texture(canvas);
@@ -192,6 +197,6 @@ export default class TextRenderer extends SupEngine.ActorComponent {
     this.clearMesh();
     super._destroy();
   }
-  
+
   setVisible(visible: boolean) { for (let threeMesh of this.threeMeshes) threeMesh.visible = visible; }
 }
