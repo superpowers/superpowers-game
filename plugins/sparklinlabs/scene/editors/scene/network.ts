@@ -16,7 +16,7 @@ import SceneUpdater from "../../components/SceneUpdater";
 export let data: { projectClient: SupClient.ProjectClient, sceneUpdater?: SceneUpdater, gameSettingsResource?: any };
 
 export let socket: SocketIOClient.Socket;
-export function networkStart() {
+export function start() {
   socket = SupClient.connect(info.projectId);
   socket.on("connect", onConnected);
   socket.on("disconnect", SupClient.onDisconnected);

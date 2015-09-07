@@ -152,7 +152,7 @@ ui.cameraSpeedSlider.value = engine.cameraControls.movementSpeed;
 document.querySelector(".main .controls .transform-mode").addEventListener("click", onTransformModeClick);
 
 ui.availableComponents = {};
-export function uiStart() {
+export function start() {
   for (let componentName in SupClient.componentEditorClasses) ui.availableComponents[componentName] = componentName;
 }
 

@@ -1,7 +1,7 @@
 import "./info";
-import ui, { uiStart } from "./ui";
-import "./engine";
-import { networkStart } from "./network";
+import ui, { start as uiStart } from "./ui";
+import engine, { start as engineStart} from "./engine";
+import { start as networkStart } from "./network";
 
 import * as async from "async"
 
@@ -38,6 +38,7 @@ async.each(SupClient.pluginPaths.all, (pluginName, pluginCallback) => {
   ], pluginCallback);
 }, (err) => {
   // Start
+  engineStart();
   uiStart();
   networkStart();
 });

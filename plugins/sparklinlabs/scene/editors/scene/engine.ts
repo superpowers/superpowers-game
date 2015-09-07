@@ -29,12 +29,18 @@ engine.cameraComponent.layers = [ 0, -1 ];
 engine.cameraControls = new SupEngine.editorComponentClasses["Camera3DControls"](engine.cameraActor, engine.cameraComponent);
 
 let selectionActor = new SupEngine.Actor(engine.gameInstance, "Selection Box", null, { layer: -1 });
-engine.selectionBoxComponent = new SupEngine.editorComponentClasses["SelectionBox"](selectionActor);
-
 let transformHandlesActor = new SupEngine.Actor(engine.gameInstance, "Transform Handles", null, { layer: -1 });
-engine.transformHandleComponent = new SupEngine.editorComponentClasses["TransformHandle"](transformHandlesActor, engine.cameraComponent.unifiedThreeCamera);
 
-requestAnimationFrame(tick);
+export function start() {
+  // Those classes are loaded asynchronously
+  engine.selectionBoxComponent = new SupEngine.editorComponentClasses["SelectionBox"](selectionActor);
+  engine.transformHandleComponent = new SupEngine.editorComponentClasses["TransformHandle"](transformHandlesActor, engine.cameraComponent.unifiedThreeCamera);
+
+  engine.transformHandleComponent.control.addEventListener("mouseDown", () => { draggingControls = true; });
+  engine.transformHandleComponent.control.addEventListener("objectChange", onTransformChange);
+
+  requestAnimationFrame(tick);
+}
 
 let lastTimestamp = 0;
 let accumulatedTime = 0;
@@ -47,6 +53,7 @@ function tick(timestamp=0) {
   if (updates > 0) engine.gameInstance.draw();
   requestAnimationFrame(tick);
 }
+
 
 function update() {
   if (ui.cameraMode === "3D" && engine.gameInstance.input.keyboardButtons[(<any>window).KeyEvent.DOM_VK_CONTROL].isDown) {
@@ -89,13 +96,7 @@ function update() {
 let mousePosition = new THREE.Vector2;
 let raycaster = new THREE.Raycaster;
 
-let draggingControls = false;
-
-engine.transformHandleComponent.control.addEventListener("mouseDown", () => {
-  draggingControls = true;
-});
-
-engine.transformHandleComponent.control.addEventListener("objectChange", onTransformChange);
+var draggingControls = false;
 
 function mouseUp() {
   if (draggingControls) {
