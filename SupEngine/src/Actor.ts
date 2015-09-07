@@ -19,6 +19,7 @@ export default class Actor {
     this.gameInstance = gameInstance;
     this.name = name;
     this.parent = parent;
+    this.threeObject.userData.isActor = true;
 
     if (this.parent != null) {
       this.parent.children.push(this)
