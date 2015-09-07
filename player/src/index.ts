@@ -14,6 +14,10 @@ if (nwDispatcher != null) {
   });
 }
 
+// Prevent keydown events from leaking out to a parent window
+// They might trigger scrolling for instance
+document.body.addEventListener("keydown", (event) => { event.preventDefault(); });
+
 let progressBar = <HTMLProgressElement>document.querySelector("progress");
 let loadingElt = document.getElementById("loading");
 let canvas = <HTMLCanvasElement>document.querySelector("canvas");
