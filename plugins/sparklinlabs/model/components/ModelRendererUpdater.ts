@@ -119,9 +119,7 @@ export default class ModelRendererUpdater {
 
   _playAnimation() {
     let animation = this.modelAsset.animations.byId[this.animationId];
-    if (animation == null) return;
-
-    this.modelRenderer.setAnimation(animation.name);
+    this.modelRenderer.setAnimation((animation != null) ? animation.name : null);
   }
 
   _onModelAssetEdited(id: string, command: string, ...args: any[]) {
@@ -210,7 +208,7 @@ export default class ModelRendererUpdater {
 
       case "animationId":
         this.animationId = value;
-        this._setModel();
+        this._playAnimation();
         break;
 
       case "castShadow":
