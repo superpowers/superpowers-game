@@ -177,6 +177,8 @@ export default class LightEditor {
 
       let castShadowRow = this.fields["castShadow"].parentElement.parentElement;
       if (castShadowRow.parentElement != null) castShadowRow.parentElement.removeChild(castShadowRow);
+      for (let shadowRow of this.shadowRows)
+        if (shadowRow.parentElement != null) shadowRow.parentElement.removeChild(shadowRow);
     }
     else {
       let intensityRow = this.fields["intensity"].parentElement.parentElement;
