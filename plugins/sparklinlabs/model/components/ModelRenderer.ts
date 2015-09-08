@@ -213,6 +213,8 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
 
   setOpacity(opacity: number) {
     this.opacity = opacity;
+    if (this.material == null) return;
+
     if (this.opacity != null) {
       this.material.transparent = true;
       this.material.opacity = this.opacity;
@@ -224,6 +226,8 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
    }
 
    setUnitRatio(unitRatio: number) {
+     if (this.threeMesh == null) return;
+
      let ratio = 1 / unitRatio;
      this.threeMesh.scale.set(ratio, ratio, ratio);
      this.threeMesh.updateMatrixWorld(false);
