@@ -41,8 +41,10 @@ export default class ArcadeBody2D extends SupEngine.ActorComponent {
     this.movable = config.movable;
     this.width = config.width;
     this.height = config.height;
-    if (config.offsetX != null) this.offsetX = config.offsetX;
-    if (config.offsetY != null) this.offsetY = config.offsetY;
+    if (config.offset != null) {
+      this.offsetX = config.offset.x;
+      this.offsetY = config.offset.y;
+    }
     if (config.bounceX != null) this.bounceX = config.bounceX;
     if (config.bounceY != null) this.bounceY = config.bounceY;
 
@@ -79,9 +81,10 @@ export default class ArcadeBody2D extends SupEngine.ActorComponent {
   }
 
   earlyUpdate() {
-    if (!this.movable || !this.enabled) return;
+    if (this.type === "tileMap") return;
 
     this.previousPosition.copy(this.position);
+    if (!this.movable || !this.enabled) return;
 
     this.velocity.x += (<any>SupEngine).ArcadePhysics2D.gravity.x;
     this.velocity.x *= this.velocityMultiplier.x;

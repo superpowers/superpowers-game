@@ -4,8 +4,7 @@ export interface ConfigPub {
   movable: boolean;
   width: number;
   height: number;
-  offsetX: number;
-  offsetY: number;
+  offset: { x: number; y: number; };
 
   tileMapAssetId: string;
   tileSetPropertyName: string;
@@ -21,11 +20,16 @@ export default class ArcadeBody2DConfig extends SupCore.data.base.ComponentConfi
     movable: { type: "boolean", mutable: true },
     width: { type: "number", mutable: true },
     height: { type: "number", mutable: true },
-    offsetX: { type: "number", mutable: true },
-    offsetY: { type: "number", mutable: true },
+    offset: {
+      type: "hash",
+      properties: {
+        x: { type: "number", mutable: true },
+        y: { type: "number", mutable: true },
+      }
+    },
 
     // TileMap
-    tileMapAssetId: { type: "string", mutable: true },
+    tileMapAssetId: { type: "string?", mutable: true },
     tileSetPropertyName: { type: "string?", mutable: true },
     layersIndex: { type: "string?", min: 0, mutable: true },
   }
@@ -37,10 +41,9 @@ export default class ArcadeBody2DConfig extends SupCore.data.base.ComponentConfi
       movable: true,
       width: 1,
       height: 1,
-      offsetX: 0,
-      offsetY: 0,
+      offset: { x: 0, y: 0 },
 
-      tileMapAssetId: "",
+      tileMapAssetId: null,
       tileSetPropertyName: null,
       layersIndex: null,
     }
@@ -52,10 +55,17 @@ export default class ArcadeBody2DConfig extends SupCore.data.base.ComponentConfi
   constructor(pub: any) {
     super(pub, ArcadeBody2DConfig.schema);
 
+    // Migration v0.12.0
+    if (this.pub.offset == null) {
+      this.pub.offset = { x: (<any>this.pub).offsetX, y: (<any>this.pub).offsetY };
+      delete (<any>this.pub).offsetX;
+      delete (<any>this.pub).offsetY;
+    }
+
     // Migration v0.6.0
     if (this.pub.type == null) {
       this.pub.type = "box";
-      this.pub.tileMapAssetId = "";
+      this.pub.tileMapAssetId = null;
       this.pub.tileSetPropertyName = null;
       this.pub.layersIndex = null;
     }

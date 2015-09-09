@@ -46,25 +46,25 @@ export default class ArcadeBody2DEditor {
     });
 
     let offsetRow = SupClient.table.appendRow(this.tbody, "Offset");
-    let offsetFields = SupClient.table.appendNumberFields(offsetRow.valueCell, [config.offsetX, config.offsetY]);
-    this.boxFields["offsetX"] = offsetFields[0];
-    this.boxFields["offsetX"].addEventListener("change", (event: any) => {
-      this.editConfig("setProperty", "offsetX", parseFloat(event.target.value));
+    let offsetFields = SupClient.table.appendNumberFields(offsetRow.valueCell, [config.offset.x, config.offset.y]);
+    this.boxFields["offset.x"] = offsetFields[0];
+    this.boxFields["offset.x"].addEventListener("change", (event: any) => {
+      this.editConfig("setProperty", "offset.x", parseFloat(event.target.value));
     });
 
-    this.boxFields["offsetY"] = offsetFields[1];
-    this.boxFields["offsetY"].addEventListener("change", (event: any) => {
-      this.editConfig("setProperty", "offsetY", parseFloat(event.target.value));
+    this.boxFields["offset.y"] = offsetFields[1];
+    this.boxFields["offset.y"].addEventListener("change", (event: any) => {
+      this.editConfig("setProperty", "offset.y", parseFloat(event.target.value));
     });
 
     // Tile Map boxFields
     this.tileMapFields = {};
 
     let tileMapRow = SupClient.table.appendRow(this.tbody, "Tile Map");
-    let tileMapName = (config.tileMapAssetId !== "") ? this.projectClient.entries.getPathFromId(config.tileMapAssetId) : "";
+    let tileMapName = (config.tileMapAssetId != null) ? this.projectClient.entries.getPathFromId(config.tileMapAssetId) : "";
     this.tileMapFields["tileMapAssetId"] = SupClient.table.appendTextField(tileMapRow.valueCell, tileMapName);
     this.tileMapFields["tileMapAssetId"].addEventListener("input", (event: any) => {
-      if (event.target.value === "") this.editConfig("setProperty", "tileMapAssetId", event.target.value);
+      if (event.target.value === "") this.editConfig("setProperty", "tileMapAssetId", null);
       else {
         let entry = SupClient.findEntryByPath(this.projectClient.entries.pub, event.target.value);
         if (entry != null && entry.type === "tileMap") this.editConfig("setProperty", "tileMapAssetId", entry.id);
@@ -111,12 +111,12 @@ export default class ArcadeBody2DEditor {
       if (onlyRemove) return;
       this.tbody.appendChild(this.boxFields["movable"].parentElement.parentElement);
       this.tbody.appendChild(this.boxFields["width"].parentElement.parentElement.parentElement);
-      this.tbody.appendChild(this.boxFields["offsetX"].parentElement.parentElement.parentElement);
+      this.tbody.appendChild(this.boxFields["offset.x"].parentElement.parentElement.parentElement);
 
     } else {
       this.tbody.removeChild(this.boxFields["movable"].parentElement.parentElement);
       this.tbody.removeChild(this.boxFields["width"].parentElement.parentElement.parentElement);
-      this.tbody.removeChild(this.boxFields["offsetX"].parentElement.parentElement.parentElement);
+      this.tbody.removeChild(this.boxFields["offset.x"].parentElement.parentElement.parentElement);
       if (onlyRemove) return;
       for (let fieldName in this.tileMapFields) this.tbody.appendChild(this.tileMapFields[fieldName].parentElement.parentElement);
     }
