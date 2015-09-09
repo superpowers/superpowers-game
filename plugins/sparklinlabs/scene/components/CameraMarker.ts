@@ -39,6 +39,9 @@ export default  class CameraMarker extends SupEngine.ActorComponent {
     this.setViewport(config.viewport.x, config.viewport.y, config.viewport.width, config.viewport.height);
     this.setNearClippingPlane(config.nearClippingPlane);
     this.setFarClippingPlane(config.farClippingPlane);
+
+    this.projectionNeedsUpdate = false;
+    this._resetGeometry();
   }
 
   setOrthographicMode(isOrthographic: boolean) {
