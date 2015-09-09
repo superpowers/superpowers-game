@@ -39,7 +39,6 @@ module Sup {
       static left()    { return new Vector3(-1,  0,  0); }
       static up()      { return new Vector3( 0,  1,  0); }
       static down()    { return new Vector3( 0, -1,  0); }
-      static one()     { return new Vector3( 1,  1,  1); }
 
       x: number;
       y: number;
