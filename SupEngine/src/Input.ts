@@ -356,7 +356,7 @@ export default class Input extends EventEmitter {
   // See https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent.code
   _onKeyDown = (event: KeyboardEvent) => {
     // NOTE: Key codes in range 33-47 are Page Up/Down, Home/End, arrow keys, Insert/Delete, etc.
-    let isControlKey = event.keyCode < 48 && event.keyCode != 32;
+    let isControlKey = event.keyCode < 48 && event.keyCode !== 32;
     if (isControlKey) event.preventDefault();
 
     if (!this.keyboardButtonsDown[event.keyCode]) this.keyboardButtonsDown[event.keyCode] = true;

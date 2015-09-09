@@ -13,16 +13,27 @@ if (nwDispatcher != null) {
     gui.Shell.openExternal(event.target.href);
   });
 }
+let qs = querystring.parse(window.location.search.slice(1));
 
 // Prevent keydown events from leaking out to a parent window
 // They might trigger scrolling for instance
-document.body.addEventListener("keydown", (event) => { event.preventDefault(); });
+document.body.addEventListener("keydown", (event) => {
+  if (event.keyCode === (<any>window)["KeyEvent"].DOM_VK_F12) {
+    if (qs.project != null && gui != null) gui.Window.get().showDevTools();
+    return;
+  }
+
+  if (event.keyCode === (<any>window)["KeyEvent"].DOM_VK_F12 ||
+      event.keyCode === (<any>window)["KeyEvent"].DOM_VK_F4 ||
+      event.keyCode === (<any>window)["KeyEvent"].DOM_VK_F5) return;
+
+  event.preventDefault();
+});
 
 let progressBar = <HTMLProgressElement>document.querySelector("progress");
 let loadingElt = document.getElementById("loading");
 let canvas = <HTMLCanvasElement>document.querySelector("canvas");
 
-let qs = querystring.parse(window.location.search.slice(1));
 if (qs.debug != null && gui != null) gui.Window.get().showDevTools();
 
 let player: SupRuntime.Player;
