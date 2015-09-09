@@ -94,7 +94,7 @@ module Sup {
       dot(v: Vector3) { return this.x * v.x + this.y * v.y + this.z * v.z; }
 
       normalize() {
-        let length = this.length()
+        let length = this.length();
         this.x /= length; this.y /= length; this.z /= length;
         return this;
       }
@@ -130,8 +130,8 @@ module Sup {
       length() { return window.Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z); }
       distanceTo(v: Vector3) { return v.clone().subtract(this).length(); }
       angleTo(v: Vector3) {
-        let theta = this.dot( v ) / ( this.length() * v.length() );
-		    return window.Math.acos( Math.clamp( theta, - 1, 1 ) );
+        let theta = this.dot(v) / (this.length() * v.length());
+		    return window.Math.acos(Math.clamp(theta, - 1, 1));
       }
 
       unproject(camera: Sup.Camera) {
@@ -139,7 +139,7 @@ module Sup {
         tmpVector3.unproject(camera.__inner.threeCamera);
         this.set(tmpVector3.x, tmpVector3.y, tmpVector3.z);
         return this;
-     }
+      }
     }
 
     export class Quaternion {
