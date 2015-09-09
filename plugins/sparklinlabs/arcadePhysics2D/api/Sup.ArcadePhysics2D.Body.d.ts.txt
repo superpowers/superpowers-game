@@ -19,6 +19,8 @@ declare module Sup {
 
     class Body extends ActorComponent {
       constructor(actor: Sup.Actor, type: BodyType, options: BoxOptions|TileMapOptions);
+      setEnabled(enabled: boolean): Body;
+      getEnabled(): boolean;
       setMovable(movable: boolean): Body;
       getMovable(): boolean;
       setSize(width: number, height: number): Body;

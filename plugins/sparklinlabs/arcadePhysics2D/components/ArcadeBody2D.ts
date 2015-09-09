@@ -2,6 +2,7 @@ let THREE = SupEngine.THREE;
 
 export default class ArcadeBody2D extends SupEngine.ActorComponent {
   type: string;
+  enabled = true;
 
   movable = false;
   width = 1;
@@ -78,7 +79,7 @@ export default class ArcadeBody2D extends SupEngine.ActorComponent {
   }
 
   earlyUpdate() {
-    if (! this.movable) return;
+    if (!this.movable || !this.enabled) return;
 
     this.previousPosition.copy(this.position);
 

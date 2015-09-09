@@ -220,7 +220,7 @@ module ArcadePhysics2D {
 
     let gotCollision = false;
     for (let body2 of bodies) {
-      if (body2 === body1) continue;
+      if (body2 === body1 || !body2.enabled) continue;
 
       if (body2.type === "box") {
         if (intersects(body1, body2)) {

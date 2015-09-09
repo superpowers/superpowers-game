@@ -20,6 +20,9 @@ module Sup {
         super.destroy();
       }
 
+      setEnabled(enabled: boolean) { this.__inner.enabled = enabled; return this; }
+      getEnabled() { return this.__inner.enabled; }
+
       setMovable(movable: boolean) {
         this.__inner.movable = movable;
         return this;
