@@ -41,7 +41,11 @@ export default class GameInstance extends EventEmitter {
     // Setup layers
     if (options.layers != null) this.layers = options.layers;
 
-    try { this.threeRenderer = new THREE.WebGLRenderer({ canvas, precision: "mediump", alpha: false, antialias: false, stencil: false }); }
+    // NOTE: We ask for a stencil buffer because of a Firefox bug
+    // If we don't, Firefox will often return a 16-bit depth buffer
+    // (rather than a more useful 24-bit depth buffer).
+    // See https://bugzilla.mozilla.org/show_bug.cgi?id=1202387
+    try { this.threeRenderer = new THREE.WebGLRenderer({ canvas, precision: "mediump", alpha: false, antialias: false, stencil: true }); }
     catch (e) { return; }
     this.threeRenderer.setSize(0, 0, false);
     this.threeRenderer.autoClearColor = false;
