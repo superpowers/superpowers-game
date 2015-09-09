@@ -496,9 +496,13 @@ export function createComponentElement(nodeId: string, component: Component) {
 
   let editConfig = (command: string, ...args: any[]) => {
     let callback = (err: string) => { if (err != null) alert(err); }
+
     // Override callback if one is given
     let lastArg = args[args.length-1];
     if (typeof lastArg === "function") callback = args.pop();
+
+    // Prevent setting a NaN value
+    if (command === "setProperty" && typeof args[1] === "number" && isNaN(args[1])) return;
 
     socket.emit("edit:assets", info.assetId, "editComponent", nodeId, component.id, command, ...args, callback);
   }
