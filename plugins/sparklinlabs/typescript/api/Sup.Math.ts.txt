@@ -302,10 +302,18 @@ module Sup {
         if (direction != null) this._raycaster.ray.direction.copy(direction).normalize();
       }
 
-      setOrigin(origin: Vector3) { this._raycaster.ray.origin.copy(origin); return this; }
+      setOrigin(x: number|Vector3, y?: number, z?: number) {
+        if (y == null && z == null) this._raycaster.ray.origin.copy(x);
+        else this._raycaster.ray.origin.set(x, y, z);
+        return this;
+      }
       getOrigin() { return new Vector3(this._raycaster.ray.origin.x, this._raycaster.ray.origin.y, this._raycaster.ray.origin.z); }
 
-      setDirection(direction: Vector3) { this._raycaster.ray.direction.copy(direction).normalize(); return this; }
+      setDirection(x: number|Vector3, y?: number, z?: number) {
+        if (y == null && z == null) this._raycaster.ray.direction.copy(x).normalize();
+        else this._raycaster.ray.direction.set(x, y, z).normalize();
+        return this;
+      }
       getDirection() { return new Vector3(this._raycaster.ray.direction.x, this._raycaster.ray.direction.y, this._raycaster.ray.direction.z); }
 
       setFromCamera(camera: Sup.Camera, screenPosition: { x: number; y: number; }) {

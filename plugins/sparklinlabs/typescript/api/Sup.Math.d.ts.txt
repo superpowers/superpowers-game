@@ -51,6 +51,12 @@ declare module Sup {
       angleTo(v: Vector3): number;
       unproject(camera: Camera): Vector3;
     }
+    
+    interface XYZ {
+      x: number;
+      y: number;
+      z: number;
+    }
 
     class Quaternion {
       x: number;
@@ -94,11 +100,14 @@ declare module Sup {
     }
 
     class Ray {
-      constructor(origin?: Vector3, direction?: Vector3);
+      constructor(origin?: Vector3|XYZ, direction?: Vector3|XYZ);
+
       setOrigin(origin: Vector3): Ray;
+      setOrigin(x: number, y: number, z: number);
       getOrigin(): Vector3;
 
       setDirection(direction: Vector3): Ray;
+      setDirection(x: number, y: number, z: number);
       getDirection(): Vector3;
 
       setFromCamera(camera: Sup.Camera, screenPosition: { x: number; y: number; }): Ray;
