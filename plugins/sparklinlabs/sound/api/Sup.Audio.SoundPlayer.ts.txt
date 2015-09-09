@@ -1,0 +1,36 @@
+module Sup {
+  export module Audio {
+    export function playSound(pathOrAsset: string|Sound, volume=1.0, options?: { loop?: boolean; pitch?: number; pan?: number; }) {
+      return new SoundPlayer(pathOrAsset, volume, options).play();
+    }
+  
+    export class SoundPlayer {
+      __inner: any;
+      constructor(pathOrAsset: string|Sound, volume=1.0, options?: { loop?: boolean; pitch?: number; pan?: number; }) {
+        let audioCtx = player.gameInstance.audio.getContext();
+        let audioMasterGain = player.gameInstance.audio.masterGain;
+        let soundAsset = (typeof pathOrAsset === "string") ? get(pathOrAsset, Sound) : <Sound>pathOrAsset;
+        this.__inner = new SupEngine.SoundPlayer(audioCtx, audioMasterGain, soundAsset.__inner.buffer);
+        this.__inner.setVolume(volume);
+        
+        if (options != null) {
+          if (options.loop != null) this.__inner.setLoop(options.loop);
+          if (options.pan != null) this.__inner.setPan(options.pan);
+          if (options.pitch != null) this.__inner.setPitch(options.pitch);
+        }
+      }
+      play() { this.__inner.play(); return this; }
+      stop() { this.__inner.stop(); return this; }
+      pause() { this.__inner.pause(); return this; }
+
+      getLoop() { return this.__inner.isLooping; }
+      setLoop(looping) { this.__inner.setLoop(looping); return this; }
+      getVolume() { return this.__inner.volume; }
+      setVolume(volume) { this.__inner.setVolume(volume); return this; }
+      getPan() { return this.__inner.pan; }
+      setPan(pan) { this.__inner.setPan(pan); return this; }
+      getPitch() { return this.__inner.pitch; }
+      setPitch(pitch) { this.__inner.setPitch(pitch); return this; }
+    }
+  }
+}

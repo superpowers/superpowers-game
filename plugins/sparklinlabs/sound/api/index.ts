@@ -10,7 +10,7 @@ SupAPI.registerPlugin("typescript", "Sup.Audio", {
   defs: fs.readFileSync(`${__dirname}/Sup.Audio.d.ts.txt`, { encoding: "utf8" })
 });
 
-SupAPI.registerPlugin("typescript", "Sup.Audio.SoundInstance", {
-  code: fs.readFileSync(`${__dirname}/Sup.Audio.SoundInstance.ts.txt`, { encoding: "utf8" }),
-  defs: fs.readFileSync(`${__dirname}/Sup.Audio.SoundInstance.d.ts.txt`, { encoding: "utf8" })
+SupAPI.registerPlugin("typescript", "Sup.Audio.SoundPlayer", {
+  code: fs.readFileSync(`${__dirname}/Sup.Audio.SoundPlayer.ts.txt`, { encoding: "utf8" }),
+  defs: fs.readFileSync(`${__dirname}/Sup.Audio.SoundPlayer.d.ts.txt`, { encoding: "utf8" })
 });
