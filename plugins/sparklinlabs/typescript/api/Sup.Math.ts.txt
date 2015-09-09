@@ -50,6 +50,8 @@ module Sup {
         this.set(x, y, z);
       }
 
+      toString() { return `{ x: ${this.x}, y: ${this.y}, z: ${this.z} }`; }
+
       set(x: number, y?: number, z?: number) {
         this.x = x;
         this.y = (y != null) ? y : x;
@@ -153,6 +155,8 @@ module Sup {
         this.z = (z) ? z : 0;
         this.w = (w) ? w : 1;
       }
+
+      toString() { return `{ x: ${this.x}, y: ${this.y}, z: ${this.z}, w: ${this.w} }`; }
 
       set(x: number, y: number, z: number, w: number) { this.x = x; this.y = y; this.z = z; this.w = w; return this; }
       copy(q: Quaternion) { this.x = q.x; this.y = q.y; this.z = q.z; this.w = q.w; return this; }
