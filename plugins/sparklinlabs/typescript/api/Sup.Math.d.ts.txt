@@ -82,7 +82,7 @@ declare module Sup {
       projectPoint(point: Vector3): Vector3;
     }
 
-    interface RaycastResult {
+    interface ActorRaycastHit {
       actor: Sup.Actor;
       distance: number;
       point: Vector3;
@@ -96,9 +96,11 @@ declare module Sup {
       setDirection(direction: Vector3): Ray;
       getDirection(): Vector3;
       setFromCamera(camera: Sup.Camera, screenPosition: { x: number; y: number; }): Ray;
-      intersectActor(actor: Sup.Actor, recursive?: boolean): RaycastResult[];
-      intersectActors(actors: Sup.Actor[]): RaycastResult[];
-      intersectPlane(plane: Plane): { distance: number; point: number; };
+
+      intersectActor(actor: Sup.Actor, recursive?: boolean): ActorRaycastHit[];
+      intersectActors(actors: Sup.Actor[]): ActorRaycastHit[];
+
+      intersectPlane(plane: Plane): { distance: number; point: Vector3; };
     }
   }
 }
