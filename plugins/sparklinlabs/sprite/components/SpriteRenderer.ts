@@ -87,8 +87,14 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
 
     let scaleRatio = 1 / this.asset.pixelsPerUnit;
     this.threeMesh.scale.set(scaleRatio, scaleRatio, scaleRatio);
-    this.threeMesh.position.setX((0.5 - this.asset.origin.x) * this.asset.grid.width * scaleRatio);
-    this.threeMesh.position.setY((0.5 - this.asset.origin.y) * this.asset.grid.height * scaleRatio);
+    let x: number;
+    if (this.horizontalFlip) x = this.asset.origin.x - 0.5;
+    else x = 0.5 - this.asset.origin.x;
+    let y: number;
+    if (this.verticalFlip) y = this.asset.origin.y - 0.5;
+    else y = 0.5 - this.asset.origin.y;
+    this.threeMesh.position.setX(x * this.asset.grid.width * scaleRatio);
+    this.threeMesh.position.setY(y * this.asset.grid.height * scaleRatio);
     this.threeMesh.updateMatrixWorld(false);
   }
 
@@ -110,6 +116,7 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
     this.horizontalFlip = horizontalFlip;
     if (this.asset == null) return;
 
+    this.updateShape();
     if (this.animationName == null) this.setFrame(0);
     else if (! this.isAnimationPlaying) this.updateFrame();
   }
@@ -118,6 +125,7 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
     this.verticalFlip = verticalFlip;
     if (this.asset == null) return;
 
+    this.updateShape();
     if (this.animationName == null) this.setFrame(0);
     else if (! this.isAnimationPlaying) this.updateFrame();
   }
