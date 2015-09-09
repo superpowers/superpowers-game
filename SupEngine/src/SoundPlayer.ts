@@ -1,6 +1,6 @@
 enum SoundStates {playing, paused, stopped};
 
-export default class SoundInstance {
+export default class SoundPlayer {
   audioCtx: AudioContext;
   audioMasterGain: GainNode;
   buffer: string|AudioBuffer;

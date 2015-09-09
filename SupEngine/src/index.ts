@@ -8,12 +8,12 @@ import ActorComponent from "./ActorComponent";
 
 import Input from "./Input";
 import Audio from "./Audio";
-import SoundInstance from "./SoundInstance";
+import SoundPlayer from "./SoundPlayer";
 
 export {
   THREE,
   GameInstance, ActorTree, Actor, ActorComponent,
-  Input, Audio, SoundInstance
+  Input, Audio, SoundPlayer
 };
 
 import Camera2DControls from "./components/Camera2DControls";

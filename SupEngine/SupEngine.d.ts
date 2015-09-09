@@ -159,8 +159,8 @@ declare module SupEngine {
     getContext(): AudioContext;
   }
 
-  enum SoundStates {playing, paused, stopped}
-  class SoundInstance {
+  enum SoundStates { playing, paused, stopped }
+  class SoundPlayer {
     audioCtx: AudioContext;
     audioMasterGain: GainNode;
     buffer: string|AudioBuffer;
