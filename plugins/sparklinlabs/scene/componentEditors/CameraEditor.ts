@@ -21,10 +21,10 @@ export default class CameraEditor {
       { perspective: "Perspective", orthographic: "Orthographic" }, config.mode);
 
     this.fovRowParts = SupClient.table.appendRow(tbody, "Field of view");
-    this.fovField = SupClient.table.appendNumberField(this.fovRowParts.valueCell, config.fov, 0.1, 179.9);
+    this.fovField = SupClient.table.appendNumberField(this.fovRowParts.valueCell, config.fov, 0.1, 179.9, 0.1);
 
     this.orthographicScaleRowParts = SupClient.table.appendRow(tbody, "Orthographic scale");
-    this.orthographicScaleField = SupClient.table.appendNumberField(this.orthographicScaleRowParts.valueCell, config.orthographicScale, 0.1);
+    this.orthographicScaleField = SupClient.table.appendNumberField(this.orthographicScaleRowParts.valueCell, config.orthographicScale, 0.1, null, 0.1);
     
     if (config.mode === "perspective") this.orthographicScaleRowParts.row.style.display = "none";
     else this.fovRowParts.row.style.display = "none";
@@ -45,14 +45,10 @@ export default class CameraEditor {
 
     SupClient.table.appendHeader(tbody, "Viewport");
     let viewportXRow = SupClient.table.appendRow(tbody, "Top / Left");
-    [ this.viewportFields.x, this.viewportFields.y ] = SupClient.table.appendNumberFields(viewportXRow.valueCell, [ config.viewport.x, config.viewport.y ], 0, 1);
-    this.viewportFields.x.step = "0.1";
-    this.viewportFields.y.step = "0.1";
+    [ this.viewportFields.x, this.viewportFields.y ] = SupClient.table.appendNumberFields(viewportXRow.valueCell, [ config.viewport.x, config.viewport.y ], 0, 1, 0.1);
 
     let widthRow = SupClient.table.appendRow(tbody, "Width / Height");
-    [ this.viewportFields.width, this.viewportFields.height ] = SupClient.table.appendNumberFields(widthRow.valueCell, [ config.viewport.width, config.viewport.height ], 0, 1);
-    this.viewportFields.width.step = "0.1";
-    this.viewportFields.height.step = "0.1";
+    [ this.viewportFields.width, this.viewportFields.height ] = SupClient.table.appendNumberFields(widthRow.valueCell, [ config.viewport.width, config.viewport.height ], 0, 1, 0.1);
 
     this.modeSelectBox.addEventListener("change", this._onChangeMode);
     this.fovField.addEventListener("input", this._onChangeFOV);
