@@ -8,6 +8,7 @@ declare module Sup {
 
     module Random {
       function integer(min: number, max: number): number;
+      function float(min: number, max: number): number;
       function sample<T>(collection: T[]): T;
     }
 
@@ -51,7 +52,7 @@ declare module Sup {
       angleTo(v: Vector3): number;
       unproject(camera: Camera): Vector3;
     }
-    
+
     interface XYZ {
       x: number;
       y: number;

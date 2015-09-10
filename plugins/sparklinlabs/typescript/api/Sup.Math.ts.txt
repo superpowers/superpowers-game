@@ -26,6 +26,7 @@ module Sup {
 
     export module Random {
       export function integer(min: number, max: number) { return window.Math.floor(window.Math.random() * (max + 1 - min)) + min; }
+      export function float(min: number, max: number) { return window.Math.random() * (max - min) + min; }
       export function sample<T>(collection: T[]) { return collection[integer(0, collection.length - 1)]; }
     }
 
