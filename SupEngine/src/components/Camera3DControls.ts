@@ -23,23 +23,25 @@ export default class Camera3DControls extends ActorComponent {
     let keyButtons = this.actor.gameInstance.input.keyboardButtons;
     let keyEvent = (<any>window).KeyEvent; // Workaround for unknown KeyEvent property on window object
 
-    tmpMovement.setX(
-      (keyButtons[keyEvent.DOM_VK_A].isDown || keyButtons[keyEvent.DOM_VK_Q].isDown) ? -this.movementSpeed :
-      ((keyButtons[keyEvent.DOM_VK_D].isDown) ? this.movementSpeed :
-      0));
-
-    tmpMovement.setZ(
-      (keyButtons[keyEvent.DOM_VK_W].isDown || keyButtons[keyEvent.DOM_VK_Z].isDown) ? -this.movementSpeed :
-      ((keyButtons[keyEvent.DOM_VK_S].isDown) ? this.movementSpeed :
-      0 ));
-
-    tmpMovement.setY(
-      (keyButtons[keyEvent.DOM_VK_SPACE].isDown) ? this.movementSpeed :
-      ((keyButtons[keyEvent.DOM_VK_SHIFT].isDown) ? -this.movementSpeed :
-      0 ));
-
-    tmpMovement.applyQuaternion(tmpQuaternion.setFromAxisAngle(forwardVector, this.rotation.y));
-    this.actor.moveLocal(tmpMovement);
+    if (!keyButtons[keyEvent.DOM_VK_CONTROL].isDown) {
+      tmpMovement.setX(
+        (keyButtons[keyEvent.DOM_VK_A].isDown || keyButtons[keyEvent.DOM_VK_Q].isDown) ? -this.movementSpeed :
+        ((keyButtons[keyEvent.DOM_VK_D].isDown) ? this.movementSpeed :
+        0));
+  
+      tmpMovement.setZ(
+        (keyButtons[keyEvent.DOM_VK_W].isDown || keyButtons[keyEvent.DOM_VK_Z].isDown) ? -this.movementSpeed :
+        ((keyButtons[keyEvent.DOM_VK_S].isDown) ? this.movementSpeed :
+        0));
+  
+      tmpMovement.setY(
+        (keyButtons[keyEvent.DOM_VK_SPACE].isDown) ? this.movementSpeed :
+        ((keyButtons[keyEvent.DOM_VK_SHIFT].isDown) ? -this.movementSpeed :
+        0));
+  
+      tmpMovement.applyQuaternion(tmpQuaternion.setFromAxisAngle(forwardVector, this.rotation.y));
+      this.actor.moveLocal(tmpMovement);
+    }
 
     // Camera rotation
     if (this.actor.gameInstance.input.mouseButtons[1].isDown ||
