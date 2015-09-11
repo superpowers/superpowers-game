@@ -124,6 +124,9 @@ onEditCommands.setAnimationProperty = (id: string, key: string, value: any) => {
       animationElt.querySelector(".end-frame-index").value = value;
       if (id == ui.selectedAnimationId) updateSelection();
       break;
+    case "speed":
+      animationElt.querySelector(".speed").value = value;
+      break;
   }
 };
 

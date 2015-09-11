@@ -378,6 +378,16 @@ export function setupAnimation(animation: any, index: number) {
       editAsset("setAnimationProperty", animation.id, "startFrameIndex", endFrameIndex);
   });
 
+  let speedInput = document.createElement("input");
+  speedInput.type = "number";
+  speedInput.className = "speed";
+  speedInput.value = animation.speed;
+  liElt.appendChild(speedInput);
+
+  speedInput.addEventListener("change", (event: any) => {
+    editAsset("setAnimationProperty", animation.id, "speed", parseFloat(event.target.value));
+  });
+
   ui.animationsTreeView.insertAt(liElt, "item", index, null);
 }
 

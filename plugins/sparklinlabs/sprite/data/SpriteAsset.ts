@@ -134,6 +134,11 @@ export default class SpriteAsset extends SupCore.data.base.Asset {
         }
       }
 
+      // TODO: Remove these at some point, asset migration introduced in Superpowers 0.12
+      for (let animation of pub.animations) {
+        if (animation.speed == null) animation.speed = 1;
+      }
+
       pub.maps = {};
       async.series([
         (callback) => {
@@ -302,7 +307,7 @@ export default class SpriteAsset extends SupCore.data.base.Asset {
   }
 
   server_newAnimation(client: any, name: string, callback: (err: string, animation?: SpriteAnimationPub, actualIndex?: number) => any) {
-    let animation: SpriteAnimationPub = { id: null, name, startFrameIndex: 0, endFrameIndex: 0 };
+    let animation: SpriteAnimationPub = { id: null, name, startFrameIndex: 0, endFrameIndex: 0, speed: 1 };
 
     this.animations.add(animation, null, (err, actualIndex) => {
       if (err != null) { callback(err); return }
