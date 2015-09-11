@@ -15,9 +15,9 @@ if (nwDispatcher != null) {
 }
 let qs = querystring.parse(window.location.search.slice(1));
 
-// Prevent keydown events from leaking out to a parent window
+// Prevent keypress events from leaking out to a parent window
 // They might trigger scrolling for instance
-document.body.addEventListener("keydown", (event) => {
+document.body.addEventListener("keypress", (event) => {
   if (event.keyCode === (<any>window)["KeyEvent"].DOM_VK_F12) {
     if (qs.project != null && gui != null) gui.Window.get().showDevTools();
     return;
