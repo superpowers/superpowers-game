@@ -268,27 +268,27 @@ function tick(timestamp=0) {
 
   accumulatedTime += timestamp - lastTimestamp;
   lastTimestamp = timestamp;
-  let { updates, timeLeft } = ui.gameInstance.tick(accumulatedTime);
+  let { updates, timeLeft } = ui.gameInstance.tick(accumulatedTime, handleTilesetArea);
   accumulatedTime = timeLeft;
 
-  if (updates > 0) {
-    if (ui.gameInstance.input.mouseButtons[0].wasJustReleased) {
-      let mousePosition = ui.gameInstance.input.mousePosition;
-      let [ mouseX, mouseY ] = ui.cameraControls.getScenePosition(mousePosition.x, mousePosition.y);
-      let x = Math.floor(mouseX);
-      let ratio = data.tileSetUpdater.tileSetAsset.pub.grid.width / data.tileSetUpdater.tileSetAsset.pub.grid.height;
-      let y = Math.floor(mouseY * ratio);
+  if (updates > 0) ui.gameInstance.draw();
+}
 
-      let pub = data.tileSetUpdater.tileSetAsset.pub;
-      if (x >= 0 && x < pub.domImage.width / pub.grid.width &&
-      y >= 0 && y < pub.domImage.height / pub.grid.height &&
-      (x !== data.selectedTile.x || y !== data.selectedTile.y)) {
-        data.tileSetUpdater.tileSetRenderer.select(x, y);
-        selectTile({ x, y });
-      }
+function handleTilesetArea() {
+  if (ui.gameInstance.input.mouseButtons[0].wasJustReleased) {
+    let mousePosition = ui.gameInstance.input.mousePosition;
+    let [ mouseX, mouseY ] = ui.cameraControls.getScenePosition(mousePosition.x, mousePosition.y);
+    let x = Math.floor(mouseX);
+    let ratio = data.tileSetUpdater.tileSetAsset.pub.grid.width / data.tileSetUpdater.tileSetAsset.pub.grid.height;
+    let y = Math.floor(mouseY * ratio);
+
+    let pub = data.tileSetUpdater.tileSetAsset.pub;
+    if (x >= 0 && x < pub.domImage.width / pub.grid.width &&
+    y >= 0 && y < pub.domImage.height / pub.grid.height &&
+    (x !== data.selectedTile.x || y !== data.selectedTile.y)) {
+      data.tileSetUpdater.tileSetRenderer.select(x, y);
+      selectTile({ x, y });
     }
-
-    ui.gameInstance.draw();
   }
 }
 
