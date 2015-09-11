@@ -17,7 +17,8 @@ declare module Sup {
 
     getAnimation(): string;
     setAnimation(animationName: string, looping?: boolean): SpriteRenderer;
-    setAnimationFrameIndex(frameIndex: number): SpriteRenderer;
+    setAnimationFrameTime(frameTime: number): SpriteRenderer;
+    getAnimationFrameTime(): number;
     getAnimationFrameIndex(): number;
     getAnimationFrameCount(): number;
     getAnimationSpeed(): number;

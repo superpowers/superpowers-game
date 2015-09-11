@@ -245,7 +245,7 @@ export function updateSelectedAnimation() {
     data.spriteUpdater.config_setProperty("animationId", ui.selectedAnimationId);
     ui.animationPlay.disabled = false;
     ui.animationSlider.disabled = false;
-
+    ui.animationSlider.max = (data.spriteUpdater.spriteRenderer.getAnimationFrameCount() - 1).toString();
     updateSelection();
   } else {
     ui.selectedAnimationId = null;
@@ -279,8 +279,7 @@ function onPlayAnimation() {
 
 function onChangeAnimationTime() {
   if (data.spriteUpdater == null) return;
-  let animationTime = parseFloat(ui.animationSlider.value) / 100 * data.spriteUpdater.spriteRenderer.getAnimationDuration();
-  data.spriteUpdater.spriteRenderer.setAnimationTime(animationTime);
+  data.spriteUpdater.spriteRenderer.setAnimationFrameTime(parseInt(ui.animationSlider.value));
 }
 
 export function setupProperty(path: string, value: any) {

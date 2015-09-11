@@ -18,8 +18,8 @@ html
         .animation-control
           span.animation-name
           button(disabled).animation-play ▐ ▌
-          input(disabled, type='range', value=0).animation-slider
-          input#loop-checkbox(type="checkbox" checked).animation-loop
+          input(disabled,type="range",value="0").animation-slider
+          input#loop-checkbox(type="checkbox",checked).animation-loop
           label(for="loop-checkbox") Loop
 
     .sidebar
@@ -37,13 +37,13 @@ html
           th Rendering
           td
             select.property-filtering
-              option(value='pixelated') Pixelated
-              option(value='smooth') Smooth
+              option(value="pixelated") Pixelated
+              option(value="smooth") Smooth
 
         tr
           th Pixels /&nbsp;unit
           td
-            input(type="number" min="1").property-pixelsPerUnit
+            input(type="number",min="1").property-pixelsPerUnit
 
         tr
           th Size
@@ -54,45 +54,45 @@ html
         tr
           th.nested Width
           td
-            input.property-grid-width(type='number')
+            input.property-grid-width(type="number")
             button.set-grid-width Set
         tr
           th.nested Height
           td
-            input.property-grid-height(type='number')
+            input.property-grid-height(type="number")
             button.set-grid-height Set
 
         tr
           th Origin (%)
           td
             span X
-            input.property-origin-x(type='number')
+            input.property-origin-x(type="number")
             span Y
-            input.property-origin-y(type='number')
+            input.property-origin-y(type="number")
 
         tr
           th Frames /&nbsp;second
           td
-            input(type="number" min="1").property-framesPerSecond
+            input(type="number",min="1").property-framesPerSecond
 
         tr
           th Frame order
           td
             select.property-frameOrder
-              option(value='rows') Rows
-              option(value='columns') Columns
+              option(value="rows") Rows
+              option(value="columns") Columns
 
         tr
           th
             span Opacity
             input(type="checkbox").opacity-checkbox
           td
-            input(type="number" min="0" max="1" step="0.1").property-opacity
+            input(type="number",min="0",max="1",step="0.1").property-opacity
 
         tr
           th Alpha test
           td
-            input(type="number" min="0" max="1" step="0.1").property-alphaTest
+            input(type="number",min="0",max="1",step="0.1").property-alphaTest
 
       .header
         span Animations

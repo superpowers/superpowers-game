@@ -224,19 +224,25 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
   }
 
   getAnimation() { return this.animationName; }
-
-  setAnimationFrameIndex(frameIndex: number) {
+  
+  setAnimationFrameTime(frameTime: number) {
     if (this.animationName == null) return;
-    if (frameIndex < 0 || frameIndex > this.getAnimationFrameCount()) throw new Error(`Frame index must be between 0 and ${this.getAnimationFrameCount()}`);
+    if (frameTime < 0 || frameTime > this.getAnimationFrameCount()) throw new Error(`Frame time must be >= 0 and < ${this.getAnimationFrameCount()}`);
 
-    this.animationTimer = Math.ceil(frameIndex * this.actor.gameInstance.framesPerSecond / this.asset.framesPerSecond);
+    this.animationTimer = Math.ceil(frameTime * this.actor.gameInstance.framesPerSecond / this.asset.framesPerSecond);
     this.updateFrame();
+  }
+
+  getAnimationFrameTime() {
+    if (this.animationName == null) return 0;
+    return this.computeAbsoluteFrameTime() - this.animation.startFrameIndex;
   }
 
   getAnimationFrameIndex() {
     if (this.animationName == null) return 0;
-    return this.computeFrame() - this.animation.startFrameIndex;
+    return this.computeAbsoluteFrameIndex() - this.animation.startFrameIndex;
   }
+
   getAnimationFrameCount() {
     if (this.animationName == null) return 0;
     return this.animation.endFrameIndex - this.animation.startFrameIndex + 1;
@@ -258,7 +264,19 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
     this.updateFrame();
   }
 
-  computeFrame() {
+  computeAbsoluteFrameTime() {
+    let frame: number;
+    if (this.playbackSpeed * this.animation.speed >= 0) {
+      frame = this.animation.startFrameIndex;
+      frame += this.animationTimer * this.playbackSpeed * this.animation.speed / this.actor.gameInstance.framesPerSecond * this.asset.framesPerSecond;
+    } else {
+      frame = this.animation.endFrameIndex;
+      frame -= this.animationTimer * Math.abs(this.playbackSpeed * this.animation.speed) / this.actor.gameInstance.framesPerSecond * this.asset.framesPerSecond;
+    }
+    return frame;
+  }
+
+  computeAbsoluteFrameIndex() {
     let frame: number;
     if (this.playbackSpeed * this.animation.speed >= 0) {
       frame = this.animation.startFrameIndex;
@@ -273,7 +291,7 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
   updateFrame() {
     this.hasFrameBeenUpdated = true;
 
-    let frame = this.computeFrame();
+    let frame = this.computeAbsoluteFrameIndex();
     if (frame > this.animation.endFrameIndex) {
       if (this.animationLooping) {
         frame = this.animation.startFrameIndex;

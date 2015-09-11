@@ -43,9 +43,10 @@ export function centerCamera() {
 
 export function handleAnimationArea() {
   if (data != null && ui.selectedAnimationId != null) {
-    let animationTime = data.spriteUpdater.spriteRenderer.getAnimationTime() / data.spriteUpdater.spriteRenderer.getAnimationDuration();
-    ui.animationSlider.value = (animationTime * 100).toString();
-
-    if (! data.spriteUpdater.spriteRenderer.isAnimationPlaying) ui.animationPlay.textContent = "▶";
+    if (!data.spriteUpdater.spriteRenderer.isAnimationPlaying) {
+      ui.animationPlay.textContent = "▶";
+    } else {
+      ui.animationSlider.value = data.spriteUpdater.spriteRenderer.getAnimationFrameIndex().toString();
+    }
   }
 }

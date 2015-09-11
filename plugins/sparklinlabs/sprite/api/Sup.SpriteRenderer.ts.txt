@@ -52,7 +52,8 @@ module Sup {
 
     setAnimation(animationName, looping) { this.__inner.setAnimation(animationName, looping); return this; }
     getAnimation() { return this.__inner.getAnimation(); }
-    setAnimationFrameIndex(frameIndex) { this.__inner.setAnimationFrameIndex(frameIndex); return this; }
+    setAnimationFrameTime(frametime) { this.__inner.setAnimationFrameTime(frametime); return this; }
+    getAnimationFrameTime() { return this.__inner.getAnimationFrameTime(); }
     getAnimationFrameIndex() { return this.__inner.getAnimationFrameIndex(); }
     getAnimationFrameCount() { return this.__inner.getAnimationFrameCount(); }
     getAnimationSpeed() { return this.__inner.animation != null ? this.__inner.animation.speed : null; }
