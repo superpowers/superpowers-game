@@ -19,22 +19,25 @@ html
     .main
       canvas(tabindex="0")
       .controls
-        .camera-mode
-          .label Camera Mode
-          button#toggle-camera-button 3D
-        .camera-speed
-          .label Camera Speed
-          input#camera-speed-slider(type="range",min="0.05",max="2.0",step="0.05")
+        .camera
+          .title Camera
+          .camera-mode
+            label(for="toggle-camera-button") Mode
+            button#toggle-camera-button 3D
+          .camera-speed
+            label(for="camera-speed-slider") Speed
+            input#camera-speed-slider(type="range",min="0.05",max="2.0",step="0.05")
         .transform-mode
-          .label Transform
-          input#transform-mode-translate(type="radio",name="transformMode",value="translate",checked)
-          label(for="transform-mode-translate",title="E") Move
-          input#transform-mode-rotate(type="radio",name="transformMode",value="rotate")
-          label(for="transform-mode-rotate",title="R") Rotate
-          input#transform-mode-scale(type="radio",name="transformMode",value="scale")
-          label(for="transform-mode-scale",title="T") Scale
-          input#transform-space(type="checkbox")
-          label(for="transform-space",title="L") Local
+          .title Transform
+          div
+            input#transform-mode-translate(type="radio",name="transformMode",value="translate",checked)
+            label(for="transform-mode-translate",title="E") Move
+            input#transform-mode-rotate(type="radio",name="transformMode",value="rotate")
+            label(for="transform-mode-rotate",title="R") Rotate
+            input#transform-mode-scale(type="radio",name="transformMode",value="scale")
+            label(for="transform-mode-scale",title="T") Scale
+            input#transform-space(type="checkbox")
+            label(for="transform-space",title="L") Local
 
     .sidebar
       .nodes-buttons
