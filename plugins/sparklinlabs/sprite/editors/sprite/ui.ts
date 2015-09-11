@@ -350,22 +350,32 @@ export function setupAnimation(animation: any, index: number) {
 
   let startFrameIndexInput = document.createElement("input");
   startFrameIndexInput.type = "number";
+  startFrameIndexInput.min = "0";
   startFrameIndexInput.className = "start-frame-index";
   startFrameIndexInput.value = animation.startFrameIndex;
   liElt.appendChild(startFrameIndexInput);
 
   startFrameIndexInput.addEventListener("change", (event: any) => {
-    editAsset("setAnimationProperty", animation.id, "startFrameIndex", parseInt(event.target.value));
+    let startFrameIndex = parseInt(event.target.value);
+    editAsset("setAnimationProperty", animation.id, "startFrameIndex", startFrameIndex);
+    ui.selectedAnimationId
+    if (startFrameIndex > data.spriteUpdater.spriteAsset.animations.byId[ui.selectedAnimationId].endFrameIndex)
+      editAsset("setAnimationProperty", animation.id, "endFrameIndex", startFrameIndex);
   });
 
-  let endFrameIndexInput = document.createElement("input")
-  endFrameIndexInput.type = "number"
-  endFrameIndexInput.className = "end-frame-index"
-  endFrameIndexInput.value = animation.endFrameIndex
+  let endFrameIndexInput = document.createElement("input");
+  endFrameIndexInput.type = "number";
+  endFrameIndexInput.min = "0";
+  endFrameIndexInput.className = "end-frame-index";
+  endFrameIndexInput.value = animation.endFrameIndex;
   liElt.appendChild(endFrameIndexInput);
 
   endFrameIndexInput.addEventListener("change", (event: any) => {
-    editAsset("setAnimationProperty", animation.id, "endFrameIndex", parseInt(event.target.value));
+    let endFrameIndex = parseInt(event.target.value);
+    editAsset("setAnimationProperty", animation.id, "endFrameIndex", endFrameIndex);
+    ui.selectedAnimationId
+    if (endFrameIndex < data.spriteUpdater.spriteAsset.animations.byId[ui.selectedAnimationId].startFrameIndex)
+      editAsset("setAnimationProperty", animation.id, "startFrameIndex", endFrameIndex);
   });
 
   ui.animationsTreeView.insertAt(liElt, "item", index, null);
