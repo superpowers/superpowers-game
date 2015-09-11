@@ -30,6 +30,7 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
   animationsByName: { [name: string]: Animation };
   animationLooping: boolean;
   animationTimer: number;
+  playbackSpeed = 1;
 
   constructor(actor: SupEngine.Actor) {
     super(actor, "SpriteRenderer");
@@ -206,13 +207,14 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
 
   setAnimation(newAnimationName: string, newAnimationLooping=true) {
     if (newAnimationName != null) {
-      if (this.animationsByName[newAnimationName] == null) throw new Error(`Animation ${newAnimationName} doesn't exist`);
+      let animation = this.animationsByName[newAnimationName];
+      if (animation == null) throw new Error(`Animation ${newAnimationName} doesn't exist`);
 
       this.animationLooping = newAnimationLooping;
       if (newAnimationName === this.animationName && this.isAnimationPlaying ) return;
 
       this.animationName = newAnimationName;
-      this.animationTimer = 0;
+      this.animationTimer = this.playbackSpeed > 0 ? 0 : (animation.endFrameIndex - animation.startFrameIndex + 1) * this.actor.gameInstance.framesPerSecond / this.asset.framesPerSecond;
       this.isAnimationPlaying = true;
       this.updateFrame();
     }
@@ -260,8 +262,9 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
 
   updateFrame() {
     this.hasFrameBeenUpdated = true;
+    console.log(this.animationTimer);
 
-    let animation = this.animationsByName[this.animationName]
+    let animation = this.animationsByName[this.animationName];
     let frame = animation.startFrameIndex + Math.max(1, Math.ceil(this.animationTimer / this.actor.gameInstance.framesPerSecond * this.asset.framesPerSecond)) - 1
     if (frame > animation.endFrameIndex) {
       if (this.animationLooping) {
@@ -270,6 +273,17 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
       }
       else {
         frame = animation.endFrameIndex;
+        this.isAnimationPlaying = false;
+      }
+
+    } else if (this.animationTimer < 0) {
+      if (this.animationLooping) {
+        frame = animation.endFrameIndex;
+        this.animationTimer = (animation.endFrameIndex - animation.startFrameIndex + 1) * this.actor.gameInstance.framesPerSecond / this.asset.framesPerSecond - 1;
+        console.log(this.animationTimer);
+      }
+      else {
+        frame = animation.startFrameIndex;
         this.isAnimationPlaying = false;
       }
     }
@@ -295,7 +309,7 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
   _tickAnimation() {
     if (this.animationName == null || ! this.isAnimationPlaying) return;
 
-    this.animationTimer += 1;
+    this.animationTimer += 1 * this.playbackSpeed;
     this.updateFrame();
   }
 

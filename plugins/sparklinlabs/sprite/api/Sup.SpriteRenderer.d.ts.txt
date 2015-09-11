@@ -25,6 +25,8 @@ declare module Sup {
     playAnimation(looping?: boolean): SpriteRenderer;
     pauseAnimation(): SpriteRenderer;
     stopAnimation(): SpriteRenderer;
+    setPlaybackSpeed(playbackSpeed: number): SpriteRenderer;
+    getPlaybackSpeed();
 
     getUniforms(): { [name: string]: { type: string; value: any; } };
   }

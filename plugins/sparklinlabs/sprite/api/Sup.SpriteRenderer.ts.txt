@@ -6,7 +6,7 @@ module Sup {
       super(actor);
       this.__inner = new SupEngine.componentClasses.SpriteRenderer(this.actor.__inner);
       if (pathOrAsset != null) {
-        let spriteAsset = (typeof pathOrAsset === "string") ? get(pathOrAsset, Sprite) : <Sprite>pathOrAsset; 
+        let spriteAsset = (typeof pathOrAsset === "string") ? get(pathOrAsset, Sprite) : <Sprite>pathOrAsset;
         this.__inner.opacity = spriteAsset.__inner.opacity;
         this.setSprite(spriteAsset, materialIndex);
       }
@@ -51,16 +51,18 @@ module Sup {
     }
 
     setAnimation(animationName, looping) { this.__inner.setAnimation(animationName, looping); return this; }
-    getAnimation() { return this.__inner.getAnimation() }
+    getAnimation() { return this.__inner.getAnimation(); }
     setAnimationTime(time) { this.__inner.setAnimationTime(time); return this; }
-    getAnimationTime() { return this.__inner.getAnimationTime() }
-    getAnimationDuration() { return this.__inner.getAnimationDuration() }
+    getAnimationTime() { return this.__inner.getAnimationTime(); }
+    getAnimationDuration() { return this.__inner.getAnimationDuration(); }
 
-    isAnimationPlaying() { return this.__inner.isAnimationPlaying }
-    playAnimation(looping) { this.__inner.playAnimation(looping); return this }
-    pauseAnimation() { this.__inner.pauseAnimation(); return this }
-    stopAnimation() { this.__inner.stopAnimation(); return this }
-    
+    isAnimationPlaying() { return this.__inner.isAnimationPlaying; }
+    playAnimation(looping) { this.__inner.playAnimation(looping); return this; }
+    pauseAnimation() { this.__inner.pauseAnimation(); return this; }
+    stopAnimation() { this.__inner.stopAnimation(); return this; }
+    setPlaybackSpeed(playbackSpeed) { this.__inner.playbackSpeed = playbackSpeed; return this; }
+    getPlaybackSpeed() { return this.__inner.playbackSpeed; }
+
     getUniforms() { return this.__inner.material.uniforms; }
   }
 
