@@ -14,6 +14,7 @@ let ui: {
 
   errorCheckTimeout?: number;
   completionTimeout?: number;
+  completionOpened?: boolean;
 
   infoElement?: HTMLDivElement;
   infoPosition?: { line: number; ch: number; };
@@ -94,7 +95,9 @@ export function setupEditor(clientId: number) {
     clearInfoPopup();
 
     // "("" character triggers the parameter hint
-    if (event.keyCode === 53 || (ui.parameterElement.parentElement != null && event.keyCode !== 38 && event.keyCode !== 40)) scheduleParameterHint();
+    if (event.keyCode === 53 ||
+       (ui.parameterElement.parentElement != null && event.keyCode !== 27 && event.keyCode !== 38 && event.keyCode !== 40))
+          scheduleParameterHint();
 
     // Ignore Ctrl, Cmd, Escape, Return, Tab, arrow keys, F8
     if (event.ctrlKey || event.metaKey || [27, 9, 13, 37, 38, 39, 40, 119, 16].indexOf(event.keyCode) !== -1) return;
@@ -110,7 +113,14 @@ export function setupEditor(clientId: number) {
     if (Math.abs(currentLine - ui.previousLine) >= 1) clearParameterPopup();
     else if (ui.parameterElement.parentElement != null) scheduleParameterHint();
     ui.previousLine = currentLine;
-  })
+  });
+
+  (<any>ui.editor.codeMirrorInstance).on("endCompletion", () => {
+    console.log("end completion");
+    ui.completionOpened = false;
+    //console.log(ui.parameterElement.parentElement != null);
+    if (ui.parameterElement.parentElement != null) ui.editor.codeMirrorInstance.addKeyMap(parameterPopupKeyMap);
+  });
 }
 
 let localVersionNumber = 0;
@@ -308,7 +318,7 @@ function clearInfoPopup() {
 ui.parameterElement = <HTMLDivElement>document.querySelector(".popup-parameter");
 ui.parameterElement.parentElement.removeChild(ui.parameterElement);
 
-let parameterPopupKeyMap = {
+var parameterPopupKeyMap = {
   "Esc": () => { clearParameterPopup(); },
   "Up": () => { updateParameterHint(ui.selectedSignatureIndex - 1); },
   "Down": () => { updateParameterHint(ui.selectedSignatureIndex + 1); },
@@ -351,7 +361,7 @@ export function showParameterPopup(texts: { prefix: string; parameters: string[]
   ui.parameterElement.style.top = `${Math.round(coordinates.top - 30)}px`;
   ui.parameterElement.style.left = `${coordinates.left}px`;
   document.body.appendChild(ui.parameterElement);
-  ui.editor.codeMirrorInstance.addKeyMap(parameterPopupKeyMap);
+  if (!ui.completionOpened) ui.editor.codeMirrorInstance.addKeyMap(parameterPopupKeyMap);
 }
 
 function updateParameterHint(index: number) {
@@ -441,6 +451,9 @@ function scheduleCompletion() {
   if (ui.completionTimeout != null) clearTimeout(ui.completionTimeout);
 
   ui.completionTimeout = window.setTimeout(() => {
+    ui.completionOpened = true;
+    if (ui.parameterElement.parentElement != null) ui.editor.codeMirrorInstance.removeKeyMap(parameterPopupKeyMap);
+
     (<any>ui.editor.codeMirrorInstance).showHint({ completeSingle: false, customKeys: hintCustomKeys, hint });
     ui.completionTimeout = null;
   }, 100);
