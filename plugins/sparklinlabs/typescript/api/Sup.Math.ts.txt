@@ -333,6 +333,7 @@ module Sup {
           this._raycaster.ray.origin.copy(threeCamera.position);
           this._raycaster.ray.direction.set(position.x, position.y, 0.5).unproject(threeCamera).sub(threeCamera.position).normalize();
         }
+        return this;
       }
 
       _raycast(actor: Sup.Actor, results: ActorRaycastHit[]) {
