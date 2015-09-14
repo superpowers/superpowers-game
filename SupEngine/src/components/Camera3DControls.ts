@@ -46,8 +46,8 @@ export default class Camera3DControls extends ActorComponent {
     // Camera rotation
     if (this.actor.gameInstance.input.mouseButtons[1].isDown ||
     (this.actor.gameInstance.input.mouseButtons[0].isDown && keyButtons[keyEvent.DOM_VK_ALT].isDown)) {
-      this.rotation.x -= this.actor.gameInstance.input.mouseDelta.y / 250
-      this.rotation.y -= this.actor.gameInstance.input.mouseDelta.x / 250
+      this.rotation.x = Math.min(Math.max(this.rotation.x - this.actor.gameInstance.input.mouseDelta.y / 250, -Math.PI / 2), Math.PI / 2);
+      this.rotation.y -= this.actor.gameInstance.input.mouseDelta.x / 250;
       this.actor.setLocalEulerAngles(this.rotation);
     }
   }
