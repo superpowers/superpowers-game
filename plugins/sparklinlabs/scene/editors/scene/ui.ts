@@ -42,6 +42,7 @@ let ui: {
   cameraMode: string;
   cameraModeButton: HTMLButtonElement;
   cameraSpeedSlider: HTMLInputElement;
+  camera2DZ: HTMLInputElement;
   
   gridSize: number;
 } = <any>{};
@@ -147,9 +148,13 @@ ui.newComponentButton.addEventListener("click", onNewComponentClick);
 ui.cameraMode = "3D";
 ui.cameraModeButton = <HTMLButtonElement>document.getElementById("toggle-camera-button");
 ui.cameraModeButton.addEventListener("click", onChangeCameraMode);
+
 ui.cameraSpeedSlider = <HTMLInputElement>document.getElementById("camera-speed-slider");
 ui.cameraSpeedSlider.addEventListener("input", onChangeCameraSpeed);
 ui.cameraSpeedSlider.value = engine.cameraControls.movementSpeed;
+
+ui.camera2DZ = <HTMLInputElement>document.getElementById("camera-2d-z");
+ui.camera2DZ.addEventListener("input", onChangeCamera2DZ);
 
 document.querySelector(".main .controls .transform-mode").addEventListener("click", onTransformModeClick);
 
@@ -570,7 +575,8 @@ export function setCameraMode(mode: string) {
   engine.gameInstance.destroyComponent(engine.cameraControls);
   ui.cameraMode = mode;
 
-  (<HTMLDivElement>document.querySelector(".controls .camera-speed")).style.display = ui.cameraMode === "3D" ? "" : "none";
+  (<HTMLDivElement>document.querySelector(".controls .camera-speed")).hidden = ui.cameraMode !== "3D";
+  (<HTMLDivElement>document.querySelector(".controls .camera-2d-z")).hidden = ui.cameraMode === "3D";
   
   updateCameraMode();
   ui.cameraModeButton.textContent = ui.cameraMode;
@@ -582,4 +588,12 @@ function onChangeCameraMode(event: any) {
 
 function onChangeCameraSpeed() {
   engine.cameraControls.movementSpeed = ui.cameraSpeedSlider.value;
+}
+
+function onChangeCamera2DZ() {
+  let z = parseFloat(ui.camera2DZ.value);
+  if (isNaN(z)) return;
+
+  engine.cameraActor.threeObject.position.setZ(z);
+  engine.cameraActor.threeObject.updateMatrixWorld(false)
 }
