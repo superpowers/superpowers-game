@@ -39,8 +39,8 @@ export default class Actor {
   awake() { for (let component of this.components.slice()) { component.awake(); } }
 
   setActiveLayer(layer: number) {
-    let visible = (this.layer === layer);
-    for (let component of this.components) component.setVisible(visible);
+    let active = (this.layer === layer);
+    for (let component of this.components) component.setActiveLayer(active);
   }
 
   update() {

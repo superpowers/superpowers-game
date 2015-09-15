@@ -23,6 +23,8 @@ export default class ActorComponent {
   awake() {}
   start() {}
   update() {}
-  
-  setVisible(visible: boolean) {}
+
+  // TODO: Make abstract when we update to TypeScript 1.6
+  // You must override it in your child class and hide your stuff when active is false
+  setActiveLayer(active: boolean) {}
 }
