@@ -15,20 +15,18 @@ body
 .controls
   display flex
   align-items center
-  height 31px
-  overflow hidden
+  flex-wrap wrap
   white-space nowrap
-  border-top 1px solid rgba(0,0,0,0.3)
+  overflow hidden
 
   > div
+    border-top 1px solid rgba(0,0,0,0.3)
+    border-left 1px solid rgba(0,0,0,0.3)
     display flex
     align-items center
-    height 30px
-    flex auto 0 0
+    height 31px
+    flex auto 1 0
 
-    &:not(:first-child)
-      border-left 1px solid rgba(0,0,0,0.3)
-  
   > div > div
     display flex
     align-items center
