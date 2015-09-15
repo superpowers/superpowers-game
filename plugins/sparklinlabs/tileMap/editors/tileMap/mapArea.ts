@@ -153,6 +153,8 @@ export function flipTilesHorizontally() {
     for (let x = width - 1; x >= 0; x--) {
       let tileValue = mapArea.patternData[y * width + x];
       tileValue[2] = !tileValue[2];
+      if (tileValue[4] === 90) tileValue[4] = 270;
+      else if (tileValue[4] === 270) tileValue[4] = 90;
       layerData.push(tileValue);
     }
   }
@@ -170,7 +172,8 @@ export function flipTilesVertically() {
     for (let x = 0; x < width; x++) {
       let tileValue = mapArea.patternData[y * width + x];
       tileValue[3] = !tileValue[3];
-
+      if (tileValue[4] === 90) tileValue[4] = 270;
+      else if (tileValue[4] === 270) tileValue[4] = 90;
       layerData.push(tileValue);
     }
   }
