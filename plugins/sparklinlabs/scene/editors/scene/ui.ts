@@ -43,8 +43,9 @@ let ui: {
   cameraModeButton: HTMLButtonElement;
   cameraSpeedSlider: HTMLInputElement;
   camera2DZ: HTMLInputElement;
-  
+
   gridSize: number;
+  gridStep: number;
 } = <any>{};
 export default ui;
 
@@ -158,15 +159,12 @@ ui.camera2DZ.addEventListener("input", onChangeCamera2DZ);
 
 document.querySelector(".main .controls .transform-mode").addEventListener("click", onTransformModeClick);
 
-ui.gridSize = 1;
-document.getElementById("grid-size").addEventListener("input", onGridSizeInput);
-document.getElementById("grid-visible").addEventListener("change", onGridVisibleChange);
-
 ui.availableComponents = {};
 export function start() {
   for (let componentName in SupClient.componentEditorClasses) ui.availableComponents[componentName] = componentName;
 }
 
+// Transform
 function onTransformModeClick(event: any) {
   if (event.target.tagName !== "INPUT") return;
 
@@ -179,13 +177,19 @@ function onTransformModeClick(event: any) {
   }
 }
 
-function onGridSizeInput(event: UIEvent) {
+// Grid
+ui.gridSize = 80;
+ui.gridStep = 1;
+document.getElementById("grid-step").addEventListener("input", onGridStepInput);
+document.getElementById("grid-visible").addEventListener("change", onGridVisibleChange);
+
+function onGridStepInput(event: UIEvent) {
   let target = (<HTMLInputElement>event.target);
   let value = parseFloat(target.value);
   if (isNaN(value) || value <= 0) { (<any>target).reportValidity(); return; }
 
-  ui.gridSize = value;
-  engine.gridHelperComponent.setSize(ui.gridSize);
+  ui.gridStep = value;
+  engine.gridHelperComponent.setup(ui.gridSize, ui.gridStep);
 }
 
 function onGridVisibleChange(event: UIEvent) {

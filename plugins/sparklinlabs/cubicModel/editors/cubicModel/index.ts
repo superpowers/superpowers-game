@@ -1,4 +1,6 @@
 import "./info";
 import "./ui";
-import "./engine";
+import { start as engineStart } from "./engine";
 import "./network";
+
+engineStart();

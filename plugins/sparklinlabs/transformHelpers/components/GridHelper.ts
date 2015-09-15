@@ -4,22 +4,22 @@ export default class GridHelper extends SupEngine.ActorComponent {
   gridHelper: THREE.GridHelper;
   visible = true;
 
-  constructor(actor: SupEngine.Actor) {
+  constructor(actor: SupEngine.Actor, size: number, step: number) {
     super(actor, "GridHelper");
     
-    this.setSize(1);
+    this.setup(size, step);
   }
   
   setIsLayerActive(active: boolean) { this.gridHelper.visible = active && this.visible; }
   
-  setSize(size: number) {
+  setup(size: number, step: number) {
     if (this.gridHelper != null) {
       this.actor.threeObject.remove(this.gridHelper);
       this.gridHelper.geometry.dispose();
       this.gridHelper.material.dispose();
     }
 
-    this.gridHelper = new THREE.GridHelper(80 * size, size);
+    this.gridHelper = new THREE.GridHelper(size, step);
     this.gridHelper.color1.setRGB(1, 1, 1);
     this.gridHelper.color2.setRGB(1, 1, 1);
     this.gridHelper.material.transparent = true;

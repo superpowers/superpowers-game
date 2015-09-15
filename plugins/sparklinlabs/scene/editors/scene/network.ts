@@ -59,7 +59,7 @@ function onSceneAssetReceived(err: string, asset: SceneAsset) {
   // Clear tree view
   ui.nodesTreeView.clearSelection();
   ui.nodesTreeView.treeRoot.innerHTML = "";
-  
+
   let box = {
     x: { min: Infinity, max: -Infinity },
     y: { min: Infinity, max: -Infinity },
@@ -74,7 +74,7 @@ function onSceneAssetReceived(err: string, asset: SceneAsset) {
       liElt.classList.add("collapsed");
       for (let child of node.children) walk(child, node, liElt)
     }
-    
+
     // Compute scene bounding box
     let pos = data.sceneUpdater.bySceneNodeId[node.id].actor.getGlobalPosition();
 

@@ -29,7 +29,7 @@ engine.cameraComponent = new SupEngine.componentClasses["Camera"](engine.cameraA
 engine.cameraComponent.layers = [ 0, -1 ];
 engine.cameraControls = new SupEngine.editorComponentClasses["Camera3DControls"](engine.cameraActor, engine.cameraComponent);
 
-let gridActor = new SupEngine.Actor(engine.gameInstance, "Grid", null, { layer: -1 });
+let gridActor = new SupEngine.Actor(engine.gameInstance, "Grid", null, { layer: 0 });
 let selectionActor = new SupEngine.Actor(engine.gameInstance, "Selection Box", null, { layer: -1 });
 let transformHandlesActor = new SupEngine.Actor(engine.gameInstance, "Transform Handles", null, { layer: -1 });
 
@@ -40,8 +40,8 @@ export function start() {
 
   engine.transformHandleComponent.control.addEventListener("mouseDown", () => { draggingControls = true; });
   engine.transformHandleComponent.control.addEventListener("objectChange", onTransformChange);
-  
-  engine.gridHelperComponent = new SupEngine.editorComponentClasses["GridHelper"](gridActor);
+
+  engine.gridHelperComponent = new SupEngine.editorComponentClasses["GridHelper"](gridActor, ui.gridSize, ui.gridStep);
   engine.gridHelperComponent.setVisible(false);
 
   requestAnimationFrame(tick);
@@ -67,9 +67,11 @@ export function updateCameraMode() {
   if (ui.cameraMode === "3D") {
     gridActor.setLocalPosition(new THREE.Vector3(0, 0, 0));
     gridActor.setLocalEulerAngles(new THREE.Euler(0, 0, 0));
+    gridActor.layer = 0;
   } else {
     gridActor.setLocalPosition(new THREE.Vector3(0, 0, -500));
     gridActor.setLocalEulerAngles(new THREE.Euler(Math.PI / 2, 0, 0));
+    gridActor.layer = -1;
   }
 }
 
@@ -120,16 +122,16 @@ function update() {
   }
 
   let snap = engine.gameInstance.input.keyboardButtons[(<any>window).KeyEvent.DOM_VK_CONTROL].isDown;
-  
+
   if (snap !== (engine.transformHandleComponent.control.translationSnap != null)) {
-    engine.transformHandleComponent.control.setTranslationSnap(snap ? ui.gridSize : null);
+    engine.transformHandleComponent.control.setTranslationSnap(snap ? ui.gridStep : null);
     engine.transformHandleComponent.control.setRotationSnap(snap ? Math.PI / 36 : null);
   }
-  
+
   if (ui.cameraMode === "2D") {
     let pos = engine.cameraActor.getLocalPosition();
-    pos.x += (ui.gridSize - pos.x % ui.gridSize);
-    pos.y += (ui.gridSize - pos.y % ui.gridSize);
+    pos.x += (ui.gridStep - pos.x % ui.gridStep);
+    pos.y += (ui.gridStep - pos.y % ui.gridStep);
     pos.z = 0;
     gridActor.setLocalPosition(pos);
   }

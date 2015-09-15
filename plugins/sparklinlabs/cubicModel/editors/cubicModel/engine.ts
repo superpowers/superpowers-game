@@ -12,6 +12,7 @@ let engine: {
   transformMarkerComponent: TransformMarker;
   selectionBoxComponent: SelectionBox;
   transformHandleComponent: TransformHandle;
+  gridHelperComponent: GridHelper;
 } = <any>{};
 export default engine;
 
@@ -35,8 +36,16 @@ engine.selectionBoxComponent = new SupEngine.editorComponentClasses["SelectionBo
 let transformHandlesActor = new SupEngine.Actor(engine.gameInstance, "Transform Handles", null, { layer: -1 });
 engine.transformHandleComponent = new SupEngine.editorComponentClasses["TransformHandle"](transformHandlesActor, cameraComponent.unifiedThreeCamera);
 
+let gridActor = new SupEngine.Actor(engine.gameInstance, "Grid", null, { layer: 0 });
+
 /*let light = new THREE.AmbientLight(0xcfcfcf);
 engine.gameInstance.threeScene.add(light);*/
+
+export function start() {
+  // We need to delay this because it relies on ui.grid* being setup
+  engine.gridHelperComponent = new SupEngine.editorComponentClasses["GridHelper"](gridActor, ui.gridSize, ui.gridStep);
+  engine.gridHelperComponent.setVisible(false);
+}
 
 let lastTimestamp = 0;
 let accumulatedTime = 0;
@@ -53,11 +62,10 @@ requestAnimationFrame(tick);
 
 function update() {
   if (engine.gameInstance.input.mouseButtons[0].wasJustReleased) mouseUp();
-  
-  // TODO:
-  /*
+
   if (engine.gameInstance.input.keyboardButtons[(<any>window).KeyEvent.DOM_VK_E].wasJustPressed) {
-    (<HTMLInputElement>document.getElementById(`transform-mode-translate`)).checked = true;
+    // TODO: switch between pivot or shape
+    (<HTMLInputElement>document.getElementById(`transform-mode-translate-pivot`)).checked = true;
     engine.transformHandleComponent.setMode("translate");
   }
 
@@ -67,7 +75,7 @@ function update() {
   }
 
   if (engine.gameInstance.input.keyboardButtons[(<any>window).KeyEvent.DOM_VK_T].wasJustPressed) {
-    (<HTMLInputElement>document.getElementById(`transform-mode-scale`)).checked = true;
+    (<HTMLInputElement>document.getElementById(`transform-mode-stretch`)).checked = true;
     engine.transformHandleComponent.setMode("scale");
   }
 
@@ -76,9 +84,13 @@ function update() {
     localElt.checked = !localElt.checked;
     engine.transformHandleComponent.setSpace(localElt.checked ? "local" : "world");
   }
-  */
 
-  engine.transformHandleComponent.control.snap = engine.gameInstance.input.keyboardButtons[(<any>window).KeyEvent.DOM_VK_CONTROL].isDown ? true : null;
+  let snap = engine.gameInstance.input.keyboardButtons[(<any>window).KeyEvent.DOM_VK_CONTROL].isDown;
+
+  if (snap !== (engine.transformHandleComponent.control.translationSnap != null)) {
+    engine.transformHandleComponent.control.setTranslationSnap(snap ? ui.gridStep : null);
+    engine.transformHandleComponent.control.setRotationSnap(snap ? Math.PI / 36 : null);
+  }
 }
 
 // Mouse picking

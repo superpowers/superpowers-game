@@ -77,14 +77,14 @@ export default class CubicModelRenderer extends SupEngine.ActorComponent {
     this.actor.threeObject.add(this.threeRoot);
     this.threeRoot.updateMatrixWorld(false);
   }
-  
+
   _makeNode(node: any, parentRendererNode: RendererNode, parentOffset: { x: number; y: number; z: number; }) {
     let pivot: THREE.Object3D;
 
     let material = new THREE.MeshBasicMaterial;
     material.side = THREE.DoubleSide;
     material.color.setRGB(Math.random(), Math.random(), Math.random());
-    
+
     pivot = new THREE.Object3D();
     pivot.name = node.name;
     pivot.userData.nodeId = node.id;
@@ -104,7 +104,7 @@ export default class CubicModelRenderer extends SupEngine.ActorComponent {
       shape.position.set(node.shape.offset.x, node.shape.offset.y, node.shape.offset.z);
       pivot.add(shape);
     }
-    
+
     let rendererNode = { pivot, shape, nodeId: node.id, children: <RendererNode[]>[] };
     this.byNodeId[node.id] = rendererNode;
     if (parentRendererNode != null) parentRendererNode.children.push(rendererNode);
@@ -113,16 +113,16 @@ export default class CubicModelRenderer extends SupEngine.ActorComponent {
     pivot.quaternion.set(node.orientation.x, node.orientation.y, node.orientation.z, node.orientation.w);
     // NOTE: Hierarchical scale is not supported for now, we'll see if the need arises
     //nodeObject.scale.set(node.scale.x, node.scale.y, node.scale.z);
-    
+
     if (parentRendererNode == null) {
       this.threeRoot.add(pivot);
     } else {
       parentRendererNode.pivot.add(pivot);
     }
     pivot.updateMatrixWorld(false);
-    
+
     return rendererNode;
   }
-  
+
   setIsLayerActive(active: boolean) { if (this.threeRoot != null) this.threeRoot.visible = active; }
 }

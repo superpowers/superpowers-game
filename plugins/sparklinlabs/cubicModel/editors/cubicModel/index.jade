@@ -29,6 +29,13 @@ html
             label(for="transform-mode-stretch") Stretch
             input#transform-space(type="checkbox")
             label(for="transform-space") Local
+        .grid
+          .title Grid
+          div
+            label(for="grid-step") Size
+            input#grid-step(type="number",value="1",min="0")
+            input#grid-visible(type="checkbox")
+            label(for="grid-visible") Visible
 
     .sidebar
       table.settings

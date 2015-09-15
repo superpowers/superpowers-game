@@ -12,8 +12,11 @@ let ui: {
   canvasElt: HTMLCanvasElement;
   treeViewElt: HTMLDivElement;
   nodesTreeView: any;
-  
+
   translateMode: string;
+
+  gridSize: number;
+  gridStep: number;
 
   newNodeButton: HTMLButtonElement;
   renameNodeButton: HTMLButtonElement;
@@ -79,6 +82,25 @@ ui.canvasElt = <HTMLCanvasElement>document.querySelector("canvas");
 new PerfectResize(document.querySelector(".sidebar"), "right");
 new PerfectResize(document.querySelector(".nodes-tree-view"), "top");
 
+// Grid
+ui.gridSize = 20;
+ui.gridStep = 1;
+document.getElementById("grid-step").addEventListener("input", onGridStepInput);
+document.getElementById("grid-visible").addEventListener("change", onGridVisibleChange);
+
+function onGridStepInput(event: UIEvent) {
+  let target = (<HTMLInputElement>event.target);
+  let value = parseFloat(target.value);
+  if (isNaN(value) || value <= 0) { (<any>target).reportValidity(); return; }
+
+  ui.gridStep = value;
+  engine.gridHelperComponent.setup(ui.gridSize, ui.gridStep);
+}
+
+function onGridVisibleChange(event: UIEvent) {
+  engine.gridHelperComponent.setVisible((<HTMLInputElement>event.target).checked);
+}
+ 
 // Setup tree view
 ui.treeViewElt = <HTMLDivElement>document.querySelector(".nodes-tree-view");
 ui.nodesTreeView = new TreeView(document.querySelector(".nodes-tree-view"), onNodeDrop);
