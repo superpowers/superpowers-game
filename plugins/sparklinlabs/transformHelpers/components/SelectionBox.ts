@@ -16,7 +16,7 @@ export default class SelectionBox extends SupEngine.ActorComponent {
     this.line.visible = false;
   }
 
-  setActiveLayer(active: boolean) { this.line.visible = active && this.target != null; }
+  setIsLayerActive(active: boolean) { this.line.visible = active && this.target != null; }
 
   setTarget(target: THREE.Object3D) {
     this.target = target;

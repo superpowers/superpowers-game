@@ -206,5 +206,5 @@ export default class Light extends SupEngine.ActorComponent {
     super._destroy();
   }
 
-  setIsActiveLayer(active: boolean) { this.light.visible = active; }
+  setIsLayerActive(active: boolean) { this.light.visible = active; }
 }

@@ -124,5 +124,5 @@ export default class CubicModelRenderer extends SupEngine.ActorComponent {
     return rendererNode;
   }
   
-  setIsActiveLayer(active: boolean) { if (this.threeRoot != null) this.threeRoot.visible = active; }
+  setIsLayerActive(active: boolean) { if (this.threeRoot != null) this.threeRoot.visible = active; }
 }

@@ -303,7 +303,7 @@ export default class TileMapRenderer extends SupEngine.ActorComponent {
     }
   }
 
-  setIsActiveLayer(active: boolean) {
+  setIsLayerActive(active: boolean) {
     if (this.layerMeshes == null) return;
 
     for (let layerId in this.layerMeshesById)

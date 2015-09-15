@@ -24,7 +24,7 @@ export default class TransformMarker extends SupEngine.ActorComponent {
     this.line.updateMatrixWorld(false);
   }
 
-  setActiveLayer(active: boolean) { this.line.visible = active && this.visible; }
+  setIsLayerActive(active: boolean) { this.line.visible = active && this.visible; }
 
   move(target: THREE.Object3D) {
     this.visible = this.line.visible = true;

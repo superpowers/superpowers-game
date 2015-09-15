@@ -73,5 +73,5 @@ export default class TileSetRenderer extends SupEngine.ActorComponent {
     super._destroy();
   }
   
-  setIsActiveLayer(active: boolean) { if (this.mesh != null) this.mesh.visible = active; }
+  setIsLayerActive(active: boolean) { if (this.mesh != null) this.mesh.visible = active; }
 }

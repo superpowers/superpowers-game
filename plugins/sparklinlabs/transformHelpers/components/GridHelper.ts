@@ -10,7 +10,7 @@ export default class GridHelper extends SupEngine.ActorComponent {
     this.setSize(1);
   }
   
-  setActiveLayer(active: boolean) { this.gridHelper.visible = active && this.visible; }
+  setIsLayerActive(active: boolean) { this.gridHelper.visible = active && this.visible; }
   
   setSize(size: number) {
     if (this.gridHelper != null) {
