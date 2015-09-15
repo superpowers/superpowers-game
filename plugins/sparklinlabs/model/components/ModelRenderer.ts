@@ -400,5 +400,5 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
     this.updatePose();
   }
 
-  setVisible(visible: boolean) { if (this.threeMesh != null) this.threeMesh.visible = visible; }
+  setIsActiveLayer(active: boolean) { if (this.threeMesh != null) this.threeMesh.visible = active; }
 }

@@ -32,6 +32,8 @@ export default  class CameraMarker extends SupEngine.ActorComponent {
     this.line.updateMatrixWorld(false);
   }
 
+  setIsActiveLayer(active: boolean) { this.line.visible = active; }
+
   setConfig(config: any) {
     this.setOrthographicMode(config.mode === "orthographic");
     this.setFOV(config.fov);

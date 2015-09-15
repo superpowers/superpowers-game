@@ -16,15 +16,15 @@ export default class SelectionBox extends SupEngine.ActorComponent {
     this.line.visible = false;
   }
 
+  setActiveLayer(active: boolean) { this.line.visible = active && this.target != null; }
+
   setTarget(target: THREE.Object3D) {
     this.target = target;
+    this.line.visible = this.target != null;
 
     if (this.target != null) {
-      this.line.visible = true;
       this.move();
       this.resize();
-    } else {
-      this.line.visible = false;
     }
   }
 
@@ -35,8 +35,6 @@ export default class SelectionBox extends SupEngine.ActorComponent {
   }
 
   resize() {
-    this.line.visible = true;
-
     let vec = new THREE.Vector3();
     let box = new THREE.Box3();
     let inverseTargetMatrixWorld = new THREE.Matrix4().compose(this.target.getWorldPosition(), this.target.getWorldQuaternion(), <THREE.Vector3>{ x: 1, y: 1, z: 1 });

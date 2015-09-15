@@ -2,6 +2,7 @@ let THREE = SupEngine.THREE;
 
 export default class TransformMarker extends SupEngine.ActorComponent {
   line: THREE.Line;
+  visible = true;
 
   constructor(actor: SupEngine.Actor) {
     super(actor, "TransformMarker");
@@ -23,15 +24,17 @@ export default class TransformMarker extends SupEngine.ActorComponent {
     this.line.updateMatrixWorld(false);
   }
 
+  setActiveLayer(active: boolean) { this.line.visible = active && this.visible; }
+
   move(target: THREE.Object3D) {
-    this.line.visible = true;
+    this.visible = this.line.visible = true;
     this.actor.threeObject.position.copy(target.getWorldPosition());
     this.actor.threeObject.quaternion.copy(target.getWorldQuaternion());
     this.actor.threeObject.updateMatrixWorld(false);
   }
 
   hide() {
-    this.line.visible = false;
+    this.visible = this.line.visible = false;
   }
 
   _destroy() {

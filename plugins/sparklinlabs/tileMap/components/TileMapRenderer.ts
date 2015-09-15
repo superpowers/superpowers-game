@@ -303,10 +303,10 @@ export default class TileMapRenderer extends SupEngine.ActorComponent {
     }
   }
 
-  setVisible(visible: boolean) {
+  setIsActiveLayer(active: boolean) {
     if (this.layerMeshes == null) return;
 
     for (let layerId in this.layerMeshesById)
-      this.layerMeshesById[layerId].visible = visible ? this.layerVisibleById[layerId]: false;
+      this.layerMeshesById[layerId].visible = active && this.layerVisibleById[layerId];
   }
 }

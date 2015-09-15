@@ -15,6 +15,8 @@ export default class TransformHandle extends SupEngine.ActorComponent {
     this.actor.gameInstance.threeScene.add(this.control);
   }
 
+  setActiveLayer(active: boolean) { this.control.visible = active; }
+
   update() {
     this.control.update();
     this.control.updateMatrixWorld(true);
