@@ -59,6 +59,12 @@ function onSceneAssetReceived(err: string, asset: SceneAsset) {
   // Clear tree view
   ui.nodesTreeView.clearSelection();
   ui.nodesTreeView.treeRoot.innerHTML = "";
+  
+  let box = {
+    x: { min: Infinity, max: -Infinity },
+    y: { min: Infinity, max: -Infinity },
+    z: { min: Infinity, max: -Infinity },
+  };
 
   function walk(node: Node, parentNode: Node, parentElt: HTMLLIElement) {
     let liElt = createNodeElement(node);
@@ -68,8 +74,27 @@ function onSceneAssetReceived(err: string, asset: SceneAsset) {
       liElt.classList.add("collapsed");
       for (let child of node.children) walk(child, node, liElt)
     }
+    
+    // Compute scene bounding box
+    let pos = data.sceneUpdater.bySceneNodeId[node.id].actor.getGlobalPosition();
+
+    box.x.min = Math.min(box.x.min, pos.x);
+    box.x.max = Math.max(box.x.max, pos.x);
+
+    box.y.min = Math.min(box.y.min, pos.y);
+    box.y.max = Math.max(box.y.max, pos.y);
+
+    box.z.min = Math.min(box.z.min, pos.z);
+    box.z.max = Math.max(box.z.max, pos.z);
   }
   for (let node of data.sceneUpdater.sceneAsset.nodes.pub) walk(node, null, null);
+
+  // Place camera so that it fits the scene
+  if (data.sceneUpdater.sceneAsset.nodes.pub.length > 0) {
+    let z = box.z.max + 5;
+    engine.cameraActor.setLocalPosition(new THREE.Vector3((box.x.min + box.x.max) / 2, (box.y.min + box.y.max) / 2, z));
+    ui.camera2DZ.value = z.toString();
+  }
 }
 
 var onEditCommands: any = {};
