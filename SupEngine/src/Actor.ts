@@ -40,7 +40,7 @@ export default class Actor {
 
   setActiveLayer(layer: number) {
     let active = (this.layer === layer);
-    for (let component of this.components) component.setActiveLayer(active);
+    for (let component of this.components) component.setIsLayerActive(active);
   }
 
   update() {
