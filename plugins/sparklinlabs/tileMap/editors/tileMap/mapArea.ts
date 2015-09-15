@@ -327,8 +327,8 @@ export function handleMapArea() {
         if (tile[0] == -1) {
           selectEraser();
         } else {
-          setupPattern([ tile ]);
           selectBrush(<number>tile[0], <number>tile[1]);
+          setupPattern([ tile ]);
         }
       }
     } else {
