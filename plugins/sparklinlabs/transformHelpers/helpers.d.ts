@@ -19,3 +19,8 @@ interface TransformMarker extends SupEngine.ActorComponent {
   move(target: THREE.Object3D): void;
   hide(): void;
 }
+
+interface GridHelper extends SupEngine.ActorComponent {
+  setSize(size: number): void;
+  setVisible(visible: boolean): void;
+}

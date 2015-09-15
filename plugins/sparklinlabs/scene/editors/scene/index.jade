@@ -38,6 +38,13 @@ html
             label(for="transform-mode-scale",title="T") Scale
             input#transform-space(type="checkbox")
             label(for="transform-space",title="L") Local
+        .grid
+          .title Grid
+          div
+            label(for="grid-size") Size
+            input#grid-size(type="number",value="1",min="0")
+            input#grid-visible(type="checkbox",checked)
+            label(for="grid-visible") Visible
 
     .sidebar
       .nodes-buttons

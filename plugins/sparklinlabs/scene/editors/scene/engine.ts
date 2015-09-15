@@ -15,6 +15,7 @@ let engine: {
 
   selectionBoxComponent: SelectionBox;
   transformHandleComponent: TransformHandle;
+  gridHelperComponent: GridHelper;
 } = <any>{};
 export default engine;
 
@@ -28,6 +29,7 @@ engine.cameraComponent = new SupEngine.componentClasses["Camera"](engine.cameraA
 engine.cameraComponent.layers = [ 0, -1 ];
 engine.cameraControls = new SupEngine.editorComponentClasses["Camera3DControls"](engine.cameraActor, engine.cameraComponent);
 
+let gridActor = new SupEngine.Actor(engine.gameInstance, "Grid", null, { layer: -1 });
 let selectionActor = new SupEngine.Actor(engine.gameInstance, "Selection Box", null, { layer: -1 });
 let transformHandlesActor = new SupEngine.Actor(engine.gameInstance, "Transform Handles", null, { layer: -1 });
 
@@ -38,8 +40,36 @@ export function start() {
 
   engine.transformHandleComponent.control.addEventListener("mouseDown", () => { draggingControls = true; });
   engine.transformHandleComponent.control.addEventListener("objectChange", onTransformChange);
+  
+  engine.gridHelperComponent = new SupEngine.editorComponentClasses["GridHelper"](gridActor);
 
   requestAnimationFrame(tick);
+}
+
+export function updateCameraMode() {
+  if (ui.cameraMode === "3D") {
+    engine.cameraComponent.setOrthographicMode(false);
+    engine.cameraControls = new SupEngine.editorComponentClasses["Camera3DControls"](engine.cameraActor, engine.cameraComponent);
+    engine.cameraControls.movementSpeed = ui.cameraSpeedSlider.value;
+  } else {
+    engine.cameraActor.setLocalOrientation(new SupEngine.THREE.Quaternion().setFromAxisAngle(new SupEngine.THREE.Vector3(0, 1, 0), 0))
+    engine.cameraComponent.setOrthographicMode(true);
+    engine.cameraControls = new SupEngine.editorComponentClasses["Camera2DControls"](engine.cameraActor, engine.cameraComponent, {
+      zoomSpeed: 1.5,
+      zoomMin: 1,
+      zoomMax: 100,
+    });
+  }
+
+  engine.transformHandleComponent.control.camera = engine.cameraComponent.threeCamera;
+
+  if (ui.cameraMode === "3D") {
+    gridActor.setLocalPosition(new THREE.Vector3(0, 0, 0));
+    gridActor.setLocalEulerAngles(new THREE.Euler(0, 0, 0));
+  } else {
+    gridActor.setLocalPosition(new THREE.Vector3(0, 0, -500));
+    gridActor.setLocalEulerAngles(new THREE.Euler(Math.PI / 2, 0, 0));
+  }
 }
 
 let lastTimestamp = 0;
@@ -89,7 +119,8 @@ function update() {
     engine.transformHandleComponent.setSpace(localElt.checked ? "local" : "world");
   }
 
-  engine.transformHandleComponent.control.snap = engine.gameInstance.input.keyboardButtons[(<any>window).KeyEvent.DOM_VK_CONTROL].isDown ? true : null;
+  let snap = engine.gameInstance.input.keyboardButtons[(<any>window).KeyEvent.DOM_VK_CONTROL].isDown;
+  engine.transformHandleComponent.control.setSnap(snap ? ui.gridSize : null);
 }
 
 // Mouse picking

@@ -1,6 +1,6 @@
 import info from "./info";
 import { socket, data } from "./network";
-import engine, { setupHelpers } from "./engine";
+import engine, { setupHelpers, updateCameraMode } from "./engine";
 
 import { Node } from "../../data/SceneNodes";
 import { Component } from "../../data/SceneComponents";
@@ -42,6 +42,8 @@ let ui: {
   cameraMode: string;
   cameraModeButton: HTMLButtonElement;
   cameraSpeedSlider: HTMLInputElement;
+  
+  gridSize: number;
 } = <any>{};
 export default ui;
 
@@ -151,6 +153,10 @@ ui.cameraSpeedSlider.value = engine.cameraControls.movementSpeed;
 
 document.querySelector(".main .controls .transform-mode").addEventListener("click", onTransformModeClick);
 
+ui.gridSize = 1;
+document.getElementById("grid-size").addEventListener("input", onGridSizeInput);
+document.getElementById("grid-visible").addEventListener("change", onGridVisibleChange);
+
 ui.availableComponents = {};
 export function start() {
   for (let componentName in SupClient.componentEditorClasses) ui.availableComponents[componentName] = componentName;
@@ -168,6 +174,19 @@ function onTransformModeClick(event: any) {
   }
 }
 
+function onGridSizeInput(event: UIEvent) {
+  let target = (<HTMLInputElement>event.target);
+  let value = parseFloat(target.value);
+  if (isNaN(value) || value <= 0) { (<any>target).reportValidity(); return; }
+
+  ui.gridSize = value;
+  engine.gridHelperComponent.setSize(ui.gridSize);
+}
+
+function onGridVisibleChange(event: UIEvent) {
+  engine.gridHelperComponent.setVisible((<HTMLInputElement>event.target).checked);
+}
+ 
 export function createNodeElement(node: Node) {
   let liElt = document.createElement("li");
   (<any>liElt.dataset).id = node.id;
@@ -552,23 +571,8 @@ export function setCameraMode(mode: string) {
   ui.cameraMode = mode;
 
   (<HTMLDivElement>document.querySelector(".controls .camera-speed")).style.display = ui.cameraMode === "3D" ? "" : "none";
-
-  if (ui.cameraMode === "3D") {
-    engine.cameraComponent.setOrthographicMode(false);
-    engine.cameraControls = new SupEngine.editorComponentClasses["Camera3DControls"](engine.cameraActor, engine.cameraComponent);
-    engine.cameraControls.movementSpeed = ui.cameraSpeedSlider.value;
-  } else {
-    engine.cameraActor.setLocalOrientation(new SupEngine.THREE.Quaternion().setFromAxisAngle(new SupEngine.THREE.Vector3(0, 1, 0), 0))
-    engine.cameraComponent.setOrthographicMode(true);
-    engine.cameraControls = new SupEngine.editorComponentClasses["Camera2DControls"](engine.cameraActor, engine.cameraComponent, {
-      zoomSpeed: 1.5,
-      zoomMin: 1,
-      zoomMax: 100,
-    });
-  }
-
-  engine.transformHandleComponent.control.camera = engine.cameraComponent.threeCamera;
-
+  
+  updateCameraMode();
   ui.cameraModeButton.textContent = ui.cameraMode;
 }
 
