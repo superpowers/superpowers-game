@@ -15,20 +15,15 @@ if (nwDispatcher != null) {
 }
 let qs = querystring.parse(window.location.search.slice(1));
 
-// Prevent keypress events from leaking out to a parent window
-// They might trigger scrolling for instance
-document.body.addEventListener("keypress", (event) => {
+document.body.addEventListener("keydown", (event) => {
   if (event.keyCode === (<any>window)["KeyEvent"].DOM_VK_F12) {
     if (qs.project != null && gui != null) gui.Window.get().showDevTools();
-    return;
   }
-
-  if (event.keyCode === (<any>window)["KeyEvent"].DOM_VK_F12 ||
-      event.keyCode === (<any>window)["KeyEvent"].DOM_VK_F4 ||
-      event.keyCode === (<any>window)["KeyEvent"].DOM_VK_F5) return;
-
-  event.preventDefault();
 });
+
+// Prevent keypress events from leaking out to a parent window
+// They might trigger scrolling for instance
+document.body.addEventListener("keypress", (event) => { event.preventDefault(); });
 
 let progressBar = <HTMLProgressElement>document.querySelector("progress");
 let loadingElt = document.getElementById("loading");
