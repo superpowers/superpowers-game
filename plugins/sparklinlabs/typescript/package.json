@@ -1,5 +1,5 @@
 {
-  "name": "superpowers-sparklinlabs-script-plugin",
+  "name": "superpowers-sparklinlabs-typescript-plugin",
   "version": "1.0.0",
   "dependencies": {
     "combine-source-map": "^0.4.0",
