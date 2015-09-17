@@ -98,12 +98,12 @@ ${jsGlobals.script}
 })();
 `;
 
-  let line = getLineCounts(jsGlobals.script);
+  let line = getLineCounts(jsGlobals.script) + 2;
   let combinedSourceMap = combine.create("bundle.js");
   for (let file of results.files) {
-    let comment = convert.fromObject( results.sourceMaps[file.name] ).toComment();
-    combinedSourceMap.addFile( { sourceFile: `/${player.gameName}/${file.name}`, source: file.text + `\n${comment}` }, {line} );
-    line += ( getLineCounts( file.text ) );
+    let comment = convert.fromObject(results.sourceMaps[file.name]).toComment();
+    combinedSourceMap.addFile({ sourceFile: `/${player.gameName}/${file.name}`, source: file.text + `\n${comment}` }, { line });
+    line += getLineCounts(file.text);
   }
 
   let code =`${jsGlobals.script}${results.script}
