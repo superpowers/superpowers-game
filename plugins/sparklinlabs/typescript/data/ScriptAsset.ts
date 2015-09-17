@@ -1,5 +1,5 @@
-///<reference path="../../textEditorWidget/operational-transform.d.ts"/>
-///<reference path="../node_modules/typescript/bin/typescriptServices.d.ts"/>
+/// <reference path="../../textEditorWidget/operational-transform.d.ts" />
+/// <reference path="../node_modules/typescript/lib/typescriptServices.d.ts" />
 
 import * as OT from "operational-transform";
 import * as fs from "fs";
@@ -246,12 +246,12 @@ Sup.registerBehavior(${behaviorName});
 
       if(results.errors.length > 0) { finish(); return; }
 
-      let libSourceFile = results.program.getSourceFile("lib.d.ts");
+      let libLocals = <ts.SymbolTable>(<any>results.program.getSourceFile("lib.d.ts")).locals;
       let supTypeSymbols: { [fullName: string]: ts.Symbol } = {
-        "Sup.Actor": libSourceFile.locals["Sup"].exports["Actor"],
-        "Sup.Behavior": libSourceFile.locals["Sup"].exports["Behavior"],
-        "Sup.Math.Vector3": libSourceFile.locals["Sup"].exports["Math"].exports["Vector3"],
-        "Sup.Asset": libSourceFile.locals["Sup"].exports["Asset"],
+        "Sup.Actor": libLocals["Sup"].exports["Actor"],
+        "Sup.Behavior": libLocals["Sup"].exports["Behavior"],
+        "Sup.Math.Vector3": libLocals["Sup"].exports["Math"].exports["Vector3"],
+        "Sup.Asset": libLocals["Sup"].exports["Asset"],
       };
 
       let supportedSupPropertyTypes: ts.Symbol[] = [
@@ -260,8 +260,9 @@ Sup.registerBehavior(${behaviorName});
 
       let behaviors: { [behaviorName: string]: { properties: Array<{ name: string, type: string }>; parentBehavior: string } } = {};
 
-      for (let symbolName in results.program.getSourceFile(ownScriptName).locals) {
-        let symbol = <ts.Symbol>results.program.getSourceFile(ownScriptName).locals[symbolName];
+      let ownLocals = <ts.SymbolTable>(<any>results.program.getSourceFile(ownScriptName)).locals;
+      for (let symbolName in ownLocals) {
+        let symbol = ownLocals[symbolName];
         if ((symbol.flags & ts.SymbolFlags.Class) !== ts.SymbolFlags.Class) continue;
 
         let parentTypeNode = ts.getClassExtendsHeritageClauseElement(symbol.valueDeclaration);
@@ -302,13 +303,13 @@ Sup.registerBehavior(${behaviorName});
           let typeSymbol = type.getSymbol();
           if (supportedSupPropertyTypes.indexOf(typeSymbol) !== -1) {
             typeName = typeSymbol.getName();
-            let parentSymbol = typeSymbol.parent;
+            let parentSymbol = (<any>typeSymbol).parent;
             while (parentSymbol != null) {
               typeName = `${parentSymbol.getName()}.${typeName}`;
               parentSymbol = parentSymbol.parent;
             }
           }
-          else if ((<ts.IntrinsicType>type).intrinsicName != null) typeName = (<ts.IntrinsicType>type).intrinsicName;
+          else if ((<any>type).intrinsicName != null) typeName = (<any>type).intrinsicName;
 
           if (typeName != null) properties.push({ name: member.name, type: typeName });
         }

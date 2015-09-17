@@ -462,7 +462,7 @@ function onTransformInputChange(event: any) {
   let transformType = event.target.parentElement.parentElement.parentElement.className;
   let inputs: HTMLInputElement[] = (<any>ui).transform[`${transformType}Elts`];
 
-  let value = {
+  let value: { x: number; y: number; z: number; w?: number } = {
     x: parseFloat(inputs[0].value),
     y: parseFloat(inputs[1].value),
     z: parseFloat(inputs[2].value),
@@ -471,7 +471,7 @@ function onTransformInputChange(event: any) {
   if (transformType === "orientation") {
     let euler = new THREE.Euler(THREE.Math.degToRad(value.x), THREE.Math.degToRad(value.y), THREE.Math.degToRad(value.z));
     let quaternion = new THREE.Quaternion().setFromEuler(euler);
-    value = { x: quaternion.x, y: quaternion.y, z: quaternion.z, w: quaternion.w }
+    value = { x: quaternion.x, y: quaternion.y, z: quaternion.z, w: quaternion.w };
   }
   let nodeId = ui.nodesTreeView.selectedNodes[0].dataset.id;
 

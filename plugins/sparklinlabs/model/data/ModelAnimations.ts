@@ -14,7 +14,7 @@ export default class ModelAnimations extends SupCore.data.base.ListById {
             items: {
               type: "hash",
               properties: {
-                time: { type: "number", minValue: 0 },
+                time: { type: "number", min: 0 },
                 value: { type: "array", items: { type: "number", length: 3 } }
               }
             }
@@ -24,7 +24,7 @@ export default class ModelAnimations extends SupCore.data.base.ListById {
             items: {
               type: "hash",
               properties: {
-                time: { type: "number", minValue: 0 },
+                time: { type: "number", min: 0 },
                 value: { type: "array", items: { type: "number", length: 4 } }
               }
             }
@@ -34,7 +34,7 @@ export default class ModelAnimations extends SupCore.data.base.ListById {
             items: {
               type: "hash",
               properties: {
-                time: { type: "number", minValue: 0 },
+                time: { type: "number", min: 0 },
                 value: { type: "array", items: { type: "number", length: 3 } }
               }
             }

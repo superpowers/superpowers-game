@@ -2,9 +2,9 @@
   "name": "superpowers-sparklinlabs-typescript-plugin",
   "version": "1.0.0",
   "dependencies": {
-    "combine-source-map": "^0.4.0",
-    "convert-source-map": "^0.5.0",
+    "combine-source-map": "^0.7.1",
+    "convert-source-map": "^1.1.1",
     "operational-transform": "^0.2.3",
-    "typescript": "1.5.0-alpha"
+    "typescript": "1.6.2"
   }
 }

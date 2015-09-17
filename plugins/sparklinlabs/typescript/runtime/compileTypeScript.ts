@@ -7,15 +7,15 @@ export default function compileTypeScript(sourceFileNames: string[], sourceFiles
   let files: Array<{name: string; text: string}> = [];
   let sourceMaps: {[name: string]: any} = {};
   // Create a compilerHost object to allow the compiler to read and write files
-  let compilerHost = {
+  let compilerHost: ts.CompilerHost = {
     getSourceFile: (filename: string, languageVersion: any) => {
-      if (sourceFiles[filename] != null) {
-        return ts.createSourceFile(filename, sourceFiles[filename], compilerOptions.target);
-      }
-      if (filename === "lib.d.ts") {
-        return ts.createSourceFile(filename, libSource, compilerOptions.target);
-      }
+      if (sourceFiles[filename] != null) return ts.createSourceFile(filename, sourceFiles[filename], compilerOptions.target);
+      if (filename === "lib.d.ts") return ts.createSourceFile(filename, libSource, compilerOptions.target);
       return null;
+    },
+    readFile: (path: string, encoding?: string) => {
+      if (path === "lib.d.ts") return libSource;
+      else return sourceFiles[path];
     },
     writeFile: (name: string, text: string, writeByteOrderMark: any) => {
       if (name.slice(name.length - 4) === ".map") {
@@ -36,7 +36,8 @@ export default function compileTypeScript(sourceFileNames: string[], sourceFiles
         script += `\n${text}`;
       }
     },
-
+    
+    fileExists: (path: string) => { return path === "lib.d.ts" || sourceFiles[path] != null; },
     getDefaultLibFileName: () => { return "lib.d.ts"; },
     useCaseSensitiveFileNames: () => { return false; },
     getCanonicalFileName: (filename: string) => { return filename; },

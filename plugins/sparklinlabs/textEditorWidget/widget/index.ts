@@ -70,7 +70,7 @@ class TextEditorWidget {
 
     this.codeMirrorInstance = CodeMirror.fromTextArea(textArea, {
       // theme: "monokai",
-      lineNumbers: true, matchBrackets: true, styleActiveLine: true, autoCloseBrackets: true,
+      lineNumbers: true,
       gutters: ["line-error-gutter", "CodeMirror-linenumbers"],
       indentWithTabs: false, indentUnit: 2, tabSize: 2, 
       extraKeys: extraKeys, keyMap: "sublime",
@@ -78,6 +78,10 @@ class TextEditorWidget {
       mode: options.mode,
       readOnly: true
     });
+
+    this.codeMirrorInstance.setOption("matchBrackets", true);
+    this.codeMirrorInstance.setOption("styleActiveLine", true);
+    this.codeMirrorInstance.setOption("autoCloseBrackets", true);
 
     this.codeMirrorInstance.on("changes", <any>this.edit);
     this.codeMirrorInstance.on("beforeChange", this.beforeChange);
