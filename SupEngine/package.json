@@ -3,6 +3,6 @@
   "version": "1.0.0",
   "main": "SupEngine.js",
   "dependencies": {
-    "three": "^0.71.0"
+    "three": "0.71.1"
   }
 }
