@@ -42,6 +42,7 @@ export function start() {
   engine.transformHandleComponent.control.addEventListener("objectChange", onTransformChange);
   
   engine.gridHelperComponent = new SupEngine.editorComponentClasses["GridHelper"](gridActor);
+  engine.gridHelperComponent.setVisible(false);
 
   requestAnimationFrame(tick);
 }

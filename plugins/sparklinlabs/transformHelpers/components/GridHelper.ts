@@ -20,8 +20,10 @@ export default class GridHelper extends SupEngine.ActorComponent {
     }
 
     this.gridHelper = new THREE.GridHelper(10 * size, size);
+    this.gridHelper.color1.setRGB(1, 1, 1);
+    this.gridHelper.color2.setRGB(0.8, 0.8, 0.8);
     this.gridHelper.material.transparent = true;
-    this.gridHelper.material.opacity = 0.2;
+    this.gridHelper.material.opacity = 0.25;
     this.actor.threeObject.add(this.gridHelper);
     this.gridHelper.visible = this.visible;
     this.gridHelper.updateMatrixWorld(false);
