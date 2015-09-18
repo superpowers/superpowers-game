@@ -19,9 +19,9 @@ export default class GridHelper extends SupEngine.ActorComponent {
       this.gridHelper.material.dispose();
     }
 
-    this.gridHelper = new THREE.GridHelper(10 * size, size);
+    this.gridHelper = new THREE.GridHelper(80 * size, size);
     this.gridHelper.color1.setRGB(1, 1, 1);
-    this.gridHelper.color2.setRGB(0.8, 0.8, 0.8);
+    this.gridHelper.color2.setRGB(1, 1, 1);
     this.gridHelper.material.transparent = true;
     this.gridHelper.material.opacity = 0.25;
     this.actor.threeObject.add(this.gridHelper);

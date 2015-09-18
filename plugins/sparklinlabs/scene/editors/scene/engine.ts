@@ -85,7 +85,6 @@ function tick(timestamp=0) {
   requestAnimationFrame(tick);
 }
 
-
 function update() {
   if (ui.cameraMode === "3D" && engine.gameInstance.input.keyboardButtons[(<any>window).KeyEvent.DOM_VK_CONTROL].isDown) {
     if (engine.gameInstance.input.mouseButtons[5].isDown) {
@@ -125,6 +124,14 @@ function update() {
   if (snap !== (engine.transformHandleComponent.control.translationSnap != null)) {
     engine.transformHandleComponent.control.setTranslationSnap(snap ? ui.gridSize : null);
     engine.transformHandleComponent.control.setRotationSnap(snap ? Math.PI / 36 : null);
+  }
+  
+  if (ui.cameraMode === "2D") {
+    let pos = engine.cameraActor.getLocalPosition();
+    pos.x += (ui.gridSize - pos.x % ui.gridSize);
+    pos.y += (ui.gridSize - pos.y % ui.gridSize);
+    pos.z = 0;
+    gridActor.setLocalPosition(pos);
   }
 }
 
