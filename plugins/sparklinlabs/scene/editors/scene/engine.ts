@@ -120,7 +120,11 @@ function update() {
   }
 
   let snap = engine.gameInstance.input.keyboardButtons[(<any>window).KeyEvent.DOM_VK_CONTROL].isDown;
-  engine.transformHandleComponent.control.setSnap(snap ? ui.gridSize : null);
+  
+  if (snap !== (engine.transformHandleComponent.control.translationSnap != null)) {
+    engine.transformHandleComponent.control.setTranslationSnap(snap ? ui.gridSize : null);
+    engine.transformHandleComponent.control.setRotationSnap(snap ? Math.PI / 36 : null);
+  }
 }
 
 // Mouse picking
