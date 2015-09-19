@@ -8,6 +8,7 @@ let PerfectResize = require("perfect-resize");
 let TreeView = require("dnd-tree-view");
 
 let ui: {
+  filteringSelect?: HTMLSelectElement;
   unitRatioInput?: HTMLInputElement;
   opacityCheckbox?: HTMLInputElement;
   opacityInput?: HTMLInputElement;
@@ -49,6 +50,10 @@ ui.mapDownloadButton.addEventListener("click", () => {
   let textureName = data.modelUpdater.modelAsset.pub.mapSlots["map"];
   downloadTexture(textureName);
 });
+
+// Filetering
+ui.filteringSelect = <HTMLSelectElement>document.querySelector(".filtering");
+ui.filteringSelect.addEventListener("change", onChangeFiltering);
 
 // Show skeleton
 let showSkeletonCheckbox = <HTMLInputElement>document.querySelector(".show-skeleton");
@@ -235,6 +240,7 @@ function downloadTexture(textureName: string) {
   });
 }
 
+function onChangeFiltering(event: any) { editAsset("setProperty", "filtering", event.target.value); }
 function onShowSkeletonChange(event: Event) { data.modelUpdater.modelRenderer.setShowSkeleton((<HTMLInputElement>event.target).checked); }
 function onChangeUnitRatio(event: any) { editAsset("setProperty", "unitRatio", parseFloat(event.target.value)); }
 function onCheckOpacity(event: any) { editAsset("setProperty", "opacity", (event.target.checked) ? 1 : null); }

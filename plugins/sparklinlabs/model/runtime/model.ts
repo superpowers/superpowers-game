@@ -20,8 +20,10 @@ export function loadAsset(player: SupRuntime.Player, entry: any, callback: (err:
           let texture = data.textures[key] = new SupEngine.THREE.Texture(image);
           texture.needsUpdate = true;
 
-          texture.magFilter = SupEngine.THREE.NearestFilter;
-          texture.minFilter = SupEngine.THREE.NearestFilter;
+          if (data.filtering === "pixelated") {
+            texture.magFilter = SupEngine.THREE.NearestFilter;
+            texture.minFilter = SupEngine.THREE.NearestFilter;
+          }
           cb();
         };
 

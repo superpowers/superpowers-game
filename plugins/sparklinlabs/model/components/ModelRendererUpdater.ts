@@ -92,8 +92,10 @@ export default class ModelRendererUpdater {
         image = new Image;
         texture = this.modelAsset.pub.textures[key] = new THREE.Texture(image);
 
-        texture.magFilter = SupEngine.THREE.NearestFilter;
-        texture.minFilter = SupEngine.THREE.NearestFilter;
+        if (this.modelAsset.pub.filtering === "pixelated") {
+          texture.magFilter = SupEngine.THREE.NearestFilter;
+          texture.minFilter = SupEngine.THREE.NearestFilter;
+        }
 
         let typedArray = new Uint8Array(buffer);
         let blob = new Blob([ typedArray ], { type: "image/*" });
@@ -164,6 +166,19 @@ export default class ModelRendererUpdater {
 
   _onEditCommand_setProperty(path: string, value: any) {
     switch(path) {
+      case "filtering":
+        for (let textureName in this.modelAsset.pub.textures) {
+          let texture = this.modelAsset.pub.textures[textureName];
+          if (value === "pixelated") {
+            texture.magFilter = THREE.NearestFilter;
+            texture.minFilter = THREE.NearestFilter;
+          } else {
+            texture.magFilter = THREE.LinearFilter;
+            texture.minFilter = THREE.LinearMipMapLinearFilter;
+          }
+          texture.needsUpdate = true;
+        }
+        break;
       case "unitRatio":
         this.modelRenderer.setUnitRatio(value);
         break;

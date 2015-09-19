@@ -95,8 +95,10 @@ export default class SpriteRendererUpdater {
         image = new Image;
         texture = this.spriteAsset.pub.textures[key] = new THREE.Texture(image);
 
-        texture.magFilter = SupEngine.THREE.NearestFilter;
-        texture.minFilter = SupEngine.THREE.NearestFilter;
+        if (this.spriteAsset.pub.filtering === "pixelated") {
+          texture.magFilter = SupEngine.THREE.NearestFilter;
+          texture.minFilter = SupEngine.THREE.NearestFilter;
+        }
 
         let typedArray = new Uint8Array(buffer);
         let blob = new Blob([ typedArray ], { type: "image/*" });
@@ -156,14 +158,17 @@ export default class SpriteRendererUpdater {
   _onEditCommand_setProperty(path: string, value: any) {
     switch(path) {
       case "filtering":
-        if (this.spriteAsset.pub.filtering === "pixelated") {
-          this.spriteAsset.pub.textures["map"].magFilter = THREE.NearestFilter;
-          this.spriteAsset.pub.textures["map"].minFilter = THREE.NearestFilter;
-        } else {
-          this.spriteAsset.pub.textures["map"].magFilter = THREE.LinearFilter;
-          this.spriteAsset.pub.textures["map"].minFilter = THREE.LinearMipMapLinearFilter;
+        for (let textureName in this.spriteAsset.pub.textures) {
+          let texture = this.spriteAsset.pub.textures[textureName];
+          if (this.spriteAsset.pub.filtering === "pixelated") {
+            texture.magFilter = THREE.NearestFilter;
+            texture.minFilter = THREE.NearestFilter;
+          } else {
+            texture.magFilter = THREE.LinearFilter;
+            texture.minFilter = THREE.LinearMipMapLinearFilter;
+          }
+          texture.needsUpdate = true;
         }
-        this.spriteAsset.pub.textures["map"].needsUpdate = true;
         break;
 
       case "opacity":

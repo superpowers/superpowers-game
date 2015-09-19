@@ -34,6 +34,7 @@ function onAssetReceived() {
     setupAnimation(animation, index);
   }
 
+  ui.filteringSelect.value = pub.filtering;
   ui.unitRatioInput.value = pub.unitRatio.toString();
   setupOpacity(pub.opacity);
 
@@ -55,6 +56,9 @@ export function editAsset(...args: any[]) {
 
 onEditCommands.setProperty = (path: string, value: any) => {
   switch (path) {
+    case "filtering":
+      ui.filteringSelect.value = value;
+      break;
     case "unitRatio":
       ui.unitRatioInput.value = value.toString();
       break;
