@@ -16,6 +16,8 @@ let engine: {
   selectionBoxComponent: SelectionBox;
   transformHandleComponent: TransformHandle;
   gridHelperComponent: GridHelper;
+
+  ambientLight: THREE.AmbientLight;
 } = <any>{};
 export default engine;
 
@@ -28,6 +30,8 @@ engine.cameraActor.setLocalPosition(new THREE.Vector3(0, 0, 5));
 engine.cameraComponent = new SupEngine.componentClasses["Camera"](engine.cameraActor);
 engine.cameraComponent.layers = [ 0, -1 ];
 engine.cameraControls = new SupEngine.editorComponentClasses["Camera3DControls"](engine.cameraActor, engine.cameraComponent);
+
+engine.ambientLight = new THREE.AmbientLight(0xcfcfcf);
 
 let gridActor = new SupEngine.Actor(engine.gameInstance, "Grid", null, { layer: 0 });
 let selectionActor = new SupEngine.Actor(engine.gameInstance, "Selection Box", null, { layer: -1 });

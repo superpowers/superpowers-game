@@ -195,7 +195,13 @@ function onGridStepInput(event: UIEvent) {
 function onGridVisibleChange(event: UIEvent) {
   engine.gridHelperComponent.setVisible((<HTMLInputElement>event.target).checked);
 }
- 
+
+// Light
+document.getElementById("show-light").addEventListener("change", (event: any) => {
+  if (event.target.checked) engine.gameInstance.threeScene.add(engine.ambientLight);
+  else engine.gameInstance.threeScene.remove(engine.ambientLight);
+})
+
 export function createNodeElement(node: Node) {
   let liElt = document.createElement("li");
   (<any>liElt.dataset).id = node.id;
@@ -581,7 +587,7 @@ export function setCameraMode(mode: string) {
 
   (<HTMLDivElement>document.querySelector(".controls .camera-speed")).hidden = ui.cameraMode !== "3D";
   (<HTMLDivElement>document.querySelector(".controls .camera-2d-z")).hidden = ui.cameraMode === "3D";
-  
+
   updateCameraMode();
   ui.cameraModeButton.textContent = ui.cameraMode;
 }
