@@ -271,8 +271,6 @@ export default class ModelAsset extends SupCore.data.base.Asset {
   }
 
   server_setModel(client: any, upAxisMatrix: number[], attributes: { [name: string]: any }, bones: any[], callback: (err: string, upAxisMatrix?: number[], attributes?: { [name: string]: any }, bones?: any[]) => any) {
-    console.log("setmodel");
-
     // Validate up matrix
     if (upAxisMatrix != null) {
       let violation = SupCore.data.base.getRuleViolation(upAxisMatrix, ModelAsset.schema.upAxisMatrix, true);
@@ -299,7 +297,6 @@ export default class ModelAsset extends SupCore.data.base.Asset {
     this.pub.attributes = attributes;
     this.pub.bones = bones;
 
-    console.log("callback");
     callback(null, upAxisMatrix, attributes, bones);
     this.emit("change");
   }
@@ -311,7 +308,6 @@ export default class ModelAsset extends SupCore.data.base.Asset {
   }
 
   server_setMaps(client: any, maps: any, callback: (err: string, maps?: any) => any) {
-    console.log("setmaps");
     if (maps == null || typeof maps !== "object") { callback("Maps must be an object"); return; }
 
     for (let key in maps) {

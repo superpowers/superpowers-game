@@ -116,9 +116,7 @@ export function setupEditor(clientId: number) {
   });
 
   (<any>ui.editor.codeMirrorInstance).on("endCompletion", () => {
-    console.log("end completion");
     ui.completionOpened = false;
-    //console.log(ui.parameterElement.parentElement != null);
     if (ui.parameterElement.parentElement != null) ui.editor.codeMirrorInstance.addKeyMap(parameterPopupKeyMap);
   });
 }
