@@ -54,5 +54,6 @@ declare module Sup {
     function wasGamepadButtonJustPressed(gamepad: number, button: number): boolean;
     function wasGamepadButtonJustReleased(gamepad: number, button: number): boolean;
     function getGamepadAxisValue(gamepad: number, axis: number): number;
+    function getGamepadButtonValue(gamepad: number, button: number): number;
   }
 }

@@ -148,5 +148,10 @@ module Sup {
       if (player.gameInstance.input.gamepadsAxes[gamepad][axis] == null) { throw new Error("Invalid gamepad info"); }
       return player.gameInstance.input.gamepadsAxes[gamepad][axis];
     }
+
+    export function getGamepadButtonValue(gamepad, button) {
+      if (player.gameInstance.input.gamepadsButtons[gamepad][button] == null) { throw new Error("Invalid gamepad info"); }
+      return player.gameInstance.input.gamepadsButtons[gamepad][button].value;
+    }
   }
 }
