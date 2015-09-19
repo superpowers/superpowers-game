@@ -142,8 +142,8 @@ declare module SupEngine {
     keyboardButtons: Array<{isDown: boolean; wasJustPressed: boolean; wasJustReleased: boolean;}>;
     keyboardButtonsDown: boolean[];
 
-    gamepadsButtons: Array<any>;
-    gamepadsAxes: Array<any>;
+    gamepadsButtons: { isDown: boolean; wasJustPressed: boolean; wasJustReleased: boolean; value: number; }[][];
+    gamepadsAxes: number[][];
 
     constructor(canvas: HTMLCanvasElement);
     destroy(): void;

@@ -29,8 +29,8 @@ export default class Input extends EventEmitter {
   textEntered = "";
   newTextEntered = "";
 
-  gamepadsButtons: Array<Array<{isDown: boolean; wasJustPressed: boolean; wasJustReleased: boolean;}>> = [];
-  gamepadsAxes: Array<number[]> = [];
+  gamepadsButtons: { isDown: boolean; wasJustPressed: boolean; wasJustReleased: boolean; value: number; }[][] = [];
+  gamepadsAxes: number[][] = [];
 
   exited = false;
 
@@ -173,7 +173,7 @@ export default class Input extends EventEmitter {
 
     // Gamepads
     for (let i = 0; i < 4; i++) {
-      for (let button = 0; button < 16; button++) this.gamepadsButtons[i][button] = { isDown: false, wasJustPressed: false, wasJustReleased: false };
+      for (let button = 0; button < 16; button++) this.gamepadsButtons[i][button] = { isDown: false, wasJustPressed: false, wasJustReleased: false, value: 0 };
       for (let axes = 0; axes < 4; axes++) this.gamepadsAxes[i][axes] = 0;
     }
   }
@@ -451,8 +451,7 @@ export default class Input extends EventEmitter {
     this.textEntered = this.newTextEntered;
     this.newTextEntered = "";
 
-    let nav: any = navigator;
-    let gamepads = (nav.getGamepads != null) ? nav.getGamepads() : null;
+    let gamepads = (navigator.getGamepads != null) ? navigator.getGamepads() : null;
     if (gamepads == null) return;
 
     for (let index = 0; index < 4; index++) {
@@ -463,6 +462,7 @@ export default class Input extends EventEmitter {
         let button = this.gamepadsButtons[index][i];
         let wasDown = button.isDown;
         button.isDown = gamepad.buttons[i].pressed;
+        button.value = gamepad.buttons[i].value;
 
         button.wasJustPressed = ! wasDown && button.isDown;
         button.wasJustReleased = wasDown && ! button.isDown;
