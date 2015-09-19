@@ -9,6 +9,7 @@ let TreeView = require("dnd-tree-view");
 
 let ui: {
   filteringSelect?: HTMLSelectElement;
+  wrappingSelect?: HTMLSelectElement;
   unitRatioInput?: HTMLInputElement;
   opacityCheckbox?: HTMLInputElement;
   opacityInput?: HTMLInputElement;
@@ -54,6 +55,10 @@ ui.mapDownloadButton.addEventListener("click", () => {
 // Filetering
 ui.filteringSelect = <HTMLSelectElement>document.querySelector(".filtering");
 ui.filteringSelect.addEventListener("change", onChangeFiltering);
+
+// Wrapping
+ui.wrappingSelect = <HTMLSelectElement>document.querySelector(".wrapping");
+ui.wrappingSelect.addEventListener("change", onChangeWrapping);
 
 // Show skeleton
 let showSkeletonCheckbox = <HTMLInputElement>document.querySelector(".show-skeleton");
@@ -241,6 +246,7 @@ function downloadTexture(textureName: string) {
 }
 
 function onChangeFiltering(event: any) { editAsset("setProperty", "filtering", event.target.value); }
+function onChangeWrapping(event: any) { editAsset("setProperty", "wrapping", event.target.value); }
 function onShowSkeletonChange(event: Event) { data.modelUpdater.modelRenderer.setShowSkeleton((<HTMLInputElement>event.target).checked); }
 function onChangeUnitRatio(event: any) { editAsset("setProperty", "unitRatio", parseFloat(event.target.value)); }
 function onCheckOpacity(event: any) { editAsset("setProperty", "opacity", (event.target.checked) ? 1 : null); }

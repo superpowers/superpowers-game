@@ -35,6 +35,7 @@ function onAssetReceived() {
   }
 
   ui.filteringSelect.value = pub.filtering;
+  ui.wrappingSelect.value = pub.wrapping;
   ui.unitRatioInput.value = pub.unitRatio.toString();
   setupOpacity(pub.opacity);
 
@@ -58,6 +59,9 @@ onEditCommands.setProperty = (path: string, value: any) => {
   switch (path) {
     case "filtering":
       ui.filteringSelect.value = value;
+      break;
+    case "wrapping":
+      ui.wrappingSelect.value = value;
       break;
     case "unitRatio":
       ui.unitRatioInput.value = value.toString();

@@ -19,6 +19,7 @@ interface ModelAssetPub {
   textures?: { [name: string]: any; };
   maps: { [name: string]: Buffer; };
   filtering: string;
+  wrapping: string;
 
   animations: Animation[];
 
@@ -64,6 +65,7 @@ export default class ModelAsset extends SupCore.data.base.Asset {
       values: { type: "buffer?" }
     },
     filtering: { type: "enum", items: [ "pixelated", "smooth"], mutable: true },
+    wrapping: { type: "enum", items: [ "clampToEdge", "repeat", "mirroredRepeat"], mutable: true },
     animations: { type: "array" },
 
     opacity: { type: "number?", min: 0, max: 1, mutable: true },
@@ -105,6 +107,7 @@ export default class ModelAsset extends SupCore.data.base.Asset {
       bones: null,
       maps: { map: new Buffer(0) },
       filtering: "pixelated",
+      wrapping: "clampToEdge",
       animations: [],
       opacity: null,
 
@@ -149,6 +152,7 @@ export default class ModelAsset extends SupCore.data.base.Asset {
 
       // TODO: Remove these at some point, asset migration introduced in Superpowers 0.13
       if (pub.filtering == null) pub.filtering = "pixelated";
+      if (pub.wrapping == null) pub.wrapping = "clampToEdge";
 
       pub.attributes = {};
       let mapsName: string[] = _.clone(<any>pub.maps);

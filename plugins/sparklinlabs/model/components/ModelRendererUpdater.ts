@@ -97,6 +97,15 @@ export default class ModelRendererUpdater {
           texture.minFilter = SupEngine.THREE.NearestFilter;
         }
 
+        if (this.modelAsset.pub.wrapping === "repeat") {
+          texture.wrapS = SupEngine.THREE.RepeatWrapping;
+          texture.wrapT = SupEngine.THREE.RepeatWrapping;
+        } else if (this.modelAsset.pub.wrapping === "mirroredRepeat") {
+          texture.wrapS = SupEngine.THREE.MirroredRepeatWrapping;
+          texture.wrapT = SupEngine.THREE.MirroredRepeatWrapping;
+        }
+        console.log(texture);
+
         let typedArray = new Uint8Array(buffer);
         let blob = new Blob([ typedArray ], { type: "image/*" });
         image.src = this.mapObjectURLs[key] = URL.createObjectURL(blob);
@@ -179,6 +188,23 @@ export default class ModelRendererUpdater {
           texture.needsUpdate = true;
         }
         break;
+      case "wrapping":
+        for (let textureName in this.modelAsset.pub.textures) {
+          let texture = this.modelAsset.pub.textures[textureName];
+          if (value === "clampToEdge") {
+            texture.wrapS = SupEngine.THREE.ClampToEdgeWrapping;
+            texture.wrapT = SupEngine.THREE.ClampToEdgeWrapping;
+          } else if (value === "repeat") {
+            texture.wrapS = SupEngine.THREE.RepeatWrapping;
+            texture.wrapT = SupEngine.THREE.RepeatWrapping;
+          } else if (value === "mirroredRepeat") {
+            texture.wrapS = SupEngine.THREE.MirroredRepeatWrapping;
+            texture.wrapT = SupEngine.THREE.MirroredRepeatWrapping;
+          }
+          texture.needsUpdate = true;
+        }
+        break;
+
       case "unitRatio":
         this.modelRenderer.setUnitRatio(value);
         break;

@@ -24,6 +24,15 @@ export function loadAsset(player: SupRuntime.Player, entry: any, callback: (err:
             texture.magFilter = SupEngine.THREE.NearestFilter;
             texture.minFilter = SupEngine.THREE.NearestFilter;
           }
+
+          if (data.wrapping === "repeat") {
+            texture.wrapS = SupEngine.THREE.RepeatWrapping;
+            texture.wrapT = SupEngine.THREE.RepeatWrapping;
+          } else if (data.wrapping === "mirroredRepeat") {
+            texture.wrapS = SupEngine.THREE.MirroredRepeatWrapping;
+            texture.wrapT = SupEngine.THREE.MirroredRepeatWrapping;
+          }
+
           cb();
         };
 
