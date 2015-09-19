@@ -39,6 +39,7 @@ class TextEditorWidget {
   constructor(projectClient: SupClient.ProjectClient, clientId: number, textArea: HTMLTextAreaElement, options: TextEditorWidgetOptions) {
     let extraKeys: { [name: string]: string|Function } = {
       "F9": () => {},
+      "Ctrl-T": () => {},
       "Tab": (cm: any) => {
         if (cm.getSelection() !== "") cm.execCommand("indentMore")
         else {
