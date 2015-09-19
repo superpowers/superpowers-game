@@ -203,12 +203,6 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
   setCastShadow(castShadow: boolean) {
     this.castShadow = castShadow;
     this.threeMesh.castShadow = castShadow;
-    if (! castShadow) return;
-
-    this.actor.gameInstance.threeScene.traverse((object: any) => {
-      let material: THREE.Material = object.material;
-      if (material != null) material.needsUpdate = true;
-    })
   }
 
   setOpacity(opacity: number) {
