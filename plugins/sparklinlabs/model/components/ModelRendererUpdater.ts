@@ -249,7 +249,7 @@ export default class ModelRendererUpdater {
 
       case "animationId":
         this.animationId = value;
-        this._playAnimation();
+        if (this.modelAsset != null) this._playAnimation();
         break;
 
       case "castShadow":
