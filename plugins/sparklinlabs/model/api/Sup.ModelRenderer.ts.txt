@@ -6,7 +6,7 @@ module Sup {
       super(actor);
       this.__inner = new SupEngine.componentClasses.ModelRenderer(this.actor.__inner);
       if (pathOrAsset != null) {
-        let modelAsset = (typeof pathOrAsset === "string") ? get(pathOrAsset, Model) : <Model>pathOrAsset; 
+        let modelAsset = (typeof pathOrAsset === "string") ? get(pathOrAsset, Model) : <Model>pathOrAsset;
         this.__inner.opacity = modelAsset.__inner.opacity;
         this.setModel(modelAsset, materialIndex);
       }
@@ -22,7 +22,7 @@ module Sup {
     setModel(pathOrAsset: string|Model, materialIndex: number) {
       let material: string;
       if (materialIndex != null) material = materialTypes[materialIndex];
-      
+
       let modelAsset = (typeof pathOrAsset === "string") ? get(pathOrAsset, Model) : <Model>pathOrAsset;
       this.__inner.setModel((modelAsset != null) ? modelAsset.__inner : null, material);
       return this;
@@ -34,15 +34,8 @@ module Sup {
     setColor(r, g, b) {
       if (g == null && b == null) {
         let color = r;
-        this.__inner.color.r = color.r;
-        this.__inner.color.g = color.g;
-        this.__inner.color.b = color.b;
-      } else {
-        this.__inner.color.r = r;
-        this.__inner.color.g = g;
-        this.__inner.color.b = b;
-      }
-      this.__inner.threeMesh.material.color.setRGB(this.__inner.color.r, this.__inner.color.g, this.__inner.color.b);
+        this.__inner.setColor(color.r, color.g, color.b);
+      } else this.__inner.setColor(r, g, b);
       return this;
     }
     getBoneTransform(name) {

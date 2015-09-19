@@ -148,10 +148,10 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
       material.alphaMap = this.asset.textures[this.asset.mapSlots["alpha"]];
       if (this.materialType === "phong") (<THREE.MeshPhongMaterial>material).normalMap = this.asset.textures[this.asset.mapSlots["normal"]];
       material.alphaTest = 0.1;
-      material.color.setRGB(this.color.r, this.color.g, this.color.b);
       this.material = material;
-      this.setOpacity(this.opacity);
     }
+    this.setColor(this.color.r, this.color.g, this.color.b);
+    this.setOpacity(this.opacity);
 
     if(this.asset.bones != null) {
       this.threeMesh = new THREE.SkinnedMesh(geometry, this.material);
@@ -216,6 +216,18 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
       this.material.transparent = false;
       this.material.opacity = 1;
     }
+    this.material.needsUpdate = true;
+   }
+
+  setColor(r: number, g: number, b: number) {
+    this.color.r = r;
+    this.color.g = g;
+    this.color.b = b;
+    if (this.material instanceof THREE.ShaderMaterial) {
+      let uniforms = (<THREE.ShaderMaterial>this.material).uniforms;
+      if (uniforms.color != null) uniforms.color.value.setRGB(r, g, b);
+
+    } else (<THREE.MeshBasicMaterial>this.material).color.setRGB(r, g, b);
     this.material.needsUpdate = true;
    }
 

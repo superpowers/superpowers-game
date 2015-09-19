@@ -104,7 +104,6 @@ export default class ModelRendererUpdater {
           texture.wrapS = SupEngine.THREE.MirroredRepeatWrapping;
           texture.wrapT = SupEngine.THREE.MirroredRepeatWrapping;
         }
-        console.log(texture);
 
         let typedArray = new Uint8Array(buffer);
         let blob = new Blob([ typedArray ], { type: "image/*" });
@@ -272,12 +271,7 @@ export default class ModelRendererUpdater {
 
       case "color":
         let hex = parseInt(value, 16);
-        this.modelRenderer.color.r = (hex >> 16 & 255) / 255;
-        this.modelRenderer.color.g = (hex >> 8 & 255) / 255;
-        this.modelRenderer.color.b = (hex & 255) / 255;
-        let material = <THREE.MeshBasicMaterial>this.modelRenderer.threeMesh.material;
-        material.color.setRGB(this.modelRenderer.color.r, this.modelRenderer.color.g, this.modelRenderer.color.b);
-        material.needsUpdate = true;
+        this.modelRenderer.setColor((hex >> 16 & 255) / 255, (hex >> 8 & 255) / 255, (hex & 255) / 255);
         break;
 
       case "materialType":
