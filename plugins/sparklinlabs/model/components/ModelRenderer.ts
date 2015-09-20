@@ -226,9 +226,7 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
     if (this.material instanceof THREE.ShaderMaterial) {
       let uniforms = (<THREE.ShaderMaterial>this.material).uniforms;
       if (uniforms.color != null) uniforms.color.value.setRGB(r, g, b);
-
     } else (<THREE.MeshBasicMaterial>this.material).color.setRGB(r, g, b);
-    this.material.needsUpdate = true;
    }
 
    setUnitRatio(unitRatio: number) {
