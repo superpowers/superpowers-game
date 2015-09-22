@@ -62,6 +62,8 @@ export default class ArcadeBody2DConfig extends SupCore.data.base.ComponentConfi
       delete (<any>this.pub).offsetY;
     }
 
+    if (this.pub.tileMapAssetId === "") this.pub.tileMapAssetId = null;
+
     // Migration v0.6.0
     if (this.pub.type == null) {
       this.pub.type = "box";
