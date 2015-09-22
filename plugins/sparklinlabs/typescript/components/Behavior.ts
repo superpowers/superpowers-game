@@ -22,4 +22,6 @@ export default class Behavior extends SupEngine.ActorComponent {
     this.funcs = null;
     super._destroy();
   }
+
+  setIsLayerActive(active: boolean) {}
 }

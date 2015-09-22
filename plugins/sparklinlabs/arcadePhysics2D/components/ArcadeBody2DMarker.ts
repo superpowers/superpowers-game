@@ -17,6 +17,10 @@ export default class ArcadeBody2DMarker extends SupEngine.ActorComponent {
     this.markerActor = new SupEngine.Actor(this.actor.gameInstance, `Marker`, null, { layer: -1 });
   }
 
+  setIsLayerActive(active: boolean) {
+    if (this.line != null) this.line.visible = active;
+  }
+
   update() {
     super.update();
     this.markerActor.setGlobalPosition(this.actor.getGlobalPosition());

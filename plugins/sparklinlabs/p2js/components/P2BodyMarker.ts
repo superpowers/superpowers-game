@@ -11,6 +11,10 @@ export default class P2BodyMarker extends SupEngine.ActorComponent {
     super(actor, "P2BodyMarker");
   }
 
+  setIsLayerActive(active: boolean) {
+    if (this.mesh != null) this.mesh.visible = active;
+  }
+
   setRectangle(width: number, height: number) {
     if (this.mesh != null) this._clearRenderer();
 

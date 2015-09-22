@@ -21,6 +21,8 @@ export default class P2Body extends SupEngine.ActorComponent {
     (<any>SupEngine).P2.World.addBody(this.body);
   }
 
+  setIsLayerActive(active: boolean) {}
+
   setup(config: any) {
     this.mass = (config.mass != null) ? config.mass : 0;
     this.fixedRotation = (config.fixedRotation != null) ? config.fixedRotation : false;

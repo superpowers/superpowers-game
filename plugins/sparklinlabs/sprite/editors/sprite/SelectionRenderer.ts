@@ -7,6 +7,10 @@ export default class SelectionRenderer extends SupEngine.ActorComponent {
     super(actor, "SelectionRenderer");
   }
 
+  setIsLayerActive(active: boolean) {
+    for (let mesh of this.meshes) mesh.visible = active;
+  }
+
   setup(width: number, height: number, start: number, end: number, frameOrder: string, framesPerDirection: number) {
     this.clearMesh();
 

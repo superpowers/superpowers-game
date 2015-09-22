@@ -22,6 +22,8 @@ class CannonBody extends SupEngine.ActorComponent {
     this.body = new (<any>window).CANNON.Body();
     (<any>SupEngine).Cannon.World.addBody(this.body);
   }
+  
+  setIsLayerActive(active: boolean) {}
 
   setup(config:any) {
     this.mass = config.mass != null ? config.mass : 0;

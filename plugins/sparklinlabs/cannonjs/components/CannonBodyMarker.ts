@@ -7,11 +7,13 @@ class CannonBodyMarker extends SupEngine.ActorComponent {
 
   static Updater = CannonBodyMarkerUpdater;
 
-  mesh:THREE.Mesh;
+  mesh: THREE.Mesh;
 
   constructor(actor:SupEngine.Actor) {
     super(actor, "CannonBodyMarker")
   }
+
+  setIsLayerActive(active: boolean) { if (this.mesh != null) this.mesh.visible = active; }
 
   setBox(size:any) {
     if (this.mesh != null) this._clearRenderer();
@@ -56,7 +58,7 @@ class CannonBodyMarker extends SupEngine.ActorComponent {
     this.actor.threeObject.remove(this.mesh);
     this.mesh.traverse((obj:any) => {
      if(obj.dispose != null) obj.dispose();
-     });
+    });
     this.mesh = null
 
   }

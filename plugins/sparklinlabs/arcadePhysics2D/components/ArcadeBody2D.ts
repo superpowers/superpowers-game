@@ -35,6 +35,8 @@ export default class ArcadeBody2D extends SupEngine.ActorComponent {
     (<any>SupEngine).ArcadePhysics2D.allBodies.push(this);
   }
 
+  setIsLayerActive(active: boolean) {}
+
   setupBox(config: any) {
     this.type = "box";
 
