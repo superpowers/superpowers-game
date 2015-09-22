@@ -113,15 +113,18 @@ declare module SupEngine {
   }
 
 
-  class ActorComponent {
+  abstract class ActorComponent {
     actor: Actor;
     typeName: string;
 
     constructor(actor: Actor, typeName: string);
     _destroy(): void;
+
     awake(): void;
     start(): void;
     update(): void;
+
+    abstract setIsLayerActive(active: boolean): void;
   }
 
   class Input {

@@ -25,6 +25,8 @@ export default class Camera2DControls extends ActorComponent {
     this.zoomCallback = zoomCallback;
   }
 
+  setIsLayerActive(active: boolean) {}
+
   setMultiplier(newMultiplier: number) {
     let newOrthographicScale = this.camera.orthographicScale * this.multiplier;
     this.multiplier = newMultiplier / 10;

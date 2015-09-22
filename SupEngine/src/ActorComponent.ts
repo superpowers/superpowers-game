@@ -1,6 +1,6 @@
 import Actor from "./Actor";
 
-export default class ActorComponent {
+abstract class ActorComponent {
   actor: Actor;
   typeName: string;
 
@@ -24,7 +24,8 @@ export default class ActorComponent {
   start() {}
   update() {}
 
-  // TODO: Make abstract when we update to TypeScript 1.6
   // You must override it in your child class and hide your stuff when active is false
-  setIsLayerActive(active: boolean) {}
+  abstract setIsLayerActive(active: boolean): void;
 }
+
+export default ActorComponent;

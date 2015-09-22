@@ -51,6 +51,8 @@ export default class Camera extends ActorComponent {
     this.projectionNeedsUpdate = true;
   }
 
+  setIsLayerActive(active: boolean) {}
+
   setOrthographicMode(isOrthographic: boolean) {
     this.isOrthographic = isOrthographic;
 

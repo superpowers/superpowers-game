@@ -25,6 +25,7 @@ export default class GridRenderer extends ActorComponent {
     if (data != null) this.setGrid(data);
   }
 
+  setIsLayerActive(active: boolean) { if (this.mesh != null) this.mesh.visible = active; }
 
   setGrid(data: data) {
     this._clearMesh();
