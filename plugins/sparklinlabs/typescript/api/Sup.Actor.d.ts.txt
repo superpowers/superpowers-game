@@ -60,6 +60,7 @@ declare module Sup {
     rotate(offset: Math.Quaternion): Actor;
     rotateLocal(offset: Math.Quaternion): Actor;
 
+    // Values are in radians
     getEulerAngles(): Math.Vector3;
     setEulerAngles(angles: Math.Vector3): Actor;
     setEulerAngles(x: number, y: number, z: number): Actor;
