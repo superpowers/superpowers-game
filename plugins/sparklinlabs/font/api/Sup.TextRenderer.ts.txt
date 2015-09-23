@@ -1,12 +1,12 @@
 module Sup {
   export class TextRenderer extends Sup.ActorComponent {
-    constructor(actor: Actor, text: string, pathOrAsset: string|Font, options: any={}) {
+    constructor(actor: Actor, text: string|number, pathOrAsset: string|Font, options: any={}) {
       super(actor);
       this.__inner = new SupEngine.componentClasses.TextRenderer(this.actor.__inner);
 
       if (options.color != null) options.color = options.color.getHexString();
       this.__inner.setOptions(options);
-      if (text != null) this.__inner.setText(text);
+      if (text != null) this.__inner.setText(`${text}`);
       if (pathOrAsset != null) this.setFont(pathOrAsset);
 
       this.__inner.__outer = this;
@@ -19,13 +19,13 @@ module Sup {
 
     getFont() { return this.__inner.font.__outer; }
     setFont(pathOrAsset: string|Font) {
-      let fontAsset = (typeof pathOrAsset === "string") ? get(pathOrAsset, Font) : <Font>pathOrAsset; 
+      let fontAsset = (typeof pathOrAsset === "string") ? get(pathOrAsset, Font) : <Font>pathOrAsset;
       this.__inner.setFont(fontAsset.__inner);
       return this;
     }
     getText() { return this.__inner.text; }
-    setText(text: string) {
-      this.__inner.setText(text);
+    setText(text: string|number) {
+      this.__inner.setText(`${text}`);
       return this;
     }
     getColor() {
