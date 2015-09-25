@@ -77,15 +77,15 @@ declare module SupEngine {
     update(): void;
 
     // Transform
-    getGlobalMatrix(): THREE.Matrix4;
-    getGlobalPosition(): THREE.Vector3;
-    getLocalPosition(): THREE.Vector3;
-    getGlobalOrientation(): THREE.Quaternion;
-    getGlobalEulerAngles(): THREE.Euler;
-    getLocalOrientation(): THREE.Quaternion;
-    getLocalEulerAngles(): THREE.Euler;
-    getLocalScale(): THREE.Vector3;
-    getParentGlobalOrientation(): THREE.Quaternion;
+    getGlobalMatrix(matrix: THREE.Matrix4): THREE.Matrix4;
+    getGlobalPosition(position: THREE.Vector3): THREE.Vector3;
+    getGlobalOrientation(orientation: THREE.Quaternion): THREE.Quaternion;
+    getGlobalEulerAngles(angles: THREE.Euler): THREE.Euler;
+    getLocalPosition(position: THREE.Vector3): THREE.Vector3;
+    getLocalOrientation(orientation: THREE.Quaternion): THREE.Quaternion;
+    getLocalEulerAngles(angles: THREE.Euler): THREE.Euler;
+    getLocalScale(scale: THREE.Vector3): THREE.Vector3;
+    getParentGlobalOrientation(orientation: THREE.Quaternion): THREE.Quaternion;
 
     setGlobalMatrix(matrix: THREE.Matrix4): void;
     setGlobalPosition(pos: THREE.Vector3): void;

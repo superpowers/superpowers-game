@@ -16,7 +16,7 @@ export default class Camera3DControls extends ActorComponent {
     super(actor, "Camera3DControls");
 
     this.camera = camera;
-    this.rotation = actor.getLocalEulerAngles();
+    this.rotation = actor.getLocalEulerAngles(new THREE.Euler());
   }
 
   setIsLayerActive(active: boolean) {}
@@ -30,17 +30,17 @@ export default class Camera3DControls extends ActorComponent {
         (keyButtons[keyEvent.DOM_VK_A].isDown || keyButtons[keyEvent.DOM_VK_Q].isDown) ? -this.movementSpeed :
         ((keyButtons[keyEvent.DOM_VK_D].isDown) ? this.movementSpeed :
         0));
-  
+
       tmpMovement.setZ(
         (keyButtons[keyEvent.DOM_VK_W].isDown || keyButtons[keyEvent.DOM_VK_Z].isDown) ? -this.movementSpeed :
         ((keyButtons[keyEvent.DOM_VK_S].isDown) ? this.movementSpeed :
         0));
-  
+
       tmpMovement.setY(
         (keyButtons[keyEvent.DOM_VK_SPACE].isDown) ? this.movementSpeed :
         ((keyButtons[keyEvent.DOM_VK_SHIFT].isDown) ? -this.movementSpeed :
         0));
-  
+
       tmpMovement.applyQuaternion(tmpQuaternion.setFromAxisAngle(forwardVector, this.rotation.y));
       this.actor.moveLocal(tmpMovement);
     }

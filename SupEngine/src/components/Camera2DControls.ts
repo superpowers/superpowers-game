@@ -3,6 +3,8 @@ import ActorComponent from "../ActorComponent";
 import Actor from "../Actor";
 import Camera from "./Camera";
 
+let tmpVector3 = new THREE.Vector3();
+
 interface options {
   zoomMin: number;
   zoomMax: number;
@@ -31,8 +33,8 @@ export default class Camera2DControls extends ActorComponent {
     let newOrthographicScale = this.camera.orthographicScale * this.multiplier;
     this.multiplier = newMultiplier / 10;
 
-    let cameraPosition = this.camera.actor.getLocalPosition();
-    let screenPosition = this.getScreenPosition(cameraPosition.x, cameraPosition.y);
+    this.camera.actor.getLocalPosition(tmpVector3);
+    let screenPosition = this.getScreenPosition(tmpVector3.x, tmpVector3.y);
     this.changeOrthographicScale(newOrthographicScale, screenPosition[0], screenPosition[1]);
   }
 
@@ -96,17 +98,17 @@ export default class Camera2DControls extends ActorComponent {
   }
 
   getScenePosition(x: number, y: number): number[]  {
-    let cameraPosition = this.camera.actor.getLocalPosition();
+    this.camera.actor.getLocalPosition(tmpVector3);
 
     x /= this.actor.gameInstance.threeRenderer.domElement.width;
     x = x * 2 - 1;
     x *= this.camera.orthographicScale / 2 * this.camera.cachedRatio;
-    x += cameraPosition.x;
+    x += tmpVector3.x;
 
     y /= this.actor.gameInstance.threeRenderer.domElement.height;
     y = y * 2 - 1;
     y *= this.camera.orthographicScale / 2;
-    y -= cameraPosition.y;
+    y -= tmpVector3.y;
     return [x, y];
   }
 }

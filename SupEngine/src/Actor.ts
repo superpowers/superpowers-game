@@ -3,6 +3,9 @@ import GameInstance from "./GameInstance";
 import ActorComponent from "./ActorComponent";
 
 let tmpMatrix = new THREE.Matrix4();
+let tmpVector3 = new THREE.Vector3();
+let tmpQuaternion = new THREE.Quaternion();
+let tmpEuler = new THREE.Euler();
 
 export default class Actor {
   name: string;
@@ -49,16 +52,16 @@ export default class Actor {
   }
 
   // Transform
-  getGlobalMatrix() { return this.threeObject.matrixWorld.clone(); }
-  getGlobalPosition() { return new THREE.Vector3().setFromMatrixPosition(this.threeObject.matrixWorld); }
-  getLocalPosition() { return this.threeObject.position.clone(); }
-  getGlobalOrientation() { return new THREE.Quaternion().multiplyQuaternions(this.getParentGlobalOrientation(), this.threeObject.quaternion); }
-  getGlobalEulerAngles() { return new THREE.Euler().setFromQuaternion(this.getGlobalOrientation()); }
-  getLocalOrientation() { return this.threeObject.quaternion.clone(); }
-  getLocalEulerAngles() { return new THREE.Euler().setFromQuaternion(this.threeObject.quaternion); }
-  getLocalScale() { return this.threeObject.scale.clone(); }
+  getGlobalMatrix(matrix: THREE.Matrix4) { return matrix.copy(this.threeObject.matrixWorld); }
+  getGlobalPosition(position: THREE.Vector3) { return position.setFromMatrixPosition(this.threeObject.matrixWorld); }
+  getGlobalOrientation(orientation: THREE.Quaternion) { return orientation.set(0, 0, 0, 1).multiplyQuaternions(this.getParentGlobalOrientation(tmpQuaternion), this.threeObject.quaternion); }
+  getGlobalEulerAngles(angles: THREE.Euler) { return angles.setFromQuaternion(this.getGlobalOrientation(tmpQuaternion)); }
+  getLocalPosition(position: THREE.Vector3) { return position.copy(this.threeObject.position); }
+  getLocalOrientation(orientation: THREE.Quaternion) { return orientation.copy(this.threeObject.quaternion); }
+  getLocalEulerAngles(angles: THREE.Euler) { return angles.setFromQuaternion(this.threeObject.quaternion); }
+  getLocalScale(scale: THREE.Vector3) { return scale.copy(this.threeObject.scale); }
 
-  getParentGlobalOrientation() {
+  getParentGlobalOrientation(orientation: THREE.Quaternion) {
     let ancestorOrientation = new THREE.Quaternion();
     let ancestorActor = this.threeObject;
     while (ancestorActor.parent != null) {
@@ -87,12 +90,12 @@ export default class Actor {
 
   lookAt(target: THREE.Vector3, up = this.threeObject.up) {
     let m = new THREE.Matrix4();
-    m.lookAt(this.getGlobalPosition(), target, up );
-    this.setGlobalOrientation(new THREE.Quaternion().setFromRotationMatrix(m));
+    m.lookAt(this.getGlobalPosition(tmpVector3), target, up );
+    this.setGlobalOrientation(tmpQuaternion.setFromRotationMatrix(m));
   }
 
   lookTowards(direction: THREE.Vector3, up?: THREE.Vector3) {
-    this.lookAt(this.getGlobalPosition().sub(direction), up);
+    this.lookAt(this.getGlobalPosition(tmpVector3).sub(direction), up);
   }
 
   setLocalOrientation(quaternion: THREE.Quaternion) {
@@ -128,8 +131,7 @@ export default class Actor {
   setParent(newParent: Actor, keepLocal=false) {
     if (this.pendingForDestruction || newParent != null && newParent.pendingForDestruction) return;
 
-    let globalMatrix: THREE.Matrix4;
-    if (! keepLocal) globalMatrix = this.getGlobalMatrix();
+    if (!keepLocal) this.getGlobalMatrix(tmpMatrix);
 
     let oldSiblings = (this.parent != null) ? this.parent.children : this.gameInstance.tree.root;
     oldSiblings.splice(oldSiblings.indexOf(this), 1);
@@ -142,14 +144,14 @@ export default class Actor {
     let threeParent = (newParent != null) ? newParent.threeObject : this.gameInstance.threeScene;
     threeParent.add(this.threeObject);
 
-    if (! keepLocal) this.setGlobalMatrix(globalMatrix);
+    if (!keepLocal) this.setGlobalMatrix(tmpMatrix);
     else this.threeObject.updateMatrixWorld(false);
   }
 
   rotateGlobal(quaternion: THREE.Quaternion) {
-    let globalOrientation = this.getGlobalOrientation();
-    globalOrientation.multiplyQuaternions(quaternion, globalOrientation);
-    this.setGlobalOrientation(globalOrientation);
+    this.getGlobalOrientation(tmpQuaternion);
+    tmpQuaternion.multiplyQuaternions(quaternion, tmpQuaternion);
+    this.setGlobalOrientation(tmpQuaternion);
   }
 
   rotateLocal(quaternion: THREE.Quaternion) {
@@ -169,8 +171,8 @@ export default class Actor {
   }
 
   moveGlobal(offset: THREE.Vector3) {
-    offset.add(this.getGlobalPosition());
-    this.setGlobalPosition(offset);
+    this.getGlobalPosition(tmpVector3).add(offset);
+    this.setGlobalPosition(tmpVector3);
   }
 
   moveLocal(offset: THREE.Vector3) {
