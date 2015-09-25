@@ -186,6 +186,7 @@ document.getElementById("grid-visible").addEventListener("change", onGridVisible
 function onGridStepInput(event: UIEvent) {
   let target = (<HTMLInputElement>event.target);
   let value = parseFloat(target.value);
+  if (value !== 0 && value < 0.0001) { value = 0; target.value = "0"; }
   if (isNaN(value) || value <= 0) { (<any>target).reportValidity(); return; }
 
   ui.gridStep = value;
