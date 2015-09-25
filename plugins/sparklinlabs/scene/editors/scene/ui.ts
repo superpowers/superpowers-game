@@ -405,10 +405,12 @@ function onNewPrefabClick() {
 function createNewNode(name: string, prefab: boolean) {
   let options = SupClient.getTreeViewInsertionPoint(ui.nodesTreeView);
 
-  let offset = new THREE.Vector3(0, 0, -5).applyQuaternion(engine.cameraActor.getGlobalOrientation());
-  let position = engine.cameraActor.getGlobalPosition().add(offset);
+  let offset = new THREE.Vector3(0, 0, -5).applyQuaternion(engine.cameraActor.getGlobalOrientation(new THREE.Quaternion()));
+  let position = new THREE.Vector3();
+  engine.cameraActor.getGlobalPosition(position).add(offset);
+
   if (options.parentId != null) {
-    let parentMatrix = data.sceneUpdater.bySceneNodeId[options.parentId].actor.getGlobalMatrix();
+    let parentMatrix = data.sceneUpdater.bySceneNodeId[options.parentId].actor.getGlobalMatrix(new THREE.Matrix4());
     position.applyMatrix4(parentMatrix.getInverse(parentMatrix));
   }
   (<any>options).transform = { position };

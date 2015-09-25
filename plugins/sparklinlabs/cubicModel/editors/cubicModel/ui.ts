@@ -33,7 +33,7 @@ let ui: {
     shape: {
       type: HTMLSelectElement;
       offset: HTMLInputElement[];
-  
+
       box: {
         size: HTMLInputElement[];
         stretch: HTMLInputElement[];
@@ -101,7 +101,7 @@ function onGridStepInput(event: UIEvent) {
 function onGridVisibleChange(event: UIEvent) {
   engine.gridHelperComponent.setVisible((<HTMLInputElement>event.target).checked);
 }
- 
+
 // Setup tree view
 ui.treeViewElt = <HTMLDivElement>document.querySelector(".nodes-tree-view");
 ui.nodesTreeView = new TreeView(document.querySelector(".nodes-tree-view"), onNodeDrop);
@@ -358,8 +358,12 @@ function onNewNodeClick() {
 
     let options = SupClient.getTreeViewInsertionPoint(ui.nodesTreeView);
 
-    let offset = new THREE.Vector3(0, 0, -10).applyQuaternion(engine.cameraActor.getGlobalOrientation());
-    let position = engine.cameraActor.getGlobalPosition().add(offset);
+    let quaternion = new THREE.Quaternion();
+    engine.cameraActor.getGlobalOrientation(quaternion);
+    let offset = new THREE.Vector3(0, 0, -10).applyQuaternion(quaternion);
+
+    let position = new THREE.Vector3();
+    engine.cameraActor.getGlobalPosition(position).add(offset);
 
     let unitRatio = data.cubicModelUpdater.cubicModelAsset.pub.unitRatio;
 
@@ -460,7 +464,7 @@ function onInspectorInputChange(event: any) {
 
   if (context == "shape" && propertyType === "type") {
     // Single value
-    value = uiFields[propertyType].value; 
+    value = uiFields[propertyType].value;
   } else {
     // Multiple values
     let inputs: HTMLInputElement[] = uiFields[propertyType];
@@ -483,5 +487,5 @@ function onInspectorInputChange(event: any) {
   } else {
     socket.emit("edit:assets", info.assetId, "moveNodePivot", nodeId, value, (err: string) => { if (err != null) alert(err); });
   }
-  
+
 }

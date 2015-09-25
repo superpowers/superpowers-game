@@ -22,7 +22,7 @@ class CannonBody extends SupEngine.ActorComponent {
     this.body = new (<any>window).CANNON.Body();
     (<any>SupEngine).Cannon.World.addBody(this.body);
   }
-  
+
   setIsLayerActive(active: boolean) {}
 
   setup(config:any) {
@@ -32,8 +32,8 @@ class CannonBody extends SupEngine.ActorComponent {
     this.offsetY = config.offsetY != null ? config.offsetY : 0;
     this.offsetZ = config.offsetZ != null ? config.offsetZ : 0;
 
-    this.actorPosition = this.actor.getGlobalPosition();
-    this.actorOrientation = this.actor.getGlobalOrientation();
+    this.actor.getGlobalPosition(this.actorPosition);
+    this.actor.getGlobalOrientation(this.actorOrientation);
 
     this.body.mass = this.mass;
     this.body.type = this.mass === 0 ? (<any>window).CANNON.Body.STATIC : (<any>window).CANNON.Body.DYNAMIC;

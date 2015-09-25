@@ -2,6 +2,8 @@ import ui, { selectBrush, selectFill } from "./ui";
 import { setupPattern } from "./mapArea";
 import { data } from "./network";
 
+let tmpVector3 = new SupEngine.THREE.Vector3();
+
 let tileSetArea: {
   gameInstance?: SupEngine.GameInstance;
 
@@ -30,19 +32,19 @@ export default tileSetArea;
 function getTileSetGridPosition(gameInstance: SupEngine.GameInstance, cameraComponent: any) {
   let mousePosition = gameInstance.input.mousePosition;
   let position = new SupEngine.THREE.Vector3(mousePosition.x, mousePosition.y, 0);
-  let cameraPosition = cameraComponent.actor.getLocalPosition();
+  cameraComponent.actor.getLocalPosition(tmpVector3);
   let ratio = data.tileSetUpdater.tileSetAsset.pub.grid.width / data.tileSetUpdater.tileSetAsset.pub.grid.height;
 
   let x = position.x / gameInstance.threeRenderer.domElement.width;
   x = x * 2 - 1;
   x *= cameraComponent.orthographicScale / 2 * cameraComponent.cachedRatio;
-  x += cameraPosition.x;
+  x += tmpVector3.x;
   x = Math.floor(x);
 
   let y = position.y / gameInstance.threeRenderer.domElement.height;
   y = y * 2 - 1;
   y *= cameraComponent.orthographicScale / 2;
-  y -= cameraPosition.y;
+  y -= tmpVector3.y;
   y *= ratio;
   y = Math.floor(y);
 

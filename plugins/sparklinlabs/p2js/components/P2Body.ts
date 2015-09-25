@@ -29,8 +29,8 @@ export default class P2Body extends SupEngine.ActorComponent {
     this.offsetX = (config.offsetX != null) ? config.offsetX : 0;
     this.offsetY = (config.offsetY != null) ? config.offsetY : 0;
 
-    this.actorPosition = this.actor.getGlobalPosition();
-    this.actorAngles = this.actor.getGlobalEulerAngles();
+    this.actor.getGlobalPosition(this.actorPosition);
+    this.actor.getGlobalEulerAngles(this.actorAngles);
 
     this.body.mass = this.mass;
     this.body.type = (this.mass === 0) ? (<any>window).p2.Body.STATIC : (<any>window).p2.Body.DYNAMIC;

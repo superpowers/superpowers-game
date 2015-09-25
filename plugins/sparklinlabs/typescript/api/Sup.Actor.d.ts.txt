@@ -97,8 +97,15 @@ declare module Sup {
     lookTowards(direction: Math.Vector3, upVector?: Math.Vector3): Actor;
 
     getLocalScale(): Math.Vector3;
+    getLocalScaleX(): number;
+    getLocalScaleY(): number;
+    getLocalScaleZ(): number;
     setLocalScale(scale: Math.Vector3): Actor;
     setLocalScale(x: number, y: number, z: number): Actor;
+    setLocalScale(xyz: number): Actor;
+    setLocalScaleX(x: number): Math.Vector3;
+    setLocalScaleY(y: number): Math.Vector3;
+    setLocalScaleZ(z: number): Math.Vector3;
 
     addBehavior<T extends Behavior>(behaviorClass: new(actor: Actor, properties?: { [key: string]: any; }) => T, properties?: { [key: string]: any; }): T;
     getBehavior<T extends Behavior>(behaviorClass: new(actor: Actor, properties?: { [key: string]: any; }) => T): T;

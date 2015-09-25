@@ -28,13 +28,13 @@ module Sup {
     setVisible(visible: boolean) { this.__inner.threeObject.visible = visible; return this; }
     getParent() { return (this.__inner.parent) ? this. __inner.parent.__outer : null; }
     setParent(parent, options={ keepLocalTransform: false }) {
-      var innerParent = (parent) ? parent.__inner : null;
+      let innerParent = (parent) ? parent.__inner : null;
       this.__inner.setParent(innerParent, options.keepLocalTransform == true);
       return this;
     }
 
     getChild(name) {
-      var foundActor = null;
+      let foundActor = null;
       player.gameInstance.tree.walkDown(this.__inner, (actor) => {
         if (actor.name === name && !actor.pendingForDestruction) { foundActor = (foundActor) ? foundActor : actor.__outer; }
       });
@@ -42,14 +42,14 @@ module Sup {
     }
 
     getChildren() {
-      var children = [];
+      let children = [];
       this.__inner.children.forEach( (child) => { if (!child.pendingForDestruction) children.push(child.__outer); } );
       return children;
     }
 
     getPosition() {
-      var position = this.__inner.getGlobalPosition();
-      return new Math.Vector3(position.x, position.y, position.z);
+      this.__inner.getGlobalPosition(tmpVector3);
+      return new Math.Vector3(tmpVector3.x, tmpVector3.y, tmpVector3.z);
     }
 
     setPosition(x, y, z) {
@@ -61,31 +61,31 @@ module Sup {
       return this;
     }
 
-    getX() { return this.__inner.getGlobalPosition().x; }
+    getX() { return this.__inner.getGlobalPosition(tmpVector3).x; }
     setX(x) {
-      let position = this.__inner.getGlobalPosition();
-      position.x = x;
-      this.__inner.setGlobalPosition(position);
+      this.__inner.getGlobalPosition(tmpVector3);
+      tmpVector3.x = x;
+      this.__inner.setGlobalPosition(tmpVector3);
       return this;
     }
-    getY() { return this.__inner.getGlobalPosition().y; }
+    getY() { return this.__inner.getGlobalPosition(tmpVector3).y; }
     setY(y) {
-      let position = this.__inner.getGlobalPosition();
-      position.y = y;
-      this.__inner.setGlobalPosition(position);
+      this.__inner.getGlobalPosition(tmpVector3);
+      tmpVector3.y = y;
+      this.__inner.setGlobalPosition(tmpVector3);
       return this;
     }
-    getZ() { return this.__inner.getGlobalPosition().z; }
+    getZ() { return this.__inner.getGlobalPosition(tmpVector3).z; }
     setZ(z) {
-      let position = this.__inner.getGlobalPosition();
-      position.z = z;
-      this.__inner.setGlobalPosition(position);
+      this.__inner.getGlobalPosition(tmpVector3);
+      tmpVector3.z = z;
+      this.__inner.setGlobalPosition(tmpVector3);
       return this;
     }
 
     getLocalPosition() {
-      var position = this.__inner.getLocalPosition();
-      return new Math.Vector3(position.x, position.y, position.z)
+      this.__inner.getLocalPosition(tmpVector3);
+      return new Math.Vector3(tmpVector3.x, tmpVector3.y, tmpVector3.z)
     }
 
     setLocalPosition(x, y, z) {
@@ -97,25 +97,25 @@ module Sup {
       return this;
     }
 
-    getLocalX() { return this.__inner.getLocalPosition().x; }
+    getLocalX() { return this.__inner.getLocalPosition(tmpVector3).x; }
     setLocalX(x) {
-      let position = this.__inner.getLocalPosition();
-      position.x = x;
-      this.__inner.setLocalPosition(position);
+      this.__inner.getLocalPosition(tmpVector3);
+      tmpVector3.x = x;
+      this.__inner.setLocalPosition(tmpVector3);
       return this;
     }
-    getLocalY() { return this.__inner.getLocalPosition().y; }
+    getLocalY() { return this.__inner.getLocalPosition(tmpVector3).y; }
     setLocalY(y) {
-      let position = this.__inner.getLocalPosition();
-      position.y = y;
-      this.__inner.setLocalPosition(position);
+      this.__inner.getLocalPosition(tmpVector3);
+      tmpVector3.y = y;
+      this.__inner.setLocalPosition(tmpVector3);
       return this;
     }
-    getLocalZ() { return this.__inner.getLocalPosition().z; }
+    getLocalZ() { return this.__inner.getLocalPosition(tmpVector3).z; }
     setLocalZ(z) {
-      let position = this.__inner.getLocalPosition();
-      position.z = z;
-      this.__inner.setLocalPosition(position);
+      this.__inner.getLocalPosition(tmpVector3);
+      tmpVector3.z = z;
+      this.__inner.setLocalPosition(tmpVector3);
       return this;
     }
 
@@ -166,7 +166,7 @@ module Sup {
         let offset = x;
         tmpVector3.set(offset.x, offset.y, offset.z);
       } else tmpVector3.set(x, y, z);
-      this.__inner.moveOriented(tmpVector3)
+      this.__inner.moveOriented(tmpVector3);
       return this;
     }
     moveOrientedX(x) {
@@ -183,18 +183,18 @@ module Sup {
     }
 
     getOrientation() {
-      var orientation = this.__inner.getGlobalOrientation();
-      return new Math.Quaternion(orientation.x, orientation.y, orientation.z, orientation.w);
+      this.__inner.getGlobalOrientation(tmpQuaternion);
+      return new Math.Quaternion(tmpQuaternion.x, tmpQuaternion.y, tmpQuaternion.z, tmpQuaternion.w);
     }
 
     setOrientation(quaternion) {
-      this.__inner.setGlobalOrientation( tmpQuaternion.set(quaternion.x, quaternion.y, quaternion.z, quaternion.w) )
+      this.__inner.setGlobalOrientation(tmpQuaternion.set(quaternion.x, quaternion.y, quaternion.z, quaternion.w));
       return this;
     }
 
     getLocalOrientation() {
-      var orientation = this.__inner.getLocalOrientation();
-      return new Math.Quaternion(orientation.x, orientation.y, orientation.z, orientation.w);
+      this.__inner.getLocalOrientation(tmpQuaternion);
+      return new Math.Quaternion(tmpQuaternion.x, tmpQuaternion.y, tmpQuaternion.z, tmpQuaternion.w);
     }
 
     setLocalOrientation(quaternion) {
@@ -213,11 +213,8 @@ module Sup {
     }
 
     getEulerAngles() {
-      var eulerAngles = this.__inner.getGlobalEulerAngles();
-      var x = eulerAngles.x;
-      var y = eulerAngles.y;
-      var z = eulerAngles.z;
-      return new Math.Vector3( x, y, z );
+      this.__inner.getGlobalEulerAngles(tmpEuler);
+      return new Math.Vector3(tmpEuler.x, tmpEuler.y, tmpEuler.z);
     }
     setEulerAngles(x, y, z) {
       if (y == null && z == null) {
@@ -228,34 +225,30 @@ module Sup {
       return this;
     }
 
-    getEulerX() { return this.__inner.getGlobalEulerAngles().x; }
+    getEulerX() { return this.__inner.getGlobalEulerAngles(tmpEuler).x; }
     setEulerX(x) {
-      let eulerAngles = this.__inner.getGlobalEulerAngles();
-      eulerAngles.x = x;
-      this.__inner.setGlobalEulerAngles(eulerAngles);
+      this.__inner.getGlobalEulerAngles(tmpEuler);
+      tmpEuler.x = x;
+      this.__inner.setGlobalEulerAngles(tmpEuler);
       return this;
     }
-    getEulerY() { return this.__inner.getGlobalEulerAngles().y; }
+    getEulerY() { return this.__inner.getGlobalEulerAngles(tmpEuler).y; }
     setEulerY(y) {
-      let eulerAngles = this.__inner.getGlobalEulerAngles();
-      eulerAngles.y = y;
-      this.__inner.setGlobalEulerAngles(eulerAngles);
+      this.__inner.getGlobalEulerAngles(tmpEuler);
+      tmpEuler.y = y;
+      this.__inner.setGlobalEulerAngles(tmpEuler);
       return this;
     }
-    getEulerZ() { return this.__inner.getGlobalEulerAngles().z; }
+    getEulerZ() { return this.__inner.getGlobalEulerAngles(tmpEuler).z; }
     setEulerZ(z) {
-      let eulerAngles = this.__inner.getGlobalEulerAngles();
-      eulerAngles.z = z;
-      this.__inner.setGlobalEulerAngles(eulerAngles);
+      this.__inner.getGlobalEulerAngles(tmpEuler);
+      this.__inner.setGlobalEulerAngles(tmpEuler);
       return this;
     }
 
     getLocalEulerAngles() {
-      var eulerAngles = this.__inner.getLocalEulerAngles();
-      var x = eulerAngles.x;
-      var y = eulerAngles.y;
-      var z = eulerAngles.z;
-      return new Math.Vector3(x, y, z);
+      this.__inner.getLocalEulerAngles(tmpEuler);
+      return new Math.Vector3(tmpEuler.x, tmpEuler.y, tmpEuler.z);
     }
     setLocalEulerAngles(x, y, z) {
       if (y == null && z == null) {
@@ -266,25 +259,25 @@ module Sup {
       return this;
     }
 
-    getLocalEulerX() { return this.__inner.getLocalEulerAngles().x; }
+    getLocalEulerX() { return this.__inner.getLocalEulerAngles(tmpEuler).x; }
     setLocalEulerX(x) {
-      let eulerAngles = this.__inner.getLocalEulerAngles();
-      eulerAngles.x = x;
-      this.__inner.setLocalEulerAngles(eulerAngles);
+      this.__inner.getLocalEulerAngles(tmpEuler);
+      tmpEuler.x = x;
+      this.__inner.setLocalEulerAngles(tmpEuler);
       return this;
     }
-    getLocalEulerY() { return this.__inner.getLocalEulerAngles().y; }
+    getLocalEulerY() { return this.__inner.getLocalEulerAngles(tmpEuler).y; }
     setLocalEulerY(y) {
-      let eulerAngles = this.__inner.getLocalEulerAngles();
-      eulerAngles.y = y;
-      this.__inner.setLocalEulerAngles(eulerAngles);
+      this.__inner.getLocalEulerAngles(tmpEuler);
+      tmpEuler.y = y;
+      this.__inner.setLocalEulerAngles(tmpEuler);
       return this;
     }
-    getLocalEulerZ() { return this.__inner.getLocalEulerAngles().z; }
+    getLocalEulerZ() { return this.__inner.getLocalEulerAngles(tmpEuler).z; }
     setLocalEulerZ(z) {
-      let eulerAngles = this.__inner.getLocalEulerAngles();
-      eulerAngles.z = z;
-      this.__inner.setLocalEulerAngles(eulerAngles);
+      this.__inner.getLocalEulerAngles(tmpEuler);
+      tmpEuler.z = z;
+      this.__inner.setLocalEulerAngles(tmpEuler);
       return this;
     }
 
@@ -341,17 +334,38 @@ module Sup {
     }
 
     getLocalScale() {
-      var scale = this.__inner.getLocalScale();
-      return new Math.Vector3(scale.x, scale.y, scale.z);
+      this.__inner.getLocalScale(tmpVector3);
+      return new Math.Vector3(tmpVector3.x, tmpVector3.y, tmpVector3.z);
     }
+    getLocalScaleX() { return this.__inner.getLocalScale(tmpVector3).x; }
+    getLocalScaleY() { return this.__inner.getLocalScale(tmpVector3).y; }
+    getLocalScaleZ() { return this.__inner.getLocalScale(tmpVector3).z; }
 
     setLocalScale(x, y, z) {
       if (y == null && z == null) {
-        let scale = x;
-        tmpVector3.set(scale.x, scale.y, scale.z)
+        if (typeof x === "number") tmpVector3.set(x, x, x);
+        else {
+          let scale = x;
+          tmpVector3.set(scale.x, scale.y, scale.z)
+        }
       } else tmpVector3.set(x, y, z)
       this.__inner.setLocalScale(tmpVector3);
       return this;
+    }
+    setLocalScaleX(x: number) {
+      this.__inner.getLocalScale(tmpVector3);
+      tmpVector3.x = x;
+      this.__inner.setLocalScale(tmpVector3);
+    }
+    setLocalScaleY(y: number) {
+      this.__inner.getLocalScale(tmpVector3);
+      tmpVector3.y = y;
+      this.__inner.setLocalScale(tmpVector3);
+    }
+    setLocalScaleZ(z: number) {
+      this.__inner.getLocalScale(tmpVector3);
+      tmpVector3.z = z;
+      this.__inner.setLocalScale(tmpVector3);
     }
 
     addBehavior(behaviorClass, properties) {
@@ -359,10 +373,10 @@ module Sup {
         throw new Error("The behavior class passed to Actor.addBehavior was null. Make sure the class is declared before Actor.addBehavior is called.");
       }
 
-      var behavior = new behaviorClass(this.__inner);
+      let behavior = new behaviorClass(this.__inner);
 
       if (properties != null) {
-        for (var propertyName in properties) {
+        for (let propertyName in properties) {
           // TODO: Validate property existence and type like in Behavior.setupComponent
           behavior[propertyName] = properties[propertyName];
         }

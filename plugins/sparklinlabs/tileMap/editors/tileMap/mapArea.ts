@@ -9,6 +9,8 @@ import TileMapAsset from "../../data/TileMapAsset";
 import TileMap from "../../components/TileMap";
 import TileMapRenderer from "../../components/TileMapRenderer";
 
+let tmpVector3 = new SupEngine.THREE.Vector3();
+
 // Map Area
 let mapArea: {
   gameInstance?: SupEngine.GameInstance;
@@ -237,19 +239,19 @@ function editMap(edits: Edits[]) {
 function getMapGridPosition(gameInstance: SupEngine.GameInstance, cameraComponent: any) {
   let mousePosition = gameInstance.input.mousePosition;
   let position = new SupEngine.THREE.Vector3(mousePosition.x, mousePosition.y, 0);
-  let cameraPosition = cameraComponent.actor.getLocalPosition();
+  cameraComponent.actor.getLocalPosition(tmpVector3);
 
   let x = position.x / gameInstance.threeRenderer.domElement.width;
   x = x * 2 - 1;
   x *= cameraComponent.orthographicScale / 2 * cameraComponent.cachedRatio;
-  x += cameraPosition.x;
+  x += tmpVector3.x;
   x *= data.tileMapUpdater.tileMapAsset.pub.pixelsPerUnit / data.tileMapUpdater.tileSetAsset.pub.grid.width;
   x = Math.floor(x);
 
   let y = position.y / gameInstance.threeRenderer.domElement.height;
   y = y * 2 - 1;
   y *= cameraComponent.orthographicScale / 2;
-  y -= cameraPosition.y;
+  y -= tmpVector3.y;
   y *= data.tileMapUpdater.tileMapAsset.pub.pixelsPerUnit / data.tileMapUpdater.tileSetAsset.pub.grid.height;
   y = Math.floor(y);
 
@@ -271,8 +273,8 @@ export function handleMapArea() {
     ui.mousePositionLabel.y.textContent = mouseY.toString();
 
     if (ui.fillToolButton.checked) {
-      let position = data.tileSetUpdater.tileSetRenderer.selectedTileActor.getLocalPosition();
-      setupFillPattern([ position.x, -position.y, false, false, 0 ]);
+      data.tileSetUpdater.tileSetRenderer.selectedTileActor.getLocalPosition(tmpVector3);
+      setupFillPattern([ tmpVector3.x, -tmpVector3.y, false, false, 0 ]);
     }
     else if (mapArea.patternActor.threeObject.visible) setupPattern(mapArea.patternData, mapArea.patternDataWidth);
   }

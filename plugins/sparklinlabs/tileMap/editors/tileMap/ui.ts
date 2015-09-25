@@ -6,6 +6,9 @@ import tileSetArea from "./tileSetArea";
 let TreeView = require("dnd-tree-view");
 let PerfectResize = require("perfect-resize");
 
+let tmpPosition = new SupEngine.THREE.Vector3();
+let tmpScale = new SupEngine.THREE.Vector3();
+
 import { TileMapLayerPub } from "../../data/TileMapLayers";
 
 let ui: {
@@ -240,17 +243,17 @@ export function selectBrush(x?: number, y?: number, width=1, height=1) {
   if (x != null && y != null) data.tileSetUpdater.tileSetRenderer.select(x, y, width, height);
 
   let ratio = data.tileSetUpdater.tileSetAsset.pub.grid.width / data.tileSetUpdater.tileSetAsset.pub.grid.height;
-  let position = data.tileSetUpdater.tileSetRenderer.selectedTileActor.getLocalPosition();
-  position.y = Math.round(position.y * ratio);
-  let scale = data.tileSetUpdater.tileSetRenderer.selectedTileActor.getLocalScale();
-  scale.y = Math.round(scale.y * ratio);
+  data.tileSetUpdater.tileSetRenderer.selectedTileActor.getLocalPosition(tmpPosition);
+  tmpPosition.y = Math.round(tmpPosition.y * ratio);
+  data.tileSetUpdater.tileSetRenderer.selectedTileActor.getLocalScale(tmpScale);
+  tmpScale.y = Math.round(tmpScale.y * ratio);
   let layerData: (number|boolean)[][] = [];
-  for (let y = -scale.y - 1; y >= 0; y--) {
-    for (let x = 0; x < scale.x; x++) {
-      layerData.push([ position.x + x, -position.y + y, false, false, 0 ]);
+  for (let y = -tmpScale.y - 1; y >= 0; y--) {
+    for (let x = 0; x < tmpScale.x; x++) {
+      layerData.push([ tmpPosition.x + x, -tmpPosition.y + y, false, false, 0 ]);
     }
   }
-  setupPattern(layerData, scale.x);
+  setupPattern(layerData, tmpScale.x);
 
   ui.brushToolButton.checked = true;
   mapArea.patternActor.threeObject.visible = true;
@@ -262,8 +265,8 @@ export function selectBrush(x?: number, y?: number, width=1, height=1) {
 export function selectFill(x?: number, y?: number) {
   if (x != null && y != null) data.tileSetUpdater.tileSetRenderer.select(x, y);
 
-  let position = data.tileSetUpdater.tileSetRenderer.selectedTileActor.getLocalPosition();
-  setupFillPattern([ position.x, -position.y, false, false, 0 ]);
+  data.tileSetUpdater.tileSetRenderer.selectedTileActor.getLocalPosition(tmpPosition);
+  setupFillPattern([ tmpPosition.x, -tmpPosition.y, false, false, 0 ]);
 
   ui.fillToolButton.checked = true;
   mapArea.patternActor.threeObject.visible = true;

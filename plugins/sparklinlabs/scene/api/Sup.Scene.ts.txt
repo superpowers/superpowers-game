@@ -26,15 +26,15 @@ module Sup {
           actor.__inner.name = node.name;
           actor.__inner.threeObject.visible = node.visible;
 
-          let localPosition = actor.__inner.getLocalPosition();
-          actor.__inner.setLocalPosition(tmpVector3.set(node.position.x, node.position.y, node.position.z).add(localPosition));
+          actor.__inner.getLocalPosition(tmpVector3);
+          actor.__inner.setLocalPosition(tmpVector3.add(node.position.x, node.position.y, node.position.z));
 
-          let localOrientation = actor.__inner.getLocalOrientation();
+          let localOrientation = actor.__inner.getLocalOrientation(new SupEngine.THREE.Quaternion());
           tmpQuaternion.set(node.orientation.x, node.orientation.y, node.orientation.z, node.orientation.w);
           actor.__inner.setLocalOrientation(tmpQuaternion.multiply(localOrientation));
 
-          let localScale = actor.__inner.getLocalScale();
-          actor.__inner.setLocalScale(tmpVector3.set(node.scale.x, node.scale.y, node.scale.z).multiply(localScale));
+          actor.__inner.getLocalScale(tmpVector3);
+          actor.__inner.setLocalScale(tmpVector3.add(node.scale.x, node.scale.y, node.scale.z).multiply(localScale));
 
           allComponents = allComponents.concat(result.allComponents);
 

@@ -1,7 +1,10 @@
 import ArcadeBody2D from "./ArcadeBody2D";
-let THREE = SupEngine.THREE;
-
 import ArcadeBody2DUpdater from "./ArcadeBody2DUpdater";
+
+let THREE = SupEngine.THREE;
+let tmpVector3 = new THREE.Vector3();
+
+
 
 export default class ArcadeBody2DMarker extends SupEngine.ActorComponent {
   static Updater = ArcadeBody2DUpdater;
@@ -23,7 +26,7 @@ export default class ArcadeBody2DMarker extends SupEngine.ActorComponent {
 
   update() {
     super.update();
-    this.markerActor.setGlobalPosition(this.actor.getGlobalPosition());
+    this.markerActor.setGlobalPosition(this.actor.getGlobalPosition(tmpVector3));
   }
 
   setBox(width: number, height: number) {

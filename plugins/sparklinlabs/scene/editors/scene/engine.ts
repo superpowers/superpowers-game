@@ -91,6 +91,7 @@ function tick(timestamp=0) {
   requestAnimationFrame(tick);
 }
 
+let pos = new THREE.Vector3();
 function update() {
   if (ui.cameraMode === "3D" && engine.gameInstance.input.keyboardButtons[(<any>window).KeyEvent.DOM_VK_CONTROL].isDown) {
     if (engine.gameInstance.input.mouseButtons[5].isDown) {
@@ -133,7 +134,7 @@ function update() {
   }
 
   if (ui.cameraMode === "2D") {
-    let pos = engine.cameraActor.getLocalPosition();
+    engine.cameraActor.getLocalPosition(pos);
     pos.x += (ui.gridStep - pos.x % ui.gridStep);
     pos.y += (ui.gridStep - pos.y % ui.gridStep);
     pos.z = 0;
@@ -218,7 +219,7 @@ function onTransformChange() {
 
       let position = object.getWorldPosition();
       if (target.parent != null) {
-        let mtx = target.parent.getGlobalMatrix();
+        let mtx = target.parent.getGlobalMatrix(new THREE.Matrix4());
         mtx.getInverse(mtx);
         position.applyMatrix4(mtx);
       }
@@ -231,7 +232,7 @@ function onTransformChange() {
 
       let orientation = object.getWorldQuaternion();
       if (target.parent != null) {
-        let q = target.parent.getGlobalOrientation().inverse();
+        let q = target.parent.getGlobalOrientation(new THREE.Quaternion()).inverse();
         orientation.multiply(q);
       }
       value = { x: orientation.x, y: orientation.y, z: orientation.z, w: orientation.w };

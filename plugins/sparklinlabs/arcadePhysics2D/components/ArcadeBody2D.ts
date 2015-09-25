@@ -50,7 +50,7 @@ export default class ArcadeBody2D extends SupEngine.ActorComponent {
     if (config.bounceX != null) this.bounceX = config.bounceX;
     if (config.bounceY != null) this.bounceY = config.bounceY;
 
-    this.actorPosition = this.actor.getGlobalPosition();
+    this.actor.getGlobalPosition(this.actorPosition);
     this.position = this.actorPosition.clone();
     this.position.x += this.offsetX;
     if ((<any>SupEngine).ArcadePhysics2D.plane === "XY") this.position.y += this.offsetY;
@@ -79,7 +79,7 @@ export default class ArcadeBody2D extends SupEngine.ActorComponent {
       for (let i = 0; i < this.tileMapAsset.__inner.data.layers.length; i++) this.layersIndex.push(i);
     }
 
-    this.position = this.actor.getGlobalPosition();
+    this.actor.getGlobalPosition(this.position);
   }
 
   earlyUpdate() {

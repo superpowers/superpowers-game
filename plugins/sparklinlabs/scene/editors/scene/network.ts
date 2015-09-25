@@ -55,6 +55,7 @@ var gameSettingSubscriber = {
   }
 };
 
+
 function onSceneAssetReceived(err: string, asset: SceneAsset) {
   // Clear tree view
   ui.nodesTreeView.clearSelection();
@@ -66,6 +67,7 @@ function onSceneAssetReceived(err: string, asset: SceneAsset) {
     z: { min: Infinity, max: -Infinity },
   };
 
+  let pos = new THREE.Vector3();
   function walk(node: Node, parentNode: Node, parentElt: HTMLLIElement) {
     let liElt = createNodeElement(node);
     ui.nodesTreeView.append(liElt, "group", parentElt);
@@ -76,7 +78,7 @@ function onSceneAssetReceived(err: string, asset: SceneAsset) {
     }
 
     // Compute scene bounding box
-    let pos = data.sceneUpdater.bySceneNodeId[node.id].actor.getGlobalPosition();
+    data.sceneUpdater.bySceneNodeId[node.id].actor.getGlobalPosition(pos);
 
     box.x.min = Math.min(box.x.min, pos.x);
     box.x.max = Math.max(box.x.max, pos.x);

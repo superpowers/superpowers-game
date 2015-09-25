@@ -3,6 +3,9 @@ import SceneAsset, { DuplicatedNode } from "../data/SceneAsset";
 import { Node } from "../data/SceneNodes";
 import { Component } from "../data/SceneComponents";
 
+let tmpVector3 = new SupEngine.THREE.Vector3();
+let tmpQuaternion = new SupEngine.THREE.Quaternion();
+
 export default class SceneUpdater {
   projectClient: SupClient.ProjectClient;
 
@@ -85,8 +88,8 @@ export default class SceneUpdater {
   _onUpdateMarkerRecursive(nodeId: string) {
     this.sceneAsset.nodes.walkNode(this.sceneAsset.nodes.byId[nodeId], null, (descendantNode) => {
       let nodeEditorData = this.bySceneNodeId[descendantNode.id];
-      nodeEditorData.markerActor.setGlobalPosition(nodeEditorData.actor.getGlobalPosition());
-      nodeEditorData.markerActor.setGlobalOrientation(nodeEditorData.actor.getGlobalOrientation());
+      nodeEditorData.markerActor.setGlobalPosition(nodeEditorData.actor.getGlobalPosition(tmpVector3));
+      nodeEditorData.markerActor.setGlobalOrientation(nodeEditorData.actor.getGlobalOrientation(tmpQuaternion));
     });
   }
 
@@ -96,12 +99,12 @@ export default class SceneUpdater {
     switch (path) {
       case "position":
         nodeEditorData.actor.setLocalPosition(value);
-        nodeEditorData.markerActor.setGlobalPosition(nodeEditorData.actor.getGlobalPosition());
+        nodeEditorData.markerActor.setGlobalPosition(nodeEditorData.actor.getGlobalPosition(tmpVector3));
         this._onUpdateMarkerRecursive(id);
         break;
       case "orientation":
         nodeEditorData.actor.setLocalOrientation(value);
-        nodeEditorData.markerActor.setGlobalOrientation(nodeEditorData.actor.getGlobalOrientation());
+        nodeEditorData.markerActor.setGlobalOrientation(nodeEditorData.actor.getGlobalOrientation(tmpQuaternion));
         this._onUpdateMarkerRecursive(id);
         break;
       case "scale":
@@ -194,8 +197,8 @@ export default class SceneUpdater {
     (<any>nodeActor).sceneNodeId = node.id;
 
     let markerActor = new SupEngine.Actor(this.gameInstance, `${nodeId} Marker`, null, { layer: -1 });
-    markerActor.setGlobalPosition(nodeActor.getGlobalPosition());
-    markerActor.setGlobalOrientation(nodeActor.getGlobalOrientation());
+    markerActor.setGlobalPosition(nodeActor.getGlobalPosition(tmpVector3));
+    markerActor.setGlobalOrientation(nodeActor.getGlobalOrientation(tmpQuaternion));
     new SupEngine.editorComponentClasses["TransformMarker"](markerActor);
 
     this.bySceneNodeId[node.id] = { actor: nodeActor, markerActor, bySceneComponentId: {}, prefabUpdater: null };
