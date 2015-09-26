@@ -11,8 +11,8 @@ export default class P2Body extends SupEngine.ActorComponent {
   height: number;
   radius: number;
 
-  actorPosition: THREE.Vector3;
-  actorAngles: THREE.Euler;
+  actorPosition = new THREE.Vector3();
+  actorAngles = new THREE.Euler();
 
   constructor(actor: SupEngine.Actor) {
     super(actor, "P2Body");

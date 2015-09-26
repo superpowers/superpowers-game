@@ -389,14 +389,14 @@ export function setInspectorPrefabId(prefabId: string) {
 }
 
 function onNewNodeClick() {
-  SupClient.dialogs.prompt("Enter a name for the actor.", null, "Actor", "Create", (name) => {
+  SupClient.dialogs.prompt("Enter a name for the actor.", null, "Actor", "Create", { pattern: "[^/]+", title: "Must contain no slashes." }, (name) => {
     if (name == null) return;
     createNewNode(name, false);
   });
 }
 
 function onNewPrefabClick() {
-  SupClient.dialogs.prompt("Enter a name for the prefab.", null, "Prefab", "Create", (name) => {
+  SupClient.dialogs.prompt("Enter a name for the prefab.", null, "Prefab", "Create", { pattern: "[^/]+", title: "Must contain no slashes." }, (name) => {
     if (name == null) return;
     createNewNode(name, true);
   });

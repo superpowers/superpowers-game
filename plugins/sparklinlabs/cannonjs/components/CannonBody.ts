@@ -1,5 +1,6 @@
-export default
-class CannonBody extends SupEngine.ActorComponent {
+let THREE = SupEngine.THREE;
+
+export default class CannonBody extends SupEngine.ActorComponent {
 
   body:any;
   mass:number;
@@ -7,8 +8,8 @@ class CannonBody extends SupEngine.ActorComponent {
   offsetX:number;
   offsetY:number;
   offsetZ:number;
-  actorPosition:THREE.Vector3;
-  actorOrientation:THREE.Quaternion;
+  actorPosition = new THREE.Vector3();
+  actorOrientation = new THREE.Quaternion();
   halfWidth:number;
   halfHeight:number;
   halfDepth:number;
