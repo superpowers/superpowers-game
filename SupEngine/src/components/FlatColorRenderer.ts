@@ -16,7 +16,7 @@ export default class FlatColorRenderer extends ActorComponent {
     this.setup(color, scaleRatio, width, height);
   }
 
-  setIsLayerActive(active: boolean) { this.mesh.visible = active; }
+  setIsLayerActive(active: boolean) { if (this.mesh != null) this.mesh.visible = active; }
 
   setup(color: number, scaleRatio: number, width: number, height: number) {
     if (color == null || scaleRatio == null || width == null) return;
