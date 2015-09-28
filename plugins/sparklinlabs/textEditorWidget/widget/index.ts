@@ -37,9 +37,9 @@ class TextEditorWidget {
   useSoftTab = true;
 
   constructor(projectClient: SupClient.ProjectClient, clientId: number, textArea: HTMLTextAreaElement, options: TextEditorWidgetOptions) {
-    let extraKeys: { [name: string]: string|Function } = {
+    let extraKeys: { [name: string]: string|Function|boolean } = {
       "F9": () => {},
-      "Ctrl-T": () => {},
+      "Ctrl-T": false,
       "Tab": (cm: any) => {
         if (cm.getSelection() !== "") cm.execCommand("indentMore")
         else {
