@@ -21,6 +21,8 @@ export default class Actor {
   constructor(gameInstance: GameInstance, name: string, parent?: Actor, options?: { visible?: boolean; layer?: number; }) {
     this.gameInstance = gameInstance;
     this.name = name;
+
+    if (parent != null && parent.pendingForDestruction) throw new Error("The parent passed to new SupEngine.Actor() has been destroyed and cannot be used as a parent.");
     this.parent = parent;
     this.threeObject.userData.isActor = true;
 
