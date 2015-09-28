@@ -18,6 +18,12 @@ interface CubicModelAssetPub {
   nodes: Node[];
 }
 
+export interface DuplicatedNode {
+  node: Node;
+  parentId: string;
+  index: number;
+}
+
 export default class CubicModelAsset extends SupCore.data.base.Asset {
 
   static schema = {
@@ -67,7 +73,7 @@ export default class CubicModelAsset extends SupCore.data.base.Asset {
     let parentNode = this.nodes.byId[parentId];
 
     let node: Node = {
-      id: null, name: name, children: <Node[]>[],
+      id: null, name: name, children: [],
       position: (options != null && options.transform != null && options.transform.position != null) ? options.transform.position : { x: 0, y: 0, z: 0 },
       orientation: (options != null && options.transform != null && options.transform.orientation != null) ? options.transform.orientation : { x: 0, y: 0, z: 0, w: 1 },
       shape: (options != null && options.shape != null) ? options.shape : { type: "none", offset: { x: 0, y: 0, z: 0 }, settings: null }
@@ -211,6 +217,62 @@ export default class CubicModelAsset extends SupCore.data.base.Asset {
     let globalMatrix = this.computeGlobalMatrix(node);
     this.nodes.client_move(id, parentId, index);
     this.applyGlobalMatrix(node, globalMatrix);
+  }
+
+
+  server_duplicateNode(client: any, newName: string, id: string, index: number, callback: (err: string, rootNode: Node, newNodes: DuplicatedNode[]) => any) {
+    let referenceNode = this.nodes.byId[id];
+    if (referenceNode == null) { callback(`Invalid node id: ${id}`, null, null); return; }
+
+    let newNodes: DuplicatedNode[] = [];
+    let totalNodeCount = 0
+    let walk = (node: Node) => {
+      totalNodeCount += 1
+      for (let childNode of node.children) walk(childNode);
+    };
+    walk(referenceNode);
+
+    let rootNode: Node = {
+      id: null, name: newName, children: [],
+      position: _.cloneDeep(referenceNode.position),
+      orientation: _.cloneDeep(referenceNode.orientation),
+      shape: _.cloneDeep(referenceNode.shape)
+    };
+    let parentId = (this.nodes.parentNodesById[id] != null) ? this.nodes.parentNodesById[id].id : null;
+
+    let addNode = (newNode: Node, parentId: string, index: number, children: Node[]) => {
+      this.nodes.add(newNode, parentId, index, (err, actualIndex) => {
+        if (err != null) { callback(err, null, null); return; }
+
+        // TODO: Copy shape
+
+        newNodes.push({ node: newNode, parentId, index: actualIndex });
+
+        if (newNodes.length === totalNodeCount) {
+          callback(null, rootNode, newNodes);
+          this.emit("change");
+        }
+
+        for (let childIndex = 0; childIndex < children.length; childIndex++) {
+          let childNode = children[childIndex];
+          let node: Node = {
+            id: null, name: childNode.name, children: [],
+            position: _.cloneDeep(childNode.position),
+            orientation: _.cloneDeep(childNode.orientation),
+            shape: _.cloneDeep(childNode.shape)
+          };
+          addNode(node, newNode.id, childIndex, childNode.children);
+        }
+      });
+    }
+    addNode(rootNode, parentId, index, referenceNode.children);
+  }
+
+  client_duplicateNode(rootNode: Node, newNodes: DuplicatedNode[]) {
+    for (let newNode of newNodes) {
+      newNode.node.children.length = 0;
+      this.nodes.client_add(newNode.node, newNode.parentId, newNode.index);
+    }
   }
 
 

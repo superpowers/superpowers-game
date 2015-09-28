@@ -1,5 +1,6 @@
 import * as async from "async";
-import CubicModelAsset from "../data/CubicModelAsset";
+import CubicModelAsset, { DuplicatedNode } from "../data/CubicModelAsset";
+import { Node } from "../data/CubicModelNodes";
 import CubicModelRenderer, { RendererNode } from "./CubicModelRenderer";
 let THREE = SupEngine.THREE;
 
@@ -62,8 +63,12 @@ export default class CubicModelRendererUpdater {
   }
 
   _onEditCommand_addNode(node: Node, parentId: string, index: number) {
-    let parentRendererNode = this.cubicModelRenderer.byNodeId[parentId];
-    let parentNode = this.cubicModelAsset.nodes.byId[parentId];
+    this._createRendererNode(node);
+  }
+
+  _createRendererNode(node: Node) {
+    let parentNode = this.cubicModelAsset.nodes.parentNodesById[node.id];
+    let parentRendererNode = (parentNode != null) ? this.cubicModelRenderer.byNodeId[parentNode.id] : null;
 
     let offset = (parentNode != null) ? parentNode.shape.offset : { x: 0, y: 0, z: 0 };
     this.cubicModelRenderer._makeNode(node, parentRendererNode, offset);
@@ -161,6 +166,10 @@ export default class CubicModelRendererUpdater {
         break;
       }
     }
+  }
+
+  _onEditCommand_duplicateNode = (rootNode: Node, newNodes: DuplicatedNode[]) => {
+    for (let newNode of newNodes) this._createRendererNode(newNode.node);
   }
 
   _onEditCommand_removeNode = (id: string) => {

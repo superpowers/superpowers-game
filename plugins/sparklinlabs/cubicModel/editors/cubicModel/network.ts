@@ -12,6 +12,7 @@ import engine, { setupHelpers } from "./engine";
 
 import CubicModelRenderer from "../../components/CubicModelRenderer";
 import CubicModelRendererUpdater from "../../components/CubicModelRendererUpdater";
+import { DuplicatedNode } from "../../data/CubicModelAsset";
 import { Node } from "../../data/CubicModelNodes";
 
 export let data: { projectClient?: SupClient.ProjectClient; cubicModelUpdater?: CubicModelRendererUpdater };
@@ -125,6 +126,13 @@ onEditCommands.setNodeProperty = (id: string, path: string, value: any) => {
   // TODO: Only refresh if selection is affected
   setupHelpers();
 };
+
+onEditCommands.duplicateNode = (rootNode: Node, newNodes: DuplicatedNode[]) => {
+  for (let newNode of newNodes) onEditCommands.addNode(newNode.node, newNode.parentId, newNode.index);
+
+  // TODO: Only refresh if selection is affected
+  setupHelpers();
+}
 
 onEditCommands.removeNode = (id: string) => {
   let nodeElt = ui.nodesTreeView.treeRoot.querySelector(`[data-id='${id}']`);

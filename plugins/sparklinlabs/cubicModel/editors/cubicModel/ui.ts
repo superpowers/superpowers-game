@@ -320,7 +320,7 @@ ui.newNodeButton.addEventListener("click", onNewNodeClick);
 ui.renameNodeButton = <HTMLButtonElement>document.querySelector("button.rename-node");
 ui.renameNodeButton.addEventListener("click", onRenameNodeClick);
 ui.duplicateNodeButton = <HTMLButtonElement>document.querySelector("button.duplicate-node");
-//ui.duplicateNodeButton.addEventListener("click", onDuplicateNodeClick);
+ui.duplicateNodeButton.addEventListener("click", onDuplicateNodeClick);
 ui.deleteNodeButton = <HTMLButtonElement>document.querySelector("button.delete-node");
 ui.deleteNodeButton.addEventListener("click", onDeleteNodeClick);
 
