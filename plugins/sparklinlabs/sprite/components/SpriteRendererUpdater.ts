@@ -146,7 +146,8 @@ export default class SpriteRendererUpdater {
     // TODO: Only update the maps that changed, don't recreate the whole model
     this._prepareMaps(() => {
       this._setSprite();
-      this.editAssetCallbacks.sprite["setMaps"]();
+      let editCallback = this.editAssetCallbacks.sprite["setMaps"];
+      if (editCallback != null) editCallback();
     });
     return false;
   }
