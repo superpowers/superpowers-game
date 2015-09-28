@@ -2,7 +2,7 @@ interface BehaviorFunctions {
   awake?: Function;
   start?: Function;
   update?: Function;
-  destroy?: Function;
+  onDestroy?: Function;
 }
 
 export default class Behavior extends SupEngine.ActorComponent {
@@ -18,7 +18,7 @@ export default class Behavior extends SupEngine.ActorComponent {
   update() { if (this.funcs.update != null) this.funcs.update(); }
 
   _destroy() {
-    if (this.funcs.destroy != null) this.funcs.destroy();
+    if (this.funcs.onDestroy != null) this.funcs.onDestroy();
     this.funcs = null;
     super._destroy();
   }
