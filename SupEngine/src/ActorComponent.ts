@@ -12,6 +12,9 @@ abstract class ActorComponent {
   }
 
   _destroy() {
+    let outer = (<any>this).__outer;
+    if (outer != null) outer.__inner = null;
+
     let startIndex = this.actor.gameInstance.componentsToBeStarted.indexOf(this);
     if (startIndex !== -1) this.actor.gameInstance.componentsToBeStarted.splice(startIndex, 1);
 
