@@ -131,7 +131,8 @@ export default class Actor {
   }
 
   setParent(newParent: Actor, keepLocal=false) {
-    if (this.pendingForDestruction || newParent != null && newParent.pendingForDestruction) return;
+    if (this.pendingForDestruction) throw new Error("Cannot set parent of destroyed actor");
+    if (newParent != null && newParent.pendingForDestruction) throw new Error("Cannot reparent actor to destroyed actor");
 
     if (!keepLocal) this.getGlobalMatrix(tmpMatrix);
 
