@@ -11,7 +11,10 @@ module Sup {
     // INSERT_COMPONENT_ACCESSORS
 
     constructor(name, parent, options) {
-      let innerParent = (parent) ? parent.__inner : null;
+      if (parent != null && (parent.__inner == null || parent.__inner.pendingForDestruction)) {
+        throw new Error("The parent actor passed to new Sup.Actor() has been destroyed and cannot be used as a parent.");
+      }
+      let innerParent = parent != null ? parent.__inner : null;
       let actor = new SupEngine.Actor(player.gameInstance, name, innerParent, options);
       this.__inner = actor;
       this.__behaviors = {};
