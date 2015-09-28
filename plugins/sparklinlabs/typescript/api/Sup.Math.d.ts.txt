@@ -15,6 +15,39 @@ declare module Sup {
     function toRadians(degrees: number): number;
     function toDegrees(radians: number): number;
 
+    class Vector2 {
+      static right(): Vector2;
+      static left(): Vector2;
+      static up(): Vector2;
+      static down(): Vector2;
+
+      x: number;
+      y: number;
+
+      constructor();
+      constructor(x: number, y: number);
+      constructor(xy: number);
+      set(x: number, y: number): Vector2;
+      set(xy: number): Vector2;
+      copy(v: { x: number; y: number; }): Vector2;
+      clone(): Vector2;
+
+      add(vector: Vector2): Vector2;
+      add(x: number, y: number): Vector2;
+      subtract(vector: Vector2): Vector2;
+      subtract(x: number, y: number): Vector2;
+      multiplyScalar(multiplier: number): Vector2;
+      dot(vector: Vector2): number;
+      normalize(): Vector2;
+      negate(): Vector2;
+      lerp(vector: Vector2, t: number): Vector2;
+      rotate(angle: number): Vector2;
+      length(): number;
+      distanceTo(vector: Vector2): number;
+      angle(): number;
+      setFromAngle(angle: number): Vector2;
+    }
+
     class Vector3 {
       static forward(): Vector3;
       static back(): Vector3;
@@ -22,7 +55,6 @@ declare module Sup {
       static left(): Vector3;
       static up(): Vector3;
       static down(): Vector3;
-      static one(): Vector3;
 
       x: number;
       y: number;
@@ -33,23 +65,23 @@ declare module Sup {
       constructor(xyz: number);
       set(x: number, y: number, z: number): Vector3;
       set(xyz: number): Vector3;
-      copy(v: {x: number; y: number; z: number;}): Vector3;
+      copy(vector: {x: number; y: number; z: number;}): Vector3;
       clone(): Vector3;
 
-      add(v: Vector3): Vector3;
+      add(vector: Vector3): Vector3;
       add(x: number, y: number, z: number): Vector3;
-      subtract(v: Vector3): Vector3;
+      subtract(vector: Vector3): Vector3;
       subtract(x: number, y: number, z: number): Vector3;
-      multiplyScalar(m: number): Vector3;
-      cross(v: Vector3): Vector3;
-      dot(v: Vector3): number;
+      multiplyScalar(multiplier: number): Vector3;
+      cross(vector: Vector3): Vector3;
+      dot(vector: Vector3): number;
       normalize(): Vector3;
       negate(): Vector3;
-      lerp(v: Vector3, t: number): Vector3;
-      rotate(q : Quaternion): Vector3;
+      lerp(vector: Vector3, t: number): Vector3;
+      rotate(orientation : Quaternion): Vector3;
       length(): number;
-      distanceTo(v: Vector3): number;
-      angleTo(v: Vector3): number;
+      distanceTo(vector: Vector3): number;
+      angleTo(vector: Vector3): number;
       unproject(camera: Camera): Vector3;
     }
 

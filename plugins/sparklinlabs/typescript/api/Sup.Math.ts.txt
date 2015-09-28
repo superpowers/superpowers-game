@@ -33,6 +33,83 @@ module Sup {
     export function toRadians(degrees: number) { return degrees * degToRad; }
     export function toDegrees(radians: number) { return radians * radToDeg; }
 
+    export class Vector2 {
+      static right() { return new Vector2(1, 0); }
+      static left()  { return new Vector2(-1, 0); }
+      static up()    { return new Vector2(0, 1); }
+      static down()  { return new Vector2(0, -1); }
+
+      x: number;
+      y: number;
+
+      constructor(x?: number, y?: number) {
+        if (x == null) x = 0;
+        this.set(x, y);
+      }
+
+      toString() { return `{ x: ${this.x}, y: ${this.y} }`; }
+
+      set(x: number, y?: number) {
+        this.x = x;
+        this.y = (y != null) ? y : x;
+        return this;
+      }
+      copy(v: Vector2) { this.x = v.x; this.y = v.y; return this; }
+      clone() { return new Vector2(this.x, this.y); }
+
+      add(x: number|Vector2, y?: number) {
+        if (y == null) {
+          let v = <Vector2>x;
+          this.x += v.x; this.y += v.y;
+        } else {
+          this.x += <number>x; this.y += y;
+        }
+        return this;
+      }
+      subtract(x: number|Vector2, y?: number) {
+        if (y == null) {
+          let v = <Vector2>x;
+          this.x -= v.x; this.y -= v.y;
+        } else {
+          this.x -= <number>x; this.y -= y;
+        }
+        return this;
+      }
+      multiplyScalar(m: number) { this.x *= m; this.y *= m; return this; }
+
+      dot(v: Vector3) { return this.x * v.x + this.y * v.y; }
+
+      normalize() {
+        let length = this.length();
+        this.x /= length; this.y /= length;
+        return this;
+      }
+      negate() {
+        this.x *= -1; this.y *= -1;
+        return this;
+      }
+
+      lerp(v: Vector3, t: number) {
+        this.x = this.x * (1 - t) + v.x * t;
+        this.y = this.y * (1 - t) + v.y * t;
+        return this;
+      }
+      rotate(angle: number) {
+        let length = this.length();
+        this.setFromAngle(this.angle() + angle).multiplyScalar(length);
+        return this;
+      }
+      length() { return window.Math.sqrt(this.x * this.x + this.y * this.y); }
+      distanceTo(v: Vector2) { return v.clone().subtract(this).length(); }
+
+      setFromAngle(angle: number) {
+        this.x = window.Math.cos(angle);
+        this.y = window.Math.sin(angle);
+        return this;
+      }
+      angle() { return window.Math.atan2(this.y, this.x); }
+    }
+
     export class Vector3 {
       static forward() { return new Vector3( 0,  0,  1); }
       static back()    { return new Vector3( 0,  0, -1); }
