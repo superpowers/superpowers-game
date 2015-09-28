@@ -431,7 +431,7 @@ function onRenameNodeClick() {
   let selectedNode = ui.nodesTreeView.selectedNodes[0];
   let node = data.sceneUpdater.sceneAsset.nodes.byId[selectedNode.dataset.id];
 
-  SupClient.dialogs.prompt("Enter a new name for the actor.", null, node.name, "Rename", (newName) => {
+  SupClient.dialogs.prompt("Enter a new name for the actor.", null, node.name, "Rename", { pattern: "[^/]+", title: "Must contain no slashes." }, (newName) => {
     if (newName == null) return;
 
     socket.emit("edit:assets", info.assetId, "setNodeProperty", node.id, "name", newName, (err: string) => { if (err != null) alert(err); });
@@ -444,7 +444,7 @@ function onDuplicateNodeClick() {
   let selectedNode = ui.nodesTreeView.selectedNodes[0];
   let node = data.sceneUpdater.sceneAsset.nodes.byId[selectedNode.dataset.id];
 
-  SupClient.dialogs.prompt("Enter a name for the new actor.", null, node.name, "Duplicate", (newName) => {
+  SupClient.dialogs.prompt("Enter a name for the new actor.", null, node.name, "Duplicate", { pattern: "[^/]+", title: "Must contain no slashes." }, (newName) => {
     if (newName == null) return;
     let options = SupClient.getTreeViewInsertionPoint(ui.nodesTreeView);
 

@@ -97,6 +97,8 @@ export default class SceneAsset extends SupCore.data.base.Asset {
   }
 
   server_addNode(client: any, name: string, options: any, callback: (err: string, node: Node, parentId: string, index: number) => any) {
+    if (name.indexOf("/") !== -1) { callback("Actor name cannot contain slashes", null, null, null); return; }
+
     let parentId = (options != null) ? options.parentId : null;
     let parentNode = this.nodes.byId[parentId];
     if (parentNode != null && parentNode.prefabId != null) {
@@ -134,6 +136,8 @@ export default class SceneAsset extends SupCore.data.base.Asset {
   }
 
   server_setNodeProperty(client: any, id: string, path: string, value: any, callback: (err: string, id: string, path: string, value: any) => any) {
+    if (path === "name" && value.indexOf("/") !== -1) { callback("Actor name cannot contain slashes", null, null, null); return; }
+
     this.nodes.setProperty(id, path, value, (err, actualValue) => {
       if (err != null) { callback(err, null, null, null); return; }
 
@@ -212,6 +216,8 @@ export default class SceneAsset extends SupCore.data.base.Asset {
 
 
   server_duplicateNode(client: any, newName: string, id: string, index: number, callback: (err: string, rootNode: Node, newNodes: DuplicatedNode[]) => any) {
+    if (newName.indexOf("/") !== -1) { callback("Actor name cannot contain slashes", null, null); return; }
+    
     let referenceNode = this.nodes.byId[id];
     if (referenceNode == null) { callback(`Invalid node id: ${id}`, null, null); return; }
 
