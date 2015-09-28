@@ -1,5 +1,9 @@
 {
   "name": "superpowers-sparklinlabs-tweenjs-plugin",
+  "repository": {
+    "type": "hg",
+    "url": "https://bitbucket.org/superpowers/sparklinlabs-plugins"
+  },
   "version": "1.0.0",
   "dependencies": {
     "tween.js": "^0.14.0"

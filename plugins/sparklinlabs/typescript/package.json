@@ -1,5 +1,9 @@
 {
   "name": "superpowers-sparklinlabs-typescript-plugin",
+  "repository": {
+    "type": "hg",
+    "url": "https://bitbucket.org/superpowers/sparklinlabs-plugins"
+  },
   "version": "1.0.0",
   "dependencies": {
     "combine-source-map": "^0.7.1",

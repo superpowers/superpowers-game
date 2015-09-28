@@ -1,5 +1,9 @@
 {
   "name": "superpowers-sparklinlabs-shader-plugin",
+  "repository": {
+    "type": "hg",
+    "url": "https://bitbucket.org/superpowers/sparklinlabs-plugins"
+  },
   "version": "1.0.0",
   "dependencies": {
     "operational-transform": "^0.2.3"

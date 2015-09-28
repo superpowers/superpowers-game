@@ -1,5 +1,9 @@
 {
   "name": "superpowers-sparklinlabs-socketio-plugin",
+  "repository": {
+    "type": "hg",
+    "url": "https://bitbucket.org/superpowers/sparklinlabs-plugins"
+  },
   "version": "1.0.0",
   "dependencies": {
     "socket.io-client": "^1.3.5"

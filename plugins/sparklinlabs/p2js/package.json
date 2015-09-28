@@ -1,5 +1,9 @@
 {
   "name": "superpowers-sparklinlabs-p2js-plugin",
+  "repository": {
+    "type": "hg",
+    "url": "https://bitbucket.org/superpowers/sparklinlabs-plugins"
+  },
   "version": "1.0.0",
   "dependencies": {
     "p2": "^0.6.0"
