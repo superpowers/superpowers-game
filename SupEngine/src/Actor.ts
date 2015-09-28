@@ -202,16 +202,13 @@ export default class Actor {
     this.threeObject = null;
 
     let outer = (<any>this).__outer;
-    if (outer != null) {
-      outer.__inner = null;
-      outer = null;
-    }
+    if (outer != null) outer.__inner = null;
 
     this.gameInstance = null;
   }
 
   _markDestructionPending() {
     this.pendingForDestruction = true;
-    for (let child of this.children) { child._markDestructionPending(); }
+    for (let child of this.children) child._markDestructionPending();
   }
 }
