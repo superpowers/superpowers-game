@@ -25,6 +25,7 @@ declare module Sup {
     actor: Actor;
     constructor(actor: Actor);
     destroy(): void;
+    isDestroyed(): boolean;
   }
 
   class Behavior extends ActorComponent {

@@ -5,6 +5,7 @@ declare module Sup {
 
     constructor(name: string, parent?: Actor, options?: { visible?: boolean; layer?: number });
     destroy(): void;
+    isDestroyed(): boolean;
 
     getName(): string;
     setName(name: string): Actor;

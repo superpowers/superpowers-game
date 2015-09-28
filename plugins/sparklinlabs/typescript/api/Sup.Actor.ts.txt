@@ -18,9 +18,8 @@ module Sup {
       actor.__outer = this;
     }
 
-    destroy() {
-      player.gameInstance.destroyActor(this.__inner);
-    }
+    destroy() { player.gameInstance.destroyActor(this.__inner); }
+    isDestroyed() { return this.__inner == null || this.__inner.pendingForDestruction; }
 
     getName() { return this.__inner.name; }
     setName(name) { this.__inner.name = name; return this; }

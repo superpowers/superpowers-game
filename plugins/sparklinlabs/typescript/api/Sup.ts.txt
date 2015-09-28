@@ -75,8 +75,12 @@ module Sup {
     constructor(actor) {
       this.actor = actor;
     }
-    destroy() {
-      player.gameInstance.destroyComponent(this.__inner);
+
+    destroy() { player.gameInstance.destroyComponent(this.__inner); }
+    isDestroyed() {
+      return this.__inner == null ||
+        this.__inner.actor.pendingForDestruction ||
+        this.__inner.actor.gameInstance.componentsToBeDestroyed.indexOf(this.__inner) !== -1;
     }
   }
 
