@@ -5,7 +5,7 @@ declare module Sup {
 
     function on(eventName: "exit", callback: () => void);
 
-    function getScreenSize(): { x: number; y: number; };
+    function getScreenSize(): Math.Vector2;
 
     function getMouseVisible(): boolean;
     function setMouseVisible(visible: boolean);
@@ -20,13 +20,13 @@ declare module Sup {
     // The "state" callback parameter can be "active" or "suspended"
     function on(eventName: "fullscreenStateChange", callback: (state: string) => void);
 
-    function getMousePosition(): { x: number; y: number; };
-    function getMouseDelta(): { x: number; y: number; };
+    function getMousePosition(): Math.Vector2;
+    function getMouseDelta(): Math.Vector2;
     function isMouseButtonDown(button: number): boolean;
     function wasMouseButtonJustPressed(button: number): boolean;
     function wasMouseButtonJustReleased(button: number): boolean;
 
-    function getTouchPosition(index: number): { x: number; y: number; };
+    function getTouchPosition(index: number): Math.Vector2;
     function isTouchDown(index: number): boolean;
     function wasTouchStarted(index: number): boolean;
     function wasTouchEnded(index: number): boolean;
