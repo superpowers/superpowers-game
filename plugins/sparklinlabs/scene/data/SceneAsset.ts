@@ -231,11 +231,11 @@ export default class SceneAsset extends SupCore.data.base.Asset {
     }
 
     let newNodes: DuplicatedNode[] = [];
-    let totalNodeCount = 0
+    let totalNodeCount = 0;
     let walk = (node: Node) => {
-      totalNodeCount += 1
+      totalNodeCount += 1;
       for (let childNode of node.children) walk(childNode);
-    }
+    };
     walk(referenceNode);
 
     let rootNode: Node = {
@@ -246,7 +246,7 @@ export default class SceneAsset extends SupCore.data.base.Asset {
       scale: _.cloneDeep(referenceNode.scale),
       visible: referenceNode.visible, layer: referenceNode.layer, prefabId: referenceNode.prefabId
     }
-    let parentId = (this.nodes.parentNodesById[id] != null) ? this.nodes.parentNodesById[id].id : null;
+    let parentId = (parentNode != null) ? parentNode.id : null;
 
     let addNode = (newNode: Node, parentId: string, index: number, children: Node[]) => {
       this.nodes.add(newNode, parentId, index, (err, actualIndex) => {
@@ -259,14 +259,10 @@ export default class SceneAsset extends SupCore.data.base.Asset {
             config.on("addDependencies", (depIds: string[]) => { this._onAddComponentDependencies(componentPath, depIds); });
             config.on("removeDependencies", (depIds: string[]) => { this._onRemoveComponentDependencies(componentPath, depIds); });
           })(config, componentPath);
-          config.restore()
+          config.restore();
         }
 
-        newNodes.push({
-          node: newNode,
-          parentId: parentId,
-          index: actualIndex,
-        })
+        newNodes.push({ node: newNode, parentId, index: actualIndex });
 
         if (newNodes.length === totalNodeCount) {
           callback(null, rootNode, newNodes);
