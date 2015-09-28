@@ -55,9 +55,14 @@ export default class GameInstance extends EventEmitter {
 
   tick(accumulatedTime: number, callback?: Function): { updates: number; timeLeft: number; }  {
     let updateInterval = 1 / this.framesPerSecond * 1000;
-    let maxAccumulatedTime = 5 * updateInterval;
 
-    // If the game is running slowly, don't fall into the well of dispair
+    // Limit how many update()s to try and catch up,
+    // to avoid falling into the "black pit of despair" aka "doom spiral".
+    // where every tick takes longer than the previous one.
+    // See http://blogs.msdn.com/b/shawnhar/archive/2011/03/25/technical-term-that-should-exist-quot-black-pit-of-despair-quot.aspx
+    const maxAccumulatedUpdates = 5;
+
+    let maxAccumulatedTime = maxAccumulatedUpdates * updateInterval;
     if (accumulatedTime > maxAccumulatedTime) accumulatedTime = maxAccumulatedTime;
 
     // Update
