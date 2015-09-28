@@ -101,6 +101,12 @@ module Sup {
       }
       length() { return window.Math.sqrt(this.x * this.x + this.y * this.y); }
       distanceTo(v: Vector2) { return v.clone().subtract(this).length(); }
+      unproject(camera: Sup.Camera) {
+        tmpVector3.set(this.x, this.y, 0);
+        tmpVector3.unproject(camera.__inner.threeCamera);
+        this.set(tmpVector3.x, tmpVector3.y);
+        return this;
+      }
 
       setFromAngle(angle: number) {
         this.x = window.Math.cos(angle);
@@ -478,6 +484,88 @@ module Sup {
 
         point.add(this.getDirection().multiplyScalar(distance));
         return { distance, point };
+      }
+    }
+
+    export class Ray2D {
+      _origin = new Vector2();
+      _direction = new Vector2();
+
+      constructor(origin?: Vector2, direction?: Vector2) {
+        if (origin != null) this.setOrigin(origin);
+        if (direction != null) this.setDirection(direction);
+      }
+
+      setOrigin(x: number|Vector2, y?: number) {
+        if (typeof x === "number") this._origin.set(x, y);
+        else this._origin.copy(x);
+        return this;
+      }
+      getOrigin() { return this._origin.clone(); }
+
+      setDirection(x: number|Vector2, y?: number) {
+        if (typeof x === "number") this._direction.set(x, y);
+        else this._direction.copy(x);
+        this._direction.normalize();
+        return this;
+      }
+      getDirection() { return this._direction.clone(); }
+
+      intersectSpriteRenderer(spriteRenderer: Sup.SpriteRenderer) {
+        let position = spriteRenderer.actor.getPosition();
+
+        let scale = 1 / spriteRenderer.getSprite().getPixelsPerUnit();
+        let { width, height } = spriteRenderer.getSprite().getGridSize();
+        width *= scale;
+        height *= scale;
+
+        let spriteAngle = spriteRenderer.actor.getEulerZ();
+        let rayAngle = wrapAngle(this._direction.angle() - spriteAngle);
+
+        let rayPosition = new Vector2(this._origin.x - position.x, this._origin.y - position.y);
+        rayPosition.rotate(-spriteAngle);
+
+        let getResult = (x: number, y: number) => {
+          let point = new Vector2(position.x, position.y);
+          point.x += x * window.Math.cos(spriteAngle) - y * window.Math.sin(spriteAngle);
+          point.y += y * window.Math.cos(spriteAngle) + x * window.Math.sin(spriteAngle);
+          let distance = this._origin.distanceTo(point);
+          return { point, distance };
+        }
+
+        // Left
+        if (rayAngle > -window.Math.PI / 2 && rayAngle < window.Math.PI / 2) {
+          let x = -width / 2;
+          if (x > rayPosition.x) {
+            let y = window.Math.tan(rayAngle) * (x - rayPosition.x) + rayPosition.y;
+            if (y >= -height / 2 && y <= height / 2) return getResult(x, y);
+          }
+        }
+        // Bottom
+        if (rayAngle > 0) {
+          let y = -height / 2;
+          if (y > rayPosition.y) {
+            let x = (y - rayPosition.y) / window.Math.tan(rayAngle) + rayPosition.x;
+            if (x >= -width / 2 && x <= width / 2) return getResult(x, y);
+          }
+        }
+        // Right
+        if (rayAngle > window.Math.PI / 2 || rayAngle < -window.Math.PI / 2) {
+          let x = width / 2;
+          if (x < rayPosition.x) {
+            let y = window.Math.tan(rayAngle) * (x - rayPosition.x) + rayPosition.y;
+            if (y >= -height / 2 && y <= height / 2) return getResult(x, y);
+          }
+        }
+        // Top
+        if (rayAngle < 0) {
+          let y = height / 2;
+          if (y < rayPosition.y) {
+            let x = (y - rayPosition.y) / window.Math.tan(rayAngle) + rayPosition.x;
+            if (x >= -width / 2 && x <= width / 2) return getResult(x, y);
+          }
+        }
+        return null;
       }
     }
   }

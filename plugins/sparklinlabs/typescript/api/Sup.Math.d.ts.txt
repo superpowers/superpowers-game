@@ -15,6 +15,11 @@ declare module Sup {
     function toRadians(degrees: number): number;
     function toDegrees(radians: number): number;
 
+    interface XY {
+      x: number;
+      y: number;
+    }
+
     class Vector2 {
       static right(): Vector2;
       static left(): Vector2;
@@ -29,7 +34,7 @@ declare module Sup {
       constructor(xy: number);
       set(x: number, y: number): Vector2;
       set(xy: number): Vector2;
-      copy(v: { x: number; y: number; }): Vector2;
+      copy(v: XY): Vector2;
       clone(): Vector2;
 
       add(vector: Vector2): Vector2;
@@ -44,8 +49,15 @@ declare module Sup {
       rotate(angle: number): Vector2;
       length(): number;
       distanceTo(vector: Vector2): number;
+      unproject(camera: Camera): Vector3;
       angle(): number;
       setFromAngle(angle: number): Vector2;
+    }
+
+    interface XYZ {
+      x: number;
+      y: number;
+      z: number;
     }
 
     class Vector3 {
@@ -65,7 +77,7 @@ declare module Sup {
       constructor(xyz: number);
       set(x: number, y: number, z: number): Vector3;
       set(xyz: number): Vector3;
-      copy(vector: {x: number; y: number; z: number;}): Vector3;
+      copy(vector: XYZ): Vector3;
       clone(): Vector3;
 
       add(vector: Vector3): Vector3;
@@ -83,12 +95,6 @@ declare module Sup {
       distanceTo(vector: Vector3): number;
       angleTo(vector: Vector3): number;
       unproject(camera: Camera): Vector3;
-    }
-
-    interface XYZ {
-      x: number;
-      y: number;
-      z: number;
     }
 
     class Quaternion {
@@ -136,11 +142,11 @@ declare module Sup {
       constructor(origin?: Vector3|XYZ, direction?: Vector3|XYZ);
 
       setOrigin(origin: Vector3): Ray;
-      setOrigin(x: number, y: number, z: number);
+      setOrigin(x: number, y: number, z: number): Ray;
       getOrigin(): Vector3;
 
       setDirection(direction: Vector3): Ray;
-      setDirection(x: number, y: number, z: number);
+      setDirection(x: number, y: number, z: number): Ray;
       getDirection(): Vector3;
 
       setFromCamera(camera: Sup.Camera, screenPosition: { x: number; y: number; }): Ray;
@@ -149,6 +155,20 @@ declare module Sup {
       intersectActors(actors: Sup.Actor[]): ActorRaycastHit[];
 
       intersectPlane(plane: Plane): { distance: number; point: Vector3; };
+    }
+
+    class Ray2D {
+      constructor(origin?: Vector2|XY, direction?: Vector2|XY);
+
+      setOrigin(origin: Vector2): Ray2D;
+      setOrigin(x: number, y: number): Ray2D;
+      getOrigin(): Vector2;
+
+      setDirection(direction: Vector2): Ray2D;
+      setDirection(x: number, y: number): Ray2D;
+      getDirection(): Vector2;
+
+      intersectSpriteRenderer(spriteRenderer: Sup.SpriteRenderer): { distance: number; point: Vector2; };
     }
   }
 }
