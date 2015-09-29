@@ -55,10 +55,13 @@ module Sup {
     }
 
     setPosition(x, y, z) {
-      if (y == null && z == null) {
+      let currentZ = this.__inner.getGlobalPosition(tmpVector3).z;
+
+      if (typeof x === "number") tmpVector3.set(x, y, z != null ? z : currentZ);
+      else {
         let position = x;
-        tmpVector3.set(position.x, position.y, position.z)
-      } else tmpVector3.set(x, y, z);
+        tmpVector3.set(position.x, position.y, position.z != null ? position.z : currentZ);
+      }
       this.__inner.setGlobalPosition(tmpVector3);
       return this;
     }
@@ -91,10 +94,13 @@ module Sup {
     }
 
     setLocalPosition(x, y, z) {
-      if (y == null && z == null) {
+      let currentZ = this.__inner.getLocalPosition(tmpVector3).z;
+
+      if (typeof x === "number") tmpVector3.set(x, y, z != null ? z : currentZ);
+      else {
         let position = x;
-        tmpVector3.set(position.x, position.y, position.z)
-      } else tmpVector3.set(x, y, z);
+        tmpVector3.set(position.x, position.y, position.z != null ? position.z : currentZ);
+      }
       this.__inner.setLocalPosition(tmpVector3);
       return this;
     }
@@ -122,11 +128,12 @@ module Sup {
     }
 
     move(x, y, z) {
-      if (y == null && z == null) {
+      if (typeof x === "number") tmpVector3.set(x, y, z != null ? z : 0);
+      else {
         let offset = x;
-        tmpVector3.set(offset.x, offset.y, offset.z);
-      } else tmpVector3.set(x, y, z);
-      this.__inner.moveGlobal(tmpVector3)
+        tmpVector3.set(offset.x, offset.y, offset.z != null ? offset.z : 0);
+      }
+      this.__inner.moveGlobal(tmpVector3);
       return this;
     }
     moveX(x) {
@@ -143,11 +150,12 @@ module Sup {
     }
 
     moveLocal(x, y, z) {
-      if (y == null && z == null) {
+      if (typeof x === "number") tmpVector3.set(x, y, z != null ? z : 0);
+      else {
         let offset = x;
-        tmpVector3.set(offset.x, offset.y, offset.z);
-      } else tmpVector3.set(x, y, z);
-      this.__inner.moveLocal(tmpVector3)
+        tmpVector3.set(offset.x, offset.y, offset.z != null ? offset.z : 0);
+      }
+      this.__inner.moveLocal(tmpVector3);
       return this;
     }
     moveLocalX(x) {
@@ -164,10 +172,11 @@ module Sup {
     }
 
     moveOriented(x, y, z) {
-      if (y == null && z == null) {
+      if (typeof x === "number") tmpVector3.set(x, y, z != null ? z : 0);
+      else {
         let offset = x;
-        tmpVector3.set(offset.x, offset.y, offset.z);
-      } else tmpVector3.set(x, y, z);
+        tmpVector3.set(offset.x, offset.y, offset.z != null ? offset.z : 0);
+      }
       this.__inner.moveOriented(tmpVector3);
       return this;
     }

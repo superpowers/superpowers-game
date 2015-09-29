@@ -19,6 +19,8 @@ declare module Sup {
     getPosition(): Math.Vector3;
     setPosition(position: Math.Vector3): Actor;
     setPosition(x: number, y: number, z: number): Actor;
+    setPosition(position: Math.Vector2): Actor;
+    setPosition(x: number, y: number): Actor;
     getX(): number;
     setX(x: number): Actor;
     getY(): number;
@@ -29,6 +31,8 @@ declare module Sup {
     getLocalPosition(): Math.Vector3;
     setLocalPosition(position: Math.Vector3): Actor;
     setLocalPosition(x: number, y: number, z: number): Actor;
+    setLocalPosition(position: Math.Vector2): Actor;
+    setLocalPosition(x: number, y: number): Actor;
     getLocalX(): number;
     setLocalX(x: number): Actor;
     getLocalY(): number;
@@ -38,18 +42,24 @@ declare module Sup {
 
     move(offset: Math.Vector3): Actor;
     move(x: number, y: number, z: number): Actor;
+    move(offset: Math.Vector2): Actor;
+    move(x: number, y: number): Actor;
     moveX(x: number): Actor;
     moveY(y: number): Actor;
     moveZ(z: number): Actor;
 
     moveLocal(offset: Math.Vector3): Actor;
     moveLocal(x: number, y: number, z: number): Actor;
+    moveLocal(offset: Math.Vector2): Actor;
+    moveLocal(x: number, y: number): Actor;
     moveLocalX(x: number): Actor;
     moveLocalY(y: number): Actor;
     moveLocalZ(z: number): Actor;
 
     moveOriented(offset: Math.Vector3): Actor;
     moveOriented(x: number, y: number, z: number): Actor;
+    moveOriented(offset: Math.Vector2): Actor;
+    moveOriented(x: number, y: number): Actor;
     moveOrientedX(x: number): Actor;
     moveOrientedY(y: number): Actor;
     moveOrientedZ(z: number): Actor;

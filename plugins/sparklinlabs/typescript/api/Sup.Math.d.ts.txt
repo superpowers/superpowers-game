@@ -52,6 +52,7 @@ declare module Sup {
       unproject(camera: Camera): Vector3;
       angle(): number;
       setFromAngle(angle: number): Vector2;
+      toVector3(): Vector3;
     }
 
     interface XYZ {
@@ -95,6 +96,7 @@ declare module Sup {
       distanceTo(vector: Vector3): number;
       angleTo(vector: Vector3): number;
       unproject(camera: Camera): Vector3;
+      toVector2(): Vector2;
     }
 
     class Quaternion {

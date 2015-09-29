@@ -114,6 +114,8 @@ module Sup {
         return this;
       }
       angle() { return window.Math.atan2(this.y, this.x); }
+
+      toVector3() { return new Vector3(this.x, this.y, 0); }
     }
 
     export class Vector3 {
@@ -224,6 +226,8 @@ module Sup {
         this.set(tmpVector3.x, tmpVector3.y, tmpVector3.z);
         return this;
       }
+
+      toVector2() { return new Vector2(this.x, this.y); }
     }
 
     export class Quaternion {
