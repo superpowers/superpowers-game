@@ -245,7 +245,7 @@ export default class SceneAsset extends SupCore.data.base.Asset {
       orientation: _.cloneDeep(referenceNode.orientation),
       scale: _.cloneDeep(referenceNode.scale),
       visible: referenceNode.visible, layer: referenceNode.layer, prefabId: referenceNode.prefabId
-    }
+    };
     let parentId = (parentNode != null) ? parentNode.id : null;
 
     let addNode = (newNode: Node, parentId: string, index: number, children: Node[]) => {

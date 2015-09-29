@@ -7,7 +7,7 @@ import ui, {
 import engine, { setupHelpers } from "./engine";
 
 let THREE = SupEngine.THREE;
-import SceneAsset, { DuplicatedNode } from "../../data/SceneAsset";
+import { DuplicatedNode } from "../../data/SceneAsset";
 import SceneSettingsResource from "../../data/SceneSettingsResource";
 import { Node } from "../../data/SceneNodes";
 import { Component } from "../../data/SceneComponents";
@@ -56,7 +56,7 @@ var gameSettingSubscriber = {
 };
 
 
-function onSceneAssetReceived(err: string, asset: SceneAsset) {
+function onSceneAssetReceived(/*err: string, asset: SceneAsset*/) {
   // Clear tree view
   ui.nodesTreeView.clearSelection();
   ui.nodesTreeView.treeRoot.innerHTML = "";
