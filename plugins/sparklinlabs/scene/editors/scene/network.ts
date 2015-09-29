@@ -1,6 +1,6 @@
 import info from "./info";
 import ui, {
-  setCameraMode, createNodeElement, setupSelectedNode, createComponentElement,
+  setCameraMode, setCameraVerticalAxis, createNodeElement, setupSelectedNode, createComponentElement,
   setInspectorPosition, setInspectorOrientation, setInspectorScale,
   setInspectorVisible, setInspectorLayer, setInspectorPrefabId,
   setupInspectorLayers } from "./ui";
@@ -32,6 +32,8 @@ function onConnected() {
 var sceneSettingSubscriber = {
   onResourceReceived: (resourceId: string, resource: SceneSettingsResource) => {
     setCameraMode(resource.pub.defaultCameraMode);
+    setCameraVerticalAxis(resource.pub.defaultVerticalAxis);
+
     data.sceneUpdater = new SceneUpdater(
       data.projectClient,
       { gameInstance: engine.gameInstance, actor: null },

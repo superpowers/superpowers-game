@@ -41,6 +41,8 @@ let ui: {
 
   cameraMode: string;
   cameraModeButton: HTMLButtonElement;
+  cameraVerticalAxis: string;
+  cameraVerticalAxisButton: HTMLButtonElement;
   cameraSpeedSlider: HTMLInputElement;
   camera2DZ: HTMLInputElement;
 
@@ -149,6 +151,11 @@ ui.newComponentButton.addEventListener("click", onNewComponentClick);
 ui.cameraMode = "3D";
 ui.cameraModeButton = <HTMLButtonElement>document.getElementById("toggle-camera-button");
 ui.cameraModeButton.addEventListener("click", onChangeCameraMode);
+
+ui.cameraVerticalAxis = "Y";
+ui.cameraVerticalAxisButton = <HTMLButtonElement>document.getElementById("toggle-camera-vertical-axis");
+ui.cameraVerticalAxisButton.addEventListener("click", onChangeCameraVerticalAxis);
+
 
 ui.cameraSpeedSlider = <HTMLInputElement>document.getElementById("camera-speed-slider");
 ui.cameraSpeedSlider.addEventListener("input", onChangeCameraSpeed);
@@ -588,15 +595,29 @@ export function setCameraMode(mode: string) {
   engine.gameInstance.destroyComponent(engine.cameraControls);
   ui.cameraMode = mode;
 
+  (<HTMLDivElement>document.querySelector(".controls .camera-vertical-axis")).hidden = ui.cameraMode !== "3D";
   (<HTMLDivElement>document.querySelector(".controls .camera-speed")).hidden = ui.cameraMode !== "3D";
   (<HTMLDivElement>document.querySelector(".controls .camera-2d-z")).hidden = ui.cameraMode === "3D";
 
+  let axis = ui.cameraMode === "3D" ? ui.cameraVerticalAxis : "Y";
+  engine.cameraRoot.setLocalEulerAngles(new THREE.Euler(axis === "Y" ? 0 : Math.PI / 2, 0, 0));
   updateCameraMode();
   ui.cameraModeButton.textContent = ui.cameraMode;
 }
 
 function onChangeCameraMode(event: any) {
   setCameraMode(ui.cameraMode === "3D" ? "2D" : "3D");
+}
+
+export function setCameraVerticalAxis(axis: string) {
+  ui.cameraVerticalAxis = axis;
+
+  engine.cameraRoot.setLocalEulerAngles(new THREE.Euler(axis === "Y" ? 0 : Math.PI / 2, 0, 0));
+  ui.cameraVerticalAxisButton.textContent = axis;
+}
+
+function onChangeCameraVerticalAxis(event: any) {
+  setCameraVerticalAxis(ui.cameraVerticalAxis === "Y" ? "Z" : "Y");
 }
 
 function onChangeCameraSpeed() {

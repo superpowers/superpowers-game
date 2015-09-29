@@ -5,9 +5,15 @@ export default class SceneSettingsResource extends SupCore.data.base.Resource {
 
   static schema = {
     defaultCameraMode: { type: "enum", items: [ "3D", "2D" ], mutable: true },
+    defaultVerticalAxis: { type: "enum", items: [ "Y", "Z" ], mutable: true }
   }
 
   constructor(pub: any, serverData: any) {
+    if (pub != null) {
+      // NOTE: Vertical axis were introduced in Superpowers 0.13
+      if (pub.defaultVerticalAxis == null) pub.defaultVerticalAxis = "Y";
+    }
+
     super(pub, SceneSettingsResource.schema, serverData);
   }
 
@@ -15,7 +21,8 @@ export default class SceneSettingsResource extends SupCore.data.base.Resource {
 
   init(callback: Function) {
     this.pub = {
-      defaultCameraMode: "3D"
+      defaultCameraMode: "3D",
+      defaultVerticalAxis: "Y"
     };
 
     super.init(callback);
