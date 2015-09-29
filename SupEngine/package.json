@@ -2,6 +2,10 @@
   "name": "superpowers-engine",
   "version": "1.0.0",
   "main": "SupEngine.js",
+  "repository": {
+    "type": "hg",
+    "url": "https://bitbucket.org/superpowers/system"
+  },
   "dependencies": {
     "three": "0.71.1"
   }
