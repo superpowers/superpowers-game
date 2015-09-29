@@ -128,7 +128,7 @@ function onFileSelectChange(event: any) {
   let reader = new FileReader();
   reader.onload = (event: any) => {
     socket.emit("edit:assets", info.assetId, "upload", event.target.result, (err: string) => {
-      if (err != null) alert(err);
+      if (err != null) { alert(err); return; }
     });
   };
 

@@ -43,14 +43,14 @@ function start() {
   ui.gridWidthInput = document.querySelector("input.grid-width");
   ui.gridWidthInput.addEventListener("change", () => {
     socket.emit("edit:assets", info.assetId, "setProperty", "grid.width", parseInt(ui.gridWidthInput.value), (err: string) => {
-      if (err != null) alert(err);
+      if (err != null) { alert(err); return; }
     });
   });
 
   ui.gridHeightInput = document.querySelector("input.grid-height");
   ui.gridHeightInput.addEventListener("change", () => {
     socket.emit("edit:assets", info.assetId, "setProperty", "grid.height", parseInt(ui.gridHeightInput.value), (err: string) => {
-      if (err != null) alert(err);
+      if (err != null) { alert(err); return; }
     });
   });
 

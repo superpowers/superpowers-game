@@ -131,7 +131,7 @@ function onChatInputKeyDown(event: any) {
   if (! socket.connected) return;
 
   socket.emit("edit:rooms", "home", "appendMessage", this.value, (err: string) => {
-    if (err != null) alert(err);
+    if (err != null) { alert(err); return; }
   });
 
   this.value = "";

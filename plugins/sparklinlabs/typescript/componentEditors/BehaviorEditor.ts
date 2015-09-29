@@ -287,7 +287,7 @@ export default class BehaviorEditor {
     }
 
     this.editConfig("setBehaviorPropertyValue", propertyName, propertyType, propertyValue, (err: string) => {
-      if (err != null) alert(err);
+      if (err != null) { alert(err); return; }
     });
   }
 }

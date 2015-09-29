@@ -31,7 +31,7 @@ export default class TextRendererEditor {
       this.pendingModification += 1;
       this.editConfig("setProperty", "text", event.target.value, (err: string) => {
         this.pendingModification -= 1;
-        if (err != null) alert(err);
+        if (err != null) { alert(err); return; }
       });
     });
 
