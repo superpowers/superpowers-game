@@ -65,6 +65,11 @@ module ArcadePhysics2D {
   }
 
   function checkTileMap(body1: ArcadeBody2D, body2: ArcadeBody2D, options: { moveBody: boolean; }) {
+    let top = false;
+    let bottom = false;
+    let right = false;
+    let left = false;
+
     function checkX() {
       let x = (body1.deltaX() < 0) ?
         Math.floor((body1.position.x - body2.position.x - body1.width / 2) / body2.mapToSceneFactor.x) :
@@ -86,10 +91,10 @@ module ArcadePhysics2D {
           body1.velocity.x = -body1.velocity.x * body1.bounceX;
           if (body1.deltaX() < 0) {
             if (options.moveBody) body1.position.x = (x + 1) * body2.mapToSceneFactor.x + body2.position.x + body1.width / 2;
-            body1.touches.left = true;
+            left = true;
           } else {
             if (options.moveBody) body1.position.x = x * body2.mapToSceneFactor.x + body2.position.x - body1.width / 2;
-            body1.touches.right = true;
+            right = true;
           }
           return true;
         }
@@ -116,10 +121,10 @@ module ArcadePhysics2D {
           body1.velocity.y = -body1.velocity.y * body1.bounceY;
           if (body1.deltaY() < 0) {
             if (options.moveBody) body1.position.y = (y + 1) * body2.mapToSceneFactor.y + body2.position.y + body1.height / 2;
-            body1.touches.bottom = true;
+            bottom = true;
           } else {
             if (options.moveBody) body1.position.y = y * body2.mapToSceneFactor.y + body2.position.y - body1.height / 2;
-            body1.touches.top = true;
+            top = true;
           }
           return true;
         }
@@ -146,10 +151,10 @@ module ArcadePhysics2D {
           body1.velocity.z = -body1.velocity.z * body1.bounceY;
           if (body1.deltaZ() < 0) {
             if (options.moveBody) body1.position.z = z * body2.mapToSceneFactor.y + body1.height / 2 + body2.position.z;
-            body1.touches.top = true;
+            top = true;
           } else {
             if (options.moveBody) body1.position.z = (z - 1) * body2.mapToSceneFactor.y - body1.height / 2 + body2.position.z;
-            body1.touches.bottom = true;
+            bottom = true;
           }
           return true;
         }
@@ -168,6 +173,8 @@ module ArcadePhysics2D {
 
           body1.position.y = yPosition;
           body1.velocity.y = ySpeed;
+          top = false;
+          bottom = false;
           checkY();
         }
       } else {
@@ -179,6 +186,8 @@ module ArcadePhysics2D {
 
           body1.position.x = xPosition;
           body1.velocity.x = xSpeed;
+          right = false;
+          left = false;
           checkX();
         }
       }
@@ -207,6 +216,10 @@ module ArcadePhysics2D {
         }
       }
     }
+    if (top) body1.touches.top = true;
+    if (bottom) body1.touches.bottom = true;
+    if (right) body1.touches.right = true;
+    if (left) body1.touches.left = true;
     return gotCollision;
   }
 
