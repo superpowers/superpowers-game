@@ -5,44 +5,49 @@ html
     link(rel="stylesheet",href="/client/styles/perfectResize.css")
     link(rel="stylesheet",href="/client/styles/treeView.css")
     link(rel="stylesheet",href="/client/styles/dialogs.css")
+    link(rel="stylesheet",href="/client/styles/properties.css")
     link(rel="stylesheet",href="index.css")
 
   body
     .main
-      canvas(tabindex="0")
-      .controls
-        .transform-settings
-          .title Settings
-          div
-            input#translate-pivot-shape(type="checkbox",checked)
-            label(for="translate-pivot-shape") Link shape to pivot
-        .transform-mode
-          .title Transform
-          div
-            input#transform-mode-translate-pivot(type="radio",name="transformMode",value="translate",data-target="pivot",checked)
-            label(for="transform-mode-translate-pivot") Move pivot
-            input#transform-mode-translate-shape(type="radio",name="transformMode",value="translate",data-target="shape")
-            label(for="transform-mode-translate-shape") Move shape
-            input#transform-mode-rotate(type="radio",name="transformMode",value="rotate")
-            label(for="transform-mode-rotate") Rotate
-            input#transform-mode-stretch(type="radio",name="transformMode",value="stretch")
-            label(for="transform-mode-stretch") Stretch
-            input#transform-space(type="checkbox")
-            label(for="transform-space") Local
-        .grid
-          .title Grid
-          div
-            label(for="grid-step") Size
-            input#grid-step(type="number",value="1",min="0")
-            input#grid-visible(type="checkbox")
-            label(for="grid-visible") Visible
+      .model-container
+        canvas(tabindex="0")
+        .controls
+          .transform-settings
+            .title Settings
+            div
+              input#translate-pivot-shape(type="checkbox",checked)
+              label(for="translate-pivot-shape") Link shape to pivot
+          .transform-mode
+            .title Transform
+            div
+              input#transform-mode-translate-pivot(type="radio",name="transformMode",value="translate",data-target="pivot",checked)
+              label(for="transform-mode-translate-pivot") Move pivot
+              input#transform-mode-translate-shape(type="radio",name="transformMode",value="translate",data-target="shape")
+              label(for="transform-mode-translate-shape") Move shape
+              input#transform-mode-rotate(type="radio",name="transformMode",value="rotate")
+              label(for="transform-mode-rotate") Rotate
+              input#transform-mode-stretch(type="radio",name="transformMode",value="stretch")
+              label(for="transform-mode-stretch") Stretch
+              input#transform-space(type="checkbox")
+              label(for="transform-space") Local
+          .grid
+            .title Grid
+            div
+              label(for="grid-step") Size
+              input#grid-step(type="number",value="1",min="0")
+              input#grid-visible(type="checkbox")
+              label(for="grid-visible") Visible
+      .texture-container
+        canvas(tabindex="0")
+        .controls
 
     .sidebar
-      table.settings
+      table.settings.properties
         tr
           th Unit ratio
           td
-            input(type="number")
+            input.property-unitRatio(type="number")
       .nodes-buttons
         button.new-node New Node
         button(disabled).rename-node Rename

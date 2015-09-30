@@ -9,8 +9,23 @@ export interface Node extends SupCore.data.base.TreeNode {
   shape: {
     type: string;
     offset: { x: number; y: number; z: number; };
+    textureOffset: { x: number; y: number; }
     settings: any;
   }
+}
+
+export function getShapeTextureSize(shape: { type: string; settings: any; }) {
+  let width = 0;
+  let height = 0; 
+
+  switch(shape.type) {
+    case "box":
+      width = shape.settings.size.x * 2 + shape.settings.size.z * 2;
+      height = shape.settings.size.z + shape.settings.size.y;
+      break;
+  }
+
+  return { width, height };
 }
 
 export default class CubicModelNodes extends SupCore.data.base.TreeById {
@@ -53,6 +68,13 @@ export default class CubicModelNodes extends SupCore.data.base.TreeById {
             z: { type: "number", mutable: true },
           }
         },
+        textureOffset: {
+          type: "hash",
+          properties: {
+            x: { type: "number" },
+            y: { type: "number" }
+          }
+        },
         settings: {
           mutable: true,
           type: "any"
@@ -64,11 +86,12 @@ export default class CubicModelNodes extends SupCore.data.base.TreeById {
   pub: Node[];
   byId: { [id: string]: Node };
   parentNodesById: { [id: string]: Node };
+  canvasContextsById: { [id: string]: { [textureName: string]: CanvasRenderingContext2D } };
 
   cubicModelAsset: CubicModelAsset;
 
-  constructor(pub: any, cubicModelAsset: CubicModelAsset) {
-    super(pub, CubicModelNodes.schema);
+  constructor(cubicModelAsset: CubicModelAsset) {
+    super(cubicModelAsset.pub.nodes, CubicModelNodes.schema);
     this.cubicModelAsset = cubicModelAsset;
   }
 }

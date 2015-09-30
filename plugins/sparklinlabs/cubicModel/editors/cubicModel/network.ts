@@ -8,6 +8,7 @@ import ui, {
   setInspectorBoxSize,
   setInspectorBoxStretch
 } from "./ui";
+import * as textureArea from "./textureArea";
 import engine, { setupHelpers } from "./engine";
 
 import CubicModelRenderer from "../../components/CubicModelRenderer";
@@ -50,6 +51,22 @@ function onAssetReceived() {
     }
   }
   for (let node of data.cubicModelUpdater.cubicModelAsset.nodes.pub) walk(node, null, null);
+  
+  let pub = data.cubicModelUpdater.cubicModelAsset.pub;
+  ui.unitRatioInput.value = pub.unitRatio.toString();
+
+  textureArea.setup();
+}
+
+export function editAsset(...args: any[]) {
+  let callback: Function;
+  if (typeof args[args.length-1] === "function") callback = args.pop();
+
+  args.push((err: string, id: string) => {
+    if (err != null) { alert(err); return; }
+    if (callback != null) callback(id);
+  });
+  socket.emit("edit:assets", info.assetId, ...args);
 }
 
 onEditCommands.addNode = (node: Node, parentId: string, index: number) => {
@@ -57,6 +74,8 @@ onEditCommands.addNode = (node: Node, parentId: string, index: number) => {
   let parentElt: HTMLLIElement;
   if (parentId != null) parentElt = ui.nodesTreeView.treeRoot.querySelector(`[data-id='${parentId}']`);
   ui.nodesTreeView.insertAt(nodeElt, "group", index, parentElt);
+
+  textureArea.addNode(node);
 };
 
 onEditCommands.moveNode = (id: string, parentId: string, index: number) => {
@@ -122,6 +141,8 @@ onEditCommands.setNodeProperty = (id: string, path: string, value: any) => {
       break;
 
   }
+  
+  textureArea.updateNode(node);
 
   // TODO: Only refresh if selection is affected
   setupHelpers();
@@ -137,6 +158,8 @@ onEditCommands.duplicateNode = (rootNode: Node, newNodes: DuplicatedNode[]) => {
 onEditCommands.removeNode = (id: string) => {
   let nodeElt = ui.nodesTreeView.treeRoot.querySelector(`[data-id='${id}']`);
   let isInspected = ui.nodesTreeView.selectedNodes.length === 1 && nodeElt === ui.nodesTreeView.selectedNodes[0];
+  
+  textureArea.removeNode(id);
 
   ui.nodesTreeView.remove(nodeElt);
   if (isInspected) setupSelectedNode();

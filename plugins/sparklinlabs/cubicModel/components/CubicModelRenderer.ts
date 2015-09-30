@@ -3,6 +3,7 @@ let tmpBoneMatrix = new THREE.Matrix4;
 let tmpVec = new THREE.Vector3;
 let tmpQuat = new THREE.Quaternion;
 
+import { CubicModelAssetPub } from "../data/cubicModelAsset";
 import CubicModelRendererUpdater from "./CubicModelRendererUpdater";
 
 export interface RendererNode {
@@ -16,9 +17,13 @@ export default class CubicModelRenderer extends SupEngine.ActorComponent {
 
   static Updater = CubicModelRendererUpdater;
 
-  asset: any;
+  asset: CubicModelAssetPub;
   threeRoot: THREE.Object3D;
   byNodeId: { [nodeId: string]: RendererNode };
+
+  // TODO: Support multiple maps
+  textureCtx: CanvasRenderingContext2D;
+  threeTexture: THREE.Texture;
 
   materialType = "basic";
   //castShadow = false;
@@ -41,31 +46,31 @@ export default class CubicModelRenderer extends SupEngine.ActorComponent {
     super._destroy();
   }
 
-  setModel(asset: any, materialType?: string, customShader?: any) {
+  setModel(asset: CubicModelAssetPub, materialType?: string, customShader?: any) {
     if (this.asset != null) this._clearMesh();
     this.asset = null;
-
     if (asset == null) return;
-
     this.asset = asset;
 
-    this.threeRoot = new THREE.Object3D();
-    this.threeRoot.scale.set(1 / asset.unitRatio, 1 / asset.unitRatio, 1 / asset.unitRatio);
-
-    this.byNodeId = {};
-
+    // Texturing
     // NOTE: This is the unoptimized variant for editing
     // There should be an option you can pass to setModel to ask for editable version vs (default) optimized
+    let canvas = document.createElement("canvas");
+    canvas.width = asset.textureWidth;
+    canvas.height = asset.textureHeight;
+    this.textureCtx = canvas.getContext("2d");
+    this.threeTexture = new THREE.Texture(canvas);
+    this.threeTexture.needsUpdate = true;
+    this.threeTexture.magFilter = THREE.NearestFilter;
+    this.threeTexture.minFilter = THREE.NearestFilter;
 
-    // In the editable version,
-    // We need to work with custom geometries for each shape so we can have separate textures too
-    // which sucks performance-wise in principle...
-    // but it's OK because they are small and it's just a model?
-    // what about in the scene editor?
-    // maybe load up the optimized versions of each model renderer and switch to editable as they are edited?
+    let imageData = new ImageData(new Uint8ClampedArray(asset.maps["map"]), asset.textureWidth, asset.textureHeight);
+    this.textureCtx.putImageData(imageData, 0, 0);
 
-    // How should we piece together each texture? The ModelAsset should probably maintain the whole texture in memory
-    // and dynamically update it?
+    // Nodes
+    this.threeRoot = new THREE.Object3D();
+    this.threeRoot.scale.set(1 / asset.unitRatio, 1 / asset.unitRatio, 1 / asset.unitRatio);
+    this.byNodeId = {};
 
     let walkNode = (node: any, parentRendererNode: RendererNode, parentOffset: { x: number; y: number; z: number; }) => {
       let rendererNode = this._makeNode(node, parentRendererNode, parentOffset);

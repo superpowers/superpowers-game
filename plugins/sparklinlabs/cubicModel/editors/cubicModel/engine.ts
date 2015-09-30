@@ -1,6 +1,7 @@
 import info from "./info";
 import { socket, data } from "./network";
 import ui, { setupSelectedNode } from "./ui";
+import textureArea from "./textureArea";
 
 let THREE = SupEngine.THREE;
 
@@ -55,8 +56,17 @@ function tick(timestamp=0) {
   let { updates, timeLeft } = engine.gameInstance.tick(accumulatedTime, update);
   accumulatedTime = timeLeft;
 
-  if (updates > 0) engine.gameInstance.draw();
+  if (updates > 0) {
+    for (let i = 0; i < updates; i++) {
+      textureArea.gameInstance.update();
+      // handleTextureArea();
+    }
+
+    engine.gameInstance.draw();
+    textureArea.gameInstance.draw();
+  }
   requestAnimationFrame(tick);
+  
 }
 requestAnimationFrame(tick);
 

@@ -1,6 +1,7 @@
 import info from "./info";
-import { socket, data } from "./network";
+import { socket, data, editAsset } from "./network";
 import engine, { setupHelpers } from "./engine";
+import { setSelectedNode as setTextureAreaSelectedNode } from "./textureArea";
 
 import { Node } from "../../data/CubicModelNodes";
 
@@ -17,6 +18,8 @@ let ui: {
 
   gridSize: number;
   gridStep: number;
+
+  unitRatioInput?: HTMLInputElement;
 
   newNodeButton: HTMLButtonElement;
   renameNodeButton: HTMLButtonElement;
@@ -79,6 +82,7 @@ document.addEventListener("keydown", (event) => {
 ui.canvasElt = <HTMLCanvasElement>document.querySelector("canvas");
 
 // Setup resizable panes
+new PerfectResize(document.querySelector(".texture-container"), "bottom");
 new PerfectResize(document.querySelector(".sidebar"), "right");
 new PerfectResize(document.querySelector(".nodes-tree-view"), "top");
 
@@ -101,6 +105,12 @@ function onGridStepInput(event: UIEvent) {
 function onGridVisibleChange(event: UIEvent) {
   engine.gridHelperComponent.setVisible((<HTMLInputElement>event.target).checked);
 }
+
+// Unit ratio
+ui.unitRatioInput = <HTMLInputElement>document.querySelector("input.property-unitRatio");
+ui.unitRatioInput.addEventListener("change", onChangeUnitRatio);
+
+function onChangeUnitRatio(event: any) { editAsset("setProperty", "unitRatio", parseFloat(event.target.value)); }
 
 // Setup tree view
 ui.treeViewElt = <HTMLDivElement>document.querySelector(".nodes-tree-view");
@@ -164,6 +174,8 @@ export function setupSelectedNode() {
     ui.renameNodeButton.disabled = true;
     ui.duplicateNodeButton.disabled = true;
     ui.deleteNodeButton.disabled = true;
+    
+    setTextureAreaSelectedNode(null);
     return;
   }
 
@@ -190,6 +202,9 @@ export function setupSelectedNode() {
   ui.renameNodeButton.disabled = false;
   ui.duplicateNodeButton.disabled = false;
   ui.deleteNodeButton.disabled = false;
+  
+  // Setup texture area
+  setTextureAreaSelectedNode(node);
 }
 
 function roundForInspector(number: number) { return parseFloat(number.toFixed(3)); }
