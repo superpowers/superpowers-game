@@ -55,7 +55,7 @@ export default class FontAsset extends SupCore.data.base.Asset {
     fs.readFile(path.join(assetPath, "asset.json"), { encoding: "utf8" }, (err, json) => {
       this.pub = JSON.parse(json);
 
-      // TODO: Remove these casts at some point, legacy stuff from Superpowers 0.7
+      // NOTE: Legacy stuff from Superpowers 0.7
       if (this.pub.color == null || this.pub.color.length !== 6) this.pub.color = "ffffff";
 
       fs.readFile(path.join(assetPath, "font.dat"), (err, buffer) => {

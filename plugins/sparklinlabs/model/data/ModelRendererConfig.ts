@@ -36,16 +36,16 @@ export default class ModelRendererConfig extends SupCore.data.base.ComponentConf
   }
 
   constructor(pub: ModelRendererConfigPub) {
-    // TODO: Remove these at some point, new config setting introduced in Superpowers 0.8
+    // NOTE: overrideOpacity was introduced in Superpowers 0.8
     if (pub.overrideOpacity == null) pub.overrideOpacity = false;
     if (pub.color == null) pub.color = "ffffff";
 
-    // TODO: Remove these at some point, new config setting introduced in Superpowers 0.7
+    // NOTE: These settings were introduced in Superpowers 0.7
     if (pub.castShadow == null) pub.castShadow = false;
     if (pub.receiveShadow == null) pub.receiveShadow = false;
     if (pub.materialType == null) pub.materialType = "basic";
 
-    // TODO: Remove these casts at some point, legacy stuff from Superpowers 0.4
+    // NOTE: Legacy stuff from Superpowers 0.4
     if (typeof pub.modelAssetId === "number") pub.modelAssetId = pub.modelAssetId.toString();
     if (typeof pub.animationId === "number") pub.animationId = pub.animationId.toString();
 

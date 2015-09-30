@@ -51,12 +51,13 @@ export default class TileMapSettingsResource extends SupCore.data.base.Resource 
     super.init(callback);
   }
 
-  // TODO: Remove this overload at some point, new grid.width and .height settings introduced in Superpowers 0.8
+  // NOTE: This whole overload is only required because
+  // gridSize was renamed to grid.width and .height in Superpowers 0.8
   load(resourcePath: string) {
     fs.readFile(path.join(resourcePath, "resource.json"), { encoding: "utf8" }, (err, json) => {
       if (err != null) {
         if (err.code === "ENOENT") {
-          this.init( () => { this.emit("load") } );
+          this.init(() => { this.emit("load") });
           return;
         }
 

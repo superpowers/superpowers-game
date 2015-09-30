@@ -21,14 +21,11 @@ export default class TextRendererConfig extends SupCore.data.base.ComponentConfi
   }
 
   constructor(pub: any) {
-    // TODO: Remove these casts at some point, legacy stuff from Superpowers 0.7
+    // NOTE: Legacy stuff from Superpowers 0.7
     if (pub.color != null && pub.color.length !== 6) pub.color = "ffffff";
 
-    // Migrate from old "align" property
-    if (pub.align != null) {
-      pub.alignment = pub.align;
-      delete pub.align;
-    }
+    // NOTE: Migration from old "align" property
+    if (pub.align != null) { pub.alignment = pub.align; delete pub.align; }
     if (pub.verticalAlignment == null) pub.verticalAlignment = "center";
 
     super(pub, TextRendererConfig.schema);

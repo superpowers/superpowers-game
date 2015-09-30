@@ -27,11 +27,11 @@ export default class TileMapRendererConfig extends SupCore.data.base.ComponentCo
   pub: TileMapRendererConfigPub;
 
   constructor(pub: TileMapRendererConfigPub) {
-    // TODO: Remove these casts at some point, legacy stuff from Superpowers 0.4
+    // NOTE: Legacy stuff from Superpowers 0.4
     if (typeof pub.tileMapAssetId === "number") pub.tileMapAssetId = pub.tileMapAssetId.toString();
     if (typeof pub.tileSetAssetId === "number") pub.tileSetAssetId = pub.tileSetAssetId.toString();
 
-    // TODO: Remove these casts at some point, legacy stuff from Superpowers 0.11
+    // NOTE: Legacy stuff from Superpowers 0.11
     if (pub.castShadow == null) pub.castShadow = false;
     if (pub.receiveShadow == null) pub.receiveShadow = false;
     if (pub.materialType == null) pub.materialType = "basic";

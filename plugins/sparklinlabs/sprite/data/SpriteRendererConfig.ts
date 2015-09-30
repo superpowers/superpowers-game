@@ -38,18 +38,18 @@ export default class SpriteRendererConfig extends SupCore.data.base.ComponentCon
   pub: SpriteRendererConfigPub;
 
   constructor(pub: SpriteRendererConfigPub) {
-    // TODO: Remove these at some point, new config setting introduced in Superpowers 0.8
+    // NOTE: Settings introduced in Superpowers 0.8
     if (pub.overrideOpacity == null) pub.overrideOpacity = false;
     if (pub.color == null) pub.color = "ffffff";
     if (pub.horizontalFlip == null) pub.horizontalFlip = false;
     if (pub.verticalFlip == null) pub.verticalFlip = false;
 
-    // TODO: Remove these at some point, new config setting introduced in Superpowers 0.7
+    // NOTE: Settings introduced in Superpowers 0.7
     if (pub.castShadow == null) pub.castShadow = false;
     if (pub.receiveShadow == null) pub.receiveShadow = false;
     if (pub.materialType == null) pub.materialType = "basic";
 
-    // TODO: Remove these casts at some point, legacy stuff from Superpowers 0.4
+    // NOTE: Legacy stuff from Superpowers 0.4
     if (typeof pub.spriteAssetId === "number") pub.spriteAssetId = pub.spriteAssetId.toString();
     if (typeof pub.animationId === "number") pub.animationId = pub.animationId.toString();
 

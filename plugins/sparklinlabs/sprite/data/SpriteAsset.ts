@@ -5,9 +5,12 @@ import * as async from "async";
 import SpriteAnimations, { SpriteAnimationPub } from "./SpriteAnimations";
 
 interface SpriteAssetPub {
+  // FIXME: This is used client-side to store shared THREE.js textures
+  // We should probably find a better place for it
   textures?: { [name: string]: any; };
   maps: { [name: string]: Buffer; };
   filtering: string;
+
   pixelsPerUnit: number;
   framesPerSecond: number;
   opacity: number;
@@ -19,6 +22,7 @@ interface SpriteAssetPub {
 
   animations: SpriteAnimationPub[];
 
+  // FIXME: This could be removed, the UI can use mapSlots or textures to determine its state
   advancedTextures: boolean;
   mapSlots: { [name: string]: string; };
 }
@@ -116,12 +120,13 @@ export default class SpriteAsset extends SupCore.data.base.Asset {
   load(assetPath: string) {
     let pub: SpriteAssetPub;
     let loadMaps = () => {
-      // TODO: Remove these at some point, new config setting introduced in Superpowers 0.8
+      // NOTE: Opacity setting was introduced in Superpowers 0.8
       if (typeof pub.opacity === "undefined") pub.opacity = 1;
 
       let mapsName: string[] = <any>pub.maps;
-      // TODO: Remove these at some point, asset migration introduced in Superpowers 0.11
+      // NOTE: Support for multiple maps was introduced in Superpowers 0.11
       if (mapsName == null) mapsName = ["map"];
+
       if (pub.frameOrder == null) pub.frameOrder = "rows";
       if (pub.advancedTextures == null) {
         pub.advancedTextures = false;
@@ -134,7 +139,7 @@ export default class SpriteAsset extends SupCore.data.base.Asset {
         }
       }
 
-      // TODO: Remove these at some point, asset migration introduced in Superpowers 0.12
+      // NOTE: Animation speed was introduced in Superpowers 0.12
       for (let animation of pub.animations) {
         if (animation.speed == null) animation.speed = 1;
       }
@@ -146,7 +151,7 @@ export default class SpriteAsset extends SupCore.data.base.Asset {
             fs.readFile(path.join(assetPath, `map-${key}.dat`), (err, buffer) => {
               // TODO: Handle error but ignore ENOENT
               if (err != null) {
-                // TODO: Remove these at some point, asset migration introduced in Superpowers 0.11
+                // NOTE: image.dat was renamed to "map-map.dat" in Superpowers 0.11
                 if (err.code === "ENOENT" && key === "map") {
                   fs.readFile(path.join(assetPath, "image.dat"), (err, buffer) => {
                     pub.maps[key] = buffer;

@@ -16,6 +16,9 @@ interface ModelAssetPub {
   upAxisMatrix: number[];
   attributes: { [name: string]: Buffer; };
   bones: { name: string; parentIndex: number; matrix: number[] }[];
+  
+  // FIXME: This is used client-side to store shared THREE.js textures
+  // We should probably find a better place for it
   textures?: { [name: string]: any; };
   maps: { [name: string]: Buffer; };
   filtering: string;
@@ -25,6 +28,7 @@ interface ModelAssetPub {
 
   opacity: number;
 
+  // FIXME: This could be removed, the UI can use mapSlots or textures to determine its state
   advancedTextures: boolean;
   mapSlots: { [name: string]: string; };
 }
@@ -132,12 +136,14 @@ export default class ModelAsset extends SupCore.data.base.Asset {
     let pub: ModelAssetPub;
 
     let loadAttributesMaps = () => {
-      // TODO: Remove these at some point, new config setting introduced in Superpowers 0.8
+      // NOTE: New config setting introduced in Superpowers 0.8
       if (typeof pub.opacity === "undefined") pub.opacity = 1;
 
-      // TODO: Remove these at some point, asset migration introduced in Superpowers 0.11
       let maps: string[] = <any>pub.maps;
+      
+      // NOTE: "diffuse" was renamed to "map" in Superpowers 0.11
       if (maps.length === 1 && maps[0] === "diffuse") (<any>pub).maps = ["map"];
+
       if (pub.advancedTextures == null) {
         pub.advancedTextures = false;
         pub.mapSlots = {
@@ -150,7 +156,7 @@ export default class ModelAsset extends SupCore.data.base.Asset {
       }
       if (pub.unitRatio == null) pub.unitRatio = 1;
 
-      // TODO: Remove these at some point, asset migration introduced in Superpowers 0.13
+      // NOTE: Filtering and wrapping were introduced in Superpowers 0.13
       if (pub.filtering == null) pub.filtering = "pixelated";
       if (pub.wrapping == null) pub.wrapping = "clampToEdge";
 
@@ -177,12 +183,12 @@ export default class ModelAsset extends SupCore.data.base.Asset {
             fs.readFile(path.join(assetPath, `map-${key}.dat`), (err, buffer) => {
               // TODO: Handle error but ignore ENOENT
               if (err != null) {
-                // TODO: Remove these at some point, asset migration introduced in Superpowers 0.11
+                // NOTE: "diffuse" was renamed to "map" in Superpowers 0.11
                 if (err.code === "ENOENT" && key === "map") {
-                  fs.readFile(path.join(assetPath, `map-diffuse.dat`), (err, buffer) => {
+                  fs.readFile(path.join(assetPath, "map-diffuse.dat"), (err, buffer) => {
                     pub.maps[key] = buffer;
-                    fs.writeFile(path.join(assetPath, `map-map.dat`), buffer);
-                    fs.unlink(path.join(assetPath, `map-diffuse.dat`));
+                    fs.writeFile(path.join(assetPath, "map-map.dat"), buffer);
+                    fs.unlink(path.join(assetPath, "map-diffuse.dat"));
                     cb();
                   });
                 } else cb();
@@ -202,7 +208,7 @@ export default class ModelAsset extends SupCore.data.base.Asset {
     }
 
     fs.readFile(path.join(assetPath, "model.json"), { encoding: "utf8" }, (err, json) => {
-      // TODO: Remove these at some point, asset migration introduced in Superpowers 0.11
+      // TODO: "asset.json" was renamed to "model.json" in Superpowers 0.11
       if (err != null && err.code === "ENOENT") {
         fs.readFile(path.join(assetPath, "asset.json"), { encoding: "utf8" }, (err, json) => {
           fs.rename(path.join(assetPath, "asset.json"), path.join(assetPath, "model.json"), (err) => {
@@ -232,7 +238,7 @@ export default class ModelAsset extends SupCore.data.base.Asset {
       if (attributes[key] != null) (<any>this.pub).attributes.push(key);
     }
 
-    (<any>this.pub).maps = []
+    (<any>this.pub).maps = [];
     for (let key in maps) {
       if (maps[key] != null) (<any>this.pub).maps.push(key);
     }

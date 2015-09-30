@@ -10,7 +10,7 @@ export default class SceneSettingsResource extends SupCore.data.base.Resource {
 
   constructor(pub: any, serverData: any) {
     if (pub != null) {
-      // NOTE: Vertical axis were introduced in Superpowers 0.13
+      // NOTE: Vertical axis was introduced in Superpowers 0.13
       if (pub.defaultVerticalAxis == null) pub.defaultVerticalAxis = "Y";
     }
 

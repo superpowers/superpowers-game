@@ -111,10 +111,10 @@ ${tab}gl_FragColor = texture2D(map, vUv);
     let pub: ShaderAssetPub;
 
     let loadShaders = () => {
-      // TODO: Remove these at some point, asset migration from Superpowers 0.11
+      // NOTE: Introduced in Superpowers 0.11
       if (pub.useLightUniforms == null) pub.useLightUniforms = false;
 
-      // TODO: Remove these at some point, asset migration from Superpowers 0.10
+      // NOTE: Migration for Superpowers 0.10
       if (typeof pub.vertexShader === "string") {
         pub.vertexShader = {
           text: <any>pub.vertexShader,
@@ -164,7 +164,7 @@ ${tab}gl_FragColor = texture2D(map, vUv);
     }
 
     fs.readFile(path.join(assetPath, "shader.json"), { encoding: "utf8" }, (err, json) => {
-      // TODO: Remove these at some point, asset migration introduced in Superpowers 0.11
+      // NOTE: "asset.json" was renamed to "shader.json" in Superpowers 0.11
       if (err != null && err.code === "ENOENT") {
         fs.readFile(path.join(assetPath, "asset.json"), { encoding: "utf8" }, (err, json) => {
           fs.rename(path.join(assetPath, "asset.json"), path.join(assetPath, "shader.json"), (err) => {

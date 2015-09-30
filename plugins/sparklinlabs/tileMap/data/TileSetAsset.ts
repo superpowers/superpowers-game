@@ -52,7 +52,7 @@ export default class TileSetAsset extends SupCore.data.base.Asset {
   load(assetPath: string) {
     let pub: TileSetAssetPub;
     let loadAsset = () => {
-      // TODO: Remove these at some point, new config setting introduced in Superpowers 0.8
+      // NOTE: gridSize was split into grid.width and .height in Superpowers 0.8
       if ((<any>pub)["gridSize"] != null) {
         pub.grid = { width: (<any>pub)["gridSize"], height: (<any>pub)["gridSize"]};
         delete (<any>pub)["gridSize"];

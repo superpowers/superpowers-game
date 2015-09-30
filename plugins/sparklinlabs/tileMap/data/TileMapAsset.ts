@@ -35,7 +35,7 @@ export default class TileMapAsset extends SupCore.data.base.Asset {
   layers: TileMapLayers;
 
   constructor(id: string, pub: TileMapAssetPub, serverData: any) {
-    // TODO: Remove this cast at some point, legacy stuff from Superpowers 0.4
+    // NOTE: Legacy stuff from Superpowers 0.4
     if (pub != null && typeof pub.tileSetId === "number") pub.tileSetId = pub.tileSetId.toString();
 
     super(id, pub, TileMapAsset.schema, serverData);

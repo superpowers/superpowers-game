@@ -135,17 +135,17 @@ Sup.registerBehavior(${behaviorName});
   }
 
   load(assetPath: string) {
-    // TODO: Remove these at some point, asset migration introduced in Superpowers 0.10
-    // NOTE: The empty callback is required to not fail if the file already doesn't exist
+    // NOTE: asset.json was removed in Superpowers 0.10
+    // The empty callback is required to not fail if the file already doesn't exist
     fs.unlink(path.join(assetPath, "asset.json"), (err) => {});
 
-    // NOTE: We must not set this.pub with temporary values here, otherwise
+    // NOTE: We must not set this.pub with a temporary value right now, otherwise
     // the asset will be considered loaded by Dictionary.acquire
     // and the acquire callback will be called immediately
 
     let readDraft = (text: string) => {
       fs.readFile(path.join(assetPath, "draft.ts"), { encoding: "utf8" }, (err, draft) => {
-        // TODO: Remove these at some point, asset migration introduced in Superpowers 0.11
+        // NOTE: draft.txt was renamed to draft.ts in Superpowers 0.11
         if (err != null && err.code === "ENOENT") {
           fs.readFile(path.join(assetPath, "draft.txt"), { encoding: "utf8" }, (err, draft) => {
             this.pub = { revisionId: 0, text, draft: (draft != null) ? draft : text };
@@ -167,7 +167,7 @@ Sup.registerBehavior(${behaviorName});
     }
 
     fs.readFile(path.join(assetPath, "script.ts"), { encoding: "utf8" }, (err, text) => {
-      // TODO: Remove these at some point, asset migration introduced in Superpowers 0.11
+      // NOTE: script.txt was renamed to script.ts in Superpowers 0.11
       if (err != null && err.code === "ENOENT") {
         fs.readFile(path.join(assetPath, "script.txt"), { encoding: "utf8" }, (err, text) => {
           readDraft(text);

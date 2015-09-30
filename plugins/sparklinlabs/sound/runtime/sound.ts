@@ -2,7 +2,7 @@ export function loadAsset(player: SupRuntime.Player, entry: any, callback: (err:
   var sound = { buffer: <AudioBuffer|string>null };
 
   if (player.gameInstance.audio.getContext() == null) {
-    setTimeout( () => { callback(null, sound); }, 0);
+    setTimeout(() => { callback(null, sound); }, 0);
     return;
   }
 
@@ -14,7 +14,7 @@ export function loadAsset(player: SupRuntime.Player, entry: any, callback: (err:
         var typedArray = new Uint8Array(soundData);
         var blob = new Blob([ typedArray ], { type: "audio/*" });
         sound.buffer = URL.createObjectURL(blob);
-        setTimeout( () => { callback(null, sound); }, 0);
+        setTimeout(() => { callback(null, sound); }, 0);
       }
       else {
         var onLoad = (buffer: AudioBuffer) => { sound.buffer = buffer; callback(null, sound); };

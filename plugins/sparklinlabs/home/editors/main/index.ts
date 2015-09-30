@@ -46,7 +46,7 @@ function onRoomEdited(id: string, command: string, ...args: any[]) {
 };
 
 function scrollToBottom() {
-  setTimeout( () => { ui.chatHistoryContainer.scrollTop = ui.chatHistoryContainer.scrollHeight; }, 0);
+  setTimeout(() => { ui.chatHistoryContainer.scrollTop = ui.chatHistoryContainer.scrollHeight; }, 0);
 };
 
 let appendDaySeparator = (date: Date) => {
