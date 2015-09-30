@@ -1,9 +1,10 @@
-///<reference path="../../textEditorWidget/operational-transform.d.ts"/>
+/// <reference path="../../textEditorWidget/operational-transform.d.ts" />
 
 import * as OT from "operational-transform";
 import * as fs from "fs";
 import * as path from "path";
 import * as async from "async";
+import * as _ from "lodash";
 
 import Uniforms, { UniformPub } from "./Uniforms";
 import Attributes, { AttributePub } from "./Attributes";
@@ -132,6 +133,10 @@ ${tab}gl_FragColor = texture2D(map, vUv);
         return;
       }
 
+      pub.vertexShader = { text: null, draft: null, revisionId: 0 };
+      pub.fragmentShader = { text: null, draft: null, revisionId: 0 };
+
+      // TODO: Rename to .glsl instead of .txt
       async.series([
         (cb: (err: Error) => any) => {
           fs.readFile(path.join(assetPath, "vertexShader.txt"), { encoding: "utf8" }, (err, text) => {
@@ -180,18 +185,19 @@ ${tab}gl_FragColor = texture2D(map, vUv);
   }
 
   save(assetPath: string, callback: (err: Error) => any) {
-    let vertexText = this.pub.vertexShader.text; delete this.pub.vertexShader.text;
-    let vertexDraft = this.pub.vertexShader.draft; delete this.pub.vertexShader.draft;
-    let fragmentText = this.pub.fragmentShader.text; delete this.pub.fragmentShader.text;
-    let fragmentDraft = this.pub.fragmentShader.draft; delete this.pub.fragmentShader.draft;
+    // NOTE: Doing a clone here because of asynchronous operations below
+    // We should use the (future) asset locking system instead
+    let vertexShader = _.cloneDeep(this.pub.vertexShader);
+    delete this.pub.vertexShader;
+    let fragmentShader = _.cloneDeep(this.pub.fragmentShader);
+    delete this.pub.fragmentShader;
 
     let json = JSON.stringify(this.pub, null, 2);
 
-    this.pub.vertexShader.text = vertexText;
-    this.pub.vertexShader.draft = vertexDraft;
-    this.pub.fragmentShader.text = fragmentText;
-    this.pub.fragmentShader.draft = fragmentDraft;
+    this.pub.vertexShader = vertexShader;
+    this.pub.fragmentShader = fragmentShader;
 
+    // TODO: Rename to .glsl instead of .txt
     async.series([
       (cb: (err: Error) => any) => {
         fs.writeFile(path.join(assetPath, "shader.json"), json, { encoding: "utf8" }, (err) => {
@@ -200,14 +206,14 @@ ${tab}gl_FragColor = texture2D(map, vUv);
         });
       },
       (cb: (err: Error) => any) => {
-        fs.writeFile(path.join(assetPath, "vertexShader.txt"), vertexText, { encoding: "utf8" }, (err) => {
+        fs.writeFile(path.join(assetPath, "vertexShader.txt"), vertexShader.text, { encoding: "utf8" }, (err) => {
           if (err != null) cb(err);
           else cb(null);
         });
       },
       (cb: (err: Error) => any) => {
-        if (vertexDraft !== vertexText) {
-          fs.writeFile(path.join(assetPath, "vertexShaderDraft.txt"), vertexDraft, { encoding: "utf8" }, (err) => {
+        if (vertexShader.draft !== vertexShader.text) {
+          fs.writeFile(path.join(assetPath, "vertexShaderDraft.txt"), vertexShader.draft, { encoding: "utf8" }, (err) => {
             if (err != null && err.code !== "ENOENT") cb(err);
             else cb(null);
           });
@@ -219,14 +225,14 @@ ${tab}gl_FragColor = texture2D(map, vUv);
         }
       },
       (cb: (err: Error) => any) => {
-        fs.writeFile(path.join(assetPath, "fragmentShader.txt"), fragmentText, { encoding: "utf8" }, (err) => {
+        fs.writeFile(path.join(assetPath, "fragmentShader.txt"), fragmentShader.text, { encoding: "utf8" }, (err) => {
           if (err != null) cb(err);
           else cb(null);
         });
       },
       (cb: (err: Error) => any) => {
-        if (fragmentDraft !== fragmentText) {
-          fs.writeFile(path.join(assetPath, "fragmentShaderDraft.txt"), fragmentDraft, { encoding: "utf8" }, (err) => {
+        if (fragmentShader.draft !== fragmentShader.text) {
+          fs.writeFile(path.join(assetPath, "fragmentShaderDraft.txt"), fragmentShader.draft, { encoding: "utf8" }, (err) => {
             if (err != null && err.code !== "ENOENT") cb(err);
             else cb(null);
           });
