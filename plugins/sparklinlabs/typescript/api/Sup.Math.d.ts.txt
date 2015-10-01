@@ -172,7 +172,7 @@ declare module Sup {
       getDirection(): Vector2;
 
       intersectSpriteRenderer(spriteRenderer: Sup.SpriteRenderer): { distance: number; point: Vector2; };
-      intersectTileMapRenderer(tileMapRenderer: Sup.TileMapRenderer): { distance: number; point: Vector2; block: Vector2; };
+      intersectTileMapRenderer(tileMapRenderer: Sup.TileMapRenderer, options?: { layers?: number[]; tileSetPropertyName?: string }): { distance: number; point: Vector2; block: Vector2; };
     }
   }
 }

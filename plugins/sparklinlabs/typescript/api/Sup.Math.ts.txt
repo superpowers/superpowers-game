@@ -584,7 +584,7 @@ module Sup {
         return this.intersectRectangle(position, gridSize, angle);
       }
 
-      intersectTileMapRenderer(tileMapRenderer: Sup.TileMapRenderer) {
+      intersectTileMapRenderer(tileMapRenderer: Sup.TileMapRenderer, options?: { layers?: number[]; tileSetPropertyName?: string }) {
         let mapPosition = tileMapRenderer.actor.getPosition().toVector2();
         let map = tileMapRenderer.getTileMap();
         let tileSet = tileMapRenderer.getTileSet();
@@ -712,8 +712,20 @@ module Sup {
 
         // Check hit tile
         for (let point of points) {
-          let tile = map.getTileAt(0, point.x, point.y);
-          if (tile !== -1) {
+          let layers: number[];
+          if (options != null && options.layers != null) layers = options.layers;
+          else {
+            layers = [];
+            for (let layer = 0; layer < map.getLayerCount(); layer++) layers.push(layer);
+          }
+
+          for (let layer of layers) {
+            let tile = map.getTileAt(layer, point.x, point.y);
+            if (tile === -1) continue;
+
+            if (options != null && options.tileSetPropertyName != null && tileSet.getTileProperties(tile)[options.tileSetPropertyName] == null)
+              continue;
+
             let block = point.clone();
 
             let tilePosition = mapPosition.clone()
