@@ -13,6 +13,7 @@ export default class ArcadeBody2DUpdater {
     this.projectClient = projectClient;
     this.bodyRenderer = bodyRenderer;
     this.config = config;
+    this.setType();
   }
 
   config_setProperty(path: string, value: any) {

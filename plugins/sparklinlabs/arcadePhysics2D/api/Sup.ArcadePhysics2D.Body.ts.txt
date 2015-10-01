@@ -69,6 +69,8 @@ module Sup {
         return this;
       }
       getVelocity() { return new Sup.Math.Vector2(this.__inner.velocity.x, this.__inner.velocity.y); }
+      getVelocityX() { return this.__inner.velocity.x; }
+      getVelocityY() { return this.__inner.velocity.y; }
 
       setVelocityMin(velocityMin: Sup.Math.Vector2|number, y?: number) {
         if (typeof velocityMin === "number") {

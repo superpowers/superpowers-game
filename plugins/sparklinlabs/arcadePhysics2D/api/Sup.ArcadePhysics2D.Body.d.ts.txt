@@ -34,6 +34,8 @@ declare module Sup {
       setVelocityX(x: number): Body;
       setVelocityY(y: number): Body;
       getVelocity(): Sup.Math.Vector2;
+      getVelocityX(): number;
+      getVelocityY(): number;
       setVelocityMin(velocityMin: Sup.Math.Vector2): Body;
       setVelocityMin(x: number, y: number): Body;
       getVelocityMin(): Sup.Math.Vector2;
