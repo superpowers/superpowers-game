@@ -13,12 +13,6 @@ export default class ArcadeBody2DUpdater {
     this.projectClient = projectClient;
     this.bodyRenderer = bodyRenderer;
     this.config = config;
-
-    this.projectClient.subResource("arcadePhysics2DSettings", this);
-  }
-
-  destroy() {
-    if (this.resource != null) this.projectClient.unsubResource("arcadePhysics2DSettings", this);
   }
 
   config_setProperty(path: string, value: any) {
@@ -34,16 +28,5 @@ export default class ArcadeBody2DUpdater {
       this.bodyRenderer.setBox(this.config.width, this.config.height);
       this.bodyRenderer.setOffset(this.config.offset.x, this.config.offset.y);
     } else this.bodyRenderer.setTileMap();
-  }
-
-  onResourceReceived = (resourceId: string, resource: any) => {
-    this.resource = resource;
-    this.bodyRenderer.plane = this.resource.pub.plane;
-    this.setType();
-  }
-
-  onResourceEdited = (resourceId: string, command: string, propertyName: string) => {
-    this.bodyRenderer.plane = this.resource.pub.plane;
-    this.setType();
   }
 }

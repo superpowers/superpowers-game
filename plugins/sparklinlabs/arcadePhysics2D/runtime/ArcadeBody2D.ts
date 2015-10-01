@@ -7,8 +7,3 @@ export function setupComponent(player: SupRuntime.Player, component: any, config
     component.setupTileMap(config);
   }
 }
-
-export function init(player: any, callback: Function) {
-  (<any>SupEngine).ArcadePhysics2D.plane = player.resources.arcadePhysics2DSettings.plane;
-  callback();
-}

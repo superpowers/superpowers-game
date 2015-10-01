@@ -5,23 +5,23 @@ module Sup {
       for (var body of SupEngine.ArcadePhysics2D.allBodies) allBodies.push(body.__outer);
       return allBodies;
     }
-    export function setGravity( gravity ) {
-      SupEngine.ArcadePhysics2D.gravity.set( gravity.x, gravity.y, 0 );
+    export function setGravity(gravity: number|Sup.Math.Vector2, y?: number) {
+      if (typeof gravity === "number") SupEngine.ArcadePhysics2D.gravity.set(gravity, y);
+      else SupEngine.ArcadePhysics2D.gravity.set(gravity.x, gravity.y);
     }
-    export function intersects( body1, body2 ) {
-      return SupEngine.ArcadePhysics2D.intersects( body1.__inner, body2.__inner );
+    export function getGravity() { return new Sup.Math.Vector2(SupEngine.ArcadePhysics2D.gravity.x, SupEngine.ArcadePhysics2D.gravity.y)}
+    export function intersects(body1, body2) {
+      return SupEngine.ArcadePhysics2D.intersects(body1.__inner, body2.__inner);
     }
-    export function collides( body1, body2 ) {
+    export function collides(body1, body2) {
       var bodies = [];
-      if ( Array.isArray( body2 ) ) {
-        body2.forEach( (body) => {
-          bodies.push( body.__inner );
+      if (Array.isArray(body2) ) {
+        body2.forEach((body) => {
+          bodies.push(body.__inner);
           })
         }
-      else {
-        bodies.push( body2.__inner );
-      }
-      return SupEngine.ArcadePhysics2D.collides( body1.__inner, bodies);
+      else bodies.push(body2.__inner);
+      return SupEngine.ArcadePhysics2D.collides(body1.__inner, bodies);
     }
   }
 }

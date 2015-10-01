@@ -4,15 +4,12 @@ import ArcadeBody2DUpdater from "./ArcadeBody2DUpdater";
 let THREE = SupEngine.THREE;
 let tmpVector3 = new THREE.Vector3();
 
-
-
 export default class ArcadeBody2DMarker extends SupEngine.ActorComponent {
   static Updater = ArcadeBody2DUpdater;
 
   markerActor: SupEngine.Actor;
   offset = new THREE.Vector3(0, 0, 0);
   line: THREE.Line;
-  plane = "XY";
 
   constructor(actor: SupEngine.Actor) {
     super(actor, "ArcadeBody2DMarker");
@@ -33,23 +30,13 @@ export default class ArcadeBody2DMarker extends SupEngine.ActorComponent {
     if (this.line != null) this._clearRenderer();
 
     let geometry = new THREE.Geometry();
-    if (this.plane === "XY") {
-      geometry.vertices.push(
-        new THREE.Vector3(-width / 2, -height / 2, 0.01),
-        new THREE.Vector3( width / 2, -height / 2, 0.01),
-        new THREE.Vector3( width / 2,  height / 2, 0.01),
-        new THREE.Vector3(-width / 2,  height / 2, 0.01),
-        new THREE.Vector3(-width / 2, -height / 2, 0.01)
-      );
-    } else if (this.plane === "XZ") {
-      geometry.vertices.push(
-        new THREE.Vector3(-width / 2, 0.01, -height / 2),
-        new THREE.Vector3( width / 2, 0.01, -height / 2),
-        new THREE.Vector3( width / 2, 0.01,  height / 2),
-        new THREE.Vector3(-width / 2, 0.01,  height / 2),
-        new THREE.Vector3(-width / 2, 0.01, -height / 2)
-      );
-    }
+    geometry.vertices.push(
+      new THREE.Vector3(-width / 2, -height / 2, 0.01),
+      new THREE.Vector3( width / 2, -height / 2, 0.01),
+      new THREE.Vector3( width / 2,  height / 2, 0.01),
+      new THREE.Vector3(-width / 2,  height / 2, 0.01),
+      new THREE.Vector3(-width / 2, -height / 2, 0.01)
+    );
 
     let material = new THREE.LineBasicMaterial({color: 0xf459e4});
 
@@ -60,8 +47,7 @@ export default class ArcadeBody2DMarker extends SupEngine.ActorComponent {
 
   setOffset(x?: number, y?: number) {
     if (x != null && y != null) this.offset.set(x, y, 0);
-    if (this.plane === "XY") this.line.position.set(this.offset.x, this.offset.y, 0);
-    else this.line.position.set(this.offset.x, 0, this.offset.y);
+    this.line.position.set(this.offset.x, this.offset.y, 0);
     this.line.updateMatrixWorld(false);
   }
 

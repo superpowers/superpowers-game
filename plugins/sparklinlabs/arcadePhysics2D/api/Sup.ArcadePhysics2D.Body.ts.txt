@@ -38,33 +38,25 @@ module Sup {
 
       setOffset(offset) {
         this.__inner.offsetX = offset.x;
-        this.__inner.offsetY = (SupEngine.ArcadePhysics2D.plane === "XY") ? offset.y : offset.z;
+        this.__inner.offsetY = offset.y;
         this.__inner.refreshActorPosition();
         return this;
       }
-      getOffset() {
-        let offset: any = { x: this.__inner.offsetX };
-        if (SupEngine.ArcadePhysics2D.plane === "XY") offset.y = this.__inner.offsetY;
-        else offset.z = this.__inner.offsetY;
-        return offset;
-      }
+      getOffset() { return new Sup.Math.Vector2(this.__inner.offsetX, this.__inner.offsetY); }
 
-      warpPosition(x: Sup.Math.Vector3|number, y?: number, z?: number) {
-        if (y == null && z == null) this.__inner.warpPosition(<Sup.Math.Vector3>x);
-        else this.__inner.warpPosition(new Sup.Math.Vector3(<number>x, y, z));
+      warpPosition(position: Sup.Math.Vector2|number, y?: number) {
+        if (typeof position === "number") this.__inner.warpPosition(position, y);
+        else this.__inner.warpPosition(position.x, position.y);
         return this;
       }
 
-      setVelocity(x: Sup.Math.Vector3|number, yz?: number) {
-        if (yz == null) {
-          let velocity = <Sup.Math.Vector3>x;
-          this.__inner.velocity.x = velocity.x;
-          if (SupEngine.ArcadePhysics2D.plane === "XY") this.__inner.velocity.y = velocity.y;
-          else this.__inner.velocity.z = velocity.z;
+      setVelocity(velocity: Sup.Math.Vector2|number, y?: number) {
+        if (typeof velocity === "number") {
+          this.__inner.velocity.x = velocity;
+          this.__inner.velocity.y = y;
         } else {
-          this.__inner.velocity.x = <number>x;
-          if (SupEngine.ArcadePhysics2D.plane === "XY") this.__inner.velocity.y = yz;
-          else this.__inner.velocity.z = yz;
+          this.__inner.velocity.x = velocity.x;
+          this.__inner.velocity.y = velocity.y;
         }
         return this;
       }
@@ -73,67 +65,51 @@ module Sup {
         return this;
       }
       setVelocityY(y: number) {
-        if (SupEngine.ArcadePhysics2D.plane === "XZ") throw new Error("ArcadeBody2D.setVelocityY can't be used with 'XZ' plane");
         this.__inner.velocity.y = y;
         return this;
       }
-      setVelocityZ(z: number) {
-        if (SupEngine.ArcadePhysics2D.plane === "XY") throw new Error("ArcadeBody2D.setVelocityZ can't be used with 'XY' plane");
-        this.__inner.velocity.z = z;
-        return this;
-      }
-      getVelocity() { return new Sup.Math.Vector3(this.__inner.velocity.x, this.__inner.velocity.y, this.__inner.velocity.z) }
+      getVelocity() { return new Sup.Math.Vector2(this.__inner.velocity.x, this.__inner.velocity.y); }
 
-      setVelocityMin(x: Sup.Math.Vector3|number, yz?: number) {
-        if (yz == null) {
-          let velocityMin = <Sup.Math.Vector3>x;
+      setVelocityMin(velocityMin: Sup.Math.Vector2|number, y?: number) {
+        if (typeof velocityMin === "number") {
+          this.__inner.velocityMin.x = velocityMin;
+          this.__inner.velocityMin.y = y;
+        } else {
           this.__inner.velocityMin.x = velocityMin.x;
-          if (SupEngine.ArcadePhysics2D.plane === "XY") this.__inner.velocityMin.y = velocityMin.y;
-          else this.__inner.velocityMin.z = velocityMin.z;
-        } else {
-          this.__inner.velocityMin.x = x;
-          if (SupEngine.ArcadePhysics2D.plane === "XY") this.__inner.velocityMin.y = yz;
-          else this.__inner.velocityMin.z = yz;
+          this.__inner.velocityMin.y = velocityMin.y;
         }
         return this;
       }
-      getVelocityMin() { return new Sup.Math.Vector3(this.__inner.velocityMin.x, this.__inner.velocityMin.y, this.__inner.velocityMin.z) }
+      getVelocityMin() { return new Sup.Math.Vector2(this.__inner.velocityMin.x, this.__inner.velocityMin.y); }
 
-      setVelocityMax(x: Sup.Math.Vector3|number, yz?: number) {
-        if (yz == null) {
-          let velocityMax = <Sup.Math.Vector3>x;
+      setVelocityMax(velocityMax: Sup.Math.Vector2|number, y?: number) {
+        if (typeof velocityMax === "number") {
+          this.__inner.velocityMax.x = velocityMax;
+          this.__inner.velocityMax.y = y;
+        } else {
           this.__inner.velocityMax.x = velocityMax.x;
-          if (SupEngine.ArcadePhysics2D.plane === "XY") this.__inner.velocityMax.y = velocityMax.y;
-          else this.__inner.velocityMax.z = velocityMax.z;
-        } else {
-          this.__inner.velocityMax.x = x;
-          if (SupEngine.ArcadePhysics2D.plane === "XY") this.__inner.velocityMax.y = yz;
-          else this.__inner.velocityMax.z = yz;
+          this.__inner.velocityMax.y = velocityMax.y;
         }
         return this;
       }
-      getVelocityMax() { return new Sup.Math.Vector3(this.__inner.velocityMax.x, this.__inner.velocityMax.y, this.__inner.velocityMax.z) }
+      getVelocityMax() { return new Sup.Math.Vector2(this.__inner.velocityMax.x, this.__inner.velocityMax.y); }
 
-      setVelocityMultiplier(x: Sup.Math.Vector3|number, yz?: number) {
-        if (yz == null) {
-          let velocityMultiplier = <Sup.Math.Vector3>x;
-          this.__inner.velocityMultiplier.x = velocityMultiplier.x;
-          if (SupEngine.ArcadePhysics2D.plane === "XY") this.__inner.velocityMultiplier.y = velocityMultiplier.y;
-          else this.__inner.velocityMultiplier.z = velocityMultiplier.z;
+      setVelocityMultiplier(velocityMultiplier: Sup.Math.Vector2|number, y?: number) {
+        if (typeof velocityMultiplier === "number") {
+          this.__inner.velocityMultiplier.x = velocityMultiplier;
+          this.__inner.velocityMultiplier.y = y;
         } else {
-          this.__inner.velocityMultiplier.x = x;
-          if (SupEngine.ArcadePhysics2D.plane === "XY") this.__inner.velocityMultiplier.y = yz;
-          else this.__inner.velocityMultiplier.z = yz;
+          this.__inner.velocityMultiplier.x = velocityMultiplier.x;
+          this.__inner.velocityMultiplier.y = velocityMultiplier.y;
         }
         return this;
       }
-      getVelocityMultiplier() { return new Sup.Math.Vector3(this.__inner.velocityMultiplier.x, this.__inner.velocityMultiplier.y, this.__inner.velocityMultiplier.z) }
+      getVelocityMultiplier() { return new Sup.Math.Vector2(this.__inner.velocityMultiplier.x, this.__inner.velocityMultiplier.y); }
 
       getTouches() {
         return {
           left: this.__inner.touches.left, right : this.__inner.touches.right,
-          top : this.__inner.touches.top , bottom: this.__inner.touches.bottom,
-          back: this.__inner.touches.top , front : this.__inner.touches.bottom,
+          top : this.__inner.touches.top , bottom: this.__inner.touches.bottom
         };
       }
     }

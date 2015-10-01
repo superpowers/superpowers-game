@@ -53,8 +53,7 @@ export default class ArcadeBody2D extends SupEngine.ActorComponent {
     this.actorPosition = this.actor.getGlobalPosition(new THREE.Vector3());
     this.position = this.actorPosition.clone();
     this.position.x += this.offsetX;
-    if ((<any>SupEngine).ArcadePhysics2D.plane === "XY") this.position.y += this.offsetY;
-    else this.position.z += this.offsetY;
+    this.position.y += this.offsetY;
     this.previousPosition = this.position.clone();
 
     this.velocity = new THREE.Vector3(0, 0, 0);
@@ -92,35 +91,25 @@ export default class ArcadeBody2D extends SupEngine.ActorComponent {
     this.velocity.x *= this.velocityMultiplier.x;
     this.velocity.x = Math.min(Math.max(this.velocity.x, this.velocityMin.x), this.velocityMax.x);
 
-    if ((<any>SupEngine).ArcadePhysics2D.plane === "XY") {
-      this.velocity.y += (<any>SupEngine).ArcadePhysics2D.gravity.y;
-      this.velocity.y *= this.velocityMultiplier.y;
-      this.velocity.y = Math.min(Math.max(this.velocity.y, this.velocityMin.y), this.velocityMax.y);
-    } else if ((<any>SupEngine).ArcadePhysics2D.plane === "XZ") {
-      this.velocity.z += (<any>SupEngine).ArcadePhysics2D.gravity.z;
-      this.velocity.z *= this.velocityMultiplier.z;
-      this.velocity.z = Math.min(Math.max(this.velocity.z, this.velocityMin.z), this.velocityMax.z);
-    }
+    this.velocity.y += (<any>SupEngine).ArcadePhysics2D.gravity.y;
+    this.velocity.y *= this.velocityMultiplier.y;
+    this.velocity.y = Math.min(Math.max(this.velocity.y, this.velocityMin.y), this.velocityMax.y);
+
     this.position.add(this.velocity);
     this.refreshActorPosition();
   }
 
-  warpPosition(position: THREE.Vector3) {
-    this.position.x = position.x + this.offsetX;
-    this.position.y = position.y;
-    this.position.z = position.z;
-    if ((<any>SupEngine).ArcadePhysics2D.plane === "XY") this.position.y += this.offsetY;
-    else this.position.z += this.offsetY;
+  warpPosition(x: number, y: number) {
+    this.position.x = x + this.offsetX;
+    this.position.y = y + this.offsetY;
     this.refreshActorPosition();
   }
 
   refreshActorPosition() {
+    this.actor.getGlobalPosition(this.actorPosition);
     this.actorPosition.x = this.position.x - this.offsetX;
-    this.actorPosition.y = this.position.y;
-    this.actorPosition.z = this.position.z;
-    if ((<any>SupEngine).ArcadePhysics2D.plane === "XY") this.actorPosition.y -= this.offsetY;
-    else this.actorPosition.z -= this.offsetY;
-    this.actor.setGlobalPosition(this.actorPosition.clone());
+    this.actorPosition.y = this.position.y - this.offsetY;
+    this.actor.setGlobalPosition(this.actorPosition);
   }
 
   _destroy() {
@@ -132,9 +121,6 @@ export default class ArcadeBody2D extends SupEngine.ActorComponent {
   left() { return this.position.x - this.width / 2; }
   top() { return this.position.y + this.height / 2; }
   bottom() { return this.position.y - this.height / 2; }
-  front() { return this.position.z + this.height / 2; }
-  back() { return this.position.z - this.height / 2; }
   deltaX() { return this.position.x - this.previousPosition.x; }
   deltaY() { return this.position.y - this.previousPosition.y; }
-  deltaZ() { return this.position.z - this.previousPosition.z; }
 }
