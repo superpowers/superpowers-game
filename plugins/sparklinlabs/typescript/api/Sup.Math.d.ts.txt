@@ -49,6 +49,7 @@ declare module Sup {
       rotate(angle: number): Vector2;
       length(): number;
       distanceTo(vector: Vector2): number;
+      angleTo(vector: Vector2): number;
       unproject(camera: Camera): Vector3;
       angle(): number;
       setFromAngle(angle: number): Vector2;

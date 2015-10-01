@@ -101,6 +101,7 @@ module Sup {
       }
       length() { return window.Math.sqrt(this.x * this.x + this.y * this.y); }
       distanceTo(v: Vector2) { return v.clone().subtract(this).length(); }
+      angleTo(v: Vector2) { return window.Math.atan2(v.y - this.y, v.x - this.x); }
       unproject(camera: Sup.Camera) {
         tmpVector3.set(this.x, this.y, 0);
         tmpVector3.unproject(camera.__inner.threeCamera);
