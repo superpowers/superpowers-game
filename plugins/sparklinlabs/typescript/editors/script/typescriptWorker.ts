@@ -48,8 +48,9 @@ onmessage = (event: MessageEvent) => {
         return;
       }
 
-      let errors = tsErrors.map((e: any) => { return {
-        file: e.file.fileName, length: e.length, message: e.messageText,
+      let errors = tsErrors.map((e) => { return {
+        file: e.file.fileName, length: e.length,
+        message: ts.flattenDiagnosticMessageText(e.messageText, "\n"),
         position: e.file.getLineAndCharacterOfPosition(e.start)
       } });
 
