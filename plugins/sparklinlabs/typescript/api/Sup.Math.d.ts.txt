@@ -156,8 +156,12 @@ declare module Sup {
 
       intersectActor(actor: Sup.Actor, recursive?: boolean): ActorRaycastHit[];
       intersectActors(actors: Sup.Actor[]): ActorRaycastHit[];
-
       intersectPlane(plane: Plane): { distance: number; point: Vector3; };
+    }
+
+    interface Raycast2DHit {
+      distance: number;
+      point: Vector2;
     }
 
     class Ray2D {
@@ -171,7 +175,9 @@ declare module Sup {
       setDirection(x: number, y: number): Ray2D;
       getDirection(): Vector2;
 
-      intersectSpriteRenderer(spriteRenderer: Sup.SpriteRenderer): { distance: number; point: Vector2; };
+      intersectCircle(position: { x: number; y: number; }, radius: number): Raycast2DHit;
+      intersectRectangle(position: { x: number; y: number; }, size: { width: number; height: number; }, angle: number): Raycast2DHit;
+      intersectSpriteRenderer(spriteRenderer: Sup.SpriteRenderer): Raycast2DHit;
       intersectTileMapRenderer(tileMapRenderer: Sup.TileMapRenderer, options?: { layers?: number[]; tileSetPropertyName?: string }): { distance: number; point: Vector2; block: Vector2; };
     }
   }

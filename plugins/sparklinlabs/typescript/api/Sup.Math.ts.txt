@@ -516,6 +516,46 @@ module Sup {
       }
       getDirection() { return this._direction.clone(); }
 
+      intersectCircle(position: { x: number; y: number; }, radius: number) {
+        let x0 = this._origin.x - position.x;
+        let y0 = this._origin.y - position.y;
+
+        if (this._direction.x > 0 && x0 >  radius) return null;
+        if (this._direction.x < 0 && x0 < -radius) return null;
+        if (this._direction.y > 0 && y0 >  radius) return null;
+        if (this._direction.y < 0 && y0 < -radius) return null;
+
+        let tanAngle = window.Math.tan(this._direction.angle());
+        //let a = 1 + 1 / window.Math.pow(tanAngle, 2);
+        let a = 1 + tanAngle*tanAngle;
+        //let b = 2 / tanAngle * (x0 - y0 / tanAngle);
+        let b = 2 * tanAngle * y0 - 2 * tanAngle * tanAngle * x0;
+        //let c = window.Math.pow(y0 / tanAngle - x0, 2) + radius*radius;
+        //let c = y0*y0 - radius*radius + window.Math.pow(tanAngle*x0 - 1, 2) - 1;
+        let c = y0*y0 - radius*radius + tanAngle*tanAngle*x0*x0 - 2*tanAngle*x0*y0;
+
+        let delta = b*b - 4*a*c;
+        if (delta < 0) return null;
+
+        // let y1 = (-b + window.Math.sqrt(delta)) / (2*a);
+        // let x1 = (y1 - y0) / tanAngle + x0;
+        let x1 = (-b + window.Math.sqrt(delta)) / (2*a);
+        let y1 = tanAngle * (x1 - x0) + y0;
+        let point1 = new Vector2(x1 + position.x, y1 + position.y);
+        let distance1 = point1.distanceTo(this._origin);
+
+
+        // let y2 = (-b - window.Math.sqrt(delta)) / (2*a);
+        // let x2 = (y2 - y0) / tanAngle + x0;
+        let x2 = (-b - window.Math.sqrt(delta)) / (2*a);
+        let y2 = tanAngle * (x2 - x0) + y0;
+        let point2 = new Vector2(x2 + position.x, y2 + position.y);
+        let distance2 = point2.distanceTo(this._origin);
+
+        if (distance1 < distance2) return { point: point1, distance: distance1 };
+        else return { point: point2, distance: distance2 };
+      }
+
       intersectRectangle(position: { x: number; y: number; }, size: { width: number; height: number; }, angle: number) {
         let rayAngle = wrapAngle(this._direction.angle() - angle);
 
