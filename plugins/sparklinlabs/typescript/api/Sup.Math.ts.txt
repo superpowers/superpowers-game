@@ -520,10 +520,10 @@ module Sup {
         let x0 = this._origin.x - position.x;
         let y0 = this._origin.y - position.y;
 
-        if (this._direction.x > 0 && x0 >  radius) return null;
-        if (this._direction.x < 0 && x0 < -radius) return null;
-        if (this._direction.y > 0 && y0 >  radius) return null;
-        if (this._direction.y < 0 && y0 < -radius) return null;
+        if (this._direction.x >= 0 && x0 >  radius) return null;
+        if (this._direction.x <= 0 && x0 < -radius) return null;
+        if (this._direction.y >= 0 && y0 >  radius) return null;
+        if (this._direction.y <= 0 && y0 < -radius) return null;
 
         let tanAngle = window.Math.tan(this._direction.angle());
         let a = 1 + tanAngle*tanAngle;
