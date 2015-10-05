@@ -68,7 +68,19 @@ onmessage = (event: MessageEvent) => {
           rawList.sort();
 
           event.data.tokenString = (event.data.tokenString !== ".") ? event.data.tokenString : "";
-          let results = fuzzy.filter(event.data.tokenString, rawList);
+          let results: any[] = fuzzy.filter(event.data.tokenString, rawList);
+
+          let exactStartIndex = 0;
+          for (let index = 0; index < results.length; index++) {
+            let result = results[index];
+            let text: string = result.original;
+            if (text.slice(0, event.data.tokenString.length) === event.data.tokenString) {
+              results.splice(index, 1);
+              results.splice(exactStartIndex, 0, result);
+              exactStartIndex++;
+            }
+          }
+
           for (let result of results) {
             let details = service.getCompletionEntryDetails(event.data.name, event.data.start, result.original);
             let kind = details.kind;
