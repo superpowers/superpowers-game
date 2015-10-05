@@ -111,6 +111,7 @@ export default class BehaviorEditor {
         case "boolean": defaultValue = false; break;
         case "number": defaultValue = 0; break;
         case "string": defaultValue = ""; break;
+        case "Sup.Math.Vector2": defaultValue = { x: 0, y: 0 }; break;
         case "Sup.Math.Vector3": defaultValue = { x: 0, y: 0, z: 0 }; break;
         // TODO: Support more types
         default: defaultValue = null; break;
@@ -207,12 +208,14 @@ export default class BehaviorEditor {
         propertyFields = [ propertyField ];
         break;
       }
-      
+
+      case "Sup.Math.Vector2":
       case "Sup.Math.Vector3": {
         let vectorContainer = <HTMLDivElement>propertySetting.valueCell.querySelector(".inputs");
         if (vectorContainer == null) {
           propertySetting.valueCell.innerHTML = "";
-          propertyFields = SupClient.table.appendNumberFields(propertySetting.valueCell, [ 0, 0, 0 ]);
+          let defaultValues = uiType === "Sup.Math.Vector3" ? [ 0, 0, 0 ] : [ 0, 0 ];
+          propertyFields = SupClient.table.appendNumberFields(propertySetting.valueCell, defaultValues);
 
           for (let field of propertyFields) field.addEventListener("change", this._onChangePropertyValue);
         } else {
@@ -221,7 +224,7 @@ export default class BehaviorEditor {
         
         propertyFields[0].value = (propertyValue != null) ? propertyValue.x : "";
         propertyFields[1].value = (propertyValue != null) ? propertyValue.y : "";
-        propertyFields[2].value = (propertyValue != null) ? propertyValue.z : "";
+        if (uiType === "Sup.Math.Vector3") propertyFields[2].value = (propertyValue != null) ? propertyValue.z : "";
         for (let field of propertyFields) field.disabled = propertyValueInfo == null;
         break;
       }
@@ -274,13 +277,15 @@ export default class BehaviorEditor {
       case "boolean": propertyValue = event.target.checked; break;
       case "number": propertyValue = parseFloat(event.target.value); break
       case "string": propertyValue = event.target.value; break
+      case "Sup.Math.Vector2":
       case "Sup.Math.Vector3": {
         let parent =  (<HTMLDivElement>event.target.parentElement);
         propertyValue = {
           x: parseFloat((<HTMLInputElement>parent.children[0]).value),
-          y: parseFloat((<HTMLInputElement>parent.children[1]).value),
-          z: parseFloat((<HTMLInputElement>parent.children[2]).value)
+          y: parseFloat((<HTMLInputElement>parent.children[1]).value)
         };
+        
+        if (propertyType === "Sup.Math.Vector3") propertyValue.z = parseFloat((<HTMLInputElement>parent.children[2]).value);
         break;
       }
       default: console.error(`Unsupported property type: ${propertyType}`); break

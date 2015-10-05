@@ -28,6 +28,7 @@ export function setupComponent(player: SupRuntime.Player, component: any, config
 
     // Convert value based on type
     switch (behaviorPropertyInfo.type) {
+      case "Sup.Math.Vector2": { component.__outer[name] = new (<any>window).Sup.Math.Vector2(valueInfo.value.x, valueInfo.value.y); break; }
       case "Sup.Math.Vector3": { component.__outer[name] = new (<any>window).Sup.Math.Vector3(valueInfo.value.x, valueInfo.value.y, valueInfo.value.z); break; }
       default: { component.__outer[name] = valueInfo.value; break; }
     }

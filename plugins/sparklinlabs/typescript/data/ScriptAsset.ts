@@ -250,11 +250,13 @@ Sup.registerBehavior(${behaviorName});
       let supTypeSymbols: { [fullName: string]: ts.Symbol } = {
         "Sup.Actor": libLocals["Sup"].exports["Actor"],
         "Sup.Behavior": libLocals["Sup"].exports["Behavior"],
+        "Sup.Math.Vector2": libLocals["Sup"].exports["Math"].exports["Vector2"],
         "Sup.Math.Vector3": libLocals["Sup"].exports["Math"].exports["Vector3"],
         "Sup.Asset": libLocals["Sup"].exports["Asset"],
       };
 
       let supportedSupPropertyTypes: ts.Symbol[] = [
+        supTypeSymbols["Sup.Math.Vector2"],
         supTypeSymbols["Sup.Math.Vector3"]
       ];
 
