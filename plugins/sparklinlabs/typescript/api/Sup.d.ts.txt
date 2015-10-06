@@ -16,7 +16,7 @@ declare module Sup {
   }
 
   function get(path: string, options?: { "ignoreMissing": boolean; }): Asset;
-  function get<T extends Asset>(path: string, type: new(inner: {[key:string]: any;}) => T, options?: { "ignoreMissing": boolean; }): T;
+  function get<T extends Asset>(path: string, type: new(inner: { [key:string]: any; }) => T, options?: { "ignoreMissing": boolean; }): T;
 
   function getActor(name: string): Actor;
   function destroyAllActors(): void;

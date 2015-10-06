@@ -2,8 +2,8 @@ let p2 = require("p2");
 (<any>window).p2 = p2;
 
 module P2 {
-  export var World = new p2.World();
-  export var autoUpdate = true;
+  export let World = new p2.World();
+  export let autoUpdate = true;
 };
 (<any>SupEngine).P2 = P2;
 

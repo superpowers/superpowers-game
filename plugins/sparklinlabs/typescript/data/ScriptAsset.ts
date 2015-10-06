@@ -267,7 +267,7 @@ Sup.registerBehavior(${behaviorName});
         let symbol = ownLocals[symbolName];
         if ((symbol.flags & ts.SymbolFlags.Class) !== ts.SymbolFlags.Class) continue;
 
-        let parentTypeNode = ts.getClassExtendsHeritageClauseElement(symbol.valueDeclaration);
+        let parentTypeNode = (<any>ts).getClassExtendsHeritageClauseElement(symbol.valueDeclaration);
         if (parentTypeNode == null) continue;
         let parentTypeSymbol = results.typeChecker.getSymbolAtLocation(parentTypeNode.expression);
 
@@ -275,7 +275,7 @@ Sup.registerBehavior(${behaviorName});
         let baseTypeSymbol = parentTypeSymbol;
         while (true) {
           if (baseTypeSymbol === supTypeSymbols["Sup.Behavior"]) break;
-          baseTypeNode = ts.getClassExtendsHeritageClauseElement(baseTypeSymbol.valueDeclaration);
+          baseTypeNode = (<any>ts).getClassExtendsHeritageClauseElement(baseTypeSymbol.valueDeclaration);
           if (baseTypeNode == null) break;
           baseTypeSymbol = results.typeChecker.getSymbolAtLocation(baseTypeNode.expression);
         }

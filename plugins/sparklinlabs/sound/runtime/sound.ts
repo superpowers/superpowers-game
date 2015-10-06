@@ -1,5 +1,5 @@
 export function loadAsset(player: SupRuntime.Player, entry: any, callback: (err: Error, asset?: any) => any) {
-  var sound = { buffer: <AudioBuffer|string>null };
+  let sound = { buffer: <AudioBuffer|string>null };
 
   if (player.gameInstance.audio.getContext() == null) {
     setTimeout(() => { callback(null, sound); }, 0);
@@ -11,14 +11,14 @@ export function loadAsset(player: SupRuntime.Player, entry: any, callback: (err:
       if (err != null) { callback(err); return; }
 
       if (data.streaming) {
-        var typedArray = new Uint8Array(soundData);
-        var blob = new Blob([ typedArray ], { type: "audio/*" });
+        let typedArray = new Uint8Array(soundData);
+        let blob = new Blob([ typedArray ], { type: "audio/*" });
         sound.buffer = URL.createObjectURL(blob);
         setTimeout(() => { callback(null, sound); }, 0);
       }
       else {
-        var onLoad = (buffer: AudioBuffer) => { sound.buffer = buffer; callback(null, sound); };
-        var onError = () => { callback(null, sound); };
+        let onLoad = (buffer: AudioBuffer) => { sound.buffer = buffer; callback(null, sound); };
+        let onError = () => { callback(null, sound); };
         player.gameInstance.audio.getContext().decodeAudioData(soundData, onLoad, onError);
       }
     });
