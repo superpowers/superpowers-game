@@ -1,7 +1,7 @@
 {
   "name": "superpowers-engine",
   "version": "1.0.0",
-  "main": "SupEngine.js",
+  "main": "src/index.js",
   "repository": {
     "type": "hg",
     "url": "https://bitbucket.org/superpowers/system"

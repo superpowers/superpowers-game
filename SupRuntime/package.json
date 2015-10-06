@@ -1,7 +1,7 @@
 {
   "name": "superpowers-runtime",
   "version": "1.0.0",
-  "main": "SupRuntime.js",
+  "main": "src/index.js",
   "repository": {
     "type": "hg",
     "url": "https://bitbucket.org/superpowers/system"

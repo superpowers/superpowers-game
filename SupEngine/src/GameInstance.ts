@@ -1,3 +1,5 @@
+/// <reference path="../SupEngine.d.ts" />
+
 import { EventEmitter } from "events";
 import * as THREE from "three";
 
@@ -101,7 +103,7 @@ export default class GameInstance extends EventEmitter {
       this.componentsToBeStarted.splice(index, 1);
     }
 
-    for (let pluginName in SupEngine.earlyUpdateFunctions) { SupEngine.earlyUpdateFunctions[pluginName](); }
+    for (let pluginName in SupEngine.earlyUpdateFunctions) SupEngine.earlyUpdateFunctions[pluginName]();
 
     // Update all actors
     this.cachedActors.forEach((actor) => { actor.update(); });

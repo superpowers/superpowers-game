@@ -14,14 +14,11 @@ gulp.task("stylus", function() { return gulp.src("./src/index.styl").pipe(stylus
 
 // TypeScript
 var ts = require("gulp-typescript");
+var tsProject = ts.createProject("src/tsconfig.json");
+
 gulp.task("typescript", function() {
-  var tsResult = gulp.src([ "**/*.ts", "!node_modules/**" ]).pipe(ts({
-    typescript: require("typescript"),
-    declarationFiles: false,
-    module: "commonjs",
-    target: "ES5"
-  }));
-  return tsResult.js.pipe(gulp.dest("./"));
+  var tsResult = tsProject.src().pipe(ts(tsProject));
+  return tsResult.js.pipe(gulp.dest("src/"));
 });
 
 // Browserify

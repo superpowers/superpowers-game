@@ -1,3 +1,6 @@
+/// <reference path="../../../typings/tsd.d.ts" />
+/// <reference path="../../SupRuntime/SupRuntime.d.ts" />
+
 import * as async from "async";
 import * as querystring from "querystring";
 
