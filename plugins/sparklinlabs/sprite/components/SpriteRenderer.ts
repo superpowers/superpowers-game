@@ -116,7 +116,7 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
 
     this.updateShape();
     if (this.animationName == null) this.setFrame(0);
-    else if (! this.isAnimationPlaying) this.updateFrame();
+    else this.updateFrame();
   }
 
   setVerticalFlip(verticalFlip: boolean) {
@@ -125,7 +125,7 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
 
     this.updateShape();
     if (this.animationName == null) this.setFrame(0);
-    else if (! this.isAnimationPlaying) this.updateFrame();
+    else this.updateFrame();
   }
 
   updateAnimationsByName() {
