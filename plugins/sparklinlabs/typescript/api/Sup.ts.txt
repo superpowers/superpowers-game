@@ -107,8 +107,10 @@ module Sup {
     }
   }
 
-  export function registerBehavior(behavior) { player.behaviorClasses[behavior["name"]] = behavior; }
-
+  export function registerBehavior(behaviorClass) {
+    player.behaviorClasses[behaviorClass.name] = behaviorClass;
+    return behaviorClass;
+  }
 }
 
 window.Sup = Sup;

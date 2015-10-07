@@ -8,7 +8,7 @@ declare module Sup {
     path: string;
     type: string;
     children: Array<string>;
-    constructor(inner: {[key:string]: any;});
+    constructor(inner: { [key:string]: any; });
   }
 
   class Folder extends Asset {
@@ -29,9 +29,8 @@ declare module Sup {
   }
 
   class Behavior extends ActorComponent {
-    constructor(actor: any, properties?: { [key: string]: any; });
+    constructor(actor: Actor, properties?: { [key: string]: any; });
   }
 
-  function registerBehavior(behavior: any): void;
-
+  function registerBehavior<T extends Behavior>(behaviorClass: new (actor) => T): T;
 }
