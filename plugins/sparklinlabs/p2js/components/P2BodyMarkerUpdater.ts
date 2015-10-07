@@ -15,6 +15,8 @@ export default class P2BodyMarkerUpdater {
     this.bodyRenderer.setOffset(this.config.offsetX, this.config.offsetY);
   }
 
+  destroy() {}
+
   config_setProperty(path: string, value: any) {
     this.config[path] = value;
 

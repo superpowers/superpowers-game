@@ -16,6 +16,8 @@ export default class ArcadeBody2DUpdater {
     this.setType();
   }
 
+  destroy() {}
+
   config_setProperty(path: string, value: any) {
     (<any>this.config)[path] = value;
 
