@@ -23,8 +23,9 @@ module Sup {
       let tilesPerRow = tileSet.__inner.data.texture.image.width / tileSet.__inner.data.grid.width;
       let tilesPerColumn = tileSet.__inner.data.texture.image.height / tileSet.__inner.data.grid.height;
       let transform = this.__inner.getTileAt(layer, x, y);
-      let tileX = transform[0]; let tileY = transform[1];
+      if (transform === 0) return -1;
 
+      let tileX = transform[0]; let tileY = transform[1];
       if (tileX === -1 || tileY === -1 || tileY >= tilesPerColumn ||
       (tileX === tilesPerRow - 1 && tileY === tilesPerColumn - 1))
         return -1;
