@@ -1,6 +1,8 @@
 {
   "name": "superpowers-runtime",
+  "description": "Three.js-based game runtime for Superpowers, the HTML5 2D+3D game maker",
   "version": "1.0.0",
+  "license": "ISC",
   "main": "src/index.js",
   "repository": {
     "type": "hg",
