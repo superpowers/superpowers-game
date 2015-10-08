@@ -1,10 +1,12 @@
 {
   "name": "superpowers-sparklinlabs-p2js-plugin",
+  "description": "p2.js 2D physics plugin for Superpowers, the HTML5 2D+3D game maker",
+  "version": "1.0.0",
+  "license": "ISC",
   "repository": {
     "type": "hg",
     "url": "https://bitbucket.org/superpowers/sparklinlabs-plugins"
   },
-  "version": "1.0.0",
   "dependencies": {
     "p2": "^0.6.0"
   }
