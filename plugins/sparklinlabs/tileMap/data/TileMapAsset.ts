@@ -61,25 +61,55 @@ export default class TileMapAsset extends SupCore.data.base.Asset {
   }
 
   load(assetPath: string) {
+    let loadJson = (json: string) => {
+      let pub = JSON.parse(json);
+
+      for (let layer of pub.layers) {
+        for (let index = 0; index < layer.data.length; index++) {
+          if ((<any>layer.data[index]) === 0) layer.data[index] = _.clone(TileMapAsset.emptyTile);
+        }
+      }
+
+      this.pub = pub;
+      this.setup();
+      this.emit("load");
+    }
+
     fs.readFile(path.join(assetPath, "tilemap.json"), { encoding: "utf8" },(err, json) => {
       if (err != null && err.code === "ENOENT") {
         fs.readFile(path.join(assetPath, "asset.json"), { encoding: "utf8" },(err, json) => {
           fs.rename(path.join(assetPath, "asset.json"), path.join(assetPath, "tilemap.json"), (err) => {
-            this.pub = JSON.parse(json);
-            this.setup();
-            this.emit("load");
+            loadJson(json);
           });
         });
-      } else {
-        this.pub = JSON.parse(json);
-        this.setup();
-        this.emit("load");
-      }
+      } else loadJson(json);
     });
   }
 
   save(assetPath: string, callback: (err: Error) => any) {
-    let json = JSON.stringify(this.pub, null, 2);
+    let pub: TileMapAssetPub = {
+      tileSetId: this.pub.tileSetId,
+      pixelsPerUnit: this.pub.pixelsPerUnit,
+      width: this.pub.width, height: this.pub.height,
+      layerDepthOffset: this.pub.layerDepthOffset,
+      layers: []
+    }
+
+    for (let layer of this.pub.layers) {
+      let saveLayer: TileMapLayerPub = {
+        id: layer.id,
+        name: layer.name,
+        data: []
+      }
+
+      for (let tile of layer.data) {
+        if (tile[0] === -1 && tile[1] === -1) (<any>saveLayer).data.push(0);
+        else saveLayer.data.push(tile);
+      }
+      pub.layers.push(saveLayer);
+    }
+
+    let json = JSON.stringify(pub, null);
     fs.writeFile(path.join(assetPath, "tilemap.json"), json, { encoding: "utf8" }, callback);
   }
 
@@ -130,7 +160,7 @@ export default class TileMapAsset extends SupCore.data.base.Asset {
         for (let layer of this.pub.layers) {
           if (width > this.pub.width)
             for (let i = 0; i < width-this.pub.width; i++)
-              layer.data.splice(row*this.pub.width, 0, _.cloneDeep(TileMapAsset.emptyTile));
+              layer.data.splice(row*this.pub.width, 0, _.clone(TileMapAsset.emptyTile));
           else
             layer.data.splice((row-1)*this.pub.width + width, this.pub.width - width);
         }
@@ -143,7 +173,7 @@ export default class TileMapAsset extends SupCore.data.base.Asset {
       for (let layer of this.pub.layers) {
         if (height > this.pub.height)
           for (let i = 0; i < (height-this.pub.height)*this.pub.width; i++)
-            layer.data.splice(this.pub.height*this.pub.width, 0, _.cloneDeep(TileMapAsset.emptyTile));
+            layer.data.splice(this.pub.height*this.pub.width, 0, _.clone(TileMapAsset.emptyTile));
         else
           layer.data.splice(height*this.pub.width, (this.pub.height-height)*this.pub.width);
       }
@@ -171,10 +201,10 @@ export default class TileMapAsset extends SupCore.data.base.Asset {
           if (horizontalOffset > 0) {
             layer.data.splice(row*this.pub.width - horizontalOffset, horizontalOffset);
             for (let i = 0; i < horizontalOffset; i++)
-              layer.data.splice((row-1)*this.pub.width, 0, _.cloneDeep(TileMapAsset.emptyTile));
+              layer.data.splice((row-1)*this.pub.width, 0, _.clone(TileMapAsset.emptyTile));
           } else {
             for (let i = 0; i < -horizontalOffset; i++)
-              layer.data.splice(row*this.pub.width, 0, _.cloneDeep(TileMapAsset.emptyTile));
+              layer.data.splice(row*this.pub.width, 0, _.clone(TileMapAsset.emptyTile));
             layer.data.splice((row-1)*this.pub.width, -horizontalOffset);
           }
         }
@@ -186,10 +216,10 @@ export default class TileMapAsset extends SupCore.data.base.Asset {
         if (verticalOffset > 0) {
           layer.data.splice((this.pub.height - verticalOffset) * this.pub.width - 1, verticalOffset * this.pub.width);
           for (let i = 0; i < verticalOffset*this.pub.width; i++)
-            layer.data.splice(0, 0, _.cloneDeep(TileMapAsset.emptyTile));
+            layer.data.splice(0, 0, _.clone(TileMapAsset.emptyTile));
         } else {
           for (let i = 0; i < -verticalOffset*this.pub.width; i++)
-            layer.data.splice(this.pub.height * this.pub.width, 0, _.cloneDeep(TileMapAsset.emptyTile));
+            layer.data.splice(this.pub.height * this.pub.width, 0, _.clone(TileMapAsset.emptyTile));
           layer.data.splice(0, -verticalOffset * this.pub.width);
         }
       }
@@ -228,7 +258,7 @@ export default class TileMapAsset extends SupCore.data.base.Asset {
     for (let edit of edits) {
       let index = edit.y * this.pub.width + edit.x;
       let tileValue = edit.tileValue;
-      if (tileValue == null) tileValue = _.cloneDeep(TileMapAsset.emptyTile);
+      if (tileValue == null) tileValue = _.clone(TileMapAsset.emptyTile);
       this.layers.byId[layerId].data[index] = tileValue;
     }
   }
@@ -237,13 +267,13 @@ export default class TileMapAsset extends SupCore.data.base.Asset {
     let newLayer: TileMapLayerPub = {
       id: null,
       name: layerName,
-      data: <(number|boolean)[][]>[]
+      data: []
     }
 
     for (let y = 0; y < this.pub.height; y++) {
       for (let x = 0; x < this.pub.width; x++) {
         let index = y * this.pub.width + x;
-        newLayer.data[index] = _.cloneDeep(TileMapAsset.emptyTile);
+        newLayer.data[index] = _.clone(TileMapAsset.emptyTile);
       }
     }
 
