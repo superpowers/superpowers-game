@@ -7,12 +7,11 @@ declare module Sup {
     name: string;
     path: string;
     type: string;
-    children: string[];
     constructor(inner: { [key:string]: any; });
   }
 
   class Folder extends Asset {
-    dummyFolderMember;
+    children: string[];
   }
 
   function get(path: string, options?: { "ignoreMissing": boolean; }): Asset;
@@ -32,5 +31,5 @@ declare module Sup {
     constructor(actor: Actor, properties?: { [key: string]: any; });
   }
 
-  function registerBehavior<T extends Behavior>(behaviorClass: new (actor) => T): T;
+  function registerBehavior<T extends Behavior>(behaviorClass: new (actor: Actor) => T);
 }
