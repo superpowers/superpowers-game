@@ -210,12 +210,18 @@ export default class TileMapRenderer extends SupEngine.ActorComponent {
   _onSetTileAt = (layerIndex: number, x: number, y: number) => { this.refreshTileAt(layerIndex, x, y); }
 
   refreshTileAt(layerIndex: number, x: number, y: number) {
+    let tileX = -1; let tileY = -1;
+    let flipX = false; let flipY = false;
+    let angle = 0;
+
     let tileInfo = this.tileMap.getTileAt(layerIndex, x, y);
-    let tileX = <number>tileInfo[0];
-    let tileY = <number>tileInfo[1];
-    let flipX = <boolean>tileInfo[2];
-    let flipY = <boolean>tileInfo[3];
-    let angle = <number>tileInfo[4];
+    if ((<any>tileInfo) !== 0) {
+      tileX = <number>tileInfo[0];
+      tileY = <number>tileInfo[1];
+      flipX = <boolean>tileInfo[2];
+      flipY = <boolean>tileInfo[3];
+      angle = <number>tileInfo[4];
+    }
 
     if (tileX == -1 || tileY == -1 || tileX >= this.tilesPerRow || tileY >= this.tilesPerColumn ||
     (tileX === this.tilesPerRow - 1 && tileY === this.tilesPerColumn - 1)) {
