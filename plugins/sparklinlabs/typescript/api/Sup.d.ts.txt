@@ -7,7 +7,7 @@ declare module Sup {
     name: string;
     path: string;
     type: string;
-    children: Array<string>;
+    children: string[];
     constructor(inner: { [key:string]: any; });
   }
 

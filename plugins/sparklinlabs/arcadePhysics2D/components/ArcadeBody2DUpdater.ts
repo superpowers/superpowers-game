@@ -2,7 +2,7 @@ import ArcadeBody2DMarker from "./ArcadeBody2DMarker";
 import { ConfigPub } from "../data/ArcadeBody2DConfig";
 
 export default class ArcadeBody2DUpdater {
-  projectClient: SupClient.ProjectClient
+  projectClient: SupClient.ProjectClient;
 
   bodyRenderer: ArcadeBody2DMarker;
   config: ConfigPub;
