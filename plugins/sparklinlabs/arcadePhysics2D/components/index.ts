@@ -1,4 +1,4 @@
-let epsilon = 0.01;
+let epsilon = 0.0001;
 let THREE = SupEngine.THREE;
 import ArcadeBody2D from "./ArcadeBody2D";
 import ArcadeBody2DMarker from "./ArcadeBody2DMarker";
@@ -57,8 +57,8 @@ module ArcadePhysics2D {
         Math.floor((body1.position.x - body2.position.x + body1.width / 2 - epsilon) / body2.mapToSceneFactor.x);
       let y = body1.position.y - body2.position.y - body1.height / 2;
       let testedHeight = body1.height - epsilon;
-      let totalPoints = Math.ceil(testedHeight / body2.mapToSceneFactor.y) + 1;
-      for (let point = 0; point < totalPoints; point++) {
+      let totalPoints = Math.ceil(testedHeight / body2.mapToSceneFactor.y);
+      for (let point = 0; point <= totalPoints; point++) {
         for (let layer of body2.layersIndex) {
           let tile = body2.tileMapAsset.getTileAt(layer, x, Math.floor((y + point * testedHeight / totalPoints) / body2.mapToSceneFactor.y));
 
@@ -69,10 +69,10 @@ module ArcadePhysics2D {
 
           body1.velocity.x = -body1.velocity.x * body1.bounceX;
           if (body1.deltaX() < 0) {
-            if (options.moveBody) body1.position.x = (x + 1) * body2.mapToSceneFactor.x + body2.position.x + body1.width / 2;
+            if (options.moveBody) body1.position.x = (x + 1 + epsilon) * body2.mapToSceneFactor.x + body2.position.x + body1.width / 2;
             left = true;
           } else {
-            if (options.moveBody) body1.position.x = x * body2.mapToSceneFactor.x + body2.position.x - body1.width / 2;
+            if (options.moveBody) body1.position.x = (x - epsilon) * body2.mapToSceneFactor.x + body2.position.x - body1.width / 2;
             right = true;
           }
           return true;
@@ -87,8 +87,8 @@ module ArcadePhysics2D {
         Math.floor((body1.position.y - body2.position.y - body1.height / 2) / body2.mapToSceneFactor.y) :
         Math.floor((body1.position.y - body2.position.y + body1.height / 2 - epsilon) / body2.mapToSceneFactor.y);
       let testedWidth = body1.width - epsilon;
-      let totalPoints = Math.ceil(testedWidth / body2.mapToSceneFactor.x) + 1;
-      for (let point = 0; point < totalPoints; point++) {
+      let totalPoints = Math.ceil(testedWidth / body2.mapToSceneFactor.x);
+      for (let point = 0; point <= totalPoints; point++) {
         for (let layer of body2.layersIndex) {
           let tile = body2.tileMapAsset.getTileAt(layer, Math.floor((x + point * testedWidth / totalPoints) / body2.mapToSceneFactor.x), y);
 
@@ -99,10 +99,10 @@ module ArcadePhysics2D {
 
           body1.velocity.y = -body1.velocity.y * body1.bounceY;
           if (body1.deltaY() < 0) {
-            if (options.moveBody) body1.position.y = (y + 1) * body2.mapToSceneFactor.y + body2.position.y + body1.height / 2;
+            if (options.moveBody) body1.position.y = (y + 1 + epsilon) * body2.mapToSceneFactor.y + body2.position.y + body1.height / 2;
             bottom = true;
           } else {
-            if (options.moveBody) body1.position.y = y * body2.mapToSceneFactor.y + body2.position.y - body1.height / 2;
+            if (options.moveBody) body1.position.y = (y - epsilon) * body2.mapToSceneFactor.y + body2.position.y - body1.height / 2;
             top = true;
           }
           return true;
