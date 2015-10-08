@@ -217,7 +217,8 @@ export default class TileMapRenderer extends SupEngine.ActorComponent {
     let flipY = <boolean>tileInfo[3];
     let angle = <number>tileInfo[4];
 
-    if (tileX == -1 || tileY == -1 || tileX >= this.tilesPerRow || tileY >= this.tilesPerColumn) {
+    if (tileX == -1 || tileY == -1 || tileX >= this.tilesPerRow || tileY >= this.tilesPerColumn ||
+    (tileX === this.tilesPerRow - 1 && tileY === this.tilesPerColumn - 1)) {
       tileX = this.tilesPerRow - 1;
       tileY = this.tilesPerColumn - 1;
     }
