@@ -111,11 +111,16 @@ declare module SupEngine {
     _destroy(): void;
     _markDestructionPending(): void;
   }
-
+  
+  interface ActorComponentUpdater {
+    destroy(): void;
+  }
 
   abstract class ActorComponent {
     actor: Actor;
     typeName: string;
+
+    static Updater: new(projectClient: any, component: any, config: any, receiveAssetCallbacks: any, editAssetCallbacks: any) => ActorComponentUpdater;
 
     constructor(actor: Actor, typeName: string);
     _destroy(): void;
