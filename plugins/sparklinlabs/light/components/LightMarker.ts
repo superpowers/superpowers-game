@@ -6,10 +6,14 @@ export default class LightMarker extends Light {
   cameraHelper: THREE.CameraHelper;
 
   setType(type: string) {
-    super.setType(type);
-
     if (this.lightMarker != null) this.actor.gameInstance.threeScene.remove(this.lightMarker);
-    if (this.cameraHelper != null) this.actor.gameInstance.threeScene.remove(this.cameraHelper);
+    if (this.cameraHelper != null) {
+      console.log("remove light");
+      this.actor.gameInstance.threeScene.remove(this.cameraHelper);
+      this.cameraHelper = null;
+    }
+
+    super.setType(type);
 
     switch (type) {
       case "ambient":
@@ -20,11 +24,11 @@ export default class LightMarker extends Light {
         break;
       case "spot":
         this.lightMarker = new THREE.SpotLightHelper(this.light, 1, 1);
-        if (this.castShadow) this.cameraHelper = new THREE.CameraHelper((<THREE.SpotLight>this.light).shadowCamera);
+        //if (this.castShadow) this.cameraHelper = new THREE.CameraHelper((<THREE.SpotLight>this.light).shadowCamera);
         break;
       case "directional":
         this.lightMarker = new THREE.DirectionalLightHelper(this.light, 1);
-        if (this.castShadow) this.cameraHelper = new THREE.CameraHelper((<THREE.DirectionalLight>this.light).shadowCamera);
+        //if (this.castShadow) this.cameraHelper = new THREE.CameraHelper((<THREE.DirectionalLight>this.light).shadowCamera);
         break;
     }
 
@@ -32,7 +36,8 @@ export default class LightMarker extends Light {
       this.actor.gameInstance.threeScene.add(this.lightMarker);
       this.lightMarker.updateMatrixWorld(true);
     }
-    if (this.castShadow) this.actor.gameInstance.threeScene.add(this.cameraHelper);
+    //console.log(this.cameraHelper);
+    //if (type === "spot" && this.cameraHelper != null && this.castShadow) this.actor.gameInstance.threeScene.add(this.cameraHelper);
   }
 
   setColor(color: number) {
