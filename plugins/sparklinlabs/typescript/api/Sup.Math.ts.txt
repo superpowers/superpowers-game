@@ -597,18 +597,22 @@ module Sup {
       }
 
       intersectSpriteRenderer(spriteRenderer: Sup.SpriteRenderer) {
+        let sprite = spriteRenderer.getSprite();
         let position = spriteRenderer.actor.getPosition().toVector2();
+        let scale = spriteRenderer.actor.getLocalScale();
 
-        let scale = 1 / spriteRenderer.getSprite().getPixelsPerUnit();
-        let gridSize = spriteRenderer.getSprite().getGridSize();
-        gridSize.width *= scale;
-        gridSize.height *= scale;
+        let pixelsPerUnit = sprite.getPixelsPerUnit();
+        let gridSize = sprite.getGridSize();
+        gridSize.width *= scale.x / pixelsPerUnit;
+        gridSize.height *= scale.y / pixelsPerUnit;
+
+        let origin = sprite.getOrigin();
+        let xOffset = (50 - origin.x) / 100 * gridSize.width;
+        if (spriteRenderer.getHorizontalFlip()) xOffset *= -1;
+        let yOffset = (50 - origin.y) / 100 * gridSize.height;
+        if (spriteRenderer.getVerticalFlip()) yOffset *= -1;
 
         let angle = spriteRenderer.actor.getEulerZ();
-
-        let origin = spriteRenderer.getSprite().getOrigin();
-        let xOffset = (50 - origin.x) / 100 * gridSize.width;
-        let yOffset = (50 - origin.y) / 100 * gridSize.height;
         position.x += xOffset * window.Math.cos(angle) - yOffset * window.Math.sin(angle);
         position.y += yOffset * window.Math.cos(angle) + xOffset * window.Math.sin(angle);
 
@@ -617,15 +621,15 @@ module Sup {
 
       intersectTileMapRenderer(tileMapRenderer: Sup.TileMapRenderer, options?: { layers?: number[]; tileSetPropertyName?: string }) {
         let mapPosition = tileMapRenderer.actor.getPosition().toVector2();
+        let mapScale = tileMapRenderer.actor.getLocalScale();
         let map = tileMapRenderer.getTileMap();
         let tileSet = tileMapRenderer.getTileSet();
-        let scale = 1 / map.getPixelsPerUnit();
+        let pixelsPerUnit = map.getPixelsPerUnit();
 
         let mapToSceneFactor = {
-          x: tileSet.getGridSize().width * scale,
-          y: tileSet.getGridSize().height * scale
+          x: tileSet.getGridSize().width * mapScale.x / pixelsPerUnit,
+          y: tileSet.getGridSize().height * mapScale.y / pixelsPerUnit
         }
-
         let mapWidth = map.getWidth() * mapToSceneFactor.x;
         let mapHeight = map.getHeight() * mapToSceneFactor.y;
 
