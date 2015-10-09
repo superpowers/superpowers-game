@@ -358,9 +358,9 @@ module Sup {
         if (typeof x === "number") tmpVector3.set(x, x, x);
         else {
           let scale = x;
-          tmpVector3.set(scale.x, scale.y, scale.z)
+          tmpVector3.set(scale.x, scale.y, scale.z);
         }
-      } else tmpVector3.set(x, y, z)
+      } else tmpVector3.set(x, y, z);
       this.__inner.setLocalScale(tmpVector3);
       return this;
     }
