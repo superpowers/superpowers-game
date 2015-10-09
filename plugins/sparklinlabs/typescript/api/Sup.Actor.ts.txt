@@ -253,6 +253,7 @@ module Sup {
     getEulerZ() { return this.__inner.getGlobalEulerAngles(tmpEuler).z; }
     setEulerZ(z) {
       this.__inner.getGlobalEulerAngles(tmpEuler);
+      tmpEuler.z = z;
       this.__inner.setGlobalEulerAngles(tmpEuler);
       return this;
     }
