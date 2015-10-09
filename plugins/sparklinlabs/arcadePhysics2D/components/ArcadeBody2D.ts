@@ -66,11 +66,9 @@ export default class ArcadeBody2D extends SupEngine.ActorComponent {
     this.type = "tileMap";
     this.tileMapAsset = config.tileMapAsset;
     this.tileSetAsset = config.tileSetAsset;
-    let scale = this.actor.getLocalScale(new THREE.Vector3());
-
     this.mapToSceneFactor = {
-      x: this.tileSetAsset.__inner.data.grid.width / this.tileMapAsset.__inner.data.pixelsPerUnit * scale.x,
-      y: this.tileSetAsset.__inner.data.grid.height / this.tileMapAsset.__inner.data.pixelsPerUnit * scale.y,
+      x: this.tileSetAsset.__inner.data.grid.width / this.tileMapAsset.__inner.data.pixelsPerUnit,
+      y: this.tileSetAsset.__inner.data.grid.height / this.tileMapAsset.__inner.data.pixelsPerUnit,
     }
     this.tileSetPropertyName = config.tileSetPropertyName;
     if (config.layersIndex != null) {
