@@ -95,7 +95,7 @@ function onSceneAssetReceived(/*err: string, asset: SceneAsset*/) {
 
   // Place camera so that it fits the scene
   if (data.sceneUpdater.sceneAsset.nodes.pub.length > 0) {
-    let z = box.z.max + 5;
+    let z = box.z.max + 10;
     engine.cameraActor.setLocalPosition(new THREE.Vector3((box.x.min + box.x.max) / 2, (box.y.min + box.y.max) / 2, z));
     ui.camera2DZ.value = z.toString();
   }
