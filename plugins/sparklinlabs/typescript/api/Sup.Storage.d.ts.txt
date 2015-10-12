@@ -1,5 +1,5 @@
-declare module Sup {
-  module Storage {
+declare namespace Sup {
+  namespace Storage {
     function set(key: string, value: string): void;
     function get(key: string, defaultValue?: string): string;
     function setJSON(key: string, value: any): void;

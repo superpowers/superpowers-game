@@ -1,4 +1,4 @@
-module Sup {
+namespace Sup {
 
   let tmpVector3 = new SupEngine.THREE.Vector3();
   let tmpQuaternion = new SupEngine.THREE.Quaternion();

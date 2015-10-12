@@ -1,5 +1,5 @@
-module Sup {
-  export module Input {
+namespace Sup {
+  export namespace Input {
     export function on(eventName: string, callback: Function) {
       player.gameInstance.input.on(eventName, callback);
     }

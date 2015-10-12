@@ -1,5 +1,5 @@
-declare module Sup {
-  module Game {
+declare namespace Sup {
+  namespace Game {
     function getFPS(): number;
     function getScreenRatio(): { width: number; height: number; };
   }

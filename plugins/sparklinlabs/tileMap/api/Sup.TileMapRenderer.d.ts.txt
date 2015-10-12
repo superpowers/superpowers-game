@@ -1,4 +1,4 @@
-declare module Sup {
+declare namespace Sup {
   class TileMapRenderer extends ActorComponent {
     constructor(actor: Actor, pathOrAsset?: string|TileMap);
     getTileMap(): TileMap;

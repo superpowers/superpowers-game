@@ -1,5 +1,4 @@
-declare module Sup {
-
+declare namespace Sup {
   function log(message?: any, ...optionalParams: any[]): void;
   function exit();
 

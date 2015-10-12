@@ -1,12 +1,12 @@
-declare module Sup {
-  module Math {
+declare namespace Sup {
+  namespace Math {
     function clamp(v: number, min: number, max: number): number;
 
     function lerp(a: number, b: number, v: number): number;
     function lerpAngle(a: number, b: number, v: number): number;
     function wrapAngle(a);
 
-    module Random {
+    namespace Random {
       function integer(min: number, max: number): number;
       function float(min: number, max: number): number;
       function sample<T>(collection: T[]): T;

@@ -1,5 +1,5 @@
-module Sup {
-  export module P2 {
+namespace Sup {
+  export namespace P2 {
     export function getWorld() { return SupEngine.P2.World; }
     export function resetWorld() { SupEngine.P2.World = new window.p2.World(); }
     export function getWorldAutoUpdate() { return SupEngine.P2.autoUpdate; }

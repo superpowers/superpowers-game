@@ -1,6 +1,6 @@
 declare let TWEEN;
 
-module Sup {
+namespace Sup {
   export class Tween extends ActorComponent {
     __inner: any;
     tween: any;

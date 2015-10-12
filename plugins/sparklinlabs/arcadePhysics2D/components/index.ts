@@ -3,7 +3,7 @@ let THREE = SupEngine.THREE;
 import ArcadeBody2D from "./ArcadeBody2D";
 import ArcadeBody2DMarker from "./ArcadeBody2DMarker";
 
-module ArcadePhysics2D {
+namespace ArcadePhysics2D {
   export let allBodies: ArcadeBody2D[] = [];
   export let gravity = new THREE.Vector3(0, 0, 0);
 

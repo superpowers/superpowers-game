@@ -1,5 +1,5 @@
-module Sup {
-  export module Audio {
+namespace Sup {
+  export namespace Audio {
     export function getMasterVolume(volume) {
       player.gameInstance.audio.getContext();
       return player.gameInstance.audio.masterGain.gain.value;

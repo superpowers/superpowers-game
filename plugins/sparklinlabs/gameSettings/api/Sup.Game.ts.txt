@@ -1,5 +1,5 @@
-module Sup {
-  export module Game {
+namespace Sup {
+  export namespace Game {
     export function getFPS() { return player.resources.gameSettings.framesPerSecond; }
     export function getScreenRatio() {
       let width = player.resources.gameSettings.ratioNumerator;

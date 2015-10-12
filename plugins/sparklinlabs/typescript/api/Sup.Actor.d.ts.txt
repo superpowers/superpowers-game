@@ -1,4 +1,4 @@
-declare module Sup {
+declare namespace Sup {
 
   class Actor {
     // INSERT_COMPONENT_ACCESSORS

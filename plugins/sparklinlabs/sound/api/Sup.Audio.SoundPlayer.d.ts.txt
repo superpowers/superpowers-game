@@ -1,5 +1,5 @@
-declare module Sup {
-  module Audio {
+declare namespace Sup {
+  namespace Audio {
     function playSound(pathOrAsset: string|Sound, volume?: number /* 1.0 */, options?: { loop?: boolean; pitch?: number; pan?: number; }): SoundPlayer;
   
     class SoundPlayer {

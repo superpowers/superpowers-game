@@ -1,5 +1,5 @@
-module Sup {
-  export module ArcadePhysics2D {
+namespace Sup {
+  export namespace ArcadePhysics2D {
     export function getAllBodies() {
       var allBodies = [];
       for (var body of SupEngine.ArcadePhysics2D.allBodies) allBodies.push(body.__outer);

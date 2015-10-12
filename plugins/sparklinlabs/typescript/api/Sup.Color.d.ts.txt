@@ -1,4 +1,4 @@
-declare module Sup {
+declare namespace Sup {
   class Color {
     // Values are in the 0.0-1.0 range
     r: number;

@@ -1,4 +1,4 @@
-module Sup {
+namespace Sup {
   export class Camera extends ActorComponent {
     constructor(actor) {
       super(actor);

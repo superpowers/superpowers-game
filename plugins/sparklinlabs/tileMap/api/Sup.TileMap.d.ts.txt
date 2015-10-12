@@ -1,4 +1,4 @@
-declare module Sup {
+declare namespace Sup {
   class TileMap extends Asset {
     getWidth(): number;
     getHeight(): number;

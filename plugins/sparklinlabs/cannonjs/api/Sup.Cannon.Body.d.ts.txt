@@ -1,5 +1,5 @@
-declare module Sup {
-  module Cannon {
+declare namespace Sup {
+  namespace Cannon {
     function getWorld(): CANNON.World;
     function resetWorld();
     function getWorldAutoUpdate(): boolean;

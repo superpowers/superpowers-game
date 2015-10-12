@@ -1,5 +1,5 @@
-module Sup {
-  export module ArcadePhysics2D {
+namespace Sup {
+  export namespace ArcadePhysics2D {
     export enum BodyType { Box, TileMap };
 
     export class Body extends ActorComponent {

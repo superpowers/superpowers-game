@@ -1,4 +1,4 @@
-declare module Sup {
+declare namespace Sup {
   class Tween {
     constructor(actor: Sup.Actor, object: Object);
 

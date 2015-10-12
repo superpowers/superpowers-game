@@ -1,5 +1,5 @@
-declare module Sup {
-  module P2 {
+declare namespace Sup {
+  namespace P2 {
     function getWorld(): p2.World;
     function resetWorld();
     function getWorldAutoUpdate(): boolean;

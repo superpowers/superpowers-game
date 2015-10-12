@@ -1,4 +1,4 @@
-module Sup {
+namespace Sup {
   export class Sprite extends Asset {
     getPixelsPerUnit() { return this.__inner.pixelsPerUnit; }
     getRendering() { return this.__inner.filtering; }

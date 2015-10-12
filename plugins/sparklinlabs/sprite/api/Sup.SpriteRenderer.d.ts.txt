@@ -1,4 +1,4 @@
-declare module Sup {
+declare namespace Sup {
   class SpriteRenderer extends ActorComponent {
     constructor(actor: Actor, pathOrAsset?: string|Sprite, materialType?: SpriteRenderer.MaterialType );
 
@@ -33,7 +33,7 @@ declare module Sup {
     getUniforms(): { [name: string]: { type: string; value: any; } };
   }
 
-  module SpriteRenderer {
+  namespace SpriteRenderer {
     enum MaterialType { Basic, Phong }
   }
 }

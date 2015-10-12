@@ -1,4 +1,4 @@
-module Sup {
+namespace Sup {
   export class TextRenderer extends Sup.ActorComponent {
     constructor(actor: Actor, text: string|number, pathOrAsset: string|Font, options: any={}) {
       super(actor);

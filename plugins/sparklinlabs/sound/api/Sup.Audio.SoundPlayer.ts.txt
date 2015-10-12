@@ -1,5 +1,5 @@
-module Sup {
-  export module Audio {
+namespace Sup {
+  export namespace Audio {
     export function playSound(pathOrAsset: string|Sound, volume=1.0, options?: { loop?: boolean; pitch?: number; pan?: number; }) {
       return new SoundPlayer(pathOrAsset, volume, options).play();
     }

@@ -1,5 +1,5 @@
-module Sup {
-  export module Storage {
+namespace Sup {
+  export namespace Storage {
     export function set(key, value) { localStorage.setItem(key, value); }
     export function get(key, defaultValue) {
       let value = localStorage.getItem(key);

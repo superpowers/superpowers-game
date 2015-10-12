@@ -1,4 +1,4 @@
-module Sup {
+namespace Sup {
   export class Light extends Sup.ActorComponent {
     type: Light.Type;
 
@@ -39,7 +39,7 @@ module Sup {
     getCastShadow() { return this.__inner.castShadow; }
   }
 
-  export module Light {
+  export namespace Light {
     export enum Type { Ambient, Point, Spot, Directional };
   }
 }

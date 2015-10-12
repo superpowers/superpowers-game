@@ -1,4 +1,4 @@
-declare module Sup {
+declare namespace Sup {
   class Camera extends ActorComponent {
     constructor(actor: Actor);
 

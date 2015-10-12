@@ -1,5 +1,5 @@
-declare module Sup {
-  module Audio {
+declare namespace Sup {
+  namespace Audio {
     function getMasterVolume(): number;
     function setMasterVolume(volume: number): void;
   }

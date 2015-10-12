@@ -1,4 +1,4 @@
-module Sup {
+namespace Sup {
   let materialTypes = ["basic", "phong"];
 
   export class SpriteRenderer extends Sup.ActorComponent {
@@ -68,7 +68,7 @@ module Sup {
     getUniforms() { return this.__inner.material.uniforms; }
   }
 
-  export module SpriteRenderer {
+  export namespace SpriteRenderer {
     export enum MaterialType { Basic, Phong };
   }
 }

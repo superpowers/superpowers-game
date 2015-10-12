@@ -1,4 +1,4 @@
-module Sup {
+namespace Sup {
   export class TileSet extends Asset {
     getWidth() { return this.__inner.data.texture.image.width; }
     getHeight() { return this.__inner.data.texture.image.height; }

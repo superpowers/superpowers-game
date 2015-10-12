@@ -1,4 +1,4 @@
-module Sup {
+namespace Sup {
   export class TileMap extends Asset {
     getWidth() { return this.__inner.getWidth(); }
     getHeight() { return this.__inner.getHeight(); }

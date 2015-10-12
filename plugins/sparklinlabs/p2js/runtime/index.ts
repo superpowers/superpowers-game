@@ -1,7 +1,7 @@
 let p2 = require("p2");
 (<any>window).p2 = p2;
 
-module P2 {
+namespace P2 {
   export let World = new p2.World();
   export let autoUpdate = true;
 };

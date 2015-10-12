@@ -13,8 +13,8 @@ interface TileMapOptions {
   layersIndex?: string;
 }
 
-declare module Sup {
-  module ArcadePhysics2D {
+declare namespace Sup {
+  namespace ArcadePhysics2D {
     enum BodyType { Box, TileMap }
 
     class Body extends ActorComponent {

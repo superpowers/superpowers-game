@@ -12,7 +12,7 @@ interface LightOptions {
   castShadow?: boolean;
 }
 
-declare module Sup {
+declare namespace Sup {
   class Light extends Sup.ActorComponent {
     constructor(actor: Actor, options: LightOptions);
 
@@ -31,7 +31,7 @@ declare module Sup {
     getCastShadow(): boolean;
   }
 
-  module Light {
+  namespace Light {
     enum Type { Ambient, Point, Spot, Directional }
   }
 }

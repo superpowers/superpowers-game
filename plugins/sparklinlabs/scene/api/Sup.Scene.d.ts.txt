@@ -1,4 +1,4 @@
-declare module Sup {
+declare namespace Sup {
   function loadScene(sceneAsset: Scene): void;
   function loadScene(sceneAssetPath: string): void;
   function appendScene(sceneAsset: Scene, parent?: Actor): Array<Actor>;

@@ -1,4 +1,4 @@
-module Sup {
+namespace Sup {
   export class TileMapRenderer extends Sup.ActorComponent {
     constructor(actor: Actor, pathOrAsset: string|TileMap) {
       super(actor);

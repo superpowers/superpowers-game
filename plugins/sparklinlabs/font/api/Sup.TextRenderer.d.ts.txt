@@ -1,5 +1,4 @@
-declare module Sup {
-
+declare namespace Sup {
   class TextRenderer extends ActorComponent {
     constructor(actor: Actor, text?: string|number, pathOrAsset?: string|Font, options?: {alignment?: string; verticalAlignment?: string; size?: number; color?: Color;});
 

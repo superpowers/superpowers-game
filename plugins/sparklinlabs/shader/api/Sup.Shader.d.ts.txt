@@ -1,4 +1,4 @@
-declare module Sup {
+declare namespace Sup {
   class Shader extends Asset {
     dummyShaderMember;
   }

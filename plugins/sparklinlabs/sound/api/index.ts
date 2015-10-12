@@ -1,8 +1,8 @@
 import * as fs from "fs";
 
 SupAPI.registerPlugin("typescript", "Sup.Sound", {
-  code: "module Sup { export class Sound extends Asset {} }",
-  defs: "declare module Sup { class Sound extends Asset { dummySoundMember; } }"
+  code: "namespace Sup { export class Sound extends Asset {} }",
+  defs: "declare namespace Sup { class Sound extends Asset { dummySoundMember; } }"
 });
 
 SupAPI.registerPlugin("typescript", "Sup.Audio", {

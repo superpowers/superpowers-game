@@ -1,8 +1,8 @@
 import * as fs from "fs";
 
 SupAPI.registerPlugin("typescript", "Sup.Model", {
-  code: "module Sup { export class Model extends Asset {} }",
-  defs: "declare module Sup { class Model extends Asset { dummyModelMember; } }"
+  code: "namespace Sup { export class Model extends Asset {} }",
+  defs: "declare namespace Sup { class Model extends Asset { dummyModelMember; } }"
 });
 
 SupAPI.registerPlugin("typescript", "ModelRenderer", {

@@ -85,7 +85,7 @@ onmessage = (event: MessageEvent) => {
             let details = service.getCompletionEntryDetails(event.data.name, event.data.start, result.original);
             let kind = details.kind;
             let info = "";
-            if (["class", "module", "interface", "keyword"].indexOf(kind) === -1) info = ts.displayPartsToString(details.displayParts);
+            if (["class", "module", "namespace", "interface", "keyword"].indexOf(kind) === -1) info = ts.displayPartsToString(details.displayParts);
             list.push({ text: result.original, kind, name: details.name, info });
           }
         }

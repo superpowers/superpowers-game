@@ -1,5 +1,4 @@
-module Sup {
-
+namespace Sup {
   export function log(message, ...optionalParams) { console.log.apply(console, [ message ].concat(optionalParams)); }
 
   export function exit() {

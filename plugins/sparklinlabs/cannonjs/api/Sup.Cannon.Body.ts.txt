@@ -1,5 +1,5 @@
-module Sup {
-  export module Cannon {
+namespace Sup {
+  export namespace Cannon {
     export function getWorld() { return SupEngine.Cannon.World; }
     export function resetWorld() { SupEngine.Cannon.World = new window.CANNON.World(); }
     export function getWorldAutoUpdate() { return SupEngine.Cannon.autoUpdate; }

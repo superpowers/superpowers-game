@@ -1,4 +1,4 @@
-module Sup {
+namespace Sup {
   export class Color {
     r: number;
     g: number;

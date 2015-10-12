@@ -1,4 +1,4 @@
-module Sup {
+namespace Sup {
   let materialTypes = ["basic", "phong"];
 
   export class ModelRenderer extends Sup.ActorComponent {
@@ -65,7 +65,7 @@ module Sup {
     getUniforms() { return this.__inner.material.uniforms; }
   }
 
-  export module ModelRenderer {
+  export namespace ModelRenderer {
     export enum MaterialType { Basic, Phong };
   }
 }
