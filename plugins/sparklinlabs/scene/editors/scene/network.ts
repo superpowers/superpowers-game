@@ -37,7 +37,7 @@ var sceneSettingSubscriber = {
     data.sceneUpdater = new SceneUpdater(
       data.projectClient,
       { gameInstance: engine.gameInstance, actor: null },
-      { sceneAssetId: info.assetId},
+      { sceneAssetId: info.assetId, isInPrefab: false },
       { scene: onSceneAssetReceived },
       { scene: onEditCommands }
     );

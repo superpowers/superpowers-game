@@ -16,6 +16,7 @@ export default class SceneUpdater {
   rootActor: SupEngine.Actor;
   sceneAssetId: string;
   sceneAsset: SceneAsset;
+  isInPrefab: boolean;
 
   bySceneNodeId: { [id: string]: {
     actor: SupEngine.Actor;
@@ -40,6 +41,7 @@ export default class SceneUpdater {
     this.gameInstance = engine.gameInstance;
     this.rootActor = engine.actor;
     this.sceneAssetId = config.sceneAssetId;
+    this.isInPrefab = config.isInPrefab;
 
     if (this.sceneAssetId != null) this.projectClient.subAsset(this.sceneAssetId, "scene", this.sceneSubscriber);
   }
@@ -99,17 +101,15 @@ export default class SceneUpdater {
     switch (path) {
       case "position":
         nodeEditorData.actor.setLocalPosition(value);
-        nodeEditorData.markerActor.setGlobalPosition(nodeEditorData.actor.getGlobalPosition(tmpVector3));
-        this._onUpdateMarkerRecursive(id);
+        if (!this.isInPrefab) this._onUpdateMarkerRecursive(id);
         break;
       case "orientation":
         nodeEditorData.actor.setLocalOrientation(value);
-        nodeEditorData.markerActor.setGlobalOrientation(nodeEditorData.actor.getGlobalOrientation(tmpQuaternion));
-        this._onUpdateMarkerRecursive(id);
+        if (!this.isInPrefab) this._onUpdateMarkerRecursive(id);
         break;
       case "scale":
         nodeEditorData.actor.setLocalScale(value);
-        this._onUpdateMarkerRecursive(id);
+        if (!this.isInPrefab) this._onUpdateMarkerRecursive(id);
         break;
       case "prefabId":
         nodeEditorData.prefabUpdater.config_setProperty("prefabId", value);
@@ -141,7 +141,7 @@ export default class SceneUpdater {
       nodeEditorData.bySceneComponentId[componentId].componentUpdater.destroy();
     }
 
-    this.gameInstance.destroyActor(nodeEditorData.markerActor);
+    if (!this.isInPrefab) this.gameInstance.destroyActor(nodeEditorData.markerActor);
     this.gameInstance.destroyActor(nodeEditorData.actor);
     delete this.bySceneNodeId[nodeId];
   }
@@ -195,16 +195,20 @@ export default class SceneUpdater {
     nodeActor.threeObject.scale.copy(<THREE.Vector3>node.scale);
     nodeActor.threeObject.updateMatrixWorld(false);
     (<any>nodeActor).sceneNodeId = node.id;
-
-    let markerActor = new SupEngine.Actor(this.gameInstance, `${nodeId} Marker`, null, { layer: -1 });
-    markerActor.setGlobalPosition(nodeActor.getGlobalPosition(tmpVector3));
-    markerActor.setGlobalOrientation(nodeActor.getGlobalOrientation(tmpQuaternion));
-    new SupEngine.editorComponentClasses["TransformMarker"](markerActor);
+    
+    let markerActor: SupEngine.Actor;
+    if (!this.isInPrefab) {
+      markerActor = new SupEngine.Actor(this.gameInstance, `${nodeId} Marker`, null, { layer: -1 });
+      markerActor.setGlobalPosition(nodeActor.getGlobalPosition(tmpVector3));
+      markerActor.setGlobalOrientation(nodeActor.getGlobalOrientation(tmpQuaternion));
+      new SupEngine.editorComponentClasses["TransformMarker"](markerActor);
+    }
 
     this.bySceneNodeId[node.id] = { actor: nodeActor, markerActor, bySceneComponentId: {}, prefabUpdater: null };
-    if (node.prefabId != null)
+    if (node.prefabId != null) {
       this.bySceneNodeId[node.id].prefabUpdater = new SceneUpdater(this.projectClient,
-        { gameInstance: this.gameInstance, actor: nodeActor }, { sceneAssetId: node.prefabId });
+        { gameInstance: this.gameInstance, actor: nodeActor }, { sceneAssetId: node.prefabId, isInPrefab: true });
+    }
 
     if (node.components != null) for (let component of node.components) this._createNodeActorComponent(node, component, nodeActor);
     return nodeActor;
@@ -225,7 +229,7 @@ export default class SceneUpdater {
     for (let sceneNodeId in this.bySceneNodeId) {
       let sceneNode = this.bySceneNodeId[sceneNodeId];
 
-      this.gameInstance.destroyActor(sceneNode.markerActor);
+      if (!this.isInPrefab) this.gameInstance.destroyActor(sceneNode.markerActor);
 
       for (let componentId in sceneNode.bySceneComponentId) sceneNode.bySceneComponentId[componentId].componentUpdater.destroy();
       this.gameInstance.destroyActor(sceneNode.actor);
