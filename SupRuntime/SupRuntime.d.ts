@@ -1,6 +1,6 @@
 ///<reference path="../SupEngine/SupEngine.d.ts"/>
 
-declare module SupRuntime {
+declare namespace SupRuntime {
   interface RuntimePlugin {
     loadAsset?(player: Player, entry: any, callback: (err: Error, asset?: any) => any): void;
     createOuterAsset?(player: Player, asset: any): any;

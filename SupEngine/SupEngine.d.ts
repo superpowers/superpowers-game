@@ -3,7 +3,7 @@
 
 declare let __tmpTHREE: typeof THREE;
 
-declare module SupEngine {
+declare namespace SupEngine {
   let THREE: typeof __tmpTHREE;
 
   let editorComponentClasses: {[name: string]: any};
