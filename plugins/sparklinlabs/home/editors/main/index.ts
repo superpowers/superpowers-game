@@ -2,29 +2,27 @@ import "./links";
 
 let qs = require("querystring").parse(window.location.search.slice(1));
 let info = { projectId: qs.project };
-let data: {room?: SupCore.data.Room;};
-let ui: {chatHistoryContainer: HTMLDivElement; chatHistory: HTMLOListElement; roomUsers: HTMLUListElement;};
+let data: { room: SupCore.data.Room; };
 let socket: SocketIOClient.Socket;
+
+let ui = {
+  chatHistoryContainer: <HTMLDivElement>document.querySelector(".chat"),
+  chatHistory: <HTMLOListElement>document.querySelector(".chat ol"),
+  roomUsers: <HTMLUListElement>document.querySelector(".members ul")
+};
 
 function start() {
   socket = SupClient.connect(info.projectId);
   socket.on("connect", onConnected);
   socket.on("disconnect", SupClient.onDisconnected);
-  SupClient.setupHotkeys()
+  SupClient.setupHotkeys();
 
   // Chat
   document.querySelector(".chat-input textarea").addEventListener("keydown", onChatInputKeyDown);
-
-  ui = {
-    chatHistoryContainer: <HTMLDivElement>document.querySelector(".chat"),
-    chatHistory: <HTMLOListElement>document.querySelector(".chat ol"),
-
-    roomUsers: <HTMLUListElement>document.querySelector(".members ul"),
-  };
 };
 
 function onConnected() {
-  data = {};
+  data = <any>{};
   // FIXME Add support in ProjectClient?
   socket.emit("sub", "rooms", "home", onRoomReceived);
   socket.on("edit:rooms", onRoomEdited);
@@ -48,6 +46,20 @@ function onRoomEdited(id: string, command: string, ...args: any[]) {
 function scrollToBottom() {
   setTimeout(() => { ui.chatHistoryContainer.scrollTop = ui.chatHistoryContainer.scrollHeight; }, 0);
 };
+
+// Firefox 41 loses the scroll position when going back to the tab
+// so we'll manually restore it when the tab is activated
+let savedScrollTop = 0;
+
+ui.chatHistoryContainer.addEventListener("scroll", (event) => {
+  savedScrollTop = ui.chatHistoryContainer.scrollTop;
+});
+
+window.addEventListener("message", (event) => {
+  if (event.data.type === "activate") {
+    setTimeout(() => { ui.chatHistoryContainer.scrollTop = savedScrollTop; }, 0);
+  }
+});
 
 let appendDaySeparator = (date: Date) => {
   let separatorElt = document.createElement("li");
