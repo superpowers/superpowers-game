@@ -4,7 +4,15 @@ import TextRendererUpdater from "../../components/TextRendererUpdater";
 let qs = require("querystring").parse(window.location.search.slice(1));
 let info = { projectId: qs.project, assetId: qs.asset };
 let data: {projectClient?: SupClient.ProjectClient; textUpdater?: TextRendererUpdater};
-let ui: any = {};
+let ui: {
+  gameInstance: SupEngine.GameInstance,
+  
+  allSettings: string[],
+  settings: { [name: string]: any; }
+  colorPicker: HTMLInputElement,
+  vectorFontTBody: HTMLTableSectionElement,
+  bitmapFontTBody: HTMLTableSectionElement
+} = <any>{};
 let socket: SocketIOClient.Socket;
 
 function start() {
@@ -60,13 +68,13 @@ function start() {
     }
   });
 
-  ui.colorPicker = document.querySelector("input.color-picker");
+  ui.colorPicker = <HTMLInputElement>document.querySelector("input.color-picker");
   ui.colorPicker.addEventListener("change", (event: any) => {
     socket.emit("edit:assets", info.assetId, "setProperty", "color", event.target.value.slice(1), (err: string) => { if (err != null) alert(err); });
   })
 
-  ui.fontTable = document.querySelector("table.font");
-  ui.bitmapTable = document.querySelector("table.bitmap");
+  ui.vectorFontTBody = <HTMLTableSectionElement>document.querySelector("tbody.vector-font");
+  ui.bitmapFontTBody = <HTMLTableSectionElement>document.querySelector("tbody.bitmap-font");
 
   requestAnimationFrame(draw);
 }
@@ -89,7 +97,7 @@ function onAssetReceived() {
   ui.allSettings.forEach((setting: string) => {
     if(setting === "isBitmap") {
       ui.settings[setting].checked = data.textUpdater.fontAsset.pub.isBitmap;
-      refreshTables();
+      refreshFontMode();
     } else {
       ui.settings[setting].value = (<any>data.textUpdater.fontAsset.pub)[setting];
     }
@@ -101,7 +109,7 @@ function onAssetReceived() {
 onEditCommands.setProperty = (path: string, value: any) => {
   if(path === "isBitmap") {
     ui.settings[path].checked = value;
-    refreshTables();
+    refreshFontMode();
   } else ui.settings[path].value = value;
 
   if (path === "color") ui.colorPicker.value = `#${value}`;
@@ -110,14 +118,16 @@ onEditCommands.setProperty = (path: string, value: any) => {
   }
 }
 
-function refreshTables() {
+function refreshFontMode() {
+  document.querySelector(".sidebar .font-or-image th").textContent = data.textUpdater.fontAsset.pub.isBitmap ? "Texture" : "Font";
+
   if (data.textUpdater.fontAsset.pub.isBitmap) {
-    ui.fontTable.style.display = "none";
-    ui.bitmapTable.style.display = "";
+    ui.vectorFontTBody.hidden = true;
+    ui.bitmapFontTBody.hidden = false;
   }
   else {
-    ui.bitmapTable.style.display = "none";
-    ui.fontTable.style.display = "";
+    ui.vectorFontTBody.hidden = false;
+    ui.bitmapFontTBody.hidden = true;
   }
 }
 

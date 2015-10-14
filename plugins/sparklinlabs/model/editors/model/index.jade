@@ -5,6 +5,7 @@ html
     link(rel="stylesheet",href="/client/styles/perfectResize.css")
     link(rel="stylesheet",href="/client/styles/treeView.css")
     link(rel="stylesheet",href="/client/styles/dialogs.css")
+    link(rel="stylesheet",href="/client/styles/properties.css")
     link(rel="stylesheet",href="index.css")
 
   body
@@ -27,7 +28,7 @@ html
             tbody
 
     .sidebar
-      table
+      table.properties
         tr.model
           th Model
           td
@@ -44,7 +45,7 @@ html
             button.download Download
 
         tr
-          th Rendering
+          th Filtering
           td
             select.filtering
               option(value="pixelated") Pixelated
@@ -71,8 +72,9 @@ html
 
         tr
           th
-            span Opacity
-            input(type="checkbox").opacity-checkbox
+            div
+              div Opacity
+              input(type="checkbox").opacity-checkbox
           td
             input(type="number" min="0" max="1" step="0.1").property-opacity
 
@@ -90,10 +92,10 @@ html
 
       .advanced-textures.collapsed
         .header
-          span Advanced Textures
+          .label Advanced Textures
           button.plus +
         .content
-          table
+          table.properties
             tr
               th Map
               td

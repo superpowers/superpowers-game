@@ -3,72 +3,66 @@ html
   head
     link(rel="stylesheet",href="/client/styles/reset.css")
     link(rel="stylesheet",href="/client/styles/dialogs.css")
+    link(rel="stylesheet",href="/client/styles/properties.css")
     link(rel="stylesheet",href="index.css")
 
   body
     canvas
 
     .sidebar
-      table
-        tr
-          th Bitmap
-          td
-            input(type="checkbox").property-isBitmap
+      table.properties
+        tbody.main
+          tr
+            th Bitmap
+            td
+              input(type="checkbox").property-isBitmap
+          tr.font-or-image
+            th Font
+            td
+              button.upload Upload
+              form(style="display: none")
+                input.file-select(type="file")
+              button.download Download
+          tr
+            th Filtering
+            td
+              select.property-filtering
+                option(value='pixelated') Pixelated
+                option(value='smooth') Smooth
+          tr
+            th Pixels /&nbsp;unit
+            td
+              input(type="number").property-pixelsPerUnit
 
-        tr
-          th Image
-          td
-            button.upload Upload
-            form(style="display: none")
-              input.file-select(type="file")
+        tbody.vector-font
+          tr
+            th Size (pixels)
+            td
+              input(type="number").property-size
+          tr
+            th Color
+            td
+              .inputs
+                input.color.property-color
+                input(type="color").color-picker
 
-            button.download Download
-
-        tr
-          th Rendering
-          td
-            select.property-filtering
-              option(value='pixelated') Pixelated
-              option(value='smooth') Smooth
-
-        tr
-          th Pixels /&nbsp;unit
-          td
-            input(type="number").property-pixelsPerUnit
-
-      table.font
-        tr
-          th Size (pixels)
-          td
-            input(type="number").property-size
-
-        tr
-          th Color
-          td
-            .color
-              input.property-color
-              input(type="color").color-picker
-
-      table.bitmap
-        tr
-          th Grid Width
-          td
-            input(type="number").property-gridWidth
-
-        tr
-          th Grid Height
-          td
-            input(type="number").property-gridHeight
-
-        tr
-          th Charset
-          td
-            input.property-charset
-
-        tr
-          th Charset Offset
-          td
-            input(type="number").property-charsetOffset
+        tbody.bitmap-font
+          tr
+            th Grid width
+            td
+              input(type="number").property-gridWidth
+          tr
+            th Grid height
+            td
+              input(type="number").property-gridHeight
+          tr
+            th Charset
+            td
+              input.property-charset
+          tr
+            th Charset offset
+            td
+              input(type="number").property-charsetOffset
 
     script(src="/core/SupCore.js")
     script(src="../../data.js")

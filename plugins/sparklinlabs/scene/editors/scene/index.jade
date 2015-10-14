@@ -5,6 +5,7 @@ html
     link(rel="stylesheet",href="/client/styles/perfectResize.css")
     link(rel="stylesheet",href="/client/styles/treeView.css")
     link(rel="stylesheet",href="/client/styles/dialogs.css")
+    link(rel="stylesheet",href="/client/styles/properties.css")
     link(rel="stylesheet",href="index.css")
 
     template#component-cartridge-template
@@ -12,7 +13,7 @@ html
         .type
         button.shrink-component –
         button.delete-component ×
-      table.settings
+      table.settings.properties
         tbody
 
   body
@@ -67,7 +68,7 @@ html
       .nodes-tree-view
 
       .inspector(hidden)
-        table.transform
+        table.transform.properties
           tr.position
             th.label  Position
             td

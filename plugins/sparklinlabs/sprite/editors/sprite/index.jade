@@ -5,6 +5,7 @@ html
     link(rel="stylesheet",href="/client/styles/perfectResize.css")
     link(rel="stylesheet",href="/client/styles/treeView.css")
     link(rel="stylesheet",href="/client/styles/dialogs.css")
+    link(rel="stylesheet",href="/client/styles/properties.css")
     link(rel="stylesheet",href="index.css")
 
   body
@@ -23,7 +24,9 @@ html
           label(for="loop-checkbox") Loop
 
     .sidebar
-      table
+      table.properties
+        tr
+          th(colspan="2") Sprite
         tr
           th Texture
           td
@@ -32,44 +35,55 @@ html
               input.file-select(type="file",accept="image/*")
 
             button.download Download
+        tr
+          th Texture size (px)
+          td.image-size
+            input(type="text",readonly)
+        tr
+          th Grid width
+          td
+            .inputs
+              input.property-grid-width(type="number")
+              button.set-grid-width Set
+        tr
+          th Grid height
+          td
+            .inputs
+              input.property-grid-height(type="number")
+              button.set-grid-height Set
+        tr
+          th Origin (%)
+          td
+            .inputs
+              input.property-origin-x(type="number")
+              input.property-origin-y(type="number")
 
         tr
-          th Rendering
-          td
-            select.property-filtering
-              option(value="pixelated") Pixelated
-              option(value="smooth") Smooth
-
+          th(colspan="2") Rendering
         tr
           th Pixels /&nbsp;unit
           td
             input(type="number",min="1").property-pixelsPerUnit
-
         tr
-          th Size
-          td.image-size
-
-        tr
-          th Grid
-        tr
-          th.nested Width
+          th Filtering
           td
-            input.property-grid-width(type="number")
-            button.set-grid-width Set
+            select.property-filtering
+              option(value="pixelated") Pixelated
+              option(value="smooth") Smooth
         tr
-          th.nested Height
+          th
+            div
+              div Opacity
+              input(type="checkbox").opacity-checkbox
           td
-            input.property-grid-height(type="number")
-            button.set-grid-height Set
+            input(type="number",min="0",max="1",step="0.1").property-opacity
+        tr
+          th Alpha test
+          td
+            input(type="number",min="0",max="1",step="0.1").property-alphaTest
 
         tr
-          th Origin (%)
-          td
-            span X
-            input.property-origin-x(type="number")
-            span Y
-            input.property-origin-y(type="number")
-
+          th(colspan="2") Animation
         tr
           th Frames /&nbsp;second
           td
@@ -82,18 +96,6 @@ html
               option(value="rows") Rows
               option(value="columns") Columns
 
-        tr
-          th
-            span Opacity
-            input(type="checkbox").opacity-checkbox
-          td
-            input(type="number",min="0",max="1",step="0.1").property-opacity
-
-        tr
-          th Alpha test
-          td
-            input(type="number",min="0",max="1",step="0.1").property-alphaTest
-
       .header
         span Animations
       .animations-buttons
@@ -105,10 +107,10 @@ html
 
       .advanced-textures.collapsed
         .header
-          span Advanced Textures
+          .label Advanced Textures
           button.plus +
         .content
-          table
+          table.properties
             tr
               th Map
               td

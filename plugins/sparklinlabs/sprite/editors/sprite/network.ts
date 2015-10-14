@@ -50,7 +50,7 @@ function onAssetReceived() {
     spritesheetArea.spritesheet.textures["map"].needsUpdate = true;
     spritesheetArea.spriteRenderer.setSprite(spritesheetArea.spritesheet);
 
-    ui.imageLabel.textContent = `${texture.image.width}x${texture.image.height} px`;
+    ui.imageSize.value = `${texture.image.width} × ${texture.image.height}`;
   }
 
   centerAnimationCamera();
@@ -145,7 +145,7 @@ function updateSpritesheet() {
   spritesheetArea.gridRenderer.resize(texture.image.width / pub.grid.width, texture.image.height / pub.grid.height);
 
   updateSelectedAnimation();
-  ui.imageLabel.textContent = `${texture.image.width}x${texture.image.height} px`;
+  ui.imageSize.value = `${texture.image.width} × ${texture.image.height}`;
 }
 
 onEditCommands.setMaps = () => { updateSpritesheet() };

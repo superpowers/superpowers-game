@@ -34,7 +34,11 @@ let ui: {
 } = {};
 export default ui;
 
+// Setup hotkeys
 SupClient.setupHotkeys();
+
+// Setup resizable panes
+new PerfectResize(document.querySelector(".sidebar"), "right");
 
 // Model upload
 let modelFileSelect = <HTMLInputElement> document.querySelector(".model input.file-select");

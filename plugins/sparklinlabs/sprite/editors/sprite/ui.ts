@@ -13,7 +13,7 @@ let ui: {
   settings?: { [name: string]: any; };
   opacityCheckbox?: HTMLInputElement;
 
-  imageLabel?: HTMLTableDataCellElement;
+  imageSize?: HTMLInputElement;
 
   animationsTreeView?: any;
   selectedAnimationId?: string;
@@ -29,8 +29,13 @@ let ui: {
 } = {};
 export default ui;
 
+// Setup hotkeys
 SupClient.setupHotkeys();
 
+// Setup resizable panes
+new PerfectResize(document.querySelector(".sidebar"), "right");
+
+// Setup properties
 let fileSelect = <HTMLInputElement>document.querySelector("input.file-select");
 fileSelect.addEventListener("change", onFileSelectChange);
 document.querySelector("button.upload").addEventListener("click", () => { fileSelect.click(); });
@@ -81,7 +86,7 @@ ui.opacityCheckbox.addEventListener("click", onCheckOpacity);
 document.querySelector("button.set-grid-width").addEventListener("click", onSetGridWidth);
 document.querySelector("button.set-grid-height").addEventListener("click", onSetGridHeight);
 
-ui.imageLabel = <HTMLTableDataCellElement>document.querySelector("td.image-size");
+ui.imageSize = <HTMLInputElement>document.querySelector("td.image-size input");
 
 // Animations
 ui.animationsTreeView = new TreeView(document.querySelector(".animations-tree-view"), onAnimationDrop);
