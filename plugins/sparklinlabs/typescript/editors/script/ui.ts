@@ -315,6 +315,7 @@ function clearInfoPopup() {
 // Parameter hint popup
 ui.parameterElement = <HTMLDivElement>document.querySelector(".popup-parameter");
 ui.parameterElement.parentElement.removeChild(ui.parameterElement);
+ui.parameterElement.style.display = "";
 
 var parameterPopupKeyMap = {
   "Esc": () => { clearParameterPopup(); },
