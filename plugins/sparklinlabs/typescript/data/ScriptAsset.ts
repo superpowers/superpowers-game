@@ -66,6 +66,13 @@ export default class ScriptAsset extends SupCore.data.base.Asset {
     let behaviorName = options.name.trim().replace(/[()[\]{}-]/g, "");
     behaviorName = behaviorName.slice(0, 1).toUpperCase() + behaviorName.slice(1);
 
+    if (behaviorName === "Behavior") {
+      let parentEntry = this.serverData.entries.parentNodesById[this.id];
+      if (parentEntry != null) {
+        behaviorName = parentEntry.name.slice(0, 1).toUpperCase() + parentEntry.name.slice(1) + behaviorName;
+      }
+    }
+
     while (true) {
       let index = behaviorName.indexOf(" ");
       if (index === -1) break;
