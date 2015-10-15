@@ -237,7 +237,17 @@ function onNewPropertyClick() {
   SupClient.dialogs.prompt("Enter a name for the property.", null, "property", "Create", (name) => {
     if (name == null) return;
 
-    socket.emit("edit:assets", info.assetId, "addTileProperty", data.selectedTile, name, (err: string) => { if (err != null) { alert(err); return; } });
+    socket.emit("edit:assets", info.assetId, "addTileProperty", data.selectedTile, name, (err: string, id: string) => {
+      if (err != null) { alert(err); return; }
+
+      ui.selectedProperty = name;
+      ui.propertiesTreeView.clearSelection();
+      let liElt = ui.propertiesTreeView.treeRoot.querySelector(`li[data-name="${ui.selectedProperty}"]`);
+      ui.propertiesTreeView.addToSelection(liElt);
+      (<HTMLInputElement>liElt.querySelector("input")).focus();
+      (<HTMLButtonElement>document.querySelector("button.rename-property")).disabled = false;
+      (<HTMLButtonElement>document.querySelector("button.delete-property")).disabled = false;
+    });
   });
 }
 
