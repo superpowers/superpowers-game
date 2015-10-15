@@ -80,7 +80,7 @@ ui.opacityInput = <HTMLInputElement>document.querySelector("input.property-opaci
 ui.opacityInput.addEventListener("input", onChangeOpacity);
 
 // Animations
-ui.animationsTreeView = new TreeView(document.querySelector(".animations-tree-view"), onAnimationDrop);
+ui.animationsTreeView = new TreeView(document.querySelector(".animations-tree-view"), { dropCallback: onAnimationDrop });
 ui.animationsTreeView.on("selectionChange", updateSelectedAnimation);
 
 document.querySelector("button.new-animation").addEventListener("click", onNewAnimationClick);

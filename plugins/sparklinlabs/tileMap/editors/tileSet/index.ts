@@ -57,7 +57,7 @@ function start() {
   ui.selectedTileLabel = document.querySelector("label.selected-tile-number");
 
   // Tile properties
-  ui.propertiesTreeView = new TreeView(document.querySelector(".properties-tree-view"), () => { return false; });
+  ui.propertiesTreeView = new TreeView(document.querySelector(".properties-tree-view"), { multipleSelection: false });
   ui.propertiesTreeView.on("selectionChange", onPropertySelect);
   document.querySelector("button.new-property").addEventListener("click", onNewPropertyClick);
   document.querySelector("button.rename-property").addEventListener("click", onRenamePropertyClick);
@@ -219,10 +219,7 @@ function onDownloadTileset(event: Event) {
 }
 
 function onPropertySelect() {
-  if (ui.propertiesTreeView.selectedNodes.length > 1) {
-    ui.propertiesTreeView.clearSelection();
-    ui.propertiesTreeView.addToSelection(ui.propertiesTreeView.treeRoot.querySelector(`li[data-name="${ui.selectedProperty}"]`));
-  } else if (ui.propertiesTreeView.selectedNodes.length === 1) {
+  if (ui.propertiesTreeView.selectedNodes.length === 1) {
     ui.selectedProperty = ui.propertiesTreeView.selectedNodes[0].dataset.name;
     (<HTMLButtonElement>document.querySelector("button.rename-property")).disabled = false;
     (<HTMLButtonElement>document.querySelector("button.delete-property")).disabled = false;

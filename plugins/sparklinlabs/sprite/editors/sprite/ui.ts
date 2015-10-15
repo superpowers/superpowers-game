@@ -89,7 +89,7 @@ document.querySelector("button.set-grid-height").addEventListener("click", onSet
 ui.imageSize = <HTMLInputElement>document.querySelector("td.image-size input");
 
 // Animations
-ui.animationsTreeView = new TreeView(document.querySelector(".animations-tree-view"), onAnimationDrop);
+ui.animationsTreeView = new TreeView(document.querySelector(".animations-tree-view"), { dropCallback: onAnimationDrop });
 ui.animationsTreeView.on("selectionChange", updateSelectedAnimation);
 
 document.querySelector("button.new-animation").addEventListener("click", onNewAnimationClick);
@@ -453,7 +453,7 @@ export function setupAdvancedTextures(advancedTextures: boolean) {
 }
 
 export function updateSelectedMap() {
-  let selectedMapElt = ui.texturesTreeView.selectedNodes[0]
+  let selectedMapElt = ui.texturesTreeView.selectedNodes[0];
   if (selectedMapElt != null) ui.selectedTextureName = selectedMapElt.dataset.name;
   else ui.selectedTextureName = null;
 

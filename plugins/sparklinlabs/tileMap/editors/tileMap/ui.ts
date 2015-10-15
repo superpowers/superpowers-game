@@ -74,7 +74,7 @@ ui.selectionToolButton.addEventListener("change", () => { selectSelection(); });
 ui.eraserToolButton = <HTMLInputElement>document.querySelector("input#Eraser");
 ui.eraserToolButton.addEventListener("change", () => { selectEraser(); });
 
-ui.layersTreeView = new TreeView(document.querySelector(".layers-tree-view"), onLayerDrop);
+ui.layersTreeView = new TreeView(document.querySelector(".layers-tree-view"), { dropCallback: onLayerDrop, multipleSelection: false });
 ui.layersTreeView.on("selectionChange", onLayerSelect);
 
 document.querySelector("button.new-layer").addEventListener("click", onNewLayerClick);
@@ -208,8 +208,7 @@ function onLayerDrop(dropInfo: any, orderedNodes: any[]) {
 }
 
 function onLayerSelect() {
-  if (ui.layersTreeView.selectedNodes.length !== 1) {
-    ui.layersTreeView.clearSelection();
+  if (ui.layersTreeView.selectedNodes.length === 0) {
     ui.layersTreeView.addToSelection(ui.layersTreeView.treeRoot.querySelector(`li[data-id="${tileSetArea.selectedLayerId}"]`));
   } else {
     tileSetArea.selectedLayerId = ui.layersTreeView.selectedNodes[0].dataset["id"];

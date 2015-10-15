@@ -97,7 +97,7 @@ new PerfectResize(document.querySelector(".nodes-tree-view"), "top");
 
 // Setup tree view
 ui.treeViewElt = <HTMLDivElement>document.querySelector(".nodes-tree-view");
-ui.nodesTreeView = new TreeView(ui.treeViewElt, onNodeDrop);
+ui.nodesTreeView = new TreeView(ui.treeViewElt, { dropCallback: onNodeDrop });
 ui.nodesTreeView.on("activate", onNodeActivate);
 ui.nodesTreeView.on("selectionChange", () => { setupSelectedNode(); });
 

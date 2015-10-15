@@ -104,7 +104,7 @@ function onGridVisibleChange(event: UIEvent) {
 
 // Setup tree view
 ui.treeViewElt = <HTMLDivElement>document.querySelector(".nodes-tree-view");
-ui.nodesTreeView = new TreeView(document.querySelector(".nodes-tree-view"), onNodeDrop);
+ui.nodesTreeView = new TreeView(document.querySelector(".nodes-tree-view"), { dropCallback: onNodeDrop });
 ui.nodesTreeView.on("activate", onNodeActivate);
 ui.nodesTreeView.on("selectionChange", () => { setupSelectedNode(); });
 
