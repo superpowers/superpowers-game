@@ -184,6 +184,8 @@ function mouseUp() {
           if (treeViewParent.tagName === "OL") (<HTMLElement>treeViewParent.previousElementSibling).classList.remove("collapsed");
           treeViewParent = treeViewParent.parentElement;
         }
+
+        ui.nodesTreeView.scrollIntoView(treeViewNode);
         break;
       }
     }
