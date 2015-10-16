@@ -33,6 +33,8 @@ namespace Sup {
     export function toRadians(degrees: number) { return degrees * degToRad; }
     export function toDegrees(radians: number) { return radians * radToDeg; }
 
+    export interface XY { x: number; y: number; }
+
     export class Vector2 {
       static right() { return new Vector2(1, 0); }
       static left()  { return new Vector2(-1, 0); }
@@ -118,6 +120,8 @@ namespace Sup {
 
       toVector3() { return new Vector3(this.x, this.y, 0); }
     }
+
+    export interface XYZ { x: number; y: number; z: number; }
 
     export class Vector3 {
       static forward() { return new Vector3( 0,  0,  1); }

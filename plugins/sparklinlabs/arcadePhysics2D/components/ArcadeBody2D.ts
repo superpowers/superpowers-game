@@ -26,6 +26,7 @@ export default class ArcadeBody2D extends SupEngine.ActorComponent {
   velocityMin: THREE.Vector3;
   velocityMax: THREE.Vector3;
   velocityMultiplier: THREE.Vector3;
+  customGravity = { x: <number>null, y: <number>null };
 
   touches = { top: false, bottom: false, right: false, left: false };
 
@@ -87,11 +88,11 @@ export default class ArcadeBody2D extends SupEngine.ActorComponent {
     this.previousPosition.copy(this.position);
     if (!this.movable || !this.enabled) return;
 
-    this.velocity.x += (<any>SupEngine).ArcadePhysics2D.gravity.x;
+    this.velocity.x += this.customGravity.x != null ? this.customGravity.x : (<any>SupEngine).ArcadePhysics2D.gravity.x;
     this.velocity.x *= this.velocityMultiplier.x;
     this.velocity.x = Math.min(Math.max(this.velocity.x, this.velocityMin.x), this.velocityMax.x);
 
-    this.velocity.y += (<any>SupEngine).ArcadePhysics2D.gravity.y;
+    this.velocity.y += this.customGravity.y != null ? this.customGravity.y : (<any>SupEngine).ArcadePhysics2D.gravity.y;
     this.velocity.y *= this.velocityMultiplier.y;
     this.velocity.y = Math.min(Math.max(this.velocity.y, this.velocityMin.y), this.velocityMax.y);
 

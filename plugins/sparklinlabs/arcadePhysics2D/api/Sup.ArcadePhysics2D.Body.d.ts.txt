@@ -19,16 +19,28 @@ declare namespace Sup {
 
     class Body extends ActorComponent {
       constructor(actor: Sup.Actor, type: BodyType, options: BoxOptions|TileMapOptions);
+
       setEnabled(enabled: boolean): Body;
       getEnabled(): boolean;
       setMovable(movable: boolean): Body;
       getMovable(): boolean;
+
+      setCustomGravity(gravity: Sup.Math.XY): Body;
+      setCustomGravity(x: number, y: number): Body;
+      setCustomGravityX(x: number): Body;
+      setCustomGravityY(y: number): Body;
+      getCustomGravity(): Sup.Math.Vector2;
+      getCustomGravityX(): number;
+      getCustomGravityY(): number;
+
       setSize(width: number, height: number): Body;
       getSize(): { width: number; height: number; };
       setOffset(offset: { x: number; y: number; }): Body;
       getOffset(): Sup.Math.Vector2;
+
       warpPosition(position: Sup.Math.Vector2): Body;
       warpPosition(x: number, y: number): Body;
+
       setVelocity(velocity: Sup.Math.Vector2): Body;
       setVelocity(x: number, y: number): Body;
       setVelocityX(x: number): Body;
@@ -36,6 +48,11 @@ declare namespace Sup {
       getVelocity(): Sup.Math.Vector2;
       getVelocityX(): number;
       getVelocityY(): number;
+      addVelocity(velocity: Sup.Math.Vector2): Body;
+      addVelocity(x: number, y: number): Body;
+      addVelocityX(x: number): Body;
+      addVelocityY(y: number): Body;
+
       setVelocityMin(velocityMin: Sup.Math.Vector2): Body;
       setVelocityMin(x: number, y: number): Body;
       getVelocityMin(): Sup.Math.Vector2;
@@ -45,6 +62,7 @@ declare namespace Sup {
       setVelocityMultiplier(velocityMultiplier: Sup.Math.Vector2): Body;
       setVelocityMultiplier(x: number, y: number): Body;
       getVelocityMultiplier(): Sup.Math.Vector2;
+
       getTouches(): { top: boolean; bottom: boolean; right: boolean; left: boolean; };
     }
   }

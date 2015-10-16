@@ -29,6 +29,21 @@ namespace Sup {
       }
       getMovable() { return this.__inner.movable; }
 
+      setCustomGravity(gravity: Sup.Math.XY|number, y?: number) {
+        if (typeof gravity === "number") {
+          this.__inner.customGravity.x = gravity;
+          this.__inner.customGravity.y = y;
+        } else {
+          this.__inner.customGravity.x = gravity.x;
+          this.__inner.customGravity.y = gravity.y;
+        }
+      }
+      setCustomGravityX(x: number) { this.__inner.customGravity.x = x; }
+      setCustomGravityY(y: number) { this.__inner.customGravity.y = y; }
+      getCustomGravity() { return new Sup.Math.Vector2(this.__inner.customGravity.x, this.__inner.customGravity.y); }
+      getCustomGravityX() { return this.__inner.customGravity.x; }
+      getCustomGravityY() { return this.__inner.customGravity.y; }
+
       setSize(width: number, height: number) {
         this.__inner.width = width;
         this.__inner.height = height;
@@ -71,6 +86,18 @@ namespace Sup {
       getVelocity() { return new Sup.Math.Vector2(this.__inner.velocity.x, this.__inner.velocity.y); }
       getVelocityX() { return this.__inner.velocity.x; }
       getVelocityY() { return this.__inner.velocity.y; }
+
+      addVelocity(velocity: Sup.Math.Vector2|number, y?: number) {
+        if (typeof velocity === "number") {
+          this.__inner.velocity.x += velocity;
+          this.__inner.velocity.y += y;
+        } else {
+          this.__inner.velocity.x += velocity.x;
+          this.__inner.velocity.y += velocity.y;
+        }
+      }
+      addVelocityX(x: number) { this.__inner.velocity.x += x; }
+      addVelocityY(y: number) { this.__inner.velocity.y += y; }
 
       setVelocityMin(velocityMin: Sup.Math.Vector2|number, y?: number) {
         if (typeof velocityMin === "number") {
