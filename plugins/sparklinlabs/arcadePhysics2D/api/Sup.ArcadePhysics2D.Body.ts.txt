@@ -59,13 +59,13 @@ namespace Sup {
       }
       getOffset() { return new Sup.Math.Vector2(this.__inner.offsetX, this.__inner.offsetY); }
 
-      warpPosition(position: Sup.Math.Vector2|number, y?: number) {
+      warpPosition(position: Sup.Math.XY|number, y?: number) {
         if (typeof position === "number") this.__inner.warpPosition(position, y);
         else this.__inner.warpPosition(position.x, position.y);
         return this;
       }
 
-      setVelocity(velocity: Sup.Math.Vector2|number, y?: number) {
+      setVelocity(velocity: Sup.Math.XY|number, y?: number) {
         if (typeof velocity === "number") {
           this.__inner.velocity.x = velocity;
           this.__inner.velocity.y = y;
@@ -87,7 +87,7 @@ namespace Sup {
       getVelocityX() { return this.__inner.velocity.x; }
       getVelocityY() { return this.__inner.velocity.y; }
 
-      addVelocity(velocity: Sup.Math.Vector2|number, y?: number) {
+      addVelocity(velocity: Sup.Math.XY|number, y?: number) {
         if (typeof velocity === "number") {
           this.__inner.velocity.x += velocity;
           this.__inner.velocity.y += y;
@@ -99,7 +99,7 @@ namespace Sup {
       addVelocityX(x: number) { this.__inner.velocity.x += x; }
       addVelocityY(y: number) { this.__inner.velocity.y += y; }
 
-      setVelocityMin(velocityMin: Sup.Math.Vector2|number, y?: number) {
+      setVelocityMin(velocityMin: Sup.Math.XY|number, y?: number) {
         if (typeof velocityMin === "number") {
           this.__inner.velocityMin.x = velocityMin;
           this.__inner.velocityMin.y = y;
@@ -111,7 +111,7 @@ namespace Sup {
       }
       getVelocityMin() { return new Sup.Math.Vector2(this.__inner.velocityMin.x, this.__inner.velocityMin.y); }
 
-      setVelocityMax(velocityMax: Sup.Math.Vector2|number, y?: number) {
+      setVelocityMax(velocityMax: Sup.Math.XY|number, y?: number) {
         if (typeof velocityMax === "number") {
           this.__inner.velocityMax.x = velocityMax;
           this.__inner.velocityMax.y = y;
@@ -123,7 +123,7 @@ namespace Sup {
       }
       getVelocityMax() { return new Sup.Math.Vector2(this.__inner.velocityMax.x, this.__inner.velocityMax.y); }
 
-      setVelocityMultiplier(velocityMultiplier: Sup.Math.Vector2|number, y?: number) {
+      setVelocityMultiplier(velocityMultiplier: Sup.Math.XY|number, y?: number) {
         if (typeof velocityMultiplier === "number") {
           this.__inner.velocityMultiplier.x = velocityMultiplier;
           this.__inner.velocityMultiplier.y = y;

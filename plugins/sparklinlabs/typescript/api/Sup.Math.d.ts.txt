@@ -37,19 +37,19 @@ declare namespace Sup {
       copy(v: XY): Vector2;
       clone(): Vector2;
 
-      add(vector: Vector2): Vector2;
+      add(vector: XY): Vector2;
       add(x: number, y: number): Vector2;
-      subtract(vector: Vector2): Vector2;
+      subtract(vector: XY): Vector2;
       subtract(x: number, y: number): Vector2;
       multiplyScalar(multiplier: number): Vector2;
-      dot(vector: Vector2): number;
+      dot(vector: XY): number;
       normalize(): Vector2;
       negate(): Vector2;
-      lerp(vector: Vector2, t: number): Vector2;
+      lerp(vector: XY, t: number): Vector2;
       rotate(angle: number): Vector2;
       length(): number;
-      distanceTo(vector: Vector2): number;
-      angleTo(vector: Vector2): number;
+      distanceTo(vector: XY): number;
+      angleTo(vector: XY): number;
       unproject(camera: Camera): Vector3;
       angle(): number;
       setFromAngle(angle: number): Vector2;
@@ -82,20 +82,20 @@ declare namespace Sup {
       copy(vector: XYZ): Vector3;
       clone(): Vector3;
 
-      add(vector: Vector3): Vector3;
+      add(vector: XYZ): Vector3;
       add(x: number, y: number, z: number): Vector3;
-      subtract(vector: Vector3): Vector3;
+      subtract(vector: XYZ): Vector3;
       subtract(x: number, y: number, z: number): Vector3;
       multiplyScalar(multiplier: number): Vector3;
-      cross(vector: Vector3): Vector3;
-      dot(vector: Vector3): number;
+      cross(vector: XYZ): Vector3;
+      dot(vector: XYZ): number;
       normalize(): Vector3;
       negate(): Vector3;
-      lerp(vector: Vector3, t: number): Vector3;
+      lerp(vector: XYZ, t: number): Vector3;
       rotate(orientation : Quaternion): Vector3;
       length(): number;
-      distanceTo(vector: Vector3): number;
-      angleTo(vector: Vector3): number;
+      distanceTo(vector: XYZ): number;
+      angleTo(vector: XYZ): number;
       unproject(camera: Camera): Vector3;
       toVector2(): Vector2;
     }
@@ -109,7 +109,7 @@ declare namespace Sup {
       constructor(x?: number, y?: number, z?: number, w?: number);
 
       set(x: number, y: number, z: number, w: number): Quaternion;
-      setFromAxisAngle(axis: Vector3, angle: number): Quaternion;
+      setFromAxisAngle(axis: XYZ, angle: number): Quaternion;
       setFromYawPitchRoll(yaw: number, pitch: number, roll: number): Quaternion;
       copy(q: Quaternion): Quaternion;
       clone(): Quaternion;
@@ -121,17 +121,16 @@ declare namespace Sup {
 
     class Plane {
       constructor();
-      constructor(normal: Vector3, distance: number);
+      constructor(normal: XYZ, distance: number);
 
-      setFromDistance(normal: Vector3, distance: number): Plane;
-      setFromPoint(normal: Vector3, point: Vector3): Plane;
+      setFromDistance(normal: XYZ, distance: number): Plane;
+      setFromPoint(normal: XYZ, point: XYZ): Plane;
 
       getNormal(): Vector3;
-
       getDistance(): number;
-      distanceToPoint(point: Vector3): number;
 
-      projectPoint(point: Vector3): Vector3;
+      distanceToPoint(point: XYZ): number;
+      projectPoint(point: XYZ): Vector3;
     }
 
     interface ActorRaycastHit {
@@ -142,17 +141,17 @@ declare namespace Sup {
     }
 
     class Ray {
-      constructor(origin?: Vector3|XYZ, direction?: Vector3|XYZ);
+      constructor(origin?: XYZ, direction?: XYZ);
 
-      setOrigin(origin: Vector3): Ray;
+      setOrigin(origin: XYZ): Ray;
       setOrigin(x: number, y: number, z: number): Ray;
       getOrigin(): Vector3;
 
-      setDirection(direction: Vector3): Ray;
+      setDirection(direction: XYZ): Ray;
       setDirection(x: number, y: number, z: number): Ray;
       getDirection(): Vector3;
 
-      setFromCamera(camera: Sup.Camera, screenPosition: { x: number; y: number; }): Ray;
+      setFromCamera(camera: Sup.Camera, screenPosition: XY): Ray;
 
       intersectActor(actor: Sup.Actor, recursive?: boolean): ActorRaycastHit[];
       intersectActors(actors: Sup.Actor[]): ActorRaycastHit[];
@@ -165,18 +164,18 @@ declare namespace Sup {
     }
 
     class Ray2D {
-      constructor(origin?: Vector2|XY, direction?: Vector2|XY);
+      constructor(origin?: XY, direction?: XY);
 
-      setOrigin(origin: Vector2): Ray2D;
+      setOrigin(origin: XY): Ray2D;
       setOrigin(x: number, y: number): Ray2D;
       getOrigin(): Vector2;
 
-      setDirection(direction: Vector2): Ray2D;
+      setDirection(direction: XY): Ray2D;
       setDirection(x: number, y: number): Ray2D;
       getDirection(): Vector2;
 
-      intersectCircle(position: { x: number; y: number; }, radius: number): Raycast2DHit;
-      intersectRectangle(position: { x: number; y: number; }, size: { width: number; height: number; }, angle: number): Raycast2DHit;
+      intersectCircle(position: XY, radius: number): Raycast2DHit;
+      intersectRectangle(position: XY, size: { width: number; height: number; }, angle: number): Raycast2DHit;
       intersectSpriteRenderer(spriteRenderer: Sup.SpriteRenderer): Raycast2DHit;
       intersectTileMapRenderer(tileMapRenderer: Sup.TileMapRenderer, options?: { layers?: number[]; tileSetPropertyName?: string }): { distance: number; point: Vector2; block: Vector2; };
     }

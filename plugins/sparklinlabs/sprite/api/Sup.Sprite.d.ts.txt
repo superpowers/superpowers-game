@@ -7,6 +7,6 @@ declare namespace Sup {
     getFramesPerSecond(): number;
     getAlphaTest(): number;
     getGridSize(): { width: number; height: number; };
-    getOrigin(): { x: number; y: number; };
+    getOrigin(): Sup.Math.Vector2;
   }
 }

@@ -25,7 +25,7 @@ declare namespace Sup {
     getDistance(): number;
     setAngle(angle: number): Light;
     getAngle(): number;
-    setTarget(target: Math.Vector3): Light;
+    setTarget(target: Sup.Math.XYZ): Light;
     getTarget(): Math.Vector3;
     setCastShadow(castShadow: boolean): Light;
     getCastShadow(): boolean;

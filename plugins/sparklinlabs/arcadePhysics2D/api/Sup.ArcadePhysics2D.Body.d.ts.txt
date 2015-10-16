@@ -38,28 +38,28 @@ declare namespace Sup {
       setOffset(offset: { x: number; y: number; }): Body;
       getOffset(): Sup.Math.Vector2;
 
-      warpPosition(position: Sup.Math.Vector2): Body;
+      warpPosition(position: Sup.Math.XY): Body;
       warpPosition(x: number, y: number): Body;
 
-      setVelocity(velocity: Sup.Math.Vector2): Body;
+      setVelocity(velocity: Sup.Math.XY): Body;
       setVelocity(x: number, y: number): Body;
       setVelocityX(x: number): Body;
       setVelocityY(y: number): Body;
       getVelocity(): Sup.Math.Vector2;
       getVelocityX(): number;
       getVelocityY(): number;
-      addVelocity(velocity: Sup.Math.Vector2): Body;
+      addVelocity(velocity: Sup.Math.XY): Body;
       addVelocity(x: number, y: number): Body;
       addVelocityX(x: number): Body;
       addVelocityY(y: number): Body;
 
-      setVelocityMin(velocityMin: Sup.Math.Vector2): Body;
+      setVelocityMin(velocityMin: Sup.Math.XY): Body;
       setVelocityMin(x: number, y: number): Body;
       getVelocityMin(): Sup.Math.Vector2;
-      setVelocityMax(velocityMax: Sup.Math.Vector2): Body;
+      setVelocityMax(velocityMax: Sup.Math.XY): Body;
       setVelocityMax(x: number, y: number): Body;
       getVelocityMax(): Sup.Math.Vector2;
-      setVelocityMultiplier(velocityMultiplier: Sup.Math.Vector2): Body;
+      setVelocityMultiplier(velocityMultiplier: Sup.Math.XY): Body;
       setVelocityMultiplier(x: number, y: number): Body;
       getVelocityMultiplier(): Sup.Math.Vector2;
 

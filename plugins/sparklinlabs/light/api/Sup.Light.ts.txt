@@ -33,7 +33,7 @@ namespace Sup {
     getDistance() { return this.__inner.distance; }
     setAngle(angle) { this.__inner.setAngle(angle); return this; }
     getAngle() { return this.__inner.angle; }
-    setTarget(target) { this.__inner.setTarget(target.x, target.y, target.z);; return this; }
+    setTarget(target) { this.__inner.setTarget(target.x, target.y, target.z); return this; }
     getTarget() { return new Math.Vector3(this.__inner.target.x, this.__inner.target.y, this.__inner.target.z); }
     setCastShadow(castShadow) { this.__inner.setCastShadow(castShadow); return this; }
     getCastShadow() { return this.__inner.castShadow; }

@@ -17,9 +17,9 @@ declare namespace Sup {
     getChildren(): Array<Actor>;
 
     getPosition(): Math.Vector3;
-    setPosition(position: Math.Vector3): Actor;
+    setPosition(position: Math.XYZ): Actor;
     setPosition(x: number, y: number, z: number): Actor;
-    setPosition(position: Math.Vector2): Actor;
+    setPosition(position: Math.XY): Actor;
     setPosition(x: number, y: number): Actor;
     getX(): number;
     setX(x: number): Actor;
@@ -29,9 +29,9 @@ declare namespace Sup {
     setZ(z: number): Actor;
 
     getLocalPosition(): Math.Vector3;
-    setLocalPosition(position: Math.Vector3): Actor;
+    setLocalPosition(position: Math.XYZ): Actor;
     setLocalPosition(x: number, y: number, z: number): Actor;
-    setLocalPosition(position: Math.Vector2): Actor;
+    setLocalPosition(position: Math.XY): Actor;
     setLocalPosition(x: number, y: number): Actor;
     getLocalX(): number;
     setLocalX(x: number): Actor;
@@ -40,25 +40,25 @@ declare namespace Sup {
     getLocalZ(): number;
     setLocalZ(z: number): Actor;
 
-    move(offset: Math.Vector3): Actor;
+    move(offset: Math.XYZ): Actor;
     move(x: number, y: number, z: number): Actor;
-    move(offset: Math.Vector2): Actor;
+    move(offset: Math.XY): Actor;
     move(x: number, y: number): Actor;
     moveX(x: number): Actor;
     moveY(y: number): Actor;
     moveZ(z: number): Actor;
 
-    moveLocal(offset: Math.Vector3): Actor;
+    moveLocal(offset: Math.XYZ): Actor;
     moveLocal(x: number, y: number, z: number): Actor;
-    moveLocal(offset: Math.Vector2): Actor;
+    moveLocal(offset: Math.XY): Actor;
     moveLocal(x: number, y: number): Actor;
     moveLocalX(x: number): Actor;
     moveLocalY(y: number): Actor;
     moveLocalZ(z: number): Actor;
 
-    moveOriented(offset: Math.Vector3): Actor;
+    moveOriented(offset: Math.XYZ): Actor;
     moveOriented(x: number, y: number, z: number): Actor;
-    moveOriented(offset: Math.Vector2): Actor;
+    moveOriented(offset: Math.XY): Actor;
     moveOriented(x: number, y: number): Actor;
     moveOrientedX(x: number): Actor;
     moveOrientedY(y: number): Actor;
@@ -73,7 +73,7 @@ declare namespace Sup {
 
     // Values are in radians
     getEulerAngles(): Math.Vector3;
-    setEulerAngles(angles: Math.Vector3): Actor;
+    setEulerAngles(angles: Math.XYZ): Actor;
     setEulerAngles(x: number, y: number, z: number): Actor;
     getEulerX(): number;
     setEulerX(x: number): Actor;
@@ -83,7 +83,7 @@ declare namespace Sup {
     setEulerZ(z: number): Actor;
 
     getLocalEulerAngles(): Math.Vector3;
-    setLocalEulerAngles(angles: Math.Vector3): Actor;
+    setLocalEulerAngles(angles: Math.XYZ): Actor;
     setLocalEulerAngles(x: number, y: number, z: number): Actor;
     getLocalEulerX(): number;
     setLocalEulerX(x: number): Actor;
@@ -92,26 +92,26 @@ declare namespace Sup {
     getLocalEulerZ(): number;
     setLocalEulerZ(z: number): Actor;
 
-    rotateEulerAngles(offset: Math.Vector3): Actor;
+    rotateEulerAngles(offset: Math.XYZ): Actor;
     rotateEulerAngles(x: number, y: number, z: number): Actor;
     rotateEulerX(x: number): Actor;
     rotateEulerY(y: number): Actor;
     rotateEulerZ(z: number): Actor;
 
-    rotateLocalEulerAngles(offset: Math.Vector3): Actor;
+    rotateLocalEulerAngles(offset: Math.XYZ): Actor;
     rotateLocalEulerAngles(x: number, y: number, z: number): Actor;
     rotateLocalEulerX(x: number): Actor;
     rotateLocalEulerY(y: number): Actor;
     rotateLocalEulerZ(z: number): Actor;
 
-    lookAt(target: Math.Vector3, upVector?: Math.Vector3): Actor;
-    lookTowards(direction: Math.Vector3, upVector?: Math.Vector3): Actor;
+    lookAt(target: Math.XYZ, upVector?: Math.XYZ): Actor;
+    lookTowards(direction: Math.XYZ, upVector?: Math.XYZ): Actor;
 
     getLocalScale(): Math.Vector3;
     getLocalScaleX(): number;
     getLocalScaleY(): number;
     getLocalScaleZ(): number;
-    setLocalScale(scale: Math.Vector3): Actor;
+    setLocalScale(scale: Math.XYZ): Actor;
     setLocalScale(x: number, y: number, z: number): Actor;
     setLocalScale(xyz: number): Actor;
     setLocalScaleX(x: number): Math.Vector3;

@@ -56,21 +56,21 @@ namespace Sup {
         this.y = (y != null) ? y : x;
         return this;
       }
-      copy(v: Vector2) { this.x = v.x; this.y = v.y; return this; }
+      copy(v: XY) { this.x = v.x; this.y = v.y; return this; }
       clone() { return new Vector2(this.x, this.y); }
 
-      add(x: number|Vector2, y?: number) {
+      add(x: number|XY, y?: number) {
         if (y == null) {
-          let v = <Vector2>x;
+          let v = <XY>x;
           this.x += v.x; this.y += v.y;
         } else {
           this.x += <number>x; this.y += y;
         }
         return this;
       }
-      subtract(x: number|Vector2, y?: number) {
+      subtract(x: number|XY, y?: number) {
         if (y == null) {
-          let v = <Vector2>x;
+          let v = <XY>x;
           this.x -= v.x; this.y -= v.y;
         } else {
           this.x -= <number>x; this.y -= y;
@@ -79,7 +79,7 @@ namespace Sup {
       }
       multiplyScalar(m: number) { this.x *= m; this.y *= m; return this; }
 
-      dot(v: Vector3) { return this.x * v.x + this.y * v.y; }
+      dot(v: XY) { return this.x * v.x + this.y * v.y; }
 
       normalize() {
         let length = this.length();
@@ -91,7 +91,7 @@ namespace Sup {
         return this;
       }
 
-      lerp(v: Vector3, t: number) {
+      lerp(v: XY, t: number) {
         this.x = this.x * (1 - t) + v.x * t;
         this.y = this.y * (1 - t) + v.y * t;
         return this;
@@ -102,8 +102,12 @@ namespace Sup {
         return this;
       }
       length() { return window.Math.sqrt(this.x * this.x + this.y * this.y); }
-      distanceTo(v: Vector2) { return v.clone().subtract(this).length(); }
-      angleTo(v: Vector2) { return window.Math.atan2(v.y - this.y, v.x - this.x); }
+      distanceTo(v: XY) {
+        let x = this.x - v.x;
+        let y = this.y - v.y;
+        return window.Math.sqrt(x*x + y*y);
+      }
+      angleTo(v: XY) { return window.Math.atan2(v.y - this.y, v.x - this.x); }
       unproject(camera: Sup.Camera) {
         tmpVector3.set(this.x, this.y, 0);
         tmpVector3.unproject(camera.__inner.threeCamera);
@@ -148,21 +152,21 @@ namespace Sup {
         this.z = (z != null) ? z : x;
         return this;
       }
-      copy(v: Vector3) { this.x = v.x; this.y = v.y; this.z = v.z; return this; }
+      copy(v: XYZ) { this.x = v.x; this.y = v.y; this.z = v.z; return this; }
       clone() { return new Vector3(this.x, this.y, this.z); }
 
-      add(x: number|Vector3, y?: number, z?: number) {
+      add(x: number|XYZ, y?: number, z?: number) {
         if (y == null && z == null) {
-          let v = <Vector3>x;
+          let v = <XYZ>x;
           this.x += v.x; this.y += v.y; this.z += v.z;
         } else {
           this.x += <number>x; this.y += y; this.z += z;
         }
         return this;
       }
-      subtract(x: number|Vector3, y?: number, z?: number) {
+      subtract(x: number|XYZ, y?: number, z?: number) {
         if (y == null && z == null) {
-          let v = <Vector3>x;
+          let v = <XYZ>x;
           this.x -= v.x; this.y -= v.y; this.z -= v.z;
         } else {
           this.x -= <number>x; this.y -= y; this.z -= z;
@@ -171,7 +175,7 @@ namespace Sup {
       }
       multiplyScalar(m: number) { this.x *= m; this.y *= m; this.z *= m; return this; }
 
-      cross(v: Vector3) {
+      cross(v: XYZ) {
         let x = this.x;
         let y = this.y;
         let z = this.z;
@@ -182,7 +186,7 @@ namespace Sup {
         return this;
       }
 
-      dot(v: Vector3) { return this.x * v.x + this.y * v.y + this.z * v.z; }
+      dot(v: XYZ) { return this.x * v.x + this.y * v.y + this.z * v.z; }
 
       normalize() {
         let length = this.length();
@@ -194,7 +198,7 @@ namespace Sup {
         return this;
       }
 
-      lerp(v: Vector3, t: number) {
+      lerp(v: XYZ, t: number) {
         this.x = this.x * (1 - t) + v.x * t;
         this.y = this.y * (1 - t) + v.y * t;
         this.z = this.z * (1 - t) + v.z * t;
@@ -219,9 +223,15 @@ namespace Sup {
       }
 
       length() { return window.Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z); }
-      distanceTo(v: Vector3) { return v.clone().subtract(this).length(); }
-      angleTo(v: Vector3) {
-        let theta = this.dot(v) / (this.length() * v.length());
+      distanceTo(v: XYZ) {
+        let x = this.x - v.x;
+        let y = this.y - v.y;
+        let z = this.z - v.z;
+        return window.Math.sqrt(x*x + y*y + z*z);
+      }
+      angleTo(v: XYZ) {
+        let vLength = window.Math.sqrt(v.x*v.x + v.y*v.y + v.z*v.z);
+        let theta = this.dot(v) / (this.length() * vLength);
 		    return window.Math.acos(Math.clamp(theta, - 1, 1));
       }
 
@@ -254,7 +264,7 @@ namespace Sup {
       copy(q: Quaternion) { this.x = q.x; this.y = q.y; this.z = q.z; this.w = q.w; return this; }
       clone() { return new Quaternion(this.x, this.y, this.z, this.w); }
 
-      setFromAxisAngle(axis: Vector3, angle: number) {
+      setFromAxisAngle(axis: XYZ, angle: number) {
         let s = window.Math.sin(angle / 2);
 
     		this.x = axis.x * s;
@@ -356,23 +366,23 @@ namespace Sup {
       _normal = new Vector3();
       _distance: number;
 
-      constructor(normal?: Vector3, distance?: number) {
+      constructor(normal?: XYZ, distance?: number) {
         this.setFromDistance(normal, distance);
       }
-      setFromDistance(normal: Vector3, distance: number) {
+      setFromDistance(normal: XYZ, distance: number) {
         if (normal != null) this._normal.copy(normal).normalize();
         if (distance != null) this._distance = distance;
         return this;
       }
-      setFromPoint(normal: Vector3, point: Vector3) {
+      setFromPoint(normal: XYZ, point: XYZ) {
         this._normal.copy(normal).normalize();
-        this._distance = point.dot(this._normal);
+        this._distance = this._normal.dot(point);
         return this;
       }
       getNormal() { return this._normal.clone(); }
       getDistance() { return this._distance; }
-      distanceToPoint(point: Vector3) { return this._normal.dot(point) + this._distance; }
-      projectPoint(point: Vector3) {
+      distanceToPoint(point: XYZ) { return this._normal.dot(point) + this._distance; }
+      projectPoint(point: XYZ) {
         return this._normal.clone()
           .multiplyScalar(this.distanceToPoint(point))
           .subtract(point)
@@ -390,26 +400,26 @@ namespace Sup {
     export class Ray {
       _raycaster = new SupEngine.THREE.Raycaster();
 
-      constructor(origin?: Vector3, direction?: Vector3) {
+      constructor(origin?: XYZ, direction?: XYZ) {
         if (origin != null) this._raycaster.ray.origin.copy(origin);
         if (direction != null) this._raycaster.ray.direction.copy(direction).normalize();
       }
 
-      setOrigin(x: number|Vector3, y?: number, z?: number) {
+      setOrigin(x: number|XYZ, y?: number, z?: number) {
         if (y == null && z == null) this._raycaster.ray.origin.copy(x);
         else this._raycaster.ray.origin.set(x, y, z);
         return this;
       }
       getOrigin() { return new Vector3(this._raycaster.ray.origin.x, this._raycaster.ray.origin.y, this._raycaster.ray.origin.z); }
 
-      setDirection(x: number|Vector3, y?: number, z?: number) {
+      setDirection(x: number|XYZ, y?: number, z?: number) {
         if (y == null && z == null) this._raycaster.ray.direction.copy(x).normalize();
         else this._raycaster.ray.direction.set(x, y, z).normalize();
         return this;
       }
       getDirection() { return new Vector3(this._raycaster.ray.direction.x, this._raycaster.ray.direction.y, this._raycaster.ray.direction.z); }
 
-      setFromCamera(camera: Sup.Camera, screenPosition: { x: number; y: number; }) {
+      setFromCamera(camera: Sup.Camera, screenPosition: XY) {
         let threeCamera = camera.__inner.threeCamera;
         let viewport = camera.__inner.viewport;
         let position = { x: screenPosition.x, y: screenPosition.y };
@@ -500,19 +510,19 @@ namespace Sup {
       _origin = new Vector2();
       _direction = new Vector2();
 
-      constructor(origin?: Vector2, direction?: Vector2) {
+      constructor(origin?: XY, direction?: XY) {
         if (origin != null) this.setOrigin(origin);
         if (direction != null) this.setDirection(direction);
       }
 
-      setOrigin(x: number|Vector2, y?: number) {
+      setOrigin(x: number|XY, y?: number) {
         if (typeof x === "number") this._origin.set(x, y);
         else this._origin.copy(x);
         return this;
       }
       getOrigin() { return this._origin.clone(); }
 
-      setDirection(x: number|Vector2, y?: number) {
+      setDirection(x: number|XY, y?: number) {
         if (typeof x === "number") this._direction.set(x, y);
         else this._direction.copy(x);
         this._direction.normalize();
@@ -520,7 +530,7 @@ namespace Sup {
       }
       getDirection() { return this._direction.clone(); }
 
-      intersectCircle(position: { x: number; y: number; }, radius: number) {
+      intersectCircle(position: XY, radius: number) {
         let x0 = this._origin.x - position.x;
         let y0 = this._origin.y - position.y;
 
@@ -551,7 +561,7 @@ namespace Sup {
         else return { point: point2, distance: distance2 };
       }
 
-      intersectRectangle(position: { x: number; y: number; }, size: { width: number; height: number; }, angle: number) {
+      intersectRectangle(position: XY, size: { width: number; height: number; }, angle: number) {
         let rayAngle = wrapAngle(this._direction.angle() - angle);
 
         let rayPosition = new Vector2(this._origin.x - position.x, this._origin.y - position.y);
