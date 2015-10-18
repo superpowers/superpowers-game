@@ -459,6 +459,8 @@ export default class Input extends EventEmitter {
       if (gamepad == null) continue;
 
       for (let i = 0; i < this.gamepadsButtons[index].length; i++) {
+        if (gamepad.buttons[i] == null) continue;
+
         let button = this.gamepadsButtons[index][i];
         let wasDown = button.isDown;
         button.isDown = gamepad.buttons[i].pressed;
@@ -469,6 +471,8 @@ export default class Input extends EventEmitter {
       }
 
       for (let stick = 0; stick < 2; stick++) {
+        if (gamepad.axes[2*stick] == null || gamepad.axes[2*stick+1] == null) continue;
+
         let axisLength = Math.sqrt( Math.pow(Math.abs(gamepad.axes[2*stick]), 2) + Math.pow(Math.abs(gamepad.axes[2*stick+1]), 2) );
         if (axisLength < 0.25) {
           this.gamepadsAxes[index][2*stick] = 0;
