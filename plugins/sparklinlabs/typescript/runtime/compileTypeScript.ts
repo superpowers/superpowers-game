@@ -63,7 +63,7 @@ export default function compileTypeScript(sourceFileNames: string[], sourceFiles
       file: e.file.fileName,
       position: e.file.getLineAndCharacterOfPosition(e.start),
       length: e.length,
-      message: e.messageText
+      message: ts.flattenDiagnosticMessageText(e.messageText, "\n")
     }}),
     program, typeChecker, script, sourceMaps, files
   }
