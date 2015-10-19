@@ -136,13 +136,8 @@ export default class ModelAsset extends SupCore.data.base.Asset {
     let pub: ModelAssetPub;
 
     let loadAttributesMaps = () => {
-      // NOTE: New config setting introduced in Superpowers 0.8
+      // NOTE: New settings introduced in Superpowers 0.8
       if (typeof pub.opacity === "undefined") pub.opacity = 1;
-
-      let maps: string[] = <any>pub.maps;
-      
-      // NOTE: "diffuse" was renamed to "map" in Superpowers 0.11
-      if (maps.length === 1 && maps[0] === "diffuse") (<any>pub).maps = ["map"];
 
       if (pub.advancedTextures == null) {
         pub.advancedTextures = false;
@@ -161,7 +156,11 @@ export default class ModelAsset extends SupCore.data.base.Asset {
       if (pub.wrapping == null) pub.wrapping = "clampToEdge";
 
       pub.attributes = {};
-      let mapsName: string[] = _.clone(<any>pub.maps);
+
+      let mapNames: string[] = <any>pub.maps;
+      // NOTE: "diffuse" was renamed to "map" in Superpowers 0.11
+      if (mapNames.length === 1 && mapNames[0] === "diffuse") mapNames[0] = "map";
+
       pub.maps = {};
       if (pub.animations == null) pub.animations = [];
 
@@ -179,7 +178,7 @@ export default class ModelAsset extends SupCore.data.base.Asset {
         },
 
         (callback) => {
-          async.each(mapsName, (key, cb) => {
+          async.each(mapNames, (key, cb) => {
             fs.readFile(path.join(assetPath, `map-${key}.dat`), (err, buffer) => {
               // TODO: Handle error but ignore ENOENT
               if (err != null) {
@@ -239,8 +238,8 @@ export default class ModelAsset extends SupCore.data.base.Asset {
     }
 
     (<any>this.pub).maps = [];
-    for (let key in maps) {
-      if (maps[key] != null) (<any>this.pub).maps.push(key);
+    for (let mapName in maps) {
+      if (maps[mapName] != null) (<any>this.pub).maps.push(mapName);
     }
 
     let json = JSON.stringify(this.pub, null, 2);
@@ -268,18 +267,18 @@ export default class ModelAsset extends SupCore.data.base.Asset {
       },
 
       (callback) => {
-        async.each(Object.keys(maps), (key, cb) => {
-          let value = maps[key];
+        async.each(Object.keys(maps), (mapName, cb) => {
+          let value = maps[mapName];
 
           if (value == null) {
-            fs.unlink(path.join(assetPath, `map-${key}.dat`), (err) => {
+            fs.unlink(path.join(assetPath, `map-${mapName}.dat`), (err) => {
               if (err != null && err.code !== "ENOENT") { cb(err); return; }
               cb();
             });
             return;
           }
 
-          fs.writeFile(path.join(assetPath, `map-${key}.dat`), value, cb);
+          fs.writeFile(path.join(assetPath, `map-${mapName}.dat`), value, cb);
         }, (err) => { callback(err, null); });
       }
 
@@ -326,20 +325,20 @@ export default class ModelAsset extends SupCore.data.base.Asset {
   server_setMaps(client: any, maps: any, callback: (err: string, maps?: any) => any) {
     if (maps == null || typeof maps !== "object") { callback("Maps must be an object"); return; }
 
-    for (let key in maps) {
-      let value = maps[key];
-      if (this.pub.maps[key] == null) { callback(`The map ${key} doesn't exist`); return; }
-      if (value != null && !(value instanceof Buffer)) { callback(`Value for ${key} must be an ArrayBuffer or null`); return; }
+    for (let mapName in maps) {
+      let value = maps[mapName];
+      if (this.pub.maps[mapName] == null) { callback(`The map ${mapName} doesn't exist`); return; }
+      if (value != null && !(value instanceof Buffer)) { callback(`Value for ${mapName} must be an ArrayBuffer or null`); return; }
     }
 
-    for (let key in maps) this.pub.maps[key] = maps[key];
+    for (let mapName in maps) this.pub.maps[mapName] = maps[mapName];
 
     callback(null, maps);
     this.emit("change");
   }
 
   client_setMaps(maps: any) {
-    for (let key in maps) this.pub.maps[key] = maps[key];
+    for (let mapName in maps) this.pub.maps[mapName] = maps[mapName];
   }
 
   server_newMap(client: any, name: string, callback: (err: string, name: string) => any) {
@@ -370,7 +369,7 @@ export default class ModelAsset extends SupCore.data.base.Asset {
       if (map === name) this.pub.mapSlots[slotName] = null;
     }
 
-    //NOTE: do not delete, the key must exist so the file can be deleted from the disk when the asset is saved
+    // NOTE: do not delete, the key must exist so the file can be deleted from the disk when the asset is saved
     this.pub.maps[name] = null;
   }
 
