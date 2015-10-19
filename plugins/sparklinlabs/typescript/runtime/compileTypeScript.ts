@@ -5,7 +5,7 @@ export default function compileTypeScript(sourceFileNames: string[], sourceFiles
 
   let script = "";
   let files: Array<{name: string; text: string}> = [];
-  let sourceMaps: {[name: string]: any} = {};
+  let sourceMaps: { [name: string]: any } = {};
   // Create a compilerHost object to allow the compiler to read and write files
   let compilerHost: ts.CompilerHost = {
     getSourceFile: (filename: string, languageVersion: any) => {
@@ -38,24 +38,24 @@ export default function compileTypeScript(sourceFileNames: string[], sourceFiles
     },
     
     fileExists: (path: string) => { return path === "lib.d.ts" || sourceFiles[path] != null; },
-    getDefaultLibFileName: () => { return "lib.d.ts"; },
-    useCaseSensitiveFileNames: () => { return false; },
-    getCanonicalFileName: (filename: string) => { return filename; },
-    getCurrentDirectory: () => { return ""; },
-    getNewLine: () => { return "\n"; }
+    getDefaultLibFileName: () => "lib.d.ts",
+    useCaseSensitiveFileNames: () => false,
+    getCanonicalFileName: (filename: string) => filename,
+    getCurrentDirectory: () => "",
+    getNewLine: () => "\n"
   }
 
   // Create a program from inputs
   let program = ts.createProgram(sourceFileNames, compilerOptions, compilerHost);
   // Query for earyly errors
-  let errors = ts.getPreEmitDiagnostics(program)
+  let errors = ts.getPreEmitDiagnostics(program);
   let typeChecker: ts.TypeChecker;
   // Do not generate code in the presence of early errors
   if (errors.length === 0) {
     // Type check and get semantic errors
     typeChecker = program.getTypeChecker();
     // Generate output
-    errors = program.emit().diagnostics
+    errors = program.emit().diagnostics;
   }
 
   return {
