@@ -46,11 +46,6 @@ namespace ArcadePhysics2D {
   }
 
   function checkTileMap(body1: ArcadeBody2D, body2: ArcadeBody2D, options: { moveBody: boolean; }) {
-    let top = false;
-    let bottom = false;
-    let right = false;
-    let left = false;
-
     function checkX() {
       let x = (body1.deltaX() < 0) ?
         Math.floor((body1.position.x - body2.position.x - body1.width / 2) / body2.mapToSceneFactor.x) :
@@ -70,10 +65,10 @@ namespace ArcadePhysics2D {
           body1.velocity.x = -body1.velocity.x * body1.bounceX;
           if (body1.deltaX() < 0) {
             if (options.moveBody) body1.position.x = (x + 1 + epsilon) * body2.mapToSceneFactor.x + body2.position.x + body1.width / 2;
-            left = true;
+            body1.touches.left = true;
           } else {
             if (options.moveBody) body1.position.x = (x - epsilon) * body2.mapToSceneFactor.x + body2.position.x - body1.width / 2;
-            right = true;
+            body1.touches.right = true;
           }
           return true;
         }
@@ -100,10 +95,10 @@ namespace ArcadePhysics2D {
           body1.velocity.y = -body1.velocity.y * body1.bounceY;
           if (body1.deltaY() < 0) {
             if (options.moveBody) body1.position.y = (y + 1 + epsilon) * body2.mapToSceneFactor.y + body2.position.y + body1.height / 2;
-            bottom = true;
+            body1.touches.bottom = true;
           } else {
             if (options.moveBody) body1.position.y = (y - epsilon) * body2.mapToSceneFactor.y + body2.position.y - body1.height / 2;
-            top = true;
+            body1.touches.top = true;
           }
           return true;
         }
@@ -111,38 +106,14 @@ namespace ArcadePhysics2D {
       return false;
     }
 
+    let x = body1.position.x;
+    body1.position.x = body1.previousPosition.x;
+
     let gotCollision = false;
-    if (Math.abs(gravity.y) > Math.abs(gravity.x) || Math.abs(body1.deltaY()) >= Math.abs(body1.deltaX())) {
-      let yPosition = body1.position.y;
-      let ySpeed = body1.velocity.y;
-      if (checkY()) gotCollision = true;
-      if (checkX()) {
-        gotCollision = true;
+    if (checkY()) gotCollision = true;
+    body1.position.x = x;
+    if (checkX()) gotCollision = true;
 
-        body1.position.y = yPosition;
-        body1.velocity.y = ySpeed;
-        top = false;
-        bottom = false;
-        checkY();
-      }
-    } else {
-      let xPosition = body1.position.x;
-      let xSpeed = body1.velocity.x;
-      if (checkX()) gotCollision = true;
-      if (checkY()) {
-        gotCollision = true;
-
-        body1.position.x = xPosition;
-        body1.velocity.x = xSpeed;
-        right = false;
-        left = false;
-        checkX();
-      }
-    }
-    if (top) body1.touches.top = true;
-    if (bottom) body1.touches.bottom = true;
-    if (right) body1.touches.right = true;
-    if (left) body1.touches.left = true;
     return gotCollision;
   }
 
