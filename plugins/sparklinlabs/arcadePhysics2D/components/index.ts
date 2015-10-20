@@ -50,8 +50,8 @@ namespace ArcadePhysics2D {
       let x = (body1.deltaX() < 0) ?
         Math.floor((body1.position.x - body2.position.x - body1.width / 2) / body2.mapToSceneFactor.x) :
         Math.floor((body1.position.x - body2.position.x + body1.width / 2 - epsilon) / body2.mapToSceneFactor.x);
-      let y = body1.position.y - body2.position.y - body1.height / 2;
-      let testedHeight = body1.height - epsilon;
+      let y = body1.position.y - body2.position.y - body1.height / 2 + epsilon;
+      let testedHeight = body1.height - 3 * epsilon;
       let totalPoints = Math.ceil(testedHeight / body2.mapToSceneFactor.y);
       for (let point = 0; point <= totalPoints; point++) {
         for (let layer of body2.layersIndex) {
@@ -64,10 +64,10 @@ namespace ArcadePhysics2D {
 
           body1.velocity.x = -body1.velocity.x * body1.bounceX;
           if (body1.deltaX() < 0) {
-            if (options.moveBody) body1.position.x = (x + 1 + epsilon) * body2.mapToSceneFactor.x + body2.position.x + body1.width / 2;
+            if (options.moveBody) body1.position.x = (x + 1) * body2.mapToSceneFactor.x + body2.position.x + body1.width / 2;
             body1.touches.left = true;
           } else {
-            if (options.moveBody) body1.position.x = (x - epsilon) * body2.mapToSceneFactor.x + body2.position.x - body1.width / 2;
+            if (options.moveBody) body1.position.x = (x) * body2.mapToSceneFactor.x + body2.position.x - body1.width / 2 + epsilon;
             body1.touches.right = true;
           }
           return true;
@@ -77,11 +77,11 @@ namespace ArcadePhysics2D {
     }
 
     function checkY() {
-      let x = body1.position.x - body2.position.x - body1.width / 2;
+      let x = body1.position.x - body2.position.x - body1.width / 2 + epsilon;
       let y = (body1.deltaY() < 0) ?
         Math.floor((body1.position.y - body2.position.y - body1.height / 2) / body2.mapToSceneFactor.y) :
         Math.floor((body1.position.y - body2.position.y + body1.height / 2 - epsilon) / body2.mapToSceneFactor.y);
-      let testedWidth = body1.width - epsilon;
+      let testedWidth = body1.width - 3 * epsilon;
       let totalPoints = Math.ceil(testedWidth / body2.mapToSceneFactor.x);
       for (let point = 0; point <= totalPoints; point++) {
         for (let layer of body2.layersIndex) {
@@ -94,10 +94,10 @@ namespace ArcadePhysics2D {
 
           body1.velocity.y = -body1.velocity.y * body1.bounceY;
           if (body1.deltaY() < 0) {
-            if (options.moveBody) body1.position.y = (y + 1 + epsilon) * body2.mapToSceneFactor.y + body2.position.y + body1.height / 2;
+            if (options.moveBody) body1.position.y = (y + 1) * body2.mapToSceneFactor.y + body2.position.y + body1.height / 2;
             body1.touches.bottom = true;
           } else {
-            if (options.moveBody) body1.position.y = (y - epsilon) * body2.mapToSceneFactor.y + body2.position.y - body1.height / 2;
+            if (options.moveBody) body1.position.y = (y) * body2.mapToSceneFactor.y + body2.position.y - body1.height / 2 + epsilon;
             body1.touches.top = true;
           }
           return true;
