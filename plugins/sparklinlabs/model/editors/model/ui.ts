@@ -56,7 +56,7 @@ ui.mapDownloadButton.addEventListener("click", () => {
   downloadTexture(textureName);
 });
 
-// Filetering
+// Filtering
 ui.filteringSelect = <HTMLSelectElement>document.querySelector(".filtering");
 ui.filteringSelect.addEventListener("change", onChangeFiltering);
 
