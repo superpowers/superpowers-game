@@ -11,13 +11,12 @@ html
   body
     .main
       .spritesheet-container
-        canvas(tabindex="0").spritesheet-canvas
+        canvas(tabindex="0")
 
       .animation-container
-        canvas(tabindex="0").animation-canvas
+        canvas(tabindex="0")
 
         .animation-control
-          span.animation-name
           button(disabled).animation-play ▐ ▌
           input(disabled,type="range",value="0").animation-slider
           input#loop-checkbox(type="checkbox",checked).animation-loop

@@ -14,7 +14,7 @@ let spritesheetArea: {
 } = {};
 export default spritesheetArea;
 
-spritesheetArea.gameInstance = new SupEngine.GameInstance(<HTMLCanvasElement>document.querySelector("canvas.spritesheet-canvas"));
+spritesheetArea.gameInstance = new SupEngine.GameInstance(<HTMLCanvasElement>document.querySelector(".spritesheet-container canvas"));
 spritesheetArea.gameInstance.threeRenderer.setClearColor(0xbbbbbb);
 
 let cameraActor = new SupEngine.Actor(spritesheetArea.gameInstance, "Camera");

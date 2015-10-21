@@ -14,7 +14,7 @@ export default animationArea;
 
 new PerfectResize(document.querySelector(".animation-container"), "bottom");
 
-animationArea.gameInstance = new SupEngine.GameInstance(<HTMLCanvasElement>document.querySelector("canvas.animation-canvas"));
+animationArea.gameInstance = new SupEngine.GameInstance(<HTMLCanvasElement>document.querySelector(".animation-container canvas"));
 animationArea.gameInstance.threeRenderer.setClearColor(0xbbbbbb);
 
 let cameraActor = new SupEngine.Actor(animationArea.gameInstance, "Camera");
