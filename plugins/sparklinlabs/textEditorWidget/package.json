@@ -8,7 +8,7 @@
     "url": "https://bitbucket.org/superpowers/sparklinlabs-plugins"
   },
   "dependencies": {
-    "codemirror": "^4.12.0",
+    "codemirror": "^5.8.0",
     "operational-transform": "^0.2.3"
   }
 }

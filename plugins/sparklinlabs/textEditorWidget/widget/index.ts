@@ -12,6 +12,11 @@ require("codemirror/addon/selection/active-line");
 require("codemirror/keymap/sublime");
 require("codemirror/mode/javascript/javascript");
 require("codemirror/mode/clike/clike");
+require("codemirror/addon/fold/foldcode");
+require("codemirror/addon/fold/foldgutter");
+require("codemirror/addon/fold/brace-fold");
+require("codemirror/addon/fold/comment-fold");
+require("codemirror/addon/fold/indent-fold");
 
 class TextEditorWidget {
   textEditorResource: TextEditorSettingsResource
@@ -72,8 +77,8 @@ class TextEditorWidget {
     this.codeMirrorInstance = CodeMirror.fromTextArea(textArea, {
       // theme: "monokai",
       lineNumbers: true,
-      gutters: ["line-error-gutter", "CodeMirror-linenumbers"],
-      indentWithTabs: false, indentUnit: 2, tabSize: 2, 
+      gutters: ["line-error-gutter", "CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+      indentWithTabs: false, indentUnit: 2, tabSize: 2,
       extraKeys: extraKeys, keyMap: "sublime",
       viewportMargin: Infinity,
       mode: options.mode,
@@ -83,10 +88,11 @@ class TextEditorWidget {
     this.codeMirrorInstance.setOption("matchBrackets", true);
     this.codeMirrorInstance.setOption("styleActiveLine", true);
     this.codeMirrorInstance.setOption("autoCloseBrackets", true);
+    this.codeMirrorInstance.setOption("foldGutter", true);
 
     this.codeMirrorInstance.on("changes", <any>this.edit);
     this.codeMirrorInstance.on("beforeChange", this.beforeChange);
-    
+
     this.clientId = clientId;
     projectClient.subResource("textEditorSettings", this);
   }
@@ -98,7 +104,7 @@ class TextEditorWidget {
 
     this.codeMirrorInstance.focus();
   }
-  
+
   beforeChange = (instance: CodeMirror.Editor, change: any) => {
     if (change.origin === "setValue" || change.origin === "network") return;
     let lastText = instance.getDoc().getValue();
@@ -191,7 +197,7 @@ class TextEditorWidget {
     if (this.clientId === operationData.userId) {
       if (this.pendingOperation != null) {
         this.sendOperationCallback(this.pendingOperation.serialize());
-  
+
         this.sentOperation = this.pendingOperation;
         this.pendingOperation = null;
       } else this.sentOperation = null;
@@ -221,49 +227,49 @@ class TextEditorWidget {
         case "retain": {
           while (true) {
             if (op.attributes.amount <= this.codeMirrorInstance.getDoc().getLine(line).length - cursorPosition) break;
-  
+
             op.attributes.amount -= this.codeMirrorInstance.getDoc().getLine(line).length + 1 - cursorPosition;
             cursorPosition = 0;
             line++;
           }
-  
+
           cursorPosition += op.attributes.amount;
           break;
         }
         case "insert": {
           let cursor = this.codeMirrorInstance.getDoc().getCursor();
-  
+
           let texts = op.attributes.text.split("\n");
           for (let textIndex = 0; textIndex < texts.length; textIndex++) {
             let text = texts[textIndex];
             if (textIndex !== texts.length - 1) text += "\n";
             (<any>this.codeMirrorInstance).replaceRange(text, { line, ch: cursorPosition }, null, origin);
             cursorPosition += text.length;
-  
+
             if (textIndex !== texts.length - 1) {
               cursorPosition = 0;
               line++;
             }
           }
-  
+
           if (line === cursor.line && cursorPosition === cursor.ch) {
             if (! operation.gotPriority(this.clientId)) {
               for (let i = 0; i < op.attributes.text.length; i++) (<any>this.codeMirrorInstance).execCommand("goCharLeft");
             }
           }
-  
+
           if (moveCursor) (<any>this.codeMirrorInstance).setCursor(line, cursorPosition);
           //use this way insted ? this.codeMirrorInstance.getDoc().setCursor({ line, ch: cursorPosition });
           break;
         }
         case "delete": {
           let texts = op.attributes.text.split("\n");
-  
+
           for (let textIndex = 0; textIndex < texts.length; textIndex++) {
             let text = texts[textIndex];
             if (texts[textIndex + 1] != null) (<any>this.codeMirrorInstance).replaceRange("", { line, ch: cursorPosition }, { line: line + 1, ch: 0 }, origin);
             else (<any>this.codeMirrorInstance).replaceRange("", { line, ch: cursorPosition }, { line, ch: cursorPosition + text.length }, origin);
-  
+
             if (moveCursor) (<any>this.codeMirrorInstance).setCursor(line, cursorPosition);
           }
           break;
@@ -277,20 +283,20 @@ class TextEditorWidget {
 
     if (this.undoQuantityByAction[this.undoQuantityByAction.length - 1] === 0) this.undoQuantityByAction.pop();
     let undoQuantityByAction = this.undoQuantityByAction[this.undoQuantityByAction.length - 1];
-  
+
     for (let i = 0; i < undoQuantityByAction; i++) {
       let operationToUndo = this.undoStack[this.undoStack.length - 1];
       this.applyOperation(operationToUndo.clone(), "undo", true);
-  
+
       this.undoStack.pop()
       this.redoStack.push(operationToUndo.invert());
     }
-  
+
     if (this.undoTimeout != null) {
       clearTimeout(this.undoTimeout);
       this.undoTimeout = null;
     }
-  
+
     this.redoQuantityByAction.push(this.undoQuantityByAction[this.undoQuantityByAction.length - 1]);
     this.undoQuantityByAction[this.undoQuantityByAction.length - 1] = 0;
   }
@@ -302,19 +308,19 @@ class TextEditorWidget {
     for (let i = 0; i < redoQuantityByAction; i++) {
       let operationToRedo = this.redoStack[this.redoStack.length - 1];
       this.applyOperation(operationToRedo.clone(), "undo", true);
-  
+
       this.redoStack.pop()
       this.undoStack.push(operationToRedo.invert());
     }
-  
+
     if (this.undoTimeout != null) {
       clearTimeout(this.undoTimeout);
       this.undoTimeout = null;
-  
+
       this.undoQuantityByAction.push(this.redoQuantityByAction[this.redoQuantityByAction.length - 1]);
     }
     else this.undoQuantityByAction[this.undoQuantityByAction.length - 1] = this.redoQuantityByAction[this.redoQuantityByAction.length - 1];
-  
+
     this.undoQuantityByAction.push(0);
     this.redoQuantityByAction.pop();
   }
