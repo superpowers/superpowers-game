@@ -412,7 +412,7 @@ function onNewPrefabClick() {
 function createNewNode(name: string, prefab: boolean) {
   let options = SupClient.getTreeViewInsertionPoint(ui.nodesTreeView);
 
-  let offset = new THREE.Vector3(0, 0, -5).applyQuaternion(engine.cameraActor.getGlobalOrientation(new THREE.Quaternion()));
+  let offset = new THREE.Vector3(0, 0, -10).applyQuaternion(engine.cameraActor.getGlobalOrientation(new THREE.Quaternion()));
   let position = new THREE.Vector3();
   engine.cameraActor.getGlobalPosition(position).add(offset);
 
