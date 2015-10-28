@@ -2,7 +2,7 @@ let THREE = SupEngine.THREE;
 
 export default class SpriteOriginMarker extends SupEngine.ActorComponent {
 
-  line: THREE.Line;
+  line: THREE.LineSegments;
 
   constructor(actor: SupEngine.Actor) {
     super(actor, "SpriteOriginMarker");
@@ -16,7 +16,7 @@ export default class SpriteOriginMarker extends SupEngine.ActorComponent {
       new THREE.Vector3(0,  0.2, 0)
     )
 
-    this.line = new THREE.Line(geometry, new THREE.LineBasicMaterial({ color: 0x333333, opacity: 0.25, transparent: true }), THREE.LinePieces);
+    this.line = new THREE.LineSegments(geometry, new THREE.LineBasicMaterial({ color: 0x333333, opacity: 0.25, transparent: true }));
     this.actor.threeObject.add(this.line);
     this.line.updateMatrixWorld(false);
   }

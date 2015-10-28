@@ -1,7 +1,7 @@
 let THREE = SupEngine.THREE;
 
 export default class SelectionBox extends SupEngine.ActorComponent {
-  line: THREE.Line;
+  line: THREE.LineSegments;
   geometry: THREE.Geometry;
   target: THREE.Object3D;
 
@@ -10,7 +10,7 @@ export default class SelectionBox extends SupEngine.ActorComponent {
 
     this.geometry = new THREE.Geometry();
     for (let i = 0; i < 24; i++) this.geometry.vertices.push(new THREE.Vector3(0,0,0));
-    this.line = new THREE.Line(this.geometry, new THREE.LineBasicMaterial({ color: 0x00ffff, opacity: 1, depthTest: false, depthWrite: false, transparent: true }), THREE.LinePieces);
+    this.line = new THREE.LineSegments(this.geometry, new THREE.LineBasicMaterial({ color: 0x00ffff, opacity: 1, depthTest: false, depthWrite: false, transparent: true }));
     this.actor.threeObject.add(this.line);
     this.line.updateMatrixWorld(false);
     this.line.visible = false;

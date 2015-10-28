@@ -1,7 +1,7 @@
 let THREE = SupEngine.THREE;
 
 export default class TransformMarker extends SupEngine.ActorComponent {
-  line: THREE.Line;
+  line: THREE.LineSegments;
   visible = true;
 
   constructor(actor: SupEngine.Actor) {
@@ -19,7 +19,7 @@ export default class TransformMarker extends SupEngine.ActorComponent {
       new THREE.Vector3( 0, 0,  0.25 )
     );
 
-    this.line = new THREE.Line(geometry, new THREE.LineBasicMaterial( { color: 0xffffff, opacity: 0.25, transparent: true } ), THREE.LinePieces);
+    this.line = new THREE.LineSegments(geometry, new THREE.LineBasicMaterial( { color: 0xffffff, opacity: 0.25, transparent: true } ));
     this.actor.threeObject.add(this.line);
     this.line.updateMatrixWorld(false);
   }
