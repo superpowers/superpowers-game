@@ -6,9 +6,7 @@ class CannonBodyEditor {
   shapeRows :HTMLTableRowElement[];
   projectClient: SupClient.ProjectClient;
   editConfig: any;
-  halfWidthRow: SupClient.table.RowParts;
-  halfHeightRow: SupClient.table.RowParts;
-  halfDepthRow: SupClient.table.RowParts;
+  halfSizeRow: SupClient.table.RowParts;
   radiusRow: SupClient.table.RowParts;
   heightRow: SupClient.table.RowParts;
 
@@ -31,27 +29,28 @@ class CannonBodyEditor {
       this.editConfig("setProperty", "fixedRotation", (<HTMLInputElement>event.target).checked);
     });
 
-    let offsetX = SupClient.table.appendRow(this.tbody, "Offset X");
-    this.fields["offsetX"] = SupClient.table.appendNumberField(offsetX.valueCell, config.offsetX);
-    this.fields["offsetX"].addEventListener("change", (event) => {
-      this.editConfig("setProperty", "offsetX", parseFloat((<HTMLInputElement>event.target).value));
+    let offsetRow = SupClient.table.appendRow(this.tbody, "Offset");
+    let offsetFields = SupClient.table.appendNumberFields(offsetRow.valueCell, [ config.offset.x, config.offset.y, config.offset.z ]);
+    this.fields["offset.x"] = offsetFields[0];
+    this.fields["offset.y"] = offsetFields[1];
+    this.fields["offset.z"] = offsetFields[2];
+
+    this.fields["offset.x"].addEventListener("change", (event) => {
+      this.editConfig("setProperty", "offset.x", parseFloat((<HTMLInputElement>event.target).value));
     });
 
-    let offsetY = SupClient.table.appendRow(this.tbody, "Offset Y");
-    this.fields["offsetY"] = SupClient.table.appendNumberField(offsetY.valueCell, config.offsetY);
-    this.fields["offsetY"].addEventListener(
+    this.fields["offset.y"].addEventListener(
       "change", (event) => {
-        this.editConfig("setProperty", "offsetY", parseFloat((<HTMLInputElement>event.target).value));
+        this.editConfig("setProperty", "offset.y", parseFloat((<HTMLInputElement>event.target).value));
       });
 
-    let offsetZ = SupClient.table.appendRow(this.tbody, "Offset Z");
-    this.fields["offsetZ"] = SupClient.table.appendNumberField(offsetZ.valueCell, config.offsetZ);
-    this.fields["offsetZ"].addEventListener("change", (event) => {
-      this.editConfig("setProperty", "offsetZ", parseFloat((<HTMLInputElement>event.target).value));
+    this.fields["offset.z"].addEventListener("change", (event) => {
+      this.editConfig("setProperty", "offset.z", parseFloat((<HTMLInputElement>event.target).value));
     });
-
-    let shapeRow = SupClient.table.appendRow(this.tbody, "Shape");
-    this.fields["shape"] = SupClient.table.appendSelectBox(shapeRow.valueCell, {
+    
+    SupClient.table.appendHeader(this.tbody, "Shape");
+    let shapeTypeRow = SupClient.table.appendRow(this.tbody, "Type");
+    this.fields["shape"] = SupClient.table.appendSelectBox(shapeTypeRow.valueCell, {
       "box": "Box",
       "sphere": "Sphere",
       "cylinder": "Cylinder"
@@ -62,38 +61,30 @@ class CannonBodyEditor {
     });
 
     // Box
-    this.halfWidthRow = SupClient.table.appendRow(this.tbody, "Half width");
-    this.shapeRows.push(this.halfWidthRow.row);
-    this.fields["halfWidth"] = SupClient.table.appendNumberField(this.halfWidthRow.valueCell, config.halfWidth, 0);
-    this.fields["halfWidth"].addEventListener(
+    this.halfSizeRow = SupClient.table.appendRow(this.tbody, "Half size");
+    this.shapeRows.push(this.halfSizeRow.row);
+    let halfSizeFields = SupClient.table.appendNumberFields(this.halfSizeRow.valueCell, [ config.halfSize.x, config.halfSize.y, config.halfSize.z ], 0);
+    this.fields["halfSize.x"] = halfSizeFields[0];
+    this.fields["halfSize.y"] = halfSizeFields[1];
+    this.fields["halfSize.z"] = halfSizeFields[2];
+    
+    this.fields["halfSize.x"].addEventListener(
       "change", (event) => {
-        this.editConfig("setProperty", "halfWidth", parseFloat((<HTMLInputElement>event.target).value));
+        this.editConfig("setProperty", "halfSize.x", parseFloat((<HTMLInputElement>event.target).value));
       });
 
-    this.halfHeightRow = SupClient.table.appendRow(this.tbody, "Half height");
-    this.shapeRows.push(this.halfHeightRow.row);
-    this.fields["halfHeight"] = SupClient.table.appendNumberField(this.halfHeightRow.valueCell, config.halfHeight, 0);
-
-    this.fields["halfHeight"].addEventListener("change", (event) => {
-      this.editConfig("setProperty", "halfHeight", parseFloat((<HTMLInputElement>event.target).value));
+    this.fields["halfSize.y"].addEventListener("change", (event) => {
+      this.editConfig("setProperty", "halfSize.y", parseFloat((<HTMLInputElement>event.target).value));
     });
 
-    this.halfDepthRow = SupClient.table.appendRow(this.tbody, "Half depth");
-
-    this.shapeRows.push(this.halfDepthRow.row);
-    this.fields["halfDepth"] = SupClient.table.appendNumberField(this.halfDepthRow.valueCell, config.halfDepth, 0);
-    this.fields["halfDepth"].addEventListener("change", (event) => {
-      this.editConfig("setProperty", "halfDepth", parseFloat((<HTMLInputElement>event.target).value));
+    this.fields["halfSize.z"].addEventListener("change", (event) => {
+      this.editConfig("setProperty", "halfSize.z", parseFloat((<HTMLInputElement>event.target).value));
     });
-
 
     // Sphere / Cylinder
     this.radiusRow = SupClient.table.appendRow(this.tbody, "Radius");
-
     this.shapeRows.push(this.radiusRow.row);
-
     this.fields["radius"] = SupClient.table.appendNumberField(this.radiusRow.valueCell, config.radius, 0);
-
     this.fields["radius"].addEventListener("change", (event) => {
       this.editConfig("setProperty", "radius", parseFloat((<HTMLInputElement>event.target).value));
     });
@@ -111,17 +102,12 @@ class CannonBodyEditor {
   updateShapeInput(shape:string) {
 
     for (let row of this.shapeRows) this.tbody.removeChild(row);
-
     this.shapeRows.length = 0;
 
     switch (shape) {
       case "box":
-        this.tbody.appendChild(this.halfWidthRow.row);
-        this.shapeRows.push(this.halfWidthRow.row);
-        this.tbody.appendChild(this.halfHeightRow.row);
-        this.shapeRows.push(this.halfHeightRow.row);
-        this.tbody.appendChild(this.halfDepthRow.row);
-        this.shapeRows.push(this.halfDepthRow.row);
+        this.tbody.appendChild(this.halfSizeRow.row);
+        this.shapeRows.push(this.halfSizeRow.row);
         break;
       case "sphere":
         this.tbody.appendChild(this.radiusRow.row);
@@ -137,14 +123,13 @@ class CannonBodyEditor {
     }
   }
 
-
   destroy() {}
 
-  config_setProperty(path:string, value:any) {
+  config_setProperty(path: string, value: any) {
     if (path === "fixedRotation") (<HTMLInputElement>this.fields["fixedRotation"]).checked = value;
     else this.fields[path].value = value;
 
-    if (path === "shape") this.updateShapeInput(value)
+    if (path === "shape") this.updateShapeInput(value);
   }
 
 }
