@@ -17,7 +17,7 @@ export default class GridRenderer extends ActorComponent {
   orthographicScale: number;
   ratio: { x: number; y: number; };
 
-  mesh: THREE.Line;
+  mesh: THREE.LineSegments;
 
   constructor(actor: Actor, data?: data) {
     super(actor, "GridRenderer");
@@ -84,7 +84,7 @@ export default class GridRenderer extends ActorComponent {
       dashSize: 5/1000, gapSize: 5/1000, scale: 1 / this.orthographicScale
     });
 
-    this.mesh = new THREE.Line(geometry, material, THREE.LinePieces);
+    this.mesh = new THREE.LineSegments(geometry, material);
     this.actor.threeObject.add(this.mesh);
     this.mesh.updateMatrixWorld(false);
   }

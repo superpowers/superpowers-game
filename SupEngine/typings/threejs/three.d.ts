@@ -1,6 +1,7 @@
-// Type definitions for three.js r71
+// Type definitions for three.js r73
 // Project: http://mrdoob.github.com/three.js/
 // Definitions by: Kon <http://phyzkit.net/>, Satoru Kimura <https://github.com/gyohk>
+// Updated from r71 to r73 by Nicolas Gauthier <https://github.com/bilou84>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 
 interface WebGLRenderingContext {}
@@ -4205,15 +4206,12 @@ declare module THREE {
 
         geometry: any; // Geometry or BufferGeometry;
         material: Material; // LineDashedMaterial or LineBasicMaterial or ShaderMaterial
-        mode: LineMode;
 
         raycast(raycaster: Raycaster, intersects: any): void;
         clone(object?: Line): Line;
     }
 
-    enum LineMode{}
-    var LineStrip: LineMode;
-    var LinePieces: LineMode;
+    export class LineSegments extends Line {}
 
     export class LOD extends Object3D {
         constructor();
