@@ -9,9 +9,10 @@ var THREE = SupEngine.THREE;
  */
  /*jshint sub:true*/
 
-(function () {
+( function () {
 
 	'use strict';
+
 
 	var GizmoMaterial = function ( parameters ) {
 
@@ -48,6 +49,7 @@ var THREE = SupEngine.THREE;
 	GizmoMaterial.prototype = Object.create( THREE.MeshBasicMaterial.prototype );
 	GizmoMaterial.prototype.constructor = GizmoMaterial;
 
+
 	var GizmoLineMaterial = function ( parameters ) {
 
 		THREE.LineBasicMaterial.call( this );
@@ -83,11 +85,13 @@ var THREE = SupEngine.THREE;
 	GizmoLineMaterial.prototype = Object.create( THREE.LineBasicMaterial.prototype );
 	GizmoLineMaterial.prototype.constructor = GizmoLineMaterial;
 
+
+	var pickerMaterial = new GizmoMaterial( { visible: false, transparent: false } );
+
+
 	THREE.TransformGizmo = function () {
 
 		var scope = this;
-		var showPickers = false; //debug
-		var showActivePlane = false; //debug
 
 		this.init = function () {
 
@@ -97,15 +101,14 @@ var THREE = SupEngine.THREE;
 			this.pickers = new THREE.Object3D();
 			this.planes = new THREE.Object3D();
 
-			this.add(this.handles);
-			this.add(this.pickers);
-			this.add(this.planes);
+			this.add( this.handles );
+			this.add( this.pickers );
+			this.add( this.planes );
 
 			//// PLANES
 
 			var planeGeometry = new THREE.PlaneBufferGeometry( 50, 50, 2, 2 );
-			var planeMaterial = new THREE.MeshBasicMaterial( { wireframe: true } );
-			planeMaterial.side = THREE.DoubleSide;
+			var planeMaterial = new THREE.MeshBasicMaterial( { visible: false, side: THREE.DoubleSide } );
 
 			var planes = {
 				"XY":   new THREE.Mesh( planeGeometry, planeMaterial ),
@@ -114,16 +117,17 @@ var THREE = SupEngine.THREE;
 				"XYZE": new THREE.Mesh( planeGeometry, planeMaterial )
 			};
 
-			this.activePlane = planes["XYZE"];
+			this.activePlane = planes[ "XYZE" ];
 
-			planes["YZ"].rotation.set( 0, Math.PI / 2, 0 );
-			planes["XZ"].rotation.set( -Math.PI / 2, 0, 0 );
+			planes[ "YZ" ].rotation.set( 0, Math.PI / 2, 0 );
+			planes[ "XZ" ].rotation.set( - Math.PI / 2, 0, 0 );
 
-			for (var i in planes) {
-				planes[i].name = i;
-				this.planes.add(planes[i]);
-				this.planes[i] = planes[i];
-				planes[i].visible = false;
+			for ( var i in planes ) {
+
+				planes[ i ].name = i;
+				this.planes.add( planes[ i ] );
+				this.planes[ i ] = planes[ i ];
+
 			}
 
 			//// HANDLES AND PICKERS
@@ -132,16 +136,16 @@ var THREE = SupEngine.THREE;
 
 				for ( var name in gizmoMap ) {
 
-					for ( i = gizmoMap[name].length; i --;) {
+					for ( i = gizmoMap[ name ].length; i --; ) {
 
-						var object = gizmoMap[name][i][0];
-						var position = gizmoMap[name][i][1];
-						var rotation = gizmoMap[name][i][2];
+						var object = gizmoMap[ name ][ i ][ 0 ];
+						var position = gizmoMap[ name ][ i ][ 1 ];
+						var rotation = gizmoMap[ name ][ i ][ 2 ];
 
 						object.name = name;
 
-						if ( position ) object.position.set( position[0], position[1], position[2] );
-						if ( rotation ) object.rotation.set( rotation[0], rotation[1], rotation[2] );
+						if ( position ) object.position.set( position[ 0 ], position[ 1 ], position[ 2 ] );
+						if ( rotation ) object.rotation.set( rotation[ 0 ], rotation[ 1 ], rotation[ 2 ] );
 
 						parent.add( object );
 
@@ -151,13 +155,15 @@ var THREE = SupEngine.THREE;
 
 			};
 
-			setupGizmos(this.handleGizmos, this.handles);
-			setupGizmos(this.pickerGizmos, this.pickers);
+			setupGizmos( this.handleGizmos, this.handles );
+			setupGizmos( this.pickerGizmos, this.pickers );
 
 			// reset Transformations
 
-			this.traverse(function ( child ) {
-				if (child instanceof THREE.Mesh) {
+			this.traverse( function ( child ) {
+
+				if ( child instanceof THREE.Mesh ) {
+
 					child.updateMatrix();
 
 					var tempGeometry = child.geometry.clone();
@@ -167,36 +173,33 @@ var THREE = SupEngine.THREE;
 					child.position.set( 0, 0, 0 );
 					child.rotation.set( 0, 0, 0 );
 					child.scale.set( 1, 1, 1 );
+
 				}
-			});
 
-		};
+			} );
 
-		this.hide = function () {
-			this.traverse(function( child ) {
-				child.visible = false;
-			});
-		};
-
-		this.show = function () {
-			this.traverse(function( child ) {
-				child.visible = true;
-				if (child.parent == scope.pickers ) child.visible = showPickers;
-				if (child.parent == scope.planes ) child.visible = false;
-			});
-			this.activePlane.visible = showActivePlane;
 		};
 
 		this.highlight = function ( axis ) {
-			this.traverse(function( child ) {
+
+			this.traverse( function( child ) {
+
 				if ( child.material && child.material.highlight ) {
-					if ( child.name == axis ) {
+
+					if ( child.name === axis ) {
+
 						child.material.highlight( true );
+
 					} else {
+
 						child.material.highlight( false );
+
 					}
+
 				}
-			});
+
+			} );
+
 		};
 
 	};
@@ -210,13 +213,19 @@ var THREE = SupEngine.THREE;
 		var vec2 = new THREE.Vector3( 0, 1, 0 );
 		var lookAtMatrix = new THREE.Matrix4();
 
-		this.traverse(function(child) {
-			if ( child.name.search("E") != -1 ) {
+		this.traverse( function( child ) {
+
+			if ( child.name.search( "E" ) !== - 1 ) {
+
 				child.quaternion.setFromRotationMatrix( lookAtMatrix.lookAt( eye, vec1, vec2 ) );
-			} else if ( child.name.search("X") != -1 || child.name.search("Y") != -1 || child.name.search("Z") != -1 ) {
+
+			} else if ( child.name.search( "X" ) !== - 1 || child.name.search( "Y" ) !== - 1 || child.name.search( "Z" ) !== - 1 ) {
+
 				child.quaternion.setFromEuler( rotation );
+
 			}
-		});
+
+		} );
 
 	};
 
@@ -232,63 +241,79 @@ var THREE = SupEngine.THREE;
 		arrowGeometry.merge( mesh.geometry, mesh.matrix );
 
 		var lineXGeometry = new THREE.BufferGeometry();
-		lineXGeometry.addAttribute( 'position', new THREE.BufferAttribute( new Float32Array([ 0, 0, 0,  1, 0, 0 ]), 3 ) );
+		lineXGeometry.addAttribute( 'position', new THREE.Float32Attribute( [ 0, 0, 0,  1, 0, 0 ], 3 ) );
 
 		var lineYGeometry = new THREE.BufferGeometry();
-		lineYGeometry.addAttribute( 'position', new THREE.BufferAttribute( new Float32Array([ 0, 0, 0,  0, 1, 0 ]), 3 ) );
+		lineYGeometry.addAttribute( 'position', new THREE.Float32Attribute( [ 0, 0, 0,  0, 1, 0 ], 3 ) );
 
 		var lineZGeometry = new THREE.BufferGeometry();
-		lineZGeometry.addAttribute( 'position', new THREE.BufferAttribute( new Float32Array([ 0, 0, 0,  0, 0, 1 ]), 3 ) );
+		lineZGeometry.addAttribute( 'position', new THREE.Float32Attribute( [ 0, 0, 0,  0, 0, 1 ], 3 ) );
 
 		this.handleGizmos = {
+
 			X: [
-				[ new THREE.Mesh( arrowGeometry, new GizmoMaterial( { color: 0xff0000 } ) ), [ 0.5, 0, 0 ], [ 0, 0, -Math.PI / 2 ] ],
+				[ new THREE.Mesh( arrowGeometry, new GizmoMaterial( { color: 0xff0000 } ) ), [ 0.5, 0, 0 ], [ 0, 0, - Math.PI / 2 ] ],
 				[ new THREE.Line( lineXGeometry, new GizmoLineMaterial( { color: 0xff0000 } ) ) ]
 			],
+
 			Y: [
 				[ new THREE.Mesh( arrowGeometry, new GizmoMaterial( { color: 0x00ff00 } ) ), [ 0, 0.5, 0 ] ],
 				[	new THREE.Line( lineYGeometry, new GizmoLineMaterial( { color: 0x00ff00 } ) ) ]
 			],
+
 			Z: [
 				[ new THREE.Mesh( arrowGeometry, new GizmoMaterial( { color: 0x0000ff } ) ), [ 0, 0, 0.5 ], [ Math.PI / 2, 0, 0 ] ],
 				[ new THREE.Line( lineZGeometry, new GizmoLineMaterial( { color: 0x0000ff } ) ) ]
 			],
+
 			XYZ: [
 				[ new THREE.Mesh( new THREE.OctahedronGeometry( 0.1, 0 ), new GizmoMaterial( { color: 0xffffff, opacity: 0.25 } ) ), [ 0, 0, 0 ], [ 0, 0, 0 ] ]
 			],
+
 			XY: [
 				[ new THREE.Mesh( new THREE.PlaneBufferGeometry( 0.29, 0.29 ), new GizmoMaterial( { color: 0xffff00, opacity: 0.25 } ) ), [ 0.15, 0.15, 0 ] ]
 			],
+
 			YZ: [
 				[ new THREE.Mesh( new THREE.PlaneBufferGeometry( 0.29, 0.29 ), new GizmoMaterial( { color: 0x00ffff, opacity: 0.25 } ) ), [ 0, 0.15, 0.15 ], [ 0, Math.PI / 2, 0 ] ]
 			],
+
 			XZ: [
-				[ new THREE.Mesh( new THREE.PlaneBufferGeometry( 0.29, 0.29 ), new GizmoMaterial( { color: 0xff00ff, opacity: 0.25 } ) ), [ 0.15, 0, 0.15 ], [ -Math.PI / 2, 0, 0 ] ]
+				[ new THREE.Mesh( new THREE.PlaneBufferGeometry( 0.29, 0.29 ), new GizmoMaterial( { color: 0xff00ff, opacity: 0.25 } ) ), [ 0.15, 0, 0.15 ], [ - Math.PI / 2, 0, 0 ] ]
 			]
+
 		};
 
 		this.pickerGizmos = {
+
 			X: [
-				[ new THREE.Mesh( new THREE.CylinderGeometry( 0.2, 0, 1, 4, 1, false ), new GizmoMaterial( { color: 0xff0000, opacity: 0.25 } ) ), [ 0.6, 0, 0 ], [ 0, 0, -Math.PI / 2 ] ]
+				[ new THREE.Mesh( new THREE.CylinderGeometry( 0.2, 0, 1, 4, 1, false ), pickerMaterial ), [ 0.6, 0, 0 ], [ 0, 0, - Math.PI / 2 ] ]
 			],
+
 			Y: [
-				[ new THREE.Mesh( new THREE.CylinderGeometry( 0.2, 0, 1, 4, 1, false ), new GizmoMaterial( { color: 0x00ff00, opacity: 0.25 } ) ), [ 0, 0.6, 0 ] ]
+				[ new THREE.Mesh( new THREE.CylinderGeometry( 0.2, 0, 1, 4, 1, false ), pickerMaterial ), [ 0, 0.6, 0 ] ]
 			],
+
 			Z: [
-				[ new THREE.Mesh( new THREE.CylinderGeometry( 0.2, 0, 1, 4, 1, false ), new GizmoMaterial( { color: 0x0000ff, opacity: 0.25 } ) ), [ 0, 0, 0.6 ], [ Math.PI / 2, 0, 0 ] ]
+				[ new THREE.Mesh( new THREE.CylinderGeometry( 0.2, 0, 1, 4, 1, false ), pickerMaterial ), [ 0, 0, 0.6 ], [ Math.PI / 2, 0, 0 ] ]
 			],
+
 			XYZ: [
-				[ new THREE.Mesh( new THREE.OctahedronGeometry( 0.2, 0 ), new GizmoMaterial( { color: 0xffffff, opacity: 0.25 } ) ) ]
+				[ new THREE.Mesh( new THREE.OctahedronGeometry( 0.2, 0 ), pickerMaterial ) ]
 			],
+
 			XY: [
-				[ new THREE.Mesh( new THREE.PlaneBufferGeometry( 0.4, 0.4 ), new GizmoMaterial( { color: 0xffff00, opacity: 0.25 } ) ), [ 0.2, 0.2, 0 ] ]
+				[ new THREE.Mesh( new THREE.PlaneBufferGeometry( 0.4, 0.4 ), pickerMaterial ), [ 0.2, 0.2, 0 ] ]
 			],
+
 			YZ: [
-				[ new THREE.Mesh( new THREE.PlaneBufferGeometry( 0.4, 0.4 ), new GizmoMaterial( { color: 0x00ffff, opacity: 0.25 } ) ), [ 0, 0.2, 0.2 ], [ 0, Math.PI / 2, 0 ] ]
+				[ new THREE.Mesh( new THREE.PlaneBufferGeometry( 0.4, 0.4 ), pickerMaterial ), [ 0, 0.2, 0.2 ], [ 0, Math.PI / 2, 0 ] ]
 			],
+
 			XZ: [
-				[ new THREE.Mesh( new THREE.PlaneBufferGeometry( 0.4, 0.4 ), new GizmoMaterial( { color: 0xff00ff, opacity: 0.25 } ) ), [ 0.2, 0, 0.2 ], [ -Math.PI / 2, 0, 0 ] ]
+				[ new THREE.Mesh( new THREE.PlaneBufferGeometry( 0.4, 0.4 ), pickerMaterial ), [ 0.2, 0, 0.2 ], [ - Math.PI / 2, 0, 0 ] ]
 			]
+
 		};
 
 		this.setActivePlane = function ( axis, eye ) {
@@ -296,31 +321,37 @@ var THREE = SupEngine.THREE;
 			var tempMatrix = new THREE.Matrix4();
 			eye.applyMatrix4( tempMatrix.getInverse( tempMatrix.extractRotation( this.planes[ "XY" ].matrixWorld ) ) );
 
-			if ( axis == "X" ) {
+			if ( axis === "X" ) {
+
 				this.activePlane = this.planes[ "XY" ];
-				if ( Math.abs(eye.y) > Math.abs(eye.z) ) this.activePlane = this.planes[ "XZ" ];
+
+				if ( Math.abs( eye.y ) > Math.abs( eye.z ) ) this.activePlane = this.planes[ "XZ" ];
+
 			}
 
-			if ( axis == "Y" ) {
+			if ( axis === "Y" ) {
+
 				this.activePlane = this.planes[ "XY" ];
-				if ( Math.abs(eye.x) > Math.abs(eye.z) ) this.activePlane = this.planes[ "YZ" ];
+
+				if ( Math.abs( eye.x ) > Math.abs( eye.z ) ) this.activePlane = this.planes[ "YZ" ];
+
 			}
 
-			if ( axis == "Z" ) {
+			if ( axis === "Z" ) {
+
 				this.activePlane = this.planes[ "XZ" ];
-				if ( Math.abs(eye.x) > Math.abs(eye.y) ) this.activePlane = this.planes[ "YZ" ];
+
+				if ( Math.abs( eye.x ) > Math.abs( eye.y ) ) this.activePlane = this.planes[ "YZ" ];
+
 			}
 
-			if ( axis == "XYZ" ) this.activePlane = this.planes[ "XYZE" ];
+			if ( axis === "XYZ" ) this.activePlane = this.planes[ "XYZE" ];
 
-			if ( axis == "XY" ) this.activePlane = this.planes[ "XY" ];
+			if ( axis === "XY" ) this.activePlane = this.planes[ "XY" ];
 
-			if ( axis == "YZ" ) this.activePlane = this.planes[ "YZ" ];
+			if ( axis === "YZ" ) this.activePlane = this.planes[ "YZ" ];
 
-			if ( axis == "XZ" ) this.activePlane = this.planes[ "XZ" ];
-
-			this.hide();
-			this.show();
+			if ( axis === "XZ" ) this.activePlane = this.planes[ "XZ" ];
 
 		};
 
@@ -340,63 +371,77 @@ var THREE = SupEngine.THREE;
 			var geometry = new THREE.BufferGeometry();
 			var vertices = [];
 			arc = arc ? arc : 1;
+
 			for ( var i = 0; i <= 64 * arc; ++ i ) {
-				if ( facing == 'x' ) vertices.push( 0, Math.cos( i / 32 * Math.PI ) * radius, Math.sin( i / 32 * Math.PI ) * radius );
-				if ( facing == 'y' ) vertices.push( Math.cos( i / 32 * Math.PI ) * radius, 0, Math.sin( i / 32 * Math.PI ) * radius );
-				if ( facing == 'z' ) vertices.push( Math.sin( i / 32 * Math.PI ) * radius, Math.cos( i / 32 * Math.PI ) * radius, 0 );
+
+				if ( facing === 'x' ) vertices.push( 0, Math.cos( i / 32 * Math.PI ) * radius, Math.sin( i / 32 * Math.PI ) * radius );
+				if ( facing === 'y' ) vertices.push( Math.cos( i / 32 * Math.PI ) * radius, 0, Math.sin( i / 32 * Math.PI ) * radius );
+				if ( facing === 'z' ) vertices.push( Math.sin( i / 32 * Math.PI ) * radius, Math.cos( i / 32 * Math.PI ) * radius, 0 );
+
 			}
-			geometry.addAttribute( 'position', new THREE.BufferAttribute( new Float32Array(vertices), 3 ) );
+
+			geometry.addAttribute( 'position', new THREE.Float32Attribute( vertices, 3 ) );
 			return geometry;
+
 		};
 
 		this.handleGizmos = {
+
 			X: [
-				[ new THREE.Line( new CircleGeometry(1,'x',0.5), new GizmoLineMaterial( { color: 0xff0000 } ) ) ]
+				[ new THREE.Line( new CircleGeometry( 1, 'x', 0.5 ), new GizmoLineMaterial( { color: 0xff0000 } ) ) ]
 			],
+
 			Y: [
-				[ new THREE.Line( new CircleGeometry(1,'y',0.5), new GizmoLineMaterial( { color: 0x00ff00 } ) ) ]
+				[ new THREE.Line( new CircleGeometry( 1, 'y', 0.5 ), new GizmoLineMaterial( { color: 0x00ff00 } ) ) ]
 			],
+
 			Z: [
-				[ new THREE.Line( new CircleGeometry(1,'z',0.5), new GizmoLineMaterial( { color: 0x0000ff } ) ) ]
+				[ new THREE.Line( new CircleGeometry( 1, 'z', 0.5 ), new GizmoLineMaterial( { color: 0x0000ff } ) ) ]
 			],
+
 			E: [
-				[ new THREE.Line( new CircleGeometry(1.25,'z',1), new GizmoLineMaterial( { color: 0xcccc00 } ) ) ]
+				[ new THREE.Line( new CircleGeometry( 1.25, 'z', 1 ), new GizmoLineMaterial( { color: 0xcccc00 } ) ) ]
 			],
+
 			XYZE: [
-				[ new THREE.Line( new CircleGeometry(1,'z',1), new GizmoLineMaterial( { color: 0x787878 } ) ) ]
+				[ new THREE.Line( new CircleGeometry( 1, 'z', 1 ), new GizmoLineMaterial( { color: 0x787878 } ) ) ]
 			]
+
 		};
 
 		this.pickerGizmos = {
+
 			X: [
-				[ new THREE.Mesh( new THREE.TorusGeometry( 1, 0.12, 4, 12, Math.PI ), new GizmoMaterial( { color: 0xff0000, opacity: 0.25 } ) ), [ 0, 0, 0 ], [ 0, -Math.PI / 2, -Math.PI / 2 ] ]
+				[ new THREE.Mesh( new THREE.TorusGeometry( 1, 0.12, 4, 12, Math.PI ), pickerMaterial ), [ 0, 0, 0 ], [ 0, - Math.PI / 2, - Math.PI / 2 ] ]
 			],
+
 			Y: [
-				[ new THREE.Mesh( new THREE.TorusGeometry( 1, 0.12, 4, 12, Math.PI ), new GizmoMaterial( { color: 0x00ff00, opacity: 0.25 } ) ), [ 0, 0, 0 ], [ Math.PI / 2, 0, 0 ] ]
+				[ new THREE.Mesh( new THREE.TorusGeometry( 1, 0.12, 4, 12, Math.PI ), pickerMaterial ), [ 0, 0, 0 ], [ Math.PI / 2, 0, 0 ] ]
 			],
+
 			Z: [
-				[ new THREE.Mesh( new THREE.TorusGeometry( 1, 0.12, 4, 12, Math.PI ), new GizmoMaterial( { color: 0x0000ff, opacity: 0.25 } ) ), [ 0, 0, 0 ], [ 0, 0, -Math.PI / 2 ] ]
+				[ new THREE.Mesh( new THREE.TorusGeometry( 1, 0.12, 4, 12, Math.PI ), pickerMaterial ), [ 0, 0, 0 ], [ 0, 0, - Math.PI / 2 ] ]
 			],
+
 			E: [
-				[ new THREE.Mesh( new THREE.TorusGeometry( 1.25, 0.12, 2, 24 ), new GizmoMaterial( { color: 0xffff00, opacity: 0.25 } ) ) ]
+				[ new THREE.Mesh( new THREE.TorusGeometry( 1.25, 0.12, 2, 24 ), pickerMaterial ) ]
 			],
+
 			XYZE: [
 				[ new THREE.Mesh( new THREE.Geometry() ) ]// TODO
 			]
+
 		};
 
 		this.setActivePlane = function ( axis ) {
 
-			if ( axis == "E" ) this.activePlane = this.planes[ "XYZE" ];
+			if ( axis === "E" ) this.activePlane = this.planes[ "XYZE" ];
 
-			if ( axis == "X" ) this.activePlane = this.planes[ "YZ" ];
+			if ( axis === "X" ) this.activePlane = this.planes[ "YZ" ];
 
-			if ( axis == "Y" ) this.activePlane = this.planes[ "XZ" ];
+			if ( axis === "Y" ) this.activePlane = this.planes[ "XZ" ];
 
-			if ( axis == "Z" ) this.activePlane = this.planes[ "XY" ];
-
-			this.hide();
-			this.show();
+			if ( axis === "Z" ) this.activePlane = this.planes[ "XY" ];
 
 		};
 
@@ -405,8 +450,10 @@ var THREE = SupEngine.THREE;
 			THREE.TransformGizmo.prototype.update.apply( this, arguments );
 
 			var group = {
-				handles: this["handles"],
-				pickers: this["pickers"],
+
+				handles: this[ "handles" ],
+				pickers: this[ "pickers" ],
+
 			};
 
 			var tempMatrix = new THREE.Matrix4();
@@ -420,35 +467,41 @@ var THREE = SupEngine.THREE;
 			var quaternionZ = new THREE.Quaternion();
 			var eye = eye2.clone();
 
-			worldRotation.copy( this.planes["XY"].rotation );
+			worldRotation.copy( this.planes[ "XY" ].rotation );
 			tempQuaternion.setFromEuler( worldRotation );
 
 			tempMatrix.makeRotationFromQuaternion( tempQuaternion ).getInverse( tempMatrix );
 			eye.applyMatrix4( tempMatrix );
 
-			this.traverse(function(child) {
+			this.traverse( function( child ) {
 
 				tempQuaternion.setFromEuler( worldRotation );
 
-				if ( child.name == "X" ) {
-					quaternionX.setFromAxisAngle( unitX, Math.atan2( -eye.y, eye.z ) );
+				if ( child.name === "X" ) {
+
+					quaternionX.setFromAxisAngle( unitX, Math.atan2( - eye.y, eye.z ) );
 					tempQuaternion.multiplyQuaternions( tempQuaternion, quaternionX );
 					child.quaternion.copy( tempQuaternion );
+
 				}
 
-				if ( child.name == "Y" ) {
+				if ( child.name === "Y" ) {
+
 					quaternionY.setFromAxisAngle( unitY, Math.atan2( eye.x, eye.z ) );
 					tempQuaternion.multiplyQuaternions( tempQuaternion, quaternionY );
 					child.quaternion.copy( tempQuaternion );
+
 				}
 
-				if ( child.name == "Z" ) {
+				if ( child.name === "Z" ) {
+
 					quaternionZ.setFromAxisAngle( unitZ, Math.atan2( eye.y, eye.x ) );
 					tempQuaternion.multiplyQuaternions( tempQuaternion, quaternionZ );
 					child.quaternion.copy( tempQuaternion );
+
 				}
 
-			});
+			} );
 
 		};
 
@@ -471,45 +524,55 @@ var THREE = SupEngine.THREE;
 		arrowGeometry.merge( mesh.geometry, mesh.matrix );
 
 		var lineXGeometry = new THREE.BufferGeometry();
-		lineXGeometry.addAttribute( 'position', new THREE.BufferAttribute( new Float32Array([ 0, 0, 0,  1, 0, 0 ]), 3 ) );
+		lineXGeometry.addAttribute( 'position', new THREE.Float32Attribute( [ 0, 0, 0,  1, 0, 0 ], 3 ) );
 
 		var lineYGeometry = new THREE.BufferGeometry();
-		lineYGeometry.addAttribute( 'position', new THREE.BufferAttribute( new Float32Array([ 0, 0, 0,  0, 1, 0 ]), 3 ) );
+		lineYGeometry.addAttribute( 'position', new THREE.Float32Attribute( [ 0, 0, 0,  0, 1, 0 ], 3 ) );
 
 		var lineZGeometry = new THREE.BufferGeometry();
-		lineZGeometry.addAttribute( 'position', new THREE.BufferAttribute( new Float32Array([ 0, 0, 0,  0, 0, 1 ]), 3 ) );
+		lineZGeometry.addAttribute( 'position', new THREE.Float32Attribute( [ 0, 0, 0,  0, 0, 1 ], 3 ) );
 
 		this.handleGizmos = {
+
 			X: [
-				[ new THREE.Mesh( arrowGeometry, new GizmoMaterial( { color: 0xff0000 } ) ), [ 0.5, 0, 0 ], [ 0, 0, -Math.PI / 2 ] ],
+				[ new THREE.Mesh( arrowGeometry, new GizmoMaterial( { color: 0xff0000 } ) ), [ 0.5, 0, 0 ], [ 0, 0, - Math.PI / 2 ] ],
 				[ new THREE.Line( lineXGeometry, new GizmoLineMaterial( { color: 0xff0000 } ) ) ]
 			],
+
 			Y: [
 				[ new THREE.Mesh( arrowGeometry, new GizmoMaterial( { color: 0x00ff00 } ) ), [ 0, 0.5, 0 ] ],
 				[ new THREE.Line( lineYGeometry, new GizmoLineMaterial( { color: 0x00ff00 } ) ) ]
 			],
+
 			Z: [
 				[ new THREE.Mesh( arrowGeometry, new GizmoMaterial( { color: 0x0000ff } ) ), [ 0, 0, 0.5 ], [ Math.PI / 2, 0, 0 ] ],
 				[ new THREE.Line( lineZGeometry, new GizmoLineMaterial( { color: 0x0000ff } ) ) ]
 			],
+
 			XYZ: [
 				[ new THREE.Mesh( new THREE.BoxGeometry( 0.125, 0.125, 0.125 ), new GizmoMaterial( { color: 0xffffff, opacity: 0.25 } ) ) ]
 			]
+
 		};
 
 		this.pickerGizmos = {
+
 			X: [
-				[ new THREE.Mesh( new THREE.CylinderGeometry( 0.2, 0, 1, 4, 1, false ), new GizmoMaterial( { color: 0xff0000, opacity: 0.25 } ) ), [ 0.6, 0, 0 ], [ 0, 0, -Math.PI / 2 ] ]
+				[ new THREE.Mesh( new THREE.CylinderGeometry( 0.2, 0, 1, 4, 1, false ), pickerMaterial ), [ 0.6, 0, 0 ], [ 0, 0, - Math.PI / 2 ] ]
 			],
+
 			Y: [
-				[ new THREE.Mesh( new THREE.CylinderGeometry( 0.2, 0, 1, 4, 1, false ), new GizmoMaterial( { color: 0x00ff00, opacity: 0.25 } ) ), [ 0, 0.6, 0 ] ]
+				[ new THREE.Mesh( new THREE.CylinderGeometry( 0.2, 0, 1, 4, 1, false ), pickerMaterial ), [ 0, 0.6, 0 ] ]
 			],
+
 			Z: [
-				[ new THREE.Mesh( new THREE.CylinderGeometry( 0.2, 0, 1, 4, 1, false ), new GizmoMaterial( { color: 0x0000ff, opacity: 0.25 } ) ), [ 0, 0, 0.6 ], [ Math.PI / 2, 0, 0 ] ]
+				[ new THREE.Mesh( new THREE.CylinderGeometry( 0.2, 0, 1, 4, 1, false ), pickerMaterial ), [ 0, 0, 0.6 ], [ Math.PI / 2, 0, 0 ] ]
 			],
+
 			XYZ: [
-				[ new THREE.Mesh( new THREE.BoxGeometry( 0.4, 0.4, 0.4 ), new GizmoMaterial( { color: 0xffffff, opacity: 0.25 } ) ) ]
+				[ new THREE.Mesh( new THREE.BoxGeometry( 0.4, 0.4, 0.4 ), pickerMaterial ) ]
 			]
+
 		};
 
 		this.setActivePlane = function ( axis, eye ) {
@@ -517,25 +580,28 @@ var THREE = SupEngine.THREE;
 			var tempMatrix = new THREE.Matrix4();
 			eye.applyMatrix4( tempMatrix.getInverse( tempMatrix.extractRotation( this.planes[ "XY" ].matrixWorld ) ) );
 
-			if ( axis == "X" ) {
+			if ( axis === "X" ) {
+
 				this.activePlane = this.planes[ "XY" ];
-				if ( Math.abs(eye.y) > Math.abs(eye.z) ) this.activePlane = this.planes[ "XZ" ];
+				if ( Math.abs( eye.y ) > Math.abs( eye.z ) ) this.activePlane = this.planes[ "XZ" ];
+
 			}
 
-			if ( axis == "Y" ) {
+			if ( axis === "Y" ) {
+
 				this.activePlane = this.planes[ "XY" ];
-				if ( Math.abs(eye.x) > Math.abs(eye.z) ) this.activePlane = this.planes[ "YZ" ];
+				if ( Math.abs( eye.x ) > Math.abs( eye.z ) ) this.activePlane = this.planes[ "YZ" ];
+
 			}
 
-			if ( axis == "Z" ) {
+			if ( axis === "Z" ) {
+
 				this.activePlane = this.planes[ "XZ" ];
-				if ( Math.abs(eye.x) > Math.abs(eye.y) ) this.activePlane = this.planes[ "YZ" ];
+				if ( Math.abs( eye.x ) > Math.abs( eye.y ) ) this.activePlane = this.planes[ "YZ" ];
+
 			}
 
-			if ( axis == "XYZ" ) this.activePlane = this.planes[ "XYZE" ];
-
-			this.hide();
-			this.show();
+			if ( axis === "XYZ" ) this.activePlane = this.planes[ "XYZE" ];
 
 		};
 
@@ -555,20 +621,8 @@ var THREE = SupEngine.THREE;
 
 		domElement = ( domElement !== undefined ) ? domElement : document;
 
-		this.gizmo = {};
-		this.gizmo["translate"] = new THREE.TransformGizmoTranslate();
-		this.gizmo["rotate"] = new THREE.TransformGizmoRotate();
-		this.gizmo["scale"] = new THREE.TransformGizmoScale();
-
-		this.add(this.gizmo["translate"]);
-		this.add(this.gizmo["rotate"]);
-		this.add(this.gizmo["scale"]);
-
-		this.gizmo["translate"].hide();
-		this.gizmo["rotate"].hide();
-		this.gizmo["scale"].hide();
-
 		this.object = undefined;
+		this.visible = false;
 		this.translationSnap = null;
 		this.rotationSnap = null;
 		this.space = "world";
@@ -577,9 +631,24 @@ var THREE = SupEngine.THREE;
 
 		var scope = this;
 
-		var _dragging = false;
 		var _mode = "translate";
+		var _dragging = false;
 		var _plane = "XY";
+		var _gizmo = {
+
+			"translate": new THREE.TransformGizmoTranslate(),
+			"rotate": new THREE.TransformGizmoRotate(),
+			"scale": new THREE.TransformGizmoScale()
+		};
+
+		for ( var type in _gizmo ) {
+
+			var gizmoObj = _gizmo[ type ];
+
+			gizmoObj.visible = ( type === _mode );
+			this.add( gizmoObj );
+
+		}
 
 		var changeEvent = { type: "change" };
 		var mouseDownEvent = { type: "mouseDown" };
@@ -587,7 +656,7 @@ var THREE = SupEngine.THREE;
 		var objectChangeEvent = { type: "objectChange" };
 
 		var ray = new THREE.Raycaster();
-		var pointerVector = new THREE.Vector3();
+		var pointerVector = new THREE.Vector2();
 
 		var point = new THREE.Vector3();
 		var offset = new THREE.Vector3();
@@ -641,6 +710,7 @@ var THREE = SupEngine.THREE;
 		domElement.addEventListener( "touchleave", onPointerUp, false );
 
 		this.dispose = function () {
+
 			domElement.removeEventListener( "mousedown", onPointerDown );
 			domElement.removeEventListener( "touchstart", onPointerDown );
 
@@ -655,29 +725,22 @@ var THREE = SupEngine.THREE;
 			domElement.removeEventListener( "touchend", onPointerUp );
 			domElement.removeEventListener( "touchcancel", onPointerUp );
 			domElement.removeEventListener( "touchleave", onPointerUp );
+
 		};
 
 		this.attach = function ( object ) {
 
-			scope.object = object;
-
-			this.gizmo["translate"].hide();
-			this.gizmo["rotate"].hide();
-			this.gizmo["scale"].hide();
-			this.gizmo[_mode].show();
-
-			scope.update();
+			this.object = object;
+			this.visible = true;
+			this.update();
 
 		};
 
 		this.detach = function () {
 
-			scope.object = undefined;
+			this.object = undefined;
+			this.visible = false;
 			this.axis = null;
-
-			this.gizmo["translate"].hide();
-			this.gizmo["rotate"].hide();
-			this.gizmo["scale"].hide();
 
 		};
 
@@ -685,12 +748,9 @@ var THREE = SupEngine.THREE;
 
 			_mode = mode ? mode : _mode;
 
-			if ( _mode == "scale" ) scope.space = "local";
+			if ( _mode === "scale" ) scope.space = "local";
 
-			this.gizmo["translate"].hide();
-			this.gizmo["rotate"].hide();
-			this.gizmo["scale"].hide();
-			this.gizmo[_mode].show();
+			for ( var type in _gizmo ) _gizmo[ type ].visible = ( type === _mode );
 
 			this.update();
 			scope.dispatchEvent( changeEvent );
@@ -743,23 +803,27 @@ var THREE = SupEngine.THREE;
 
 			eye.copy( camPosition ).sub( worldPosition ).normalize();
 
-			if ( scope.space == "local" )
-				this.gizmo[_mode].update( worldRotation, eye );
+			if ( scope.space === "local" ) {
 
-			else if ( scope.space == "world" )
-				this.gizmo[_mode].update( new THREE.Euler(), eye );
+				_gizmo[ _mode ].update( worldRotation, eye );
 
-			this.gizmo[_mode].highlight( scope.axis );
+			} else if ( scope.space === "world" ) {
+
+				_gizmo[ _mode ].update( new THREE.Euler(), eye );
+
+			}
+
+			_gizmo[ _mode ].highlight( scope.axis );
 
 		};
 
 		function onPointerHover( event ) {
 
-			if ( scope.object === undefined || _dragging === true ) return;
+			if ( scope.object === undefined || _dragging === true || ( event.button !== undefined && event.button !== 0 ) ) return;
 
 			var pointer = event.changedTouches ? event.changedTouches[ 0 ] : event;
 
-			var intersect = intersectObjects( pointer, scope.gizmo[_mode].pickers.children );
+			var intersect = intersectObjects( pointer, _gizmo[ _mode ].pickers.children );
 
 			var axis = null;
 
@@ -783,13 +847,13 @@ var THREE = SupEngine.THREE;
 
 		function onPointerDown( event ) {
 
-			if ( scope.object === undefined || _dragging === true || event.button !== 0 ) return;
+			if ( scope.object === undefined || _dragging === true || ( event.button !== undefined && event.button !== 0 ) ) return;
 
 			var pointer = event.changedTouches ? event.changedTouches[ 0 ] : event;
 
 			if ( pointer.button === 0 || pointer.button === undefined ) {
 
-				var intersect = intersectObjects( pointer, scope.gizmo[_mode].pickers.children );
+				var intersect = intersectObjects( pointer, _gizmo[ _mode ].pickers.children );
 
 				if ( intersect ) {
 
@@ -804,20 +868,24 @@ var THREE = SupEngine.THREE;
 
 					eye.copy( camPosition ).sub( worldPosition ).normalize();
 
-					scope.gizmo[_mode].setActivePlane( scope.axis, eye );
+					_gizmo[ _mode ].setActivePlane( scope.axis, eye );
 
-					var planeIntersect = intersectObjects( pointer, [ scope.gizmo[_mode].activePlane ] );
+					var planeIntersect = intersectObjects( pointer, [ _gizmo[ _mode ].activePlane ] );
 
-					oldPosition.copy( scope.object.position );
-					oldScale.copy( scope.object.scale );
+					if ( planeIntersect ) {
 
-					oldRotationMatrix.extractRotation( scope.object.matrix );
-					worldRotationMatrix.extractRotation( scope.object.matrixWorld );
+						oldPosition.copy( scope.object.position );
+						oldScale.copy( scope.object.scale );
 
-					parentRotationMatrix.extractRotation( scope.object.parent.matrixWorld );
-					parentScale.setFromMatrixScale( tempMatrix.getInverse( scope.object.parent.matrixWorld ) );
+						oldRotationMatrix.extractRotation( scope.object.matrix );
+						worldRotationMatrix.extractRotation( scope.object.matrixWorld );
 
-					offset.copy( planeIntersect.point );
+						parentRotationMatrix.extractRotation( scope.object.parent.matrixWorld );
+						parentScale.setFromMatrixScale( tempMatrix.getInverse( scope.object.parent.matrixWorld ) );
+
+						offset.copy( planeIntersect.point );
+
+					}
 
 				}
 
@@ -829,30 +897,31 @@ var THREE = SupEngine.THREE;
 
 		function onPointerMove( event ) {
 
-			if ( scope.object === undefined || scope.axis === null || _dragging === false || event.button !== 0 ) return;
+			if ( scope.object === undefined || scope.axis === null || _dragging === false || ( event.button !== undefined && event.button !== 0 ) ) return;
+
+			var pointer = event.changedTouches ? event.changedTouches[ 0 ] : event;
+
+			var planeIntersect = intersectObjects( pointer, [ _gizmo[ _mode ].activePlane ] );
+
+			if ( planeIntersect === false ) return;
 
 			event.preventDefault();
 			event.stopPropagation();
 
-			var pointer = event.changedTouches ? event.changedTouches[0] : event;
-
-			var planeIntersect = intersectObjects( pointer, [ scope.gizmo[_mode].activePlane ] );
-			if ( planeIntersect === false ) return;
-
 			point.copy( planeIntersect.point );
 
-			if ( _mode == "translate" ) {
+			if ( _mode === "translate" ) {
 
 				point.sub( offset );
-				point.multiply(parentScale);
+				point.multiply( parentScale );
 
-				if ( scope.space == "local" ) {
+				if ( scope.space === "local" ) {
 
 					point.applyMatrix4( tempMatrix.getInverse( worldRotationMatrix ) );
 
-					if ( scope.axis.search("X") == -1 ) point.x = 0;
-					if ( scope.axis.search("Y") == -1 ) point.y = 0;
-					if ( scope.axis.search("Z") == -1 ) point.z = 0;
+					if ( scope.axis.search( "X" ) === - 1 ) point.x = 0;
+					if ( scope.axis.search( "Y" ) === - 1 ) point.y = 0;
+					if ( scope.axis.search( "Z" ) === - 1 ) point.z = 0;
 
 					point.applyMatrix4( oldRotationMatrix );
 
@@ -861,11 +930,11 @@ var THREE = SupEngine.THREE;
 
 				}
 
-				if ( scope.space == "world" || scope.axis.search("XYZ") != -1 ) {
+				if ( scope.space === "world" || scope.axis.search( "XYZ" ) !== - 1 ) {
 
-					if ( scope.axis.search("X") == -1 ) point.x = 0;
-					if ( scope.axis.search("Y") == -1 ) point.y = 0;
-					if ( scope.axis.search("Z") == -1 ) point.z = 0;
+					if ( scope.axis.search( "X" ) === - 1 ) point.x = 0;
+					if ( scope.axis.search( "Y" ) === - 1 ) point.y = 0;
+					if ( scope.axis.search( "Z" ) === - 1 ) point.z = 0;
 
 					point.applyMatrix4( tempMatrix.getInverse( parentRotationMatrix ) );
 
@@ -894,14 +963,14 @@ var THREE = SupEngine.THREE;
 
 				}
 
-			} else if ( _mode == "scale" ) {
+			} else if ( _mode === "scale" ) {
 
 				point.sub( offset );
-				point.multiply(parentScale);
+				point.multiply( parentScale );
 
-				if ( scope.space == "local" ) {
+				if ( scope.space === "local" ) {
 
-					if ( scope.axis == "XYZ") {
+					if ( scope.axis === "XYZ" ) {
 
 						scale = 1 + ( ( point.y ) / 50 );
 
@@ -913,22 +982,22 @@ var THREE = SupEngine.THREE;
 
 						point.applyMatrix4( tempMatrix.getInverse( worldRotationMatrix ) );
 
-						if ( scope.axis == "X" ) scope.object.scale.x = oldScale.x * ( 1 + point.x / 50 );
-						if ( scope.axis == "Y" ) scope.object.scale.y = oldScale.y * ( 1 + point.y / 50 );
-						if ( scope.axis == "Z" ) scope.object.scale.z = oldScale.z * ( 1 + point.z / 50 );
+						if ( scope.axis === "X" ) scope.object.scale.x = oldScale.x * ( 1 + point.x / 50 );
+						if ( scope.axis === "Y" ) scope.object.scale.y = oldScale.y * ( 1 + point.y / 50 );
+						if ( scope.axis === "Z" ) scope.object.scale.z = oldScale.z * ( 1 + point.z / 50 );
 
 					}
 
 				}
 
-			} else if ( _mode == "rotate" ) {
+			} else if ( _mode === "rotate" ) {
 
 				point.sub( worldPosition );
-				point.multiply(parentScale);
-				tempVector.copy(offset).sub( worldPosition );
-				tempVector.multiply(parentScale);
+				point.multiply( parentScale );
+				tempVector.copy( offset ).sub( worldPosition );
+				tempVector.multiply( parentScale );
 
-				if ( scope.axis == "E" ) {
+				if ( scope.axis === "E" ) {
 
 					point.applyMatrix4( tempMatrix.getInverse( lookAtMatrix ) );
 					tempVector.applyMatrix4( tempMatrix.getInverse( lookAtMatrix ) );
@@ -946,12 +1015,12 @@ var THREE = SupEngine.THREE;
 
 					scope.object.quaternion.copy( tempQuaternion );
 
-				} else if ( scope.axis == "XYZE" ) {
+				} else if ( scope.axis === "XYZE" ) {
 
-					quaternionE.setFromEuler( point.clone().cross(tempVector).normalize() ); // rotation axis
+					quaternionE.setFromEuler( point.clone().cross( tempVector ).normalize() ); // rotation axis
 
 					tempQuaternion.setFromRotationMatrix( tempMatrix.getInverse( parentRotationMatrix ) );
-					quaternionX.setFromAxisAngle( quaternionE, - point.clone().angleTo(tempVector) );
+					quaternionX.setFromAxisAngle( quaternionE, - point.clone().angleTo( tempVector ) );
 					quaternionXYZ.setFromRotationMatrix( worldRotationMatrix );
 
 					tempQuaternion.multiplyQuaternions( tempQuaternion, quaternionX );
@@ -959,7 +1028,7 @@ var THREE = SupEngine.THREE;
 
 					scope.object.quaternion.copy( tempQuaternion );
 
-				} else if ( scope.space == "local" ) {
+				} else if ( scope.space === "local" ) {
 
 					point.applyMatrix4( tempMatrix.getInverse( worldRotationMatrix ) );
 
@@ -984,13 +1053,13 @@ var THREE = SupEngine.THREE;
 
 					}
 
-					if ( scope.axis == "X" ) quaternionXYZ.multiplyQuaternions( quaternionXYZ, quaternionX );
-					if ( scope.axis == "Y" ) quaternionXYZ.multiplyQuaternions( quaternionXYZ, quaternionY );
-					if ( scope.axis == "Z" ) quaternionXYZ.multiplyQuaternions( quaternionXYZ, quaternionZ );
+					if ( scope.axis === "X" ) quaternionXYZ.multiplyQuaternions( quaternionXYZ, quaternionX );
+					if ( scope.axis === "Y" ) quaternionXYZ.multiplyQuaternions( quaternionXYZ, quaternionY );
+					if ( scope.axis === "Z" ) quaternionXYZ.multiplyQuaternions( quaternionXYZ, quaternionZ );
 
 					scope.object.quaternion.copy( quaternionXYZ );
 
-				} else if ( scope.space == "world" ) {
+				} else if ( scope.space === "world" ) {
 
 					rotation.set( Math.atan2( point.z, point.y ), Math.atan2( point.x, point.z ), Math.atan2( point.y, point.x ) );
 					offsetRotation.set( Math.atan2( tempVector.z, tempVector.y ), Math.atan2( tempVector.x, tempVector.z ), Math.atan2( tempVector.y, tempVector.x ) );
@@ -1013,9 +1082,9 @@ var THREE = SupEngine.THREE;
 
 					quaternionXYZ.setFromRotationMatrix( worldRotationMatrix );
 
-					if ( scope.axis == "X" ) tempQuaternion.multiplyQuaternions( tempQuaternion, quaternionX );
-					if ( scope.axis == "Y" ) tempQuaternion.multiplyQuaternions( tempQuaternion, quaternionY );
-					if ( scope.axis == "Z" ) tempQuaternion.multiplyQuaternions( tempQuaternion, quaternionZ );
+					if ( scope.axis === "X" ) tempQuaternion.multiplyQuaternions( tempQuaternion, quaternionX );
+					if ( scope.axis === "Y" ) tempQuaternion.multiplyQuaternions( tempQuaternion, quaternionY );
+					if ( scope.axis === "Z" ) tempQuaternion.multiplyQuaternions( tempQuaternion, quaternionZ );
 
 					tempQuaternion.multiplyQuaternions( tempQuaternion, quaternionXYZ );
 
@@ -1033,12 +1102,15 @@ var THREE = SupEngine.THREE;
 
 		function onPointerUp( event ) {
 
-			if ( event.button !== 0 ) return;
+			if ( event.button !== undefined && event.button !== 0 ) return;
 
 			if ( _dragging && ( scope.axis !== null ) ) {
+
 				mouseUpEvent.mode = _mode;
 				scope.dispatchEvent( mouseUpEvent )
+
 			}
+
 			_dragging = false;
 			onPointerHover( event );
 
@@ -1047,16 +1119,25 @@ var THREE = SupEngine.THREE;
 		function intersectObjects( pointer, objects ) {
 
 			var rect = domElement.getBoundingClientRect();
-			var x = ( pointer.clientX - rect.left ) / rect.width;
-			var y = ( pointer.clientY - rect.top ) / rect.height;
 
-			pointerVector.set( ( x * 2 ) - 1, - ( y * 2 ) + 1, 0.5 );
-			pointerVector.unproject( camera );
+      var x =  ( pointer.clientX - rect.left ) / rect.width  * 2 - 1;
+      var y = -( pointer.clientY - rect.top  ) / rect.height * 2 + 1;
 
-			ray.set( camPosition, pointerVector.sub( camPosition ).normalize() );
+      // Does the conversion manually because the raycast can't deduce the type of the camera
+      if ( camera.type === "perspective" ) {
+
+        ray.ray.origin.setFromMatrixPosition( camera.matrixWorld );
+        ray.ray.direction.set( x, y, 0.5 ).unproject( camera ).sub( ray.ray.origin ).normalize();
+
+      } else if ( camera.type === "orthographic" ) {
+
+        ray.ray.origin.set( x, y, - 1 ).unproject( camera );
+        ray.ray.direction.set( 0, 0, - 1 ).transformDirection( camera.matrixWorld );
+
+      }
 
 			var intersections = ray.intersectObjects( objects, true );
-			return intersections[0] ? intersections[0] : false;
+			return intersections[ 0 ] ? intersections[ 0 ] : false;
 
 		}
 
@@ -1065,4 +1146,4 @@ var THREE = SupEngine.THREE;
 	THREE.TransformControls.prototype = Object.create( THREE.Object3D.prototype );
 	THREE.TransformControls.prototype.constructor = THREE.TransformControls;
 
-}());
+}() );
