@@ -9,6 +9,6 @@
     "url": "https://bitbucket.org/superpowers/system"
   },
   "dependencies": {
-    "three": "0.72.0"
+    "three": "0.73.0"
   }
 }

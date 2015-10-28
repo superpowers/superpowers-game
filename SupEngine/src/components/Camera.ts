@@ -23,6 +23,7 @@ export default class Camera extends ActorComponent {
     super(actor, "Camera");
 
     this.unifiedThreeCamera = <any>{
+      type: "perspective",
       matrixWorld: null,
       projectionMatrix: null,
       updateMatrixWorld: () => {},
@@ -64,6 +65,7 @@ export default class Camera extends ActorComponent {
     }
     else this.threeCamera = new THREE.PerspectiveCamera(this.fov, this.cachedRatio, this.nearClippingPlane, this.farClippingPlane);
 
+    this.unifiedThreeCamera.type = isOrthographic ? "orthographic" : "perspective";
     this.unifiedThreeCamera.matrixWorld = this.threeCamera.matrixWorld;
     this.unifiedThreeCamera.projectionMatrix = this.threeCamera.projectionMatrix;
 
@@ -147,5 +149,6 @@ export default class Camera extends ActorComponent {
         this.actor.gameInstance.threeRenderer.render(this.actor.gameInstance.threeScene, this.threeCamera);
       }
     }
+    this.actor.gameInstance.setActiveLayer(null);
   }
 }

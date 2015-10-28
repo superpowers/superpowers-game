@@ -890,13 +890,6 @@ declare module THREE {
         morphTargets: MorphTarget[];
 
         /**
-         * Array of morph colors. Morph colors have similar structure as morph targets, each color set is a Javascript object:
-         *
-         *     morphColor = { name: "colorName", colors: [ new THREE.Color(), ... ] }
-         */
-        morphColors: MorphColor[];
-
-        /**
          * Array of morph normals. Morph normals have similar structure as morph targets, each normal set is a Javascript object:
          *
          *     morphNormal = { name: "NormalName", normals: [ new THREE.Vector3(), ... ] }
@@ -1039,6 +1032,8 @@ declare module THREE {
          * Duplicated vertices are removed and faces' vertices are updated.
          */
         mergeVertices(): number;
+
+        sortFacesByMaterialIndex(): void;
 
         toJSON(): any;
 
@@ -2968,14 +2963,6 @@ declare module THREE {
         clamp(x: number, a: number, b: number): number;
 
         /**
-         * Clamps the x to be larger than a.
-         *
-         * @param x — Value to be clamped.
-         * @param a — Minimum value
-         */
-        clampBottom(x: number, a: number): number;
-
-        /**
          * Linear mapping of x from range [a1, a2] to range [b1, b2].
          *
          * @param x Value to be mapped.
@@ -3749,6 +3736,7 @@ declare module THREE {
         max(v: Vector2): Vector2;
         clamp(min: Vector2, max: Vector2): Vector2;
         clampScalar(min: number, max: number): Vector2;
+        clampLength(min: number, max: number): Vector2;
         floor(): Vector2;
         ceil(): Vector2;
         round(): Vector2;
@@ -3813,6 +3801,8 @@ declare module THREE {
         toArray(xy?: number[], offset?: number): number[];
 
         fromAttribute( attribute: BufferAttribute, index: number, offset?: number): Vector2;
+
+        rotateAround(center: Vector2, angle: number): Vector2;
 
         /**
          * Clones this vector.
@@ -3919,6 +3909,7 @@ declare module THREE {
         max(v: Vector3): Vector3;
         clamp(min: Vector3, max: Vector3): Vector3;
         clampScalar(min: number, max: number): Vector3;
+        clampLength(min: number, max: number): Vector3;
         floor(): Vector3;
         ceil(): Vector3;
         round(): Vector3;
@@ -5355,15 +5346,15 @@ declare module THREE {
          */
         getTangentAt(u: number): T;
 
-        static Utils: {
-            tangentQuadraticBezier(t: number, p0: number, p1: number, p2: number): number;
-            tangentCubicBezier(t: number, p0: number, p1: number, p2: number, p3: number): number;
-            tangentSpline(t: number, p0: number, p1: number, p2: number, p3: number): number;
-            interpolate(p0: number, p1: number, p2: number, p3: number, t: number): number;
-        };
-
         static create(constructorFunc: Function, getPointFunc: Function): Function;
     }
+
+    export var CurveUtils: {
+        tangentQuadraticBezier(t: number, p0: number, p1: number, p2: number): number;
+        tangentCubicBezier(t: number, p0: number, p1: number, p2: number, p3: number): number;
+        tangentSpline(t: number, p0: number, p1: number, p2: number, p3: number): number;
+        interpolate(p0: number, p1: number, p2: number, p3: number, t: number): number;
+    };
 
     export interface BoundingBox {
         minX: number;
@@ -5973,8 +5964,9 @@ declare module THREE {
     // Extras / Objects /////////////////////////////////////////////////////////////////////
 
     export class ImmediateRenderObject extends Object3D {
-        constructor();
+        constructor(material: Material);
 
+        material: Material
         render(renderCallback:Function): void;
     }
 
