@@ -2,8 +2,6 @@
 // 029b4e511e51fa36d791448bd5ec09e609431c71
 // with additional fixes from https://github.com/mrdoob/three.js/pull/6737
 
-var THREE = SupEngine.THREE;
-
 /**
  * @author arodic / https://github.com/arodic
  */
@@ -13,6 +11,8 @@ var THREE = SupEngine.THREE;
 
 	'use strict';
 
+	// Change for Superpowers: expose THREE.js
+	var THREE = SupEngine.THREE;
 
 	var GizmoMaterial = function ( parameters ) {
 
@@ -1120,21 +1120,23 @@ var THREE = SupEngine.THREE;
 
 			var rect = domElement.getBoundingClientRect();
 
-      var x =  ( pointer.clientX - rect.left ) / rect.width  * 2 - 1;
-      var y = -( pointer.clientY - rect.top  ) / rect.height * 2 + 1;
+			// Change for Superpowers: Setup based on camera.type
+      // rather than using `instanceof`
+			// since we're using a custom combined camera
+			var x =  ( pointer.clientX - rect.left ) / rect.width  * 2 - 1;
+			var y = -( pointer.clientY - rect.top  ) / rect.height * 2 + 1;
 
-      // Does the conversion manually because the raycast can't deduce the type of the camera
-      if ( camera.type === "perspective" ) {
+			if ( camera.type === "perspective" ) {
 
-        ray.ray.origin.setFromMatrixPosition( camera.matrixWorld );
-        ray.ray.direction.set( x, y, 0.5 ).unproject( camera ).sub( ray.ray.origin ).normalize();
+				ray.ray.origin.setFromMatrixPosition( camera.matrixWorld );
+				ray.ray.direction.set( x, y, 0.5 ).unproject( camera ).sub( ray.ray.origin ).normalize();
 
-      } else if ( camera.type === "orthographic" ) {
+			} else if ( camera.type === "orthographic" ) {
 
-        ray.ray.origin.set( x, y, - 1 ).unproject( camera );
-        ray.ray.direction.set( 0, 0, - 1 ).transformDirection( camera.matrixWorld );
+				ray.ray.origin.set( x, y, - 1 ).unproject( camera );
+				ray.ray.direction.set( 0, 0, - 1 ).transformDirection( camera.matrixWorld );
 
-      }
+			}
 
 			var intersections = ray.intersectObjects( objects, true );
 			return intersections[ 0 ] ? intersections[ 0 ] : false;
