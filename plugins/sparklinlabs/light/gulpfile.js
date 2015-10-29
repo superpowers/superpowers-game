@@ -32,6 +32,7 @@ makeBrowserify("./components/index.js", "./public", "components");
 makeBrowserify("./componentEditors/index.js", "./public", "componentEditors");
 makeBrowserify("./runtime/index.js", "./public", "runtime");
 makeBrowserify("./api/index.js", "./public", "api");
+makeBrowserify("./settingsEditors/index.js", "./public", "settingsEditors");
 
 // All
 gulp.task("default", tasks);

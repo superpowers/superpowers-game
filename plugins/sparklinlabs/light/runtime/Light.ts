@@ -1,3 +1,19 @@
+let THREE = SupEngine.THREE;
+export function init(player: any, callback: Function) {
+  switch (player.resources.lightSettings.shadowMapType) {
+    case "basic":
+      player.gameInstance.threeRenderer.shadowMap.type = THREE.BasicShadowMap;
+      break;
+    case "pcf":
+      player.gameInstance.threeRenderer.shadowMap.type = THREE.PCFShadowMap;
+      break;
+    case "pcfSoft":
+      player.gameInstance.threeRenderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      break;
+  }
+  callback();
+}
+
 export function setupComponent(player: SupRuntime.Player, component: any, config: any) {
   component.__outer.type = ["ambient", "point", "spot", "directional"].indexOf(config.type)
   component.color = parseInt(config.color, 16);

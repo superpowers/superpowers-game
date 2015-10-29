@@ -1,11 +1,21 @@
 import Light from "./Light";
 import { LightConfigPub } from "../data/LightConfig";
+import LightSettingsResource from "../data/LightSettingsResource";
+let THREE = SupEngine.THREE;
 
 export default class LightUpdater {
+  projectClient: SupClient.ProjectClient;
 
   light: Light;
 
-  constructor(client: SupClient.ProjectClient, light: Light, config: LightConfigPub) {
+  lightSettings: LightSettingsResource;
+  lightSettingsSubscriber = {
+    onResourceReceived: this._onLightResourceRecevied.bind(this),
+    onResourceEdited: this._onLightResourceEdited.bind(this)
+  }
+
+  constructor(projectClient: SupClient.ProjectClient, light: Light, config: LightConfigPub) {
+    this.projectClient = projectClient;
     this.light = light;
 
     this.light.color = parseInt(config.color, 16);
@@ -27,9 +37,13 @@ export default class LightUpdater {
     this.light.shadowCameraBottom = config.shadowCameraSize.bottom;
 
     this.light.setType(config.type);
+
+    this.projectClient.subResource("lightSettings", this.lightSettingsSubscriber);
   }
 
-  destroy() {}
+  destroy() {
+    this.projectClient.unsubResource("lightSettings", this.lightSettingsSubscriber);
+  }
 
   config_setProperty(path: string, value: any) {
     switch(path) {
@@ -94,5 +108,32 @@ export default class LightUpdater {
         this.light.setShadowCameraSize(null, null, null, value);
         break;
     }
+  }
+
+  _updateLightShadowMap() {
+    switch (this.lightSettings.pub.shadowMapType) {
+      case "basic":
+        this.light.actor.gameInstance.threeRenderer.shadowMap.type = THREE.BasicShadowMap;
+        break;
+      case "pcf":
+        this.light.actor.gameInstance.threeRenderer.shadowMap.type = THREE.PCFShadowMap;
+        break;
+      case "pcfSoft":
+        this.light.actor.gameInstance.threeRenderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        break;
+    }
+    this.light.actor.gameInstance.threeScene.traverse((object: any) => {
+      let material: THREE.Material = object.material;
+      if (material != null) material.needsUpdate = true;
+    })
+  }
+
+  _onLightResourceRecevied(resourceId: string, resource: LightSettingsResource) {
+    this.lightSettings = resource;
+    this._updateLightShadowMap();
+  }
+
+  _onLightResourceEdited(resourceId: string, command: string, propertyName: string) {
+    if (command === "setProperty" && propertyName === "shadowMapType") this._updateLightShadowMap();
   }
 }
