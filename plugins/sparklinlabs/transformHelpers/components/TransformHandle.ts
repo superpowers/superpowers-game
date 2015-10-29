@@ -7,6 +7,7 @@ export default class TransformHandle extends SupEngine.ActorComponent {
   target: THREE.Object3D;
   mode = "translate";
   space = "world";
+  controlVisible = false;
 
   constructor(actor: SupEngine.Actor, threeCamera: THREE.Camera) {
     super(actor, "TransformHandle");
@@ -15,7 +16,7 @@ export default class TransformHandle extends SupEngine.ActorComponent {
     this.actor.gameInstance.threeScene.add(this.control);
   }
 
-  setIsLayerActive(active: boolean) { this.control.visible = active; }
+  setIsLayerActive(active: boolean) { this.control.visible = active && this.controlVisible; }
 
   update() {
     this.control.update();
@@ -39,12 +40,14 @@ export default class TransformHandle extends SupEngine.ActorComponent {
     this.target = target;
 
     if (this.target != null) {
+      this.controlVisible = true;
       this.control.attach(this.actor.threeObject);
       this.control.setSpace(this.mode === "scale" ? "local" : this.space);
       this.control.setMode(this.mode);
       this.move();
     } else {
-      this.control.detach(this.actor.threeObject);
+      this.controlVisible = false;
+      this.control.detach();
     }
   }
 
@@ -59,6 +62,7 @@ export default class TransformHandle extends SupEngine.ActorComponent {
   }
 
   _destroy() {
+    this.controlVisible = false;
     this.control.detach();
     this.actor.gameInstance.threeScene.remove(this.control);
 
