@@ -29,8 +29,8 @@ export default class Light extends SupEngine.ActorComponent {
   constructor(actor: SupEngine.Actor) {
     super(actor, "Light");
 
-    this.actor.gameInstance.threeRenderer.shadowMapEnabled = true;
-    this.actor.gameInstance.threeRenderer.shadowMapType = THREE.BasicShadowMap;
+    this.actor.gameInstance.threeRenderer.shadowMap.enabled = true;
+    this.actor.gameInstance.threeRenderer.shadowMap.type = THREE.BasicShadowMap;
   }
 
   setType(type: string) {

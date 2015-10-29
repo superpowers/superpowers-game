@@ -55,43 +55,28 @@ export function createShaderMaterial(asset: ShaderAssetPub, textures: { [name: s
     uniforms[uniform.name] = { type: uniform.type, value };
   }
 
-  let attributes: { [name: string]: { type: string }} = {};
   for (let attribute of asset.attributes) {
-    attributes[attribute.name] = { type: attribute.type };
-
     let values = <any[]>[];
     let itemSize: number;
     switch (attribute.type) {
       case "f":
         itemSize = 1;
-        for (let v = 0; v < geometry.getAttribute("position").length / 3; v++) {
-          for (let i = 0; i < itemSize; i++) values.push(Math.random());
-        }
         break;
       case "c":
         itemSize = 3;
-        for (let v = 0; v < geometry.getAttribute("position").length / 3; v++) {
-          for (let i = 0; i < itemSize; i++) values.push(Math.random());
-        }
         break;
       case "v2":
         itemSize = 2;
-        for (let v = 0; v < geometry.getAttribute("position").length / 3; v++) {
-          for (let i = 0; i < itemSize; i++) values.push(Math.random());
-        }
         break;
       case "v3":
         itemSize = 3;
-        for (let v = 0; v < geometry.getAttribute("position").length / 3; v++) {
-          for (let i = 0; i < itemSize; i++) values.push(Math.random());
-        }
         break;
       case "v4":
         itemSize = 4;
-        for (let v = 0; v < geometry.getAttribute("position").length / 3; v++) {
-          for (let i = 0; i < itemSize; i++) values.push(Math.random());
-        }
         break;
+    }
+    for (let v = 0; v < geometry.getAttribute("position").length / 3; v++) {
+      for (let i = 0; i < itemSize; i++) values.push(Math.random());
     }
     geometry.addAttribute(attribute.name, new THREE.BufferAttribute(new Float32Array(values), itemSize));
   }
@@ -100,7 +85,7 @@ export function createShaderMaterial(asset: ShaderAssetPub, textures: { [name: s
   let fragmentShader = replaceShaderChunk(options.useDraft ? asset.fragmentShader.draft : asset.fragmentShader.text);
 
   return new THREE.ShaderMaterial({
-    uniforms, attributes,
+    uniforms,
     vertexShader, fragmentShader,
     transparent: true,
     lights: asset.useLightUniforms

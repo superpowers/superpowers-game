@@ -72,7 +72,7 @@ export default class TextRendererGeometry extends THREE.BufferGeometry {
         offset3 += 6;
       }
     }
-    this.addAttribute("index", new THREE.BufferAttribute(indices, 1));
+    this.setIndex(new THREE.BufferAttribute(indices, 1));
     this.addAttribute("position", new THREE.BufferAttribute(vertices, 3));
     this.addAttribute("normal", new THREE.BufferAttribute(normals, 3));
     this.addAttribute("uv", new THREE.BufferAttribute(uvs, 2));
