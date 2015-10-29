@@ -1,3 +1,5 @@
+let THREE = SupEngine.THREE;
+
 export default class P2Body extends SupEngine.ActorComponent {
   body: any;
 
