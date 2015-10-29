@@ -18,8 +18,6 @@ export default class P2BodyMarkerUpdater {
   destroy() {}
 
   config_setProperty(path: string, value: any) {
-    this.config[path] = value;
-
     if (path === "width" || path === "height" || (path === "shape" && value === "rectangle")) {
       this.bodyRenderer.setRectangle(this.config.width, this.config.height);
     }

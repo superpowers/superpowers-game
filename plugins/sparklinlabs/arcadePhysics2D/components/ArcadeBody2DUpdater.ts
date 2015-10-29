@@ -19,9 +19,7 @@ export default class ArcadeBody2DUpdater {
   destroy() {}
 
   config_setProperty(path: string, value: any) {
-    (<any>this.config)[path] = value;
-
-    if (path === "width"   || path === "height")   this.bodyRenderer.setBox(this.config.width, this.config.height);
+    if (path === "width" || path === "height") this.bodyRenderer.setBox(this.config.width, this.config.height);
     if (path === "offset.x" || path ===  "offset.y") this.bodyRenderer.setOffset(this.config.offset.x, this.config.offset.y);
     if (path === "type") this.setType();
   }
