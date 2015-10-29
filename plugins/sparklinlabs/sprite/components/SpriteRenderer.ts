@@ -118,10 +118,7 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
 
     this.updateShape();
     if (this.animationName == null) this.setFrame(0);
-    else {
-      this.updateFrame();
-      this.hasFrameBeenUpdated = false;
-    }
+    else this.updateFrame(false);
   }
 
   setVerticalFlip(verticalFlip: boolean) {
@@ -130,10 +127,7 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
 
     this.updateShape();
     if (this.animationName == null) this.setFrame(0);
-    else {
-      this.updateFrame();
-      this.hasFrameBeenUpdated = false;
-    }
+    else this.updateFrame(false);
   }
 
   updateAnimationsByName() {
@@ -296,8 +290,8 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
     return frame;
   }
 
-  updateFrame() {
-    this.hasFrameBeenUpdated = true;
+  updateFrame(flagFrameUpdated=true) {
+    if (flagFrameUpdated) this.hasFrameBeenUpdated = true;
 
     let frame = this.computeAbsoluteFrameIndex();
     if (frame > this.animation.endFrameIndex) {
