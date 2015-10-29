@@ -450,8 +450,8 @@ declare module THREE {
         boundingBox: Box3;
         boundingSphere: BoundingSphere;
 
-        addIndex(index: number): void;
-        setIndex(index: number): void;
+        addIndex(index: BufferAttribute): void;
+        setIndex(index: BufferAttribute): void;
         addAttribute(name: string, attribute: BufferAttribute): any;
         addAttribute(name: string, array: any, itemSize: number): any;
         getAttribute(name: string): any;
