@@ -1,5 +1,6 @@
 let THREE = SupEngine.THREE;
 
+import { SpriteAssetPub } from "../data/SpriteAsset";
 import { SpriteAnimationPub } from "../data/SpriteAnimations";
 import SpriteRendererUpdater from "./SpriteRendererUpdater";
 
@@ -11,7 +12,7 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
   color = { r: 1, g: 1, b: 1 };
   hasFrameBeenUpdated = false;
 
-  asset: any;
+  asset: SpriteAssetPub;
   geometry: THREE.PlaneBufferGeometry;
   material: THREE.MeshBasicMaterial|THREE.MeshPhongMaterial|THREE.ShaderMaterial;
   materialType = "basic";
@@ -33,7 +34,7 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
     super(actor, "SpriteRenderer");
   }
 
-  setSprite(asset: any, materialType?: string, customShader?: any) {
+  setSprite(asset: SpriteAssetPub, materialType?: string, customShader?: any) {
     this._clearMesh();
 
     this.asset = asset;

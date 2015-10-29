@@ -11,7 +11,7 @@ interface Animation {
   keyFrames: any;
 }
 
-interface ModelAssetPub {
+export interface ModelAssetPub {
   unitRatio: number;
   upAxisMatrix: number[];
   attributes: { [name: string]: Buffer; };

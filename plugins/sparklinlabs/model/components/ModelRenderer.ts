@@ -3,6 +3,7 @@ let tmpBoneMatrix = new THREE.Matrix4;
 let tmpVec = new THREE.Vector3;
 let tmpQuat = new THREE.Quaternion;
 
+import { ModelAssetPub } from "../data/ModelAsset";
 import ModelRendererUpdater from "./ModelRendererUpdater";
 
 interface AnimationKeyFrames {
@@ -49,7 +50,7 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
   color = { r: 1, g: 1, b: 1 };
   hasPoseBeenUpdated = false;
 
-  asset: any;
+  asset: ModelAssetPub;
   material: THREE.MeshBasicMaterial|THREE.MeshPhongMaterial|THREE.ShaderMaterial;
   threeMesh: THREE.Mesh|THREE.SkinnedMesh;
   materialType = "basic";
@@ -88,12 +89,11 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
     super._destroy();
   }
 
-  setModel(asset: any, materialType?: string, customShader?: any) {
+  setModel(asset: ModelAssetPub, materialType?: string, customShader?: any) {
     if (this.asset != null) this._clearMesh();
-    this.asset = null;
     this.animation = null;
 
-    if (asset == null || asset.attributes.position == null) return;
+    if (asset == null || asset.attributes["position"] == null) return;
 
     this.asset = asset;
     if (materialType != null) this.materialType = materialType;
@@ -101,32 +101,32 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
 
     let geometry = new THREE.BufferGeometry;
 
-    if (this.asset.attributes.position != null) {
-      let buffer = new Float32Array(this.asset.attributes.position);
+    if (this.asset.attributes["position"] != null) {
+      let buffer = new Float32Array(this.asset.attributes["position"]);
       geometry.addAttribute("position", new THREE.BufferAttribute(buffer, 3));
     }
-    if (this.asset.attributes.index != null) {
-      let buffer = new Uint16Array(this.asset.attributes.index);
+    if (this.asset.attributes["index"] != null) {
+      let buffer = new Uint16Array(this.asset.attributes["index"]);
       geometry.setIndex(new THREE.BufferAttribute(buffer, 1));
     }
-    if (this.asset.attributes.uv != null) {
-      let buffer = new Float32Array(this.asset.attributes.uv);
+    if (this.asset.attributes["uv"] != null) {
+      let buffer = new Float32Array(this.asset.attributes["uv"]);
       geometry.addAttribute("uv", new THREE.BufferAttribute(buffer, 2));
     }
-    if (this.asset.attributes.normal != null) {
-      let buffer = new Float32Array(this.asset.attributes.normal);
+    if (this.asset.attributes["normal"] != null) {
+      let buffer = new Float32Array(this.asset.attributes["normal"]);
       geometry.addAttribute("normal", new THREE.BufferAttribute(buffer, 3));
     }
-    if (this.asset.attributes.color != null) {
-      let buffer = new Float32Array(this.asset.attributes.color);
+    if (this.asset.attributes["color"] != null) {
+      let buffer = new Float32Array(this.asset.attributes["color"]);
       geometry.addAttribute("color", new THREE.BufferAttribute(buffer, 3));
     }
-    if (this.asset.attributes.skinIndex != null) {
-      let buffer = new Float32Array(this.asset.attributes.skinIndex);
+    if (this.asset.attributes["skinIndex"] != null) {
+      let buffer = new Float32Array(this.asset.attributes["skinIndex"]);
       geometry.addAttribute("skinIndex", new THREE.BufferAttribute(buffer, 4));
     }
-    if (this.asset.attributes.skinWeight != null) {
-      let buffer = new Float32Array(this.asset.attributes.skinWeight);
+    if (this.asset.attributes["skinWeight"] != null) {
+      let buffer = new Float32Array(this.asset.attributes["skinWeight"]);
       geometry.addAttribute("skinWeight", new THREE.BufferAttribute(buffer, 4));
     }
 

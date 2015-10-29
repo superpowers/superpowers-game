@@ -4,7 +4,7 @@ import * as async from "async";
 
 import SpriteAnimations, { SpriteAnimationPub } from "./SpriteAnimations";
 
-interface SpriteAssetPub {
+export interface SpriteAssetPub {
   // FIXME: This is used client-side to store shared THREE.js textures
   // We should probably find a better place for it
   textures?: { [name: string]: any; };
