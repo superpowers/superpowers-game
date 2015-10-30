@@ -4,8 +4,6 @@ import * as _ from "lodash";
 import TileMapAsset, { TileMapAssetPub } from "../data/TileMapAsset";
 
 export default class TileMap extends EventEmitter {
-  static emptyTile = [ -1, -1, false, false, 0 ];
-
   private data: TileMapAssetPub;
 
   constructor(data: TileMapAssetPub) {
@@ -24,13 +22,13 @@ export default class TileMap extends EventEmitter {
     if (x < 0 || y < 0 || x >= this.data.width || y >= this.data.height) return;
 
     let index = y * this.data.width + x;
-    this.data.layers[layer].data[index] = (value != null) ? value : _.cloneDeep(TileMapAsset.emptyTile);
+    this.data.layers[layer].data[index] = (value != null) ? value : 0;
 
     this.emit("setTileAt", layer, x, y);
   }
 
   getTileAt(layer: number, x: number, y: number) {
-    if (x < 0 || y < 0 || x >= this.data.width || y >= this.data.height) return _.cloneDeep(TileMapAsset.emptyTile);
+    if (x < 0 || y < 0 || x >= this.data.width || y >= this.data.height) return 0;
 
     let index = y * this.data.width + x;
     return this.data.layers[layer].data[index];

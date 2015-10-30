@@ -28,9 +28,6 @@ export default class TileMapAsset extends SupCore.data.base.Asset {
     layers: { type: "array" },
   }
 
-  //             x,  y, flipX, flipY, angle
-  static emptyTile = [-1, -1, false, false, 0];
-
   pub: TileMapAssetPub;
   layers: TileMapLayers;
 
@@ -64,11 +61,11 @@ export default class TileMapAsset extends SupCore.data.base.Asset {
     let loadJson = (json: string) => {
       let pub = JSON.parse(json);
 
-      for (let layer of pub.layers) {
+      /*for (let layer of pub.layers) {
         for (let index = 0; index < layer.data.length; index++) {
-          if ((<any>layer.data[index]) === 0) layer.data[index] = _.clone(TileMapAsset.emptyTile);
+          if ((<any>layer.data[index]) === 0) layer.data[index] = 0;
         }
-      }
+      }*/
 
       this.pub = pub;
       this.setup();
@@ -87,7 +84,7 @@ export default class TileMapAsset extends SupCore.data.base.Asset {
   }
 
   save(assetPath: string, callback: (err: Error) => any) {
-    let pub: TileMapAssetPub = {
+    /*let pub: TileMapAssetPub = {
       tileSetId: this.pub.tileSetId,
       pixelsPerUnit: this.pub.pixelsPerUnit,
       width: this.pub.width, height: this.pub.height,
@@ -109,7 +106,8 @@ export default class TileMapAsset extends SupCore.data.base.Asset {
       pub.layers.push(saveLayer);
     }
 
-    let json = JSON.stringify(pub, null);
+    let json = JSON.stringify(pub, null);*/
+    let json = JSON.stringify(this.pub, null);
     fs.writeFile(path.join(assetPath, "tilemap.json"), json, { encoding: "utf8" }, callback);
   }
 
@@ -160,7 +158,7 @@ export default class TileMapAsset extends SupCore.data.base.Asset {
         for (let layer of this.pub.layers) {
           if (width > this.pub.width)
             for (let i = 0; i < width-this.pub.width; i++)
-              layer.data.splice(row*this.pub.width, 0, _.clone(TileMapAsset.emptyTile));
+              layer.data.splice(row*this.pub.width, 0, 0);
           else
             layer.data.splice((row-1)*this.pub.width + width, this.pub.width - width);
         }
@@ -173,7 +171,7 @@ export default class TileMapAsset extends SupCore.data.base.Asset {
       for (let layer of this.pub.layers) {
         if (height > this.pub.height)
           for (let i = 0; i < (height-this.pub.height)*this.pub.width; i++)
-            layer.data.splice(this.pub.height*this.pub.width, 0, _.clone(TileMapAsset.emptyTile));
+            layer.data.splice(this.pub.height*this.pub.width, 0, 0);
         else
           layer.data.splice(height*this.pub.width, (this.pub.height-height)*this.pub.width);
       }
@@ -201,10 +199,10 @@ export default class TileMapAsset extends SupCore.data.base.Asset {
           if (horizontalOffset > 0) {
             layer.data.splice(row*this.pub.width - horizontalOffset, horizontalOffset);
             for (let i = 0; i < horizontalOffset; i++)
-              layer.data.splice((row-1)*this.pub.width, 0, _.clone(TileMapAsset.emptyTile));
+              layer.data.splice((row-1)*this.pub.width, 0, 0);
           } else {
             for (let i = 0; i < -horizontalOffset; i++)
-              layer.data.splice(row*this.pub.width, 0, _.clone(TileMapAsset.emptyTile));
+              layer.data.splice(row*this.pub.width, 0, 0);
             layer.data.splice((row-1)*this.pub.width, -horizontalOffset);
           }
         }
@@ -216,10 +214,10 @@ export default class TileMapAsset extends SupCore.data.base.Asset {
         if (verticalOffset > 0) {
           layer.data.splice((this.pub.height - verticalOffset) * this.pub.width - 1, verticalOffset * this.pub.width);
           for (let i = 0; i < verticalOffset*this.pub.width; i++)
-            layer.data.splice(0, 0, _.clone(TileMapAsset.emptyTile));
+            layer.data.splice(0, 0, 0);
         } else {
           for (let i = 0; i < -verticalOffset*this.pub.width; i++)
-            layer.data.splice(this.pub.height * this.pub.width, 0, _.clone(TileMapAsset.emptyTile));
+            layer.data.splice(this.pub.height * this.pub.width, 0, 0);
           layer.data.splice(0, -verticalOffset * this.pub.width);
         }
       }
@@ -238,7 +236,8 @@ export default class TileMapAsset extends SupCore.data.base.Asset {
 
       if (x == null || typeof x != "number" || x < 0 || x >= this.pub.width) { callback(`x must be an integer between 0 && ${this.pub.width-1}`, null, null); return; }
       if (y == null || typeof y != "number" || y < 0 || y >= this.pub.height) { callback(`y must be an integer between 0 && ${this.pub.height-1}`, null, null); return; }
-      if (! Array.isArray(tileValue) || tileValue.length != 5) { callback("tileValue must be an array with 5 items", null, null); return; }
+      if (<any>tileValue === 0) continue;
+      if (!Array.isArray(tileValue) || tileValue.length != 5) { callback("tileValue must be an array with 5 items", null, null); return; }
       if (typeof tileValue[0] != "number" || tileValue[0] < -1) { callback("tileX must be an integer greater than -1", null, null); return; }
       if (typeof tileValue[1] != "number" || tileValue[1] < -1) { callback("tileY must be an integer greater than -1", null, null); return; }
       if (typeof tileValue[2] != "boolean") { callback("flipX must be a boolean", null, null); return; }
@@ -254,12 +253,10 @@ export default class TileMapAsset extends SupCore.data.base.Asset {
     this.emit("change");
   }
 
-  client_editMap(layerId: string, edits: {x: number, y: number, tileValue: (number|boolean)[]}[]) {
+  client_editMap(layerId: string, edits: {x: number, y: number, tileValue: (number|boolean)[]|number}[]) {
     for (let edit of edits) {
       let index = edit.y * this.pub.width + edit.x;
-      let tileValue = edit.tileValue;
-      if (tileValue == null) tileValue = _.clone(TileMapAsset.emptyTile);
-      this.layers.byId[layerId].data[index] = tileValue;
+      this.layers.byId[layerId].data[index] = edit.tileValue;
     }
   }
 
@@ -273,7 +270,7 @@ export default class TileMapAsset extends SupCore.data.base.Asset {
     for (let y = 0; y < this.pub.height; y++) {
       for (let x = 0; x < this.pub.width; x++) {
         let index = y * this.pub.width + x;
-        newLayer.data[index] = _.clone(TileMapAsset.emptyTile);
+        newLayer.data[index] = 0;
       }
     }
 

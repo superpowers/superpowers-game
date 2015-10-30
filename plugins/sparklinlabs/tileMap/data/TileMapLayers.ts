@@ -1,7 +1,7 @@
 export interface TileMapLayerPub {
   id: string;
   name: string;
-  data: (number|boolean)[][];
+  data: ((number|boolean)[]|number)[];
 }
 
 export default class TileMapLayers extends SupCore.data.base.ListById {

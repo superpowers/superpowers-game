@@ -8,15 +8,14 @@ namespace Sup {
     setTileAt(layer, x, y, value, flipX, flipY, angle) {
       let tileSet = player.getOuterAsset(this.__inner.data.tileSetId);
       let tilesPerRow = tileSet.__inner.data.texture.image.width / tileSet.__inner.data.grid.width;
-      if (value == -1) {
-        this.__inner.setTileAt(layer, x, y, null);
-      } else {
+      if (value == -1) this.__inner.setTileAt(layer, x, y, 0);
+      else {
         flipX = (flipX) ? flipX : false;
         flipY = (flipY) ? flipY : false;
         angle = (angle) ? angle : 0;
         this.__inner.setTileAt(layer, x, y, [value % tilesPerRow, window.Math.floor(value / tilesPerRow), flipX, flipY, angle]);
       }
-      return this
+      return this;
     }
     getTileAt(layer, x, y) {
       let tileSet = player.getOuterAsset(this.__inner.data.tileSetId);

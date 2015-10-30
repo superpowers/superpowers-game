@@ -214,7 +214,7 @@ export default class TileMapRenderer extends SupEngine.ActorComponent {
     let flipX = false; let flipY = false;
     let angle = 0;
 
-    let tileInfo = this.tileMap.getTileAt(layerIndex, x, y);
+    let tileInfo = <(number|boolean)[]>this.tileMap.getTileAt(layerIndex, x, y);
     if ((<any>tileInfo) !== 0) {
       tileX = <number>tileInfo[0];
       tileY = <number>tileInfo[1];

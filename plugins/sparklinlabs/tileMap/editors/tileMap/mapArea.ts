@@ -21,7 +21,7 @@ let mapArea: {
   gridActor?: SupEngine.Actor;
   gridRenderer?: any;
 
-  patternData?: (number|boolean)[][]
+  patternData?: ((number|boolean)[]|number)[]
   patternDataWidth?: number;
   patternActor?: SupEngine.Actor;
   patternRenderer?: TileMapRenderer;
@@ -66,20 +66,20 @@ mapArea.patternBackgroundRenderer = new SupEngine.editorComponentClasses["FlatCo
 mapArea.duplicatingSelection = false;
 mapArea.cursorPoint = { x: -1, y: -1 };
 
-export function setupPattern(layerData: (number|boolean)[][], width=1) {
+export function setupPattern(layerData: ((number|boolean)[]|number)[], width=1) {
   mapArea.patternData = layerData;
   mapArea.patternDataWidth = width;
 
   let pub = data.tileMapUpdater.tileMapAsset.pub;
   let height = layerData.length / width;
 
-  let patternLayerData: (number|boolean)[][] = [];
+  let patternLayerData: ((number|boolean)[]|number)[] = [];
   for (let y = 0; y < pub.height; y++) {
     for (let x = 0; x < pub.width; x++) {
       let localX = x - mapArea.cursorPoint.x;
       let localY = y - mapArea.cursorPoint.y;
 
-      if (localX < 0 || localX >= width || localY < 0 || localY >= height) patternLayerData.push(TileMapAsset.emptyTile);
+      if (localX < 0 || localX >= width || localY < 0 || localY >= height) patternLayerData.push(0);
       else patternLayerData.push(layerData[localY * width + localX]);
     }
   }
@@ -99,14 +99,14 @@ export function setupFillPattern(newTileData: (number|boolean)[]) {
   let pub = data.tileMapUpdater.tileMapAsset.pub;
   let layerData = data.tileMapUpdater.tileMapAsset.layers.byId[tileSetArea.selectedLayerId].data
 
-  let patternLayerData: (number|boolean)[][] = [];
+  let patternLayerData: ((number|boolean)[]|number)[] = [];
   for (let y = 0; y < pub.height; y++) {
     for (let x = 0; x < pub.width; x++) {
-      patternLayerData.push(TileMapAsset.emptyTile);
+      patternLayerData.push(0);
     }
   }
 
-  let refTileData = layerData[mapArea.cursorPoint.y * pub.width + mapArea.cursorPoint.x];
+  let refTileData = <(number|boolean)[]>layerData[mapArea.cursorPoint.y * pub.width + mapArea.cursorPoint.x];
   function checkTile(x: number, y: number) {
     if (x < 0 || x >= pub.width || y < 0 || y >= pub.height) return;
 
@@ -114,11 +114,11 @@ export function setupFillPattern(newTileData: (number|boolean)[]) {
     // Skip if target tile on pattern isn't empty
     let patternTile = patternLayerData[index];
     for (let i = 0; i < 2; i++) {
-      if (patternTile[i] !== TileMapAsset.emptyTile[i]) return;
+      if (patternTile !== 0) return;
     }
 
     // Skip if taget tile on layer is different from the base tile
-    let layerTile = layerData[index];
+    let layerTile = <(number|boolean)[]>layerData[index];
     for (let i = 0; i < layerTile.length; i++) {
       if (layerTile[i] !== refTileData[i]) return;
     }
@@ -150,14 +150,17 @@ export function flipTilesHorizontally() {
 
   let width = mapArea.patternDataWidth;
   let height = mapArea.patternData.length / mapArea.patternDataWidth;
-  let layerData: (number|boolean)[][] = [];
+  let layerData: ((number|boolean)[]|number)[] = [];
   for (let y = 0; y < height; y++) {
     for (let x = width - 1; x >= 0; x--) {
       let tileValue = mapArea.patternData[y * width + x];
-      tileValue[2] = !tileValue[2];
-      if (tileValue[4] === 90) tileValue[4] = 270;
-      else if (tileValue[4] === 270) tileValue[4] = 90;
-      layerData.push(tileValue);
+      if (typeof tileValue === "number") layerData.push(0);
+      else {
+        tileValue[2] = !tileValue[2];
+        if (tileValue[4] === 90) tileValue[4] = 270;
+        else if (tileValue[4] === 270) tileValue[4] = 90;
+        layerData.push(tileValue);
+      }
     }
   }
 
@@ -169,14 +172,17 @@ export function flipTilesVertically() {
 
   let width = mapArea.patternDataWidth;
   let height = mapArea.patternData.length / mapArea.patternDataWidth;
-  let layerData: (number|boolean)[][] = [];
+  let layerData: ((number|boolean)[]|number)[] = [];
   for (let y = height - 1; y >= 0; y--) {
     for (let x = 0; x < width; x++) {
       let tileValue = mapArea.patternData[y * width + x];
-      tileValue[3] = !tileValue[3];
-      if (tileValue[4] === 90) tileValue[4] = 270;
-      else if (tileValue[4] === 270) tileValue[4] = 90;
-      layerData.push(tileValue);
+      if (typeof tileValue === "number") layerData.push(0);
+      else {
+        tileValue[3] = !tileValue[3];
+        if (tileValue[4] === 90) tileValue[4] = 270;
+        else if (tileValue[4] === 270) tileValue[4] = 90;
+        layerData.push(tileValue);
+      }
     }
   }
 
@@ -188,14 +194,17 @@ export function rotateTiles() {
 
   let width = mapArea.patternDataWidth;
   let height = mapArea.patternData.length / mapArea.patternDataWidth;
-  let layerData: (number|boolean)[][] = [];
+  let layerData: ((number|boolean)[]|number)[] = [];
   for (let x = 0; x < width; x++) {
     for (let y = height - 1; y >= 0; y--) {
       let tileValue = mapArea.patternData[y * width + x];
-      (<any>tileValue)[4] += 90;
-      if (tileValue[4] === 360) tileValue[4] = 0;
+      if (typeof tileValue === "number") layerData.push(0);
+      else {
+        (<any>tileValue)[4] += 90;
+        if (tileValue[4] === 360) tileValue[4] = 0;
 
-      layerData.push(tileValue);
+        layerData.push(tileValue);
+      }
     }
   }
 
@@ -207,7 +216,7 @@ export function rotateTiles() {
 interface Edits {
   x: number;
   y: number;
-  tileValue: (number|boolean)[];
+  tileValue: ((number|boolean)[]|number);
 }
 
 function editMap(edits: Edits[]) {
@@ -220,10 +229,15 @@ function editMap(edits: Edits[]) {
       let index = edit.y * data.tileMapUpdater.tileMapAsset.pub.width + edit.x;
 
       let sameTile = true;
-      for (let i = 0; i < edit.tileValue.length; i++) {
-        if (layer.data[index][i] !== edit.tileValue[i]) {
-          sameTile = false;
-          break;
+      if (edit.tileValue === 0) {
+        if (layer.data[index] !== 0) sameTile = false;
+      } else {
+        let tileValue = <(number|boolean)[]>edit.tileValue;
+        for (let i = 0; i < tileValue.length; i++) {
+          if ((<(number|boolean)[]>layer.data[index])[i] !== tileValue[i]) {
+            sameTile = false;
+            break;
+          }
         }
       }
       if (! sameTile) actualEdits.push(edit);
@@ -282,7 +296,7 @@ export function handleMapArea() {
   // Edit tiles
   if (mapArea.gameInstance.input.mouseButtons[0].isDown) {
     if (ui.eraserToolButton.checked) {
-      editMap([{ x: mouseX, y: mouseY, tileValue: TileMapAsset.emptyTile }]);
+      editMap([{ x: mouseX, y: mouseY, tileValue: 0 }]);
 
     } else if (ui.fillToolButton.checked) {
       let edits: Edits[] = [];
@@ -290,16 +304,7 @@ export function handleMapArea() {
       for (let y = 0; y < pub.height; y++) {
         for (let x = 0; x < pub.width; x++) {
           let tileValue = mapArea.patternRenderer.tileMap.getTileAt(0, x, y);
-
-          let emptyTile = true;
-          for (let i = 0; i < TileMapAsset.emptyTile.length; i++) {
-            if (tileValue[i] !== TileMapAsset.emptyTile[i]) {
-              emptyTile = false;
-              break;
-            }
-          }
-
-          if (! emptyTile) edits.push({ x, y, tileValue });
+          if (tileValue !== 0) edits.push({ x, y, tileValue });
         }
       }
       editMap(edits);
@@ -329,9 +334,8 @@ export function handleMapArea() {
       if (mouseX >= 0 && mouseX < pub.width && mouseY >= 0 && mouseY < pub.height) {
         let layer = data.tileMapUpdater.tileMapAsset.layers.byId[tileSetArea.selectedLayerId];
         let tile = layer.data[mouseY * pub.width + mouseX];
-        if (tile[0] == -1) {
-          selectEraser();
-        } else {
+        if (typeof tile === "number") selectEraser();
+        else {
           selectBrush(<number>tile[0], <number>tile[1]);
           setupPattern([ tile ]);
         }
@@ -410,7 +414,7 @@ export function handleMapArea() {
         let edits: Edits[] = [];
         for (let y = 0; y < height; y++) {
           for (let x = 0; x < width; x++) {
-            edits.push({ x: startX + x, y: startY + y, tileValue: TileMapAsset.emptyTile });
+            edits.push({ x: startX + x, y: startY + y, tileValue: 0 });
           }
         }
         editMap(edits);
@@ -422,7 +426,7 @@ export function handleMapArea() {
       // Move/duplicate the selection
       else if (mapArea.gameInstance.input.keyboardButtons[(<any>window).KeyEvent.DOM_VK_M].wasJustReleased ||
       mapArea.gameInstance.input.keyboardButtons[(<any>window).KeyEvent.DOM_VK_D].wasJustReleased) {
-        let layerData: (number|boolean)[][] = [];
+        let layerData: ((number|boolean)[]|number)[] = [];
         let layer = data.tileMapUpdater.tileMapAsset.layers.byId[tileSetArea.selectedLayerId];
 
         let edits: Edits[] = [];
@@ -432,7 +436,7 @@ export function handleMapArea() {
             layerData.push(tile);
 
             if (!mapArea.gameInstance.input.keyboardButtons[(<any>window).KeyEvent.DOM_VK_D].wasJustReleased)
-              edits.push({ x: startX + x, y: startY + y, tileValue: TileMapAsset.emptyTile });
+              edits.push({ x: startX + x, y: startY + y, tileValue: 0 });
           }
         }
         editMap(edits);
