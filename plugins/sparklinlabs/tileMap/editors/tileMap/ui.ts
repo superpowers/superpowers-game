@@ -103,8 +103,11 @@ document.addEventListener("keyup", (event) => {
 });
 
 function onTileSetChange(event: Event) {
-  let entry = SupClient.findEntryByPath(data.projectClient.entries.pub, (<HTMLInputElement>event.target).value);
+  let value = (<HTMLInputElement>event.target).value;
+  if (value === "")
+    socket.emit("edit:assets", info.assetId, "changeTileSet", null, (err: string) => { if (err != null) { alert(err); return; } });
 
+  let entry = SupClient.findEntryByPath(data.projectClient.entries.pub, value);
   if (entry != null && entry.type === "tileSet") {
     socket.emit("edit:assets", info.assetId, "changeTileSet", entry.id, (err: string) => { if (err != null) { alert(err); return; } });
   }

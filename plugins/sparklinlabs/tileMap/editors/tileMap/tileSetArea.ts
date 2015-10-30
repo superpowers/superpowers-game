@@ -33,7 +33,7 @@ function getTileSetGridPosition(gameInstance: SupEngine.GameInstance, cameraComp
   let mousePosition = gameInstance.input.mousePosition;
   let position = new SupEngine.THREE.Vector3(mousePosition.x, mousePosition.y, 0);
   cameraComponent.actor.getLocalPosition(tmpVector3);
-  let ratio = data.tileSetUpdater.tileSetAsset.pub.grid.width / data.tileSetUpdater.tileSetAsset.pub.grid.height;
+  let ratio = data.tileMapUpdater.tileSetAsset.pub.grid.width / data.tileMapUpdater.tileSetAsset.pub.grid.height;
 
   let x = position.x / gameInstance.threeRenderer.domElement.width;
   x = x * 2 - 1;

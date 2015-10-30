@@ -16,9 +16,13 @@ export default class TileSetRenderer extends SupEngine.ActorComponent {
 
     let gridActor = new SupEngine.Actor(this.actor.gameInstance, "Grid");
     gridActor.setLocalPosition(new THREE.Vector3(0, 0, 1));
-    this.gridRenderer = new SupEngine.editorComponentClasses["GridRenderer"](gridActor);
+    this.gridRenderer = new SupEngine.editorComponentClasses["GridRenderer"](gridActor, {
+      width: 1, height: 1,
+      direction: -1, orthographicScale: 10,
+      ratio: { x: 1, y: 1 }
+    });
 
-    this.selectedTileActor = new SupEngine.Actor(this.actor.gameInstance, "Selection");
+    this.selectedTileActor = new SupEngine.Actor(this.actor.gameInstance, "Selection", null, { visible: false });
     new SupEngine.editorComponentClasses["FlatColorRenderer"](this.selectedTileActor, 0x900090, 1, 1);
 
     let texture = (overrideTexture != null) ? overrideTexture : (asset != null) ? asset.data.texture : null;
@@ -36,6 +40,7 @@ export default class TileSetRenderer extends SupEngine.ActorComponent {
     this.mesh = new THREE.Mesh(geometry, material);
     this.actor.threeObject.add(this.mesh);
     this.refreshScaleRatio();
+    this.selectedTileActor.threeObject.visible = true;
   }
 
   select(x: number, y: number, width=1, height=1) {
@@ -63,6 +68,7 @@ export default class TileSetRenderer extends SupEngine.ActorComponent {
     this.mesh.material.dispose();
     this.actor.threeObject.remove(this.mesh);
     this.mesh = null;
+    this.selectedTileActor.threeObject.visible = false;
   }
 
   _destroy() {
@@ -72,6 +78,6 @@ export default class TileSetRenderer extends SupEngine.ActorComponent {
     this.asset = null;
     super._destroy();
   }
-  
+
   setIsLayerActive(active: boolean) { if (this.mesh != null) this.mesh.visible = active; }
 }

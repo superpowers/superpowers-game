@@ -102,8 +102,10 @@ export default class TileMapRendererUpdater {
   }
 
   _onTileMapAssetEdited = (id: string, command: string, ...args: any[]) => {
-    let commandFunction = (<any>this)[`_onEditCommand_${command}`];
-    if (commandFunction != null) commandFunction.apply(this, args);
+    if (this.tileSetAsset != null || command === "changeTileSet") {
+      let commandFunction = (<any>this)[`_onEditCommand_${command}`];
+      if (commandFunction != null) commandFunction.apply(this, args);
+    }
 
     if (this.editAssetCallbacks != null) {
       let editCallback = this.editAssetCallbacks.tileMap[command];

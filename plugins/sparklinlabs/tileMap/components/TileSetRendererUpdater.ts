@@ -51,6 +51,8 @@ export default class TileSetRendererUpdater {
     this.tileSetAssetId = tileSetId;
 
     this.tileSetAsset = null;
+    this.tileSetRenderer.setTileSet(null, null);
+    this.tileSetRenderer.gridRenderer.resize(1, 1);
     if (this.url != null) URL.revokeObjectURL(this.url);
     if (this.tileSetThreeTexture != null) this.tileSetThreeTexture.dispose();
     this.tileSetThreeTexture = null;
