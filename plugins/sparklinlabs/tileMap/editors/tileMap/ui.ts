@@ -87,6 +87,8 @@ ui.mousePositionLabel = {
 // Keybindings
 SupClient.setupHotkeys();
 document.addEventListener("keyup", (event) => {
+  if ((<HTMLInputElement>event.target).tagName === "INPUT") return;
+
   switch (event.keyCode) {
     case (<any>window).KeyEvent.DOM_VK_B: selectBrush(); break;
     case (<any>window).KeyEvent.DOM_VK_F: selectFill(); break;

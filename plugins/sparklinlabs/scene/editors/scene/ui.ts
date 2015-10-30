@@ -46,6 +46,7 @@ let ui: {
   cameraSpeedSlider: HTMLInputElement;
   camera2DZ: HTMLInputElement;
 
+  gridCheckbox: HTMLInputElement;
   gridSize: number;
   gridStep: number;
 } = <any>{};
@@ -86,6 +87,45 @@ document.addEventListener("keydown", (event) => {
   if (event.keyCode === 46) { // Delete
     event.preventDefault();
     onDeleteNodeClick();
+  }
+});
+
+document.addEventListener("keydown", (event) => {
+  if ((<HTMLInputElement>event.target).tagName === "INPUT") return;
+
+  switch (event.keyCode) {
+    case (<any>window).KeyEvent.DOM_VK_E:
+      (<HTMLInputElement>document.getElementById(`transform-mode-translate`)).checked = true;
+      engine.transformHandleComponent.setMode("translate");
+      break;
+    case (<any>window).KeyEvent.DOM_VK_R:
+      (<HTMLInputElement>document.getElementById(`transform-mode-rotate`)).checked = true;
+      engine.transformHandleComponent.setMode("rotate");
+      break;
+    case (<any>window).KeyEvent.DOM_VK_T:
+      (<HTMLInputElement>document.getElementById(`transform-mode-scale`)).checked = true;
+      engine.transformHandleComponent.setMode("scale");
+      break;
+    case (<any>window).KeyEvent.DOM_VK_L:
+      let localElt = (<HTMLInputElement>document.getElementById(`transform-space`));
+      localElt.checked = !localElt.checked;
+      engine.transformHandleComponent.setSpace(localElt.checked ? "local" : "world");
+      break;
+
+    case (<any>window).KeyEvent.DOM_VK_G:
+      ui.gridCheckbox.checked = !ui.gridCheckbox.checked;
+      engine.gridHelperComponent.setVisible(ui.gridCheckbox.checked);
+      break;
+
+    case (<any>window).KeyEvent.DOM_VK_F:
+      if (ui.nodesTreeView.selectedNodes.length !== 1) return;
+
+      let nodeId = ui.nodesTreeView.selectedNodes[0].dataset.id;
+      let position = new THREE.Box3().setFromObject(data.sceneUpdater.bySceneNodeId[nodeId].actor.threeObject).center();
+      if (ui.cameraMode === "2D") position.z = engine.cameraActor.getLocalPosition(new THREE.Vector3()).z;
+      engine.cameraActor.setLocalPosition(position);
+      if (ui.cameraMode === "3D") engine.cameraActor.moveOriented(new THREE.Vector3(0, 0, 20));
+      break;
   }
 });
 
@@ -185,10 +225,11 @@ function onTransformModeClick(event: any) {
 }
 
 // Grid
+ui.gridCheckbox = <HTMLInputElement>document.getElementById("grid-visible");
+ui.gridCheckbox.addEventListener("change", onGridVisibleChange);
 ui.gridSize = 80;
 ui.gridStep = 1;
 document.getElementById("grid-step").addEventListener("input", onGridStepInput);
-document.getElementById("grid-visible").addEventListener("change", onGridVisibleChange);
 
 function onGridStepInput(event: UIEvent) {
   let target = (<HTMLInputElement>event.target);
