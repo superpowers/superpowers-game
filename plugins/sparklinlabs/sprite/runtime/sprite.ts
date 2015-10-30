@@ -11,6 +11,12 @@ export function loadAsset(player: SupRuntime.Player, entry: any, callback: (err:
 
         image.onload = () => {
           let texture = data.textures[key] = new SupEngine.THREE.Texture(image);
+
+          // Three.js might resize our texture to make its dimensions power-of-twos
+          // because of WebGL limitations (see https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/Tutorial/Using_textures_in_WebGL#Non_power-of-two_textures)
+          // so we store its original, non-power-of-two size for later use
+          (<any>texture).size = { width: image.width, height: image.height };
+
           texture.needsUpdate = true;
 
           if (data.filtering === "pixelated") {

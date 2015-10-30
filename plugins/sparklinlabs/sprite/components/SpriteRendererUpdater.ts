@@ -94,6 +94,7 @@ export default class SpriteRendererUpdater {
       if (image == null) {
         image = new Image;
         texture = this.spriteAsset.pub.textures[key] = new THREE.Texture(image);
+        (<any>texture).size = { width: 0, height: 0 };
 
         if (this.spriteAsset.pub.filtering === "pixelated") {
           texture.magFilter = SupEngine.THREE.NearestFilter;
@@ -106,7 +107,16 @@ export default class SpriteRendererUpdater {
       }
 
       if (!image.complete) {
-        image.addEventListener("load", () => { texture.needsUpdate = true; cb(); return });
+        image.addEventListener("load", () => {
+          // Three.js might resize our texture to make its dimensions power-of-twos
+          // because of WebGL limitations (see https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/Tutorial/Using_textures_in_WebGL#Non_power-of-two_textures)
+          // so we store its original, non-power-of-two size for later use
+          (<any>texture).size = { width: image.width, height: image.height };
+
+          texture.needsUpdate = true;
+          cb();
+          return;
+        });
       } else cb();
 
     }, callback);

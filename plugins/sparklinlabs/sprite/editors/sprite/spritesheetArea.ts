@@ -62,8 +62,8 @@ export function updateSelection() {
   let width = pub.grid.width / pub.pixelsPerUnit;
   let height = pub.grid.height / pub.pixelsPerUnit;
   let framesPerDirection: number;
-  if (pub.frameOrder === "rows") framesPerDirection = texture.image.width / pub.grid.width;
-  else framesPerDirection = texture.image.height / pub.grid.height;
+  if (pub.frameOrder === "rows") framesPerDirection = texture.size.width / pub.grid.width;
+  else framesPerDirection = texture.size.height / pub.grid.height;
   spritesheetArea.selectionRenderer.setup(
     width, height,
     animation.startFrameIndex, animation.endFrameIndex,

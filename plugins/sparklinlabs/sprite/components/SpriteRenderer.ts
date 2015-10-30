@@ -169,19 +169,19 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
 
     let frameX: number, frameY: number;
     if (this.asset.frameOrder === "rows") {
-      let framesPerRow = Math.floor(map.image.width / this.asset.grid.width);
+      let framesPerRow = Math.floor((<any>map).size.width / this.asset.grid.width);
       frameX = frame % framesPerRow;
       frameY = Math.floor(frame / framesPerRow);
     } else {
-      let framesPerColumn = Math.floor(map.image.height / this.asset.grid.height);
+      let framesPerColumn = Math.floor((<any>map).size.height / this.asset.grid.height);
       frameX = Math.floor(frame / framesPerColumn);
       frameY = frame % framesPerColumn;
     }
 
-    let left   = (frameX     * this.asset.grid.width) / map.image.width;
-    let right  = ((frameX+1) * this.asset.grid.width) / map.image.width;
-    let bottom = (map.image.height - (frameY+1) * this.asset.grid.height) / map.image.height;
-    let top    = (map.image.height - frameY     * this.asset.grid.height) / map.image.height;
+    let left   = (frameX     * this.asset.grid.width) / (<any>map).size.width;
+    let right  = ((frameX+1) * this.asset.grid.width) / (<any>map).size.width;
+    let bottom = ((<any>map).size.height - (frameY+1) * this.asset.grid.height) / (<any>map).size.height;
+    let top    = ((<any>map).size.height - frameY     * this.asset.grid.height) / (<any>map).size.height;
 
     let tmp: number;
     if (this.horizontalFlip) {

@@ -181,7 +181,7 @@ function onSetGridWidth(event: any) {
     let framesPerRowNum = parseInt(framesPerRow);
     if (isNaN(framesPerRowNum)) return;
 
-    editAsset("setProperty", "grid.width", Math.floor(texture.image.width / framesPerRowNum));
+    editAsset("setProperty", "grid.width", Math.floor(texture.size.width / framesPerRowNum));
   });
 }
 
@@ -195,7 +195,7 @@ function onSetGridHeight(event: any) {
     let framesPerColumnNum = parseInt(framesPerColumn);
     if (isNaN(framesPerColumnNum)) return;
 
-    editAsset("setProperty", "grid.height", Math.floor(texture.image.height / framesPerColumnNum));
+    editAsset("setProperty", "grid.height", Math.floor(texture.size.height / framesPerColumnNum));
   });
 }
 
@@ -334,8 +334,7 @@ export function setupProperty(path: string, value: any) {
     spritesheetArea.gridRenderer.setRatio({ x: pub.pixelsPerUnit / pub.grid.width, y: pub.pixelsPerUnit / pub.grid.height });
     let texture = pub.textures[pub.mapSlots["map"]];
     if (texture != null) {
-      let image = texture.image;
-      spritesheetArea.gridRenderer.resize(image.width / pub.grid.width, image.height / pub.grid.height);
+      spritesheetArea.gridRenderer.resize(texture.size.width / pub.grid.width, texture.size.height / pub.grid.height);
     }
     updateSelection();
   }

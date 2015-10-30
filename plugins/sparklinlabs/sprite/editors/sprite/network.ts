@@ -32,7 +32,7 @@ function onAssetReceived() {
   let map = pub.maps[pub.mapSlots["map"]];
 
   spritesheetArea.spritesheet = {
-    textures: { map: texture != null ? texture.clone() : null },
+    textures: { map: texture },
     filtering: pub.filtering,
     pixelsPerUnit: pub.pixelsPerUnit,
     framesPerSecond: pub.framesPerSecond,
@@ -45,19 +45,19 @@ function onAssetReceived() {
   };
 
   if (texture != null) {
-    spritesheetArea.spritesheet.grid.width = texture.image.width;
-    spritesheetArea.spritesheet.grid.height = texture.image.height;
+    spritesheetArea.spritesheet.grid.width = texture.size.width;
+    spritesheetArea.spritesheet.grid.height = texture.size.height;
     spritesheetArea.spritesheet.textures["map"].needsUpdate = true;
     spritesheetArea.spriteRenderer.setSprite(spritesheetArea.spritesheet);
 
-    ui.imageSize.value = `${texture.image.width} × ${texture.image.height}`;
+    ui.imageSize.value = `${texture.size.width} × ${texture.size.height}`;
   }
 
   centerAnimationCamera();
   centerSpritesheetCamera();
 
-  let width = texture != null ? texture.image.width / pub.grid.width : 1;
-  let height = texture != null ? texture.image.height / pub.grid.height : 1;
+  let width = texture != null ? texture.size.width / pub.grid.width : 1;
+  let height = texture != null ? texture.size.height / pub.grid.height : 1;
 
   spritesheetArea.gridRenderer.setGrid({
     width, height,
@@ -136,16 +136,16 @@ function updateSpritesheet() {
   if (texture == null) return;
 
   let asset = spritesheetArea.spritesheet;
-  asset.textures["map"] = texture.clone();
+  asset.textures["map"] = texture;
   asset.textures["map"].needsUpdate = true;
-  asset.grid.width = texture.image.width;
-  asset.grid.height = texture.image.height;
+  asset.grid.width = texture.size.width;
+  asset.grid.height = texture.size.height;
   asset.pixelsPerUnit = pub.pixelsPerUnit;
   spritesheetArea.spriteRenderer.setSprite(asset);
-  spritesheetArea.gridRenderer.resize(texture.image.width / pub.grid.width, texture.image.height / pub.grid.height);
+  spritesheetArea.gridRenderer.resize(texture.size.width / pub.grid.width, texture.size.height / pub.grid.height);
 
   updateSelectedAnimation();
-  ui.imageSize.value = `${texture.image.width} × ${texture.image.height}`;
+  ui.imageSize.value = `${texture.size.width} × ${texture.size.height}`;
 }
 
 onEditCommands.setMaps = () => { updateSpritesheet() };
