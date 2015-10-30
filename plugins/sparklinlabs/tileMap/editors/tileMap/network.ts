@@ -66,9 +66,10 @@ onEditCommands.changeTileSet = () => {
 };
 
 onEditCommands.resizeMap = () => {
-  ui.widthLabel.textContent = data.tileMapUpdater.tileMapAsset.pub.width.toString();
-  ui.heightLabel.textContent = data.tileMapUpdater.tileMapAsset.pub.height.toString();
-  mapArea.gridRenderer.resize(data.tileMapUpdater.tileMapAsset.pub.width, data.tileMapUpdater.tileMapAsset.pub.height);
+  let width = data.tileMapUpdater.tileMapAsset.pub.width;
+  let height = data.tileMapUpdater.tileMapAsset.pub.height;
+  ui.sizeInput.value = `${width} × ${height}`;
+  mapArea.gridRenderer.resize(width, height);
 };
 
 onEditCommands.setProperty = (path: string, value: any) => {

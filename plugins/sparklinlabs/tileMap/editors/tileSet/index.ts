@@ -54,7 +54,7 @@ function start() {
     });
   });
 
-  ui.selectedTileLabel = document.querySelector("label.selected-tile-number");
+  ui.selectedTileInput = document.querySelector("input.selected-tile-number");
 
   // Tile properties
   ui.propertiesTreeView = new TreeView(document.querySelector(".properties-tree-view"), { multipleSelection: false });
@@ -148,7 +148,7 @@ function selectTile(tile: { x: number; y: number; }) {
   let tilePerColumn = Math.floor(pub.domImage.height / pub.grid.height);
 
   let tileIndex = (tile.x === tilePerRow - 1 && tile.y === tilePerColumn - 1) ? -1 : tile.x + tile.y * tilePerRow;
-  ui.selectedTileLabel.textContent = tileIndex;
+  ui.selectedTileInput.value = tileIndex;
 
   while (ui.propertiesTreeView.treeRoot.children.length !== 0) {
     ui.propertiesTreeView.remove(ui.propertiesTreeView.treeRoot.children[0]);

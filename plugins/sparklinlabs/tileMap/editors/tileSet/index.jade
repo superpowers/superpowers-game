@@ -5,6 +5,7 @@ html
     link(rel="stylesheet",href="/client/styles/perfectResize.css")
     link(rel="stylesheet",href="/client/styles/treeView.css")
     link(rel="stylesheet",href="/client/styles/dialogs.css")
+    link(rel="stylesheet",href="/client/styles/properties.css")
     link(rel="stylesheet",href="index.css")
 
   body
@@ -12,9 +13,11 @@ html
       canvas(tabindex="0")
 
     .sidebar
-      table
+      table.properties
         tr
-          th Tile Set
+          th(colspan="2") Tile Set
+        tr
+          th Texture
           td
             button.upload Upload
             form(style="display: none")
@@ -23,14 +26,18 @@ html
             button.download Download
 
         tr
-          th Grid (pixels)
+          th Grid (px)
           td
-            input(type='number' min="1").grid-width
-            input(type='number' min="1").grid-height
+            .inputs
+              input(type='number' min="1").grid-width
+              input(type='number' min="1").grid-height
 
-      .tile-number
-        label Tile ID:
-        label.selected-tile-number
+        tr
+          th(colspan="2") Data
+        tr
+          th Tile ID
+          td
+            input(readonly).selected-tile-number
 
       .header
         span Properties

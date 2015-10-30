@@ -14,8 +14,7 @@ import { TileMapLayerPub } from "../../data/TileMapLayers";
 let ui: {
   tileSetInput?: HTMLInputElement;
 
-  widthLabel?: HTMLLabelElement;
-  heightLabel?: HTMLLabelElement;
+  sizeInput?: HTMLInputElement;
 
   settings?: { [name: string]: HTMLInputElement };
 
@@ -42,8 +41,7 @@ ui.tileSetInput = <HTMLInputElement>document.querySelector(".property-tileSetId"
 ui.tileSetInput.addEventListener("input", onTileSetChange);
 ui.tileSetInput.addEventListener("keyup", (event: Event) => { event.stopPropagation(); });
 
-ui.widthLabel = <HTMLLabelElement>document.querySelector(".property-width");
-ui.heightLabel = <HTMLLabelElement>document.querySelector(".property-height");
+ui.sizeInput = <HTMLInputElement>document.querySelector(".property-size");
 (<HTMLButtonElement>document.querySelector("button.resize")).addEventListener("click", onResizeMapClick);
 (<HTMLButtonElement>document.querySelector("button.move")).addEventListener("click", onMoveMapClick);
 
