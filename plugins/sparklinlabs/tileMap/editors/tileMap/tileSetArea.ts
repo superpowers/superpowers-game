@@ -24,7 +24,7 @@ tileSetArea.cameraComponent = new SupEngine.componentClasses["Camera"](cameraAct
 tileSetArea.cameraComponent.setOrthographicMode(true);
 new SupEngine.editorComponentClasses["Camera2DControls"](
   cameraActor, tileSetArea.cameraComponent,
-  { zoomSpeed: 1.5, zoomMin: 1, zoomMax: 60 },
+  { zoomSpeed: 1.5, zoomMin: 1, zoomMax: 200 },
   () => { data.tileSetUpdater.tileSetRenderer.gridRenderer.setOrthgraphicScale(tileSetArea.cameraComponent.orthographicScale); }
 );
 export default tileSetArea;

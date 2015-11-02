@@ -34,7 +34,7 @@ function start() {
   new SupEngine.editorComponentClasses["Camera2DControls"](cameraActor, cameraComponent, {
     zoomSpeed: 1.5,
     zoomMin: 1,
-    zoomMax: 60
+    zoomMax: 200
   });
 
   // Sidebar
