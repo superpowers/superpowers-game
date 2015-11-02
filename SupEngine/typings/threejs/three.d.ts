@@ -452,9 +452,10 @@ declare module THREE {
 
         addIndex(index: BufferAttribute): void;
         setIndex(index: BufferAttribute): void;
-        addAttribute(name: string, attribute: BufferAttribute): any;
-        addAttribute(name: string, array: any, itemSize: number): any;
-        getAttribute(name: string): any;
+        addAttribute(name: string, attribute: BufferAttribute): void;
+        addAttribute(name: string, array: any, itemSize: number): void;
+        getAttribute(name: string): THREE.BufferAttribute|THREE.InterleavedBufferAttribute;
+        removeAttribute(name: string): void;
         addGroup(start: number, count: number, index: number): void;
         clearGroups(): void;
         setDrawRange(start: number, cout: number): void;
@@ -473,7 +474,7 @@ declare module THREE {
 
         center(): Vector3;
 
-        fromGeometry( geometry: Geometry, settings?: any ): BufferGeometry;
+        fromGeometry(geometry: Geometry, settings?: any): BufferGeometry;
 
         /**
          * Computes bounding box of the geometry, updating Geometry.boundingBox attribute.
@@ -1422,7 +1423,7 @@ declare module THREE {
     export interface RaycasterParameters {
         Sprite?: any;
         Mesh?: any;
-        PointCloud?: any;
+        Points?: any;
         LOD?: any;
         Line?: any;
     }
@@ -1821,9 +1822,9 @@ declare module THREE {
     }
 
     export interface LoaderHandler{
-        handlers:any[];
-        add(regex:string, loader:Loader):void;
-        get(file: string):Loader;
+        handlers: any[];
+        add(regex:string, loader:Loader): void;
+        get(file: string): Loader;
     }
 
     export class BinaryTextureLoader {
@@ -1841,7 +1842,7 @@ declare module THREE {
         parse(json: any): BufferGeometry;
     }
 
-    export interface Cache{
+    export interface Cache {
         enabled: boolean;
         files: any[];
 
@@ -1852,7 +1853,7 @@ declare module THREE {
     }
     export var Cache:Cache;
 
-    export class CompressedTextureLoader{
+    export class CompressedTextureLoader {
         constructor();
 
         load(url: string, onLoad: (bufferGeometry: BufferGeometry) => void, onError?: (event: any) => void): void;
@@ -1927,7 +1928,7 @@ declare module THREE {
          * Will be called while load progresses.
          * The default is a function with empty body.
          */
-        onProgress: (item:any, loaded:number, total:number) => void;
+        onProgress: (item: any, loaded: number, total: number) => void;
 
         /**
          * Will be called when each element in the scene completes loading.
@@ -4204,7 +4205,7 @@ declare module THREE {
         constructor(geometry?: BufferGeometry, material?: LineBasicMaterial, mode?: number);
         constructor(geometry?: BufferGeometry, material?: ShaderMaterial, mode?: number);
 
-        geometry: any; // Geometry or BufferGeometry;
+        geometry: Geometry|BufferGeometry;
         material: Material; // LineDashedMaterial or LineBasicMaterial or ShaderMaterial
 
         raycast(raycaster: Raycaster, intersects: any): void;
