@@ -3,13 +3,15 @@ namespace Sup {
 
   export function exit() {
     if (player.gameInstance.input.exited) return;
-    player.gameInstance.input.emit("exit");
-    player.gameInstance.input.exited = true;
-    player.gameInstance.destroyAllActors();
 
     // Close window only if running release mode in NW.js
-    if (!player.gameInstance.debug && window.nwDispatcher != null)
+    if (!player.gameInstance.debug && window.nwDispatcher != null) {
       window.nwDispatcher.requireNwGui().Window.get().close();
+    } else {
+      player.gameInstance.input.emit("exit");
+      player.gameInstance.input.exited = true;
+      player.gameInstance.destroyAllActors();
+    }
   }
 
   export class Asset {
