@@ -381,9 +381,7 @@ export default class Input extends EventEmitter {
     // NOTE: It seems window.onbeforeunload might be called twice
     // in some circumstances so we check if the callback was cleared already
     // http://stackoverflow.com/questions/8711393/onbeforeunload-fires-twice
-    if (this.exited) return;
-
-    this.emit("exit");
+    if (!this.exited) this.emit("exit");
     this.exited = true;
 
     let nwDispatcher = (<any>window).nwDispatcher;
