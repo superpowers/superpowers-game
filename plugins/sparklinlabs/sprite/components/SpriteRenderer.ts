@@ -183,20 +183,10 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
     let bottom = ((<any>map).size.height - (frameY+1) * this.asset.grid.height) / (<any>map).size.height;
     let top    = ((<any>map).size.height - frameY     * this.asset.grid.height) / (<any>map).size.height;
 
-    let tmp: number;
-    if (this.horizontalFlip) {
-      tmp = left;
-      left = right;
-      right = tmp;
-    }
+    if (this.horizontalFlip) [ left, right ] = [ right, left ];
+    if (this.verticalFlip) [ top, bottom ] = [ bottom, top ];
 
-    if (this.verticalFlip) {
-      tmp = top;
-      top = bottom;
-      bottom = tmp;
-    }
-
-    let uvs = this.geometry.getAttribute("uv");
+    let uvs = <THREE.BufferAttribute>this.geometry.getAttribute("uv");
     uvs.needsUpdate = true;
 
     uvs.array[0] = left ; uvs.array[1] = top;
