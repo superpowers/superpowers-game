@@ -2,7 +2,7 @@ import * as path from "path";
 import * as fs from "fs";
 
 export default class SoundAsset extends SupCore.data.base.Asset {
-  static schema = {
+  static schema: SupCore.data.base.Schema = {
     sound: { type: "buffer" },
     streaming: { type: "boolean", mutable: true }
   }

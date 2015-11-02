@@ -3,10 +3,10 @@ import * as fs from "fs";
 
 export default class SpriteSettingsResource extends SupCore.data.base.Resource {
 
-  static schema = {
+  static schema: SupCore.data.base.Schema = {
     filtering: { type: "enum", items: [ "pixelated", "smooth" ], mutable: true },
-    pixelsPerUnit: { type: "number", min: 1, mutable: true },
-    framesPerSecond: { type: "number", min: 1, mutable: true },
+    pixelsPerUnit: { type: "number", minExcluded: 0, mutable: true },
+    framesPerSecond: { type: "number", minExcluded: 0, mutable: true },
     alphaTest: { type: "number", min: 0, max: 1, mutable: true }
   }
 

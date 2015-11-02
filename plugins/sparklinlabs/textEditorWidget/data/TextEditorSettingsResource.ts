@@ -5,7 +5,7 @@ interface TextEditorSettingsResourcePub {
 
 export default class TextEditorSettingsResource extends SupCore.data.base.Resource {
 
-  static schema = {
+  static schema: SupCore.data.base.Schema = {
     tabSize: { type: "number", min: 1, mutable: true },
     softTab: { type: "boolean", mutable: true },
   }

@@ -41,7 +41,7 @@ export default class GameSettingsEditor {
     this.fields["defaultLayer"] = SupClient.table.appendTextField(this.layerContainers, "Default");
     this.fields["defaultLayer"].readOnly = true;
 
-    for (let i = 0; i < GameSettingsResource.schema.customLayers.maxLength; i++) {
+    for (let i = 0; i < GameSettingsResource.schema["customLayers"].maxLength; i++) {
       let field = this.fields[`customLayer${i}`] = SupClient.table.appendTextField(this.layerContainers, "");
       (<any>field.dataset).customLayerIndex = i;
       field.addEventListener("change", this.onCustomLayerFieldChange);
@@ -78,10 +78,10 @@ export default class GameSettingsEditor {
       }
     }
   }
-  
+
   _setupCustomLayers() {
     this.customLayers = this.resource.pub.customLayers.slice(0);
-    for (let i = 0; i < GameSettingsResource.schema.customLayers.maxLength; i++) {
+    for (let i = 0; i < GameSettingsResource.schema["customLayers"].maxLength; i++) {
       let field = this.fields[`customLayer${i}`];
       if (i === this.customLayers.length) {
         field.placeholder = "New layer...";
@@ -89,7 +89,7 @@ export default class GameSettingsEditor {
       } else {
         field.placeholder = "";
       }
-      
+
       if (i > this.customLayers.length) {
         if (field.parentElement != null) this.layerContainers.removeChild(field);
       } else {
@@ -103,11 +103,11 @@ export default class GameSettingsEditor {
     if (propertyName === "customLayers") this._setupCustomLayers();
     else this.fields[propertyName].value = this.resource.pub[propertyName];
   }
-  
+
   onCustomLayerFieldChange = (event: any) => {
     let index = parseInt(<string>event.target.dataset.customLayerIndex);
     if (index > this.customLayers.length) return;
-    
+
     if (index === this.customLayers.length) {
       if (event.target.value === "") return;
       this.customLayers.push(event.target.value);

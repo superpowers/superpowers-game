@@ -42,7 +42,7 @@ if ((<any>global).window == null) {
 
 export default class ScriptAsset extends SupCore.data.base.Asset {
 
-  static schema = {
+  static schema: SupCore.data.base.Schema = {
     text: { type: "string" },
     draft: { type: "string" },
     revisionId: { type: "integer" }

@@ -3,7 +3,7 @@ import * as fs from "fs";
 
 export default class SceneSettingsResource extends SupCore.data.base.Resource {
 
-  static schema = {
+  static schema: SupCore.data.base.Schema = {
     defaultCameraMode: { type: "enum", items: [ "3D", "2D" ], mutable: true },
     defaultVerticalAxis: { type: "enum", items: [ "Y", "Z" ], mutable: true }
   }

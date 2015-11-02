@@ -12,8 +12,8 @@ interface TileMapSettingsResourcePub {
 
 export default class TileMapSettingsResource extends SupCore.data.base.Resource {
 
-  static schema = {
-    pixelsPerUnit: { type: "integer", min: 1, mutable: true },
+  static schema: SupCore.data.base.Schema = {
+    pixelsPerUnit: { type: "integer", minExcluded: 0, mutable: true },
     width: { type: "integer", min: 1, mutable: true },
     height: { type: "integer", min: 1, mutable: true },
     layerDepthOffset: { type: "number", min: 0, mutable: true },

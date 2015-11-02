@@ -21,7 +21,7 @@ export interface DuplicatedNode {
 
 export default class SceneAsset extends SupCore.data.base.Asset {
 
-  static schema = {
+  static schema: SupCore.data.base.Schema = {
     nodes: { type: "array" },
   }
 
@@ -217,7 +217,7 @@ export default class SceneAsset extends SupCore.data.base.Asset {
 
   server_duplicateNode(client: any, newName: string, id: string, index: number, callback: (err: string, rootNode: Node, newNodes: DuplicatedNode[]) => any) {
     if (newName.indexOf("/") !== -1) { callback("Actor name cannot contain slashes", null, null); return; }
-    
+
     let referenceNode = this.nodes.byId[id];
     if (referenceNode == null) { callback(`Invalid node id: ${id}`, null, null); return; }
 

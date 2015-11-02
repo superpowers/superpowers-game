@@ -1,5 +1,5 @@
 export default class ProjectSettingsResource extends SupCore.data.base.Resource {
-  static schema = {
+  static schema: SupCore.data.base.Schema = {
     // members: ...
   }
 

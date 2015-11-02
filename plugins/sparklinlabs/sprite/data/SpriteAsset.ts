@@ -29,7 +29,7 @@ export interface SpriteAssetPub {
 
 export default class SpriteAsset extends SupCore.data.base.Asset {
 
-  static schema = {
+  static schema: SupCore.data.base.Schema = {
     maps: {
       type: "hash",
       values: {
@@ -37,8 +37,8 @@ export default class SpriteAsset extends SupCore.data.base.Asset {
       }
     },
     filtering: { type: "enum", items: [ "pixelated", "smooth"], mutable: true },
-    pixelsPerUnit: { type: "number", min: 1, mutable: true },
-    framesPerSecond: { type: "number", min: 1, mutable: true },
+    pixelsPerUnit: { type: "number", minExcluded: 0, mutable: true },
+    framesPerSecond: { type: "number", minExcluded: 0, mutable: true },
     opacity: { type: "number?", min: 0, max: 1, mutable: true },
     alphaTest: { type: "number", min: 0, max: 1, mutable: true },
     frameOrder: { type: "enum", items: [ "rows", "columns"], mutable: true },

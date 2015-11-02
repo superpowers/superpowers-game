@@ -1,7 +1,7 @@
 export default class GameSettingsResource extends SupCore.data.base.Resource {
-  static schema = {
+  static schema: SupCore.data.base.Schema = {
     startupScene: { type: "string?", mutable: true },
-    framesPerSecond: { type: "integer", mutable: true },
+    framesPerSecond: { type: "integer", minExcluded: 0, mutable: true },
     ratioNumerator: { type: "integer?", mutable: true },
     ratioDenominator: { type: "integer?", mutable: true },
     customLayers: {

@@ -12,13 +12,13 @@ interface TileSetAssetPub {
 
 export default class TileSetAsset extends SupCore.data.base.Asset {
 
-  static schema = {
+  static schema: SupCore.data.base.Schema = {
     image: { type: "buffer" },
     grid: {
       type: "hash",
       properties: {
-        width: { type: "number", min: 1, mutable: true },
-        height: { type: "number", min: 1, mutable: true }
+        width: { type: "integer", min: 1, mutable: true },
+        height: { type: "integer", min: 1, mutable: true }
       }
     },
     tileProperties: {
@@ -119,7 +119,7 @@ export default class TileSetAsset extends SupCore.data.base.Asset {
 
     let properties: { [name: string]: string} = {};
     properties[name] = "";
-    let violation = SupCore.data.base.getRuleViolation(properties, TileSetAsset.schema.tileProperties.values, true);
+    let violation = SupCore.data.base.getRuleViolation(properties, TileSetAsset.schema["tileProperties"].values, true);
     if (violation != null) { callback(`Invalid property: ${SupCore.data.base.formatRuleViolation(violation)}`, null, null); return; }
 
     if (this.pub.tileProperties[`${tile.x}_${tile.y}`] != null &&
@@ -157,7 +157,7 @@ export default class TileSetAsset extends SupCore.data.base.Asset {
 
     let properties: { [name: string]: string} = {};
     properties[newName] = "";
-    let violation = SupCore.data.base.getRuleViolation(properties, TileSetAsset.schema.tileProperties.values, true);
+    let violation = SupCore.data.base.getRuleViolation(properties, TileSetAsset.schema["tileProperties"].values, true);
     if (violation != null) { callback(`Invalid property: ${SupCore.data.base.formatRuleViolation(violation)}`, null, null, null); return; }
 
     if (this.pub.tileProperties[`${tile.x}_${tile.y}`][name] == null) { callback(`Property ${name} doesn't exists`, null, null, null); return; }
@@ -222,7 +222,7 @@ export default class TileSetAsset extends SupCore.data.base.Asset {
 
     let properties: { [name: string]: string } = {};
     properties[name] = value;
-    let violation = SupCore.data.base.getRuleViolation(properties, TileSetAsset.schema.tileProperties.values, true);
+    let violation = SupCore.data.base.getRuleViolation(properties, TileSetAsset.schema["tileProperties"].values, true);
     if (violation != null) { callback(`Invalid property: ${SupCore.data.base.formatRuleViolation(violation)}`, null, null, null); return; }
 
     this.pub.tileProperties[`${tile.x}_${tile.y}`][name] = value;

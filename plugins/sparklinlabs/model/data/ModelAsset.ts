@@ -16,7 +16,7 @@ export interface ModelAssetPub {
   upAxisMatrix: number[];
   attributes: { [name: string]: Buffer; };
   bones: { name: string; parentIndex: number; matrix: number[] }[];
-  
+
   // FIXME: This is used client-side to store shared THREE.js textures
   // We should probably find a better place for it
   textures?: { [name: string]: any; };
@@ -35,8 +35,8 @@ export interface ModelAssetPub {
 
 export default class ModelAsset extends SupCore.data.base.Asset {
 
-  static schema = {
-    unitRatio: { type: "number", min: 1, mutable: true },
+  static schema: SupCore.data.base.Schema = {
+    unitRatio: { type: "number", minExcluded: 0, mutable: true },
     upAxisMatrix: { type: "array", length: 16, items: { type: "number" } },
     attributes: {
       type: "hash",
@@ -167,7 +167,7 @@ export default class ModelAsset extends SupCore.data.base.Asset {
       async.series([
 
         (callback) => {
-            async.each(Object.keys(ModelAsset.schema.attributes.properties), (key, cb) => {
+            async.each(Object.keys(ModelAsset.schema["attributes"].properties), (key, cb) => {
                 fs.readFile(path.join(assetPath, `attr-${key}.dat`), (err, buffer) => {
                     // TODO: Handle error but ignore ENOENT
                     if (err != null) { cb(); return; }
@@ -251,7 +251,7 @@ export default class ModelAsset extends SupCore.data.base.Asset {
       (callback) => { fs.writeFile(path.join(assetPath, "model.json"), json, { encoding: "utf8" }, (err) => { callback(err, null); }); },
 
       (callback) => {
-        async.each(Object.keys(ModelAsset.schema.attributes.properties), (key, cb) => {
+        async.each(Object.keys(ModelAsset.schema["attributes"].properties), (key, cb) => {
           let value = attributes[key];
 
           if (value == null) {
@@ -288,7 +288,7 @@ export default class ModelAsset extends SupCore.data.base.Asset {
   server_setModel(client: any, upAxisMatrix: number[], attributes: { [name: string]: any }, bones: any[], callback: (err: string, upAxisMatrix?: number[], attributes?: { [name: string]: any }, bones?: any[]) => any) {
     // Validate up matrix
     if (upAxisMatrix != null) {
-      let violation = SupCore.data.base.getRuleViolation(upAxisMatrix, ModelAsset.schema.upAxisMatrix, true);
+      let violation = SupCore.data.base.getRuleViolation(upAxisMatrix, ModelAsset.schema["upAxisMatrix"], true);
       if (violation != null) { callback(`Invalid up axis matrix: ${SupCore.data.base.formatRuleViolation(violation)}`); return; }
     }
 
@@ -297,13 +297,13 @@ export default class ModelAsset extends SupCore.data.base.Asset {
 
     for (let key in attributes) {
       let value = attributes[key];
-      if ((<any>ModelAsset.schema.attributes.properties)[key] == null) { callback(`Unsupported attribute type: ${key}`); return; }
+      if ((<any>ModelAsset.schema["attributes"].properties)[key] == null) { callback(`Unsupported attribute type: ${key}`); return; }
       if (value != null && !(value instanceof Buffer)) { callback(`Value for ${key} must be an ArrayBuffer or null`); return; }
     }
 
     // Validate bones
     if (bones != null) {
-      let violation = SupCore.data.base.getRuleViolation(bones, ModelAsset.schema.bones, true);
+      let violation = SupCore.data.base.getRuleViolation(bones, ModelAsset.schema["bones"], true);
       if (violation != null) { callback(`Invalid bones: ${SupCore.data.base.formatRuleViolation(violation)}`); return; }
     }
 

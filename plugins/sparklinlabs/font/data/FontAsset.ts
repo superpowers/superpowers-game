@@ -9,10 +9,10 @@ export interface FontPub {
 
 export default class FontAsset extends SupCore.data.base.Asset {
 
-  static schema = {
+  static schema: SupCore.data.base.Schema = {
     isBitmap: { type: "boolean", mutable: true},
     filtering: { type: "enum", items: [ "pixelated", "smooth"], mutable: true },
-    pixelsPerUnit: { type: "number", min: 1, mutable: true },
+    pixelsPerUnit: { type: "number", minExcluded: 0, mutable: true },
 
     font: { type: "buffer" },
     size: { type: "number", min: 1, mutable: true },

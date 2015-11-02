@@ -3,7 +3,7 @@ import * as fs from "fs";
 
 export default class LightSettingsResource extends SupCore.data.base.Resource {
 
-  static schema = {
+  static schema: SupCore.data.base.Schema = {
     shadowMapType: { type: "enum", items: [ "basic", "pcf", "pcfSoft" ], mutable: true },
   }
 

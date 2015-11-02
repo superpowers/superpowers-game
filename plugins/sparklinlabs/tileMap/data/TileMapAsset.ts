@@ -16,10 +16,10 @@ export interface TileMapAssetPub {
 
 export default class TileMapAsset extends SupCore.data.base.Asset {
 
-  static schema = {
+  static schema: SupCore.data.base.Schema = {
     tileSetId: { type: "string?" },
 
-    pixelsPerUnit: { type: "number", min: 1, mutable: true },
+    pixelsPerUnit: { type: "number", minExcluded: 0, mutable: true },
 
     width: { type: "integer", min: 1 },
     height: { type: "integer", min: 1 },

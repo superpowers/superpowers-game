@@ -8,7 +8,7 @@ export interface BehaviorProperty {
 
 export default class BehaviorPropertiesResource extends SupCore.data.base.Resource {
 
-  static schema = {
+  static schema: SupCore.data.base.Schema = {
     behaviors: {
       type: "hash",
       keys: { minLength: 1 },

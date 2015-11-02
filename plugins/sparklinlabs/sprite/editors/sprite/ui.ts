@@ -120,7 +120,7 @@ ui.texturesTreeView = new TreeView(document.querySelector(".textures-tree-view")
 ui.texturesTreeView.on("selectionChange", updateSelectedMap);
 
 ui.mapSlotsInput = {};
-for (let slotName in SpriteAsset.schema.mapSlots.properties) {
+for (let slotName in SpriteAsset.schema["mapSlots"].properties) {
   ui.mapSlotsInput[slotName] = <HTMLInputElement>document.querySelector(`.map-${slotName}`);
   (<any>ui.mapSlotsInput[slotName].dataset).name = slotName;
   ui.mapSlotsInput[slotName].addEventListener("input", onEditMapSlot);

@@ -24,7 +24,7 @@ export interface ShaderAssetPub {
 }
 
 export default class ShaderAsset extends SupCore.data.base.Asset {
-  static schema = {
+  static schema: SupCore.data.base.Schema = {
     uniforms: { type: "array" },
     useLightUniforms: { type: "boolean", mutable: true },
     attributes: { type: "array" },
