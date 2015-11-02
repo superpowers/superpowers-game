@@ -103,37 +103,38 @@ export default  class CameraMarker extends SupEngine.ActorComponent {
       nearTopRight = farTopRight.clone().normalize().multiplyScalar(near);
     }
 
+    let vertices = (<THREE.Geometry>this.line.geometry).vertices;
     // Near plane
-    this.line.geometry.vertices[0].set(-nearTopRight.x,  nearTopRight.y, -near);
-    this.line.geometry.vertices[1].set( nearTopRight.x,  nearTopRight.y, -near);
-    this.line.geometry.vertices[2].set( nearTopRight.x,  nearTopRight.y, -near);
-    this.line.geometry.vertices[3].set( nearTopRight.x, -nearTopRight.y, -near);
-    this.line.geometry.vertices[4].set( nearTopRight.x, -nearTopRight.y, -near);
-    this.line.geometry.vertices[5].set(-nearTopRight.x, -nearTopRight.y, -near);
-    this.line.geometry.vertices[6].set(-nearTopRight.x, -nearTopRight.y, -near);
-    this.line.geometry.vertices[7].set(-nearTopRight.x,  nearTopRight.y, -near);
+    vertices[0].set(-nearTopRight.x,  nearTopRight.y, -near);
+    vertices[1].set( nearTopRight.x,  nearTopRight.y, -near);
+    vertices[2].set( nearTopRight.x,  nearTopRight.y, -near);
+    vertices[3].set( nearTopRight.x, -nearTopRight.y, -near);
+    vertices[4].set( nearTopRight.x, -nearTopRight.y, -near);
+    vertices[5].set(-nearTopRight.x, -nearTopRight.y, -near);
+    vertices[6].set(-nearTopRight.x, -nearTopRight.y, -near);
+    vertices[7].set(-nearTopRight.x,  nearTopRight.y, -near);
 
     // Far plane
-    this.line.geometry.vertices[8].set( -farTopRight.x,  farTopRight.y, -far);
-    this.line.geometry.vertices[9].set(  farTopRight.x,  farTopRight.y, -far);
-    this.line.geometry.vertices[10].set( farTopRight.x,  farTopRight.y, -far);
-    this.line.geometry.vertices[11].set( farTopRight.x, -farTopRight.y, -far);
-    this.line.geometry.vertices[12].set( farTopRight.x, -farTopRight.y, -far);
-    this.line.geometry.vertices[13].set(-farTopRight.x, -farTopRight.y, -far);
-    this.line.geometry.vertices[14].set(-farTopRight.x, -farTopRight.y, -far);
-    this.line.geometry.vertices[15].set(-farTopRight.x,  farTopRight.y, -far);
+    vertices[8].set( -farTopRight.x,  farTopRight.y, -far);
+    vertices[9].set(  farTopRight.x,  farTopRight.y, -far);
+    vertices[10].set( farTopRight.x,  farTopRight.y, -far);
+    vertices[11].set( farTopRight.x, -farTopRight.y, -far);
+    vertices[12].set( farTopRight.x, -farTopRight.y, -far);
+    vertices[13].set(-farTopRight.x, -farTopRight.y, -far);
+    vertices[14].set(-farTopRight.x, -farTopRight.y, -far);
+    vertices[15].set(-farTopRight.x,  farTopRight.y, -far);
 
     // Lines
-    this.line.geometry.vertices[16].set(-nearTopRight.x,  nearTopRight.y, -near);
-    this.line.geometry.vertices[17].set( -farTopRight.x,   farTopRight.y, -far);
-    this.line.geometry.vertices[18].set( nearTopRight.x,  nearTopRight.y, -near);
-    this.line.geometry.vertices[19].set(  farTopRight.x,   farTopRight.y, -far);
-    this.line.geometry.vertices[20].set( nearTopRight.x, -nearTopRight.y, -near);
-    this.line.geometry.vertices[21].set(  farTopRight.x,  -farTopRight.y, -far);
-    this.line.geometry.vertices[22].set(-nearTopRight.x, -nearTopRight.y, -near);
-    this.line.geometry.vertices[23].set( -farTopRight.x,  -farTopRight.y, -far);
+    vertices[16].set(-nearTopRight.x,  nearTopRight.y, -near);
+    vertices[17].set( -farTopRight.x,   farTopRight.y, -far);
+    vertices[18].set( nearTopRight.x,  nearTopRight.y, -near);
+    vertices[19].set(  farTopRight.x,   farTopRight.y, -far);
+    vertices[20].set( nearTopRight.x, -nearTopRight.y, -near);
+    vertices[21].set(  farTopRight.x,  -farTopRight.y, -far);
+    vertices[22].set(-nearTopRight.x, -nearTopRight.y, -near);
+    vertices[23].set( -farTopRight.x,  -farTopRight.y, -far);
 
-    this.line.geometry.verticesNeedUpdate = true;
+    (<THREE.Geometry>this.line.geometry).verticesNeedUpdate = true;
   }
 
   _destroy() {

@@ -146,7 +146,7 @@ export default class TextRenderer extends SupEngine.ActorComponent {
       }
       this.threeMeshes[index].position.setY(-y);
 
-      let uvs = geometry.getAttribute("uv");
+      let uvs = <THREE.BufferAttribute>geometry.getAttribute("uv");
       uvs.needsUpdate = true;
 
       let charsByRow = this.font.texture.image.width / this.font.gridWidth;

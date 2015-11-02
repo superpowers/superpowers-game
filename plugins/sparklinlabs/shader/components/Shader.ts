@@ -75,7 +75,9 @@ export function createShaderMaterial(asset: ShaderAssetPub, textures: { [name: s
         itemSize = 4;
         break;
     }
-    for (let v = 0; v < geometry.getAttribute("position").length / 3; v++) {
+    
+    const triangleCount = (<THREE.BufferAttribute>geometry.getAttribute("position")).length / 3;
+    for (let v = 0; v < triangleCount; v++) {
       for (let i = 0; i < itemSize; i++) values.push(Math.random());
     }
     geometry.addAttribute(attribute.name, new THREE.BufferAttribute(new Float32Array(values), itemSize));
