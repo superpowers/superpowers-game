@@ -53,8 +53,9 @@ namespace Sup {
 
       setOffset(offset) {
         this.__inner.offsetX = offset.x;
+        this.__inner.position.x = this.__inner.actorPosition.x + offset.x;
         this.__inner.offsetY = offset.y;
-        this.__inner.refreshActorPosition();
+        this.__inner.position.y = this.__inner.actorPosition.y + offset.y;
         return this;
       }
       getOffset() { return new Sup.Math.Vector2(this.__inner.offsetX, this.__inner.offsetY); }
