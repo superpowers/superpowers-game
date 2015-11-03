@@ -32,7 +32,7 @@ export interface DuplicatedNode {
 export default class CubicModelAsset extends SupCore.data.base.Asset {
 
   static schema: SupCore.data.base.Schema = {
-    pixelsPerUnit: { type: "integer", min: 1 },
+    pixelsPerUnit: { type: "integer", min: 1, mutable: true },
     nodes: { type: "array" },
     
     textureWidth: { type: "number"},

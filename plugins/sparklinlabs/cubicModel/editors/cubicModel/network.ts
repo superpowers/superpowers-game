@@ -69,6 +69,12 @@ export function editAsset(...args: any[]) {
   socket.emit("edit:assets", info.assetId, ...args);
 }
 
+onEditCommands.setProperty = (path: string, value: any) => {
+  if (path === "pixelsPerUnit") {
+    // TODO: Update model renderer pixels per unit
+  }
+};
+
 onEditCommands.addNode = (node: Node, parentId: string, index: number) => {
   let nodeElt = createNodeElement(node);
   let parentElt: HTMLLIElement;
