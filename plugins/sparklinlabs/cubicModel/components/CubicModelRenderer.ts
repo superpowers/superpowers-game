@@ -4,6 +4,7 @@ let tmpVec = new THREE.Vector3;
 let tmpQuat = new THREE.Quaternion;
 
 import { CubicModelAssetPub } from "../data/cubicModelAsset";
+import { Node } from "../data/CubicModelNodes";
 import CubicModelRendererUpdater from "./CubicModelRendererUpdater";
 
 export interface RendererNode {
@@ -64,7 +65,7 @@ export default class CubicModelRenderer extends SupEngine.ActorComponent {
     this.threeRoot.updateMatrixWorld(false);
   }
 
-  _makeNode(node: any, parentRendererNode: RendererNode, parentOffset: { x: number; y: number; z: number; }) {
+  _makeNode(node: Node, parentRendererNode: RendererNode, parentOffset: { x: number; y: number; z: number; }) {
     let pivot: THREE.Object3D;
 
     let material = new THREE.MeshBasicMaterial({
@@ -80,10 +81,88 @@ export default class CubicModelRenderer extends SupEngine.ActorComponent {
     let shape: THREE.Mesh;
 
     if (node.shape.type === "box") {
-      let boxGeometry = new THREE.BoxGeometry(
-        node.shape.settings.size.x, node.shape.settings.size.y, node.shape.settings.size.z
-      );
-      //boxGeometry.faceVertexUvs
+      let size = node.shape.settings.size;
+      let offset = node.shape.textureOffset;
+      let width = this.asset.textureWidth;
+
+      let boxGeometry = new THREE.BoxGeometry(size.x, size.y, size.z);
+
+      let bottomLeft =  new THREE.Vector2();
+      let bottomRight = new THREE.Vector2();
+      let topLeft =     new THREE.Vector2();
+      let topRight =    new THREE.Vector2();
+
+      // Left Face
+      bottomLeft.set((offset.x)          / width, (width - offset.y - size.z - size.y) / width);
+      bottomRight.set((offset.x + size.z) / width, (width - offset.y - size.z - size.y) / width);
+      topLeft.set((offset.x)          / width, (width - offset.y - size.z)          / width);
+      topRight.set((offset.x + size.z) / width, (width - offset.y - size.z)          / width);
+      boxGeometry.faceVertexUvs[0][2][0].copy(topLeft);
+      boxGeometry.faceVertexUvs[0][2][1].copy(bottomLeft);
+      boxGeometry.faceVertexUvs[0][2][2].copy(topRight);
+      boxGeometry.faceVertexUvs[0][3][0].copy(bottomLeft);
+      boxGeometry.faceVertexUvs[0][3][1].copy(bottomRight);
+      boxGeometry.faceVertexUvs[0][3][2].copy(topRight);
+
+      // Front Face
+      bottomLeft.set((offset.x + size.z)          / width, (width - offset.y - size.z - size.y) / width);
+      bottomRight.set((offset.x + size.z + size.x) / width, (width - offset.y - size.z - size.y) / width);
+      topLeft.set((offset.x + size.z)          / width, (width - offset.y - size.z)          / width);
+      topRight.set((offset.x + size.z + size.x) / width, (width - offset.y - size.z)          / width);
+      boxGeometry.faceVertexUvs[0][8][0].copy(topLeft);
+      boxGeometry.faceVertexUvs[0][8][1].copy(bottomLeft);
+      boxGeometry.faceVertexUvs[0][8][2].copy(topRight);
+      boxGeometry.faceVertexUvs[0][9][0].copy(bottomLeft);
+      boxGeometry.faceVertexUvs[0][9][1].copy(bottomRight);
+      boxGeometry.faceVertexUvs[0][9][2].copy(topRight);
+
+      // Right Face
+      bottomLeft.set((offset.x + size.z + size.x)     / width, (width - offset.y - size.z - size.y) / width);
+      bottomRight.set((offset.x + 2 * size.z + size.x) / width, (width - offset.y - size.z - size.y) / width);
+      topLeft.set((offset.x + size.z + size.x)     / width, (width - offset.y - size.z)          / width);
+      topRight.set((offset.x + 2 * size.z + size.x) / width, (width - offset.y - size.z)          / width);
+      boxGeometry.faceVertexUvs[0][0][0].copy(topLeft);
+      boxGeometry.faceVertexUvs[0][0][1].copy(bottomLeft);
+      boxGeometry.faceVertexUvs[0][0][2].copy(topRight);
+      boxGeometry.faceVertexUvs[0][1][0].copy(bottomLeft);
+      boxGeometry.faceVertexUvs[0][1][1].copy(bottomRight);
+      boxGeometry.faceVertexUvs[0][1][2].copy(topRight);
+
+      // Bottom Face
+      bottomLeft.set((offset.x + 2 * size.z + size.x)     / width, (width - offset.y - size.z - size.y) / width);
+      bottomRight.set((offset.x + 2 * size.z + 2 * size.x) / width, (width - offset.y - size.z - size.y) / width);
+      topLeft.set((offset.x + 2 * size.z + size.x)     / width, (width - offset.y - size.z) / width);
+      topRight.set((offset.x + 2 * size.z + 2 * size.x) / width, (width - offset.y - size.z) / width);
+      boxGeometry.faceVertexUvs[0][10][0].copy(topLeft);
+      boxGeometry.faceVertexUvs[0][10][1].copy(bottomLeft);
+      boxGeometry.faceVertexUvs[0][10][2].copy(topRight);
+      boxGeometry.faceVertexUvs[0][11][0].copy(bottomLeft);
+      boxGeometry.faceVertexUvs[0][11][1].copy(bottomRight);
+      boxGeometry.faceVertexUvs[0][11][2].copy(topRight);
+
+      // Top Face
+      bottomLeft.set((offset.x + size.z)          / width, (width - offset.y - size.z) / width);
+      bottomRight.set((offset.x + size.z + size.x) / width, (width - offset.y - size.z) / width);
+      topLeft.set((offset.x + size.z)          / width, (width - offset.y)          / width);
+      topRight.set((offset.x + size.z + size.x) / width, (width - offset.y)          / width);
+      boxGeometry.faceVertexUvs[0][4][0].copy(topLeft);
+      boxGeometry.faceVertexUvs[0][4][1].copy(bottomLeft);
+      boxGeometry.faceVertexUvs[0][4][2].copy(topRight);
+      boxGeometry.faceVertexUvs[0][5][0].copy(bottomLeft);
+      boxGeometry.faceVertexUvs[0][5][1].copy(bottomRight);
+      boxGeometry.faceVertexUvs[0][5][2].copy(topRight);
+
+      // Down Face
+      bottomLeft.set((offset.x + size.z + size.x)     / width, (width - offset.y - size.z) / width);
+      bottomRight.set((offset.x + size.z + 2 * size.x) / width, (width - offset.y - size.z) / width);
+      topLeft.set((offset.x + size.z + size.x)     / width, (width - offset.y)          / width);
+      topRight.set((offset.x + size.z + 2 * size.x) / width, (width - offset.y)          / width);
+      boxGeometry.faceVertexUvs[0][6][0].copy(topLeft);
+      boxGeometry.faceVertexUvs[0][6][1].copy(bottomLeft);
+      boxGeometry.faceVertexUvs[0][6][2].copy(topRight);
+      boxGeometry.faceVertexUvs[0][7][0].copy(bottomLeft);
+      boxGeometry.faceVertexUvs[0][7][1].copy(bottomRight);
+      boxGeometry.faceVertexUvs[0][7][2].copy(topRight);
 
       shape = new THREE.Mesh(boxGeometry, material);
       shape.scale.set(node.shape.settings.stretch.x, node.shape.settings.stretch.y, node.shape.settings.stretch.z);
