@@ -201,7 +201,7 @@ function onTransformChange() {
 
       let position = object.getWorldPosition();
       let parent = target.parent;
-      let unitRatio = data.cubicModelUpdater.cubicModelAsset.pub.unitRatio;
+      let pixelsPerUnit = data.cubicModelUpdater.cubicModelAsset.pub.pixelsPerUnit;
 
       /*if (ui.translateMode === "all") {
         position.sub(target.getWorldPosition().sub(parent.getWorldPosition()));
@@ -220,10 +220,10 @@ function onTransformChange() {
           position.z -= parentOffset.z;
         }
 
-        position.multiplyScalar(1 / unitRatio);
+        position.multiplyScalar(1 / pixelsPerUnit);
       }
 
-      value = { x: position.x * unitRatio, y: position.y * unitRatio, z: position.z * unitRatio };
+      value = { x: position.x * pixelsPerUnit, y: position.y * pixelsPerUnit, z: position.z * pixelsPerUnit };
       break;
     }
 

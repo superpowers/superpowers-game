@@ -19,7 +19,7 @@ let ui: {
   gridSize: number;
   gridStep: number;
 
-  unitRatioInput?: HTMLInputElement;
+  pixelsPerUnitInput?: HTMLInputElement;
 
   newNodeButton: HTMLButtonElement;
   renameNodeButton: HTMLButtonElement;
@@ -107,10 +107,10 @@ function onGridVisibleChange(event: UIEvent) {
 }
 
 // Unit ratio
-ui.unitRatioInput = <HTMLInputElement>document.querySelector("input.property-unitRatio");
-ui.unitRatioInput.addEventListener("change", onChangeUnitRatio);
+ui.pixelsPerUnitInput = <HTMLInputElement>document.querySelector("input.property-pixelsPerUnit");
+ui.pixelsPerUnitInput.addEventListener("change", onChangePixelsPerUnit);
 
-function onChangeUnitRatio(event: any) { editAsset("setProperty", "unitRatio", parseFloat(event.target.value)); }
+function onChangePixelsPerUnit(event: any) { editAsset("setProperty", "pixelsPerUnit", parseFloat(event.target.value)); }
 
 // Setup tree view
 ui.treeViewElt = <HTMLDivElement>document.querySelector(".nodes-tree-view");
@@ -380,13 +380,13 @@ function onNewNodeClick() {
     let position = new THREE.Vector3();
     engine.cameraActor.getGlobalPosition(position).add(offset);
 
-    let unitRatio = data.cubicModelUpdater.cubicModelAsset.pub.unitRatio;
+    let pixelsPerunit = data.cubicModelUpdater.cubicModelAsset.pub.pixelsPerUnit;
 
     if (options.parentId != null) {
       let inverseParentMatrix = new THREE.Matrix4().getInverse(data.cubicModelUpdater.cubicModelRenderer.byNodeId[options.parentId].pivot.matrixWorld);
       position.applyMatrix4(inverseParentMatrix);
     } else {
-      position.multiplyScalar(unitRatio);
+      position.multiplyScalar(pixelsPerunit);
     }
 
     (<any>options).transform = { position };
@@ -394,7 +394,7 @@ function onNewNodeClick() {
       type: "box",
       offset: { x: 0, y: 0, z: 0 },
       settings: {
-        size: { x: unitRatio, y: unitRatio, z: unitRatio },
+        size: { x: pixelsPerunit, y: pixelsPerunit, z: pixelsPerunit },
         stretch: { x: 1, y: 1, z: 1 }
       }
     };

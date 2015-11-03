@@ -53,7 +53,7 @@ function onAssetReceived() {
   for (let node of data.cubicModelUpdater.cubicModelAsset.nodes.pub) walk(node, null, null);
   
   let pub = data.cubicModelUpdater.cubicModelAsset.pub;
-  ui.unitRatioInput.value = pub.unitRatio.toString();
+  ui.pixelsPerUnitInput.value = pub.pixelsPerUnit.toString();
 
   textureArea.setup();
 }

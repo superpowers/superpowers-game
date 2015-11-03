@@ -69,7 +69,7 @@ export default class CubicModelRenderer extends SupEngine.ActorComponent {
 
     // Nodes
     this.threeRoot = new THREE.Object3D();
-    this.threeRoot.scale.set(1 / asset.unitRatio, 1 / asset.unitRatio, 1 / asset.unitRatio);
+    this.threeRoot.scale.set(1 / asset.pixelsPerUnit, 1 / asset.pixelsPerUnit, 1 / asset.pixelsPerUnit);
     this.byNodeId = {};
 
     let walkNode = (node: any, parentRendererNode: RendererNode, parentOffset: { x: number; y: number; z: number; }) => {

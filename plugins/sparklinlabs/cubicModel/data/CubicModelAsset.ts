@@ -14,7 +14,7 @@ import * as _ from "lodash";
 import CubicModelNodes, { Node, getShapeTextureSize } from "./CubicModelNodes";
 
 export interface CubicModelAssetPub {
-  unitRatio: number;
+  pixelsPerUnit: number;
   nodes: Node[];
 
   textureWidth: number;
@@ -32,7 +32,7 @@ export interface DuplicatedNode {
 export default class CubicModelAsset extends SupCore.data.base.Asset {
 
   static schema: SupCore.data.base.Schema = {
-    unitRatio: { type: "integer", min: 1 },
+    pixelsPerUnit: { type: "integer", min: 1 },
     nodes: { type: "array" },
     
     textureWidth: { type: "number"},
@@ -60,7 +60,7 @@ export default class CubicModelAsset extends SupCore.data.base.Asset {
 
   init(options: any, callback: Function) {
     this.pub = {
-      unitRatio: 16, // TODO: get default from settings resource!
+      pixelsPerUnit: 16, // TODO: get default from settings resource!
       nodes: [],
       textureWidth: 128,
       textureHeight: 128,
