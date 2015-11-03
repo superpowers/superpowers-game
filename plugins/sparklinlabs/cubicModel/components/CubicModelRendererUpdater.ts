@@ -1,5 +1,5 @@
 import * as async from "async";
-import CubicModelAsset, { DuplicatedNode } from "../data/CubicModelAsset";
+import CubicModelAsset, { DuplicatedNode, TextureEdit } from "../data/CubicModelAsset";
 import { Node } from "../data/CubicModelNodes";
 import CubicModelRenderer, { RendererNode } from "./CubicModelRenderer";
 let THREE = SupEngine.THREE;
@@ -14,6 +14,8 @@ export default class CubicModelRendererUpdater {
 
   cubicModelAssetId: string;
   cubicModelAsset: CubicModelAsset = null;
+
+  textures: { [name: string]: { imageData: ImageData; ctx: CanvasRenderingContext2D; } } = {};
 
   cubicModelSubscriber = {
     onAssetReceived: this._onCubicModelAssetReceived.bind(this),
@@ -38,6 +40,26 @@ export default class CubicModelRendererUpdater {
 
   _onCubicModelAssetReceived(assetId: string, asset: CubicModelAsset) {
     this.cubicModelAsset = asset;
+
+    // Texturing
+    // NOTE: This is the unoptimized variant for editing
+    // There should be an option you can pass to setModel to ask for editable version vs (default) optimized
+    asset.pub.textures = {};
+    for (let mapName in asset.pub.maps) {
+      let canvas = document.createElement("canvas");
+      canvas.width = asset.pub.textureWidth;
+      canvas.height = asset.pub.textureHeight;
+      let ctx = canvas.getContext("2d");
+      let texture = asset.pub.textures[mapName] = new THREE.Texture(canvas);
+      texture.needsUpdate = true;
+      texture.magFilter = THREE.NearestFilter;
+      texture.minFilter = THREE.NearestFilter;
+
+      let imageData = new ImageData(new Uint8ClampedArray(asset.pub.maps[mapName]), asset.pub.textureWidth, asset.pub.textureHeight)
+      ctx.putImageData(imageData, 0, 0);
+      this.textures[mapName] = { imageData, ctx };
+    }
+
     this._setCubicModel();
     if (this.receiveAssetCallbacks != null) this.receiveAssetCallbacks.cubicModel();
   }
@@ -194,6 +216,20 @@ export default class CubicModelRendererUpdater {
     rendererNode.pivot.parent.remove(rendererNode.pivot);
 
     delete this.cubicModelRenderer.byNodeId[nodeId];
+  }
+
+  _onEditCommand_editTexture = (name: string, edits: TextureEdit[]) => {
+    let imageData = this.textures[name].imageData;
+    for (let edit of edits) {
+      let index = edit.y * this.cubicModelAsset.pub.textureWidth + edit.x;
+      index *= 4;
+      imageData.data[index + 0] = edit.value.r;
+      imageData.data[index + 1] = edit.value.g;
+      imageData.data[index + 2] = edit.value.b;
+      imageData.data[index + 3] = edit.value.a;
+    }
+    this.textures[name].ctx.putImageData(imageData, 0, 0);
+    this.cubicModelAsset.pub.textures[name].needsUpdate = true;
   }
 
   _onCubicModelAssetTrashed() {

@@ -21,10 +21,6 @@ export default class CubicModelRenderer extends SupEngine.ActorComponent {
   threeRoot: THREE.Object3D;
   byNodeId: { [nodeId: string]: RendererNode };
 
-  // TODO: Support multiple maps
-  textureCtx: CanvasRenderingContext2D;
-  threeTexture: THREE.Texture;
-
   materialType = "basic";
   //castShadow = false;
   //receiveShadow = false;
@@ -52,21 +48,6 @@ export default class CubicModelRenderer extends SupEngine.ActorComponent {
     if (asset == null) return;
     this.asset = asset;
 
-    // Texturing
-    // NOTE: This is the unoptimized variant for editing
-    // There should be an option you can pass to setModel to ask for editable version vs (default) optimized
-    let canvas = document.createElement("canvas");
-    canvas.width = asset.textureWidth;
-    canvas.height = asset.textureHeight;
-    this.textureCtx = canvas.getContext("2d");
-    this.threeTexture = new THREE.Texture(canvas);
-    this.threeTexture.needsUpdate = true;
-    this.threeTexture.magFilter = THREE.NearestFilter;
-    this.threeTexture.minFilter = THREE.NearestFilter;
-
-    let imageData = new ImageData(new Uint8ClampedArray(asset.maps["map"]), asset.textureWidth, asset.textureHeight);
-    this.textureCtx.putImageData(imageData, 0, 0);
-
     // Nodes
     this.threeRoot = new THREE.Object3D();
     this.threeRoot.scale.set(1 / asset.pixelsPerUnit, 1 / asset.pixelsPerUnit, 1 / asset.pixelsPerUnit);
@@ -86,9 +67,11 @@ export default class CubicModelRenderer extends SupEngine.ActorComponent {
   _makeNode(node: any, parentRendererNode: RendererNode, parentOffset: { x: number; y: number; z: number; }) {
     let pivot: THREE.Object3D;
 
-    let material = new THREE.MeshBasicMaterial;
-    material.side = THREE.DoubleSide;
-    material.color.setRGB(Math.random(), Math.random(), Math.random());
+    let material = new THREE.MeshBasicMaterial({
+      map: this.asset.textures["map"],
+      side: THREE.DoubleSide,
+      transparent: true
+      });
 
     pivot = new THREE.Object3D();
     pivot.name = node.name;
@@ -100,6 +83,7 @@ export default class CubicModelRenderer extends SupEngine.ActorComponent {
       let boxGeometry = new THREE.BoxGeometry(
         node.shape.settings.size.x, node.shape.settings.size.y, node.shape.settings.size.z
       );
+      //boxGeometry.faceVertexUvs
 
       shape = new THREE.Mesh(boxGeometry, material);
       shape.scale.set(node.shape.settings.stretch.x, node.shape.settings.stretch.y, node.shape.settings.stretch.z);

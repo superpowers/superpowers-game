@@ -19,6 +19,7 @@ export interface CubicModelAssetPub {
 
   textureWidth: number;
   textureHeight: number;
+  textures?: { [name: string]: any; };
   maps: { [name: string]: ArrayBuffer; };
   mapSlots: { [name: string]: string; };
 }
@@ -29,15 +30,20 @@ export interface DuplicatedNode {
   index: number;
 }
 
+export interface TextureEdit {
+  x: number; y: number;
+  value: { r: number; g: number; b: number; a: number; };
+}
+
 export default class CubicModelAsset extends SupCore.data.base.Asset {
 
   static schema: SupCore.data.base.Schema = {
     pixelsPerUnit: { type: "integer", min: 1, mutable: true },
     nodes: { type: "array" },
-    
+
     textureWidth: { type: "number"},
     textureHeight: { type: "number" },
-    
+
     maps: { type: "hash", values: { type: "buffer?" } },
     mapSlots: {
       type: "hash",
@@ -53,6 +59,7 @@ export default class CubicModelAsset extends SupCore.data.base.Asset {
 
   pub: CubicModelAssetPub;
   nodes: CubicModelNodes;
+  textureDatas: { [name: string]: Uint8ClampedArray; };
 
   constructor(id: string, pub: any, serverData: any) {
     super(id, pub, CubicModelAsset.schema, serverData);
@@ -73,7 +80,7 @@ export default class CubicModelAsset extends SupCore.data.base.Asset {
         normal: null
       }
     };
-    
+
     let x = new Uint8ClampedArray(this.pub.maps["map"]);
     for (let i = 0; i < 200; i++) x[i] = 255;
 
@@ -82,6 +89,11 @@ export default class CubicModelAsset extends SupCore.data.base.Asset {
 
   setup() {
     this.nodes = new CubicModelNodes(this);
+
+    this.textureDatas = {};
+    for (let mapName in this.pub.maps) {
+      this.textureDatas[mapName] = new Uint8ClampedArray(this.pub.maps[mapName]);
+    }
   }
 
   load(assetPath: string) {
@@ -119,10 +131,10 @@ export default class CubicModelAsset extends SupCore.data.base.Asset {
 
     let json = JSON.stringify(this.pub, null, 2);
     this.pub.maps = maps;
-    
+
     fs.writeFile(path.join(assetPath, "cubicModel.json"), json, { encoding: "utf8" }, (err) => {
       if (err) { saveCallback(err); return; }
-      
+
       async.each(Object.keys(maps), (mapName, cb) => {
         let map = new Buffer(new Uint8ClampedArray(maps[mapName]));
 
@@ -133,7 +145,7 @@ export default class CubicModelAsset extends SupCore.data.base.Asset {
           });
           return;
         }
-        
+
         fs.writeFile(path.join(assetPath, `map-${mapName}.dat`), map, cb);
       }, saveCallback);
     });
@@ -150,12 +162,12 @@ export default class CubicModelAsset extends SupCore.data.base.Asset {
       orientation: (options != null && options.transform != null && options.transform.orientation != null) ? options.transform.orientation : { x: 0, y: 0, z: 0, w: 1 },
       shape: (options != null && options.shape != null) ? options.shape : { type: "none", offset: { x: 0, y: 0, z: 0 }, textureOffset: { x: 0, y: 0 }, settings: null }
     };
-    
+
     if (node.shape.type !== "none") {
       node.shape.textureOffset = { x: 0, y: 0 };
       let placed = false;
       let size = getShapeTextureSize(node.shape);
-      
+
       for (let j = 0; j < this.pub.textureHeight - size.height; j++) {
         for (let i = 0; i < this.pub.textureWidth; i++) {
           let pushed: boolean;
@@ -164,9 +176,9 @@ export default class CubicModelAsset extends SupCore.data.base.Asset {
             for (let otherNodeId in this.nodes.byId) {
               let otherNode = this.nodes.byId[otherNodeId];
               if (otherNode.shape.type === "none") continue;
-  
+
               let otherSize = getShapeTextureSize(otherNode.shape);
-              let otherOffset = otherNode.shape.textureOffset; 
+              let otherOffset = otherNode.shape.textureOffset;
               // + 1 and - 1 because we need a one-pixel border
               // to avoid filtering issues
               if ((i + size.width >= otherOffset.x - 1) && (j + size.height >= otherOffset.y - 1) &&
@@ -177,7 +189,7 @@ export default class CubicModelAsset extends SupCore.data.base.Asset {
               }
             }
           } while(pushed);
-          
+
           if (i < this.pub.textureWidth && i + size.width < this.pub.textureWidth) {
             node.shape.textureOffset.x = i;
             node.shape.textureOffset.y = j;
@@ -187,7 +199,7 @@ export default class CubicModelAsset extends SupCore.data.base.Asset {
         }
         if (placed) break;
       }
-      
+
       if (!placed) {
         console.log("Could not find any room for the node's texture. Texture needs to be expanded and all blocks should be re-laid out from bigger to smaller!");
       } else {
@@ -403,5 +415,29 @@ export default class CubicModelAsset extends SupCore.data.base.Asset {
 
   client_removeNode(id: string) {
     this.nodes.client_remove(id);
+  }
+
+  server_editTexture(client: any, name: string, edits: TextureEdit[], callback: (err: string, name: string, edits: TextureEdit[]) => void) {
+    console.log("edit texture");
+
+    if (this.pub.maps[name] == null) { callback(`Invalid map name: ${name}`, null, null); return; }
+    //TODO: more check ?
+
+    this.client_editTexture(name, edits);
+
+    callback(null, name, edits);
+    this.emit("change");
+  }
+
+  client_editTexture(name: string, edits: TextureEdit[]) {
+    let array = this.textureDatas[name];
+    for (let edit of edits) {
+      let index = edit.y * this.pub.textureWidth + edit.x;
+      index *= 4;
+      array[index + 0] = edit.value.r;
+      array[index + 1] = edit.value.g;
+      array[index + 2] = edit.value.b;
+      array[index + 3] = edit.value.a;
+    }
   }
 }

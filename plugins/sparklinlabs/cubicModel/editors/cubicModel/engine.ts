@@ -1,7 +1,7 @@
 import info from "./info";
 import { socket, data } from "./network";
 import ui, { setupSelectedNode } from "./ui";
-import textureArea from "./textureArea";
+import textureArea, { handleTextureArea } from "./textureArea";
 
 let THREE = SupEngine.THREE;
 
@@ -59,14 +59,14 @@ function tick(timestamp=0) {
   if (updates > 0) {
     for (let i = 0; i < updates; i++) {
       textureArea.gameInstance.update();
-      // handleTextureArea();
+      handleTextureArea();
     }
 
     engine.gameInstance.draw();
     textureArea.gameInstance.draw();
   }
   requestAnimationFrame(tick);
-  
+
 }
 requestAnimationFrame(tick);
 
@@ -120,7 +120,7 @@ function mouseUp() {
     draggingControls = false;
     return;
   }
-  
+
   mousePosition.x =   engine.gameInstance.input.mousePosition.x / canvasElt.clientWidth * 2 - 1;
   mousePosition.y = -(engine.gameInstance.input.mousePosition.y / canvasElt.clientHeight * 2 - 1);
 
