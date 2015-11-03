@@ -151,7 +151,7 @@ export default class Player {
   }
 
   _initPlugins(callback: any) {
-    async.each(Object.keys(SupRuntime.plugins), (name: string, cb: Function) => {
+    async.each(Object.keys(SupRuntime.plugins), (name, cb) => {
       let plugin = SupRuntime.plugins[name];
       if (plugin.init != null) plugin.init(this, cb);
       else cb();
