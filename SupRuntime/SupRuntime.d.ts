@@ -1,4 +1,4 @@
-///<reference path="../SupEngine/SupEngine.d.ts"/>
+/// <reference path="../SupEngine/SupEngine.d.ts" />
 
 declare namespace SupRuntime {
   interface RuntimePlugin {
