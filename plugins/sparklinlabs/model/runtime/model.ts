@@ -5,7 +5,7 @@ export function loadAsset(player: SupRuntime.Player, entry: any, callback: (err:
 
     let attributesList = data.attributes;
     data.attributes = {};
-    async.each(attributesList, (key: string, cb: Function) => {
+    async.each<string>(attributesList, (key, cb) => {
       player.getAssetData(`assets/${entry.storagePath}/attr-${key}.dat`, "arraybuffer", (err: Error, buffer: ArrayBuffer) => {
         data.attributes[key] = buffer;
         cb(); return
@@ -13,7 +13,7 @@ export function loadAsset(player: SupRuntime.Player, entry: any, callback: (err:
     }, () => {
       let mapsList = data.maps;
       data.textures = {};
-      async.each(mapsList, (key: string, cb: Function) => {
+      async.each<string>(mapsList, (key, cb) => {
         let image = new Image();
 
         image.onload = () => {

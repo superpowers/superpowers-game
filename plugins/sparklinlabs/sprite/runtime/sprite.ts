@@ -6,7 +6,7 @@ export function loadAsset(player: SupRuntime.Player, entry: any, callback: (err:
 
     let mapsList = data.maps;
       data.textures = {};
-      async.each(mapsList, (key: string, cb: Function) => {
+      async.each<string>(mapsList, (key, cb) => {
         let image = new Image();
 
         image.onload = () => {
