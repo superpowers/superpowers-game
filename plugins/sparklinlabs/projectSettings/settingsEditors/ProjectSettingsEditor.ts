@@ -5,9 +5,6 @@ export default class ProjectSettingsEditor {
   projectClient: SupClient.ProjectClient;
   resource: ProjectSettingsResource;
 
-  /*fpsRow: SupClient.table.RowParts;
-  ratioRow: SupClient.table.RowParts;*/
-
   fields: { [name: string]: HTMLInputElement } = {};
 
   constructor(container: HTMLDivElement, projectClient: SupClient.ProjectClient) {
