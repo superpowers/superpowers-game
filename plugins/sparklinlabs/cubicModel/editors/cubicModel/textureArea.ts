@@ -7,18 +7,80 @@ let THREE = SupEngine.THREE;
 let textureArea: {
   gameInstance?: SupEngine.GameInstance;
   cameraControls?: any;
-  textureMesh?: THREE.Mesh;
   shapeLineMeshesByNodeId: { [nodeId: string]: THREE.LineSegments; }
   //gridRenderer?: any;
   //selectionRenderer?: SelectionRenderer;
 
   brushColor?: HTMLInputElement;
+
+  pasteMesh?: THREE.Mesh;
 } = {
   shapeLineMeshesByNodeId: {}
 };
 export default textureArea;
 
-textureArea.gameInstance = new SupEngine.GameInstance(<HTMLCanvasElement>document.querySelector(".texture-container canvas"));
+let canvas = <HTMLCanvasElement>document.querySelector(".texture-container canvas");
+/*document.addEventListener("copy", (event: ClipboardEvent) => {
+  console.log("copy?");
+  if (document.activeElement !== canvas) return;
+
+  //event.clipboardData.clearData();
+  let ctx = data.cubicModelUpdater.textures["map"].ctx;
+
+  //event.clipboardData.setData("text/plain", "bonjour");
+  // let typedArray = new Uint8Array(data.cubicModelUpdater.textures["map"].imageData.data);
+  // let blob = new Blob([ typedArray ], { type: "image/png" });
+
+  let imageData = data.cubicModelUpdater.textures["map"].ctx.canvas.toDataURL().replace(/^data:image\/(png|jpg);base64,/, "")
+  event.clipboardData.setData("image/png", imageData);
+
+  let dataURL = data.cubicModelUpdater.textures["map"].ctx.canvas.toDataURL();
+  let parts = dataURL.split(',');
+  let raw = decodeURIComponent(parts[1]);
+
+  // event.clipboardData.clearData();
+  // event.clipboardData.items.clear();
+  // event.clipboardData.items.add(new File([raw], "test", { type: "image/png" }));
+  console.log(event.clipboardData.types);
+  // console.log(event.clipboardData.files.item(0));
+  event.preventDefault();
+  console.log("copy");
+});*/
+
+let pasteCtx = document.createElement("canvas").getContext("2d");
+document.addEventListener("paste", (event: ClipboardEvent) => {
+  if (document.activeElement !== canvas) return;
+  if (event.clipboardData.items[0] == null) return;
+  if (event.clipboardData.items[0].type.indexOf("image") === -1) return;
+
+  if (textureArea.pasteMesh != null) {
+    textureArea.gameInstance.threeScene.remove(textureArea.pasteMesh);
+    textureArea.pasteMesh = null;
+  }
+
+  let imageBlob = (<any>event.clipboardData.items[0]).getAsFile();
+  let image = new Image();
+  image.src = URL.createObjectURL(imageBlob);
+  image.onload = () => {
+    pasteCtx.canvas.width = image.width;
+    pasteCtx.canvas.height = image.height;
+    pasteCtx.drawImage(image, 0, 0);
+
+    let texture = new THREE.Texture(pasteCtx.canvas);
+    texture.needsUpdate = true;
+    texture.magFilter = THREE.NearestFilter;
+    texture.minFilter = THREE.NearestFilter;
+
+    let geom = new THREE.PlaneBufferGeometry(image.width, image.height, 1, 1);
+    let mat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, map: texture });
+    textureArea.pasteMesh = new THREE.Mesh(geom, mat);
+    textureArea.pasteMesh.position.set(image.width / 2, -image.height / 2, 1);
+    textureArea.gameInstance.threeScene.add(textureArea.pasteMesh);
+    textureArea.pasteMesh.updateMatrixWorld(false);
+  }
+})
+
+textureArea.gameInstance = new SupEngine.GameInstance(canvas);
 textureArea.gameInstance.threeRenderer.setClearColor(0xbbbbbb);
 
 let cameraActor = new SupEngine.Actor(textureArea.gameInstance, "Camera");
@@ -28,6 +90,7 @@ cameraComponent.setOrthographicMode(true);
 cameraComponent.setOrthographicScale(10);
 textureArea.cameraControls = new SupEngine.editorComponentClasses["Camera2DControls"](cameraActor, cameraComponent,
   { zoomSpeed: 1.5, zoomMin: 1, zoomMax: 200 });
+
 
 export function setup() {
   let asset = data.cubicModelUpdater.cubicModelAsset;
@@ -145,45 +208,122 @@ export function setSelectedNode(node: Node) {
   if (selectedNodeLineMesh != null) selectedNodeLineMesh.material = selectedLineMaterial;
 }
 
+let mousePosition = new THREE.Vector3();
 let cameraPosition = new THREE.Vector3();
+
+let isDrawing = false;
+let isDragging = false;
+let dragOffset = new THREE.Vector3();
+
 export function handleTextureArea() {
-  if (textureArea.gameInstance.input.mouseButtons[0].isDown || textureArea.gameInstance.input.mouseButtons[2].isDown) {
-    let brush = { r: 0, g: 0, b: 0, a: 0 };
-    if (textureArea.gameInstance.input.mouseButtons[0].isDown) {
-      let hex = parseInt(textureArea.brushColor.value.slice(1), 16);
-      brush.r = (hex >> 16 & 255);
-      brush.g = (hex >> 8 & 255);
-      brush.b = (hex & 255);
-      brush.a = 255;
+  let inputs = textureArea.gameInstance.input;
+
+  mousePosition.set(inputs.mousePosition.x, inputs.mousePosition.y, 0);
+  cameraComponent.actor.getLocalPosition(cameraPosition);
+
+  mousePosition.x /= textureArea.gameInstance.threeRenderer.domElement.width;
+  mousePosition.x = mousePosition.x * 2 - 1;
+  mousePosition.x *= cameraComponent.orthographicScale / 2 * cameraComponent.cachedRatio;
+  mousePosition.x += cameraPosition.x;
+  mousePosition.x = Math.floor(mousePosition.x);
+
+  mousePosition.y /= textureArea.gameInstance.threeRenderer.domElement.height;
+  mousePosition.y = mousePosition.y * 2 - 1;
+  mousePosition.y *= cameraComponent.orthographicScale / 2;
+  mousePosition.y -= cameraPosition.y;
+  mousePosition.y = Math.floor(mousePosition.y);
+
+  // Paste element
+  if (textureArea.pasteMesh != null) {
+    if (isDragging) {
+      textureArea.pasteMesh.position.x = mousePosition.x + dragOffset.x;
+      textureArea.pasteMesh.position.y = -mousePosition.y + dragOffset.y;
+      textureArea.pasteMesh.updateMatrixWorld(false);
+
+      if (!inputs.mouseButtons[0].isDown) isDragging = false;
+      return;
     }
 
-    let mousePosition = textureArea.gameInstance.input.mousePosition;
-    let position = new SupEngine.THREE.Vector3(mousePosition.x, mousePosition.y, 0);
-    cameraComponent.actor.getLocalPosition(cameraPosition);
+    let keys = (<any>window).KeyEvent;
+    if (inputs.keyboardButtons[keys.DOM_VK_RIGHT].wasJustPressed) {
+      textureArea.pasteMesh.position.x += 1;
+      textureArea.pasteMesh.updateMatrixWorld(false);
+    }
+    if (inputs.keyboardButtons[keys.DOM_VK_LEFT].wasJustPressed) {
+      textureArea.pasteMesh.position.x -= 1;
+      textureArea.pasteMesh.updateMatrixWorld(false);
+    }
+    if (inputs.keyboardButtons[keys.DOM_VK_UP].wasJustPressed) {
+      textureArea.pasteMesh.position.y += 1;
+      textureArea.pasteMesh.updateMatrixWorld(false);
+    }
+    if (inputs.keyboardButtons[keys.DOM_VK_DOWN].wasJustPressed) {
+      textureArea.pasteMesh.position.y -= 1;
+      textureArea.pasteMesh.updateMatrixWorld(false);
+    }
 
-    let x = position.x / textureArea.gameInstance.threeRenderer.domElement.width;
-    x = x * 2 - 1;
-    x *= cameraComponent.orthographicScale / 2 * cameraComponent.cachedRatio;
-    x += cameraPosition.x;
-    x = Math.floor(x);
+    if (inputs.mouseButtons[0].wasJustPressed) {
+      let position = textureArea.pasteMesh.position;
+      let width = pasteCtx.canvas.width;
+      let height = pasteCtx.canvas.height;
+      if (mousePosition.x > position.x - width  / 2 &&  mousePosition.x < position.x + width  / 2 &&
+         -mousePosition.y > position.y - height / 2 && -mousePosition.y < position.y + height / 2) {
+        isDragging = true;
+        dragOffset.set(position.x - mousePosition.x, position.y + mousePosition.y, 0)
+        return;
+      }
 
-    let y = position.y / textureArea.gameInstance.threeRenderer.domElement.height;
-    y = y * 2 - 1;
-    y *= cameraComponent.orthographicScale / 2;
-    y -= cameraPosition.y;
-    y = Math.floor(y);
+      let imageData = pasteCtx.getImageData(0, 0, width, height).data;
+      let edits: TextureEdit[] = [];
 
-    if (x < 0 || x >= data.cubicModelUpdater.cubicModelAsset.pub.textureWidth) return;
-    if (y < 0 || y >= data.cubicModelUpdater.cubicModelAsset.pub.textureHeight) return;
+      let startX = textureArea.pasteMesh.position.x - width / 2;
+      let startY = -textureArea.pasteMesh.position.y - height / 2;
+
+      for (let i = 0; i < width; i++) {
+        for (let j = 0; j < height; j++) {
+          let index = j * width + i;
+          index *= 4;
+          let x = startX + i;
+          if (x < 0 || x >= data.cubicModelUpdater.cubicModelAsset.pub.textureWidth) continue;
+          let y = startY + j;
+          if (y < 0 || y >= data.cubicModelUpdater.cubicModelAsset.pub.textureHeight) continue;
+
+          edits.push({ x, y, value: { r: imageData[index], g: imageData[index + 1], b: imageData[index + 2], a: imageData[index + 3] } })
+        }
+      }
+      editAsset("editTexture", "map", edits);
+
+      textureArea.gameInstance.threeScene.remove(textureArea.pasteMesh);
+      textureArea.pasteMesh = null;
+    }
+    return;
+  }
+
+  // Edit texture
+  if (!isDrawing) {
+    if (inputs.mouseButtons[0].wasJustPressed) isDrawing = true;
+  } else if (!inputs.mouseButtons[0].isDown) isDrawing = false;
+
+  if (isDrawing) {
+    let hex = parseInt(textureArea.brushColor.value.slice(1), 16);
+    let brush = {
+      r: (hex >> 16 & 255),
+      g: (hex >> 8 & 255),
+      b: (hex & 255),
+      a: 255
+    }
+
+    if (mousePosition.x < 0 || mousePosition.x >= data.cubicModelUpdater.cubicModelAsset.pub.textureWidth) return;
+    if (mousePosition.y < 0 || mousePosition.y >= data.cubicModelUpdater.cubicModelAsset.pub.textureHeight) return;
 
     let mapName = "map";
     let array = data.cubicModelUpdater.cubicModelAsset.textureDatas[mapName];
-    let index = y * data.cubicModelUpdater.cubicModelAsset.pub.textureWidth + x;
+    let index = mousePosition.y * data.cubicModelUpdater.cubicModelAsset.pub.textureWidth + mousePosition.x;
     index *= 4;
 
     if (array[index + 0] !== brush.r || array[index + 1] !== brush.g || array[index + 2] !== brush.b ||array[index + 3] !== brush.a) {
       let edits: TextureEdit[] = [];
-      edits.push({ x, y, value: brush });
+      edits.push({ x: mousePosition.x, y: mousePosition.y, value: brush });
       editAsset("editTexture", mapName, edits)
     }
   }
