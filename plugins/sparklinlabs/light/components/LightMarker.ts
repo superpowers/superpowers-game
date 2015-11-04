@@ -8,7 +8,6 @@ export default class LightMarker extends Light {
   setType(type: string) {
     if (this.lightMarker != null) this.actor.gameInstance.threeScene.remove(this.lightMarker);
     if (this.cameraHelper != null) {
-      console.log("remove light");
       this.actor.gameInstance.threeScene.remove(this.cameraHelper);
       this.cameraHelper = null;
     }
@@ -36,7 +35,6 @@ export default class LightMarker extends Light {
       this.actor.gameInstance.threeScene.add(this.lightMarker);
       this.lightMarker.updateMatrixWorld(true);
     }
-    //console.log(this.cameraHelper);
     //if (type === "spot" && this.cameraHelper != null && this.castShadow) this.actor.gameInstance.threeScene.add(this.cameraHelper);
   }
 
