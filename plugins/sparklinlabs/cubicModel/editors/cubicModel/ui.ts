@@ -174,7 +174,7 @@ export function setupSelectedNode() {
     ui.renameNodeButton.disabled = true;
     ui.duplicateNodeButton.disabled = true;
     ui.deleteNodeButton.disabled = true;
-    
+
     setTextureAreaSelectedNode(null);
     return;
   }
@@ -202,7 +202,7 @@ export function setupSelectedNode() {
   ui.renameNodeButton.disabled = false;
   ui.duplicateNodeButton.disabled = false;
   ui.deleteNodeButton.disabled = false;
-  
+
   // Setup texture area
   setTextureAreaSelectedNode(node);
 }

@@ -11,6 +11,8 @@ let textureArea: {
   shapeLineMeshesByNodeId: { [nodeId: string]: THREE.LineSegments; }
   //gridRenderer?: any;
   //selectionRenderer?: SelectionRenderer;
+
+  brushColor?: HTMLInputElement;
 } = {
   shapeLineMeshesByNodeId: {}
 };
@@ -43,6 +45,7 @@ export function setup() {
   data.cubicModelUpdater.cubicModelAsset.nodes.walk(addNode);
 }
 
+textureArea.brushColor = <HTMLInputElement>document.getElementById("brush-color");
 const lineMaterial = new THREE.LineBasicMaterial({ color: 0xff00ff, opacity: 0.4, depthTest: false, depthWrite: false, transparent: true })
 const selectedLineMaterial = new THREE.LineBasicMaterial({ color: 0xff00ff, opacity: 1, depthTest: false, depthWrite: false, transparent: true })
 const verticesByShapeType: { [type: string]: number } = {
@@ -147,7 +150,10 @@ export function handleTextureArea() {
   if (textureArea.gameInstance.input.mouseButtons[0].isDown || textureArea.gameInstance.input.mouseButtons[2].isDown) {
     let brush = { r: 0, g: 0, b: 0, a: 0 };
     if (textureArea.gameInstance.input.mouseButtons[0].isDown) {
-      brush.r = 255;
+      let hex = parseInt(textureArea.brushColor.value.slice(1), 16);
+      brush.r = (hex >> 16 & 255);
+      brush.g = (hex >> 8 & 255);
+      brush.b = (hex & 255);
       brush.a = 255;
     }
 

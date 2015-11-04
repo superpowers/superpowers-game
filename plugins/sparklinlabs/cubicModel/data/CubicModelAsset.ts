@@ -82,7 +82,7 @@ export default class CubicModelAsset extends SupCore.data.base.Asset {
     };
 
     let x = new Uint8ClampedArray(this.pub.maps["map"]);
-    for (let i = 0; i < 200; i++) x[i] = 255;
+    for (let i = 0; i < x.length; i++) x[i] = 255;
 
     super.init(options, callback);
   }
@@ -418,10 +418,15 @@ export default class CubicModelAsset extends SupCore.data.base.Asset {
   }
 
   server_editTexture(client: any, name: string, edits: TextureEdit[], callback: (err: string, name: string, edits: TextureEdit[]) => void) {
-    console.log("edit texture");
-
     if (this.pub.maps[name] == null) { callback(`Invalid map name: ${name}`, null, null); return; }
-    //TODO: more check ?
+    for (let edit of edits) {
+      if (edit.x == null || edit.x < 0 || edit.x >= this.pub.textureWidth) { callback(`Invalid edit x: ${edit.x}`, null, null); return; }
+      if (edit.y == null || edit.y < 0 || edit.y >= this.pub.textureHeight) { callback(`Invalid edit y: ${edit.y}`, null, null); return; }
+      if (edit.value.r == null || edit.value.r < 0 || edit.value.r > 255) { callback(`Invalid edit value r: ${edit.value.r}`, null, null); return; }
+      if (edit.value.g == null || edit.value.g < 0 || edit.value.g > 255) { callback(`Invalid edit value g: ${edit.value.g}`, null, null); return; }
+      if (edit.value.b == null || edit.value.b < 0 || edit.value.b > 255) { callback(`Invalid edit value b: ${edit.value.b}`, null, null); return; }
+      if (edit.value.a == null || edit.value.a < 0 || edit.value.a > 255) { callback(`Invalid edit value a: ${edit.value.a}`, null, null); return; }
+    }
 
     this.client_editTexture(name, edits);
 

@@ -11,7 +11,6 @@ html
   body
     .main
       .model-container
-        canvas(tabindex="0")
         .controls
           .transform-settings
             .title Settings
@@ -38,9 +37,18 @@ html
               input#grid-step(type="number",value="1",min="0")
               input#grid-visible(type="checkbox")
               label(for="grid-visible") Visible
-      .texture-container
         canvas(tabindex="0")
+
+      .texture-container
         .controls
+          div
+            .title Brush
+            div
+              label Color
+              input#brush-color(type="color")
+
+        canvas(tabindex="0")
+
 
     .sidebar
       table.settings.properties
