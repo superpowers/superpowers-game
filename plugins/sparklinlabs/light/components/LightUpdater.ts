@@ -23,18 +23,18 @@ export default class LightUpdater {
     this.light.distance = config.distance;
     this.light.angle = config.angle;
     this.light.target.set(config.target.x, config.target.y, config.target.z);
+  
     this.light.castShadow = config.castShadow;
-    this.light.shadowMapWidth = config.shadowMapSize.width;
-    this.light.shadowMapHeight = config.shadowMapSize.height;
-    this.light.shadowBias = config.shadowBias;
-    this.light.shadowDarkness = config.shadowDarkness;
-    this.light.shadowCameraNear = config.shadowCameraNearPlane;
-    this.light.shadowCameraFar = config.shadowCameraFarPlane;
-    this.light.shadowCameraFov = config.shadowCameraFov;
-    this.light.shadowCameraLeft = config.shadowCameraSize.left;
-    this.light.shadowCameraRight = config.shadowCameraSize.right;
-    this.light.shadowCameraTop = config.shadowCameraSize.top;
-    this.light.shadowCameraBottom = config.shadowCameraSize.bottom;
+    this.light.shadow.mapSize.set(config.shadowMapSize.width, config.shadowMapSize.height);
+    this.light.shadow.bias = config.shadowBias;
+    this.light.shadow.darkness = config.shadowDarkness;
+    this.light.shadow.camera.near = config.shadowCameraNearPlane;
+    this.light.shadow.camera.far = config.shadowCameraFarPlane;
+    this.light.shadow.camera.fov = config.shadowCameraFov;
+    this.light.shadow.camera.left = config.shadowCameraSize.left;
+    this.light.shadow.camera.right = config.shadowCameraSize.right;
+    this.light.shadow.camera.top = config.shadowCameraSize.top;
+    this.light.shadow.camera.bottom = config.shadowCameraSize.bottom;
 
     this.light.setType(config.type);
 
