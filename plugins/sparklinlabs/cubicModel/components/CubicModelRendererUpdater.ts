@@ -84,6 +84,16 @@ export default class CubicModelRendererUpdater {
     }
   }
 
+  _onEditCommand_setProperty(path: string, value: any) {
+    switch(path) {
+      case "pixelsPerUnit":
+        let scale = 1 / value;
+        this.cubicModelRenderer.threeRoot.scale.set(scale, scale, scale);
+        this.cubicModelRenderer.threeRoot.updateMatrixWorld(false);
+        break;
+    }
+  }
+
   _onEditCommand_addNode(node: Node, parentId: string, index: number) {
     this._createRendererNode(node);
   }

@@ -51,7 +51,7 @@ function onAssetReceived() {
     }
   }
   for (let node of data.cubicModelUpdater.cubicModelAsset.nodes.pub) walk(node, null, null);
-  
+
   let pub = data.cubicModelUpdater.cubicModelAsset.pub;
   ui.pixelsPerUnitInput.value = pub.pixelsPerUnit.toString();
 
@@ -70,9 +70,7 @@ export function editAsset(...args: any[]) {
 }
 
 onEditCommands.setProperty = (path: string, value: any) => {
-  if (path === "pixelsPerUnit") {
-    // TODO: Update model renderer pixels per unit
-  }
+  if (path === "pixelsPerUnit") ui.pixelsPerUnitInput.value = value.toString();
 };
 
 onEditCommands.addNode = (node: Node, parentId: string, index: number) => {
@@ -108,7 +106,7 @@ onEditCommands.moveNodePivot = (id: string, value: { x: number; y: number; z: nu
   let nodeElt = ui.nodesTreeView.treeRoot.querySelector(`[data-id='${id}']`);
   let isInspected = ui.nodesTreeView.selectedNodes.length === 1 && nodeElt === ui.nodesTreeView.selectedNodes[0];
   let node = data.cubicModelUpdater.cubicModelAsset.nodes.byId[id];
-  
+
   if (isInspected) {
     setInspectorPosition(<THREE.Vector3>node.position);
     setInspectorOrientation(<THREE.Quaternion>node.orientation);
@@ -147,7 +145,7 @@ onEditCommands.setNodeProperty = (id: string, path: string, value: any) => {
       break;
 
   }
-  
+
   textureArea.updateNode(node);
 
   // TODO: Only refresh if selection is affected
@@ -164,7 +162,7 @@ onEditCommands.duplicateNode = (rootNode: Node, newNodes: DuplicatedNode[]) => {
 onEditCommands.removeNode = (id: string) => {
   let nodeElt = ui.nodesTreeView.treeRoot.querySelector(`[data-id='${id}']`);
   let isInspected = ui.nodesTreeView.selectedNodes.length === 1 && nodeElt === ui.nodesTreeView.selectedNodes[0];
-  
+
   textureArea.removeNode(id);
 
   ui.nodesTreeView.remove(nodeElt);
