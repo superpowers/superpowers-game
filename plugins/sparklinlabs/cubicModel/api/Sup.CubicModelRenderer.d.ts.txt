@@ -1,0 +1,12 @@
+declare namespace Sup {
+  class CubicModelRenderer extends ActorComponent {
+    constructor(actor: Actor, pathOrAsset?: string|CubicModel, materialType?: CubicModelRenderer.MaterialType );
+
+    getCubicModel(): CubicModel;
+    setCubicModel(pathOrAsset: string|CubicModel, materialType?: CubicModelRenderer.MaterialType): CubicModelRenderer;
+  }
+
+  namespace CubicModelRenderer {
+    enum MaterialType { Basic, Phong }
+  }
+}

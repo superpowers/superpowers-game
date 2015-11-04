@@ -200,11 +200,8 @@ export default class CubicModelAsset extends SupCore.data.base.Asset {
         if (placed) break;
       }
 
-      if (!placed) {
+      if (!placed)
         console.log("Could not find any room for the node's texture. Texture needs to be expanded and all blocks should be re-laid out from bigger to smaller!");
-      } else {
-        console.log(node.shape.textureOffset);
-      }
     }
 
     let index = (options != null) ? options.index : null;

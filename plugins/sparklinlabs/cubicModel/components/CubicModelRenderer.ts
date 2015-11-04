@@ -43,7 +43,7 @@ export default class CubicModelRenderer extends SupEngine.ActorComponent {
     super._destroy();
   }
 
-  setModel(asset: CubicModelAssetPub, materialType?: string, customShader?: any) {
+  setCubicModel(asset: CubicModelAssetPub, materialType?: string, customShader?: any) {
     if (this.asset != null) this._clearMesh();
     this.asset = null;
     if (asset == null) return;
@@ -76,7 +76,7 @@ export default class CubicModelRenderer extends SupEngine.ActorComponent {
 
     pivot = new THREE.Object3D();
     pivot.name = node.name;
-    pivot.userData.nodeId = node.id;
+    pivot.userData.cubicNodeId = node.id;
 
     let shape: THREE.Mesh;
 

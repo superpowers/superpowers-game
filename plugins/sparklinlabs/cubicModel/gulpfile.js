@@ -42,9 +42,9 @@ function makeBrowserify(source, destination, output) {
 
 makeBrowserify("./data/index.js", "./public", "data");
 makeBrowserify("./components/index.js", "./public", "components");
-//makeBrowserify("./componentEditors/index.js", "./public", "componentEditors");
-//makeBrowserify("./runtime/index.js", "./public", "runtime");
-//makeBrowserify("./api/index.js", "./public", "api");
+makeBrowserify("./componentEditors/index.js", "./public", "componentEditors");
+makeBrowserify("./runtime/index.js", "./public", "runtime");
+makeBrowserify("./api/index.js", "./public", "api");
 var editors = require("fs").readdirSync("./editors");
 editors.forEach(function(editor) {
   makeBrowserify("./editors/" + editor + "/index.js", "./public/editors", editor + "/index");

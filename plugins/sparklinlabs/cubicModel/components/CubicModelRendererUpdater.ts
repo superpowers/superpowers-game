@@ -66,11 +66,11 @@ export default class CubicModelRendererUpdater {
 
   _setCubicModel() {
     if (this.cubicModelAsset == null) {
-      this.cubicModelRenderer.setModel(null);
+      this.cubicModelRenderer.setCubicModel(null);
       return;
     }
 
-    this.cubicModelRenderer.setModel(this.cubicModelAsset.pub);
+    this.cubicModelRenderer.setCubicModel(this.cubicModelAsset.pub);
   }
 
 
@@ -235,7 +235,7 @@ export default class CubicModelRendererUpdater {
 
   _onCubicModelAssetTrashed() {
     this.cubicModelAsset = null;
-    this.cubicModelRenderer.setModel(null);
+    this.cubicModelRenderer.setCubicModel(null);
     // FIXME: the updater shouldn't be dealing with SupClient.onAssetTrashed directly
     if (this.editAssetCallbacks != null) SupClient.onAssetTrashed();
   }
@@ -247,7 +247,7 @@ export default class CubicModelRendererUpdater {
         this.cubicModelAssetId = value;
 
         this.cubicModelAsset = null;
-        this.cubicModelRenderer.setModel(null, null);
+        this.cubicModelRenderer.setCubicModel(null, null);
 
         if (this.cubicModelAssetId != null) this.client.subAsset(this.cubicModelAssetId, "cubicModel", this.cubicModelSubscriber);
         break;

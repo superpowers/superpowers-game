@@ -135,12 +135,12 @@ function mouseUp() {
       let threeObject = intersect.object;
 
       while (threeObject != null) {
-        if (threeObject.userData.nodeId != null) break;
+        if (threeObject.userData.cubicNodeId != null) break;
         threeObject = threeObject.parent;
       }
 
       if (threeObject != null) {
-        selectedNodeId = threeObject.userData.nodeId;
+        selectedNodeId = threeObject.userData.cubicNodeId;
 
         let treeViewNode: HTMLLIElement = ui.nodesTreeView.treeRoot.querySelector(`li[data-id='${selectedNodeId}']`);
         ui.nodesTreeView.addToSelection(treeViewNode);
@@ -208,13 +208,13 @@ function onTransformChange() {
         parent = parent.parent;
       }*/
 
-      if (parent.userData.nodeId != null) {
+      if (parent.userData.cubicNodeId != null) {
         let inverseParentMatrix = parent.matrixWorld.clone();
         inverseParentMatrix.getInverse(inverseParentMatrix);
         position.applyMatrix4(inverseParentMatrix);
 
         if (ui.translateMode !== "shape") {
-          let parentOffset = data.cubicModelUpdater.cubicModelAsset.nodes.byId[parent.userData.nodeId].shape.offset;
+          let parentOffset = data.cubicModelUpdater.cubicModelAsset.nodes.byId[parent.userData.cubicNodeId].shape.offset;
           position.x -= parentOffset.x;
           position.y -= parentOffset.y;
           position.z -= parentOffset.z;
