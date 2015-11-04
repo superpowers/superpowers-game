@@ -1,0 +1,29 @@
+namespace Sup {
+  export abstract class Behavior extends ActorComponent {
+    awake: Function;
+    start: Function;
+    update: Function;
+    onDestroy: Function;
+
+    constructor(actor) {
+      if (actor.__outer == null) throw new Error("Use actor.addBehavior to create a behavior");
+
+      super(actor.__outer);
+
+      let funcs = {};
+      funcs["awake"] = this.awake != null ? this.awake.bind(this) : null;
+      funcs["start"] = this.start != null ? this.start.bind(this) : null;
+      funcs["update"] = this.update != null ? this.update.bind(this) : null;
+      funcs["onDestroy"] = this.onDestroy != null ? this.onDestroy.bind(this) : null;
+      this.__inner = new SupEngine.componentClasses.Behavior(actor, funcs);
+
+      this.__inner.__outer = this;
+      this.actor.__behaviors[this.constructor["name"]] = this;
+    }
+  }
+
+  export function registerBehavior(behaviorClass) {
+    player.behaviorClasses[behaviorClass.name] = behaviorClass;
+    return behaviorClass;
+  }
+}

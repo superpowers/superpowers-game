@@ -1,4 +1,6 @@
 declare namespace Sup {
+  function getActor(name: string): Actor;
+  function destroyAllActors(): void;
 
   class Actor {
     // INSERT_COMPONENT_ACCESSORS
@@ -120,5 +122,12 @@ declare namespace Sup {
 
     addBehavior<T extends Behavior>(behaviorClass: new(actor: Actor, properties?: { [key: string]: any; }) => T, properties?: { [key: string]: any; }): T;
     getBehavior<T extends Behavior>(behaviorClass: { prototype: T }): T;
+  }
+
+  class ActorComponent {
+    actor: Actor;
+    constructor(actor: Actor);
+    destroy(): void;
+    isDestroyed(): boolean;
   }
 }

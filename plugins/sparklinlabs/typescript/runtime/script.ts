@@ -58,7 +58,8 @@ export function start(player: SupRuntime.Player, callback: Function) {
   globals["Sup.Actor.ts"] = globals["Sup.Actor.ts"].replace("// INSERT_COMPONENT_ACCESSORS", joinedActorComponentAccessors);
   globalDefs["Sup.Actor.d.ts"] = globalDefs["Sup.Actor.d.ts"].replace("// INSERT_COMPONENT_ACCESSORS", joinedActorComponentAccessors);
 
-  // Make sure the Sup namespace is compiled before everything else
+  // Make sure the Sup namespace, Sup.Actor and Sup.ActorComponent are compiled before everything else
+  globalNames.unshift(globalNames.splice(globalNames.indexOf("Sup.Actor.ts"), 1)[0]);
   globalNames.unshift(globalNames.splice(globalNames.indexOf("Sup.ts"), 1)[0]);
 
   // Compile plugin globals

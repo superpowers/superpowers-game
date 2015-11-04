@@ -15,6 +15,11 @@ SupAPI.registerPlugin("typescript", "Sup.Actor", {
   defs: fs.readFileSync(`${__dirname}/Sup.Actor.d.ts.txt`, { encoding: "utf8" }),
 });
 
+SupAPI.registerPlugin("typescript", "Sup.Behavior", {
+  code: fs.readFileSync(`${__dirname}/Sup.Behavior.ts.txt`, { encoding: "utf8" }),
+  defs: fs.readFileSync(`${__dirname}/Sup.Behavior.d.ts.txt`, { encoding: "utf8" }),
+});
+
 SupAPI.registerPlugin("typescript", "Sup.Math", {
   code: fs.readFileSync(`${__dirname}/Sup.Math.ts.txt`, { encoding: "utf8" }),
   defs: fs.readFileSync(`${__dirname}/Sup.Math.d.ts.txt`, { encoding: "utf8" }),

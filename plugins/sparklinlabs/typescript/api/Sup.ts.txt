@@ -51,67 +51,6 @@ namespace Sup {
 
     return outerAsset;
   }
-
-  export function getActor(name) {
-    let foundActor = null;
-    player.gameInstance.tree.walkTopDown((actor) => {
-      if (actor.name === name && !actor.pendingForDestruction) {
-        foundActor = actor.__outer;
-        return false;
-      }
-      return true;
-    });
-    return foundActor;
-  }
-
-  export function destroyAllActors() {
-    player.gameInstance.destroyAllActors();
-    player.gameInstance.tree.walkTopDown((actor) => { actor.__outer.__inner = null; actor.__outer = null; return true; });
-  }
-
-  export class ActorComponent {
-    actor: Actor;
-    __inner: any;
-
-    constructor(actor) {
-      this.actor = actor;
-    }
-
-    destroy() { player.gameInstance.destroyComponent(this.__inner); }
-    isDestroyed() {
-      return this.__inner == null ||
-        this.__inner.actor.pendingForDestruction ||
-        this.__inner.actor.gameInstance.componentsToBeDestroyed.indexOf(this.__inner) !== -1;
-    }
-  }
-
-  export abstract class Behavior extends ActorComponent {
-    awake: Function;
-    start: Function;
-    update: Function;
-    onDestroy: Function;
-
-    constructor(actor) {
-      if (actor.__outer == null) throw new Error("Use actor.addBehavior to create a behavior");
-
-      super(actor.__outer);
-
-      let funcs = {};
-      funcs["awake"] = this.awake != null ? this.awake.bind(this) : null;
-      funcs["start"] = this.start != null ? this.start.bind(this) : null;
-      funcs["update"] = this.update != null ? this.update.bind(this) : null;
-      funcs["onDestroy"] = this.onDestroy != null ? this.onDestroy.bind(this) : null;
-      this.__inner = new SupEngine.componentClasses.Behavior(actor, funcs);
-
-      this.__inner.__outer = this;
-      this.actor.__behaviors[this.constructor["name"]] = this;
-    }
-  }
-
-  export function registerBehavior(behaviorClass) {
-    player.behaviorClasses[behaviorClass.name] = behaviorClass;
-    return behaviorClass;
-  }
 }
 
 window.Sup = Sup;

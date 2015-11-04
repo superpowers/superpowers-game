@@ -1,4 +1,20 @@
 namespace Sup {
+  export function getActor(name) {
+    let foundActor = null;
+    player.gameInstance.tree.walkTopDown((actor) => {
+      if (actor.name === name && !actor.pendingForDestruction) {
+        foundActor = actor.__outer;
+        return false;
+      }
+      return true;
+    });
+    return foundActor;
+  }
+
+  export function destroyAllActors() {
+    player.gameInstance.destroyAllActors();
+    player.gameInstance.tree.walkTopDown((actor) => { actor.__outer.__inner = null; actor.__outer = null; return true; });
+  }
 
   let tmpVector3 = new SupEngine.THREE.Vector3();
   let tmpQuaternion = new SupEngine.THREE.Quaternion();
@@ -407,6 +423,22 @@ namespace Sup {
         if (Object.getPrototypeOf(behavior) instanceof behaviorClass) return behavior;
       }
       return null;
+    }
+  }
+
+  export class ActorComponent {
+    actor: Actor;
+    __inner: any;
+
+    constructor(actor) {
+      this.actor = actor;
+    }
+
+    destroy() { player.gameInstance.destroyComponent(this.__inner); }
+    isDestroyed() {
+      return this.__inner == null ||
+        this.__inner.actor.pendingForDestruction ||
+        this.__inner.actor.gameInstance.componentsToBeDestroyed.indexOf(this.__inner) !== -1;
     }
   }
 }

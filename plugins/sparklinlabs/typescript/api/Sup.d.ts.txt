@@ -15,39 +15,4 @@ declare namespace Sup {
 
   function get(path: string, options?: { "ignoreMissing": boolean; }): Asset;
   function get<T extends Asset>(path: string, type: new(inner: { [key:string]: any; }) => T, options?: { "ignoreMissing": boolean; }): T;
-
-  function getActor(name: string): Actor;
-  function destroyAllActors(): void;
-
-  class ActorComponent {
-    actor: Actor;
-    constructor(actor: Actor);
-    destroy(): void;
-    isDestroyed(): boolean;
-  }
-
-  abstract class Behavior extends ActorComponent {
-    constructor(actor: Actor, properties?: { [key: string]: any; });
-
-    // The following methods do nothing by default,
-    // they can be overridden to implement custom behaviors.
-
-    // Called once when the behavior is added to an actor.
-    // Useful for initialization.
-    awake();
-
-    // Called once, just before all actors are about to be updated.
-    // Useful for late initialization.
-    start();
-
-    // Called once per game update (by default, that is 60 times a second).
-    // Useful for on-going gameplay logic.
-    update();
-
-    // Called once when the behavior is destroyed (that includes when a new scene is loaded).
-    // Useful for clean up.
-    onDestroy();
-  }
-
-  function registerBehavior<T extends Behavior>(behaviorClass: new (actor: Actor) => T);
 }
