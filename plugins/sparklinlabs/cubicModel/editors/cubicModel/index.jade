@@ -49,13 +49,18 @@ html
 
         canvas(tabindex="0")
 
-
     .sidebar
       table.settings.properties
+        tr
+          th(colspan="2") Cubic Model
         tr
           th Pixels per unit
           td
             input.property-pixelsPerUnit(type="number")
+
+      .header
+        span Nodes
+
       .nodes-buttons
         button.new-node New Node
         button(disabled).rename-node Rename

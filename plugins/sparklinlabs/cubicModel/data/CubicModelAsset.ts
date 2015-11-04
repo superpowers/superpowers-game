@@ -66,25 +66,27 @@ export default class CubicModelAsset extends SupCore.data.base.Asset {
   }
 
   init(options: any, callback: Function) {
-    this.pub = {
-      pixelsPerUnit: 16, // TODO: get default from settings resource!
-      nodes: [],
-      textureWidth: 128,
-      textureHeight: 128,
-      maps: { map: new ArrayBuffer(128 * 128 * 4) },
-      mapSlots: {
-        map: "map",
-        light: null,
-        specular: null,
-        alpha: null,
-        normal: null
-      }
-    };
+    this.serverData.resources.acquire("cubicModelSettings", null, (err: Error, cubicModelSettings: any) => {
+      this.pub = {
+        pixelsPerUnit: cubicModelSettings.pub.pixelsPerUnit,
+        nodes: [],
+        textureWidth: 128,
+        textureHeight: 128,
+        maps: { map: new ArrayBuffer(128 * 128 * 4) },
+        mapSlots: {
+          map: "map",
+          light: null,
+          specular: null,
+          alpha: null,
+          normal: null
+        }
+      };
 
-    let x = new Uint8ClampedArray(this.pub.maps["map"]);
-    for (let i = 0; i < x.length; i++) x[i] = 255;
+      let x = new Uint8ClampedArray(this.pub.maps["map"]);
+      for (let i = 0; i < x.length; i++) x[i] = 255;
 
-    super.init(options, callback);
+      super.init(options, callback);
+    });
   }
 
   setup() {
