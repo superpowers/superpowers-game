@@ -8,9 +8,15 @@ html
 
   body
     nav
-      ul
+      form
+        input(type="search",placeholder="Search",autofocus)
+      .defs
+        ul
 
     main
+      article.no-results
+        header Search results
+        p No results found.
 
     script(src="/client/SupClient.js")
     script(src="/api/SupAPI.js")

@@ -5,22 +5,33 @@ body
 
 nav
   width 250px
-  overflow-y auto
-  position fixed
-  top 0
   background #ddd
-  bottom 0
+  border-right 1px solid #ccc
+  
+  display flex
+  flex-flow column
+  
+  input[type=search]
+    border none
+    padding 0.5em
+    width 100%
+    border-bottom 1px solid #ccc
 
-  ul
+  .defs
+    flex 1
+    position relative
+    overflow-y auto
+
+  .defs ul
     list-style none
     margin 0
     padding 0.5em
 
-  li
+  .defs li
     padding 0
     margin 0
 
-  a
+  .defs a
     display block
     color #444
     padding 0.25em 0.5em
@@ -34,24 +45,25 @@ nav
       color #eee
 
 main
-  margin-left 250px
-  padding 1em
   flex 1
+  display flex
+  flex-flow column
 
-section
+article
+  flex 1
   display none
+  &.active { display: block; }
+  header { font-size: 24pt; }
+  overflow-y auto
 
-  &.active
-    display initial
+  &:not(.no-results) { background: #474747; }
+  &.no-results { padding: 1em; }
 
-section header
-  font-size 24pt
-
-section pre
+article pre
   white-space pre-wrap
   font-family "Consolas", monospace
   font-size 16px
-  background #474747
   color #dadada
-  padding 1em
   user-select text
+  margin 0
+  padding 1em
