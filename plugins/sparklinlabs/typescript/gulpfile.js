@@ -2,7 +2,7 @@ var gulp = require("gulp");
 var tasks = [ "copy", "jade", "stylus" ];
 
 // Copy
-gulp.task("copy", function () { return gulp.src("node_modules/highlight.js/styles/railscasts.css").pipe(gulp.dest("./public/editors/documentation/")); });
+gulp.task("copy", function () { return gulp.src("node_modules/highlight.js/styles/railscasts.css").pipe(gulp.dest("./public/editors/apiBrowser/")); });
 
 // Jade
 var jade = require("gulp-jade");
