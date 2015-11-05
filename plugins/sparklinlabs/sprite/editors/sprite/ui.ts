@@ -158,7 +158,7 @@ function downloadTexture(textureName: string) {
     let a = document.createElement("a");
     document.body.appendChild(a);
     a.style.display = "none";
-    a.href = data.spriteUpdater.mapObjectURLs[textureName];
+    a.href = data.spriteUpdater.spriteAsset.mapObjectURLs[textureName];
 
     (<any>a).download = name + ".png";
     a.click();

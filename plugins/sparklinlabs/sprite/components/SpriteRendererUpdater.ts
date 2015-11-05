@@ -19,7 +19,6 @@ export default class SpriteRendererUpdater {
   shaderAssetId: string;
   shaderPub: any;
   overrideOpacity = false;
-  mapObjectURLs: { [mapName: string]: string } = {};
 
   spriteSubscriber = {
     onAssetReceived: this._onSpriteAssetReceived.bind(this),
@@ -77,49 +76,25 @@ export default class SpriteRendererUpdater {
   }
 
   _prepareMaps(callback: () => any) {
-    this.spriteAsset.pub.textures = {};
+    let mapNames = Object.keys(this.spriteAsset.pub.maps);
+    let remainingTextureToLoad = mapNames.length;
 
-    for (let key in this.mapObjectURLs) {
-      URL.revokeObjectURL(this.mapObjectURLs[key]);
-      delete this.mapObjectURLs[key];
+    let onTextureLoaded = () => {
+      remainingTextureToLoad -= 1;
+      if (remainingTextureToLoad === 0) callback();
     }
 
-    async.each(Object.keys(this.spriteAsset.pub.maps), (key, cb) => {
+    mapNames.forEach((key) => {
       let buffer: any = this.spriteAsset.pub.maps[key];
-      if (buffer == null || buffer.byteLength === 0) { cb(); return; }
-
-      let texture = this.spriteAsset.pub.textures[key];
-      let image: HTMLImageElement = (texture != null) ? texture.image : null;
-
-      if (image == null) {
-        image = new Image;
-        texture = this.spriteAsset.pub.textures[key] = new THREE.Texture(image);
-        (<any>texture).size = { width: 0, height: 0 };
-
-        if (this.spriteAsset.pub.filtering === "pixelated") {
-          texture.magFilter = SupEngine.THREE.NearestFilter;
-          texture.minFilter = SupEngine.THREE.NearestFilter;
-        }
-
-        let typedArray = new Uint8Array(buffer);
-        let blob = new Blob([ typedArray ], { type: "image/*" });
-        image.src = this.mapObjectURLs[key] = URL.createObjectURL(blob);
+      if (buffer == null || buffer.byteLength === 0) {
+        onTextureLoaded();
+        return;
       }
 
-      if (!image.complete) {
-        image.addEventListener("load", () => {
-          // Three.js might resize our texture to make its dimensions power-of-twos
-          // because of WebGL limitations (see https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/Tutorial/Using_textures_in_WebGL#Non_power-of-two_textures)
-          // so we store its original, non-power-of-two size for later use
-          (<any>texture).size = { width: image.width, height: image.height };
-
-          texture.needsUpdate = true;
-          cb();
-          return;
-        });
-      } else cb();
-
-    }, callback);
+      let image = this.spriteAsset.pub.textures[key].image;
+      if (!image.complete) image.addEventListener("load", () => { onTextureLoaded(); });
+      else onTextureLoaded();
+    });
   }
 
   _setSprite() {

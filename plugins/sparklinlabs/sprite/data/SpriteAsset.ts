@@ -4,6 +4,10 @@ import * as async from "async";
 
 import SpriteAnimations, { SpriteAnimationPub } from "./SpriteAnimations";
 
+// Reference to THREE only on client-side
+let THREE: typeof SupEngine.THREE;
+if ((<any>global).window != null) THREE = SupEngine.THREE;
+
 export interface SpriteAssetPub {
   // FIXME: This is used client-side to store shared THREE.js textures
   // We should probably find a better place for it
@@ -78,8 +82,16 @@ export default class SpriteAsset extends SupCore.data.base.Asset {
   animations: SpriteAnimations;
   pub: SpriteAssetPub;
 
+  // Only used on client-side
+  mapObjectURLs: { [mapName: string]: string };
+
   constructor(id: string, pub: SpriteAssetPub, serverData: any) {
     super(id, pub, SpriteAsset.schema, serverData);
+
+    if (serverData == null) {
+      this.mapObjectURLs = {};
+      this.loadTextures();
+    }
   }
 
   init(options: any, callback: Function) {
@@ -223,6 +235,49 @@ export default class SpriteAsset extends SupCore.data.base.Asset {
     ], (err) => { saveCallback(err); });
   }
 
+  loadTextures() {
+    for (let textureName in this.pub.textures) this.pub.textures[textureName].dispose();
+    this.pub.textures = {};
+
+    for (let key in this.mapObjectURLs) {
+      URL.revokeObjectURL(this.mapObjectURLs[key]);
+      delete this.mapObjectURLs[key];
+    }
+
+    Object.keys(this.pub.maps).forEach((key) => {
+      let buffer: any = this.pub.maps[key];
+      if (buffer == null || buffer.byteLength === 0) return;
+
+      let texture = this.pub.textures[key];
+      let image: HTMLImageElement = (texture != null) ? texture.image : null;
+
+      if (image == null) {
+        image = new Image;
+        texture = this.pub.textures[key] = new THREE.Texture(image);
+        (<any>texture).size = { width: 0, height: 0 };
+
+        if (this.pub.filtering === "pixelated") {
+          texture.magFilter = SupEngine.THREE.NearestFilter;
+          texture.minFilter = SupEngine.THREE.NearestFilter;
+        }
+
+        let typedArray = new Uint8Array(buffer);
+        let blob = new Blob([ typedArray ], { type: "image/*" });
+        image.src = this.mapObjectURLs[key] = URL.createObjectURL(blob);
+      }
+
+      if (!image.complete) {
+        image.addEventListener("load", () => {
+          // Three.js might resize our texture to make its dimensions power-of-twos
+          // because of WebGL limitations (see https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/Tutorial/Using_textures_in_WebGL#Non_power-of-two_textures)
+          // so we store its original, non-power-of-two size for later use
+          (<any>texture).size = { width: image.width, height: image.height };
+          texture.needsUpdate = true;
+        });
+      }
+    });
+  }
+
   server_setMaps(client: any, maps: any, callback: (err: string, maps?: any) => any) {
     if (maps == null || typeof maps !== "object") { callback("Maps must be an object"); return; }
 
@@ -240,6 +295,7 @@ export default class SpriteAsset extends SupCore.data.base.Asset {
 
   client_setMaps(maps: any) {
     for (let key in maps) this.pub.maps[key] = maps[key];
+    this.loadTextures();
   }
 
   server_newMap(client: any, name: string, callback: (err: string, name: string) => any) {
