@@ -4,10 +4,6 @@ import * as async from "async";
 
 import SpriteAnimations, { SpriteAnimationPub } from "./SpriteAnimations";
 
-// Reference to THREE only on client-side
-let THREE: typeof SupEngine.THREE;
-if ((<any>global).window != null) THREE = SupEngine.THREE;
-
 export interface SpriteAssetPub {
   // FIXME: This is used client-side to store shared THREE.js textures
   // We should probably find a better place for it
@@ -253,7 +249,7 @@ export default class SpriteAsset extends SupCore.data.base.Asset {
 
       if (image == null) {
         image = new Image;
-        texture = this.pub.textures[key] = new THREE.Texture(image);
+        texture = this.pub.textures[key] = new SupEngine.THREE.Texture(image);
         (<any>texture).size = { width: 0, height: 0 };
 
         if (this.pub.filtering === "pixelated") {

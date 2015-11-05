@@ -77,11 +77,11 @@ export default class SpriteRendererUpdater {
 
   _prepareMaps(callback: () => any) {
     let mapNames = Object.keys(this.spriteAsset.pub.maps);
-    let remainingTextureToLoad = mapNames.length;
+    let texturesToLoad = mapNames.length;
 
-    let onTextureLoaded = () => {
-      remainingTextureToLoad -= 1;
-      if (remainingTextureToLoad === 0) callback();
+    function onTextureLoaded() {
+      texturesToLoad--;
+      if (texturesToLoad === 0) callback();
     }
 
     mapNames.forEach((key) => {
@@ -92,7 +92,7 @@ export default class SpriteRendererUpdater {
       }
 
       let image = this.spriteAsset.pub.textures[key].image;
-      if (!image.complete) image.addEventListener("load", () => { onTextureLoaded(); });
+      if (!image.complete) image.addEventListener("load", onTextureLoaded);
       else onTextureLoaded();
     });
   }
