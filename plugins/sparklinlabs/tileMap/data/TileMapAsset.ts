@@ -61,11 +61,11 @@ export default class TileMapAsset extends SupCore.data.base.Asset {
     let loadJson = (json: string) => {
       let pub = JSON.parse(json);
 
-      /*for (let layer of pub.layers) {
+      for (let layer of pub.layers) {
         for (let index = 0; index < layer.data.length; index++) {
-          if ((<any>layer.data[index]) === 0) layer.data[index] = 0;
+          if ((<any>layer.data[index][0]) === -1) layer.data[index] = 0;
         }
-      }*/
+      }
 
       this.pub = pub;
       this.setup();
@@ -84,29 +84,6 @@ export default class TileMapAsset extends SupCore.data.base.Asset {
   }
 
   save(assetPath: string, callback: (err: Error) => any) {
-    /*let pub: TileMapAssetPub = {
-      tileSetId: this.pub.tileSetId,
-      pixelsPerUnit: this.pub.pixelsPerUnit,
-      width: this.pub.width, height: this.pub.height,
-      layerDepthOffset: this.pub.layerDepthOffset,
-      layers: []
-    }
-
-    for (let layer of this.pub.layers) {
-      let saveLayer: TileMapLayerPub = {
-        id: layer.id,
-        name: layer.name,
-        data: []
-      }
-
-      for (let tile of layer.data) {
-        if (tile[0] === -1 && tile[1] === -1) (<any>saveLayer).data.push(0);
-        else saveLayer.data.push(tile);
-      }
-      pub.layers.push(saveLayer);
-    }
-
-    let json = JSON.stringify(pub, null);*/
     let json = JSON.stringify(this.pub, null);
     fs.writeFile(path.join(assetPath, "tilemap.json"), json, { encoding: "utf8" }, callback);
   }
