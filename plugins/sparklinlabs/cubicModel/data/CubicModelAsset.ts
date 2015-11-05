@@ -1,5 +1,5 @@
 let serverRequire = require;
-let THREE: any;
+let THREE: typeof SupEngine.THREE;
 // NOTE: It is important that we require THREE through SupEngine
 // so that we inherit any settings, like the global Euler order
 // (or, alternatively, we could duplicate those settings...)
