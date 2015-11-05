@@ -19,6 +19,7 @@ nav
 
   .defs
     flex 1
+    flex-basis 0
     position relative
     overflow-y auto
 
@@ -32,17 +33,31 @@ nav
     margin 0
 
   .defs a
-    display block
+    display flex
+    align-items center
     color #444
-    padding 0.25em 0.5em
+    padding 0.25em
     text-decoration none
 
     &:hover
       background #ccc
+  
+    .name { flex: 1; padding: 0 0.25em; pointer-events: none; }
+    .results { pointer-events: none; }
+    .results:not(:empty)
+      font-size smaller
+      border-radius 1em
+      padding 0 0.5em
+      background rgba(0,0,0,0.3)
+      color rgba(255,255,255,0.8)
 
     &.active
       background #444
       color #eee
+      
+      .results:not(:empty)
+        background rgba(255,255,255,0.3)
+        color rgba(0,0,0,0.8)
 
 main
   flex 1

@@ -51,6 +51,7 @@ async.each(SupClient.pluginPaths.all, (pluginName, pluginCallback) => {
   for (let pluginName in SupAPI.contexts["typescript"].plugins) {
     let plugin = SupAPI.contexts["typescript"].plugins[pluginName];
     name = pluginName;
+    if (name === "lib") name = "Built-ins";
 
     if (plugin.exposeActorComponent != null) {
       name = plugin.exposeActorComponent.className;
@@ -63,29 +64,33 @@ async.each(SupClient.pluginPaths.all, (pluginName, pluginCallback) => {
 
   let sortedDefNames = Object.keys(allDefs);
   sortedDefNames.sort((a, b) => { return (a.toLowerCase() < b.toLowerCase()) ? -1 : 1 });
-  sortedDefNames.unshift(sortedDefNames.splice(sortedDefNames.indexOf("lib"), 1)[0]);
+  sortedDefNames.unshift(sortedDefNames.splice(sortedDefNames.indexOf("Built-ins"), 1)[0]);
 
   preElts = [];
 
   for (let name of sortedDefNames) {
     let defs = allDefs[name];
-    if (name === "lib") name = "Built-ins";
 
     let liElt = document.createElement("li");
+    navListElt.appendChild(liElt);
+
     let anchorElt = document.createElement("a");
     anchorElt.id = `link-${name}`;
     anchorElt.href = `#${name}`;
-    anchorElt.textContent = name;
     liElt.appendChild(anchorElt);
-    navListElt.appendChild(liElt);
+
+    let nameElt = document.createElement("span");
+    nameElt.className = "name";
+    nameElt.textContent = name;
+    anchorElt.appendChild(nameElt);
+    
+    let resultsElt = document.createElement("span")
+    resultsElt.className = "results";
+    anchorElt.appendChild(resultsElt);
 
     let articleElt = document.createElement("article");
     articleElt.id = `doc-${name}`;
     mainElt.appendChild(articleElt);
-
-    /*let headerElt = document.createElement("header");
-    headerElt.textContent = name;
-    articleElt.appendChild(headerElt);*/
 
     let preElt = document.createElement("pre");
     
@@ -106,12 +111,18 @@ async.each(SupClient.pluginPaths.all, (pluginName, pluginCallback) => {
       event.preventDefault();
     }
   });
-  searchElt.addEventListener("change", (event) => { results = null; })
+  searchElt.addEventListener("input", (event) => {
+    results = null;
+    // Clear result badges
+    for (let defName of sortedDefNames) document.getElementById(`link-${defName}`).firstChild.nextSibling.textContent = "";
+  });
   searchElt.form.addEventListener("submit", (event) => {
     event.preventDefault();
 
     let needle = searchElt.value.toLowerCase();
-    if (needle.length === 0) return;
+    if (needle.length < 3) return;
+
+    let resultsByDefName = {};
 
     if (results == null) {
       results = [];
@@ -119,18 +130,26 @@ async.each(SupClient.pluginPaths.all, (pluginName, pluginCallback) => {
 
       let i = 0;
       for (let i = 0; i < sortedDefNames.length; i++) {
-        let def = allDefs[sortedDefNames[i]].toLowerCase().replace(/\n\n/g, " ").replace(/\n/g, "");
+        let defName = sortedDefNames[i];
+        let def = allDefs[defName].toLowerCase().replace(/\n\n/g, " ").replace(/\n/g, "");
         let preElt = preElts[i];
+        
+        if (preElt.parentElement.classList.contains("active")) resultIndex = results.length;
 
+        let resultsCount = 0;
         let targetIndex = -1;
-        while(true) {
+        while (true) {
           targetIndex = def.indexOf(needle, targetIndex + 1);
           if (targetIndex === -1) break;
 
           let start = findText(preElt, targetIndex);
           let end = findText(preElt, targetIndex + needle.length);
           results.push({ articleElt: preElt.parentElement, start, end });
+          resultsCount++;
         }
+
+        // Setup results badge
+        (document.getElementById(`link-${defName}`).firstChild.nextSibling as HTMLSpanElement).textContent = resultsCount > 0 ? resultsCount.toString() : "";
       }
     } else resultIndex = (resultIndex + 1) % results.length;
 
@@ -169,7 +188,7 @@ async.each(SupClient.pluginPaths.all, (pluginName, pluginCallback) => {
 
     clearActiveArticle();
     event.target.classList.add("active");
-    document.getElementById(`doc-${event.target.textContent}`).classList.add("active");
+    document.getElementById(`doc-${event.target.firstChild.textContent}`).classList.add("active");
   });
 
   if (window.location.hash.length > 1) {
