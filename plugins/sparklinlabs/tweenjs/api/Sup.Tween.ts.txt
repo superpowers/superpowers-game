@@ -18,18 +18,18 @@ namespace Sup {
       this.__inner = new SupEngine.componentClasses.Behavior(actor.__inner, funcs);
     }
     update() {
-      if (this.timer == -1) { return; }
+      if (this.timer == -1) return;
 
       this.timer += 1 / Game.getFPS();
       this.tween.update(this.timer * 1000);
     }
 
     to(object, duration) {
-      this.tween.to(object, duration)
+      this.tween.to(object, duration);
       return this;
     }
     easing(easing) {
-      this.tween.easing(easing)
+      this.tween.easing(easing);
       return this;
     }
     yoyo(yoyo) {
@@ -47,7 +47,7 @@ namespace Sup {
       return this;
     }
     onComplete(complete) {
-      let self = this
+      let self = this;
       this.tween.onComplete(function() {
         complete(this);
         self.destroy();
