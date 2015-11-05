@@ -1,4 +1,6 @@
 import * as async from "async";
+let highlight = require("highlight.js"); // import * as highlight from "highlight.js";
+
 SupClient.setupHotkeys();
 
 async.each(SupClient.pluginPaths.all, (pluginName, pluginCallback) => {
@@ -57,7 +59,7 @@ async.each(SupClient.pluginPaths.all, (pluginName, pluginCallback) => {
     sectionElt.appendChild(headerElt);
 
     let preElt = document.createElement("pre");
-    preElt.textContent = defs;
+    preElt.innerHTML = highlight.highlight("typescript", defs, true).value;
     sectionElt.appendChild(preElt);
   }
 

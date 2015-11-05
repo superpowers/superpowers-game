@@ -1,5 +1,8 @@
 var gulp = require("gulp");
-var tasks = [ "jade", "stylus" ];
+var tasks = [ "copy", "jade", "stylus" ];
+
+// Copy
+gulp.task("copy", function () { return gulp.src("node_modules/highlight.js/styles/railscasts.css").pipe(gulp.dest("./public/editors/documentation/")); });
 
 // Jade
 var jade = require("gulp-jade");
