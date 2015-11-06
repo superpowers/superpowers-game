@@ -39,7 +39,7 @@ function onRoomReceived(err: string, room: any) {
 
 let onRoomCommands: any = {};
 function onRoomEdited(id: string, command: string, ...args: any[]) {
-  (<any>data.room).__proto__[`client_${command}`].apply(data.room, args);
+  Object.getPrototypeOf(data.room)[`client_${command}`].apply(data.room, args);
   if (onRoomCommands[command] != null) onRoomCommands[command].apply(data.room, args);
 };
 

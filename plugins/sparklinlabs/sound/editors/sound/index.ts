@@ -49,7 +49,7 @@ function onAssetReceived(err: string, asset: any) {
 }
 
 function onAssetEdited(id: string, command: string, ...args: any[]) {
-  data.asset.__proto__[`client_${command}`].apply(data.asset, args);
+  Object.getPrototypeOf(data.asset)[`client_${command}`].apply(data.asset, args);
   if (onAssetCommands[command] != null) onAssetCommands[command].apply(data.asset, args);
 }
 
