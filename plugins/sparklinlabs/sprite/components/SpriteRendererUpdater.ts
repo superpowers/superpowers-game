@@ -144,17 +144,6 @@ export default class SpriteRendererUpdater {
   _onEditCommand_setProperty(path: string, value: any) {
     switch(path) {
       case "filtering":
-        for (let textureName in this.spriteAsset.pub.textures) {
-          let texture = this.spriteAsset.pub.textures[textureName];
-          if (this.spriteAsset.pub.filtering === "pixelated") {
-            texture.magFilter = THREE.NearestFilter;
-            texture.minFilter = THREE.NearestFilter;
-          } else {
-            texture.magFilter = THREE.LinearFilter;
-            texture.minFilter = THREE.LinearMipMapLinearFilter;
-          }
-          texture.needsUpdate = true;
-        }
         break;
 
       case "opacity":

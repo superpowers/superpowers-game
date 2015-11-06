@@ -4,10 +4,14 @@ import * as async from "async";
 
 import SpriteAnimations, { SpriteAnimationPub } from "./SpriteAnimations";
 
+// Reference to THREE only on client-side
+let THREE: typeof SupEngine.THREE;
+if ((<any>global).window != null) THREE = SupEngine.THREE;
+
 export interface SpriteAssetPub {
   // FIXME: This is used client-side to store shared THREE.js textures
   // We should probably find a better place for it
-  textures?: { [name: string]: any; };
+  textures?: { [name: string]: THREE.Texture; };
   maps: { [name: string]: Buffer; };
   filtering: string;
 
@@ -83,11 +87,6 @@ export default class SpriteAsset extends SupCore.data.base.Asset {
 
   constructor(id: string, pub: SpriteAssetPub, serverData: any) {
     super(id, pub, SpriteAsset.schema, serverData);
-
-    if (serverData == null) {
-      this.mapObjectURLs = {};
-      this.loadTextures();
-    }
   }
 
   init(options: any, callback: Function) {
@@ -199,6 +198,15 @@ export default class SpriteAsset extends SupCore.data.base.Asset {
     });
   }
 
+  client_load() {
+    this.mapObjectURLs = {};
+    this._loadTextures();
+  }
+
+  client_unload() {
+    this._unloadTextures();
+  }
+
   save(assetPath: string, saveCallback: Function) {
     let maps = this.pub.maps;
     let mapsName = <string[]>[];
@@ -231,14 +239,18 @@ export default class SpriteAsset extends SupCore.data.base.Asset {
     ], (err) => { saveCallback(err); });
   }
 
-  loadTextures() {
+  _unloadTextures() {
     for (let textureName in this.pub.textures) this.pub.textures[textureName].dispose();
-    this.pub.textures = {};
 
     for (let key in this.mapObjectURLs) {
       URL.revokeObjectURL(this.mapObjectURLs[key]);
       delete this.mapObjectURLs[key];
     }
+  }
+
+  _loadTextures() {
+    this._unloadTextures();
+    this.pub.textures = {};
 
     Object.keys(this.pub.maps).forEach((key) => {
       let buffer: any = this.pub.maps[key];
@@ -249,12 +261,12 @@ export default class SpriteAsset extends SupCore.data.base.Asset {
 
       if (image == null) {
         image = new Image;
-        texture = this.pub.textures[key] = new SupEngine.THREE.Texture(image);
+        texture = this.pub.textures[key] = new THREE.Texture(image);
         (<any>texture).size = { width: 0, height: 0 };
 
         if (this.pub.filtering === "pixelated") {
-          texture.magFilter = SupEngine.THREE.NearestFilter;
-          texture.minFilter = SupEngine.THREE.NearestFilter;
+          texture.magFilter = THREE.NearestFilter;
+          texture.minFilter = THREE.NearestFilter;
         }
 
         let typedArray = new Uint8Array(buffer);
@@ -274,6 +286,25 @@ export default class SpriteAsset extends SupCore.data.base.Asset {
     });
   }
 
+  setupFiltering() {
+    for (let textureName in this.pub.textures) {
+      let texture = this.pub.textures[textureName];
+      if (this.pub.filtering === "pixelated") {
+        texture.magFilter = THREE.NearestFilter;
+        texture.minFilter = THREE.NearestFilter;
+      } else {
+        texture.magFilter = THREE.LinearFilter;
+        texture.minFilter = THREE.LinearMipMapLinearFilter;
+      }
+      texture.needsUpdate = true;
+    }
+  }
+
+  client_setProperty(path: string, value: any) {
+    super.client_setProperty(path, value);
+    if (path === "") this.setupFiltering();
+  }
+
   server_setMaps(client: any, maps: any, callback: (err: string, maps?: any) => any) {
     if (maps == null || typeof maps !== "object") { callback("Maps must be an object"); return; }
 
@@ -291,7 +322,7 @@ export default class SpriteAsset extends SupCore.data.base.Asset {
 
   client_setMaps(maps: any) {
     for (let key in maps) this.pub.maps[key] = maps[key];
-    this.loadTextures();
+    this._loadTextures();
   }
 
   server_newMap(client: any, name: string, callback: (err: string, name: string) => any) {
