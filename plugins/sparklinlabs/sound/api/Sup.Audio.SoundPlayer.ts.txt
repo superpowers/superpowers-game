@@ -22,6 +22,8 @@ namespace Sup {
       play() { this.__inner.play(); return this; }
       stop() { this.__inner.stop(); return this; }
       pause() { this.__inner.pause(); return this; }
+      isPlaying() { return this.__inner.state === SoundPlayer.State.Playing; }
+      getState() { return this.__inner.state; }
 
       getLoop() { return this.__inner.isLooping; }
       setLoop(looping) { this.__inner.setLoop(looping); return this; }
@@ -31,6 +33,10 @@ namespace Sup {
       setPan(pan) { this.__inner.setPan(pan); return this; }
       getPitch() { return this.__inner.pitch; }
       setPitch(pitch) { this.__inner.setPitch(pitch); return this; }
+    }
+    
+    export namespace SoundPlayer {
+      export enum State { Playing, Paused, Stopped }
     }
   }
 }
