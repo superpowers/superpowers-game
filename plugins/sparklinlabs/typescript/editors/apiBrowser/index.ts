@@ -133,7 +133,7 @@ async.each(SupClient.pluginPaths.all, (pluginName, pluginCallback) => {
         let defName = sortedDefNames[i];
         let def = allDefs[defName].toLowerCase().replace(/\n\n/g, " ").replace(/\n/g, "");
         let preElt = preElts[i];
-        
+
         if (preElt.parentElement.classList.contains("active")) resultIndex = results.length;
 
         let resultsCount = 0;
@@ -151,7 +151,9 @@ async.each(SupClient.pluginPaths.all, (pluginName, pluginCallback) => {
         // Setup results badge
         (document.getElementById(`link-${defName}`).firstChild.nextSibling as HTMLSpanElement).textContent = resultsCount > 0 ? resultsCount.toString() : "";
       }
-    } else resultIndex = (resultIndex + 1) % results.length;
+    } else resultIndex++;
+
+    resultIndex %= results.length;
 
     if (results.length > 0) {
       let result = results[resultIndex];
