@@ -4,14 +4,21 @@ import * as async from "async";
 
 import SpriteAnimations, { SpriteAnimationPub } from "./SpriteAnimations";
 
-// Reference to THREE only on client-side
+// Reference to THREE, client-side only
 let THREE: typeof SupEngine.THREE;
 if ((<any>global).window != null) THREE = SupEngine.THREE;
+
+interface TextureWithSize extends THREE.Texture {
+  size?: {
+    width: number;
+    height: number;
+  }
+}
 
 export interface SpriteAssetPub {
   // FIXME: This is used client-side to store shared THREE.js textures
   // We should probably find a better place for it
-  textures?: { [name: string]: THREE.Texture; };
+  textures?: { [name: string]: TextureWithSize; };
   maps: { [name: string]: Buffer; };
   filtering: string;
 

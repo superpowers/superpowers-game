@@ -4,7 +4,7 @@ import * as fs from "fs";
 // FontFace is a very new feature (supported in Chrome only). Not available in lib.d.ts just yet
 declare let FontFace: any;
 
-// Reference to THREE only on client-side
+// Reference to THREE, client-side only
 let THREE: typeof SupEngine.THREE;
 if ((<any>global).window != null) THREE = SupEngine.THREE;
 
