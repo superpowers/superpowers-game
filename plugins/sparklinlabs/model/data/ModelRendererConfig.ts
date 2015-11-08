@@ -6,7 +6,7 @@ export interface ModelRendererConfigPub {
   materialType: string; shaderAssetId: string;
 }
 
-export default class ModelRendererConfig extends SupCore.data.base.ComponentConfig {
+export default class ModelRendererConfig extends SupCore.Data.Base.ComponentConfig {
 
   static schema = {
     modelAssetId: { type: "string?", min: 0, mutable: true },

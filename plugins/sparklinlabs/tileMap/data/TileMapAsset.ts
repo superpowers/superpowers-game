@@ -15,10 +15,10 @@ export interface TileMapAssetPub {
   layers: TileMapLayerPub[];
 }
 
-export default class TileMapAsset extends SupCore.data.base.Asset {
+export default class TileMapAsset extends SupCore.Data.Base.Asset {
   static currentFormatVersion = 1;
 
-  static schema: SupCore.data.base.Schema = {
+  static schema: SupCore.Data.Base.Schema = {
     formatVersion: { type: "integer" },
 
     tileSetId: { type: "string?" },
@@ -35,12 +35,12 @@ export default class TileMapAsset extends SupCore.data.base.Asset {
   pub: TileMapAssetPub;
   layers: TileMapLayers;
 
-  constructor(id: string, pub: TileMapAssetPub, serverData: any) {
-    super(id, pub, TileMapAsset.schema, serverData);
+  constructor(id: string, pub: TileMapAssetPub, server: ProjectServer) {
+    super(id, pub, TileMapAsset.schema, server);
   }
 
   init(options: any, callback: (err: string) => any) {
-    this.serverData.resources.acquire("tileMapSettings", null, (err: Error, tileMapSettings: TileMapSettingsResource) => {
+    this.server.data.resources.acquire("tileMapSettings", null, (err: Error, tileMapSettings: TileMapSettingsResource) => {
       this.pub = {
         formatVersion: TileMapAsset.currentFormatVersion,
         tileSetId: null,
@@ -113,7 +113,7 @@ export default class TileMapAsset extends SupCore.data.base.Asset {
     if (tileSetId != null) {
       if (typeof(tileSetId) !== "string") { callback("tileSetId must be a string or null", null); return; }
 
-      let entry = this.serverData.entries.byId[tileSetId];
+      let entry = this.server.data.entries.byId[tileSetId];
       if (entry == null) { callback("Invalid tileSetId", null); return; }
       if (entry.type !== "tileSet") { callback("Invalid asset type", null); return; }
     }

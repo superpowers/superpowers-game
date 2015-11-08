@@ -93,7 +93,7 @@ export default class GameSettingsEditor {
     }
   }
 
-  onEntriesReceived = (entries: SupCore.data.Entries) => {
+  onEntriesReceived = (entries: SupCore.Data.Entries) => {
     if (this.resource == null) return;
     this._setStartupScene(this.resource.pub.startupSceneId);
   }

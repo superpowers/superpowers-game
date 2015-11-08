@@ -1,4 +1,4 @@
-export default class CameraConfig extends SupCore.data.base.ComponentConfig {
+export default class CameraConfig extends SupCore.Data.Base.ComponentConfig {
 
   static schema = {
     mode: { type: "enum", items: [ "perspective", "orthographic" ], mutable: true },

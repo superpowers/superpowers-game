@@ -31,8 +31,8 @@ if ((<any>global).window == null) {
   var globalDefs = "";
 
   let actorComponentAccessors: string[] = [];
-  for (let pluginName in SupAPI.contexts["typescript"].plugins) {
-    let plugin = SupAPI.contexts["typescript"].plugins[pluginName];
+  for (let pluginName in SupCore.system.api.contexts["typescript"].plugins) {
+    let plugin = SupCore.system.api.contexts["typescript"].plugins[pluginName];
     if (plugin.defs != null) globalDefs += plugin.defs;
     if (plugin.exposeActorComponent != null) actorComponentAccessors.push(`${plugin.exposeActorComponent.propertyName}: ${plugin.exposeActorComponent.className};`);
   }
@@ -46,9 +46,9 @@ interface ScriptAssetPub {
   revisionId: number;
 }
 
-export default class ScriptAsset extends SupCore.data.base.Asset {
+export default class ScriptAsset extends SupCore.Data.Base.Asset {
 
-  static schema: SupCore.data.base.Schema = {
+  static schema: SupCore.Data.Base.Schema = {
     text: { type: "string" },
     draft: { type: "string" },
     revisionId: { type: "integer" }
@@ -59,8 +59,8 @@ export default class ScriptAsset extends SupCore.data.base.Asset {
   document: OT.Document;
   hasDraft: boolean;
 
-  constructor(id: string, pub: any, serverData?: any) {
-    super(id, pub, ScriptAsset.schema, serverData);
+  constructor(id: string, pub: any, server?: ProjectServer) {
+    super(id, pub, ScriptAsset.schema, server);
   }
 
   init(options: any, callback: Function) {
@@ -69,7 +69,7 @@ export default class ScriptAsset extends SupCore.data.base.Asset {
     behaviorName = behaviorName.slice(0, 1).toUpperCase() + behaviorName.slice(1);
 
     if (behaviorName === "Behavior") {
-      let parentEntry = this.serverData.entries.parentNodesById[this.id];
+      let parentEntry = this.server.data.entries.parentNodesById[this.id];
       if (parentEntry != null) {
         behaviorName = parentEntry.name.slice(0, 1).toUpperCase() + parentEntry.name.slice(1) + behaviorName;
       }
@@ -87,8 +87,8 @@ export default class ScriptAsset extends SupCore.data.base.Asset {
 
     if (!_.endsWith(behaviorName, "Behavior")) behaviorName += "Behavior";
 
-    this.serverData.resources.acquire("textEditorSettings", null, (err: Error, textEditorSettings: any) => {
-      this.serverData.resources.release("textEditorSettings", null);
+    this.server.data.resources.acquire("textEditorSettings", null, (err: Error, textEditorSettings: any) => {
+      this.server.data.resources.release("textEditorSettings", null);
 
       let tab: string;
       if (textEditorSettings.pub.softTab) {
@@ -113,14 +113,14 @@ Sup.registerBehavior(${behaviorName});
         revisionId: 0
       }
 
-      this.serverData.resources.acquire("behaviorProperties", null, (err: Error, behaviorProperties: BehaviorPropertiesResource) => {
+      this.server.data.resources.acquire("behaviorProperties", null, (err: Error, behaviorProperties: BehaviorPropertiesResource) => {
         if (behaviorProperties.pub.behaviors[behaviorName] == null) {
           let behaviors: { [behaviorName: string]: { properties: Array<{name: string; type: string}>; parentBehavior: string; } } = {};
           behaviors[behaviorName] = { properties: [], parentBehavior: null };
           behaviorProperties.setScriptBehaviors(this.id, behaviors);
         }
 
-        this.serverData.resources.release("behaviorProperties", null);
+        this.server.data.resources.release("behaviorProperties", null);
         super.init(options, callback);
       });
     });
@@ -136,9 +136,9 @@ Sup.registerBehavior(${behaviorName});
   }
 
   destroy(callback: Function) {
-    this.serverData.resources.acquire("behaviorProperties", null, (err: Error, behaviorProperties: BehaviorPropertiesResource) => {
+    this.server.data.resources.acquire("behaviorProperties", null, (err: Error, behaviorProperties: BehaviorPropertiesResource) => {
       behaviorProperties.clearScriptBehaviors(this.id);
-      this.serverData.resources.release("behaviorProperties", null);
+      this.server.data.resources.release("behaviorProperties", null);
       callback();
     });
   }
@@ -324,30 +324,30 @@ Sup.registerBehavior(${behaviorName});
           if (typeName != null) properties.push({ name: member.name, type: typeName });
         }
       }
-      this.serverData.resources.acquire("behaviorProperties", null, (err: Error, behaviorProperties: BehaviorPropertiesResource) => {
+      this.server.data.resources.acquire("behaviorProperties", null, (err: Error, behaviorProperties: BehaviorPropertiesResource) => {
         behaviorProperties.setScriptBehaviors(this.id, behaviors);
-        this.serverData.resources.release("behaviorProperties", null);
+        this.server.data.resources.release("behaviorProperties", null);
         finish();
       });
     };
 
-    let remainingAssetsToLoad = Object.keys(this.serverData.entries.byId).length;
+    let remainingAssetsToLoad = Object.keys(this.server.data.entries.byId).length;
     let assetsLoading = 0;
-    this.serverData.entries.walk((entry: any) => {
+    this.server.data.entries.walk((entry: any) => {
       remainingAssetsToLoad--;
       if (entry.type !== "script") {
         if (remainingAssetsToLoad === 0 && assetsLoading === 0) compile();
         return;
       }
 
-      let name = `${this.serverData.entries.getPathFromId(entry.id)}.ts`;
+      let name = `${this.server.data.entries.getPathFromId(entry.id)}.ts`;
       scriptNames.push(name);
       assetsLoading++;
-      this.serverData.assets.acquire(entry.id, null, (err: Error, asset: ScriptAsset) => {
+      this.server.data.assets.acquire(entry.id, null, (err: Error, asset: ScriptAsset) => {
         scripts[name] = asset.pub.text;
         if (asset === this) ownScriptName = name;
 
-        this.serverData.assets.release(entry.id, null);
+        this.server.data.assets.release(entry.id, null);
         assetsLoading--;
 
         if (remainingAssetsToLoad === 0 && assetsLoading === 0) compile();

@@ -3,7 +3,7 @@ let THREE: typeof SupEngine.THREE;
 // NOTE: It is important that we require THREE through SupEngine
 // so that we inherit any settings, like the global Euler order
 // (or, alternatively, we could duplicate those settings...)
-if ((<any>global).window == null) THREE = serverRequire("../../../../system/SupEngine").THREE;
+if ((<any>global).window == null) THREE = serverRequire("../../../../SupEngine").THREE;
 else if ((<any>window).SupEngine != null) THREE = SupEngine.THREE;
 
 import * as path from "path";
@@ -19,9 +19,9 @@ export interface DuplicatedNode {
   index: number;
 }
 
-export default class SceneAsset extends SupCore.data.base.Asset {
+export default class SceneAsset extends SupCore.Data.Base.Asset {
 
-  static schema: SupCore.data.base.Schema = {
+  static schema: SupCore.Data.Base.Schema = {
     nodes: { type: "array" },
   }
 
@@ -29,8 +29,8 @@ export default class SceneAsset extends SupCore.data.base.Asset {
   componentPathsByDependentAssetId: { [assetId: string]: string[] };
   nodes: SceneNodes;
 
-  constructor(id: string, pub: any, serverData: ProjectServerData) {
-    super(id, pub, SceneAsset.schema, serverData);
+  constructor(id: string, pub: any, server: ProjectServer) {
+    super(id, pub, SceneAsset.schema, server);
   }
 
   init(options: any, callback: Function) {
@@ -77,7 +77,7 @@ export default class SceneAsset extends SupCore.data.base.Asset {
       for (let componentId in components.configsById) {
         let config = components.configsById[componentId];
         let componentPath = `${nodeId}_${componentId}`;
-        ((config: SupCore.data.base.ComponentConfig, componentPath: string) => {
+        ((config: SupCore.Data.Base.ComponentConfig, componentPath: string) => {
           config.on("addDependencies", (depIds: string[]) => { this._onAddComponentDependencies(componentPath, depIds); });
           config.on("removeDependencies", (depIds: string[]) => { this._onRemoveComponentDependencies(componentPath, depIds); });
         })(config, componentPath);
@@ -107,7 +107,7 @@ export default class SceneAsset extends SupCore.data.base.Asset {
     }
 
     if (this.nodes.pub.length !== 0 && parentNode == null) {
-      let entry = this.serverData.entries.byId[this.id];
+      let entry = this.server.data.entries.byId[this.id];
       if (entry.dependentAssetIds.length > 0) {
         callback("A prefab can have only one root actor", null, null, null);
         return;
@@ -161,7 +161,7 @@ export default class SceneAsset extends SupCore.data.base.Asset {
     }
 
     if (parentNode == null) {
-      let entry = this.serverData.entries.byId[this.id];
+      let entry = this.server.data.entries.byId[this.id];
       if (entry.dependentAssetIds.length > 0) {
         callback("A prefab can have only one root actor", null, null, null);
         return;
@@ -223,7 +223,7 @@ export default class SceneAsset extends SupCore.data.base.Asset {
 
     let parentNode = this.nodes.parentNodesById[id];
     if (parentNode == null) {
-      let entry = this.serverData.entries.byId[this.id];
+      let entry = this.server.data.entries.byId[this.id];
       if (entry.dependentAssetIds.length > 0) {
         callback("A prefab can have only one root actor", null, null);
         return;
@@ -255,7 +255,7 @@ export default class SceneAsset extends SupCore.data.base.Asset {
         for (let componentId in this.nodes.componentsByNodeId[newNode.id].configsById) {
           let config = this.nodes.componentsByNodeId[newNode.id].configsById[componentId];
           let componentPath = `${newNode.id}_${componentId}`;
-          ((config: SupCore.data.base.ComponentConfig, componentPath: string) => {
+          ((config: SupCore.Data.Base.ComponentConfig, componentPath: string) => {
             config.on("addDependencies", (depIds: string[]) => { this._onAddComponentDependencies(componentPath, depIds); });
             config.on("removeDependencies", (depIds: string[]) => { this._onRemoveComponentDependencies(componentPath, depIds); });
           })(config, componentPath);
@@ -346,7 +346,7 @@ export default class SceneAsset extends SupCore.data.base.Asset {
   server_addComponent(client: any, nodeId: string, componentType: string, index: number,
   callback: (err: string, nodeId: string, component: Component, index: number) => any) {
 
-    let componentConfigClass = SupCore.data.componentConfigClasses[componentType];
+    let componentConfigClass = this.server.system.data.componentConfigClasses[componentType];
     if (componentConfigClass == null) { callback("Invalid component type", null, null, null); return; }
 
     let node = this.nodes.byId[nodeId];

@@ -14,7 +14,7 @@ export interface LightConfigPub {
   shadowCameraSize: { top: number; bottom: number; left: number; right: number; };
 }
 
-export default class LightConfig extends SupCore.data.base.ComponentConfig {
+export default class LightConfig extends SupCore.Data.Base.ComponentConfig {
 
   static schema = {
     type: { type: "enum", items: ["ambient", "point", "spot", "directional"], mutable: true },

@@ -1,5 +1,5 @@
 import FontAsset from "./FontAsset";
 import TextRendererConfig from "./TextRendererConfig";
 
-SupCore.data.registerAssetClass("font", FontAsset);
-SupCore.data.registerComponentConfigClass("TextRenderer", TextRendererConfig);
+SupCore.system.data.registerAssetClass("font", FontAsset);
+SupCore.system.data.registerComponentConfigClass("TextRenderer", TextRendererConfig);

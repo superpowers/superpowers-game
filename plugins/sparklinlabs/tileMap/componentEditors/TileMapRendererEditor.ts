@@ -130,7 +130,7 @@ export default class TileMapRendererEditor {
   }
 
   // Network callbacks
-  onEntriesReceived(entries: SupCore.data.Entries) {
+  onEntriesReceived(entries: SupCore.Data.Entries) {
     this.tileMapTextField.disabled = false;
     this.materialSelectBox.disabled = false;
     this.castShadowField.disabled = false;

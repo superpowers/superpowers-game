@@ -9,10 +9,10 @@ export interface GameSettingsResourcePub {
   [key: string]: any;
 }
 
-export default class GameSettingsResource extends SupCore.data.base.Resource {
+export default class GameSettingsResource extends SupCore.Data.Base.Resource {
   static currentFormatVersion = 1;
 
-  static schema: SupCore.data.base.Schema = {
+  static schema: SupCore.Data.Base.Schema = {
     formatVersion: { type: "integer" },
 
     startupSceneId: { type: "string?", mutable: true },
@@ -27,8 +27,8 @@ export default class GameSettingsResource extends SupCore.data.base.Resource {
 
   pub: GameSettingsResourcePub;
 
-  constructor(pub: GameSettingsResourcePub, serverData?: ProjectServerData) {
-    super(pub, GameSettingsResource.schema, serverData);
+  constructor(pub: GameSettingsResourcePub, server?: ProjectServer) {
+    super(pub, GameSettingsResource.schema, server);
   }
 
   init(callback: Function) {
@@ -50,8 +50,8 @@ export default class GameSettingsResource extends SupCore.data.base.Resource {
       // NOTE: Custom layers were introduced in Superpowers 0.8
       if (pub.customLayers == null) pub.customLayers = [];
 
-      this.serverData.entries.walk((node) => {
-        let path = this.serverData.entries.getPathFromId(node.id);
+      this.server.data.entries.walk((node) => {
+        let path = this.server.data.entries.getPathFromId(node.id);
         if (path === (<any>pub).startupScene) pub.startupSceneId = node.id;
       })
       delete (<any>pub).startupScene;

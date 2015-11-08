@@ -6,27 +6,29 @@ export interface Component {
   config: any;
 }
 
-export default class SceneComponents extends SupCore.data.base.ListById {
+export default class SceneComponents extends SupCore.Data.Base.ListById {
 
   static schema = {
     type: { type: "string" },
     config: { type: "any" },
   };
 
-  configsById: { [id: string]: SupCore.data.base.ComponentConfig } = {};
+  configsById: { [id: string]: SupCore.Data.Base.ComponentConfig } = {};
   sceneAsset: SceneAsset;
 
   constructor(pub: any, sceneAsset?: SceneAsset) {
     super(pub, SceneComponents.schema);
     this.sceneAsset = sceneAsset;
+    
+    let system = (this.sceneAsset.server != null) ? this.sceneAsset.server.system : SupCore.system;
 
     for (let item of this.pub) {
-      let componentConfigClass = SupCore.data.componentConfigClasses[item.type];
+      let componentConfigClass = system.data.componentConfigClasses[item.type];
 
       if (componentConfigClass == null) {
         if (sceneAsset != null) {
-          let scenePath = sceneAsset.serverData.entries.getPathFromId(sceneAsset.id);
-          throw new Error(`Could not find component config class for type ${item.type} in scene ${scenePath} of project ${sceneAsset.serverData.manifest.pub.name} (${sceneAsset.serverData.manifest.pub.id})`);
+          let scenePath = sceneAsset.server.data.entries.getPathFromId(sceneAsset.id);
+          throw new Error(`Could not find component config class for type ${item.type} in scene ${scenePath} of project ${sceneAsset.server.data.manifest.pub.name} (${sceneAsset.server.data.manifest.pub.id})`);
         } else {
           throw new Error(`Could not find component config class for type ${item.type}`);
         }
@@ -40,7 +42,7 @@ export default class SceneComponents extends SupCore.data.base.ListById {
     super.add(component, index, (err, actualIndex) => {
       if (err != null) { callback(err, null); return; }
 
-      let componentConfigClass = SupCore.data.componentConfigClasses[component.type];
+      let componentConfigClass = this.sceneAsset.server.system.data.componentConfigClasses[component.type];
       this.configsById[component.id] = new componentConfigClass(component.config, this.sceneAsset);
 
       callback(null, actualIndex);
@@ -50,7 +52,7 @@ export default class SceneComponents extends SupCore.data.base.ListById {
   client_add(component: any, index: number) {
     super.client_add(component, index);
 
-    let componentConfigClass = SupCore.data.componentConfigClasses[component.type];
+    let componentConfigClass = SupCore.system.data.componentConfigClasses[component.type];
     this.configsById[component.id] = new componentConfigClass(component.config);
   }
 

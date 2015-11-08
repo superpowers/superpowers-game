@@ -12,10 +12,10 @@ interface TileMapSettingsResourcePub {
   grid: { width: number; height: number; };
 }
 
-export default class TileMapSettingsResource extends SupCore.data.base.Resource {
+export default class TileMapSettingsResource extends SupCore.Data.Base.Resource {
   static currentFormatVersion = 1;
 
-  static schema: SupCore.data.base.Schema = {
+  static schema: SupCore.Data.Base.Schema = {
     formatVersion: { type: "integer" },
 
     pixelsPerUnit: { type: "integer", minExcluded: 0, mutable: true },
@@ -34,8 +34,8 @@ export default class TileMapSettingsResource extends SupCore.data.base.Resource 
 
   pub: TileMapSettingsResourcePub;
 
-  constructor(pub: TileMapSettingsResourcePub, serverData: any) {
-    super(pub, TileMapSettingsResource.schema, serverData);
+  constructor(pub: TileMapSettingsResourcePub, server: ProjectServer) {
+    super(pub, TileMapSettingsResource.schema, server);
   }
 
   init(callback: Function) {

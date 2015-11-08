@@ -4,7 +4,7 @@ export interface TileMapLayerPub {
   data: ((number|boolean)[]|number)[];
 }
 
-export default class TileMapLayers extends SupCore.data.base.ListById {
+export default class TileMapLayers extends SupCore.Data.Base.ListById {
 
   static schema = {
     name: { type: "string", minLength: 1, maxLength: 80, mutable: true },

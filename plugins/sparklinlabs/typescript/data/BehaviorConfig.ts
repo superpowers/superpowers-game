@@ -3,7 +3,7 @@ interface Pub {
   propertyValues: { [name: string]: { type: string; value: any } };
 }
 
-export default class BehaviorConfig extends SupCore.data.base.ComponentConfig {
+export default class BehaviorConfig extends SupCore.Data.Base.ComponentConfig {
 
   static schema = {
     behaviorName: { type: "string", mutable: true },

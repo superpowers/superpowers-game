@@ -1,11 +1,11 @@
 import CubicModelAsset from "./CubicModelAsset";
 
-export interface Node extends SupCore.data.base.TreeNode {
+export interface Node extends SupCore.Data.Base.TreeNode {
   children: Node[];
 
   position: { x: number; y: number; z: number };
   orientation: { x: number; y: number; z: number; w: number };
-  
+
   shape: {
     type: string;
     offset: { x: number; y: number; z: number; };
@@ -16,7 +16,7 @@ export interface Node extends SupCore.data.base.TreeNode {
 
 export function getShapeTextureSize(shape: { type: string; settings: any; }) {
   let width = 0;
-  let height = 0; 
+  let height = 0;
 
   switch(shape.type) {
     case "box":
@@ -28,7 +28,7 @@ export function getShapeTextureSize(shape: { type: string; settings: any; }) {
   return { width, height };
 }
 
-export default class CubicModelNodes extends SupCore.data.base.TreeById {
+export default class CubicModelNodes extends SupCore.Data.Base.TreeById {
 
   static schema = {
     name: { type: "string", minLength: 1, maxLength: 80, mutable: true },

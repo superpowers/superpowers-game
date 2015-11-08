@@ -1,14 +1,14 @@
 import * as path from "path";
 import * as fs from "fs";
 
-export default class LightSettingsResource extends SupCore.data.base.Resource {
+export default class LightSettingsResource extends SupCore.Data.Base.Resource {
 
-  static schema: SupCore.data.base.Schema = {
+  static schema: SupCore.Data.Base.Schema = {
     shadowMapType: { type: "enum", items: [ "basic", "pcf", "pcfSoft" ], mutable: true },
   }
 
-  constructor(pub: any, serverData: any) {
-    super(pub, LightSettingsResource.schema, serverData);
+  constructor(pub: any, server: ProjectServer) {
+    super(pub, LightSettingsResource.schema, server);
   }
 
   init(callback: Function) {

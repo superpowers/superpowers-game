@@ -4,44 +4,66 @@ import ui, { setupEditor, refreshErrors, showParameterPopup, clearParameterPopup
 import * as async from "async";
 import ScriptAsset from "../../data/ScriptAsset";
 
-export let data: {
-  projectClient?: SupClient.ProjectClient;
-
-  typescriptWorker: Worker;
-
-  assetsById?: {[id: string]: ScriptAsset};
-  asset?: ScriptAsset;
-
-  fileNames?: string[];
-  files?: { [name: string]: { id: string; text: string; version: string; } };
-  fileNamesByScriptId?: { [name: string]: string };
-} = {
+export let data = {
+  clientId: <number>null,
+  systemName: <string>null,
+  projectClient: <SupClient.ProjectClient>null,
   typescriptWorker: new Worker("typescriptWorker.js"),
 
-  assetsById: {},
+  assetsById: <{[id: string]: ScriptAsset}>{},
+  asset: <ScriptAsset>null,
 
-  fileNames: [],
-  files: {},
-  fileNamesByScriptId: {}
+  fileNames: <string[]>[],
+  files: <{ [name: string]: { id: string; text: string; version: string; } }>{},
+  fileNamesByScriptId: <{ [name: string]: string }>{}
 };
 
-export let socket: SocketIOClient.Socket;
-function start() {
-  socket = SupClient.connect(info.projectId);
-  socket.on("welcome", onWelcomed);
-  socket.on("disconnect", SupClient.onDisconnected);
-}
+export let socket = SupClient.connect(info.projectId);
+socket.on("welcome", onWelcome);
+socket.on("disconnect", SupClient.onDisconnected);
 
 let onEditCommands: any = {};
-function onWelcomed(clientId: number) {
-  data.projectClient = new SupClient.ProjectClient(socket);
-  data.projectClient.subEntries(entriesSubscriber);
+function onWelcome(clientId: number, config: { buildPort: number; systemName: string; }) {
+  data.clientId = clientId;
+  data.systemName = config.systemName;
+  loadPlugins();
+}
 
-  setupEditor(clientId);
+function loadPlugins() {
+  (<any>window).fetch(`/systems/${data.systemName}/plugins.json`).then((response: any) => response.json()).then((pluginPaths: any) => {
+    async.each(pluginPaths.all, (pluginName, pluginCallback) => {
+      if (pluginName === "sparklinlabs/typescript") { pluginCallback(); return; }
+    
+      let apiScript = document.createElement("script");
+      apiScript.src = `/systems/${data.systemName}/plugins/${pluginName}/api.js`;
+      apiScript.addEventListener("load", () => { pluginCallback(); } );
+      apiScript.addEventListener("error", () => { pluginCallback(); } );
+      document.body.appendChild(apiScript);
+    }, (err) => {
+      // Read API definitions
+      let globalDefs = "";
+
+      let actorComponentAccessors: string[] = [];
+      for (let pluginName in SupCore.system.api.contexts["typescript"].plugins) {
+        let plugin = SupCore.system.api.contexts["typescript"].plugins[pluginName];
+        if (plugin.defs != null) globalDefs += plugin.defs;
+        if (plugin.exposeActorComponent != null) actorComponentAccessors.push(`${plugin.exposeActorComponent.propertyName}: ${plugin.exposeActorComponent.className};`);
+      }
+
+      globalDefs = globalDefs.replace("// INSERT_COMPONENT_ACCESSORS", actorComponentAccessors.join("\n    "));
+      data.fileNames.push("lib.d.ts");
+      data.files["lib.d.ts"] = { id: "lib.d.ts", text: globalDefs, version: "" };
+
+      data.projectClient = new SupClient.ProjectClient(socket);
+      data.projectClient.subEntries(entriesSubscriber);
+
+      setupEditor(data.clientId);
+    });
+  });
 }
 
 var entriesSubscriber = {
-  onEntriesReceived: (entries: SupCore.data.Entries) => {
+  onEntriesReceived: (entries: SupCore.Data.Entries) => {
     entries.walk((entry) => {
       if (entry.type !== "script") return;
 
@@ -313,30 +335,3 @@ export function setNextCompletion(completion: CompletionRequest) {
   nextCompletion = completion;
   if(activeCompletion == null) startAutocomplete();
 }
-
-async.each(SupClient.pluginPaths.all, (pluginName, pluginCallback) => {
-  if (pluginName === "sparklinlabs/typescript") { pluginCallback(); return; }
-
-  let apiScript = document.createElement("script");
-  apiScript.src = `/plugins/${pluginName}/api.js`;
-  apiScript.addEventListener("load", () => { pluginCallback(); } );
-  apiScript.addEventListener("error", () => { pluginCallback(); } );
-  document.body.appendChild(apiScript);
-}, (err) => {
-  // Read API definitions
-  let globalDefs = "";
-
-  let actorComponentAccessors: string[] = [];
-  for (let pluginName in SupAPI.contexts["typescript"].plugins) {
-    let plugin = SupAPI.contexts["typescript"].plugins[pluginName];
-    if (plugin.defs != null) globalDefs += plugin.defs;
-    if (plugin.exposeActorComponent != null) actorComponentAccessors.push(`${plugin.exposeActorComponent.propertyName}: ${plugin.exposeActorComponent.className};`);
-  }
-
-  globalDefs = globalDefs.replace("// INSERT_COMPONENT_ACCESSORS", actorComponentAccessors.join("\n    "));
-  data.fileNames.push("lib.d.ts");
-  data.files["lib.d.ts"] = { id: "lib.d.ts", text: globalDefs, version: "" };
-
-  // Start
-  start();
-});

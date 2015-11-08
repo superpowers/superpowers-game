@@ -7,10 +7,10 @@ interface SceneSettingsResourcePub {
   defaultVerticalAxis: string;
 }
 
-export default class SceneSettingsResource extends SupCore.data.base.Resource {
+export default class SceneSettingsResource extends SupCore.Data.Base.Resource {
   static currentFormatVersion = 1;
 
-  static schema: SupCore.data.base.Schema = {
+  static schema: SupCore.Data.Base.Schema = {
     formatVersion: { type: "integer" },
 
     defaultCameraMode: { type: "enum", items: [ "3D", "2D" ], mutable: true },
@@ -19,8 +19,8 @@ export default class SceneSettingsResource extends SupCore.data.base.Resource {
 
   pub: SceneSettingsResourcePub;
 
-  constructor(pub: any, serverData: any) {
-    super(pub, SceneSettingsResource.schema, serverData);
+  constructor(pub: any, server: ProjectServer) {
+    super(pub, SceneSettingsResource.schema, server);
   }
 
   init(callback: Function) {

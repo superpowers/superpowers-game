@@ -244,7 +244,7 @@ export default class CubicModelRendererEditor {
   }
 
   // Network callbacks
-  onEntriesReceived(entries: SupCore.data.Entries) {
+  onEntriesReceived(entries: SupCore.Data.Entries) {
     this.cubicModelTextField.disabled = false;
     // this.castShadowField.disabled = false;
     // this.receiveShadowField.disabled = false;

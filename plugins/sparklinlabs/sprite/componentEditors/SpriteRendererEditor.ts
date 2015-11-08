@@ -243,7 +243,7 @@ export default class SpriteRendererEditor {
   }
 
   // Network callbacks
-  onEntriesReceived(entries: SupCore.data.Entries) {
+  onEntriesReceived(entries: SupCore.Data.Entries) {
     this.spriteTextField.disabled = false;
     this.castShadowField.disabled = false;
     this.receiveShadowField.disabled = false;

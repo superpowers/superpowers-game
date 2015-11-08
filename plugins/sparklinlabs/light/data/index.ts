@@ -1,5 +1,5 @@
 import LightConfig from "./LightConfig";
 import LightSettingsResource from "./LightSettingsResource";
 
-SupCore.data.registerComponentConfigClass("Light", LightConfig);
-SupCore.data.registerResource("lightSettings", LightSettingsResource);
+SupCore.system.data.registerComponentConfigClass("Light", LightConfig);
+SupCore.system.data.registerResource("lightSettings", LightSettingsResource);

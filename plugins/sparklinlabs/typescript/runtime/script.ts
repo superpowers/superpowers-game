@@ -30,15 +30,15 @@ export function init(player: any, callback: Function) {
     } else {
       if (actorComponentTypesByName[type] == null) {
         actorComponentTypesByName[type] = window;
-        let parts = SupAPI.contexts["typescript"].plugins[type].exposeActorComponent.className.split(".");
+        let parts = SupCore.system.api.contexts["typescript"].plugins[type].exposeActorComponent.className.split(".");
         for (let part of parts) actorComponentTypesByName[type] = actorComponentTypesByName[type][part];
       }
       return new actorComponentTypesByName[type](actor);
     }
   }
 
-  for (let pluginName in SupAPI.contexts["typescript"].plugins) {
-    let plugin = SupAPI.contexts["typescript"].plugins[pluginName];
+  for (let pluginName in SupCore.system.api.contexts["typescript"].plugins) {
+    let plugin = SupCore.system.api.contexts["typescript"].plugins[pluginName];
     if (plugin.code != null) {
       globalNames.push(`${pluginName}.ts`);
       globals[`${pluginName}.ts`] = plugin.code;

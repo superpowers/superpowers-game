@@ -24,7 +24,7 @@ export function setupComponent(player: SupRuntime.Player, component: any, config
     component.setModel(model.__inner, config.materialType, shader);
 
     if (config.animationId != null) {
-      // FIXME: should we load model with SupCore.data?
+      // FIXME: should we load model with SupCore.Data?
       for (let animation of model.__inner.animations) {
         if (animation.id === config.animationId) {
           component.setAnimation(animation.name);

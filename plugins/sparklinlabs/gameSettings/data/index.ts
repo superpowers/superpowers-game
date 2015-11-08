@@ -1,3 +1,3 @@
 import GameSettingsResource from "./GameSettingsResource";
 
-SupCore.data.registerResource("gameSettings", GameSettingsResource);
+SupCore.system.data.registerResource("gameSettings", GameSettingsResource);

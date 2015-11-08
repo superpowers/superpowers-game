@@ -39,10 +39,10 @@ export interface ModelAssetPub {
   mapSlots: { [name: string]: string; };
 }
 
-export default class ModelAsset extends SupCore.data.base.Asset {
+export default class ModelAsset extends SupCore.Data.Base.Asset {
   static currentFormatVersion = 1;
 
-  static schema: SupCore.data.base.Schema = {
+  static schema: SupCore.Data.Base.Schema = {
     formatVersion: { type: "integer" },
 
     unitRatio: { type: "number", minExcluded: 0, mutable: true },
@@ -63,7 +63,7 @@ export default class ModelAsset extends SupCore.data.base.Asset {
       type: "array",
       items: {
         type: "hash",
-        properties: <{ [index: string]: SupCore.data.base.Rule }> {
+        properties: <{ [index: string]: SupCore.Data.Base.Rule }> {
           name: { type: "string", minLength: 1, maxLength: 80 },
           parentIndex: { type: "integer?" },
           matrix: { type: "array", length: 16, items: { type: "number" } }
@@ -103,8 +103,8 @@ export default class ModelAsset extends SupCore.data.base.Asset {
   // Only used on client-side
   mapObjectURLs: { [mapName: string]: string };
 
-  constructor(id: string, pub: any, serverData: any) {
-    super(id, pub, ModelAsset.schema, serverData);
+  constructor(id: string, pub: any, server: ProjectServer) {
+    super(id, pub, ModelAsset.schema, server);
   }
 
   init(options: any, callback: Function) {
@@ -395,8 +395,8 @@ export default class ModelAsset extends SupCore.data.base.Asset {
   server_setModel(client: any, upAxisMatrix: number[], attributes: { [name: string]: any }, bones: any[], callback: (err: string, upAxisMatrix?: number[], attributes?: { [name: string]: any }, bones?: any[]) => any) {
     // Validate up matrix
     if (upAxisMatrix != null) {
-      let violation = SupCore.data.base.getRuleViolation(upAxisMatrix, ModelAsset.schema["upAxisMatrix"], true);
-      if (violation != null) { callback(`Invalid up axis matrix: ${SupCore.data.base.formatRuleViolation(violation)}`); return; }
+      let violation = SupCore.Data.Base.getRuleViolation(upAxisMatrix, ModelAsset.schema["upAxisMatrix"], true);
+      if (violation != null) { callback(`Invalid up axis matrix: ${SupCore.Data.Base.formatRuleViolation(violation)}`); return; }
     }
 
     // Validate attributes
@@ -410,8 +410,8 @@ export default class ModelAsset extends SupCore.data.base.Asset {
 
     // Validate bones
     if (bones != null) {
-      let violation = SupCore.data.base.getRuleViolation(bones, ModelAsset.schema["bones"], true);
-      if (violation != null) { callback(`Invalid bones: ${SupCore.data.base.formatRuleViolation(violation)}`); return; }
+      let violation = SupCore.Data.Base.getRuleViolation(bones, ModelAsset.schema["bones"], true);
+      if (violation != null) { callback(`Invalid bones: ${SupCore.Data.Base.formatRuleViolation(violation)}`); return; }
     }
 
     // Apply changes
@@ -524,7 +524,7 @@ export default class ModelAsset extends SupCore.data.base.Asset {
     this.animations.add(animation, null, (err, actualIndex) => {
       if (err != null) { callback(err); return; }
 
-      animation.name = SupCore.data.ensureUniqueName(animation.id, animation.name, this.animations.pub);
+      animation.name = SupCore.Data.ensureUniqueName(animation.id, animation.name, this.animations.pub);
 
       callback(null, animation, actualIndex);
       this.emit("change");
@@ -566,7 +566,7 @@ export default class ModelAsset extends SupCore.data.base.Asset {
       if (typeof value !== "string") { callback("Invalid value"); return; }
       value = value.trim();
 
-      if (SupCore.data.hasDuplicateName(id, value, this.animations.pub)) {
+      if (SupCore.Data.hasDuplicateName(id, value, this.animations.pub)) {
         callback("There's already an animation with this name"); return;
       }
     }
@@ -584,11 +584,11 @@ export default class ModelAsset extends SupCore.data.base.Asset {
   }
 
   server_setAnimation(client: any, id: string, duration: number, keyFrames: any, callback: (err: string, id?: string, duration?: number, keyFrames?: any) => any) {
-    let violation = SupCore.data.base.getRuleViolation(duration, ModelAnimations.schema.duration, true);
-    if (violation != null) { callback(`Invalid duration: ${SupCore.data.base.formatRuleViolation(violation)}`); return; }
+    let violation = SupCore.Data.Base.getRuleViolation(duration, ModelAnimations.schema.duration, true);
+    if (violation != null) { callback(`Invalid duration: ${SupCore.Data.Base.formatRuleViolation(violation)}`); return; }
 
-    violation = SupCore.data.base.getRuleViolation(keyFrames, ModelAnimations.schema.keyFrames, true);
-    if (violation != null) { callback(`Invalid duration: ${SupCore.data.base.formatRuleViolation(violation)}`); return; }
+    violation = SupCore.Data.Base.getRuleViolation(keyFrames, ModelAnimations.schema.keyFrames, true);
+    if (violation != null) { callback(`Invalid duration: ${SupCore.Data.Base.formatRuleViolation(violation)}`); return; }
 
     let animation = this.animations.byId[id];
     if (animation == null) { callback(`Invalid animation id: ${id}`); return }

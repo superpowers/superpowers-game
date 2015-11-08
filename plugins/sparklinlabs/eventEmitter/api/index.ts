@@ -1,6 +1,6 @@
 import * as fs from "fs";
 
-SupAPI.registerPlugin("typescript", "EventEmitter", {
+SupCore.system.api.registerPlugin("typescript", "EventEmitter", {
   code: null,
   defs: fs.readFileSync(__dirname + "/EventEmitter.d.ts.txt", { encoding: "utf8" })
 });

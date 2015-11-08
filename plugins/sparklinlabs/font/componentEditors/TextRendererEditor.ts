@@ -91,7 +91,7 @@ export default class TextRendererEditor {
   }
 
   // Network callbacks
-  onEntriesReceived(entries: SupCore.data.Entries) {}
+  onEntriesReceived(entries: SupCore.Data.Entries) {}
   onEntryAdded(entry: any, parentId: string, index: number) {}
   onEntryMoved(id: string, parentId: string, index: number) {
     if (id === this.fontAssetId) this.fields["fontAssetId"].value = this.projectClient.entries.getPathFromId(this.fontAssetId);

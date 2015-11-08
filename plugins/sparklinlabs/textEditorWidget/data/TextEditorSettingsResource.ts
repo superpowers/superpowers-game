@@ -3,17 +3,17 @@ interface TextEditorSettingsResourcePub {
   softTab: boolean;
 }
 
-export default class TextEditorSettingsResource extends SupCore.data.base.Resource {
+export default class TextEditorSettingsResource extends SupCore.Data.Base.Resource {
 
-  static schema: SupCore.data.base.Schema = {
+  static schema: SupCore.Data.Base.Schema = {
     tabSize: { type: "number", min: 1, mutable: true },
     softTab: { type: "boolean", mutable: true },
   }
 
   pub: TextEditorSettingsResourcePub;
 
-  constructor(pub: any, serverData: any) {
-    super(pub, TextEditorSettingsResource.schema, serverData);
+  constructor(pub: any, server: ProjectServer) {
+    super(pub, TextEditorSettingsResource.schema, server);
   }
 
   init(callback: Function) {

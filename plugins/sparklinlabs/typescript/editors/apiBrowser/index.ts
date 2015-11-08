@@ -1,6 +1,9 @@
 import * as async from "async";
 let highlight = require("highlight.js"); // import * as highlight from "highlight.js";
 
+let qs = require("querystring").parse(window.location.search.slice(1));
+let info = { projectId: qs.project };
+
 SupClient.setupHotkeys();
 
 let searchElt = <HTMLInputElement>document.querySelector("input[type=search]");
@@ -34,22 +37,31 @@ function findText(containerNode: Node, offset: number) {
   }
 }
 
-async.each(SupClient.pluginPaths.all, (pluginName, pluginCallback) => {
-  async.series([
-    (cb) => {
-      let apiScript = document.createElement("script");
-      apiScript.src = `/plugins/${pluginName}/api.js`;
-      apiScript.addEventListener("load", (event: any) => { cb(null, null); } );
-      apiScript.addEventListener("error", (event: any) => { cb(null, null); } );
-      document.body.appendChild(apiScript);
-    }
-  ], pluginCallback);
-}, (err) => {
+let socket = SupClient.connect(info.projectId);
+socket.on("welcome", onWelcome);
+
+function onWelcome(clientId: number, config: { buildPort: number; systemName: string; }) {
+  (<any>window).fetch(`/systems/${config.systemName}/plugins.json`).then((response: any) => response.json()).then((pluginPaths: any) => {
+    async.each(pluginPaths.all, (pluginName, pluginCallback) => {
+      async.series([
+        (cb) => {
+          let apiScript = document.createElement("script");
+          apiScript.src = `/systems/${config.systemName}/plugins/${pluginName}/api.js`;
+          apiScript.addEventListener("load", (event: any) => { cb(null, null); } );
+          apiScript.addEventListener("error", (event: any) => { cb(null, null); } );
+          document.body.appendChild(apiScript);
+        }
+      ], pluginCallback);
+    }, onAPILoaded);
+  });
+}
+
+function onAPILoaded() {
   let allDefs: { [pluginName: string]: string } = {};
 
   let actorComponentAccessors: string[] = [];
-  for (let pluginName in SupAPI.contexts["typescript"].plugins) {
-    let plugin = SupAPI.contexts["typescript"].plugins[pluginName];
+  for (let pluginName in SupCore.system.api.contexts["typescript"].plugins) {
+    let plugin = SupCore.system.api.contexts["typescript"].plugins[pluginName];
     name = pluginName;
     if (name === "lib") name = "Built-ins";
 
@@ -205,7 +217,7 @@ async.each(SupClient.pluginPaths.all, (pluginName, pluginCallback) => {
 
   (<HTMLAnchorElement>navListElt.querySelector("li a")).classList.add("active");
   noSearchResultsElt.nextElementSibling.classList.add("active");
-});
+}
 
 function clearActiveArticle() {
   let activeItem = <HTMLAnchorElement>navListElt.querySelector("li a.active");

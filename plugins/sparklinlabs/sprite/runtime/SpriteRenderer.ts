@@ -26,7 +26,7 @@ export function setupComponent(player: SupRuntime.Player, component: any, config
     component.setSprite(sprite.__inner, config.materialType, shader);
 
     if (config.animationId != null) {
-      // FIXME: should we load sprite with SupCore.data?
+      // FIXME: should we load sprite with SupCore.Data?
       sprite.__inner.animations.every((animation: any) => {
         if (animation.id === config.animationId) {
           component.setAnimation(animation.name);

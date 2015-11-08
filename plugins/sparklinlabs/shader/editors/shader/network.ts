@@ -8,10 +8,10 @@ import { AttributePub } from "../../data/Attributes";
 export let data: { projectClient?: SupClient.ProjectClient, shaderAsset?: ShaderAsset, previewComponentUpdater?: any };
 
 export let socket = SupClient.connect(info.projectId);
-socket.on("welcome", onWelcomed);
+socket.on("welcome", onWelcome);
 socket.on("disconnect", SupClient.onDisconnected);
 
-function onWelcomed(clientId: number) {
+function onWelcome(clientId: number) {
   data = { projectClient: new SupClient.ProjectClient(socket, { subEntries: true }) };
   setupEditors(clientId);
 

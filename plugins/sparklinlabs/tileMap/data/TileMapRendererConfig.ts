@@ -4,7 +4,7 @@ interface TileMapRendererConfigPub {
   materialType: string; shaderAssetId: string;
 }
 
-export default class TileMapRendererConfig extends SupCore.data.base.ComponentConfig {
+export default class TileMapRendererConfig extends SupCore.Data.Base.ComponentConfig {
 
   static schema = {
     tileMapAssetId: { type: "string?", min: 0, mutable: true },

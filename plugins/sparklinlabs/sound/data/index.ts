@@ -1,3 +1,3 @@
 import SoundAsset from "./SoundAsset";
 
-SupCore.data.registerAssetClass("sound", SoundAsset);
+SupCore.system.data.registerAssetClass("sound", SoundAsset);

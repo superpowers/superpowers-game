@@ -1,3 +1,3 @@
 import TextEditorSettingsResource from "./TextEditorSettingsResource";
 
-SupCore.data.registerResource("textEditorSettings", TextEditorSettingsResource);
+SupCore.system.data.registerResource("textEditorSettings", TextEditorSettingsResource);

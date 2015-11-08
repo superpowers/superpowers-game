@@ -5,7 +5,7 @@ export interface UniformPub {
   value: any;
 }
 
-export default class Uniforms extends SupCore.data.base.ListById {
+export default class Uniforms extends SupCore.Data.Base.ListById {
 
   static schema = {
     name: { type: "string", minLength: 1, maxLength: 80, mutable: true },

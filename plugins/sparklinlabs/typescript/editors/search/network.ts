@@ -15,13 +15,13 @@ socket.on("disconnect", SupClient.onDisconnected);
 let onEditCommands: any = {};
 function onConnected() {
   data.assetsById = {};
-  
+
   data.projectClient = new SupClient.ProjectClient(socket);
   data.projectClient.subEntries(entriesSubscriber);
 }
 
 var entriesSubscriber = {
-  onEntriesReceived: (entries: SupCore.data.Entries) => {
+  onEntriesReceived: (entries: SupCore.Data.Entries) => {
     entries.walk((entry) => {
       if (entry.type !== "script") return;
       data.projectClient.subAsset(entry.id, "script", scriptSubscriber);
@@ -59,10 +59,10 @@ var entriesSubscriber = {
 
   onEntryTrashed: (id: string) => {
     if (data.assetsById[id] != null) delete data.assetsById[id];
-    
+
     let nameElt = <HTMLSpanElement>document.querySelector(`span[data-id='${id}']`);
     let tableElt = <HTMLTableElement>document.querySelector(`table[data-id='${id}']`);
-    
+
     if (nameElt != null) nameElt.parentElement.removeChild(nameElt);
     if (tableElt != null) tableElt.parentElement.removeChild(tableElt);
   },

@@ -1,2 +1,2 @@
 import CannonBodyConfig from "./CannonBodyConfig";
-SupCore.data.registerComponentConfigClass("CannonBody", CannonBodyConfig);
+SupCore.system.data.registerComponentConfigClass("CannonBody", CannonBodyConfig);

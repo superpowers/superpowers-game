@@ -24,10 +24,10 @@ export interface ShaderAssetPub {
   fragmentShader: ShaderCode;
 }
 
-export default class ShaderAsset extends SupCore.data.base.Asset {
+export default class ShaderAsset extends SupCore.Data.Base.Asset {
   static currentFormatVersion = 1;
 
-  static schema: SupCore.data.base.Schema = {
+  static schema: SupCore.Data.Base.Schema = {
     formatVersion: { type: "integer" },
 
     uniforms: { type: "array" },
@@ -57,13 +57,13 @@ export default class ShaderAsset extends SupCore.data.base.Asset {
   fragmentDocument: OT.Document;
   pub: ShaderAssetPub;
 
-  constructor(id: string, pub: ShaderAssetPub, serverData: any) {
-    super(id, pub, ShaderAsset.schema, serverData);
+  constructor(id: string, pub: ShaderAssetPub, server: ProjectServer) {
+    super(id, pub, ShaderAsset.schema, server);
   }
 
   init(options: any, callback: Function) {
-    this.serverData.resources.acquire("textEditorSettings", null, (err: Error, textEditorSettings: any) => {
-      this.serverData.resources.release("textEditorSettings", null);
+    this.server.data.resources.acquire("textEditorSettings", null, (err: Error, textEditorSettings: any) => {
+      this.server.data.resources.release("textEditorSettings", null);
 
       let tab: string;
       if (textEditorSettings.pub.softTab) {
@@ -298,7 +298,7 @@ ${tab}gl_FragColor = texture2D(map, vUv);
       if (typeof(value) !== "string") { callback("Invalid value"); return; }
       value = value.trim();
 
-      if (SupCore.data.hasDuplicateName(id, value, this.uniforms.pub)) {
+      if (SupCore.Data.hasDuplicateName(id, value, this.uniforms.pub)) {
         callback("There's already an uniform with this name");
         return;
       }
@@ -356,7 +356,7 @@ ${tab}gl_FragColor = texture2D(map, vUv);
       if (typeof(value) !== "string") { callback("Invalid value"); return; }
       value = value.trim();
 
-      if (SupCore.data.hasDuplicateName(id, value, this.attributes.pub)) {
+      if (SupCore.Data.hasDuplicateName(id, value, this.attributes.pub)) {
         callback("There's already an attribute with this name");
         return;
       }

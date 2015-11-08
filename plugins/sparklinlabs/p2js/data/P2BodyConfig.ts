@@ -1,4 +1,4 @@
-export default class P2BodyConfig extends SupCore.data.base.ComponentConfig {
+export default class P2BodyConfig extends SupCore.Data.Base.ComponentConfig {
 
   static schema = {
     mass: { type: "number", min: 0, mutable: true },

@@ -7,7 +7,7 @@ export interface SpriteRendererConfigPub {
   materialType: string; shaderAssetId: string;
 }
 
-export default class SpriteRendererConfig extends SupCore.data.base.ComponentConfig {
+export default class SpriteRendererConfig extends SupCore.Data.Base.ComponentConfig {
 
   static schema = {
     spriteAssetId: { type: "string?", min: 0, mutable: true },

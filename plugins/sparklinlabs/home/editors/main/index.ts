@@ -2,7 +2,7 @@ import "./links";
 
 let qs = require("querystring").parse(window.location.search.slice(1));
 let info = { projectId: qs.project };
-let data: { room: SupCore.data.Room; };
+let data: { room: SupCore.Data.Room; };
 let socket: SocketIOClient.Socket;
 
 let ui = {
@@ -29,7 +29,7 @@ function onConnected() {
 };
 
 function onRoomReceived(err: string, room: any) {
-  data.room = new SupCore.data.Room(room);
+  data.room = new SupCore.Data.Room(room);
 
   for (let roomUser of data.room.pub.users) appendRoomUser(roomUser);
 

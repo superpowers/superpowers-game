@@ -2,6 +2,6 @@ import SceneSettingsResource from "./SceneSettingsResource";
 import SceneAsset from "./SceneAsset";
 import CameraConfig from "./CameraConfig";
 
-SupCore.data.registerResource("sceneSettings", SceneSettingsResource);
-SupCore.data.registerAssetClass("scene", SceneAsset);
-SupCore.data.registerComponentConfigClass("Camera", CameraConfig);
+SupCore.system.data.registerResource("sceneSettings", SceneSettingsResource);
+SupCore.system.data.registerAssetClass("scene", SceneAsset);
+SupCore.system.data.registerComponentConfigClass("Camera", CameraConfig);

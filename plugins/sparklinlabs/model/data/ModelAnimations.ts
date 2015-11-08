@@ -1,4 +1,4 @@
-export default class ModelAnimations extends SupCore.data.base.ListById {
+export default class ModelAnimations extends SupCore.Data.Base.ListById {
 
   static schema = {
     name: { type: "string", minLength: 1, maxLength: 80, mutable: true },
@@ -8,7 +8,7 @@ export default class ModelAnimations extends SupCore.data.base.ListById {
       keys: { minLength: 1, maxLength: 80 },
       values: {
         type: "hash",
-        properties: <{ [index: string]: SupCore.data.base.Rule }> {
+        properties: <{ [index: string]: SupCore.Data.Base.Rule }> {
           translation: {
             type: "array?",
             items: {

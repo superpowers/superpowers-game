@@ -40,10 +40,10 @@ export interface SpriteAssetPub {
   mapSlots: { [name: string]: string; };
 }
 
-export default class SpriteAsset extends SupCore.data.base.Asset {
+export default class SpriteAsset extends SupCore.Data.Base.Asset {
   static currentFormatVersion = 1;
 
-  static schema: SupCore.data.base.Schema = {
+  static schema: SupCore.Data.Base.Schema = {
     formatVersion: { type: "integer" },
 
     maps: {
@@ -97,12 +97,12 @@ export default class SpriteAsset extends SupCore.data.base.Asset {
   // Only used on client-side
   mapObjectURLs: { [mapName: string]: string };
 
-  constructor(id: string, pub: SpriteAssetPub, serverData: any) {
-    super(id, pub, SpriteAsset.schema, serverData);
+  constructor(id: string, pub: SpriteAssetPub, server: ProjectServer) {
+    super(id, pub, SpriteAsset.schema, server);
   }
 
   init(options: any, callback: Function) {
-    this.serverData.resources.acquire("spriteSettings", null, (err: Error, spriteSettings: any) => {
+    this.server.data.resources.acquire("spriteSettings", null, (err: Error, spriteSettings: any) => {
       this.pub = {
         formatVersion: SpriteAsset.currentFormatVersion,
 
@@ -129,7 +129,7 @@ export default class SpriteAsset extends SupCore.data.base.Asset {
         }
       };
 
-      this.serverData.resources.release("spriteSettings", null);
+      this.server.data.resources.release("spriteSettings", null);
       super.init(options, callback);
     });
   }
@@ -422,7 +422,7 @@ export default class SpriteAsset extends SupCore.data.base.Asset {
     this.animations.add(animation, null, (err, actualIndex) => {
       if (err != null) { callback(err); return }
 
-      animation.name = SupCore.data.ensureUniqueName(animation.id, animation.name, this.animations.pub);
+      animation.name = SupCore.Data.ensureUniqueName(animation.id, animation.name, this.animations.pub);
 
       callback(null, animation, actualIndex);
       this.emit("change");
@@ -465,7 +465,7 @@ export default class SpriteAsset extends SupCore.data.base.Asset {
       if (typeof(value) !== "string") { callback("Invalid value"); return; }
       value = value.trim();
 
-      if (SupCore.data.hasDuplicateName(id, value, this.animations.pub)) {
+      if (SupCore.Data.hasDuplicateName(id, value, this.animations.pub)) {
         callback("There's already an animation with this name");
         return;
       }

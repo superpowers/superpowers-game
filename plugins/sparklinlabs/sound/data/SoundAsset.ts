@@ -7,10 +7,10 @@ interface SoundAssetPub {
   streaming: boolean;
 }
 
-export default class SoundAsset extends SupCore.data.base.Asset {
+export default class SoundAsset extends SupCore.Data.Base.Asset {
   static currentFormatVersion = 1;
 
-  static schema: SupCore.data.base.Schema = {
+  static schema: SupCore.Data.Base.Schema = {
     formatVersion: { type: "integer" },
 
     sound: { type: "buffer" },
@@ -19,8 +19,8 @@ export default class SoundAsset extends SupCore.data.base.Asset {
 
   pub: SoundAssetPub;
 
-  constructor(id: string, pub: any, serverData?: any) {
-    super(id, pub, SoundAsset.schema, serverData);
+  constructor(id: string, pub: any, server?: ProjectServer) {
+    super(id, pub, SoundAsset.schema, server);
   }
 
   init(options: any, callback: Function) {

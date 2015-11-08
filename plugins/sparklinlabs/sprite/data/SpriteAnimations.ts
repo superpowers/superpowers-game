@@ -6,7 +6,7 @@ export interface SpriteAnimationPub {
   speed: number;
 }
 
-export default class SpriteAnimations extends SupCore.data.base.ListById {
+export default class SpriteAnimations extends SupCore.Data.Base.ListById {
 
   static schema = {
     name: { type: "string", minLength: 1, maxLength: 80, mutable: true },

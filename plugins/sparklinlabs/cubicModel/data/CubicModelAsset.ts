@@ -3,7 +3,7 @@ let THREE: typeof SupEngine.THREE;
 // NOTE: It is important that we require THREE through SupEngine
 // so that we inherit any settings, like the global Euler order
 // (or, alternatively, we could duplicate those settings...)
-if ((<any>global).window == null) THREE = serverRequire("../../../../system/SupEngine").THREE;
+if ((<any>global).window == null) THREE = serverRequire("../../../../SupEngine").THREE;
 else if ((<any>window).SupEngine != null) THREE = SupEngine.THREE;
 
 import * as path from "path";
@@ -35,9 +35,9 @@ export interface TextureEdit {
   value: { r: number; g: number; b: number; a: number; };
 }
 
-export default class CubicModelAsset extends SupCore.data.base.Asset {
+export default class CubicModelAsset extends SupCore.Data.Base.Asset {
 
-  static schema: SupCore.data.base.Schema = {
+  static schema: SupCore.Data.Base.Schema = {
     pixelsPerUnit: { type: "integer", min: 1, mutable: true },
     nodes: { type: "array" },
 
@@ -65,12 +65,12 @@ export default class CubicModelAsset extends SupCore.data.base.Asset {
   // Only used on client-side
   textureEditing: { [name: string]: { imageData: ImageData; ctx: CanvasRenderingContext2D; } } = {};
 
-  constructor(id: string, pub: any, serverData: any) {
-    super(id, pub, CubicModelAsset.schema, serverData);
+  constructor(id: string, pub: any, server: ProjectServer) {
+    super(id, pub, CubicModelAsset.schema, server);
   }
 
   init(options: any, callback: Function) {
-    this.serverData.resources.acquire("cubicModelSettings", null, (err: Error, cubicModelSettings: any) => {
+    this.server.data.resources.acquire("cubicModelSettings", null, (err: Error, cubicModelSettings: any) => {
       this.pub = {
         pixelsPerUnit: cubicModelSettings.pub.pixelsPerUnit,
         nodes: [],

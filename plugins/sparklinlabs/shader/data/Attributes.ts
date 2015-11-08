@@ -4,7 +4,7 @@ export interface AttributePub {
   type: string;
 }
 
-export default class Attributes extends SupCore.data.base.ListById {
+export default class Attributes extends SupCore.Data.Base.ListById {
 
   static schema = {
     name: { type: "string", minLength: 1, maxLength: 80, mutable: true },

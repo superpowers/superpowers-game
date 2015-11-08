@@ -1,7 +1,7 @@
 import SceneAsset from "./SceneAsset";
 import SceneComponents, { Component } from "./SceneComponents";
 
-export interface Node extends SupCore.data.base.TreeNode {
+export interface Node extends SupCore.Data.Base.TreeNode {
   children: Node[];
 
   components: Component[];
@@ -13,7 +13,7 @@ export interface Node extends SupCore.data.base.TreeNode {
   prefabId: string;
 }
 
-export default class SceneNodes extends SupCore.data.base.TreeById {
+export default class SceneNodes extends SupCore.Data.Base.TreeById {
 
   static schema = {
     name: { type: "string", minLength: 1, maxLength: 80, mutable: true },
@@ -177,8 +177,8 @@ export default class SceneNodes extends SupCore.data.base.TreeById {
 
     let checkScene = (sceneId: string) => {
       aquiringScene++;
-      this.sceneAsset.serverData.assets.acquire(sceneId, this, (error: Error, asset: SceneAsset) => {
-        this.sceneAsset.serverData.assets.release(sceneId, this);
+      this.sceneAsset.server.data.assets.acquire(sceneId, this, (error: Error, asset: SceneAsset) => {
+        this.sceneAsset.server.data.assets.release(sceneId, this);
 
         // Check the scene has only one root actor
         if (asset.pub.nodes.length !== 1) {

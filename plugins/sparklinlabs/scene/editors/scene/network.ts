@@ -1,10 +1,12 @@
 import info from "./info";
 import ui, {
+  start as uiStart,
   setCameraMode, setCameraVerticalAxis, createNodeElement, setupSelectedNode, createComponentElement,
   setInspectorPosition, setInspectorOrientation, setInspectorScale,
   setInspectorVisible, setInspectorLayer, setInspectorPrefabId,
   setupInspectorLayers } from "./ui";
-import engine, { setupHelpers } from "./engine";
+import engine, { start as engineStart, setupHelpers } from "./engine";
+import * as async from "async";
 
 let THREE = SupEngine.THREE;
 import { DuplicatedNode } from "../../data/SceneAsset";
@@ -13,20 +15,68 @@ import { Node } from "../../data/SceneNodes";
 import { Component } from "../../data/SceneComponents";
 import SceneUpdater from "../../components/SceneUpdater";
 
-export let data: { projectClient: SupClient.ProjectClient, sceneUpdater?: SceneUpdater, gameSettingsResource?: any };
+export let data: {
+  projectClient: SupClient.ProjectClient;
+  systemName: string;
+  sceneUpdater?: SceneUpdater;
+  gameSettingsResource?: any;
+};
 
 export let socket: SocketIOClient.Socket;
-export function start() {
-  socket = SupClient.connect(info.projectId);
-  socket.on("connect", onConnected);
-  socket.on("disconnect", SupClient.onDisconnected);
+
+socket = SupClient.connect(info.projectId);
+socket.on("welcome", onWelcome);
+socket.on("disconnect", SupClient.onDisconnected);
+
+function onWelcome(clientId: number, config: { buildPort: number; systemName: string; }) {
+  data = {
+    projectClient: new SupClient.ProjectClient(socket, { subEntries: true }),
+    systemName: config.systemName
+  };
+  
+  loadPlugins(() => {
+    engineStart();
+    uiStart();
+
+    data.projectClient.subResource("sceneSettings", sceneSettingSubscriber);
+    data.projectClient.subResource("gameSettings", gameSettingSubscriber);
+  });
 }
 
-function onConnected() {
-  data = { projectClient: new SupClient.ProjectClient(socket, { subEntries: true }) };
+function loadPlugins(callback: ErrorCallback) {
+  (<any>window).fetch(`/systems/${data.systemName}/plugins.json`).then((response: any) => response.json()).then((pluginPaths: any) => {
+    async.each(pluginPaths.all, (pluginName, pluginCallback) => {
+      if (pluginName === "sparklinlabs/scene") { pluginCallback(); return; }
 
-  data.projectClient.subResource("sceneSettings", sceneSettingSubscriber);
-  data.projectClient.subResource("gameSettings", gameSettingSubscriber);
+      async.series([
+
+        (cb) => {
+          let dataScript = document.createElement("script");
+          dataScript.src = `/systems/${data.systemName}/plugins/${pluginName}/data.js`;
+          dataScript.addEventListener("load", () => { cb(null, null); } );
+          dataScript.addEventListener("error", () => { cb(null, null); } );
+          document.body.appendChild(dataScript);
+        },
+
+        (cb) => {
+          let componentsScript = document.createElement("script");
+          componentsScript.src = `/systems/${data.systemName}/plugins/${pluginName}/components.js`;
+          componentsScript.addEventListener("load", () => { cb(null, null); } );
+          componentsScript.addEventListener("error", () => { cb(null, null); } );
+          document.body.appendChild(componentsScript);
+        },
+
+        (cb) => {
+          let componentEditorsScript = document.createElement("script");
+          componentEditorsScript.src = `/systems/${data.systemName}/plugins/${pluginName}/componentEditors.js`;
+          componentEditorsScript.addEventListener("load", () => { cb(null, null); } );
+          componentEditorsScript.addEventListener("error", () => { cb(null, null); } );
+          document.body.appendChild(componentEditorsScript);
+        },
+
+      ], pluginCallback);
+    }, callback);
+  });
 }
 
 var sceneSettingSubscriber = {

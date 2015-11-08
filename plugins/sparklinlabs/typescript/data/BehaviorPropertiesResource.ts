@@ -6,9 +6,9 @@ export interface BehaviorProperty {
   type: string;
 }
 
-export default class BehaviorPropertiesResource extends SupCore.data.base.Resource {
+export default class BehaviorPropertiesResource extends SupCore.Data.Base.Resource {
 
-  static schema: SupCore.data.base.Schema = {
+  static schema: SupCore.Data.Base.Schema = {
     behaviors: {
       type: "hash",
       keys: { minLength: 1 },
@@ -37,8 +37,8 @@ export default class BehaviorPropertiesResource extends SupCore.data.base.Resour
   behaviorNamesByScriptId: {[scriptId: string]: string[];};
   propertiesByNameByBehavior: {[behaviorName: string]: {[propertyName: string]: BehaviorProperty}};
 
-  constructor(pub: any, serverData: any) {
-    super(pub, BehaviorPropertiesResource.schema, serverData);
+  constructor(pub: any, server: ProjectServer) {
+    super(pub, BehaviorPropertiesResource.schema, server);
   }
 
   setup() {

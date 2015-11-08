@@ -10,7 +10,7 @@ class CannonBodyEditor {
   radiusRow: SupClient.table.RowParts;
   heightRow: SupClient.table.RowParts;
 
-  constructor(tbody: HTMLTableSectionElement, config:any, projectClient:SupClient.ProjectClient, editConfig:any) {
+  constructor(tbody: HTMLTableSectionElement, config: any, projectClient: SupClient.ProjectClient, editConfig: any) {
     this.projectClient = projectClient;
     this.editConfig = editConfig;
     this.tbody = tbody;

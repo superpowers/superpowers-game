@@ -1,3 +1,3 @@
 import ShaderAsset from "./ShaderAsset";
 
-SupCore.data.registerAssetClass("shader", ShaderAsset);
+SupCore.system.data.registerAssetClass("shader", ShaderAsset);

@@ -4,25 +4,54 @@ let qs = require("querystring").parse(window.location.search.slice(1));
 let info = { projectId: qs.project };
 let data: {
   projectClient: SupClient.ProjectClient;
+  systemName: string;
 };
 
 let ui: any = {};
 
-let socket: SocketIOClient.Socket;
+let socket = SupClient.connect(info.projectId);
+socket.on("welcome", onWelcome);
+socket.on("disconnect", SupClient.onDisconnected);
+SupClient.setupHotkeys();
 
-function start() {
-  socket = SupClient.connect(info.projectId);
-  socket.on("connect", onConnected);
-  socket.on("disconnect", SupClient.onDisconnected);
-  SupClient.setupHotkeys();
+function onWelcome(clientId: number, config: { buildPort: number; systemName: string; }) {
+  data = {
+    projectClient: new SupClient.ProjectClient(socket),
+    systemName: config.systemName
+  };
+  
+  loadPlugins();
 }
 
-// Network callbacks
-function onConnected() {
-  data = {
-    projectClient: new SupClient.ProjectClient(socket)
-  };
+function loadPlugins() {
+  (<any>window).fetch(`/systems/${data.systemName}/plugins.json`).then((response: any) => response.json()).then((pluginPaths: any) => {
+    async.each(pluginPaths.all, (pluginName, pluginCallback) => {
+      if (pluginName === "sparklinlabs/settings") { pluginCallback(); return; }
 
+      async.series([
+
+        (cb) => {
+          let dataScript = document.createElement("script");
+          dataScript.src = `/systems/${data.systemName}/plugins/${pluginName}/data.js`;
+          dataScript.addEventListener("load", () => { cb(null, null); } );
+          dataScript.addEventListener("error", () => { cb(null, null); } );
+          document.body.appendChild(dataScript);
+        },
+
+        (cb) => {
+          let settingsEditorScript = document.createElement("script");
+          settingsEditorScript.src = `/systems/${data.systemName}/plugins/${pluginName}/settingsEditors.js`;
+          settingsEditorScript.addEventListener("load", () => { cb(null, null); } );
+          settingsEditorScript.addEventListener("error", () => { cb(null, null); } );
+          document.body.appendChild(settingsEditorScript);
+        },
+
+      ], pluginCallback);
+    }, (err) => { setupSettings(); });
+  });
+}
+
+function setupSettings() {
   let navListElt = document.querySelector("nav ul");
   let mainElt = document.querySelector("main");
 
@@ -76,31 +105,3 @@ function onConnected() {
   (<HTMLAnchorElement>navListElt.querySelector("li a")).classList.add("active");
   (<HTMLElement>mainElt.querySelector("section")).classList.add("active");
 }
-
-// Load plugins
-async.each(SupClient.pluginPaths.all, (pluginName, pluginCallback) => {
-  if (pluginName === "sparklinlabs/settings") { pluginCallback(); return; }
-
-  async.series([
-
-    (cb) => {
-      let dataScript = document.createElement("script");
-      dataScript.src = `/plugins/${pluginName}/data.js`;
-      dataScript.addEventListener("load", () => { cb(null, null); } );
-      dataScript.addEventListener("error", () => { cb(null, null); } );
-      document.body.appendChild(dataScript);
-    },
-
-    (cb) => {
-      let settingsEditorScript = document.createElement("script");
-      settingsEditorScript.src = `/plugins/${pluginName}/settingsEditors.js`;
-      settingsEditorScript.addEventListener("load", () => { cb(null, null); } );
-      settingsEditorScript.addEventListener("error", () => { cb(null, null); } );
-      document.body.appendChild(settingsEditorScript);
-    },
-
-  ], pluginCallback);
-}, (err) => {
-  // Start
-  start()
-});

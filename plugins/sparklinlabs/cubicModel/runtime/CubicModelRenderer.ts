@@ -26,7 +26,7 @@ export function setupComponent(player: SupRuntime.Player, component: any, config
     component.setCubicModel(cubicModel.__inner, config.materialType, shader);
 
     if (config.animationId != null) {
-      // FIXME: should we load cubicModel with SupCore.data?
+      // FIXME: should we load cubicModel with SupCore.Data?
       cubicModel.__inner.animations.every((animation: any) => {
         if (animation.id === config.animationId) {
           component.setAnimation(animation.name);

@@ -15,10 +15,10 @@ export interface FontPub {
   bitmap: Buffer; gridWidth: number; gridHeight: number; charset: string; charsetOffset: number; texture?: THREE.Texture;
 }
 
-export default class FontAsset extends SupCore.data.base.Asset {
+export default class FontAsset extends SupCore.Data.Base.Asset {
   static currentFormatVersion = 1;
 
-  static schema: SupCore.data.base.Schema = {
+  static schema: SupCore.Data.Base.Schema = {
     formatVersion: { type: "integer" },
 
     isBitmap: { type: "boolean", mutable: true},
@@ -41,8 +41,8 @@ export default class FontAsset extends SupCore.data.base.Asset {
   url: string;
   font: any;
 
-  constructor(id: string, pub: any, serverData: any) {
-    super(id, pub, FontAsset.schema, serverData);
+  constructor(id: string, pub: any, server: ProjectServer) {
+    super(id, pub, FontAsset.schema, server);
   }
 
   init(options: any, callback: Function) {
