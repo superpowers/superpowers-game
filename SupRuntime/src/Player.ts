@@ -1,5 +1,3 @@
-/// <reference path="../SupRuntime.d.ts" />
-
 import * as async from "async";
 
 interface Asset {

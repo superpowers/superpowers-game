@@ -1,6 +1,3 @@
-/// <reference path="../../../typings/tsd.d.ts" />
-/// <reference path="../typings/tsd.d.ts" />
-
 import * as THREE from "three";
 (<any>THREE.Euler).DefaultOrder = "YXZ";
 

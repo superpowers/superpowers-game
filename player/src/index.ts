@@ -1,8 +1,12 @@
-/// <reference path="../../../typings/tsd.d.ts" />
+/// <reference path="../../../../typings/tsd.d.ts" />
 /// <reference path="../../SupRuntime/SupRuntime.d.ts" />
+/// <reference path="../../../../SupCore/SupCore.d.ts" />
 
+import "whatwg-fetch";
 import * as async from "async";
 import * as querystring from "querystring";
+
+SupCore.system = new SupCore.System("");
 
 // In NW.js, open links in a browser window
 let nwDispatcher = (<any>window).nwDispatcher;
@@ -68,48 +72,42 @@ let onLoaded = (err: Error) => {
 }
 
 // Load plugins
-let pluginsXHR = new XMLHttpRequest();
-pluginsXHR.open("GET", "../plugins.json", false); // Synchronous
-pluginsXHR.send(null);
-
-if (pluginsXHR.status !== 200) throw new Error("Could not get plugins list");
-
-let pluginPaths = JSON.parse(pluginsXHR.responseText);
-
-async.each(pluginPaths.all, (pluginName, pluginCallback) => {
-  async.series([
-
-    (cb) => {
-      let apiScript = document.createElement("script");
-      apiScript.src = `../plugins/${pluginName}/api.js`;
-      apiScript.addEventListener("load", () => cb(null, null));
-      apiScript.addEventListener("error", (err) => cb(null, null));
-      document.body.appendChild(apiScript);
-    },
-
-    (cb) => {
-      let componentsScript = document.createElement("script");
-      componentsScript.src = `../plugins/${pluginName}/components.js`;
-      componentsScript.addEventListener("load", () => cb(null, null));
-      componentsScript.addEventListener("error", () => cb(null, null));
-      document.body.appendChild(componentsScript);
-    },
-
-    (cb) => {
-      let runtimeScript = document.createElement("script");
-      runtimeScript.src = `../plugins/${pluginName}/runtime.js`;
-      runtimeScript.addEventListener("load", () => cb(null, null));
-      runtimeScript.addEventListener("error", () => cb(null, null));
-      document.body.appendChild(runtimeScript);
-    }
-
-  ], pluginCallback);
-}, (err) => {
-  if (err != null) console.log(err);
-  // Load game
-  let buildPath = (qs.project != null) ? `/builds/${qs.project}/${qs.build}/` : "../";
-  player = new SupRuntime.Player(canvas, buildPath, { debug: qs.debug != null });
-  player.load(onLoadProgress, onLoaded);
+(<any>window).fetch("plugins.json").then((response: any) => response.json()).then((pluginPaths: any) => {
+  async.each(pluginPaths.all, (pluginName, pluginCallback) => {
+    async.series([
+  
+      (cb) => {
+        let apiScript = document.createElement("script");
+        apiScript.src = `plugins/${pluginName}/api.js`;
+        apiScript.addEventListener("load", () => cb(null, null));
+        apiScript.addEventListener("error", (err) => cb(null, null));
+        document.body.appendChild(apiScript);
+      },
+  
+      (cb) => {
+        let componentsScript = document.createElement("script");
+        componentsScript.src = `plugins/${pluginName}/components.js`;
+        componentsScript.addEventListener("load", () => cb(null, null));
+        componentsScript.addEventListener("error", () => cb(null, null));
+        document.body.appendChild(componentsScript);
+      },
+  
+      (cb) => {
+        let runtimeScript = document.createElement("script");
+        runtimeScript.src = `plugins/${pluginName}/runtime.js`;
+        runtimeScript.addEventListener("load", () => cb(null, null));
+        runtimeScript.addEventListener("error", () => cb(null, null));
+        document.body.appendChild(runtimeScript);
+      }
+  
+    ], pluginCallback);
+  }, (err) => {
+    if (err != null) console.log(err);
+    // Load game
+    let buildPath = (qs.project != null) ? `/builds/${qs.project}/${qs.build}/` : "/";
+    player = new SupRuntime.Player(canvas, buildPath, { debug: qs.debug != null });
+    player.load(onLoadProgress, onLoaded);
+  });
 });
 
 loadingElt.classList.add("start");

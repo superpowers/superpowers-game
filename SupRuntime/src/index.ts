@@ -1,5 +1,4 @@
-/// <reference path="../../../typings/tsd.d.ts"/>
-/// <reference path="../../SupEngine/SupEngine.d.ts"/>
+/// <reference path="../SupRuntime.d.ts" />
 
 import Player from "./Player";
 export { Player };

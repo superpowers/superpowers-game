@@ -1,3 +1,4 @@
+/// <reference path="../../../typings/tsd.d.ts" />
 /// <reference path="../SupEngine/SupEngine.d.ts" />
 
 declare namespace SupRuntime {

@@ -1,5 +1,5 @@
-/// <reference path="../../typings/tsd.d.ts" />
-/// <reference path="./typings/threejs/three.d.ts" />
+/// <reference path="../../../typings/tsd.d.ts" />
+/// <reference path="./typings/tsd.d.ts" />
 
 declare let __tmpTHREE: typeof THREE;
 

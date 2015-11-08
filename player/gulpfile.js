@@ -1,16 +1,16 @@
 var gulp = require("gulp");
 
 // Copy
-gulp.task("copy", function () { return gulp.src("./src/images/*").pipe(gulp.dest("../../public/player/images")); });
+gulp.task("copy", function () { return gulp.src("./src/images/*").pipe(gulp.dest("../public/images")); });
 
 // Jade
 var jade = require("gulp-jade");
-gulp.task("jade", function() { return gulp.src("./src/index.jade").pipe(jade()).pipe(gulp.dest("../../public/player")); });
+gulp.task("jade", function() { return gulp.src("./src/index.jade").pipe(jade()).pipe(gulp.dest("../public")); });
 
 // Stylus
 var stylus = require("gulp-stylus");
 var nib = require("nib");
-gulp.task("stylus", function() { return gulp.src("./src/index.styl").pipe(stylus({use: [ nib() ], errors: true})).pipe(gulp.dest("../../public/player")); });
+gulp.task("stylus", function() { return gulp.src("./src/index.styl").pipe(stylus({use: [ nib() ], errors: true})).pipe(gulp.dest("../public")); });
 
 // TypeScript
 var ts = require("gulp-typescript");
@@ -26,7 +26,7 @@ var browserify = require("browserify");
 var source = require("vinyl-source-stream");
 gulp.task("browserify", [ "typescript" ],function() {
   var bundler = browserify("./src/index.js");
-  function bundle() { return bundler.bundle().pipe(source("index.js")).pipe(gulp.dest("../../public/player")); }
+  function bundle() { return bundler.bundle().pipe(source("index.js")).pipe(gulp.dest("../public")); }
   return bundle();
 });
 
