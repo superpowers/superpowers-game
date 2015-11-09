@@ -3,11 +3,16 @@ import * as fs from "fs";
 
 import TileMapSettingsResource from "./TileMapSettingsResource";
 
+// Reference to THREE, client-side only
+let THREE: typeof SupEngine.THREE;
+if ((<any>global).window != null && (<any>window).SupEngine != null) THREE = SupEngine.THREE;
+
 interface TileSetAssetPub {
   image: Buffer;
   grid: { width: number; height: number };
   tileProperties: { [tileName: string]: { [propertyName: string]: string} };
   domImage?: any;
+  texture?: THREE.Texture;
 }
 
 export default class TileSetAsset extends SupCore.data.base.Asset {
@@ -81,6 +86,9 @@ export default class TileSetAsset extends SupCore.data.base.Asset {
     });
   }
 
+  client_load() { this._loadTexture(); }
+  client_unload() { this._unloadTexture(); }
+
   save(assetPath: string, callback: (err: NodeJS.ErrnoException) => any) {
     let buffer = this.pub.image;
     delete this.pub.image;
@@ -89,6 +97,16 @@ export default class TileSetAsset extends SupCore.data.base.Asset {
     fs.writeFile(path.join(assetPath, "tileset.json"), json, { encoding: "utf8" }, () => {
       fs.writeFile(path.join(assetPath, "image.dat"), buffer, callback);
     });
+  }
+
+  _loadTexture() {
+    this._unloadTexture();
+
+
+  }
+
+  _unloadTexture() {
+
   }
 
   server_upload(client: any, image: Buffer, callback: (err: string, image: Buffer) => any) {
@@ -102,6 +120,7 @@ export default class TileSetAsset extends SupCore.data.base.Asset {
 
   client_upload(image: Buffer) {
     this.pub.image = image;
+    this._loadTexture();
   }
 
   server_addTileProperty(client: any, tile: {x: number; y: number}, name: string,

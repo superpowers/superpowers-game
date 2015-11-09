@@ -5,7 +5,7 @@ import * as _ from "lodash";
 
 // Reference to THREE, client-side only
 let THREE: typeof SupEngine.THREE;
-if ((<any>global).window != null && (<any>global).window.SupEngine != null) THREE = (<any>global).window.SupEngine.THREE;
+if ((<any>global).window != null && (<any>window).SupEngine != null) THREE = SupEngine.THREE;
 
 import ModelAnimations from "./ModelAnimations";
 interface Animation {

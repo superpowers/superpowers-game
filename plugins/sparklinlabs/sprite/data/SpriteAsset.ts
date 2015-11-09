@@ -6,7 +6,7 @@ import SpriteAnimations, { SpriteAnimationPub } from "./SpriteAnimations";
 
 // Reference to THREE, client-side only
 let THREE: typeof SupEngine.THREE;
-if ((<any>global).window != null && (<any>global).window.SupEngine != null) THREE = (<any>global).window.SupEngine.THREE;
+if ((<any>global).window != null && (<any>window).SupEngine != null) THREE = SupEngine.THREE;
 
 interface TextureWithSize extends THREE.Texture {
   size?: {
