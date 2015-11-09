@@ -56,8 +56,8 @@ export function handleTileSetArea() {
   if (data.tileMapUpdater.tileMapAsset == null) return;
   if (data.tileMapUpdater.tileSetAsset == null) return;
 
-  let tilesPerRow = data.tileMapUpdater.tileSetAsset.pub.domImage.width / data.tileMapUpdater.tileSetAsset.pub.grid.width;
-  let tilesPerColumn = data.tileMapUpdater.tileSetAsset.pub.domImage.height / data.tileMapUpdater.tileSetAsset.pub.grid.height;
+  let tilesPerRow = data.tileMapUpdater.tileSetAsset.pub.texture.image.width / data.tileMapUpdater.tileSetAsset.pub.grid.width;
+  let tilesPerColumn = data.tileMapUpdater.tileSetAsset.pub.texture.image.height / data.tileMapUpdater.tileSetAsset.pub.grid.height;
 
   let [ mouseX, mouseY ] = getTileSetGridPosition(tileSetArea.gameInstance, tileSetArea.cameraComponent);
   if (tileSetArea.gameInstance.input.mouseButtons[0].wasJustPressed) {

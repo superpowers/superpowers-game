@@ -20,7 +20,6 @@ export default class TileMapRendererUpdater {
   materialType: string;
   shaderAssetId: string;
   shaderPub: any;
-  url: string;
 
   tileMapSubscriber: {
     onAssetReceived: (assetId: string, asset: TileMapAsset) => any;
@@ -42,7 +41,6 @@ export default class TileMapRendererUpdater {
 
   tileMapAsset: TileMapAsset;
   tileSetAsset: TileSetAsset;
-  tileSetThreeTexture: THREE.Texture;
 
   constructor(client: SupClient.ProjectClient, tileMapRenderer: TileMapRenderer, config: any, receiveAssetCallbacks?: any, editAssetCallbacks?: any) {
     this.client = client;
@@ -54,7 +52,6 @@ export default class TileMapRendererUpdater {
     this.tileSetAssetId = config.tileSetAssetId;
     this.materialType = config.materialType;
     this.shaderAssetId = config.shaderAssetId;
-    this.tileSetThreeTexture = null;
 
     this.tileMapSubscriber = {
       onAssetReceived: this._onTileMapAssetReceived,
@@ -76,10 +73,7 @@ export default class TileMapRendererUpdater {
 
   destroy() {
     if (this.tileMapAssetId != null) this.client.unsubAsset(this.tileMapAssetId, this.tileMapSubscriber);
-    if (this.tileSetAssetId != null) {
-      this.client.unsubAsset(this.tileSetAssetId, this.tileSetSubscriber);
-      this.tileSetThreeTexture.dispose();
-    }
+    if (this.tileSetAssetId != null) { this.client.unsubAsset(this.tileSetAssetId, this.tileSetSubscriber); }
     if (this.shaderAssetId != null) this.client.unsubAsset(this.shaderAssetId, this.shaderSubscriber);
   }
 
@@ -114,13 +108,10 @@ export default class TileMapRendererUpdater {
   }
 
   _onEditCommand_changeTileSet() {
-    if (this.tileSetAssetId != null) {
-      this.client.unsubAsset(this.tileSetAssetId, this.tileSetSubscriber);
-      this.tileSetThreeTexture.dispose();
-      this.tileSetThreeTexture = null;
-      this.tileSetAsset = null;
-    }
-    this.tileMapRenderer.setTileSet(null, null);
+    if (this.tileSetAssetId != null) this.client.unsubAsset(this.tileSetAssetId, this.tileSetSubscriber);
+
+    this.tileSetAsset = null;
+    this.tileMapRenderer.setTileSet(null);
 
     this.tileSetAssetId = this.tileMapAsset.pub.tileSetId;
     if (this.tileSetAssetId != null) this.client.subAsset(this.tileSetAssetId, "tileSet", this.tileSetSubscriber);
@@ -166,38 +157,24 @@ export default class TileMapRendererUpdater {
   }
 
   _onTileSetAssetReceived = (assetId: string, asset: TileSetAsset) => {
-    this.tileSetAsset = asset;
+    this._prepareTexture(asset.pub.texture, () => {
+      this.tileSetAsset = asset;
 
-    if (asset.pub.domImage == null) {
-      if (this.url != null) URL.revokeObjectURL(this.url);
-      let typedArray = new Uint8Array(<any>asset.pub.image);
-      let blob = new Blob([ typedArray ], { type: "image/*" });
-      this.url = URL.createObjectURL(blob);
-
-      asset.pub.domImage = new Image();
-      asset.pub.domImage.src = this.url;
-    }
-
-    this.tileSetThreeTexture = new THREE.Texture(asset.pub.domImage);
-    this.tileSetThreeTexture.magFilter = THREE.NearestFilter;
-    this.tileSetThreeTexture.minFilter = THREE.NearestFilter;
-
-    if (asset.pub.domImage.complete) {
-      this.tileSetThreeTexture.needsUpdate = true;
-      this.tileMapRenderer.setTileSet(new TileSet(asset.pub), this.tileSetThreeTexture);
+      if (asset.pub.texture != null) this.tileMapRenderer.setTileSet(new TileSet(asset.pub));
       if (this.receiveAssetCallbacks != null) this.receiveAssetCallbacks.tileSet();
+    })
+
+  };
+
+  _prepareTexture(texture: THREE.Texture, callback: Function) {
+    if (texture == null) {
+      callback();
       return;
     }
 
-    let onImageLoaded = () => {
-      asset.pub.domImage.removeEventListener("load", onImageLoaded);
-      this.tileSetThreeTexture.needsUpdate = true;
-      this.tileMapRenderer.setTileSet(new TileSet(asset.pub), this.tileSetThreeTexture);
-      if (this.receiveAssetCallbacks != null) this.receiveAssetCallbacks.tileSet();
-    }
-
-    asset.pub.domImage.addEventListener("load", onImageLoaded);
-  };
+    if (texture.image.complete) callback();
+    else texture.image.addEventListener("load", callback);
+  }
 
   _onTileSetAssetEdited = (id: string, command: string, ...args: any[]) => {
     let commandFunction = (<any>this)[`_onTileSetEditCommand_${command}`];
@@ -210,25 +187,17 @@ export default class TileMapRendererUpdater {
   }
 
   _onTileSetEditCommand_upload() {
-    if (this.url != null) URL.revokeObjectURL(this.url);
-    let typedArray = new Uint8Array(<any>this.tileSetAsset.pub.image);
-    let blob = new Blob([ typedArray ], { type: "image/*" });
-    this.url = URL.createObjectURL(blob);
-
-    let image = this.tileSetThreeTexture.image;
-    image.src = this.url;
-    image.addEventListener("load", () => {
-      this.tileSetThreeTexture.needsUpdate = true;
-      this.tileMapRenderer.setTileSet(new TileSet(this.tileSetAsset.pub), this.tileSetThreeTexture);
+    this._prepareTexture(this.tileSetAsset.pub.texture, () => {
+      this.tileMapRenderer.setTileSet(new TileSet(this.tileSetAsset.pub));
     });
   }
 
   _onTileSetEditCommand_setProperty() {
-    this.tileMapRenderer.setTileSet(new TileSet(this.tileSetAsset.pub), this.tileSetThreeTexture);
+    this.tileMapRenderer.setTileSet(new TileSet(this.tileSetAsset.pub));
   }
 
   _onTileSetAssetTrashed = (assetId: string) => {
-    this.tileMapRenderer.setTileSet(null, null);
+    this.tileMapRenderer.setTileSet(null);
   }
 
   _onShaderAssetReceived(assetId: string, asset: { pub: any} ) {
@@ -256,11 +225,7 @@ export default class TileMapRendererUpdater {
 
         if (this.tileSetAssetId != null) this.client.unsubAsset(this.tileSetAssetId, this.tileSetSubscriber)
         this.tileSetAsset = null;
-        this.tileMapRenderer.setTileSet(null, null);
-        if (this.tileSetThreeTexture != null) {
-          this.tileSetThreeTexture.dispose();
-          this.tileSetThreeTexture = null;
-        }
+        this.tileMapRenderer.setTileSet(null);
 
         if (this.tileMapAssetId != null) this.client.subAsset(this.tileMapAssetId, "tileMap", this.tileMapSubscriber);
         break;

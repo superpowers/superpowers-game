@@ -1,7 +1,9 @@
-export default class TileSet {
-  data: any;
+import { TileSetAssetPub } from "../data/TileSetAsset";
 
-  constructor(data: any) {
+export default class TileSet {
+  data: TileSetAssetPub;
+
+  constructor(data: TileSetAssetPub) {
     this.data = data;
   }
 }

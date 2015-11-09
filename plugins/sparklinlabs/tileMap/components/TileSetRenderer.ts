@@ -11,7 +11,7 @@ export default class TileSetRenderer extends SupEngine.ActorComponent {
   gridRenderer: any;
   selectedTileActor: SupEngine.Actor;
 
-  constructor(actor: SupEngine.Actor, asset?: TileSet, overrideTexture?: THREE.Texture) {
+  constructor(actor: SupEngine.Actor, asset?: TileSet) {
     super(actor, "TileSetRenderer");
 
     let gridActor = new SupEngine.Actor(this.actor.gameInstance, "Grid");
@@ -25,17 +25,16 @@ export default class TileSetRenderer extends SupEngine.ActorComponent {
     this.selectedTileActor = new SupEngine.Actor(this.actor.gameInstance, "Selection", null, { visible: false });
     new SupEngine.editorComponentClasses["FlatColorRenderer"](this.selectedTileActor, 0x900090, 1, 1);
 
-    let texture = (overrideTexture != null) ? overrideTexture : (asset != null) ? asset.data.texture : null;
-    this.setTileSet(asset, texture);
+    this.setTileSet(asset);
   }
 
-  setTileSet(asset: TileSet, texture: THREE.Texture) {
+  setTileSet(asset: TileSet) {
     this._clearMesh();
     this.asset = asset;
     if (this.asset == null) return;
 
-    let geometry = new THREE.PlaneBufferGeometry(texture.image.width, texture.image.height);
-    let material = new THREE.MeshBasicMaterial({ map: texture, alphaTest: 0.1, side: THREE.DoubleSide });
+    let geometry = new THREE.PlaneBufferGeometry(asset.data.texture.image.width, asset.data.texture.image.height);
+    let material = new THREE.MeshBasicMaterial({ map: asset.data.texture, alphaTest: 0.1, side: THREE.DoubleSide });
 
     this.mesh = new THREE.Mesh(geometry, material);
     this.actor.threeObject.add(this.mesh);

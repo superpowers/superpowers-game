@@ -144,8 +144,8 @@ function selectTile(tile: { x: number; y: number; }) {
   data.selectedTile = tile;
   let pub = data.tileSetUpdater.tileSetAsset.pub
 
-  let tilePerRow = Math.floor(pub.domImage.width / pub.grid.width);
-  let tilePerColumn = Math.floor(pub.domImage.height / pub.grid.height);
+  let tilePerRow = Math.floor(pub.texture.image.width / pub.grid.width);
+  let tilePerColumn = Math.floor(pub.texture.image.height / pub.grid.height);
 
   let tileIndex = (tile.x === tilePerRow - 1 && tile.y === tilePerColumn - 1) ? -1 : tile.x + tile.y * tilePerRow;
   ui.selectedTileInput.value = tileIndex;
@@ -209,7 +209,7 @@ function onDownloadTileset(event: Event) {
     let a = document.createElement("a");
     document.body.appendChild(a);
     a.style.display = "none";
-    a.href = data.tileSetUpdater.url;
+    a.href = data.tileSetUpdater.tileSetAsset.url;
 
     // Not yet supported in IE and Safari (http://caniuse.com/#feat=download)
     (<any>a).download = `${name}.png`;
@@ -290,8 +290,8 @@ function handleTilesetArea() {
     let y = Math.floor(mouseY * ratio);
 
     let pub = data.tileSetUpdater.tileSetAsset.pub;
-    if (x >= 0 && x < pub.domImage.width / pub.grid.width &&
-    y >= 0 && y < pub.domImage.height / pub.grid.height &&
+    if (x >= 0 && x < pub.texture.image.width / pub.grid.width &&
+    y >= 0 && y < pub.texture.image.height / pub.grid.height &&
     (x !== data.selectedTile.x || y !== data.selectedTile.y)) {
       data.tileSetUpdater.tileSetRenderer.select(x, y);
       selectTile({ x, y });

@@ -17,7 +17,6 @@ export default class TileMapRenderer extends SupEngine.ActorComponent {
   materialType = "basic";
   customShader: any;
 
-  tileSetTexture: THREE.Texture;
   layerMeshes: THREE.Mesh[];
   layerMeshesById: { [id: string]: THREE.Mesh };
   layerVisibleById: { [id: string]: boolean };
@@ -40,16 +39,14 @@ export default class TileMapRenderer extends SupEngine.ActorComponent {
     this._createLayerMeshes();
   }
 
-  setTileSet(asset: TileSet, overrideTexture: THREE.Texture) {
-    if (this.tileSetTexture != null) {
-      this.tileSetTexture = null;
-      if (this.tileMap != null) this._clearLayerMeshes();
-    }
+  setTileSet(asset: TileSet) {
+    if (this.layerMeshes != null) this._clearLayerMeshes();
 
     this.tileSet = asset;
     if (this.tileSet == null) return;
 
-    this._setupTexture((overrideTexture != null) ? overrideTexture : this.tileSet.data.texture);
+    this.tilesPerRow = this.tileSet.data.texture.image.width / this.tileSet.data.grid.width;
+    this.tilesPerColumn = this.tileSet.data.texture.image.height / this.tileSet.data.grid.height;
     if (this.tileMap != null) this._createLayerMeshes();
   }
 
@@ -81,18 +78,7 @@ export default class TileMapRenderer extends SupEngine.ActorComponent {
     this.tileMap.removeListener("setTileAt", this._onSetTileAt);
   }
 
-  _setupTexture(texture: THREE.Texture) {
-    this.tileSetTexture = texture;
-    this.tilesPerRow = this.tileSetTexture.image.width / this.tileSet.data.grid.width;
-    this.tilesPerColumn = this.tileSetTexture.image.height / this.tileSet.data.grid.height;
-  }
-
   _destroy() {
-    if (this.tileSetTexture != null) {
-      if (this.layerMeshes != null) this._clearLayerMeshes();
-      this.tileSetTexture = null;
-    }
-
     this.tileMap = null;
     this.tileSet = null;
     super._destroy();
@@ -107,15 +93,15 @@ export default class TileMapRenderer extends SupEngine.ActorComponent {
     if (this.materialType === "shader") {
       material = SupEngine.componentClasses["Shader"].createShaderMaterial(
         this.customShader,
-        { map: this.tileSetTexture },
+        { map: this.tileSet.data.texture },
         geometry
       );
-      (<any>material).map = this.tileSetTexture;
+      (<any>material).map = this.tileSet.data.texture;
 
     } else {
       if (this.materialType === "basic") material = new THREE.MeshBasicMaterial();
       else if (this.materialType === "phong") material = new THREE.MeshPhongMaterial();
-      material.map = this.tileSetTexture;
+      material.map = this.tileSet.data.texture;
       material.alphaTest = 0.1;
       material.side = THREE.DoubleSide;
       material.transparent = true;
@@ -229,10 +215,11 @@ export default class TileMapRenderer extends SupEngine.ActorComponent {
       tileY = this.tilesPerColumn - 1;
     }
 
-    let left   = (tileX     * this.tileSet.data.grid.width + 0.2) / this.tileSetTexture.image.width;
-    let right  = ((tileX+1) * this.tileSet.data.grid.width - 0.2) / this.tileSetTexture.image.width;
-    let bottom = 1 - ((tileY+1) * this.tileSet.data.grid.height - 0.2) / this.tileSetTexture.image.height;
-    let top    = 1 - (tileY     * this.tileSet.data.grid.height + 0.2) / this.tileSetTexture.image.height;
+    let image = this.tileSet.data.texture.image;
+    let left   = (tileX     * this.tileSet.data.grid.width + 0.2) / image.width;
+    let right  = ((tileX+1) * this.tileSet.data.grid.width - 0.2) / image.width;
+    let bottom = 1 - ((tileY+1) * this.tileSet.data.grid.height - 0.2) / image.height;
+    let top    = 1 - (tileY     * this.tileSet.data.grid.height + 0.2) / image.height;
 
     if (flipX) {
       let temp = right;

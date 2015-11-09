@@ -7,11 +7,10 @@ import TileMapSettingsResource from "./TileMapSettingsResource";
 let THREE: typeof SupEngine.THREE;
 if ((<any>global).window != null && (<any>window).SupEngine != null) THREE = SupEngine.THREE;
 
-interface TileSetAssetPub {
+export interface TileSetAssetPub {
   image: Buffer;
   grid: { width: number; height: number };
   tileProperties: { [tileName: string]: { [propertyName: string]: string} };
-  domImage?: any;
   texture?: THREE.Texture;
 }
 
@@ -37,6 +36,8 @@ export default class TileSetAsset extends SupCore.data.base.Asset {
   };
 
   pub: TileSetAssetPub;
+
+  url: string;
 
   constructor(id: string, pub: TileSetAssetPub, serverData: any) {
     super(id, pub, TileSetAsset.schema, serverData);
@@ -102,11 +103,27 @@ export default class TileSetAsset extends SupCore.data.base.Asset {
   _loadTexture() {
     this._unloadTexture();
 
+    if (this.pub.image.length === 0) return;
 
+    let image = new Image;
+    let texture = this.pub.texture = new THREE.Texture(image);
+
+    texture.magFilter = THREE.NearestFilter;
+    texture.minFilter = THREE.NearestFilter;
+
+    let typedArray = new Uint8Array(this.pub.image);
+    let blob = new Blob([ typedArray ], { type: "image/*" });
+    image.src = this.url = URL.createObjectURL(blob);
+
+    if (!image.complete) image.addEventListener("load", () => { texture.needsUpdate = true; });
   }
 
   _unloadTexture() {
+    if (this.url != null) URL.revokeObjectURL(this.url);
+    if (this.pub.texture != null) this.pub.texture.dispose();
 
+    this.url = null;
+    this.pub.texture = null;
   }
 
   server_upload(client: any, image: Buffer, callback: (err: string, image: Buffer) => any) {

@@ -1,7 +1,7 @@
 import { EventEmitter } from "events";
 import * as _ from "lodash";
 
-import TileMapAsset, { TileMapAssetPub } from "../data/TileMapAsset";
+import { TileMapAssetPub } from "../data/TileMapAsset";
 
 export default class TileMap extends EventEmitter {
   private data: TileMapAssetPub;

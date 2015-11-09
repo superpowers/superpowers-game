@@ -12,7 +12,6 @@ export default class TileSetRendererUpdater {
   editAssetCallbacks: any;
 
   tileSetAssetId: string;
-  url: string;
 
   tileSetSubscriber: {
     onAssetReceived: (assetId: string, asset: TileSetAsset) => any;
@@ -21,7 +20,6 @@ export default class TileSetRendererUpdater {
   };
 
   tileSetAsset: TileSetAsset;
-  tileSetThreeTexture: THREE.Texture;
 
   constructor(client: SupClient.ProjectClient, tileSetRenderer: TileSetRenderer, config: any, receiveAssetCallbacks?: any, editAssetCallbacks?: any) {
     this.client = client;
@@ -40,10 +38,7 @@ export default class TileSetRendererUpdater {
   }
 
   destroy() {
-    if (this.tileSetAssetId != null) {
-      this.client.unsubAsset(this.tileSetAssetId, this.tileSetSubscriber);
-      this.tileSetThreeTexture.dispose();
-    }
+    if (this.tileSetAssetId != null) { this.client.unsubAsset(this.tileSetAssetId, this.tileSetSubscriber); }
   }
 
   changeTileSetId(tileSetId: string) {
@@ -51,55 +46,39 @@ export default class TileSetRendererUpdater {
     this.tileSetAssetId = tileSetId;
 
     this.tileSetAsset = null;
-    this.tileSetRenderer.setTileSet(null, null);
+    this.tileSetRenderer.setTileSet(null);
     this.tileSetRenderer.gridRenderer.resize(1, 1);
-    if (this.url != null) URL.revokeObjectURL(this.url);
-    if (this.tileSetThreeTexture != null) this.tileSetThreeTexture.dispose();
-    this.tileSetThreeTexture = null;
 
     if (this.tileSetAssetId != null) this.client.subAsset(this.tileSetAssetId, "tileSet", this.tileSetSubscriber);
   }
 
   _onTileSetAssetReceived = (assetId: string, asset: TileSetAsset) => {
-    this.tileSetAsset = asset;
+    this._prepareTexture(asset.pub.texture, () => {
+      this.tileSetAsset = asset;
 
-    if (asset.pub.domImage == null) {
-      if (this.url != null) URL.revokeObjectURL(this.url);
-      let typedArray = new Uint8Array(<any>asset.pub.image);
-      let blob = new Blob([ typedArray ], { type: "image/*" });
-      this.url = URL.createObjectURL(blob);
-
-      asset.pub.domImage = new Image
-      asset.pub.domImage.src = this.url
-    }
-
-    if (this.tileSetThreeTexture != null) this.tileSetThreeTexture.dispose();
-    this.tileSetThreeTexture = new THREE.Texture(asset.pub.domImage);
-    this.tileSetThreeTexture.magFilter = THREE.NearestFilter;
-    this.tileSetThreeTexture.minFilter = THREE.NearestFilter;
-
-    let setupTileSetTexture = () => {
-      this.tileSetThreeTexture.needsUpdate = true;
-      this.tileSetRenderer.setTileSet(new TileSet(asset.pub), this.tileSetThreeTexture);
-      this.tileSetRenderer.gridRenderer.setGrid({
-        width: asset.pub.domImage.width / asset.pub.grid.width,
-        height: asset.pub.domImage.height / asset.pub.grid.height,
-        direction: -1,
-        orthographicScale: 10,
-        ratio: { x: 1, y: asset.pub.grid.width / asset.pub.grid.height }
-      });
+      if (asset.pub.texture != null) {
+        this.tileSetRenderer.setTileSet(new TileSet(asset.pub));
+        this.tileSetRenderer.gridRenderer.setGrid({
+          width: asset.pub.texture.image.width / asset.pub.grid.width,
+          height: asset.pub.texture.image.height / asset.pub.grid.height,
+          direction: -1,
+          orthographicScale: 10,
+          ratio: { x: 1, y: asset.pub.grid.width / asset.pub.grid.height }
+        });
+      }
 
       if (this.receiveAssetCallbacks != null) this.receiveAssetCallbacks.tileSet();
+    })
+  }
+
+  _prepareTexture(texture: THREE.Texture, callback: Function) {
+    if (texture == null) {
+      callback();
+      return;
     }
 
-    if (asset.pub.domImage.complete) { setupTileSetTexture(); return; }
-
-    let onImageLoaded = () => {
-      asset.pub.domImage.removeEventListener("load", onImageLoaded);
-      setupTileSetTexture();
-    }
-
-    asset.pub.domImage.addEventListener("load", onImageLoaded);
+    if (texture.image.complete) callback();
+    else texture.image.addEventListener("load", callback);
   }
 
   _onTileSetAssetEdited = (id: string, command: string, ...args: any[]) => {
@@ -113,19 +92,12 @@ export default class TileSetRendererUpdater {
   }
 
   _onEditCommand_upload() {
-    if (this.url != null) URL.revokeObjectURL(this.url);
-    let typedArray = new Uint8Array(<any>this.tileSetAsset.pub.image);
-    let blob = new Blob([ typedArray ], { type: "image/*" });
-    this.url = URL.createObjectURL(blob);
+    let texture = this.tileSetAsset.pub.texture;
+    this._prepareTexture(texture, () => {
+      this.tileSetRenderer.setTileSet(new TileSet(this.tileSetAsset.pub));
 
-    let image = this.tileSetThreeTexture.image;
-    image.src = this.url;
-    image.addEventListener("load", () => {
-      this.tileSetThreeTexture.needsUpdate = true;
-      this.tileSetRenderer.setTileSet(new TileSet(this.tileSetAsset.pub), this.tileSetThreeTexture);
-
-      let width = this.tileSetThreeTexture.image.width / this.tileSetAsset.pub.grid.width;
-      let height = this.tileSetThreeTexture.image.height / this.tileSetAsset.pub.grid.height;
+      let width = texture.image.width / this.tileSetAsset.pub.grid.width;
+      let height = texture.image.height / this.tileSetAsset.pub.grid.height;
       this.tileSetRenderer.gridRenderer.resize(width, height);
       this.tileSetRenderer.gridRenderer.setRatio({ x: 1, y: this.tileSetAsset.pub.grid.width / this.tileSetAsset.pub.grid.height });
     });
@@ -137,8 +109,8 @@ export default class TileSetRendererUpdater {
       case "grid.height":
         this.tileSetRenderer.refreshScaleRatio();
 
-        let width = this.tileSetThreeTexture.image.width / this.tileSetAsset.pub.grid.width;
-        let height = this.tileSetThreeTexture.image.height / this.tileSetAsset.pub.grid.height;
+        let width = this.tileSetAsset.pub.texture.image.width / this.tileSetAsset.pub.grid.width;
+        let height = this.tileSetAsset.pub.texture.image.height / this.tileSetAsset.pub.grid.height;
         this.tileSetRenderer.gridRenderer.resize(width, height);
         this.tileSetRenderer.gridRenderer.setRatio({ x: 1, y: this.tileSetAsset.pub.grid.width / this.tileSetAsset.pub.grid.height });
         break;
@@ -146,7 +118,7 @@ export default class TileSetRendererUpdater {
   }
 
   _onTileSetAssetTrashed = (assetId: string) => {
-    this.tileSetRenderer.setTileSet(null, null);
+    this.tileSetRenderer.setTileSet(null);
     if (this.editAssetCallbacks != null) {
       // FIXME: We should probably have a this.trashAssetCallback instead
       // and let editors handle things how they want
