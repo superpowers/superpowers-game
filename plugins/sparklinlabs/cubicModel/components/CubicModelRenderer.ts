@@ -45,9 +45,8 @@ export default class CubicModelRenderer extends SupEngine.ActorComponent {
 
   setCubicModel(asset: CubicModelAssetPub, materialType?: string, customShader?: any) {
     if (this.asset != null) this._clearMesh();
-    this.asset = null;
-    if (asset == null) return;
     this.asset = asset;
+    if (asset == null) return;
 
     // Nodes
     this.threeRoot = new THREE.Object3D();

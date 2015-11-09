@@ -92,10 +92,11 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
   setModel(asset: ModelAssetPub, materialType?: string, customShader?: any) {
     if (this.asset != null) this._clearMesh();
     this.animation = null;
-
-    if (asset == null || asset.attributes["position"] == null) return;
+    this.animationsByName = {};
 
     this.asset = asset;
+    if (asset == null || asset.attributes["position"] == null) return;
+
     if (materialType != null) this.materialType = materialType;
     this.updateAnimationsByName();
 
@@ -261,7 +262,6 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
   }
 
   updateAnimationsByName() {
-    this.animationsByName = {};
     for (let animation of this.asset.animations) {
       this.animationsByName[animation.name] = animation;
     }
