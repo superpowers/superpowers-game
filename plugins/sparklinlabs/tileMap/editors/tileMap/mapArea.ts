@@ -113,14 +113,15 @@ export function setupFillPattern(newTileData: (number|boolean)[]) {
     let index = y * pub.width + x;
     // Skip if target tile on pattern isn't empty
     let patternTile = patternLayerData[index];
-    for (let i = 0; i < 2; i++) {
-      if (patternTile !== 0) return;
-    }
+    if (patternTile !== 0) return;
 
-    // Skip if taget tile on layer is different from the base tile
+    // Skip if target tile on layer is different from the base tile
     let layerTile = <(number|boolean)[]>layerData[index];
-    for (let i = 0; i < layerTile.length; i++) {
-      if (layerTile[i] !== refTileData[i]) return;
+    if ((<any>layerTile) === 0) {
+      if ((<any>refTileData) !== 0) return;
+    } else {
+      for (let i = 0; i < layerTile.length; i++)
+        if (layerTile[i] !== refTileData[i]) return;
     }
 
     patternLayerData[index] = _.cloneDeep(newTileData);
