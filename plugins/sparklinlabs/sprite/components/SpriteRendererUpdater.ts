@@ -76,21 +76,15 @@ export default class SpriteRendererUpdater {
   }
 
   _prepareMaps(callback: () => any) {
-    let mapNames = Object.keys(this.spriteAsset.pub.maps);
-    let texturesToLoad = mapNames.length;
+    let textureNames = Object.keys(this.spriteAsset.pub.textures);
+    let texturesToLoad = textureNames.length;
 
     function onTextureLoaded() {
       texturesToLoad--;
       if (texturesToLoad === 0) callback();
     }
 
-    mapNames.forEach((key) => {
-      let buffer: any = this.spriteAsset.pub.maps[key];
-      if (buffer == null || buffer.byteLength === 0) {
-        onTextureLoaded();
-        return;
-      }
-
+    textureNames.forEach((key) => {
       let image = this.spriteAsset.pub.textures[key].image;
       if (!image.complete) image.addEventListener("load", onTextureLoaded);
       else onTextureLoaded();

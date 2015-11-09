@@ -269,7 +269,7 @@ export default class SpriteAsset extends SupCore.data.base.Asset {
       if (image == null) {
         image = new Image;
         texture = this.pub.textures[key] = new THREE.Texture(image);
-        (<any>texture).size = { width: 0, height: 0 };
+        texture.size = { width: 0, height: 0 };
 
         if (this.pub.filtering === "pixelated") {
           texture.magFilter = THREE.NearestFilter;
@@ -286,7 +286,7 @@ export default class SpriteAsset extends SupCore.data.base.Asset {
           // Three.js might resize our texture to make its dimensions power-of-twos
           // because of WebGL limitations (see https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/Tutorial/Using_textures_in_WebGL#Non_power-of-two_textures)
           // so we store its original, non-power-of-two size for later use
-          (<any>texture).size = { width: image.width, height: image.height };
+          texture.size = { width: image.width, height: image.height };
           texture.needsUpdate = true;
         });
       }
@@ -309,7 +309,7 @@ export default class SpriteAsset extends SupCore.data.base.Asset {
 
   client_setProperty(path: string, value: any) {
     super.client_setProperty(path, value);
-    if (path === "") this.setupFiltering();
+    if (path === "filtering") this.setupFiltering();
   }
 
   server_setMaps(client: any, maps: any, callback: (err: string, maps?: any) => any) {
