@@ -77,6 +77,11 @@ export default class ModelRendererUpdater {
     let textureNames = Object.keys(textures);
     let texturesToLoad = textureNames.length;
 
+    if (texturesToLoad === 0) {
+      callback();
+      return;
+    }
+
     function onTextureLoaded() {
       texturesToLoad--;
       if (texturesToLoad === 0) callback();

@@ -38,9 +38,6 @@ export default class CubicModelRendererUpdater {
 
   _onCubicModelAssetReceived(assetId: string, asset: CubicModelAsset) {
     this.cubicModelAsset = asset;
-
-
-
     this._setCubicModel();
     if (this.receiveAssetCallbacks != null) this.receiveAssetCallbacks.cubicModel();
   }
@@ -53,7 +50,6 @@ export default class CubicModelRendererUpdater {
 
     this.cubicModelRenderer.setCubicModel(this.cubicModelAsset.pub);
   }
-
 
   _onCubicModelAssetEdited(id: string, command: string, ...args: any[]) {
     let commandCallback = (<any>this)[`_onEditCommand_${command}`];
