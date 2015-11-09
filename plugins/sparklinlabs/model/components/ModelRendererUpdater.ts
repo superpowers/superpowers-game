@@ -66,55 +66,27 @@ export default class ModelRendererUpdater {
 
   _onModelAssetReceived(assetId: string, asset: ModelAsset) {
     if (this.modelRenderer.opacity == null) this.modelRenderer.opacity = asset.pub.opacity;
-    this.modelAsset = asset;
-    this._prepareMaps(() => {
+    this._prepareMaps(asset.pub.textures, () => {
+      this.modelAsset = asset;
       this._setModel();
       if (this.receiveAssetCallbacks != null) this.receiveAssetCallbacks.model();
     });
   }
 
-  _prepareMaps(callback: () => any) {
-    this.modelAsset.pub.textures = {};
+  _prepareMaps(textures: { [name: string]: THREE.Texture }, callback: () => any) {
+    let textureNames = Object.keys(textures);
+    let texturesToLoad = textureNames.length;
 
-    for (let key in this.mapObjectURLs) {
-      URL.revokeObjectURL(this.mapObjectURLs[key]);
-      delete this.mapObjectURLs[key];
+    function onTextureLoaded() {
+      texturesToLoad--;
+      if (texturesToLoad === 0) callback();
     }
 
-    async.each(Object.keys(this.modelAsset.pub.maps), (key, cb) => {
-      let buffer: any = this.modelAsset.pub.maps[key];
-      if (buffer == null || buffer.byteLength === 0) { cb(); return; }
-
-      let texture = this.modelAsset.pub.textures[key];
-      let image: HTMLImageElement = (texture != null) ? texture.image : null;
-
-      if (image == null) {
-        image = new Image;
-        texture = this.modelAsset.pub.textures[key] = new THREE.Texture(image);
-
-        if (this.modelAsset.pub.filtering === "pixelated") {
-          texture.magFilter = SupEngine.THREE.NearestFilter;
-          texture.minFilter = SupEngine.THREE.NearestFilter;
-        }
-
-        if (this.modelAsset.pub.wrapping === "repeat") {
-          texture.wrapS = SupEngine.THREE.RepeatWrapping;
-          texture.wrapT = SupEngine.THREE.RepeatWrapping;
-        } else if (this.modelAsset.pub.wrapping === "mirroredRepeat") {
-          texture.wrapS = SupEngine.THREE.MirroredRepeatWrapping;
-          texture.wrapT = SupEngine.THREE.MirroredRepeatWrapping;
-        }
-
-        let typedArray = new Uint8Array(buffer);
-        let blob = new Blob([ typedArray ], { type: "image/*" });
-        image.src = this.mapObjectURLs[key] = URL.createObjectURL(blob);
-      }
-
-      if (!image.complete) {
-        image.addEventListener("load", () => { texture.needsUpdate = true; cb(); return });
-      } else cb();
-
-    }, callback);
+    textureNames.forEach((key) => {
+      let image = textures[key].image;
+      if (!image.complete) image.addEventListener("load", onTextureLoaded);
+      else onTextureLoaded();
+    });
   }
 
   _setModel() {
@@ -148,7 +120,7 @@ export default class ModelRendererUpdater {
 
   _onEditCommand_setMaps(maps: any) {
     // TODO: Only update the maps that changed, don't recreate the whole model
-    this._prepareMaps(() => {
+    this._prepareMaps(this.modelAsset.pub.textures, () => {
       this._setModel();
     });
   }

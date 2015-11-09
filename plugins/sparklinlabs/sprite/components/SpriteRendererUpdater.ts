@@ -68,15 +68,15 @@ export default class SpriteRendererUpdater {
 
   _onSpriteAssetReceived(assetId: string, asset: SpriteAsset) {
     if (this.spriteRenderer.opacity == null) this.spriteRenderer.opacity = asset.pub.opacity;
-    this.spriteAsset = asset;
-    this._prepareMaps(() => {
+    this._prepareMaps(asset.pub.textures, () => {
+      this.spriteAsset = asset;
       this._setSprite();
       if (this.receiveAssetCallbacks != null) this.receiveAssetCallbacks.sprite();
     });
   }
 
-  _prepareMaps(callback: () => any) {
-    let textureNames = Object.keys(this.spriteAsset.pub.textures);
+  _prepareMaps(textures: { [name: string]: THREE.Texture }, callback: () => any) {
+    let textureNames = Object.keys(textures);
     let texturesToLoad = textureNames.length;
 
     function onTextureLoaded() {
@@ -85,7 +85,7 @@ export default class SpriteRendererUpdater {
     }
 
     textureNames.forEach((key) => {
-      let image = this.spriteAsset.pub.textures[key].image;
+      let image = textures[key].image;
       if (!image.complete) image.addEventListener("load", onTextureLoaded);
       else onTextureLoaded();
     });
@@ -123,7 +123,7 @@ export default class SpriteRendererUpdater {
 
   _onEditCommand_setMaps(maps: any) {
     // TODO: Only update the maps that changed, don't recreate the whole model
-    this._prepareMaps(() => {
+    this._prepareMaps(this.spriteAsset.pub.textures, () => {
       this._setSprite();
       let editCallback = (this.editAssetCallbacks != null) ? this.editAssetCallbacks.sprite["setMaps"] : null;
       if (editCallback != null) editCallback();
