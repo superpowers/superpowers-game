@@ -19,7 +19,7 @@ export interface CubicModelAssetPub {
 
   textureWidth: number;
   textureHeight: number;
-  textures?: { [name: string]: any; };
+  textures?: { [name: string]: THREE.Texture; };
   maps: { [name: string]: ArrayBuffer; };
   mapSlots: { [name: string]: string; };
 }
@@ -59,7 +59,11 @@ export default class CubicModelAsset extends SupCore.data.base.Asset {
 
   pub: CubicModelAssetPub;
   nodes: CubicModelNodes;
+
   textureDatas: { [name: string]: Uint8ClampedArray; };
+
+  // Only used on client-side
+  textureEditing: { [name: string]: { imageData: ImageData; ctx: CanvasRenderingContext2D; } } = {};
 
   constructor(id: string, pub: any, serverData: any) {
     super(id, pub, CubicModelAsset.schema, serverData);
@@ -123,6 +127,9 @@ export default class CubicModelAsset extends SupCore.data.base.Asset {
     });
   }
 
+  client_load() { this._loadTextures(); }
+  client_unload() { this._unloadTextures(); }
+
   save(assetPath: string, saveCallback: (err: Error) => void) {
     let maps = this.pub.maps;
 
@@ -153,6 +160,33 @@ export default class CubicModelAsset extends SupCore.data.base.Asset {
     });
   }
 
+  _unloadTextures() {
+    for (let textureName in this.pub.textures) this.pub.textures[textureName].dispose();
+  }
+
+  _loadTextures() {
+    this._unloadTextures();
+    this.pub.textures = {};
+    this.textureEditing = {};
+
+    // Texturing
+    // NOTE: This is the unoptimized variant for editing
+    // There should be an option you can pass to setModel to ask for editable version vs (default) optimized
+    for (let mapName in this.pub.maps) {
+      let canvas = document.createElement("canvas");
+      canvas.width = this.pub.textureWidth;
+      canvas.height = this.pub.textureHeight;
+      let ctx = canvas.getContext("2d");
+      let texture = this.pub.textures[mapName] = new THREE.Texture(canvas);
+      texture.needsUpdate = true;
+      texture.magFilter = THREE.NearestFilter;
+      texture.minFilter = THREE.NearestFilter;
+
+      let imageData = new ImageData(this.textureDatas[mapName], this.pub.textureWidth, this.pub.textureHeight)
+      ctx.putImageData(imageData, 0, 0);
+      this.textureEditing[mapName] = { imageData, ctx };
+    }
+  }
 
   server_addNode(client: any, name: string, options: any, callback: (err: string, node: Node, parentId: string, index: number) => any) {
     let parentId = (options != null) ? options.parentId : null;
@@ -427,13 +461,21 @@ export default class CubicModelAsset extends SupCore.data.base.Asset {
       if (edit.value.a == null || edit.value.a < 0 || edit.value.a > 255) { callback(`Invalid edit value a: ${edit.value.a}`, null, null); return; }
     }
 
-    this.client_editTexture(name, edits);
+    this._editTextureData(name, edits);
 
     callback(null, name, edits);
     this.emit("change");
   }
 
   client_editTexture(name: string, edits: TextureEdit[]) {
+    this._editTextureData(name, edits);
+
+    let imageData = this.textureEditing[name].imageData;
+    this.textureEditing[name].ctx.putImageData(imageData, 0, 0);
+    this.pub.textures[name].needsUpdate = true;
+  }
+
+  _editTextureData(name: string, edits: TextureEdit[]) {
     let array = this.textureDatas[name];
     for (let edit of edits) {
       let index = edit.y * this.pub.textureWidth + edit.x;
