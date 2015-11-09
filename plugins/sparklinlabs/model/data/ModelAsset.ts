@@ -349,6 +349,42 @@ export default class ModelAsset extends SupCore.data.base.Asset {
     });
   }
 
+  client_setProperty(path: string, value: any) {
+    super.client_setProperty(path, value);
+
+    switch (path) {
+      case "filtering":
+        for (let textureName in this.pub.textures) {
+          let texture = this.pub.textures[textureName];
+          if (this.pub.filtering === "pixelated") {
+            texture.magFilter = THREE.NearestFilter;
+            texture.minFilter = THREE.NearestFilter;
+          } else {
+            texture.magFilter = THREE.LinearFilter;
+            texture.minFilter = THREE.LinearMipMapLinearFilter;
+          }
+          texture.needsUpdate = true;
+        }
+        break;
+      case "wrapping":
+        for (let textureName in this.pub.textures) {
+          let texture = this.pub.textures[textureName];
+          if (value === "clampToEdge") {
+            texture.wrapS = SupEngine.THREE.ClampToEdgeWrapping;
+            texture.wrapT = SupEngine.THREE.ClampToEdgeWrapping;
+          } else if (value === "repeat") {
+            texture.wrapS = SupEngine.THREE.RepeatWrapping;
+            texture.wrapT = SupEngine.THREE.RepeatWrapping;
+          } else if (value === "mirroredRepeat") {
+            texture.wrapS = SupEngine.THREE.MirroredRepeatWrapping;
+            texture.wrapT = SupEngine.THREE.MirroredRepeatWrapping;
+          }
+          texture.needsUpdate = true;
+        }
+        break;
+    }
+  }
+
   server_setModel(client: any, upAxisMatrix: number[], attributes: { [name: string]: any }, bones: any[], callback: (err: string, upAxisMatrix?: number[], attributes?: { [name: string]: any }, bones?: any[]) => any) {
     // Validate up matrix
     if (upAxisMatrix != null) {

@@ -269,7 +269,6 @@ export default class SpriteAsset extends SupCore.data.base.Asset {
       if (image == null) {
         image = new Image;
         texture = this.pub.textures[key] = new THREE.Texture(image);
-        //texture.size = { width: 0, height: 0 };
 
         if (this.pub.filtering === "pixelated") {
           texture.magFilter = THREE.NearestFilter;
@@ -293,23 +292,24 @@ export default class SpriteAsset extends SupCore.data.base.Asset {
     });
   }
 
-  setupFiltering() {
-    for (let textureName in this.pub.textures) {
-      let texture = this.pub.textures[textureName];
-      if (this.pub.filtering === "pixelated") {
-        texture.magFilter = THREE.NearestFilter;
-        texture.minFilter = THREE.NearestFilter;
-      } else {
-        texture.magFilter = THREE.LinearFilter;
-        texture.minFilter = THREE.LinearMipMapLinearFilter;
-      }
-      texture.needsUpdate = true;
-    }
-  }
-
   client_setProperty(path: string, value: any) {
     super.client_setProperty(path, value);
-    if (path === "filtering") this.setupFiltering();
+
+    switch (path) {
+      case "filtering":
+        for (let textureName in this.pub.textures) {
+          let texture = this.pub.textures[textureName];
+          if (this.pub.filtering === "pixelated") {
+            texture.magFilter = THREE.NearestFilter;
+            texture.minFilter = THREE.NearestFilter;
+          } else {
+            texture.magFilter = THREE.LinearFilter;
+            texture.minFilter = THREE.LinearMipMapLinearFilter;
+          }
+          texture.needsUpdate = true;
+        }
+        break;
+    }
   }
 
   server_setMaps(client: any, maps: any, callback: (err: string, maps?: any) => any) {

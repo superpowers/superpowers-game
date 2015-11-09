@@ -146,36 +146,6 @@ export default class ModelRendererUpdater {
 
   _onEditCommand_setProperty(path: string, value: any) {
     switch(path) {
-      case "filtering":
-        for (let textureName in this.modelAsset.pub.textures) {
-          let texture = this.modelAsset.pub.textures[textureName];
-          if (value === "pixelated") {
-            texture.magFilter = THREE.NearestFilter;
-            texture.minFilter = THREE.NearestFilter;
-          } else {
-            texture.magFilter = THREE.LinearFilter;
-            texture.minFilter = THREE.LinearMipMapLinearFilter;
-          }
-          texture.needsUpdate = true;
-        }
-        break;
-      case "wrapping":
-        for (let textureName in this.modelAsset.pub.textures) {
-          let texture = this.modelAsset.pub.textures[textureName];
-          if (value === "clampToEdge") {
-            texture.wrapS = SupEngine.THREE.ClampToEdgeWrapping;
-            texture.wrapT = SupEngine.THREE.ClampToEdgeWrapping;
-          } else if (value === "repeat") {
-            texture.wrapS = SupEngine.THREE.RepeatWrapping;
-            texture.wrapT = SupEngine.THREE.RepeatWrapping;
-          } else if (value === "mirroredRepeat") {
-            texture.wrapS = SupEngine.THREE.MirroredRepeatWrapping;
-            texture.wrapT = SupEngine.THREE.MirroredRepeatWrapping;
-          }
-          texture.needsUpdate = true;
-        }
-        break;
-
       case "unitRatio":
         this.modelRenderer.setUnitRatio(value);
         break;
