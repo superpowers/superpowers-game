@@ -168,6 +168,8 @@ export default class FontAsset extends SupCore.data.base.Asset {
   client_upload(font: any) {
     if (this.pub.isBitmap) this.pub.bitmap = font
     else this.pub.font = font
+
+    this._loadFont();
   }
 
   client_setProperty(path: string, value: any) {
