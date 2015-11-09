@@ -6,7 +6,7 @@ declare let FontFace: any;
 
 // Reference to THREE, client-side only
 let THREE: typeof SupEngine.THREE;
-if ((<any>global).window != null) THREE = SupEngine.THREE;
+if ((<any>global).window != null && (<any>global).window.SupEngine != null) THREE = (<any>global).window.SupEngine.THREE;
 
 export interface FontPub {
   isBitmap: boolean; filtering: string; pixelsPerUnit: number;

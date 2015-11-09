@@ -6,7 +6,7 @@ import SpriteAnimations, { SpriteAnimationPub } from "./SpriteAnimations";
 
 // Reference to THREE, client-side only
 let THREE: typeof SupEngine.THREE;
-if ((<any>global).window != null) THREE = SupEngine.THREE;
+if ((<any>global).window != null && (<any>global).window.SupEngine != null) THREE = (<any>global).window.SupEngine.THREE;
 
 interface TextureWithSize extends THREE.Texture {
   size?: {
@@ -269,7 +269,7 @@ export default class SpriteAsset extends SupCore.data.base.Asset {
       if (image == null) {
         image = new Image;
         texture = this.pub.textures[key] = new THREE.Texture(image);
-        texture.size = { width: 0, height: 0 };
+        //texture.size = { width: 0, height: 0 };
 
         if (this.pub.filtering === "pixelated") {
           texture.magFilter = THREE.NearestFilter;
