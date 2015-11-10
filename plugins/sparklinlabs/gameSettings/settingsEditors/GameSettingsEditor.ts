@@ -118,7 +118,7 @@ export default class GameSettingsEditor {
     this._setupCustomLayers();
 
     for (let setting in resource.pub) {
-      if (setting === "version" || setting === "customLayers") continue;
+      if (setting === "formatVersion" || setting === "customLayers") continue;
 
       if (setting === "startupSceneId") {
         if (this.projectClient.entries != null) this._setStartupScene(resource.pub.startupSceneId);

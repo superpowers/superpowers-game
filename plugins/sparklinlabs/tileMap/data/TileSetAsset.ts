@@ -8,6 +8,7 @@ let THREE: typeof SupEngine.THREE;
 if ((<any>global).window != null && (<any>window).SupEngine != null) THREE = SupEngine.THREE;
 
 export interface TileSetAssetPub {
+  formatVersion: number;
   image: Buffer;
   grid: { width: number; height: number };
   tileProperties: { [tileName: string]: { [propertyName: string]: string} };
@@ -15,8 +16,11 @@ export interface TileSetAssetPub {
 }
 
 export default class TileSetAsset extends SupCore.data.base.Asset {
+  static currentFormatVersion = 1;
 
   static schema: SupCore.data.base.Schema = {
+    formatVersion: { type: "integer" },
+
     image: { type: "buffer" },
     grid: {
       type: "hash",
@@ -46,6 +50,8 @@ export default class TileSetAsset extends SupCore.data.base.Asset {
   init(options: any, callback: Function) {
     this.serverData.resources.acquire("tileMapSettings", null, (err: Error, tileMapSettings: TileMapSettingsResource) => {
       this.pub = {
+        formatVersion: TileSetAsset.currentFormatVersion,
+
         image: new Buffer(0),
         grid: tileMapSettings.pub.grid,
         tileProperties: {}
@@ -57,34 +63,40 @@ export default class TileSetAsset extends SupCore.data.base.Asset {
 
   load(assetPath: string) {
     let pub: TileSetAssetPub;
-    let loadAsset = () => {
-      // NOTE: gridSize was split into grid.width and .height in Superpowers 0.8
-      if ((<any>pub)["gridSize"] != null) {
-        pub.grid = { width: (<any>pub)["gridSize"], height: (<any>pub)["gridSize"]};
-        delete (<any>pub)["gridSize"];
-      }
-
-      fs.readFile(path.join(assetPath, "image.dat"), (err, buffer) => {
-        pub.image = buffer;
-        this.pub = pub;
-        this.setup();
-        this.emit("load");
-      });
-    }
-
     fs.readFile(path.join(assetPath, "tileset.json"), { encoding: "utf8" }, (err, json) => {
       if (err != null && err.code === "ENOENT") {
         fs.readFile(path.join(assetPath, "asset.json"), { encoding: "utf8" },(err, json) => {
           fs.rename(path.join(assetPath, "asset.json"), path.join(assetPath, "tileset.json"), (err) => {
             pub = JSON.parse(json);
-            loadAsset();
+            fs.readFile(path.join(assetPath, "image.dat"), (err, buffer) => {
+              pub.image = buffer;
+              this._onLoaded(assetPath, pub);
+            });
           });
         });
       } else {
         pub = JSON.parse(json);
-        loadAsset();
+        fs.readFile(path.join(assetPath, "image.dat"), (err, buffer) => {
+          pub.image = buffer;
+          this._onLoaded(assetPath, pub);
+        });
       }
     });
+  }
+
+  migrate(assetPath: string, pub: TileSetAssetPub, callback: (hasMigrated: boolean) => void) {
+    if (pub.formatVersion === TileSetAsset.currentFormatVersion) { callback(false); return; }
+
+    if (pub.formatVersion == null) {
+      // NOTE: gridSize was split into grid.width and .height in Superpowers 0.8
+      if ((<any>pub)["gridSize"] != null) {
+        pub.grid = { width: (<any>pub)["gridSize"], height: (<any>pub)["gridSize"]};
+        delete (<any>pub)["gridSize"];
+      }
+      pub.formatVersion = 1;
+    }
+
+    callback(true);
   }
 
   client_load() { this._loadTexture(); }

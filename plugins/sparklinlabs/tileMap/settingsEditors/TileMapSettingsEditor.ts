@@ -66,6 +66,8 @@ export default class TileMapSettingsEditor {
     this.resource = resource;
 
     for (let setting in resource.pub) {
+      if (setting === "formatVersion") continue;
+
       if (setting === "grid") {
         this.fields["grid.width"].value = resource.pub.grid.width.toString();
         this.fields["grid.height"].value = resource.pub.grid.height.toString();

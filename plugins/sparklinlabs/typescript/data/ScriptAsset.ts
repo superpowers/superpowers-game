@@ -40,6 +40,12 @@ if ((<any>global).window == null) {
   globalDefs = globalDefs.replace("// INSERT_COMPONENT_ACCESSORS", actorComponentAccessors.join("\n    "));
 }
 
+interface ScriptAssetPub {
+  text: string;
+  draft: string
+  revisionId: number;
+}
+
 export default class ScriptAsset extends SupCore.data.base.Asset {
 
   static schema: SupCore.data.base.Schema = {
@@ -48,11 +54,7 @@ export default class ScriptAsset extends SupCore.data.base.Asset {
     revisionId: { type: "integer" }
   };
 
-  pub: {
-    text: string;
-    draft: string
-    revisionId: number;
-  }
+  pub: ScriptAssetPub;
 
   document: OT.Document;
   hasDraft: boolean;
@@ -150,14 +152,14 @@ Sup.registerBehavior(${behaviorName});
     // the asset will be considered loaded by Dictionary.acquire
     // and the acquire callback will be called immediately
 
+    let pub: ScriptAssetPub
     let readDraft = (text: string) => {
       fs.readFile(path.join(assetPath, "draft.ts"), { encoding: "utf8" }, (err, draft) => {
         // NOTE: draft.txt was renamed to draft.ts in Superpowers 0.11
         if (err != null && err.code === "ENOENT") {
           fs.readFile(path.join(assetPath, "draft.txt"), { encoding: "utf8" }, (err, draft) => {
-            this.pub = { revisionId: 0, text, draft: (draft != null) ? draft : text };
-            this.setup();
-            this.emit("load");
+            pub = { revisionId: 0, text, draft: (draft != null) ? draft : text };
+            this._onLoaded(assetPath, pub);
 
             if (draft != null) {
               if (draft !== text) fs.writeFile(path.join(assetPath, "draft.ts"), draft, { encoding: "utf8" });
@@ -166,9 +168,8 @@ Sup.registerBehavior(${behaviorName});
 
           });
         } else {
-          this.pub = { revisionId: 0, text, draft: (draft != null) ? draft : text };
-          this.setup();
-          this.emit("load");
+          pub = { revisionId: 0, text, draft: (draft != null) ? draft : text };
+          this._onLoaded(assetPath, pub);
         }
       });
     }

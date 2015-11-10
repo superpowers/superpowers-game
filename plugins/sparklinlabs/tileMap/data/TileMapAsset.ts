@@ -6,6 +6,7 @@ import * as fs from "fs";
 import * as _ from "lodash";
 
 export interface TileMapAssetPub {
+  formatVersion?: number;
   tileSetId: string;
   pixelsPerUnit: number;
   width: number;
@@ -15,8 +16,11 @@ export interface TileMapAssetPub {
 }
 
 export default class TileMapAsset extends SupCore.data.base.Asset {
+  static currentFormatVersion = 1;
 
   static schema: SupCore.data.base.Schema = {
+    formatVersion: { type: "integer" },
+
     tileSetId: { type: "string?" },
 
     pixelsPerUnit: { type: "number", minExcluded: 0, mutable: true },
@@ -32,15 +36,13 @@ export default class TileMapAsset extends SupCore.data.base.Asset {
   layers: TileMapLayers;
 
   constructor(id: string, pub: TileMapAssetPub, serverData: any) {
-    // NOTE: Legacy stuff from Superpowers 0.4
-    if (pub != null && typeof pub.tileSetId === "number") pub.tileSetId = pub.tileSetId.toString();
-
     super(id, pub, TileMapAsset.schema, serverData);
   }
 
   init(options: any, callback: (err: string) => any) {
     this.serverData.resources.acquire("tileMapSettings", null, (err: Error, tileMapSettings: TileMapSettingsResource) => {
       this.pub = {
+        formatVersion: TileMapAsset.currentFormatVersion,
         tileSetId: null,
         pixelsPerUnit: tileMapSettings.pub.pixelsPerUnit,
         width: tileMapSettings.pub.width, height: tileMapSettings.pub.height,
@@ -58,29 +60,40 @@ export default class TileMapAsset extends SupCore.data.base.Asset {
   }
 
   load(assetPath: string) {
-    let loadJson = (json: string) => {
-      let pub = JSON.parse(json);
-
-      for (let layer of pub.layers) {
-        for (let index = 0; index < layer.data.length; index++) {
-          if ((<any>layer.data[index][0]) === -1) layer.data[index] = 0;
-        }
-      }
-
-      this.pub = pub;
-      this.setup();
-      this.emit("load");
-    }
-
+    let pub: TileMapAssetPub
     fs.readFile(path.join(assetPath, "tilemap.json"), { encoding: "utf8" },(err, json) => {
       if (err != null && err.code === "ENOENT") {
         fs.readFile(path.join(assetPath, "asset.json"), { encoding: "utf8" },(err, json) => {
           fs.rename(path.join(assetPath, "asset.json"), path.join(assetPath, "tilemap.json"), (err) => {
-            loadJson(json);
+            pub = JSON.parse(json);
+            this._onLoaded(assetPath, pub);
           });
         });
-      } else loadJson(json);
+      } else {
+        pub = JSON.parse(json);
+        this._onLoaded(assetPath, pub);
+      }
     });
+  }
+
+  migrate(assetPath: string, pub: TileMapAssetPub, callback: (hasMigrated: boolean) => void) {
+    if (pub.formatVersion === TileMapAsset.currentFormatVersion) { callback(false); return; }
+
+    if (pub.formatVersion == null) {
+      // NOTE: Legacy stuff from Superpowers 0.4
+      if (typeof pub.tileSetId === "number") pub.tileSetId = pub.tileSetId.toString();
+
+      // NOTE: Migration from Superpowers 0.13.1
+      for (let layer of pub.layers) {
+        for (let index = 0; index < layer.data.length; index++) {
+          if ((<any>layer).data[index][0] === -1) layer.data[index] = 0;
+        }
+      }
+
+      pub.formatVersion = 1;
+    }
+
+    callback(true);
   }
 
   save(assetPath: string, callback: (err: Error) => any) {

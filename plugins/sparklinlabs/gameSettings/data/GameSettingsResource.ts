@@ -43,7 +43,7 @@ export default class GameSettingsResource extends SupCore.data.base.Resource {
     super.init(callback);
   }
 
-  migrate(callback: (hasMigrated: boolean) => void) {
+  migrate(resourcePath: string, callback: (hasMigrated: boolean) => void) {
     if (this.pub.formatVersion === GameSettingsResource.currentFormatVersion) { callback(false); return; }
 
     if (this.pub.formatVersion == null) {

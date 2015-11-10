@@ -26,7 +26,7 @@ export default class SceneSettingsResource extends SupCore.data.base.Resource {
     super.init(callback);
   }
 
-  migrate(callback: (hasMigrated: boolean) => void) {
+  migrate(resourcePath: string, callback: (hasMigrated: boolean) => void) {
     if (this.pub.formatVersion === SceneSettingsResource.currentFormatVersion) { callback(false); return; }
 
     if (this.pub.formatVersion == null) {

@@ -16,6 +16,8 @@ interface Animation {
 }
 
 export interface ModelAssetPub {
+  formatVersion: number;
+
   unitRatio: number;
   upAxisMatrix: number[];
   attributes: { [name: string]: Buffer; };
@@ -38,8 +40,11 @@ export interface ModelAssetPub {
 }
 
 export default class ModelAsset extends SupCore.data.base.Asset {
+  static currentFormatVersion = 1;
 
   static schema: SupCore.data.base.Schema = {
+    formatVersion: { type: "integer" },
+
     unitRatio: { type: "number", minExcluded: 0, mutable: true },
     upAxisMatrix: { type: "array", length: 16, items: { type: "number" } },
     attributes: {
@@ -104,6 +109,8 @@ export default class ModelAsset extends SupCore.data.base.Asset {
 
   init(options: any, callback: Function) {
     this.pub = {
+      formatVersion: ModelAsset.currentFormatVersion,
+
       unitRatio: 1,
       upAxisMatrix: null,
       attributes: {
@@ -143,6 +150,71 @@ export default class ModelAsset extends SupCore.data.base.Asset {
     let pub: ModelAssetPub;
 
     let loadAttributesMaps = () => {
+      let mapNames: string[] = <any>pub.maps;
+      // NOTE: "diffuse" was renamed to "map" in Superpowers 0.11
+      if (pub.formatVersion == null && mapNames.length === 1 && mapNames[0] === "diffuse") mapNames[0] = "map";
+
+      pub.maps = {};
+      pub.attributes = {};
+
+      async.series([
+
+        (callback) => {
+            async.each(Object.keys(ModelAsset.schema["attributes"].properties), (key, cb) => {
+                fs.readFile(path.join(assetPath, `attr-${key}.dat`), (err, buffer) => {
+                  // TODO: Handle error but ignore ENOENT
+                  if (err != null) { cb(); return; }
+                  pub.attributes[key] = buffer;
+                  cb();
+                });
+            }, (err) => { callback(err, null); });
+        },
+
+        (callback) => {
+          async.each(mapNames, (key, cb) => {
+            fs.readFile(path.join(assetPath, `map-${key}.dat`), (err, buffer) => {
+              // TODO: Handle error but ignore ENOENT
+              if (err != null) {
+                // NOTE: "diffuse" was renamed to "map" in Superpowers 0.11
+                if (err.code === "ENOENT" && key === "map") {
+                  fs.readFile(path.join(assetPath, "map-diffuse.dat"), (err, buffer) => {
+                    fs.rename(path.join(assetPath, "map-diffuse.dat"), path.join(assetPath, "map-map.dat"), (err) => {
+                      pub.maps[key] = buffer;
+                      cb();
+                    });
+                  });
+                } else cb();
+                return;
+              }
+              pub.maps[key] = buffer;
+              cb();
+            });
+          }, (err) => { callback(err, null); });
+        }
+
+      ], (err) => { this._onLoaded(assetPath, pub); });
+    }
+
+    fs.readFile(path.join(assetPath, "model.json"), { encoding: "utf8" }, (err, json) => {
+      // NOTE: "asset.json" was renamed to "model.json" in Superpowers 0.11
+      if (err != null && err.code === "ENOENT") {
+        fs.readFile(path.join(assetPath, "asset.json"), { encoding: "utf8" }, (err, json) => {
+          fs.rename(path.join(assetPath, "asset.json"), path.join(assetPath, "model.json"), (err) => {
+            pub = JSON.parse(json);
+            loadAttributesMaps();
+          });
+        });
+      } else {
+        pub = JSON.parse(json);
+        loadAttributesMaps();
+      }
+    });
+  }
+
+  migrate(assetPath: string, pub: ModelAssetPub, callback: (hasMigrated: boolean) => void) {
+    if (pub.formatVersion === ModelAsset.currentFormatVersion) { callback(false); return; }
+
+    if (pub.formatVersion == null) {
       // NOTE: New settings introduced in Superpowers 0.8
       if (typeof pub.opacity === "undefined") pub.opacity = 1;
 
@@ -162,77 +234,12 @@ export default class ModelAsset extends SupCore.data.base.Asset {
       if (pub.filtering == null) pub.filtering = "pixelated";
       if (pub.wrapping == null) pub.wrapping = "clampToEdge";
 
-      pub.attributes = {};
-
-      let mapNames: string[] = <any>pub.maps;
-      // NOTE: "diffuse" was renamed to "map" in Superpowers 0.11
-      if (mapNames.length === 1 && mapNames[0] === "diffuse") mapNames[0] = "map";
-
-      pub.maps = {};
       if (pub.animations == null) pub.animations = [];
 
-      async.series([
-
-        (callback) => {
-            async.each(Object.keys(ModelAsset.schema["attributes"].properties), (key, cb) => {
-                fs.readFile(path.join(assetPath, `attr-${key}.dat`), (err, buffer) => {
-                    // TODO: Handle error but ignore ENOENT
-                    if (err != null) { cb(); return; }
-                    pub.attributes[key] = buffer;
-                    cb();
-                });
-            }, (err) => { callback(err, null); });
-        },
-
-        (callback) => {
-          async.each(mapNames, (key, cb) => {
-            fs.readFile(path.join(assetPath, `map-${key}.dat`), (err, buffer) => {
-              // TODO: Handle error but ignore ENOENT
-              if (err != null) {
-                // NOTE: "diffuse" was renamed to "map" in Superpowers 0.11
-                if (err.code === "ENOENT" && key === "map") {
-                  fs.readFile(path.join(assetPath, "map-diffuse.dat"), (err, buffer) => {
-                    pub.maps[key] = buffer;
-                    fs.writeFile(path.join(assetPath, "map-map.dat"), buffer);
-                    fs.unlink(path.join(assetPath, "map-diffuse.dat"));
-                    cb();
-                  });
-                } else cb();
-                return;
-              }
-              pub.maps[key] = buffer;
-              cb();
-            });
-          }, (err) => { callback(err, null); });
-        }
-
-      ], (err) => {
-        this.pub = pub;
-        this.setup();
-        this.emit("load");
-      });
+      pub.formatVersion = 1;
     }
 
-    fs.readFile(path.join(assetPath, "model.json"), { encoding: "utf8" }, (err, json) => {
-      // TODO: "asset.json" was renamed to "model.json" in Superpowers 0.11
-      if (err != null && err.code === "ENOENT") {
-        fs.readFile(path.join(assetPath, "asset.json"), { encoding: "utf8" }, (err, json) => {
-          fs.rename(path.join(assetPath, "asset.json"), path.join(assetPath, "model.json"), (err) => {
-            pub = JSON.parse(json);
-            loadAttributesMaps();
-          });
-        });
-      } else {
-        pub = JSON.parse(json);
-        loadAttributesMaps();
-      }
-    });
-
-    /*(callback) => {
-      async.each(this.pub.animations, (animation, cb) => {
-        fs.readFile(path.join(assetPath, `anim-${animation.id}.dat`), (err, buffer) => { ... });
-      });
-    } */
+    callback(true);
   }
 
   client_load() {

@@ -16,6 +16,8 @@ interface TextureWithSize extends THREE.Texture {
 }
 
 export interface SpriteAssetPub {
+  formatVersion: number;
+
   // FIXME: This is used client-side to store shared THREE.js textures
   // We should probably find a better place for it
   textures?: { [name: string]: TextureWithSize; };
@@ -39,8 +41,11 @@ export interface SpriteAssetPub {
 }
 
 export default class SpriteAsset extends SupCore.data.base.Asset {
+  static currentFormatVersion = 1;
 
   static schema: SupCore.data.base.Schema = {
+    formatVersion: { type: "integer" },
+
     maps: {
       type: "hash",
       values: {
@@ -99,6 +104,8 @@ export default class SpriteAsset extends SupCore.data.base.Asset {
   init(options: any, callback: Function) {
     this.serverData.resources.acquire("spriteSettings", null, (err: Error, spriteSettings: any) => {
       this.pub = {
+        formatVersion: SpriteAsset.currentFormatVersion,
+
         maps: { map: new Buffer(0) },
         filtering: spriteSettings.pub.filtering,
         pixelsPerUnit: spriteSettings.pub.pixelsPerUnit,
@@ -134,29 +141,9 @@ export default class SpriteAsset extends SupCore.data.base.Asset {
   load(assetPath: string) {
     let pub: SpriteAssetPub;
     let loadMaps = () => {
-      // NOTE: Opacity setting was introduced in Superpowers 0.8
-      if (typeof pub.opacity === "undefined") pub.opacity = 1;
-
       let mapsName: string[] = <any>pub.maps;
       // NOTE: Support for multiple maps was introduced in Superpowers 0.11
       if (mapsName == null) mapsName = ["map"];
-
-      if (pub.frameOrder == null) pub.frameOrder = "rows";
-      if (pub.advancedTextures == null) {
-        pub.advancedTextures = false;
-        pub.mapSlots = {
-          map: "map",
-          light: null,
-          specular: null,
-          alpha: null,
-          normal: null
-        }
-      }
-
-      // NOTE: Animation speed was introduced in Superpowers 0.12
-      for (let animation of pub.animations) {
-        if (animation.speed == null) animation.speed = 1;
-      }
 
       pub.maps = {};
       async.series([
@@ -183,14 +170,11 @@ export default class SpriteAsset extends SupCore.data.base.Asset {
           }, (err) => { callback(err, null); });
         }
 
-      ], (err) => {
-        this.pub = pub;
-        this.setup();
-        this.emit("load");
-      });
+      ], (err) => { this._onLoaded(assetPath, pub); });
     };
 
     fs.readFile(path.join(assetPath, "sprite.json"), { encoding: "utf8" }, (err, json) => {
+      // NOTE: "asset.json" was renamed to "sprite.json" in Superpowers 0.11
       if (err != null && err.code === "ENOENT") {
         fs.readFile(path.join(assetPath, "asset.json"), { encoding: "utf8" }, (err, json) => {
           fs.rename(path.join(assetPath, "asset.json"), path.join(assetPath, "sprite.json"), (err) => {
@@ -203,6 +187,37 @@ export default class SpriteAsset extends SupCore.data.base.Asset {
         loadMaps();
       }
     });
+  }
+
+  migrate(assetPath: string, pub: SpriteAssetPub, callback: (hasMigrated: boolean) => void) {
+    if (pub.formatVersion === SpriteAsset.currentFormatVersion) { callback(false); return; }
+
+    if (pub.formatVersion == null) {
+      // NOTE: Opacity setting was introduced in Superpowers 0.8
+      if (typeof pub.opacity === "undefined") pub.opacity = 1;
+
+      // NOTE: Support for multiple maps was introduced in Superpowers 0.11
+      if (pub.frameOrder == null) pub.frameOrder = "rows";
+      if (pub.advancedTextures == null) {
+        pub.advancedTextures = false;
+        pub.mapSlots = {
+          map: "map",
+          light: null,
+          specular: null,
+          alpha: null,
+          normal: null
+        }
+      }
+
+      // NOTE: Animation speed was introduced in Superpowers 0.12
+      for (let animation of pub.animations) {
+        if (animation.speed == null) animation.speed = 1;
+      }
+
+      pub.formatVersion = 1;
+    }
+
+    callback(true);
   }
 
   client_load() {

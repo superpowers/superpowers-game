@@ -16,6 +16,7 @@ interface ShaderCode {
 }
 
 export interface ShaderAssetPub {
+  formatVersion: number;
   uniforms: UniformPub[];
   useLightUniforms: boolean;
   attributes: AttributePub[];
@@ -24,7 +25,11 @@ export interface ShaderAssetPub {
 }
 
 export default class ShaderAsset extends SupCore.data.base.Asset {
+  static currentFormatVersion = 1;
+
   static schema: SupCore.data.base.Schema = {
+    formatVersion: { type: "integer" },
+
     uniforms: { type: "array" },
     useLightUniforms: { type: "boolean", mutable: true },
     attributes: { type: "array" },
@@ -83,6 +88,8 @@ ${tab}gl_FragColor = texture2D(map, vUv);
 }
 `
       this.pub = {
+        formatVersion: ShaderAsset.currentFormatVersion,
+
         uniforms: [{ id: "0", name: "map", type: "t", value: "map" }],
         useLightUniforms: false,
         attributes: [],
@@ -112,9 +119,6 @@ ${tab}gl_FragColor = texture2D(map, vUv);
     let pub: ShaderAssetPub;
 
     let loadShaders = () => {
-      // NOTE: Introduced in Superpowers 0.11
-      if (pub.useLightUniforms == null) pub.useLightUniforms = false;
-
       // NOTE: Migration for Superpowers 0.10
       if (typeof pub.vertexShader === "string") {
         pub.vertexShader = {
@@ -127,9 +131,7 @@ ${tab}gl_FragColor = texture2D(map, vUv);
           draft: <any>pub.fragmentShader,
           revisionId: 0
         }
-        this.pub = pub;
-        this.setup();
-        this.emit("load");
+        this._onLoaded(assetPath, pub);
         return;
       }
 
@@ -159,10 +161,7 @@ ${tab}gl_FragColor = texture2D(map, vUv);
         (cb: (err: Error) => any) => {
           fs.readFile(path.join(assetPath, "fragmentShaderDraft.txt"), { encoding: "utf8" }, (err, draft) => {
             pub.fragmentShader.draft = (draft != null) ? draft : pub.fragmentShader.text;
-
-            this.pub = pub;
-            this.setup();
-            this.emit("load");
+            this._onLoaded(assetPath, pub);
           });
         }
       ]);
@@ -182,6 +181,19 @@ ${tab}gl_FragColor = texture2D(map, vUv);
         loadShaders();
       }
     });
+  }
+
+  migrate(assetPath: string, pub: ShaderAssetPub, callback: (hasMigrated: boolean) => void) {
+    if (pub.formatVersion === ShaderAsset.currentFormatVersion) { callback(false); return; }
+
+    if (pub.formatVersion == null) {
+      // NOTE: Introduced in Superpowers 0.11
+      if (pub.useLightUniforms == null) pub.useLightUniforms = false;
+
+      pub.formatVersion = 1;
+    }
+
+    callback(true);
   }
 
   save(assetPath: string, callback: (err: Error) => any) {

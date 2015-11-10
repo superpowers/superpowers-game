@@ -9,14 +9,18 @@ let THREE: typeof SupEngine.THREE;
 if ((<any>global).window != null && (<any>global).window.SupEngine != null) THREE = (<any>global).window.SupEngine.THREE;
 
 export interface FontPub {
+  formatVersion: number;
   isBitmap: boolean; filtering: string; pixelsPerUnit: number;
   font: Buffer; size: number; color: string; name?: string;
   bitmap: Buffer; gridWidth: number; gridHeight: number; charset: string; charsetOffset: number; texture?: THREE.Texture;
 }
 
 export default class FontAsset extends SupCore.data.base.Asset {
+  static currentFormatVersion = 1;
 
   static schema: SupCore.data.base.Schema = {
+    formatVersion: { type: "integer" },
+
     isBitmap: { type: "boolean", mutable: true},
     filtering: { type: "enum", items: [ "pixelated", "smooth"], mutable: true },
     pixelsPerUnit: { type: "number", minExcluded: 0, mutable: true },
@@ -43,6 +47,8 @@ export default class FontAsset extends SupCore.data.base.Asset {
 
   init(options: any, callback: Function) {
     this.pub = {
+      formatVersion: FontAsset.currentFormatVersion,
+
       isBitmap: false,
       filtering: "pixelated",
       pixelsPerUnit: 20,
@@ -63,20 +69,29 @@ export default class FontAsset extends SupCore.data.base.Asset {
 
   load(assetPath: string) {
     fs.readFile(path.join(assetPath, "asset.json"), { encoding: "utf8" }, (err, json) => {
-      this.pub = JSON.parse(json);
-
-      // NOTE: Legacy stuff from Superpowers 0.7
-      if (this.pub.color == null || this.pub.color.length !== 6) this.pub.color = "ffffff";
+      let pub = JSON.parse(json);
 
       fs.readFile(path.join(assetPath, "font.dat"), (err, buffer) => {
-        this.pub.font = buffer;
+        pub.font = buffer;
         fs.readFile(path.join(assetPath, "bitmap.dat"), (err, buffer) => {
-          this.pub.bitmap = buffer;
-          this.setup();
-          this.emit("load");
+          pub.bitmap = buffer;
+          this._onLoaded(assetPath, pub);
         });
       });
     });
+  }
+
+  migrate(assetPath: string, pub: FontPub, callback: (hasMigrated: boolean) => void) {
+    if (pub.formatVersion === FontAsset.currentFormatVersion) { callback(false); return; }
+
+    if (pub.formatVersion == null) {
+      // NOTE: Legacy stuff from Superpowers 0.7
+      if (pub.color == null || pub.color.length !== 6) pub.color = "ffffff";
+
+      pub.formatVersion = 1;
+    }
+
+    callback(true);
   }
 
   client_load() { this._loadFont(); }

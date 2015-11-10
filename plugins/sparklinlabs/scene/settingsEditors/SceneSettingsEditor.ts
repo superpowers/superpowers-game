@@ -33,6 +33,7 @@ export default class SceneSettingsEditor {
     this.resource = resource;
 
     for (let setting in resource.pub) {
+      if (setting === "formatVersion") continue;
       this.fields[setting].value = resource.pub[setting];
     }
   }

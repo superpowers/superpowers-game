@@ -1,50 +1,66 @@
 import * as path from "path";
 import * as fs from "fs";
 
+interface SoundAssetPub {
+  formatVersion: number;
+  sound: Buffer;
+  streaming: boolean;
+}
+
 export default class SoundAsset extends SupCore.data.base.Asset {
+  static currentFormatVersion = 1;
+
   static schema: SupCore.data.base.Schema = {
+    formatVersion: { type: "integer" },
+
     sound: { type: "buffer" },
     streaming: { type: "boolean", mutable: true }
   }
+
+  pub: SoundAssetPub;
 
   constructor(id: string, pub: any, serverData?: any) {
     super(id, pub, SoundAsset.schema, serverData);
   }
 
   init(options: any, callback: Function) {
-    this.pub = { sound: new Buffer(0), streaming: false };
+    this.pub = { formatVersion: SoundAsset.currentFormatVersion, sound: new Buffer(0), streaming: false };
     super.init(options, callback);
   }
 
   load(assetPath: string) {
+    let pub: SoundAssetPub;
     fs.readFile(path.join(assetPath, "sound.json"), { encoding: "utf8" }, (err, json) => {
+      // NOTE: "asset.json" was renamed to "sound.json" in Superpowers 0.11
       if (err != null && err.code === "ENOENT") {
         fs.readFile(path.join(assetPath, "asset.json"), { encoding: "utf8" }, (err, json) => {
-          let pub = JSON.parse(json);
-          if (pub.streaming == null) pub.streaming = false;
-
           fs.rename(path.join(assetPath, "asset.json"), path.join(assetPath, "sound.json"), (err) => {
             pub = JSON.parse(json);
             fs.readFile(path.join(assetPath, "sound.dat"), (err, buffer) => {
               pub.sound = buffer;
-              this.pub = pub;
-              this.emit("load");
+              this._onLoaded(assetPath, pub);
             });
           });
-
-
         });
       } else {
-        let pub = JSON.parse(json);
-        if (pub.streaming == null) pub.streaming = false;
-
+        pub = JSON.parse(json);
         fs.readFile(path.join(assetPath, "sound.dat"), (err, buffer) => {
           pub.sound = buffer;
-          this.pub = pub;
-          this.emit("load");
+          this._onLoaded(assetPath, pub);
         });
       }
     });
+  }
+
+  migrate(assetPath: string, pub: SoundAssetPub, callback: (hasMigrated: boolean) => void) {
+    if (pub.formatVersion === SoundAsset.currentFormatVersion) { callback(false); return; }
+
+    if (pub.formatVersion == null) {
+      if (pub.streaming == null) pub.streaming = false;
+      pub.formatVersion = 1;
+    }
+
+    callback(true);
   }
 
   save(assetPath: string, callback: Function) {

@@ -119,10 +119,7 @@ export default class CubicModelAsset extends SupCore.data.base.Asset {
         });
       }, (err) => {
         if (err) throw err;
-
-        this.pub = pub;
-        this.setup();
-        this.emit("load");
+        this._onLoaded(assetPath, pub);
       });
     });
   }
