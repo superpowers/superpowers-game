@@ -13,6 +13,8 @@ export default class GameSettingsEditor {
   layerContainers: HTMLDivElement;
 
   fields: { [name: string]: HTMLInputElement } = {};
+  sceneAssetId: string;
+  startupSceneButton: HTMLButtonElement;
 
   constructor(container: HTMLDivElement, projectClient: SupClient.ProjectClient) {
     this.projectClient = projectClient;
@@ -20,7 +22,10 @@ export default class GameSettingsEditor {
     let { tbody } = SupClient.table.createTable(container);
 
     this.startupSceneRow = SupClient.table.appendRow(tbody, "Startup scene");
-    this.fields["startupScene"] = SupClient.table.appendTextField(this.startupSceneRow.valueCell, "");
+    let startupSceneFields = SupClient.table.appendAssetField(this.startupSceneRow.valueCell, "");
+    this.fields["startupSceneId"] = startupSceneFields.textField;
+    this.startupSceneButton = startupSceneFields.buttonElt;
+    this.startupSceneButton.disabled = true;
 
     this.fpsRow = SupClient.table.appendRow(tbody, "Frames per second");
     this.fields["framesPerSecond"] = SupClient.table.appendNumberField(this.fpsRow.valueCell, "");
@@ -47,10 +52,17 @@ export default class GameSettingsEditor {
       field.addEventListener("change", this.onCustomLayerFieldChange);
     }
 
-    this.fields["startupScene"].addEventListener("change", (event: any) => {
-      let scene = (event.target.value !== "") ? event.target.value : null;
-      this.projectClient.socket.emit("edit:resources", "gameSettings", "setProperty", "startupScene", scene, (err: string) => { if (err != null) alert(err); });
+    this.fields["startupSceneId"].addEventListener("input", (event: any) => {
+      if (event.target.value === "") this.projectClient.socket.emit("edit:resources", "gameSettings", "setProperty", "startupSceneId", null, (err: string) => { if (err != null) alert(err); });
+      else {
+        let entry = SupClient.findEntryByPath(this.projectClient.entries.pub, event.target.value);
+        if (entry != null && entry.type === "scene")
+          this.projectClient.socket.emit("edit:resources", "gameSettings", "setProperty", "startupSceneId", entry.id, (err: string) => { if (err != null) alert(err); });
+      }
     });
+    this.startupSceneButton.addEventListener("click", (event) => {
+      window.parent.postMessage({ type: "openEntry", id: this.sceneAssetId }, (<any>window.location).origin);
+    })
 
     this.fields["framesPerSecond"].addEventListener("change", (event: any) => {
       this.projectClient.socket.emit("edit:resources", "gameSettings", "setProperty", "framesPerSecond", parseInt(event.target.value), (err: string) => { if (err != null) alert(err); });
@@ -64,7 +76,40 @@ export default class GameSettingsEditor {
       this.projectClient.socket.emit("edit:resources", "gameSettings", "setProperty", "ratioDenominator", parseInt(event.target.value), (err: string) => { if (err != null) alert(err); });
     });
 
+    this.projectClient.subEntries(this);
     this.projectClient.subResource("gameSettings", this);
+  }
+
+  _setStartupScene(id: string) {
+    let entry = this.projectClient.entries.byId[id];
+    if (entry != null && entry.type === "scene") {
+      this.sceneAssetId = id;
+      this.fields["startupSceneId"].value = this.projectClient.entries.getPathFromId(id);
+      this.startupSceneButton.disabled = false;
+    } else {
+      this.sceneAssetId = null;
+      this.fields["startupSceneId"].value = "";
+      this.startupSceneButton.disabled = true;
+    }
+  }
+
+  onEntriesReceived = (entries: SupCore.data.Entries) => {
+    if (this.resource == null) return;
+    this._setStartupScene(this.resource.pub.startupSceneId);
+  }
+
+  onEntryAdded() {}
+  onEntryMoved(id: string, parentId: string, index: number) {
+    if (id !== this.resource.pub.startupSceneId) return;
+    this._setStartupScene(id);
+  }
+  onSetEntryProperty(id: string, key: string, value: any) {
+    if (id !== this.resource.pub.startupSceneId) return;
+    this._setStartupScene(id);
+  }
+  onEntryTrashed(id: string) {
+    if (id !== this.resource.pub.startupSceneId) return;
+    this._setStartupScene(id);
   }
 
   onResourceReceived = (resourceId: string, resource: GameSettingsResource) => {
@@ -73,9 +118,11 @@ export default class GameSettingsEditor {
     this._setupCustomLayers();
 
     for (let setting in resource.pub) {
-      if (setting !== "customLayers") {
-        this.fields[setting].value = resource.pub[setting];
-      }
+      if (setting === "version" || setting === "customLayers") continue;
+
+      if (setting === "startupSceneId") {
+        if (this.projectClient.entries != null) this._setStartupScene(resource.pub.startupSceneId);
+      } else this.fields[setting].value = resource.pub[setting];
     }
   }
 
@@ -101,6 +148,7 @@ export default class GameSettingsEditor {
 
   onResourceEdited = (resourceId: string, command: string, propertyName: string) => {
     if (propertyName === "customLayers") this._setupCustomLayers();
+    else if (propertyName === "startupSceneId") this._setStartupScene(this.resource.pub.startupSceneId);
     else this.fields[propertyName].value = this.resource.pub[propertyName];
   }
 
