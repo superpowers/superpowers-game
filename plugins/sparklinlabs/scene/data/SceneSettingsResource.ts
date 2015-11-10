@@ -1,6 +1,12 @@
 import * as path from "path";
 import * as fs from "fs";
 
+interface SceneSettingsResourcePub {
+  formatVersion: number;
+  defaultCameraMode: string;
+  defaultVerticalAxis: string;
+}
+
 export default class SceneSettingsResource extends SupCore.data.base.Resource {
   static currentFormatVersion = 1;
 
@@ -10,6 +16,8 @@ export default class SceneSettingsResource extends SupCore.data.base.Resource {
     defaultCameraMode: { type: "enum", items: [ "3D", "2D" ], mutable: true },
     defaultVerticalAxis: { type: "enum", items: [ "Y", "Z" ], mutable: true }
   }
+
+  pub: SceneSettingsResourcePub;
 
   constructor(pub: any, serverData: any) {
     super(pub, SceneSettingsResource.schema, serverData);
@@ -26,7 +34,7 @@ export default class SceneSettingsResource extends SupCore.data.base.Resource {
     super.init(callback);
   }
 
-  migrate(resourcePath: string, callback: (hasMigrated: boolean) => void) {
+  migrate(resourcePath: string, pub: SceneSettingsResourcePub, callback: (hasMigrated: boolean) => void) {
     if (this.pub.formatVersion === SceneSettingsResource.currentFormatVersion) { callback(false); return; }
 
     if (this.pub.formatVersion == null) {

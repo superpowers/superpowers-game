@@ -56,17 +56,17 @@ export default class TileMapSettingsResource extends SupCore.data.base.Resource 
     super.init(callback);
   }
 
-  migrate(resourcePath: string, callback: (hasMigrated: boolean) => void) {
-    if (this.pub.formatVersion === TileMapSettingsResource.currentFormatVersion) { callback(false); return; }
+  migrate(resourcePath: string, pub: TileMapSettingsResourcePub, callback: (hasMigrated: boolean) => void) {
+    if (pub.formatVersion === TileMapSettingsResource.currentFormatVersion) { callback(false); return; }
 
-    if (this.pub.formatVersion == null) {
+    if (pub.formatVersion == null) {
       // NOTE: gridSize was renamed to grid.width and .height in Superpowers 0.8
-      if ((<any>this.pub)["gridSize"] != null) {
-        this.pub.grid = { width: (<any>this.pub)["gridSize"], height: (<any>this.pub)["gridSize"] };
-        delete (<any>this.pub)["gridSize"];
+      if ((<any>pub)["gridSize"] != null) {
+        pub.grid = { width: (<any>pub)["gridSize"], height: (<any>pub)["gridSize"] };
+        delete (<any>pub)["gridSize"];
       }
 
-      this.pub.formatVersion = 1;
+      pub.formatVersion = 1;
     }
 
     callback(true);

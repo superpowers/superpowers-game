@@ -43,20 +43,20 @@ export default class GameSettingsResource extends SupCore.data.base.Resource {
     super.init(callback);
   }
 
-  migrate(resourcePath: string, callback: (hasMigrated: boolean) => void) {
-    if (this.pub.formatVersion === GameSettingsResource.currentFormatVersion) { callback(false); return; }
+  migrate(resourcePath: string, pub: GameSettingsResourcePub, callback: (hasMigrated: boolean) => void) {
+    if (pub.formatVersion === GameSettingsResource.currentFormatVersion) { callback(false); return; }
 
-    if (this.pub.formatVersion == null) {
+    if (pub.formatVersion == null) {
       // NOTE: Custom layers were introduced in Superpowers 0.8
-      if (this.pub.customLayers == null) this.pub.customLayers = [];
+      if (pub.customLayers == null) pub.customLayers = [];
 
       this.serverData.entries.walk((node) => {
         let path = this.serverData.entries.getPathFromId(node.id);
-        if (path === (<any>this.pub).startupScene) this.pub.startupSceneId = node.id;
+        if (path === (<any>pub).startupScene) pub.startupSceneId = node.id;
       })
-      delete (<any>this.pub).startupScene;
+      delete (<any>pub).startupScene;
 
-      this.pub.formatVersion = 1;
+      pub.formatVersion = 1;
     }
 
     callback(true);
