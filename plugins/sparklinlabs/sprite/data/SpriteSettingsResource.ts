@@ -14,8 +14,6 @@ export default class SpriteSettingsResource extends SupCore.data.base.Resource {
     super(pub, SpriteSettingsResource.schema, serverData);
   }
 
-  setup() {}
-
   init(callback: Function) {
     this.pub = {
       filtering: "pixelated",

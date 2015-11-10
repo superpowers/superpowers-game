@@ -27,7 +27,6 @@ function makeBrowserify(source, destination, output) {
   tasks.push(output + "-browserify");
 }
 
-makeBrowserify("./data/index.js", "./public", "data");
 makeBrowserify("./settingsEditors/index.js", "./public", "settingsEditors");
 
 // All

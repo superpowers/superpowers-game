@@ -1,9 +1,6 @@
-import ProjectSettingsResource from "../data/ProjectSettingsResource";
-
 export default class ProjectSettingsEditor {
 
   projectClient: SupClient.ProjectClient;
-  resource: ProjectSettingsResource;
 
   fields: { [name: string]: HTMLInputElement } = {};
 

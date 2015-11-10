@@ -11,8 +11,6 @@ export default class CubicModelSettingsResource extends SupCore.data.base.Resour
     super(pub, CubicModelSettingsResource.schema, serverData);
   }
 
-  setup() {}
-
   init(callback: Function) {
     this.pub = {
       pixelsPerUnit: 16

@@ -11,8 +11,6 @@ export default class LightSettingsResource extends SupCore.data.base.Resource {
     super(pub, LightSettingsResource.schema, serverData);
   }
 
-  setup() {}
-
   init(callback: Function) {
     this.pub = {
       shadowMapType: "basic"

@@ -16,8 +16,6 @@ export default class TextEditorSettingsResource extends SupCore.data.base.Resour
     super(pub, TextEditorSettingsResource.schema, serverData);
   }
 
-  setup() {}
-
   init(callback: Function) {
     this.pub = {
       tabSize: 2,
