@@ -68,7 +68,7 @@ export default class ScriptAsset extends SupCore.Data.Base.Asset {
     let behaviorName = options.name.trim().replace(/[()[\]{}-]/g, "");
     behaviorName = behaviorName.slice(0, 1).toUpperCase() + behaviorName.slice(1);
 
-    if (behaviorName === "Behavior") {
+    if (behaviorName === "Behavior" || behaviorName === "Behaviour") {
       let parentEntry = this.server.data.entries.parentNodesById[this.id];
       if (parentEntry != null) {
         behaviorName = parentEntry.name.slice(0, 1).toUpperCase() + parentEntry.name.slice(1) + behaviorName;
@@ -85,7 +85,7 @@ export default class ScriptAsset extends SupCore.Data.Base.Asset {
         behaviorName.slice(index + 2);
     }
 
-    if (!_.endsWith(behaviorName, "Behavior")) behaviorName += "Behavior";
+    if (!_.endsWith(behaviorName, "Behavior") && !_.endsWith(behaviorName, "Behaviour")) behaviorName += "Behavior";
 
     this.server.data.resources.acquire("textEditorSettings", null, (err: Error, textEditorSettings: any) => {
       this.server.data.resources.release("textEditorSettings", null);
