@@ -4,7 +4,6 @@ let qs = require("querystring").parse(window.location.search.slice(1));
 let info = { projectId: qs.project };
 let data: {
   projectClient: SupClient.ProjectClient;
-  systemName: string;
 };
 
 let ui: any = {};
@@ -14,17 +13,14 @@ socket.on("welcome", onWelcome);
 socket.on("disconnect", SupClient.onDisconnected);
 SupClient.setupHotkeys();
 
-function onWelcome(clientId: number, config: { buildPort: number; systemName: string; }) {
-  data = {
-    projectClient: new SupClient.ProjectClient(socket),
-    systemName: config.systemName
-  };
+function onWelcome() {
+  data = { projectClient: new SupClient.ProjectClient(socket), };
   
   loadPlugins();
 }
 
 function loadPlugins() {
-  (<any>window).fetch(`/systems/${data.systemName}/plugins.json`).then((response: any) => response.json()).then((pluginPaths: any) => {
+  (<any>window).fetch(`/systems/${SupCore.system.name}/plugins.json`).then((response: any) => response.json()).then((pluginPaths: any) => {
     async.each(pluginPaths.all, (pluginName, pluginCallback) => {
       if (pluginName === "sparklinlabs/settings") { pluginCallback(); return; }
 
@@ -32,7 +28,7 @@ function loadPlugins() {
 
         (cb) => {
           let dataScript = document.createElement("script");
-          dataScript.src = `/systems/${data.systemName}/plugins/${pluginName}/data.js`;
+          dataScript.src = `/systems/${SupCore.system.name}/plugins/${pluginName}/data.js`;
           dataScript.addEventListener("load", () => { cb(null, null); } );
           dataScript.addEventListener("error", () => { cb(null, null); } );
           document.body.appendChild(dataScript);
@@ -40,7 +36,7 @@ function loadPlugins() {
 
         (cb) => {
           let settingsEditorScript = document.createElement("script");
-          settingsEditorScript.src = `/systems/${data.systemName}/plugins/${pluginName}/settingsEditors.js`;
+          settingsEditorScript.src = `/systems/${SupCore.system.name}/plugins/${pluginName}/settingsEditors.js`;
           settingsEditorScript.addEventListener("load", () => { cb(null, null); } );
           settingsEditorScript.addEventListener("error", () => { cb(null, null); } );
           document.body.appendChild(settingsEditorScript);

@@ -17,7 +17,6 @@ import SceneUpdater from "../../components/SceneUpdater";
 
 export let data: {
   projectClient: SupClient.ProjectClient;
-  systemName: string;
   sceneUpdater?: SceneUpdater;
   gameSettingsResource?: any;
 };
@@ -28,11 +27,8 @@ socket = SupClient.connect(info.projectId);
 socket.on("welcome", onWelcome);
 socket.on("disconnect", SupClient.onDisconnected);
 
-function onWelcome(clientId: number, config: { buildPort: number; systemName: string; }) {
-  data = {
-    projectClient: new SupClient.ProjectClient(socket, { subEntries: true }),
-    systemName: config.systemName
-  };
+function onWelcome() {
+  data = { projectClient: new SupClient.ProjectClient(socket, { subEntries: true }) };
   
   loadPlugins(() => {
     engineStart();
@@ -44,7 +40,7 @@ function onWelcome(clientId: number, config: { buildPort: number; systemName: st
 }
 
 function loadPlugins(callback: ErrorCallback) {
-  (<any>window).fetch(`/systems/${data.systemName}/plugins.json`).then((response: any) => response.json()).then((pluginPaths: any) => {
+  (<any>window).fetch(`/systems/${SupCore.system.name}/plugins.json`).then((response: any) => response.json()).then((pluginPaths: any) => {
     async.each(pluginPaths.all, (pluginName, pluginCallback) => {
       if (pluginName === "sparklinlabs/scene") { pluginCallback(); return; }
 
@@ -52,7 +48,7 @@ function loadPlugins(callback: ErrorCallback) {
 
         (cb) => {
           let dataScript = document.createElement("script");
-          dataScript.src = `/systems/${data.systemName}/plugins/${pluginName}/data.js`;
+          dataScript.src = `/systems/${SupCore.system.name}/plugins/${pluginName}/data.js`;
           dataScript.addEventListener("load", () => { cb(null, null); } );
           dataScript.addEventListener("error", () => { cb(null, null); } );
           document.body.appendChild(dataScript);
@@ -60,7 +56,7 @@ function loadPlugins(callback: ErrorCallback) {
 
         (cb) => {
           let componentsScript = document.createElement("script");
-          componentsScript.src = `/systems/${data.systemName}/plugins/${pluginName}/components.js`;
+          componentsScript.src = `/systems/${SupCore.system.name}/plugins/${pluginName}/components.js`;
           componentsScript.addEventListener("load", () => { cb(null, null); } );
           componentsScript.addEventListener("error", () => { cb(null, null); } );
           document.body.appendChild(componentsScript);
@@ -68,7 +64,7 @@ function loadPlugins(callback: ErrorCallback) {
 
         (cb) => {
           let componentEditorsScript = document.createElement("script");
-          componentEditorsScript.src = `/systems/${data.systemName}/plugins/${pluginName}/componentEditors.js`;
+          componentEditorsScript.src = `/systems/${SupCore.system.name}/plugins/${pluginName}/componentEditors.js`;
           componentEditorsScript.addEventListener("load", () => { cb(null, null); } );
           componentEditorsScript.addEventListener("error", () => { cb(null, null); } );
           document.body.appendChild(componentEditorsScript);

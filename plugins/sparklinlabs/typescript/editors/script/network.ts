@@ -6,7 +6,6 @@ import ScriptAsset from "../../data/ScriptAsset";
 
 export let data = {
   clientId: <number>null,
-  systemName: <string>null,
   projectClient: <SupClient.ProjectClient>null,
   typescriptWorker: new Worker("typescriptWorker.js"),
 
@@ -23,19 +22,18 @@ socket.on("welcome", onWelcome);
 socket.on("disconnect", SupClient.onDisconnected);
 
 let onEditCommands: any = {};
-function onWelcome(clientId: number, config: { buildPort: number; systemName: string; }) {
+function onWelcome(clientId: number) {
   data.clientId = clientId;
-  data.systemName = config.systemName;
   loadPlugins();
 }
 
 function loadPlugins() {
-  (<any>window).fetch(`/systems/${data.systemName}/plugins.json`).then((response: any) => response.json()).then((pluginPaths: any) => {
+  (<any>window).fetch(`/systems/${SupCore.system.name}/plugins.json`).then((response: any) => response.json()).then((pluginPaths: any) => {
     async.each(pluginPaths.all, (pluginName, pluginCallback) => {
       if (pluginName === "sparklinlabs/typescript") { pluginCallback(); return; }
     
       let apiScript = document.createElement("script");
-      apiScript.src = `/systems/${data.systemName}/plugins/${pluginName}/api.js`;
+      apiScript.src = `/systems/${SupCore.system.name}/plugins/${pluginName}/api.js`;
       apiScript.addEventListener("load", () => { pluginCallback(); } );
       apiScript.addEventListener("error", () => { pluginCallback(); } );
       document.body.appendChild(apiScript);
