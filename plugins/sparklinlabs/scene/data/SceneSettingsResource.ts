@@ -35,13 +35,13 @@ export default class SceneSettingsResource extends SupCore.data.base.Resource {
   }
 
   migrate(resourcePath: string, pub: SceneSettingsResourcePub, callback: (hasMigrated: boolean) => void) {
-    if (this.pub.formatVersion === SceneSettingsResource.currentFormatVersion) { callback(false); return; }
+    if (pub.formatVersion === SceneSettingsResource.currentFormatVersion) { callback(false); return; }
 
-    if (this.pub.formatVersion == null) {
+    if (pub.formatVersion == null) {
       // NOTE: Vertical axis was introduced in Superpowers 0.13
-      if (this.pub.defaultVerticalAxis == null) this.pub.defaultVerticalAxis = "Y";
+      if (pub.defaultVerticalAxis == null) pub.defaultVerticalAxis = "Y";
 
-      this.pub.formatVersion = 1;
+      pub.formatVersion = 1;
     }
 
     callback(true);
