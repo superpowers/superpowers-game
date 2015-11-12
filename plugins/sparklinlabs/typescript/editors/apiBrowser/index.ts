@@ -41,8 +41,8 @@ let socket = SupClient.connect(info.projectId);
 socket.on("welcome", onWelcome);
 
 function onWelcome(clientId: number, config: { buildPort: number; systemName: string; }) {
-  (<any>window).fetch(`/systems/${config.systemName}/plugins.json`).then((response: any) => response.json()).then((pluginPaths: any) => {
-    async.each(pluginPaths.all, (pluginName, pluginCallback) => {
+  window.fetch(`/systems/${config.systemName}/plugins.json`).then((response) => response.json()).then((pluginsInfo: SupCore.PluginsInfo) => {
+    async.each(pluginsInfo.list, (pluginName, pluginCallback) => {
       async.series([
         (cb) => {
           let apiScript = document.createElement("script");

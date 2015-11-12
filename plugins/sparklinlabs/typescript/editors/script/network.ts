@@ -28,8 +28,8 @@ function onWelcome(clientId: number) {
 }
 
 function loadPlugins() {
-  (<any>window).fetch(`/systems/${SupCore.system.name}/plugins.json`).then((response: any) => response.json()).then((pluginPaths: any) => {
-    async.each(pluginPaths.all, (pluginName, pluginCallback) => {
+  window.fetch(`/systems/${SupCore.system.name}/plugins.json`).then((response) => response.json()).then((pluginsInfo: SupCore.PluginsInfo) => {
+    async.each(pluginsInfo.list, (pluginName, pluginCallback) => {
       if (pluginName === "sparklinlabs/typescript") { pluginCallback(); return; }
     
       let apiScript = document.createElement("script");
