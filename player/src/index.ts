@@ -72,8 +72,8 @@ let onLoaded = (err: Error) => {
 }
 
 // Load plugins
-(<any>window).fetch("plugins.json").then((response: any) => response.json()).then((pluginPaths: any) => {
-  async.each(pluginPaths.all, (pluginName, pluginCallback) => {
+window.fetch("plugins.json").then((response) => response.json()).then((pluginsInfo: SupCore.PluginsInfo) => {
+  async.each(pluginsInfo.list, (pluginName, pluginCallback) => {
     async.series([
   
       (cb) => {
