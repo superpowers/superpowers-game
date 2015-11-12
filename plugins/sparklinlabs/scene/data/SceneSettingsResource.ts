@@ -3,8 +3,10 @@ import * as fs from "fs";
 
 interface SceneSettingsResourcePub {
   formatVersion: number;
+
   defaultCameraMode: string;
   defaultVerticalAxis: string;
+  [key: string]: any;
 }
 
 export default class SceneSettingsResource extends SupCore.Data.Base.Resource {
