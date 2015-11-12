@@ -1,30 +1,31 @@
 /// <reference path="../../../../typings/tsd.d.ts" />
+/// <reference path="../../../../typings/github-electron/github-electron-renderer.d.ts" />
 /// <reference path="../../SupRuntime/SupRuntime.d.ts" />
 /// <reference path="../../../../SupCore/SupCore.d.ts" />
 
-import "whatwg-fetch";
+import "isomorphic-fetch";
 import * as async from "async";
 import * as querystring from "querystring";
 
 SupCore.system = new SupCore.System("");
 
-// In NW.js, open links in a browser window
-let nwDispatcher = (<any>window).nwDispatcher;
-let gui: any;
-if (nwDispatcher != null) {
-  gui = nwDispatcher.requireNwGui();
+// In app, open links in a browser window
+let playerWindow: GitHubElectron.BrowserWindow;
+if ((<any>window).process) {
+  let nodeRequire = require;
+  playerWindow = nodeRequire("remote").getCurrentWindow();
 
   document.body.addEventListener("click", (event: any) => {
     if (event.target.tagName !== "A") return;
     event.preventDefault();
-    gui.Shell.openExternal(event.target.href);
+    nodeRequire("shell").openExternal(event.target.href);
   });
 }
 let qs = querystring.parse(window.location.search.slice(1));
 
 document.body.addEventListener("keydown", (event) => {
   if (event.keyCode === (<any>window)["KeyEvent"].DOM_VK_F12) {
-    if (qs.project != null && gui != null) gui.Window.get().showDevTools();
+    if (qs.project != null && playerWindow != null) playerWindow.toggleDevTools();
   }
 });
 
@@ -36,7 +37,7 @@ let progressBar = <HTMLProgressElement>document.querySelector("progress");
 let loadingElt = document.getElementById("loading");
 let canvas = <HTMLCanvasElement>document.querySelector("canvas");
 
-if (qs.debug != null && gui != null) gui.Window.get().showDevTools();
+if (qs.debug != null && playerWindow != null) playerWindow.openDevTools();
 
 let player: SupRuntime.Player;
 
@@ -75,7 +76,7 @@ let onLoaded = (err: Error) => {
 window.fetch("plugins.json").then((response) => response.json()).then((pluginsInfo: SupCore.PluginsInfo) => {
   async.each(pluginsInfo.list, (pluginName, pluginCallback) => {
     async.series([
-  
+
       (cb) => {
         let apiScript = document.createElement("script");
         apiScript.src = `plugins/${pluginName}/api.js`;
@@ -83,7 +84,7 @@ window.fetch("plugins.json").then((response) => response.json()).then((pluginsIn
         apiScript.addEventListener("error", (err) => cb(null, null));
         document.body.appendChild(apiScript);
       },
-  
+
       (cb) => {
         let componentsScript = document.createElement("script");
         componentsScript.src = `plugins/${pluginName}/components.js`;
@@ -91,7 +92,7 @@ window.fetch("plugins.json").then((response) => response.json()).then((pluginsIn
         componentsScript.addEventListener("error", () => cb(null, null));
         document.body.appendChild(componentsScript);
       },
-  
+
       (cb) => {
         let runtimeScript = document.createElement("script");
         runtimeScript.src = `plugins/${pluginName}/runtime.js`;
@@ -99,7 +100,7 @@ window.fetch("plugins.json").then((response) => response.json()).then((pluginsIn
         runtimeScript.addEventListener("error", () => cb(null, null));
         document.body.appendChild(runtimeScript);
       }
-  
+
     ], pluginCallback);
   }, (err) => {
     if (err != null) console.log(err);
