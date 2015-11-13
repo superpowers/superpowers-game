@@ -164,7 +164,5 @@ onTileSetEditCommands.setProperty = () => {
   if (tileSetPub.texture != null) mapArea.patternRenderer.setTileSet(new TileSet(tileSetPub));
   mapArea.patternBackgroundRenderer.setup(0x900090, 1 / tileMapPub.pixelsPerUnit, tileSetPub.grid.width);
 
-  if (data.tileMapUpdater.tileSetAsset.pub != null) {
-    if (ui.brushToolButton.checked) selectBrush(0, 0);
-  }
+  if (ui.brushToolButton.checked) selectBrush(0, 0);
 };
