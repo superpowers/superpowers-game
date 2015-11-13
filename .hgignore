@@ -4,3 +4,4 @@ player/**.js
 SupEngine/**.js
 SupRuntime/**.js
 public/
+plugins/
