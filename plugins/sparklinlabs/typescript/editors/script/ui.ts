@@ -189,8 +189,8 @@ export function refreshErrors(errors: Array<{file: string; position: {line: numb
   for (let error of errors) {
     let errorRow = document.createElement("tr");
 
-    (<any>errorRow.dataset).line = error.position.line;
-    (<any>errorRow.dataset).character = error.position.character;
+    errorRow.dataset["line"] = error.position.line.toString();
+    errorRow.dataset["character"] = error.position.character.toString();
 
     let positionCell = document.createElement("td");
     positionCell.textContent = (error.position.line + 1).toString();
@@ -203,7 +203,7 @@ export function refreshErrors(errors: Array<{file: string; position: {line: numb
     let scriptCell = document.createElement("td");
     errorRow.appendChild(scriptCell);
     if (error.file !== "") {
-      (<any>errorRow.dataset).assetId = data.files[error.file].id;
+      errorRow.dataset["assetId"] = data.files[error.file].id;
       scriptCell.textContent = error.file.substring(0, error.file.length - 3);
     } else scriptCell.textContent = "Internal"
 
@@ -246,11 +246,11 @@ function onErrorTBodyClick(event: MouseEvent) {
     target = target.parentElement;
   }
 
-  let assetId: string = (<any>target.dataset).assetId;
+  let assetId = target.dataset["assetId"];
   if (assetId == null) return;
 
-  let line: string = (<any>target.dataset).line;
-  let character: string = (<any>target.dataset).character;
+  let line = target.dataset["line"];
+  let character = target.dataset["character"];
 
   if (assetId === info.assetId) {
     ui.editor.codeMirrorInstance.getDoc().setCursor({ line: parseInt(line), ch: parseInt(character) });

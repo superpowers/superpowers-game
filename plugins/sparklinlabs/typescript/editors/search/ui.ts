@@ -78,7 +78,7 @@ export function searchAsset(assetId: string) {
 
   if (nameElt == null) {
     nameElt = document.createElement("span");
-    (<any>nameElt.dataset).id = assetId;
+    nameElt.dataset["id"] = assetId;
     ui.resultsPane.appendChild(nameElt);
 
     nameElt.addEventListener("click", (event: any) => {
@@ -90,7 +90,7 @@ export function searchAsset(assetId: string) {
 
   if (tableElt == null) {
     tableElt = document.createElement("table");
-    (<any>tableElt.dataset).id = assetId;
+    tableElt.dataset["id"] = assetId;
     ui.resultsPane.appendChild(tableElt);
 
     tableElt.addEventListener("click", (event: any) => {
@@ -101,9 +101,9 @@ export function searchAsset(assetId: string) {
         target = target.parentElement;
       }
 
-      let id: string = (<any>target.dataset).id;
-      let line: string = (<any>target.dataset).line;
-      let ch: string = (<any>target.dataset).ch;
+      let id = target.dataset["id"];
+      let line = target.dataset["line"];
+      let ch = target.dataset["ch"];
 
       if (window.parent != null)
         window.parent.postMessage({ type: "openEntry", id, options: { line, ch } }, (<any>window.location).origin);

@@ -238,8 +238,8 @@ export default class BehaviorEditor {
     }
     
     for (let field of propertyFields) {
-      (<any>field.dataset)["behaviorPropertyName"] = property.name;
-      (<any>field.dataset)["behaviorPropertyType"] = property.type;
+      field.dataset["behaviorPropertyName"] = property.name;
+      field.dataset["behaviorPropertyType"] = property.type;
     }
   }
 

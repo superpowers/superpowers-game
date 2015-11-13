@@ -28,15 +28,15 @@ SupClient.setupHotkeys();
 ui.uniformsList = <HTMLTableElement>document.querySelector(".uniforms tbody");
 export function setupUniform(uniform: UniformPub) {
   let rowElt = document.createElement("tr");
-  (<any>rowElt.dataset).id = uniform.id;
+  rowElt.dataset["id"] = uniform.id;
   ui.uniformsList.appendChild(rowElt);
 
   let nameElt = document.createElement("td");
   let nameInputElt = document.createElement("input");
   nameInputElt.classList.add("name");
   nameInputElt.addEventListener("change", (event: any) => {
-    if (event.target.value === "") editAsset("deleteUniform", (<any>rowElt.dataset).id);
-    else editAsset("setUniformProperty", (<any>rowElt.dataset).id, "name", event.target.value);
+    if (event.target.value === "") editAsset("deleteUniform", rowElt.dataset["id"]);
+    else editAsset("setUniformProperty", rowElt.dataset["id"], "name", event.target.value);
   })
   nameInputElt.value = uniform.name;
   nameElt.appendChild(nameInputElt);
@@ -51,7 +51,7 @@ export function setupUniform(uniform: UniformPub) {
   }
   selectTypeElt.classList.add("type");
   selectTypeElt.addEventListener("change", (event: any) => {
-    editAsset("setUniformProperty", (<any>rowElt.dataset).id, "type", event.target.value);
+    editAsset("setUniformProperty", rowElt.dataset["id"], "type", event.target.value);
   })
   selectTypeElt.value = uniform.type;
   typeElt.appendChild(selectTypeElt);
@@ -134,15 +134,15 @@ ui.useLightUniformsCheckbox.addEventListener("change", (event: any) => {
 ui.attributesList = <HTMLTableElement>document.querySelector(".attributes tbody");
 export function setupAttribute(attribute: AttributePub) {
   let rowElt = document.createElement("tr");
-  (<any>rowElt.dataset).id = attribute.id;
+  rowElt.dataset["id"] = attribute.id;
   ui.attributesList.appendChild(rowElt);
 
   let nameElt = document.createElement("td");
   let nameInputElt = document.createElement("input");
   nameInputElt.classList.add("name");
   nameInputElt.addEventListener("change", (event: any) => {
-    if (event.target.value === "") editAsset("deleteAttribute", (<any>rowElt.dataset).id);
-    else editAsset("setAttributeProperty", (<any>rowElt.dataset).id, "name", event.target.value);
+    if (event.target.value === "") editAsset("deleteAttribute", rowElt.dataset["id"]);
+    else editAsset("setAttributeProperty", rowElt.dataset["id"], "name", event.target.value);
   })
   nameInputElt.value = attribute.name;
   nameElt.appendChild(nameInputElt);
@@ -156,7 +156,7 @@ export function setupAttribute(attribute: AttributePub) {
     selectTypeElt.appendChild(optionElt);
   }
   selectTypeElt.classList.add("type");
-  selectTypeElt.addEventListener("change", (event: any) => { editAsset("setAttributeProperty", (<any>rowElt.dataset).id, "type", event.target.value); })
+  selectTypeElt.addEventListener("change", (event: any) => { editAsset("setAttributeProperty", rowElt.dataset["id"], "type", event.target.value); })
   selectTypeElt.value = attribute.type;
   typeElt.appendChild(selectTypeElt);
   rowElt.appendChild(typeElt);

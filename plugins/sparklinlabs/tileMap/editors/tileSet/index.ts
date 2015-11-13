@@ -165,7 +165,7 @@ function selectTile(tile: { x: number; y: number; }) {
 
 function addTileProperty(name: string, value="") {
   let liElt = document.createElement("li");
-  (<any>liElt.dataset).name = name;
+  liElt.dataset["name"] = name;
 
   let nameSpan = document.createElement("span");
   nameSpan.className = "name";

@@ -120,7 +120,7 @@ ui.nodesTreeView.on("selectionChange", () => { setupSelectedNode(); });
 
 export function createNodeElement(node: Node) {
   let liElt = document.createElement("li");
-  (<any>liElt.dataset).id = node.id;
+  liElt.dataset["id"] = node.id;
 
   let nameSpan = document.createElement("span");
   nameSpan.classList.add("name");
@@ -306,7 +306,7 @@ function onTransformModeClick(event: UIEvent) {
     engine.transformHandleComponent.setMode(target.value);
 
     if (target.value === "translate") {
-      ui.translateMode = (<any>target.dataset)["target"];
+      ui.translateMode = target.dataset["target"];
       let linkShapeToPivot = (<HTMLInputElement>document.getElementById("translate-pivot-shape")).checked;
       if (ui.translateMode === "pivot" && linkShapeToPivot) ui.translateMode = "all";
     }

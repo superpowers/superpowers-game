@@ -296,7 +296,7 @@ export function selectEraser() {
 
 export function setupLayer(layer: TileMapLayerPub, index: number) {
   let liElt = <HTMLLIElement>document.createElement("li");
-  (<any>liElt.dataset).id = layer.id;
+  liElt.dataset["id"] = layer.id;
 
   let displayCheckbox = document.createElement("input");
   displayCheckbox.classList.add("display");

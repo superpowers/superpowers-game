@@ -253,7 +253,7 @@ document.getElementById("show-light").addEventListener("change", (event: any) =>
 
 export function createNodeElement(node: Node) {
   let liElt = document.createElement("li");
-  (<any>liElt.dataset).id = node.id;
+  liElt.dataset["id"] = node.id;
 
   let nameSpan = document.createElement("span");
   nameSpan.classList.add("name");
@@ -571,7 +571,7 @@ function onPrefabInput(event: any) {
 
 export function createComponentElement(nodeId: string, component: Component) {
   let componentElt = document.createElement("div");
-  (<any>componentElt.dataset).componentId = component.id;
+  componentElt.dataset["componentId"] = component.id;
 
   let template = <any>document.getElementById("component-cartridge-template");
   let clone = <any>document.importNode(template.content, true);;

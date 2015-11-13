@@ -106,7 +106,7 @@ onEditCommands.renameMap = (oldName: string, newName: string) => {
   let pub = data.modelUpdater.modelAsset.pub;
 
   let textureElt = <HTMLLIElement>ui.texturesTreeView.treeRoot.querySelector(`[data-name="${oldName}"]`);
-  (<any>textureElt.dataset).name = newName;
+  textureElt.dataset["name"] = newName;
   textureElt.querySelector("span").textContent = newName;
 
   for (let slotName in pub.mapSlots)

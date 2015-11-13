@@ -121,7 +121,7 @@ onRoomCommands.appendMessage = (entry: Entry) => {
 
 function appendRoomUser(roomUser: {id: string, connectionCount: number;}) {
   let roomUserElt = document.createElement("li");
-  (<any>roomUserElt.dataset).userId = roomUser.id;
+  roomUserElt.dataset["userId"] = roomUser.id;
   roomUserElt.textContent = roomUser.id;
   ui.roomUsers.appendChild(roomUserElt);
 };

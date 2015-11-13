@@ -48,7 +48,7 @@ export default class GameSettingsEditor {
 
     for (let i = 0; i < GameSettingsResource.schema["customLayers"].maxLength; i++) {
       let field = this.fields[`customLayer${i}`] = SupClient.table.appendTextField(this.layerContainers, "");
-      (<any>field.dataset).customLayerIndex = i;
+      field.dataset["customLayerIndex"] = i.toString();
       field.addEventListener("change", this.onCustomLayerFieldChange);
     }
 

@@ -108,7 +108,7 @@ ui.texturesTreeView.on("selectionChange", updateSelectedMap);
 ui.mapSlotsInput = {};
 for (let slotName in ModelAsset.schema["mapSlots"].properties) {
   ui.mapSlotsInput[slotName] = <HTMLInputElement>document.querySelector(`.map-${slotName}`);
-  (<any>ui.mapSlotsInput[slotName].dataset).name = slotName;
+  ui.mapSlotsInput[slotName].dataset["name"] = slotName;
   ui.mapSlotsInput[slotName].addEventListener("input", onEditMapSlot);
 }
 
@@ -311,7 +311,7 @@ function onDeleteAnimationClick() {
 
 function onAnimationDrop(dropInfo: any, orderedNodes: HTMLLIElement[]) {
   let animationIds: string[] = [];
-  for (let animation of orderedNodes) animationIds.push((<any>animation.dataset).id);
+  for (let animation of orderedNodes) animationIds.push(animation.dataset["id"]);
 
   let index = SupClient.getListViewDropIndex(dropInfo, data.modelUpdater.modelAsset.animations);
   for (let i = 0; i < animationIds.length; i++) editAsset("moveAnimation", animationIds[i], index + i);
@@ -335,7 +335,7 @@ export function updateSelectedAnimation() {
 
 export function setupAnimation(animation: any, index: number) {
   let liElt = document.createElement("li");
-  (<any>liElt.dataset).id = animation.id;
+  liElt.dataset["id"] = animation.id;
 
   let nameSpan = document.createElement("span");
   nameSpan.className = "name";
@@ -414,7 +414,7 @@ export function updateSelectedMap() {
 
 export function setupMap(mapName: string) {
   let liElt = document.createElement("li");
-  (<any>liElt.dataset).name = mapName;
+  liElt.dataset["name"] = mapName;
 
   let nameSpan = document.createElement("span");
   nameSpan.className = "name";
