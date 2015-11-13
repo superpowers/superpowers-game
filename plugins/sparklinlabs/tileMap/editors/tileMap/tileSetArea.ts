@@ -55,6 +55,7 @@ export function handleTileSetArea() {
   if (data.tileMapUpdater == null) return;
   if (data.tileMapUpdater.tileMapAsset == null) return;
   if (data.tileMapUpdater.tileSetAsset == null) return;
+  if (data.tileMapUpdater.tileSetAsset.pub.texture == null) return;
 
   let tilesPerRow = data.tileMapUpdater.tileSetAsset.pub.texture.image.width / data.tileMapUpdater.tileSetAsset.pub.grid.width;
   let tilesPerColumn = data.tileMapUpdater.tileSetAsset.pub.texture.image.height / data.tileMapUpdater.tileSetAsset.pub.grid.height;

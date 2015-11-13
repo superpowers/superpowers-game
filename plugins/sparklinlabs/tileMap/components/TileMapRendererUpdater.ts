@@ -92,7 +92,7 @@ export default class TileMapRendererUpdater {
 
     if (this.tileMapAsset.pub.tileSetId != null)
       this.client.subAsset(this.tileMapAsset.pub.tileSetId, "tileSet", this.tileSetSubscriber);
-    if (this.receiveAssetCallbacks != null) this.receiveAssetCallbacks.tileMap();
+    if (this.receiveAssetCallbacks != null && this.receiveAssetCallbacks.tileMap != null) this.receiveAssetCallbacks.tileMap();
   }
 
   _onTileMapAssetEdited = (id: string, command: string, ...args: any[]) => {
@@ -101,7 +101,7 @@ export default class TileMapRendererUpdater {
       if (commandFunction != null) commandFunction.apply(this, args);
     }
 
-    if (this.editAssetCallbacks != null) {
+    if (this.editAssetCallbacks != null && this.editAssetCallbacks.tileMap != null) {
       let editCallback = this.editAssetCallbacks.tileMap[command];
       if (editCallback != null) editCallback.apply(null, args);
     }
@@ -160,8 +160,8 @@ export default class TileMapRendererUpdater {
     this._prepareTexture(asset.pub.texture, () => {
       this.tileSetAsset = asset;
 
-      if (asset.pub.texture != null) this.tileMapRenderer.setTileSet(new TileSet(asset.pub));
-      if (this.receiveAssetCallbacks != null) this.receiveAssetCallbacks.tileSet();
+      this.tileMapRenderer.setTileSet(new TileSet(asset.pub));
+      if (this.receiveAssetCallbacks != null && this.receiveAssetCallbacks.tileSet != null) this.receiveAssetCallbacks.tileSet();
     })
 
   };
@@ -180,7 +180,7 @@ export default class TileMapRendererUpdater {
     let commandFunction = (<any>this)[`_onTileSetEditCommand_${command}`];
     if (commandFunction != null) commandFunction.apply(this, args);
 
-    if (this.editAssetCallbacks != null) {
+    if (this.editAssetCallbacks != null && this.editAssetCallbacks.tileSet != null) {
       let editCallback = this.editAssetCallbacks.tileSet[command];
       if (editCallback != null) editCallback.apply(null, args);
     }

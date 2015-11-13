@@ -274,9 +274,12 @@ function getMapGridPosition(gameInstance: SupEngine.GameInstance, cameraComponen
 }
 
 export function handleMapArea() {
-  if (data.tileMapUpdater == null) return;
-  if (data.tileMapUpdater.tileMapAsset == null) return;
-  if (data.tileMapUpdater.tileSetAsset == null) return;
+  if (data.tileMapUpdater == null || data.tileMapUpdater.tileMapAsset == null ||
+  data.tileMapUpdater.tileSetAsset == null || data.tileMapUpdater.tileSetAsset.pub.texture == null) {
+    mapArea.patternActor.threeObject.visible = false;
+    mapArea.patternBackgroundActor.threeObject.visible = false;
+    return;
+  }
 
   let pub = data.tileMapUpdater.tileMapAsset.pub;
   let [ mouseX, mouseY ] = getMapGridPosition(mapArea.gameInstance, mapArea.cameraComponent);
@@ -293,7 +296,7 @@ export function handleMapArea() {
     }
     else if (mapArea.patternActor.threeObject.visible) setupPattern(mapArea.patternData, mapArea.patternDataWidth);
   }
-
+  
   // Edit tiles
   if (mapArea.gameInstance.input.mouseButtons[0].isDown) {
     if (ui.eraserToolButton.checked) {

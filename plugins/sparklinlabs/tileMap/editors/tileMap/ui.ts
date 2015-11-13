@@ -242,6 +242,9 @@ function onChangeHighlight() {
 }
 
 export function selectBrush(x?: number, y?: number, width=1, height=1) {
+  ui.brushToolButton.checked = true;
+
+  if (data.tileMapUpdater.tileSetAsset == null || data.tileMapUpdater.tileSetAsset.pub == null) return;
   if (x != null && y != null) data.tileSetUpdater.tileSetRenderer.select(x, y, width, height);
 
   let ratio = data.tileSetUpdater.tileSetAsset.pub.grid.width / data.tileSetUpdater.tileSetAsset.pub.grid.height;
@@ -257,7 +260,6 @@ export function selectBrush(x?: number, y?: number, width=1, height=1) {
   }
   setupPattern(layerData, tmpScale.x);
 
-  ui.brushToolButton.checked = true;
   mapArea.patternActor.threeObject.visible = true;
   data.tileSetUpdater.tileSetRenderer.selectedTileActor.threeObject.visible = true;
   mapArea.patternBackgroundActor.threeObject.visible = true;
@@ -265,12 +267,14 @@ export function selectBrush(x?: number, y?: number, width=1, height=1) {
 }
 
 export function selectFill(x?: number, y?: number) {
+  ui.fillToolButton.checked = true;
+
+  if (data.tileMapUpdater.tileSetAsset == null || data.tileMapUpdater.tileSetAsset.pub == null) return;
   if (x != null && y != null) data.tileSetUpdater.tileSetRenderer.select(x, y);
 
   data.tileSetUpdater.tileSetRenderer.selectedTileActor.getLocalPosition(tmpPosition);
   setupFillPattern([ tmpPosition.x, -tmpPosition.y, false, false, 0 ]);
 
-  ui.fillToolButton.checked = true;
   mapArea.patternActor.threeObject.visible = true;
   data.tileSetUpdater.tileSetRenderer.selectedTileActor.threeObject.visible = true;
   mapArea.patternBackgroundActor.threeObject.visible = false;
@@ -278,6 +282,9 @@ export function selectFill(x?: number, y?: number) {
 
 export function selectSelection() {
   ui.selectionToolButton.checked = true;
+
+  if (data.tileMapUpdater.tileSetAsset == null || data.tileMapUpdater.tileSetAsset.pub == null) return;
+
   mapArea.patternActor.threeObject.visible = false;
   mapArea.patternBackgroundActor.threeObject.visible = false;
   data.tileSetUpdater.tileSetRenderer.selectedTileActor.threeObject.visible = false;
@@ -287,6 +294,9 @@ export function selectSelection() {
 
 export function selectEraser() {
   ui.eraserToolButton.checked = true;
+
+  if (data.tileMapUpdater.tileSetAsset == null || data.tileMapUpdater.tileSetAsset.pub == null) return;
+
   mapArea.patternActor.threeObject.visible = false;
   data.tileSetUpdater.tileSetRenderer.selectedTileActor.threeObject.visible = false;
   mapArea.patternBackgroundActor.threeObject.visible = true;

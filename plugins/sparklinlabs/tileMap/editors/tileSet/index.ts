@@ -142,10 +142,10 @@ function setupProperty(key: string, value: any) {
 
 function selectTile(tile: { x: number; y: number; }) {
   data.selectedTile = tile;
-  let pub = data.tileSetUpdater.tileSetAsset.pub
+  let pub = data.tileSetUpdater.tileSetAsset.pub;
 
-  let tilePerRow = Math.floor(pub.texture.image.width / pub.grid.width);
-  let tilePerColumn = Math.floor(pub.texture.image.height / pub.grid.height);
+  let tilePerRow = (pub.texture != null) ? Math.floor(pub.texture.image.width / pub.grid.width) : 1;
+  let tilePerColumn = (pub.texture != null) ? Math.floor(pub.texture.image.height / pub.grid.height) : 1;
 
   let tileIndex = (tile.x === tilePerRow - 1 && tile.y === tilePerColumn - 1) ? -1 : tile.x + tile.y * tilePerRow;
   ui.selectedTileInput.value = tileIndex;
@@ -282,6 +282,11 @@ function tick(timestamp=0) {
 }
 
 function handleTilesetArea() {
+  if (data == null || data.tileSetUpdater.tileSetAsset == null) return;
+  
+  let pub = data.tileSetUpdater.tileSetAsset.pub;
+  if (pub.texture == null) return;
+
   if (ui.gameInstance.input.mouseButtons[0].wasJustReleased) {
     let mousePosition = ui.gameInstance.input.mousePosition;
     let [ mouseX, mouseY ] = ui.cameraControls.getScenePosition(mousePosition.x, mousePosition.y);
@@ -289,7 +294,7 @@ function handleTilesetArea() {
     let ratio = data.tileSetUpdater.tileSetAsset.pub.grid.width / data.tileSetUpdater.tileSetAsset.pub.grid.height;
     let y = Math.floor(mouseY * ratio);
 
-    let pub = data.tileSetUpdater.tileSetAsset.pub;
+    
     if (x >= 0 && x < pub.texture.image.width / pub.grid.width &&
     y >= 0 && y < pub.texture.image.height / pub.grid.height &&
     (x !== data.selectedTile.x || y !== data.selectedTile.y)) {

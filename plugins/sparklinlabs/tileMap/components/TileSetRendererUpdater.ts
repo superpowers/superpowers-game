@@ -67,7 +67,7 @@ export default class TileSetRendererUpdater {
         });
       }
 
-      if (this.receiveAssetCallbacks != null) this.receiveAssetCallbacks.tileSet();
+      if (this.receiveAssetCallbacks != null && this.receiveAssetCallbacks.tileSet != null) this.receiveAssetCallbacks.tileSet();
     })
   }
 
@@ -85,7 +85,7 @@ export default class TileSetRendererUpdater {
     let commandFunction = (<any>this)[`_onEditCommand_${command}`];
     if (commandFunction != null) commandFunction.apply(this, args);
 
-    if (this.editAssetCallbacks != null) {
+    if (this.editAssetCallbacks != null && this.editAssetCallbacks.tileSet != null) {
       let editCallback = this.editAssetCallbacks.tileSet[command];
       if (editCallback != null) editCallback.apply(null, args);
     }

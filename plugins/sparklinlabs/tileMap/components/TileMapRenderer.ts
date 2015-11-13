@@ -34,7 +34,7 @@ export default class TileMapRenderer extends SupEngine.ActorComponent {
     this.tileMap = asset;
     if (materialType != null) this.materialType = materialType;
     this.customShader = customShader;
-    if (this.tileSet == null || this.tileMap == null) return;
+    if (this.tileSet == null || this.tileSet.data.texture == null || this.tileMap == null) return;
 
     this._createLayerMeshes();
   }
@@ -43,7 +43,7 @@ export default class TileMapRenderer extends SupEngine.ActorComponent {
     if (this.layerMeshes != null) this._clearLayerMeshes();
 
     this.tileSet = asset;
-    if (this.tileSet == null) return;
+    if (this.tileSet == null || this.tileSet.data.texture == null) return;
 
     this.tilesPerRow = this.tileSet.data.texture.image.width / this.tileSet.data.grid.width;
     this.tilesPerColumn = this.tileSet.data.texture.image.height / this.tileSet.data.grid.height;

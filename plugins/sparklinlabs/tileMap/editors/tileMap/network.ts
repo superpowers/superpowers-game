@@ -26,9 +26,8 @@ function onConnected() {
   let tileMapActor = new SupEngine.Actor(mapArea.gameInstance, "Tile Map");
   let tileMapRenderer = new TileMapRenderer(tileMapActor);
   let config = { tileMapAssetId: info.assetId, tileSetAssetId: <string>null, materialType: "basic" };
-  let receiveCallbacks = { tileMap: onTileMapAssetReceived, tileSet: onTileSetAssetReceived };
-  let editCallbacks = { tileMap: onEditCommands, tileSet: onTileSetEditCommands };
-
+  let receiveCallbacks = { tileMap: onTileMapAssetReceived };
+  let editCallbacks = { tileMap: onEditCommands };
   data.tileMapUpdater = new TileMapRenderer.Updater(data.projectClient, tileMapRenderer, config, receiveCallbacks, editCallbacks);
 }
 
@@ -39,8 +38,10 @@ function onTileMapAssetReceived() {
   let tileSetActor = new SupEngine.Actor(tileSetArea.gameInstance, "Tile Set");
   let tileSetRenderer = new TileSetRenderer(tileSetActor);
   let config = { tileSetAssetId: pub.tileSetId };
-  let receiveCallbacks = { tileSet: () => { selectBrush(0, 0); } };
-  data.tileSetUpdater = new TileSetRenderer.Updater(data.projectClient, tileSetRenderer, config, receiveCallbacks);
+  
+  let receiveCallbacks = { tileSet: onTileSetAssetReceived };
+  let editCallbacks = { tileSet: onTileSetEditCommands };
+  data.tileSetUpdater = new TileSetRenderer.Updater(data.projectClient, tileSetRenderer, config, receiveCallbacks, editCallbacks);
 
   updateTileSetInput();
   onEditCommands.resizeMap();
@@ -141,7 +142,11 @@ function onTileSetAssetReceived() {
 
   mapArea.cameraControls.setMultiplier(tileMapPub.pixelsPerUnit / tileSetPub.grid.width / 1);
   mapArea.gridRenderer.setRatio({ x: tileMapPub.pixelsPerUnit / tileSetPub.grid.width, y: tileMapPub.pixelsPerUnit / tileSetPub.grid.height });
-  mapArea.patternRenderer.setTileSet(new TileSet(tileSetPub));
+  
+  if (tileSetPub.texture != null) {
+    mapArea.patternRenderer.setTileSet(new TileSet(tileSetPub));
+    if (ui.brushToolButton.checked) selectBrush(0, 0);
+  }
   mapArea.patternBackgroundRenderer.setup(0x900090, 1 / tileMapPub.pixelsPerUnit, tileSetPub.grid.width);
 };
 
@@ -156,8 +161,10 @@ onTileSetEditCommands.setProperty = () => {
 
   mapArea.cameraControls.setMultiplier(tileMapPub.pixelsPerUnit / tileSetPub.grid.width / 1);
   mapArea.gridRenderer.setRatio({ x: tileMapPub.pixelsPerUnit / tileSetPub.grid.width, y: tileMapPub.pixelsPerUnit / tileSetPub.grid.height });
-  mapArea.patternRenderer.setTileSet(new TileSet(tileSetPub));
+  if (tileSetPub.texture != null) mapArea.patternRenderer.setTileSet(new TileSet(tileSetPub));
   mapArea.patternBackgroundRenderer.setup(0x900090, 1 / tileMapPub.pixelsPerUnit, tileSetPub.grid.width);
 
-  if (ui.brushToolButton.checked) selectBrush(0, 0);
+  if (data.tileMapUpdater.tileSetAsset.pub != null) {
+    if (ui.brushToolButton.checked) selectBrush(0, 0);
+  }
 };

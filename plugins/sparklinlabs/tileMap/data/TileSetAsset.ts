@@ -9,7 +9,7 @@ if ((<any>global).window != null && (<any>window).SupEngine != null) THREE = Sup
 
 export interface TileSetAssetPub {
   formatVersion: number;
-  image: Buffer;
+  image: Buffer|ArrayBuffer;
   grid: { width: number; height: number };
   tileProperties: { [tileName: string]: { [propertyName: string]: string} };
   texture?: THREE.Texture;
@@ -115,7 +115,8 @@ export default class TileSetAsset extends SupCore.Data.Base.Asset {
   _loadTexture() {
     this._unloadTexture();
 
-    if (this.pub.image.length === 0) return;
+    let buffer = this.pub.image as ArrayBuffer;
+    if (buffer.byteLength === 0) return;
 
     let image = new Image;
     let texture = this.pub.texture = new THREE.Texture(image);
@@ -123,7 +124,7 @@ export default class TileSetAsset extends SupCore.Data.Base.Asset {
     texture.magFilter = THREE.NearestFilter;
     texture.minFilter = THREE.NearestFilter;
 
-    let typedArray = new Uint8Array(this.pub.image);
+    let typedArray = new Uint8Array(buffer);
     let blob = new Blob([ typedArray ], { type: "image/*" });
     image.src = this.url = URL.createObjectURL(blob);
 
