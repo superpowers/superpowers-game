@@ -84,13 +84,13 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
   }
 
   _destroy() {
-    if (this.asset != null) this._clearMesh();
+    if (this.threeMesh != null) this._clearMesh();
     this.asset = null;
     super._destroy();
   }
 
   setModel(asset: ModelAssetPub, materialType?: string, customShader?: any) {
-    if (this.asset != null) this._clearMesh();
+    if (this.threeMesh != null) this._clearMesh();
     this.animation = null;
     this.animationsByName = {};
 
