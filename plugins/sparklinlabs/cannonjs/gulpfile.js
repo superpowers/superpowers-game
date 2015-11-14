@@ -1,17 +1,12 @@
 var gulp = require("gulp");
 var tasks = [];
 
-
 // TypeScript
 var ts = require("gulp-typescript");
-gulp.task("typescript", function () {
-  var tsResult = gulp.src(["**/*.ts", "!node_modules/**"]).pipe(ts({
-    typescript: require("typescript"),
-    declarationFiles: false,
-    module: "commonjs",
-    target: "ES5",
-    noImplicitAny: true
-  }));
+var tsProject = ts.createProject("./tsconfig.json");
+
+gulp.task("typescript", function() {
+  var tsResult = tsProject.src().pipe(ts(tsProject));
   return tsResult.js.pipe(gulp.dest("./"));
 });
 
