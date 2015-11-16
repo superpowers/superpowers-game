@@ -437,14 +437,14 @@ export function setInspectorPrefabId(prefabId: string) {
 }
 
 function onNewNodeClick() {
-  SupClient.dialogs.prompt("Enter a name for the actor.", null, "Actor", "Create", { pattern: "[^/]+", title: "Must contain no slashes." }, (name) => {
+  SupClient.dialogs.prompt("Enter a name for the actor.", null, "Actor", "Create", { pattern: SupClient.namePattern, title: SupClient.namePatternDescription }, (name) => {
     if (name == null) return;
     createNewNode(name, false);
   });
 }
 
 function onNewPrefabClick() {
-  SupClient.dialogs.prompt("Enter a name for the prefab.", null, "Prefab", "Create", { pattern: "[^/]+", title: "Must contain no slashes." }, (name) => {
+  SupClient.dialogs.prompt("Enter a name for the prefab.", null, "Prefab", "Create", { pattern: SupClient.namePattern, title: SupClient.namePatternDescription }, (name) => {
     if (name == null) return;
     createNewNode(name, true);
   });
@@ -479,7 +479,7 @@ function onRenameNodeClick() {
   let selectedNode = ui.nodesTreeView.selectedNodes[0];
   let node = data.sceneUpdater.sceneAsset.nodes.byId[selectedNode.dataset.id];
 
-  SupClient.dialogs.prompt("Enter a new name for the actor.", null, node.name, "Rename", { pattern: "[^/]+", title: "Must contain no slashes." }, (newName) => {
+  SupClient.dialogs.prompt("Enter a new name for the actor.", null, node.name, "Rename", { pattern: SupClient.namePattern, title: SupClient.namePatternDescription }, (newName) => {
     if (newName == null) return;
 
     socket.emit("edit:assets", info.assetId, "setNodeProperty", node.id, "name", newName, (err: string) => { if (err != null) alert(err); });
@@ -492,7 +492,7 @@ function onDuplicateNodeClick() {
   let selectedNode = ui.nodesTreeView.selectedNodes[0];
   let node = data.sceneUpdater.sceneAsset.nodes.byId[selectedNode.dataset.id];
 
-  SupClient.dialogs.prompt("Enter a name for the new actor.", null, node.name, "Duplicate", { pattern: "[^/]+", title: "Must contain no slashes." }, (newName) => {
+  SupClient.dialogs.prompt("Enter a name for the new actor.", null, node.name, "Duplicate", { pattern: SupClient.namePattern, title: SupClient.namePatternDescription }, (newName) => {
     if (newName == null) return;
     let options = SupClient.getTreeViewInsertionPoint(ui.nodesTreeView);
 
