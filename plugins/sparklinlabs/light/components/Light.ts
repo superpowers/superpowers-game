@@ -130,7 +130,8 @@ export default class Light extends SupEngine.ActorComponent {
     if (height != null) this.shadow.mapSize.y = height;
     if (this.type !== "spot" && this.type !== "directional") return;
 
-    this.light.shadow.mapSize.copy(this.shadow.mapSize);
+    let shadow = (this.light as THREE.SpotLight|THREE.DirectionalLight).shadow;
+    shadow.mapSize.copy(this.shadow.mapSize);
     this.setType(this.type);
   }
 
@@ -138,21 +139,24 @@ export default class Light extends SupEngine.ActorComponent {
     this.shadow.bias = bias;
     if (this.type !== "spot" && this.type !== "directional") return;
 
-    this.light.shadow.bias = this.shadow.bias;
+    let shadow = (this.light as THREE.SpotLight|THREE.DirectionalLight).shadow;
+    shadow.bias = this.shadow.bias;
   }
 
   setShadowDarkness(darkness: number) {
     this.shadow.darkness = darkness;
     if (this.type !== "spot" && this.type !== "directional") return;
 
-    this.light.shadow.darkness = this.shadow.darkness;
+    let shadow = (this.light as THREE.SpotLight|THREE.DirectionalLight).shadow;
+    shadow.darkness = this.shadow.darkness;
   }
 
   setShadowCameraNearPlane(near: number) {
     this.shadow.camera.near = near;
     if (this.type !== "spot" && this.type !== "directional") return;
 
-    let camera = <THREE.PerspectiveCamera>this.light.shadow.camera;
+    let shadow = (this.light as THREE.SpotLight|THREE.DirectionalLight).shadow;
+    let camera = <THREE.PerspectiveCamera>shadow.camera;
     camera.near = this.shadow.camera.near;
     camera.updateProjectionMatrix();
   }
@@ -161,7 +165,8 @@ export default class Light extends SupEngine.ActorComponent {
     this.shadow.camera.far = far;
     if (this.type !== "spot" && this.type !== "directional") return;
 
-    let camera = <THREE.PerspectiveCamera>this.light.shadow.camera;
+    let shadow = (this.light as THREE.SpotLight|THREE.DirectionalLight).shadow;
+    let camera = <THREE.PerspectiveCamera>shadow.camera;
     camera.far = this.shadow.camera.far;
     camera.updateProjectionMatrix();
   }
@@ -170,7 +175,8 @@ export default class Light extends SupEngine.ActorComponent {
     this.shadow.camera.fov;
     if (this.type !== "spot") return;
 
-    let camera = <THREE.PerspectiveCamera>this.light.shadow.camera;
+    let shadow = (this.light as THREE.SpotLight|THREE.DirectionalLight).shadow;
+    let camera = <THREE.PerspectiveCamera>shadow.camera;
     camera.fov = this.shadow.camera.fov;
     camera.updateProjectionMatrix();
   }

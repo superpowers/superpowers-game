@@ -160,8 +160,8 @@ export default class CubicModelRendererUpdater {
           case "box":
             switch (path) {
               case "shape.settings.size": {
-                rendererNode.shape.geometry = new THREE.BoxGeometry(value.x, value.y, value.z);
-                this.cubicModelRenderer.updateBoxNodeUv(rendererNode.shape.geometry, node);
+                let geometry = rendererNode.shape.geometry = new THREE.BoxGeometry(value.x, value.y, value.z);
+                this.cubicModelRenderer.updateBoxNodeUv(geometry, node);
                 break;
               }
 
