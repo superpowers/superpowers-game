@@ -5,8 +5,8 @@ namespace Sup {
     if (player.gameInstance.input.exited) return;
 
     // Close window only if running release mode in NW.js
-    if (!player.gameInstance.debug && window.nwDispatcher != null) {
-      window.nwDispatcher.requireNwGui().Window.get().close();
+    if (!player.gameInstance.debug && window.navigator.userAgent.indexOf("Electron") !== -1) {
+      require("remote").getCurrentWindow().close();
     } else {
       player.gameInstance.input.emit("exit");
       player.gameInstance.input.exited = true;
