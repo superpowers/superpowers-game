@@ -53,8 +53,6 @@ let ui: {
 export default ui;
 
 // Hotkeys
-SupClient.setupHotkeys();
-
 document.addEventListener("keydown", (event) => {
   if (document.querySelector(".dialog") != null) return;
   let activeElement = <HTMLElement>document.activeElement;
@@ -69,8 +67,9 @@ document.addEventListener("keydown", (event) => {
     onNewNodeClick();
   }
 
-  if (event.keyCode === 80 && (event.ctrlKey || event.metaKey)) { // CTRL-O or CTRL-P
+  if (event.keyCode === 80 && (event.ctrlKey || event.metaKey)) { // CTRL-P
     event.preventDefault();
+    event.stopPropagation();
     onNewPrefabClick();
   }
 
@@ -89,9 +88,11 @@ document.addEventListener("keydown", (event) => {
     onDeleteNodeClick();
   }
 });
+SupClient.setupHotkeys();
 
 document.addEventListener("keydown", (event) => {
   if ((<HTMLInputElement>event.target).tagName === "INPUT") return;
+  if ((<HTMLInputElement>event.target).tagName === "TEXTAREA") return;
 
   switch (event.keyCode) {
     case (<any>window).KeyEvent.DOM_VK_E:
