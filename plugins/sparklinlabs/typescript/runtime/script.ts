@@ -63,7 +63,7 @@ export function start(player: SupRuntime.Player, callback: Function) {
   globalNames.unshift(globalNames.splice(globalNames.indexOf("Sup.ts"), 1)[0]);
 
   // Compile plugin globals
-  let jsGlobals = compileTypeScript(globalNames, globals, `${globalDefs["lib.d.ts"]}\ndeclare var console, window, localStorage, player, SupEngine, SupRuntime;`, { sourceMap: false });
+  let jsGlobals = compileTypeScript(globalNames, globals, `${globalDefs["lib.d.ts"]}\ndeclare var console, window, localStorage, player, SupEngine, SupRuntime, require;`, { sourceMap: false });
   if (jsGlobals.errors.length > 0) {
     for (let error of jsGlobals.errors) console.log(`${error.file}(${error.position.line}): ${error.message}`);
     callback(new Error("Compilation failed. Check the devtools (F12) for errors."));

@@ -1,6 +1,3 @@
-let nodeRequire = require;
-//let shell = nodeRequire("shell");
-
 if (SupClient.isApp) {
   document.querySelector(".sidebar .links").addEventListener("click", (event: any) => {
     if (event.target.tagName !== "A") return;
