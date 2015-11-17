@@ -88,9 +88,9 @@ export default class Input extends EventEmitter {
 
     // On exit
     if (options.enableOnExit) {
-      let nwDispatcher = (<any>window).nwDispatcher;
-      if (nwDispatcher != null) {
-        try { nwDispatcher.requireNwGui().Window.get().on("close", this._doExitCallback); }
+      if (window.navigator.userAgent.indexOf("Electron") !== -1) {
+        let nodeRequire = require;
+        try { nodeRequire("remote").getCurrentWindow().on("close", this._doExitCallback); }
         // An exception might happen if we're in NW.js but the window wasn't created by Superpowers
         // Some users have reported they use NW.js as a browser while developing with Superpowers
         // so as a convenience for them, we're logging a warning rather than crashing
@@ -383,12 +383,6 @@ export default class Input extends EventEmitter {
     // http://stackoverflow.com/questions/8711393/onbeforeunload-fires-twice
     if (!this.exited) this.emit("exit");
     this.exited = true;
-
-    let nwDispatcher = (<any>window).nwDispatcher;
-    if (nwDispatcher != null) {
-      let gui = (<any>window).nwDispatcher.requireNwGui();
-      gui.Window.get().close(true);
-    }
   }
 
   update() {
