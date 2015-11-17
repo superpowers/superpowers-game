@@ -3,7 +3,6 @@
 /// <reference path="../../SupRuntime/SupRuntime.d.ts" />
 /// <reference path="../../../../SupCore/SupCore.d.ts" />
 
-import "isomorphic-fetch";
 import * as async from "async";
 import * as querystring from "querystring";
 
