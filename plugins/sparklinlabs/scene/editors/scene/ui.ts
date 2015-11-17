@@ -14,7 +14,7 @@ let ui: {
   treeViewElt: HTMLDivElement;
   nodesTreeView: any;
 
-  newNodeButton: HTMLButtonElement;
+  newActorButton: HTMLButtonElement;
   newPrefabButton: HTMLButtonElement;
   renameNodeButton: HTMLButtonElement;
   duplicateNodeButton: HTMLButtonElement;
@@ -141,8 +141,8 @@ ui.nodesTreeView = new TreeView(ui.treeViewElt, { dropCallback: onNodeDrop });
 ui.nodesTreeView.on("activate", onNodeActivate);
 ui.nodesTreeView.on("selectionChange", () => { setupSelectedNode(); });
 
-ui.newNodeButton = <HTMLButtonElement>document.querySelector("button.new-node");
-ui.newNodeButton.addEventListener("click", onNewNodeClick);
+ui.newActorButton = <HTMLButtonElement>document.querySelector("button.new-actor");
+ui.newActorButton.addEventListener("click", onNewNodeClick);
 ui.newPrefabButton = <HTMLButtonElement>document.querySelector("button.new-prefab");
 ui.newPrefabButton.addEventListener("click", onNewPrefabClick);
 ui.renameNodeButton = <HTMLButtonElement>document.querySelector("button.rename-node");
@@ -309,7 +309,7 @@ export function setupSelectedNode() {
   if (nodeElt == null || ui.nodesTreeView.selectedNodes.length !== 1) {
     ui.inspectorElt.hidden = true;
 
-    ui.newNodeButton.disabled = false;
+    ui.newActorButton.disabled = false;
     ui.newPrefabButton.disabled = false;
     ui.renameNodeButton.disabled = true;
     ui.duplicateNodeButton.disabled = true;
@@ -329,7 +329,7 @@ export function setupSelectedNode() {
 
   // If it's a prefab, disable various buttons
   let isPrefab = node.prefabId != null;
-  ui.newNodeButton.disabled = isPrefab;
+  ui.newActorButton.disabled = isPrefab;
   ui.newPrefabButton.disabled = isPrefab;
   ui.renameNodeButton.disabled = false;
   ui.duplicateNodeButton.disabled = false;

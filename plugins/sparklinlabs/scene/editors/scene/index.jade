@@ -59,11 +59,11 @@ html
 
     .sidebar
       .nodes-buttons
-        button(title="Ctrl+N").new-node New Actor
-        button(title="Ctrl+P").new-prefab New Prefab
-        button(disabled, title="F2").rename-node Rename
-        button(disabled, title="Ctrl+D").duplicate-node Duplicate
-        button(disabled, title="Suppr").delete-node Delete
+        button(title="New actor (Ctrl+N)").new-actor
+        button(title="New prefab (Ctrl+P)").new-prefab
+        button(title="Rename (F2)",disabled).rename-node
+        button(title="Duplicate (Ctrl+D)",disabled).duplicate-node
+        button(title="Delete (Delete)",disabled).delete-node
 
       .nodes-tree-view
 
