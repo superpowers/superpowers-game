@@ -206,6 +206,21 @@ export default class CubicModelRendererUpdater {
     delete this.cubicModelRenderer.byNodeId[nodeId];
   }
 
+  _onEditCommand_changeTextureWidth = () => { this._onChangeTextureSize(); }
+  _onEditCommand_changeTextureHeight = () => { this._onChangeTextureSize(); }
+
+  _onChangeTextureSize() {
+    for (let id in this.cubicModelAsset.nodes.byId) {
+      let node = this.cubicModelAsset.nodes.byId[id];
+      let shape = this.cubicModelRenderer.byNodeId[id].shape;
+      this.cubicModelRenderer.updateBoxNodeUv(shape.geometry, node);
+
+      let material = shape.material as THREE.MeshBasicMaterial;
+      material.map = this.cubicModelAsset.pub.textures["map"];
+      material.needsUpdate = true;
+    }
+  }
+
   _onCubicModelAssetTrashed() {
     this.cubicModelAsset = null;
     this.cubicModelRenderer.setCubicModel(null);

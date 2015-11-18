@@ -3,6 +3,7 @@ import { socket, data, editAsset } from "./network";
 import engine, { setupHelpers } from "./engine";
 import { setSelectedNode as setTextureAreaSelectedNode } from "./textureArea";
 
+import CubicModelAsset from "../../data/CubicModelAsset";
 import { Node } from "../../data/CubicModelNodes";
 
 let THREE = SupEngine.THREE;
@@ -20,6 +21,8 @@ let ui: {
   gridStep: number;
 
   pixelsPerUnitInput?: HTMLInputElement;
+  textureWidthSelect?: HTMLSelectElement;
+  textureHeightSelect?: HTMLSelectElement;
 
   newNodeButton: HTMLButtonElement;
   renameNodeButton: HTMLButtonElement;
@@ -111,6 +114,22 @@ ui.pixelsPerUnitInput = <HTMLInputElement>document.querySelector("input.property
 ui.pixelsPerUnitInput.addEventListener("change", onChangePixelsPerUnit);
 
 function onChangePixelsPerUnit(event: any) { editAsset("setProperty", "pixelsPerUnit", parseFloat(event.target.value)); }
+
+// Texture size
+ui.textureWidthSelect = document.querySelector("select.property-texture-width") as HTMLSelectElement;
+ui.textureHeightSelect = document.querySelector("select.property-texture-height") as HTMLSelectElement;
+let addOption = (parent: HTMLSelectElement, value: number) => {
+  let optionElt = document.createElement("option");
+  optionElt.textContent = value.toString();
+  optionElt.value = value.toString();
+  parent.appendChild(optionElt);
+}
+for (let size of CubicModelAsset.validTextureSizes) {
+  addOption(ui.textureWidthSelect, size);
+  addOption(ui.textureHeightSelect, size);
+}
+ui.textureWidthSelect.addEventListener("input", (event: any) => { editAsset("changeTextureWidth", parseInt(event.target.value)); })
+ui.textureHeightSelect.addEventListener("input", (event: any) => { editAsset("changeTextureHeight", parseInt(event.target.value)); })
 
 // Setup tree view
 ui.treeViewElt = <HTMLDivElement>document.querySelector(".nodes-tree-view");

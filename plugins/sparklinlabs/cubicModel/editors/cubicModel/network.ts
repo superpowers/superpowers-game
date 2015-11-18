@@ -54,6 +54,8 @@ function onAssetReceived() {
 
   let pub = data.cubicModelUpdater.cubicModelAsset.pub;
   ui.pixelsPerUnitInput.value = pub.pixelsPerUnit.toString();
+  ui.textureWidthSelect.value = pub.textureWidth.toString();
+  ui.textureHeightSelect.value = pub.textureHeight.toString();
 
   textureArea.setup();
 }
@@ -171,3 +173,12 @@ onEditCommands.removeNode = (id: string) => {
   // TODO: Only refresh if selection is affected
   setupHelpers();
 };
+
+onEditCommands.changeTextureWidth = () => {
+  ui.textureWidthSelect.value = data.cubicModelUpdater.cubicModelAsset.pub.textureWidth.toString();
+  textureArea.setupTexture();
+}
+onEditCommands.changeTextureHeight = () => {
+  ui.textureHeightSelect.value = data.cubicModelUpdater.cubicModelAsset.pub.textureHeight.toString();
+  textureArea.setupTexture();
+}

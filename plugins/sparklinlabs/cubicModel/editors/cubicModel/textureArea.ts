@@ -5,18 +5,18 @@ import { TextureEdit } from "../../data/CubicModelAsset";
 let THREE = SupEngine.THREE;
 
 let textureArea: {
-  gameInstance?: SupEngine.GameInstance;
-  cameraControls?: any;
+  gameInstance: SupEngine.GameInstance;
+  cameraControls: any;
   shapeLineMeshesByNodeId: { [nodeId: string]: THREE.LineSegments; }
-  //gridRenderer?: any;
-  //selectionRenderer?: SelectionRenderer;
 
-  brushColor?: HTMLInputElement;
+  textureMesh: THREE.Mesh;
+  //gridRenderer: any;
+  //selectionRenderer: SelectionRenderer;
 
-  pasteMesh?: THREE.Mesh;
-} = {
-  shapeLineMeshesByNodeId: {}
-};
+  brushColor: HTMLInputElement;
+
+  pasteMesh: THREE.Mesh;
+} = <any>{ shapeLineMeshesByNodeId: {} };
 export default textureArea;
 
 let canvas = <HTMLCanvasElement>document.querySelector(".texture-container canvas");
@@ -93,19 +93,23 @@ textureArea.cameraControls = new SupEngine.editorComponentClasses["Camera2DContr
 
 
 export function setup() {
+  setupTexture();
+  data.cubicModelUpdater.cubicModelAsset.nodes.walk(addNode);
+}
+
+export function setupTexture() {
+  if (textureArea.textureMesh != null) textureArea.gameInstance.threeScene.remove(textureArea.textureMesh);
+
   let asset = data.cubicModelUpdater.cubicModelAsset;
   let threeTexture = data.cubicModelUpdater.cubicModelAsset.pub.textures["map"];
 
   let geom = new THREE.PlaneBufferGeometry(asset.pub.textureWidth, asset.pub.textureHeight, 1, 1);
-  let mat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true });
-  mat.map = threeTexture;
-  let mesh = new THREE.Mesh(geom, mat);
-  mesh.position.set(asset.pub.textureWidth / 2, -asset.pub.textureHeight / 2, 0);
+  let mat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, map: threeTexture });
+  textureArea.textureMesh = new THREE.Mesh(geom, mat);
+  textureArea.textureMesh.position.set(asset.pub.textureWidth / 2, -asset.pub.textureHeight / 2, -1);
 
-  textureArea.gameInstance.threeScene.add(mesh);
-  mesh.updateMatrixWorld(false);
-
-  data.cubicModelUpdater.cubicModelAsset.nodes.walk(addNode);
+  textureArea.gameInstance.threeScene.add(textureArea.textureMesh);
+  textureArea.textureMesh.updateMatrixWorld(false);
 }
 
 textureArea.brushColor = <HTMLInputElement>document.getElementById("brush-color");

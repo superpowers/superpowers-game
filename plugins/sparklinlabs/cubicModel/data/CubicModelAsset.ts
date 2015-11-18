@@ -41,7 +41,7 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
     pixelsPerUnit: { type: "integer", min: 1, mutable: true },
     nodes: { type: "array" },
 
-    textureWidth: { type: "number"},
+    textureWidth: { type: "number" },
     textureHeight: { type: "number" },
 
     maps: { type: "hash", values: { type: "buffer?" } },
@@ -57,13 +57,15 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
     }
   };
 
+  static validTextureSizes = [32, 64, 128, 256, 512, 1024, 2048];
+
   pub: CubicModelAssetPub;
   nodes: CubicModelNodes;
 
   textureDatas: { [name: string]: Uint8ClampedArray; };
 
   // Only used on client-side
-  textureEditing: { [name: string]: { imageData: ImageData; ctx: CanvasRenderingContext2D; } } = {};
+  clientTextureDatas: { [name: string]: { imageData: ImageData; ctx: CanvasRenderingContext2D; } } = {};
 
   constructor(id: string, pub: any, server: ProjectServer) {
     super(id, pub, CubicModelAsset.schema, server);
@@ -86,8 +88,8 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
         }
       };
 
-      let x = new Uint8ClampedArray(this.pub.maps["map"]);
-      for (let i = 0; i < x.length; i++) x[i] = 255;
+      let data = new Uint8ClampedArray(this.pub.maps["map"]);
+      for (let i = 0; i < data.length; i++) data[i] = 255;
 
       super.init(options, callback);
     });
@@ -164,7 +166,7 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
   _loadTextures() {
     this._unloadTextures();
     this.pub.textures = {};
-    this.textureEditing = {};
+    this.clientTextureDatas = {};
 
     // Texturing
     // NOTE: This is the unoptimized variant for editing
@@ -181,10 +183,11 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
 
       let imageData = new ImageData(this.textureDatas[mapName], this.pub.textureWidth, this.pub.textureHeight)
       ctx.putImageData(imageData, 0, 0);
-      this.textureEditing[mapName] = { imageData, ctx };
+      this.clientTextureDatas[mapName] = { imageData, ctx };
     }
   }
 
+  // Nodes
   server_addNode(client: any, name: string, options: any, callback: (err: string, node: Node, parentId: string, index: number) => any) {
     let parentId = (options != null) ? options.parentId : null;
     let parentNode = this.nodes.byId[parentId];
@@ -447,6 +450,84 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
     this.nodes.client_remove(id);
   }
 
+
+  // Texture
+  server_changeTextureWidth(client: any, newWidth: number, callback: (err: string, newWidth: number) => void) {
+    if (CubicModelAsset.validTextureSizes.indexOf(newWidth) === -1) { callback(`Invalid new texture width: ${newWidth}`, null); return; }
+
+    this._changeTextureWidth(newWidth);
+    callback(null, newWidth);
+    this.emit("change");
+  }
+
+  client_changeTextureWidth(newWidth: number) {
+    this._changeTextureWidth(newWidth);
+    this._loadTextures();
+  }
+
+  _changeTextureWidth(newWidth: number) {
+    for (let mapName in this.pub.maps) {
+      let oldMapData = this.textureDatas[mapName];
+
+      let newMapBuffer = new ArrayBuffer(newWidth * this.pub.textureHeight * 4);
+      let newMapData = new Uint8ClampedArray(newMapBuffer);
+
+      for (let y = 0; y < this.pub.textureHeight; y++) {
+        let x = 0;
+        while (x < Math.max(this.pub.textureWidth, newWidth)) {
+          let oldIndex = (y * this.pub.textureWidth + x) * 4;
+          let newIndex = (y * newWidth              + x) * 4;
+
+          for (let i = 0; i < 4; i++) {
+            let value = x >= this.pub.textureWidth ? 255 : oldMapData[oldIndex + i];
+            newMapData[newIndex + i] = value;
+          }
+          x++;
+        }
+      }
+
+      this.pub.maps[mapName] = newMapBuffer;
+      this.textureDatas[mapName] = newMapData;
+    }
+    this.pub.textureWidth = newWidth;
+  }
+
+  server_changeTextureHeight(client: any, newHeight: number, callback: (err: string, newHeight: number) => void) {
+    if (CubicModelAsset.validTextureSizes.indexOf(newHeight) === -1) { callback(`Invalid new texture height: ${newHeight}`, null); return; }
+
+    this._changeTextureHeight(newHeight);
+    callback(null, newHeight);
+    this.emit("change");
+  }
+
+  client_changeTextureHeight(newHeight: number) {
+    this._changeTextureHeight(newHeight);
+    this._loadTextures();
+  }
+
+  _changeTextureHeight(newHeight: number) {
+    for (let mapName in this.pub.maps) {
+      let oldMapData = this.textureDatas[mapName];
+
+      let newMapBuffer = new ArrayBuffer(this.pub.textureWidth * newHeight * 4);
+      let newMapData = new Uint8ClampedArray(newMapBuffer);
+
+      for (let y = 0; y < Math.max(this.pub.textureHeight, newHeight); y++) {
+        for (let x = 0; x < this.pub.textureWidth; x++) {
+          let index = (y * this.pub.textureWidth + x) * 4;
+          for (let i = 0; i < 4; i++) {
+            let value = y >= this.pub.textureHeight ? 255 : oldMapData[index + i];
+            newMapData[index + i] = value;
+          }
+        }
+      }
+
+      this.pub.maps[mapName] = newMapBuffer;
+      this.textureDatas[mapName] = newMapData;
+    }
+    this.pub.textureHeight = newHeight;
+  }
+
   server_editTexture(client: any, name: string, edits: TextureEdit[], callback: (err: string, name: string, edits: TextureEdit[]) => void) {
     if (this.pub.maps[name] == null) { callback(`Invalid map name: ${name}`, null, null); return; }
     for (let edit of edits) {
@@ -467,8 +548,8 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
   client_editTexture(name: string, edits: TextureEdit[]) {
     this._editTextureData(name, edits);
 
-    let imageData = this.textureEditing[name].imageData;
-    this.textureEditing[name].ctx.putImageData(imageData, 0, 0);
+    let imageData = this.clientTextureDatas[name].imageData;
+    this.clientTextureDatas[name].ctx.putImageData(imageData, 0, 0);
     this.pub.textures[name].needsUpdate = true;
   }
 
