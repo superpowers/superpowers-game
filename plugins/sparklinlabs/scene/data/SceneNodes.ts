@@ -173,10 +173,10 @@ export default class SceneNodes extends SupCore.Data.Base.TreeById {
 
     // Check for infinite loop
     let canUseScene = true;
-    let aquiringScene = 0;
+    let acquiringScene = 0;
 
     let checkScene = (sceneId: string) => {
-      aquiringScene++;
+      acquiringScene++;
       this.sceneAsset.server.data.assets.acquire(sceneId, this, (error: Error, asset: SceneAsset) => {
         this.sceneAsset.server.data.assets.release(sceneId, this);
 
@@ -187,7 +187,7 @@ export default class SceneNodes extends SupCore.Data.Base.TreeById {
         }
 
         let walk = (node: Node) => {
-          if (! canUseScene) return;
+          if (!canUseScene) return;
 
           if (node.prefabId != null && node.prefabId.length > 0) {
             if (node.prefabId === this.sceneAsset.id) canUseScene = false;
@@ -198,8 +198,8 @@ export default class SceneNodes extends SupCore.Data.Base.TreeById {
 
         for (let node of asset.pub.nodes) walk(node);
 
-        aquiringScene--;
-        if (aquiringScene === 0) {
+        acquiringScene--;
+        if (acquiringScene === 0) {
           if (canUseScene) finish();
           else callback("Cannot use this scene, it will create an infinite loop");
         }
