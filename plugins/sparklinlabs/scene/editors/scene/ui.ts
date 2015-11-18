@@ -91,8 +91,11 @@ document.addEventListener("keydown", (event) => {
 SupClient.setupHotkeys();
 
 document.addEventListener("keydown", (event) => {
+  if (document.querySelector("body > .dialog") != null) return;
   if ((<HTMLInputElement>event.target).tagName === "INPUT") return;
   if ((<HTMLInputElement>event.target).tagName === "TEXTAREA") return;
+  if ((<HTMLInputElement>event.target).tagName === "SELECT") return;
+  if ((<HTMLInputElement>event.target).tagName === "BUTTON") return;
 
   switch (event.keyCode) {
     case (<any>window).KeyEvent.DOM_VK_E:
