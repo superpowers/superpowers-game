@@ -66,7 +66,7 @@ export default class LightMarker extends Light {
   setCastShadow(castShadow: boolean) {
     super.setCastShadow(castShadow);
     if (castShadow) {
-      this.cameraHelper = new THREE.CameraHelper(this.light.shadow.camera);
+      this.cameraHelper = new THREE.CameraHelper((this.light as THREE.DirectionalLight|THREE.SpotLight).shadow.camera);
       this.actor.gameInstance.threeScene.add(this.cameraHelper);
     } else {
       this.actor.gameInstance.threeScene.remove(this.cameraHelper);
