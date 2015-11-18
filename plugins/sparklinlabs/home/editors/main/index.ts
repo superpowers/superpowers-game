@@ -140,7 +140,7 @@ onRoomCommands.leave = (roomUserId: string) => {
 function onChatInputKeyDown(event: any) {
   if (event.keyCode !== 13 || event.shiftKey) return;
   event.preventDefault();
-  if (! socket.connected) return;
+  if (!socket.connected) return;
 
   socket.emit("edit:rooms", "home", "appendMessage", this.value, (err: string) => {
     if (err != null) { alert(err); return; }

@@ -100,7 +100,7 @@ export default class BehaviorEditor {
 
     propertySetting.checkbox.checked = this.config.propertyValues[property.name] != null;
     propertySetting.checkbox.addEventListener("change", (event: any) => {
-      if (! event.target.checked) {
+      if (!event.target.checked) {
         this.editConfig("clearBehaviorPropertyValue", property.name);
         return;
       }

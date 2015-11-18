@@ -150,7 +150,7 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
   setCastShadow(castShadow: boolean) {
     this.castShadow = castShadow;
     this.threeMesh.castShadow = castShadow;
-    if (! castShadow) return;
+    if (!castShadow) return;
 
     this.actor.gameInstance.threeScene.traverse((object: any) => {
       let material: THREE.Material = object.material;
@@ -326,7 +326,7 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
   }
 
   _tickAnimation() {
-    if (this.animationName == null || ! this.isAnimationPlaying) return;
+    if (this.animationName == null || !this.isAnimationPlaying) return;
 
     this.animationTimer += 1;
     this.updateFrame();

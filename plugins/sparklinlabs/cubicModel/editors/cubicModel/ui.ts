@@ -465,7 +465,7 @@ function onDuplicateNodeClick() {
 function onDeleteNodeClick() {
   if (ui.nodesTreeView.selectedNodes.length === 0) return;
   SupClient.dialogs.confirm("Are you sure you want to delete the selected nodes?", "Delete", (confirm) => {
-    if (! confirm) return;
+    if (!confirm) return;
 
     for (let selectedNode of ui.nodesTreeView.selectedNodes) {
       editAsset("removeNode", selectedNode.dataset.id);

@@ -13,7 +13,7 @@ export function setupComponent(player: SupRuntime.Player, component: any, config
     let sprite = player.getOuterAsset(config.spriteAssetId);
     if (sprite == null) return;
 
-    if (! config.overrideOpacity) component.opacity = sprite.__inner.opacity;
+    if (!config.overrideOpacity) component.opacity = sprite.__inner.opacity;
 
     let shader: any;
     if (config.materialType === "shader") {

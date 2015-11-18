@@ -94,8 +94,8 @@ document.addEventListener("keyup", (event) => {
     case (<any>window).KeyEvent.DOM_VK_F: selectFill(); break;
     case (<any>window).KeyEvent.DOM_VK_S: selectSelection(); break;
     case (<any>window).KeyEvent.DOM_VK_E: selectEraser(); break;
-    case (<any>window).KeyEvent.DOM_VK_G: ui.gridCheckbox.checked = ! ui.gridCheckbox.checked; onChangeGridDisplay(); break;
-    case (<any>window).KeyEvent.DOM_VK_I: ui.highlightCheckbox.checked = ! ui.highlightCheckbox.checked; onChangeHighlight(); break;
+    case (<any>window).KeyEvent.DOM_VK_G: ui.gridCheckbox.checked = !ui.gridCheckbox.checked; onChangeGridDisplay(); break;
+    case (<any>window).KeyEvent.DOM_VK_I: ui.highlightCheckbox.checked = !ui.highlightCheckbox.checked; onChangeHighlight(); break;
     case (<any>window).KeyEvent.DOM_VK_H: flipTilesHorizontally(); break;
     case (<any>window).KeyEvent.DOM_VK_V: flipTilesVertically(); break;
     case (<any>window).KeyEvent.DOM_VK_R: rotateTiles(); break;

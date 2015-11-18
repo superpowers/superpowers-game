@@ -135,14 +135,14 @@ export default class CubicModelRendererEditor {
       let opacity = (event.target.checked) ? 1 : null;
       this.editConfig("setProperty", "opacity", opacity);
     });
-    this.transparentField.disabled = ! config.overrideOpacity;
+    this.transparentField.disabled = !config.overrideOpacity;
 
     this.opacityField = SupClient.table.appendNumberField(<any>opacityParent, config.opacity, 0, 1);
     this.opacityField.addEventListener("input", (event: any) => {
       this.editConfig("setProperty", "opacity", parseFloat(event.target.value));
     });
     this.opacityField.step = "0.1";
-    this.opacityField.disabled = ! config.overrideOpacity;
+    this.opacityField.disabled = !config.overrideOpacity;
 
     let materialRow = SupClient.table.appendRow(tbody, "Material");
     this.materialSelectBox = SupClient.table.appendSelectBox(materialRow.valueCell, { "basic": "Basic", "phong": "Phong", "shader": "Shader" }, config.materialType);
@@ -190,7 +190,7 @@ export default class CubicModelRendererEditor {
         break;
 
       /*case "animationId":
-        if (! this.animationSelectBox.disabled) this.animationSelectBox.value = (value != null) ? value : "";
+        if (!this.animationSelectBox.disabled) this.animationSelectBox.value = (value != null) ? value : "";
         this.animationId = value;
         break;
 
@@ -217,7 +217,7 @@ export default class CubicModelRendererEditor {
 
       case "overrideOpacity":
         this.overrideOpacityField.checked = value;
-        this.transparentField.disabled = ! value;
+        this.transparentField.disabled = !value;
         this.transparentField.checked = false;
         this.opacityField.value = null;
         this.opacityField.disabled = true;

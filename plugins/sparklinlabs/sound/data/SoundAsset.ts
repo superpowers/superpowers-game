@@ -74,7 +74,7 @@ export default class SoundAsset extends SupCore.Data.Base.Asset {
   }
 
   server_upload(client: any, sound: any, callback: (err: string, sound?: Buffer) => any) {
-    if (! (sound instanceof Buffer)) { callback("Sound must be an ArrayBuffer"); return; }
+    if (!(sound instanceof Buffer)) { callback("Sound must be an ArrayBuffer"); return; }
 
     this.pub.sound = sound;
 

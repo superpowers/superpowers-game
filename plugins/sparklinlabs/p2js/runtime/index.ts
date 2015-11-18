@@ -8,7 +8,7 @@ namespace P2 {
 (<any>SupEngine).P2 = P2;
 
 SupEngine.registerEarlyUpdateFunction("P2js", () => {
-  if (! P2.autoUpdate) return;
+  if (!P2.autoUpdate) return;
   P2.World.step(1/60);
 });
 

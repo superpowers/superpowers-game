@@ -227,7 +227,7 @@ function onRenameAnimationClick() {
 function onDeleteAnimationClick() {
   if (ui.animationsTreeView.selectedNodes.length === 0) return;
   SupClient.dialogs.confirm("Are you sure you want to delete the selected animations?", "Delete", (confirm) => {
-    if (! confirm) return;
+    if (!confirm) return;
 
     ui.animationsTreeView.selectedNodes.forEach((selectedNode: any) => { editAsset("deleteAnimation", selectedNode.dataset.id); });
   });

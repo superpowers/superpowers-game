@@ -140,7 +140,7 @@ export default class TileSetAsset extends SupCore.Data.Base.Asset {
   }
 
   server_upload(client: any, image: Buffer, callback: (err: string, image: Buffer) => any) {
-    if (! (image instanceof Buffer)) { callback("Image must be an ArrayBuffer", null); return; }
+    if (!(image instanceof Buffer)) { callback("Image must be an ArrayBuffer", null); return; }
 
     this.pub.image = image;
 

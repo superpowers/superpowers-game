@@ -155,7 +155,7 @@ export default class ModelRendererUpdater {
         this.modelRenderer.setUnitRatio(value);
         break;
       case "opacity":
-        if (! this.overrideOpacity) this.modelRenderer.setOpacity(value);
+        if (!this.overrideOpacity) this.modelRenderer.setOpacity(value);
         break;
     }
   }

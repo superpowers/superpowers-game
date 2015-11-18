@@ -378,7 +378,7 @@ ${tab}gl_FragColor = texture2D(map, vUv);
     if (operationData.userId !== client.id) { callback("Invalid client id"); return; }
 
     let operation = new OT.TextOperation();
-    if (! operation.deserialize(operationData)) { callback("Invalid operation data"); return; }
+    if (!operation.deserialize(operationData)) { callback("Invalid operation data"); return; }
 
     try { operation = this.vertexDocument.apply(operation, revisionIndex); }
     catch (err) { callback("Operation can't be applied"); return; }
@@ -412,7 +412,7 @@ ${tab}gl_FragColor = texture2D(map, vUv);
     if (operationData.userId !== client.id) { callback("Invalid client id"); return; }
 
     let operation = new OT.TextOperation();
-    if (! operation.deserialize(operationData)) { callback("Invalid operation data"); return; }
+    if (!operation.deserialize(operationData)) { callback("Invalid operation data"); return; }
 
     try { operation = this.fragmentDocument.apply(operation, revisionIndex); }
     catch (err) { callback("Operation can't be applied"); return; }

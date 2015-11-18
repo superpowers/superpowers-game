@@ -513,7 +513,7 @@ function onDuplicateNodeClick() {
 function onDeleteNodeClick() {
   if (ui.nodesTreeView.selectedNodes.length === 0) return;
   SupClient.dialogs.confirm("Are you sure you want to delete the selected actors?", "Delete", (confirm) => {
-    if (! confirm) return;
+    if (!confirm) return;
 
     for (let selectedNode of ui.nodesTreeView.selectedNodes) {
       socket.emit("edit:assets", info.assetId, "removeNode", selectedNode.dataset.id, (err: string) => { if (err != null) alert(err); });
@@ -627,7 +627,7 @@ function onNewComponentClick() {
 
 function onDeleteComponentClick(event: any) {
   SupClient.dialogs.confirm("Are you sure you want to delete this component?", "Delete", (confirm) => {
-    if (! confirm) return;
+    if (!confirm) return;
 
     let nodeId = ui.nodesTreeView.selectedNodes[0].dataset.id;
     let componentId = event.target.parentElement.parentElement.dataset.componentId;

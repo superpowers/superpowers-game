@@ -205,7 +205,7 @@ Sup.registerBehavior(${behaviorName});
     if (operationData.userId !== client.id) { callback("Invalid client id"); return; }
 
     let operation = new OT.TextOperation();
-    if (! operation.deserialize(operationData)) { callback("Invalid operation data"); return; }
+    if (!operation.deserialize(operationData)) { callback("Invalid operation data"); return; }
 
     try { operation = this.document.apply(operation, revisionIndex); }
     catch (err) { callback("Operation can't be applied"); return; }

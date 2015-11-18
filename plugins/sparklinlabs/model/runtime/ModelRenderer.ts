@@ -11,7 +11,7 @@ export function setupComponent(player: SupRuntime.Player, component: any, config
     let model = player.getOuterAsset(config.modelAssetId);
     if (model == null) return;
 
-    if (! config.overrideOpacity) component.opacity = model.__inner.opacity;
+    if (!config.overrideOpacity) component.opacity = model.__inner.opacity;
 
     let shader: any;
     if (config.materialType === "shader") {

@@ -146,7 +146,7 @@ export default class SpriteRendererUpdater {
         break;
 
       case "opacity":
-        if (! this.overrideOpacity) this.spriteRenderer.setOpacity(value);
+        if (!this.overrideOpacity) this.spriteRenderer.setOpacity(value);
         break;
 
       case "alphaTest":

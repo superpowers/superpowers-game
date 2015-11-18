@@ -118,7 +118,7 @@ namespace ArcadePhysics2D {
   }
 
   export function collides(body1: ArcadeBody2D, bodies: ArcadeBody2D[]) {
-    if (body1.type === "tileMap" || ! body1.movable) throw new Error("The first body must be a movable box in ArcadePhysics2D.collides");
+    if (body1.type === "tileMap" || !body1.movable) throw new Error("The first body must be a movable box in ArcadePhysics2D.collides");
 
     body1.touches.top = false;
     body1.touches.bottom = false;

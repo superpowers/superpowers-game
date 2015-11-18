@@ -53,7 +53,7 @@ export default  class CameraMarker extends SupEngine.ActorComponent {
 
   setFOV(fov: number) {
     this.fov = fov;
-    if (! this.isOrthographic) this.projectionNeedsUpdate = true;
+    if (!this.isOrthographic) this.projectionNeedsUpdate = true;
   }
 
   setOrthographicScale(orthographicScale: number) {

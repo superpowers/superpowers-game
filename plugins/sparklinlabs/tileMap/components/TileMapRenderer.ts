@@ -149,7 +149,7 @@ export default class TileMapRenderer extends SupEngine.ActorComponent {
   setCastShadow(castShadow: boolean) {
     this.castShadow = castShadow;
     for (let layerMesh of this.layerMeshes) layerMesh.castShadow = castShadow;
-    if (! castShadow) return;
+    if (!castShadow) return;
 
     this.actor.gameInstance.threeScene.traverse((object: any) => {
       let material: THREE.Material = object.material;

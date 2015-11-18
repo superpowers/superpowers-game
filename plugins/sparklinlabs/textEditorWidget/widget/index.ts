@@ -163,7 +163,7 @@ class TextEditorWidget {
     this.texts.length = 0;
     if (operationToSend == null) return;
 
-    if (! undoRedo) {
+    if (!undoRedo) {
       if (this.undoTimeout != null) {
         clearTimeout(this.undoTimeout);
         this.undoTimeout = null;
@@ -253,7 +253,7 @@ class TextEditorWidget {
           }
 
           if (line === cursor.line && cursorPosition === cursor.ch) {
-            if (! operation.gotPriority(this.clientId)) {
+            if (!operation.gotPriority(this.clientId)) {
               for (let i = 0; i < op.attributes.text.length; i++) (<any>this.codeMirrorInstance).execCommand("goCharLeft");
             }
           }

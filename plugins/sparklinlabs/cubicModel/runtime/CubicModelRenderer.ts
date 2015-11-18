@@ -13,7 +13,7 @@ export function setupComponent(player: SupRuntime.Player, component: any, config
     let cubicModel = player.getOuterAsset(config.cubicModelAssetId);
     if (cubicModel == null) return;
 
-    if (! config.overrideOpacity) component.opacity = cubicModel.__inner.opacity;
+    if (!config.overrideOpacity) component.opacity = cubicModel.__inner.opacity;
 
     let shader: any;
     if (config.materialType === "shader") {

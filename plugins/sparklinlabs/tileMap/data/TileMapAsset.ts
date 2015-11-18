@@ -217,7 +217,7 @@ export default class TileMapAsset extends SupCore.Data.Base.Asset {
   server_editMap(client: any, layerId: string, edits: {x: number, y: number, tileValue: (number|boolean)[]}[],
   callback: (err: string, layerId: string, edits: {x: number, y: number, tileValue: (number|boolean)[]}[]) => any) {
     if (typeof layerId !== "string" || this.layers.byId[layerId] == null) { callback("no such layer", null, null); return; }
-    if (! Array.isArray(edits)) { callback("edits must be an array", null, null); return; }
+    if (!Array.isArray(edits)) { callback("edits must be an array", null, null); return; }
 
     for (let edit of edits) {
       let x = edit.x;

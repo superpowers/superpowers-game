@@ -241,7 +241,7 @@ function editMap(edits: Edits[]) {
           }
         }
       }
-      if (! sameTile) actualEdits.push(edit);
+      if (!sameTile) actualEdits.push(edit);
     }
   }
 
@@ -325,7 +325,7 @@ export function handleMapArea() {
       }
       editMap(edits);
 
-      if (ui.selectionToolButton.checked && ! mapArea.duplicatingSelection) {
+      if (ui.selectionToolButton.checked && !mapArea.duplicatingSelection) {
         mapArea.patternActor.threeObject.visible = false;
         mapArea.patternBackgroundActor.threeObject.visible = false;
       }

@@ -171,7 +171,7 @@ export default class FontAsset extends SupCore.Data.Base.Asset {
   }
 
   server_upload(client: any, font: any, callback: (err: string, font: any) => any) {
-    if (! (font instanceof Buffer)) { callback("Image must be an ArrayBuffer", null); return; }
+    if (!(font instanceof Buffer)) { callback("Image must be an ArrayBuffer", null); return; }
 
     if (this.pub.isBitmap) this.pub.bitmap = font
     else this.pub.font = font
