@@ -9,8 +9,7 @@ gulp.task("jade", function() { return gulp.src("./src/index.jade").pipe(jade()).
 
 // Stylus
 var stylus = require("gulp-stylus");
-var nib = require("nib");
-gulp.task("stylus", function() { return gulp.src("./src/index.styl").pipe(stylus({use: [ nib() ], errors: true})).pipe(gulp.dest("../public")); });
+gulp.task("stylus", function() { return gulp.src("./src/index.styl").pipe(stylus({ errors: true })).pipe(gulp.dest("../public")); });
 
 // TypeScript
 var ts = require("gulp-typescript");
