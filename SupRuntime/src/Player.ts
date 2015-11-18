@@ -193,23 +193,14 @@ export default class Player {
   }
 
   getAssetData(path: string, responseType: string, callback: (err: Error, data?: any) => any) {
-    let xhr = new XMLHttpRequest()
-    xhr.open("GET", `${this.dataURL}${path}`, true);
-    xhr.responseType = responseType;
-
-    xhr.onload = (event) => {
-      // Local file access returns status code 0
-      if (xhr.status !== 200 && xhr.status !== 0) { callback(new Error(`Could not get ${path}`)); return; }
-
-      // WORKAROUND: IE <= 11 does not support responseType = "json"
-      let response = xhr.response;
-      if (responseType === "json" && xhr.responseType !== "json") {
-        try { response = JSON.parse(response); }
-        catch (e) {}
-      }
-      callback(null, response);
-    }
-    xhr.send();
+    window.fetch(`${this.dataURL}${path}`)
+    .then((response) => {
+      if (responseType === "json") return response.json();
+      else if (responseType === "text") return response.text();
+      else return response.arrayBuffer();
+    })
+    .then((result) => { callback(null, result); })
+    .catch((err) => { callback(new Error(`Could not get ${path}`)); return; });
   }
 
   getOuterAsset(assetId: number) {
