@@ -156,7 +156,7 @@ export default class CubicModelRendererUpdater {
       }
 
       case "shape.textureOffset": {
-        let geometry = rendererNode.shape.geometry;
+        let geometry = rendererNode.shape.geometry as THREE.Geometry;
         this.cubicModelRenderer.updateBoxNodeUv(geometry, node);
         break;
       }
@@ -219,7 +219,7 @@ export default class CubicModelRendererUpdater {
     for (let id in this.cubicModelAsset.nodes.byId) {
       let node = this.cubicModelAsset.nodes.byId[id];
       let shape = this.cubicModelRenderer.byNodeId[id].shape;
-      this.cubicModelRenderer.updateBoxNodeUv(shape.geometry, node);
+      this.cubicModelRenderer.updateBoxNodeUv(shape.geometry as THREE.Geometry, node);
 
       let material = shape.material as THREE.MeshBasicMaterial;
       material.map = this.cubicModelAsset.pub.textures["map"];
