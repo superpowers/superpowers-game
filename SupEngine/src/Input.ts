@@ -91,8 +91,8 @@ export default class Input extends EventEmitter {
       if (window.navigator.userAgent.indexOf("Electron") !== -1) {
         let nodeRequire = require;
         try { nodeRequire("remote").getCurrentWindow().on("close", this._doExitCallback); }
-        // An exception might happen if we're in NW.js but the window wasn't created by Superpowers
-        // Some users have reported they use NW.js as a browser while developing with Superpowers
+        // An exception might happen if we're in the app but the window wasn't created by Superpowers
+        // Some users have reported they use the app as a browser while developing with Superpowers
         // so as a convenience for them, we're logging a warning rather than crashing
         catch(e) { console.warn("Could not setup exit callback:", e); }
       } else window.onbeforeunload = this._doExitCallback;

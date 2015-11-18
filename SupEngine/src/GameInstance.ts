@@ -34,7 +34,7 @@ export default class GameInstance extends EventEmitter {
   constructor(canvas: HTMLCanvasElement, options: { debug?: boolean; enableOnExit?: boolean; layers?: string[]; } = {}) {
     super();
 
-    // Used to know whether or not we have to close the window at exit when using NW.js
+    // Used to know whether or not we have to close the window at exit when using the app
     this.debug = options.debug === true;
 
     // Exit callback is only enabled when playing the actual game, not in most editors
