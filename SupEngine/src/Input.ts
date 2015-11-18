@@ -412,8 +412,8 @@ export default class Input extends EventEmitter {
       let wasDown = mouseButton.isDown;
       mouseButton.isDown = this.mouseButtonsDown[i];
 
-      mouseButton.wasJustPressed = ! wasDown && mouseButton.isDown;
-      mouseButton.wasJustReleased = wasDown && ! mouseButton.isDown;
+      mouseButton.wasJustPressed = !wasDown && mouseButton.isDown;
+      mouseButton.wasJustReleased = wasDown && !mouseButton.isDown;
     }
 
     for (let i = 0; i < this.touches.length; i++) {
@@ -421,8 +421,8 @@ export default class Input extends EventEmitter {
       let wasDown = touch.isDown;
       touch.isDown = this.touchesDown[i];
 
-      touch.wasStarted = ! wasDown && touch.isDown;
-      touch.wasEnded = wasDown && ! touch.isDown;
+      touch.wasStarted = !wasDown && touch.isDown;
+      touch.wasEnded = wasDown && !touch.isDown;
     }
 
     for (let i = 0; i < this.keyboardButtons.length; i++) {
@@ -430,9 +430,9 @@ export default class Input extends EventEmitter {
       let wasDown = keyboardButton.isDown;
       keyboardButton.isDown = this.keyboardButtonsDown[i];
 
-      keyboardButton.wasJustPressed = ! wasDown && keyboardButton.isDown;
+      keyboardButton.wasJustPressed = !wasDown && keyboardButton.isDown;
       keyboardButton.wasJustAutoRepeated = false;
-      keyboardButton.wasJustReleased = wasDown && ! keyboardButton.isDown;
+      keyboardButton.wasJustReleased = wasDown && !keyboardButton.isDown;
     }
 
     if (this.autoRepeatedKey != null) {
@@ -458,8 +458,8 @@ export default class Input extends EventEmitter {
         button.isDown = gamepad.buttons[i].pressed;
         button.value = gamepad.buttons[i].value;
 
-        button.wasJustPressed = ! wasDown && button.isDown;
-        button.wasJustReleased = wasDown && ! button.isDown;
+        button.wasJustPressed = !wasDown && button.isDown;
+        button.wasJustReleased = wasDown && !button.isDown;
       }
 
       for (let stick = 0; stick < 2; stick++) {
