@@ -12,10 +12,9 @@ gulp.task("jade", function() {
 
 // Stylus
 var stylus = require("gulp-stylus");
-var nib = require("nib");
 var cssimport = require("gulp-cssimport");
 gulp.task("stylus", function() {
-  return gulp.src("./editors/**/index.styl").pipe(stylus({use: [ nib() ], errors: true})).pipe(cssimport()).pipe(gulp.dest("./public/editors"));
+  return gulp.src("./editors/**/index.styl").pipe(stylus({ errors: true })).pipe(cssimport()).pipe(gulp.dest("./public/editors"));
 });
 
 // TypeScript

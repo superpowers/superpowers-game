@@ -3,10 +3,9 @@ var tasks = [ "stylus" ];
 
 // Stylus
 var stylus = require("gulp-stylus");
-var nib = require("nib");
 var cssimport = require("gulp-cssimport");
 gulp.task("stylus", function() {
-  return gulp.src("./widget/**/index.styl").pipe(stylus({use: [ nib() ], errors: true})).pipe(cssimport()).pipe(gulp.dest("./public/widget"));
+  return gulp.src("./widget/**/index.styl").pipe(stylus({ errors: true })).pipe(cssimport()).pipe(gulp.dest("./public/widget"));
 });
 
 // TypeScript
