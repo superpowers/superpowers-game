@@ -6,7 +6,7 @@
   "main": "src/index.js",
   "repository": {
     "type": "hg",
-    "url": "https://bitbucket.org/superpowers/system"
+    "url": "https://bitbucket.org/superpowers/sup-game-system"
   },
   "dependencies": {
     "three": "0.73.0"
