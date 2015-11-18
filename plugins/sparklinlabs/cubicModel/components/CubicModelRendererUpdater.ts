@@ -155,6 +155,12 @@ export default class CubicModelRendererUpdater {
         break;
       }
 
+      case "shape.textureOffset": {
+        let geometry = rendererNode.shape.geometry;
+        this.cubicModelRenderer.updateBoxNodeUv(geometry, node);
+        break;
+      }
+
       default: {
         switch (node.shape.type) {
           case "box":

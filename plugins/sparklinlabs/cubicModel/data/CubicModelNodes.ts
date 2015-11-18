@@ -69,10 +69,11 @@ export default class CubicModelNodes extends SupCore.Data.Base.TreeById {
           }
         },
         textureOffset: {
+          mutable: true,
           type: "hash",
           properties: {
-            x: { type: "number" },
-            y: { type: "number" }
+            x: { type: "number", mutable: true },
+            y: { type: "number", mutable: true }
           }
         },
         settings: {

@@ -41,11 +41,33 @@ html
 
       .texture-container
         .controls
-          div
-            .title Brush
+          .mode-selection
+            .title Mode
             div
-              label Color
-              input#brush-color(type="color")
+              input#layout-mode(type="radio",name="mode",value="layout",checked)
+              label(for="layout-mode") Layout
+              input#paint-mode(type="radio",name="mode",value="paint")
+              label(for="paint-mode") Paint
+
+          .layout-mode-container
+            .title Settings
+            div
+              input#translate-texture(type="checkbox")
+              label(for="translate-texture") Link texture to UV
+
+          .paint-mode-container
+            .title Tool
+            div
+              input#brush-tool(type="radio",name="tool",checked)
+              label(for="brush-tool") Brush
+              input#eraser-tool(type="radio",name="tool")
+              label(for="eraser-tool") Eraser
+              input#fill-tool(type="radio",name="tool")
+              label(for="fill-tool") Fill
+
+            .title Color
+            div
+              input.color(type="color")
 
         canvas(tabindex="0")
 

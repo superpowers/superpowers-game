@@ -1,3 +1,4 @@
+import ui from "./ui";
 import { data, editAsset } from "./network";
 import { Node } from "../../data/CubicModelNodes";
 import { TextureEdit } from "../../data/CubicModelAsset";
@@ -13,7 +14,8 @@ let textureArea: {
   //gridRenderer: any;
   //selectionRenderer: SelectionRenderer;
 
-  brushColor: HTMLInputElement;
+  mode: string;
+  colorInput: HTMLInputElement;
 
   pasteMesh: THREE.Mesh;
 } = <any>{ shapeLineMeshesByNodeId: {} };
@@ -52,6 +54,7 @@ document.addEventListener("paste", (event: ClipboardEvent) => {
   if (document.activeElement !== canvas) return;
   if (event.clipboardData.items[0] == null) return;
   if (event.clipboardData.items[0].type.indexOf("image") === -1) return;
+  if (textureArea.mode !== "paint") return;
 
   if (textureArea.pasteMesh != null) {
     textureArea.gameInstance.threeScene.remove(textureArea.pasteMesh);
@@ -112,7 +115,23 @@ export function setupTexture() {
   textureArea.textureMesh.updateMatrixWorld(false);
 }
 
-textureArea.brushColor = <HTMLInputElement>document.getElementById("brush-color");
+textureArea.mode = "layout";
+document.querySelector(".texture-container .controls .mode-selection").addEventListener("click", (event) => {
+  let target = <HTMLInputElement>event.target;
+  if (target.tagName !== "INPUT") return;
+
+  textureArea.mode = target.value;
+  updateMode();
+});
+
+function updateMode() {
+  for (let mode of ["layout", "paint"]) {
+    let container = <HTMLDivElement>document.querySelector(`.${mode}-mode-container`);
+    container.style.display = mode === textureArea.mode ? "" : "none";
+  }
+}
+
+textureArea.colorInput = <HTMLInputElement>document.querySelector("input.color");
 const lineMaterial = new THREE.LineBasicMaterial({ color: 0xff00ff, opacity: 0.4, depthTest: false, depthWrite: false, transparent: true })
 const selectedLineMaterial = new THREE.LineBasicMaterial({ color: 0xff00ff, opacity: 1, depthTest: false, depthWrite: false, transparent: true })
 const verticesByShapeType: { [type: string]: number } = {
@@ -237,98 +256,118 @@ export function handleTextureArea() {
   mousePosition.y -= cameraPosition.y;
   mousePosition.y = Math.floor(mousePosition.y);
 
-  // Paste element
-  if (textureArea.pasteMesh != null) {
+  if (!inputs.mouseButtons[0].isDown) isDragging = false;
+
+  if (textureArea.mode === "layout") {
+    if (ui.nodesTreeView.selectedNodes.length !== 1) return;
+
+    let nodeId = ui.nodesTreeView.selectedNodes[0].dataset.id;
+    let node = data.cubicModelUpdater.cubicModelAsset.nodes.byId[nodeId];
     if (isDragging) {
-      textureArea.pasteMesh.position.x = mousePosition.x + dragOffset.x;
-      textureArea.pasteMesh.position.y = -mousePosition.y + dragOffset.y;
-      textureArea.pasteMesh.updateMatrixWorld(false);
+      let textureOffset = node.shape.textureOffset;
+      let x = mousePosition.x + dragOffset.x;
+      let y = mousePosition.y + dragOffset.y;
+      if (textureOffset.x !== x || textureOffset.y !== y)
+        editAsset("setNodeProperty", nodeId, `shape.textureOffset`, { x, y });
 
-      if (!inputs.mouseButtons[0].isDown) isDragging = false;
-      return;
-    }
-
-    let keys = (<any>window).KeyEvent;
-    if (inputs.keyboardButtons[keys.DOM_VK_RIGHT].wasJustPressed) {
-      textureArea.pasteMesh.position.x += 1;
-      textureArea.pasteMesh.updateMatrixWorld(false);
-    }
-    if (inputs.keyboardButtons[keys.DOM_VK_LEFT].wasJustPressed) {
-      textureArea.pasteMesh.position.x -= 1;
-      textureArea.pasteMesh.updateMatrixWorld(false);
-    }
-    if (inputs.keyboardButtons[keys.DOM_VK_UP].wasJustPressed) {
-      textureArea.pasteMesh.position.y += 1;
-      textureArea.pasteMesh.updateMatrixWorld(false);
-    }
-    if (inputs.keyboardButtons[keys.DOM_VK_DOWN].wasJustPressed) {
-      textureArea.pasteMesh.position.y -= 1;
-      textureArea.pasteMesh.updateMatrixWorld(false);
+    } else if (inputs.mouseButtons[0].wasJustPressed) {
+      isDragging = true;
+      let textureOffset = node.shape.textureOffset;
+      dragOffset.set(textureOffset.x - mousePosition.x, textureOffset.y - mousePosition.y, 0);
     }
 
-    if (inputs.mouseButtons[0].wasJustPressed) {
-      let position = textureArea.pasteMesh.position;
-      let width = pasteCtx.canvas.width;
-      let height = pasteCtx.canvas.height;
-      if (mousePosition.x > position.x - width  / 2 &&  mousePosition.x < position.x + width  / 2 &&
-         -mousePosition.y > position.y - height / 2 && -mousePosition.y < position.y + height / 2) {
-        isDragging = true;
-        dragOffset.set(position.x - mousePosition.x, position.y + mousePosition.y, 0)
+  } else if (textureArea.mode === "paint") {
+    // Paste element
+    if (textureArea.pasteMesh != null) {
+      if (isDragging) {
+        textureArea.pasteMesh.position.x = mousePosition.x + dragOffset.x;
+        textureArea.pasteMesh.position.y = -mousePosition.y + dragOffset.y;
+        textureArea.pasteMesh.updateMatrixWorld(false);
         return;
       }
 
-      let imageData = pasteCtx.getImageData(0, 0, width, height).data;
-      let edits: TextureEdit[] = [];
-
-      let startX = textureArea.pasteMesh.position.x - width / 2;
-      let startY = -textureArea.pasteMesh.position.y - height / 2;
-
-      for (let i = 0; i < width; i++) {
-        for (let j = 0; j < height; j++) {
-          let index = j * width + i;
-          index *= 4;
-          let x = startX + i;
-          if (x < 0 || x >= data.cubicModelUpdater.cubicModelAsset.pub.textureWidth) continue;
-          let y = startY + j;
-          if (y < 0 || y >= data.cubicModelUpdater.cubicModelAsset.pub.textureHeight) continue;
-
-          edits.push({ x, y, value: { r: imageData[index], g: imageData[index + 1], b: imageData[index + 2], a: imageData[index + 3] } })
-        }
+      let keys = (<any>window).KeyEvent;
+      if (inputs.keyboardButtons[keys.DOM_VK_RIGHT].wasJustPressed) {
+        textureArea.pasteMesh.position.x += 1;
+        textureArea.pasteMesh.updateMatrixWorld(false);
       }
-      editAsset("editTexture", "map", edits);
+      if (inputs.keyboardButtons[keys.DOM_VK_LEFT].wasJustPressed) {
+        textureArea.pasteMesh.position.x -= 1;
+        textureArea.pasteMesh.updateMatrixWorld(false);
+      }
+      if (inputs.keyboardButtons[keys.DOM_VK_UP].wasJustPressed) {
+        textureArea.pasteMesh.position.y += 1;
+        textureArea.pasteMesh.updateMatrixWorld(false);
+      }
+      if (inputs.keyboardButtons[keys.DOM_VK_DOWN].wasJustPressed) {
+        textureArea.pasteMesh.position.y -= 1;
+        textureArea.pasteMesh.updateMatrixWorld(false);
+      }
 
-      textureArea.gameInstance.threeScene.remove(textureArea.pasteMesh);
-      textureArea.pasteMesh = null;
+      if (inputs.mouseButtons[0].wasJustPressed) {
+        let position = textureArea.pasteMesh.position;
+        let width = pasteCtx.canvas.width;
+        let height = pasteCtx.canvas.height;
+        if (mousePosition.x > position.x - width  / 2 &&  mousePosition.x < position.x + width  / 2 &&
+          -mousePosition.y > position.y - height / 2 && -mousePosition.y < position.y + height / 2) {
+          isDragging = true;
+          dragOffset.set(position.x - mousePosition.x, position.y + mousePosition.y, 0);
+          return;
+        }
+
+        let imageData = pasteCtx.getImageData(0, 0, width, height).data;
+        let edits: TextureEdit[] = [];
+
+        let startX = textureArea.pasteMesh.position.x - width / 2;
+        let startY = -textureArea.pasteMesh.position.y - height / 2;
+
+        for (let i = 0; i < width; i++) {
+          for (let j = 0; j < height; j++) {
+            let index = j * width + i;
+            index *= 4;
+            let x = startX + i;
+            if (x < 0 || x >= data.cubicModelUpdater.cubicModelAsset.pub.textureWidth) continue;
+            let y = startY + j;
+            if (y < 0 || y >= data.cubicModelUpdater.cubicModelAsset.pub.textureHeight) continue;
+
+            edits.push({ x, y, value: { r: imageData[index], g: imageData[index + 1], b: imageData[index + 2], a: imageData[index + 3] } })
+          }
+        }
+        editAsset("editTexture", "map", edits);
+
+        textureArea.gameInstance.threeScene.remove(textureArea.pasteMesh);
+        textureArea.pasteMesh = null;
+      }
+      return;
     }
-    return;
-  }
 
-  // Edit texture
-  if (!isDrawing) {
-    if (inputs.mouseButtons[0].wasJustPressed) isDrawing = true;
-  } else if (!inputs.mouseButtons[0].isDown) isDrawing = false;
+    // Edit texture
+    if (!isDrawing) {
+      if (inputs.mouseButtons[0].wasJustPressed) isDrawing = true;
+    } else if (!inputs.mouseButtons[0].isDown) isDrawing = false;
 
-  if (isDrawing) {
-    let hex = parseInt(textureArea.brushColor.value.slice(1), 16);
-    let brush = {
-      r: (hex >> 16 & 255),
-      g: (hex >> 8 & 255),
-      b: (hex & 255),
-      a: 255
-    }
+    if (isDrawing) {
+      let hex = parseInt(textureArea.colorInput.value.slice(1), 16);
+      let brush = {
+        r: (hex >> 16 & 255),
+        g: (hex >> 8 & 255),
+        b: (hex & 255),
+        a: 255
+      }
 
-    if (mousePosition.x < 0 || mousePosition.x >= data.cubicModelUpdater.cubicModelAsset.pub.textureWidth) return;
-    if (mousePosition.y < 0 || mousePosition.y >= data.cubicModelUpdater.cubicModelAsset.pub.textureHeight) return;
+      if (mousePosition.x < 0 || mousePosition.x >= data.cubicModelUpdater.cubicModelAsset.pub.textureWidth) return;
+      if (mousePosition.y < 0 || mousePosition.y >= data.cubicModelUpdater.cubicModelAsset.pub.textureHeight) return;
 
-    let mapName = "map";
-    let array = data.cubicModelUpdater.cubicModelAsset.textureDatas[mapName];
-    let index = mousePosition.y * data.cubicModelUpdater.cubicModelAsset.pub.textureWidth + mousePosition.x;
-    index *= 4;
+      let mapName = "map";
+      let array = data.cubicModelUpdater.cubicModelAsset.textureDatas[mapName];
+      let index = mousePosition.y * data.cubicModelUpdater.cubicModelAsset.pub.textureWidth + mousePosition.x;
+      index *= 4;
 
-    if (array[index + 0] !== brush.r || array[index + 1] !== brush.g || array[index + 2] !== brush.b ||array[index + 3] !== brush.a) {
-      let edits: TextureEdit[] = [];
-      edits.push({ x: mousePosition.x, y: mousePosition.y, value: brush });
-      editAsset("editTexture", mapName, edits)
+      if (array[index + 0] !== brush.r || array[index + 1] !== brush.g || array[index + 2] !== brush.b ||array[index + 3] !== brush.a) {
+        let edits: TextureEdit[] = [];
+        edits.push({ x: mousePosition.x, y: mousePosition.y, value: brush });
+        editAsset("editTexture", mapName, edits)
+      }
     }
   }
 }

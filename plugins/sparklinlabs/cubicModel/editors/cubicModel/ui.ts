@@ -174,7 +174,7 @@ function onNodeDrop(dropInfo: any, orderedNodes: any) {
 
   let i = 0;
   for (let id of nodeIds) {
-    socket.emit("edit:assets", info.assetId, "moveNode", id, dropPoint.parentId, dropPoint.index + i, (err: string) => { if (err != null) alert(err); });
+    editAsset("moveNode", id, dropPoint.parentId, dropPoint.index + i);
     if (!sameParent || sourceChildren.indexOf(data.cubicModelUpdater.cubicModelAsset.nodes.byId[id]) >= dropPoint.index) i++;
   }
   return false;
@@ -418,7 +418,7 @@ function onNewNodeClick() {
       }
     };
 
-    socket.emit("edit:assets", info.assetId, "addNode", name, options, (err: string, nodeId: string) => {
+    editAsset("addNode", name, options, (err: string, nodeId: string) => {
       if (err != null) { alert(err); return; }
 
       ui.nodesTreeView.clearSelection();
@@ -438,7 +438,7 @@ function onRenameNodeClick() {
   SupClient.dialogs.prompt("Enter a new name for the node.", null, node.name, "Rename", (newName) => {
     if (newName == null) return;
 
-    socket.emit("edit:assets", info.assetId, "setNodeProperty", node.id, "name", newName, (err: string) => { if (err != null) alert(err); });
+    editAsset("setNodeProperty", node.id, "name", newName);
   });
 }
 
@@ -452,7 +452,7 @@ function onDuplicateNodeClick() {
     if (newName == null) return;
     let options = SupClient.getTreeViewInsertionPoint(ui.nodesTreeView);
 
-    socket.emit("edit:assets", info.assetId, "duplicateNode", newName, node.id, options.index, (err: string, nodeId: string) => {
+    editAsset("duplicateNode", newName, node.id, options.index, (err: string, nodeId: string) => {
       if (err != null) { alert(err); return; }
 
       ui.nodesTreeView.clearSelection();
@@ -468,7 +468,7 @@ function onDeleteNodeClick() {
     if (! confirm) return;
 
     for (let selectedNode of ui.nodesTreeView.selectedNodes) {
-      socket.emit("edit:assets", info.assetId, "removeNode", selectedNode.dataset.id, (err: string) => { if (err != null) alert(err); });
+      editAsset("removeNode", selectedNode.dataset.id);
     }
   });
 }
@@ -517,9 +517,9 @@ function onInspectorInputChange(event: any) {
   }
 
   if (propertyType !== "position" || ui.translateMode !== "pivot") {
-    socket.emit("edit:assets", info.assetId, "setNodeProperty", nodeId, `${path}${propertyType}`, value, (err: string) => { if (err != null) alert(err); });
+    editAsset("setNodeProperty", nodeId, `${path}${propertyType}`, value);
   } else {
-    socket.emit("edit:assets", info.assetId, "moveNodePivot", nodeId, value, (err: string) => { if (err != null) alert(err); });
+    editAsset("moveNodePivot", nodeId, value);
   }
 
 }
