@@ -8,6 +8,6 @@
     "url": "https://bitbucket.org/superpowers/sup-game-sparklinlabs-plugins"
   },
   "dependencies": {
-    "socket.io-client": "^1.3.5"
+    "socket.io-client": "^1.3.7"
   }
 }
