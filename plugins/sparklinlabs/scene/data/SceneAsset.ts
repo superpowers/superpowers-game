@@ -69,8 +69,9 @@ export default class SceneAsset extends SupCore.Data.Base.Asset {
     this.nodes.on("addDependencies", (depIds: string[], componentPath: string) => { this._onAddComponentDependencies(componentPath, depIds); });
     this.nodes.on("removeDependencies", (depIds: string[], componentPath: string) => { this._onRemoveComponentDependencies(componentPath, depIds); });
 
-    for (let node of this.nodes.pub)
-      if (node.prefabId != null && node.prefabId.length > 0) this._onAddComponentDependencies(`${node.id}_${node.prefabId}`, [node.prefabId]);
+    this.nodes.walk((node) => {
+      if (node.prefabId != null && node.prefabId.length > 0) this._onAddComponentDependencies(`${node.id}_${node.prefabId}`, [ node.prefabId ]);
+    })
 
     for (let nodeId in this.nodes.componentsByNodeId) {
       let components = this.nodes.componentsByNodeId[nodeId];
