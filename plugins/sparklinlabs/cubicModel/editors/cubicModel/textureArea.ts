@@ -15,6 +15,7 @@ let textureArea: {
   //selectionRenderer: SelectionRenderer;
 
   mode: string;
+  paintTool: string;
   colorInput: HTMLInputElement;
 
   pasteMesh: THREE.Mesh;
@@ -122,6 +123,14 @@ document.querySelector(".texture-container .controls .mode-selection").addEventL
 
   textureArea.mode = target.value;
   updateMode();
+});
+
+textureArea.paintTool = "brush";
+document.querySelector(".texture-container .controls .paint-mode-container .tool").addEventListener("click", (event) => {
+  let target = <HTMLInputElement>event.target;
+  if (target.tagName !== "INPUT") return;
+
+  textureArea.paintTool = target.value;
 });
 
 function updateMode() {
@@ -344,26 +353,50 @@ export function handleTextureArea() {
     // Edit texture
     if (!isDrawing) {
       if (inputs.mouseButtons[0].wasJustPressed) isDrawing = true;
+      else if (inputs.mouseButtons[2].wasJustPressed) {
+        if (mousePosition.x < 0 || mousePosition.x >= data.cubicModelUpdater.cubicModelAsset.pub.textureWidth) return;
+        if (mousePosition.y < 0 || mousePosition.y >= data.cubicModelUpdater.cubicModelAsset.pub.textureHeight) return;
+
+        let textureData = data.cubicModelUpdater.cubicModelAsset.textureDatas["map"];
+        let index = mousePosition.y * data.cubicModelUpdater.cubicModelAsset.pub.textureWidth + mousePosition.x;
+        index *= 4;
+        let r = textureData[index + 0];
+        let g = textureData[index + 1];
+        let b = textureData[index + 2];
+        let a = textureData[index + 3];
+
+        if (a === 0) {
+          (document.getElementById("eraser-tool") as HTMLInputElement).checked = true;
+          textureArea.paintTool = "eraser";
+        } else {
+          (document.getElementById("brush-tool") as HTMLInputElement).checked = true;
+          textureArea.paintTool = "brush";
+
+          let hex = ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+          textureArea.colorInput.value = `#${hex}`;
+        }
+      }
     } else if (!inputs.mouseButtons[0].isDown) isDrawing = false;
 
     if (isDrawing) {
-      let hex = parseInt(textureArea.colorInput.value.slice(1), 16);
-      let brush = {
-        r: (hex >> 16 & 255),
-        g: (hex >> 8 & 255),
-        b: (hex & 255),
-        a: 255
-      }
-
       if (mousePosition.x < 0 || mousePosition.x >= data.cubicModelUpdater.cubicModelAsset.pub.textureWidth) return;
       if (mousePosition.y < 0 || mousePosition.y >= data.cubicModelUpdater.cubicModelAsset.pub.textureHeight) return;
 
+      let hex = parseInt(textureArea.colorInput.value.slice(1), 16);
+      let brush = { r: 0, g: 0, b: 0, a: 0 };
+      if (textureArea.paintTool === "brush") {
+        brush.r = (hex >> 16 & 255);
+        brush.g = (hex >> 8 & 255);
+        brush.b = (hex & 255);
+        brush.a = 255;
+      }
+
       let mapName = "map";
-      let array = data.cubicModelUpdater.cubicModelAsset.textureDatas[mapName];
+      let textureData = data.cubicModelUpdater.cubicModelAsset.textureDatas[mapName];
       let index = mousePosition.y * data.cubicModelUpdater.cubicModelAsset.pub.textureWidth + mousePosition.x;
       index *= 4;
 
-      if (array[index + 0] !== brush.r || array[index + 1] !== brush.g || array[index + 2] !== brush.b ||array[index + 3] !== brush.a) {
+      if (textureData[index + 0] !== brush.r || textureData[index + 1] !== brush.g || textureData[index + 2] !== brush.b ||textureData[index + 3] !== brush.a) {
         let edits: TextureEdit[] = [];
         edits.push({ x: mousePosition.x, y: mousePosition.y, value: brush });
         editAsset("editTexture", mapName, edits)

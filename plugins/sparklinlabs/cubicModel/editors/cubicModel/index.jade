@@ -57,12 +57,12 @@ html
 
           .paint-mode-container
             .title Tool
-            div
-              input#brush-tool(type="radio",name="tool",checked)
+            .tool
+              input#brush-tool(type="radio",name="tool",value="brush",checked)
               label(for="brush-tool") Brush
-              input#eraser-tool(type="radio",name="tool")
+              input#eraser-tool(type="radio",name="tool",value="eraser")
               label(for="eraser-tool") Eraser
-              input#fill-tool(type="radio",name="tool")
+              input#fill-tool(type="radio",name="tool",value="fill")
               label(for="fill-tool") Fill
 
             .title Color
