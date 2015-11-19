@@ -6,15 +6,17 @@ export interface Node extends SupCore.Data.Base.TreeNode {
   position: { x: number; y: number; z: number };
   orientation: { x: number; y: number; z: number; w: number };
 
-  shape: {
-    type: string;
-    offset: { x: number; y: number; z: number; };
-    textureOffset: { x: number; y: number; }
-    settings: any;
-  }
+  shape: Shape;
 }
 
-export function getShapeTextureSize(shape: { type: string; settings: any; }) {
+interface Shape {
+  type: string;
+  offset: { x: number; y: number; z: number; };
+  textureLayout: { [face: string]: { offset: { x: number; y: number; } } };
+  settings: any;
+}
+
+export function getShapeTextureSize(shape: Shape) {
   let width = 0;
   let height = 0;
 
@@ -22,6 +24,35 @@ export function getShapeTextureSize(shape: { type: string; settings: any; }) {
     case "box":
       width = shape.settings.size.x * 2 + shape.settings.size.z * 2;
       height = shape.settings.size.z + shape.settings.size.y;
+      break;
+  }
+
+  return { width, height };
+}
+
+export function getShapeTextureFaceSize(shape: Shape, faceName: string) {
+  let width = 0;
+  let height = 0;
+
+  switch(shape.type) {
+    case "box":
+      switch (faceName) {
+        case "front":
+        case "back":
+          width = shape.settings.size.x;
+          height = shape.settings.size.y;
+          break;
+        case "left":
+        case "right":
+          width = shape.settings.size.z;
+          height = shape.settings.size.y;
+          break;
+        case "top":
+        case "bottom":
+          width = shape.settings.size.x;
+          height = shape.settings.size.z;
+          break;
+      }
       break;
   }
 
@@ -68,12 +99,20 @@ export default class CubicModelNodes extends SupCore.Data.Base.TreeById {
             z: { type: "number", mutable: true },
           }
         },
-        textureOffset: {
-          mutable: true,
+        textureLayout: {
           type: "hash",
-          properties: {
-            x: { type: "number", mutable: true },
-            y: { type: "number", mutable: true }
+          values: {
+            type: "hash",
+            properties: {
+              offset: {
+                type: "hash",
+                properties: {
+                  x: { type: "number" },
+                  y: { type: "number" }
+                }
+              }
+
+            }
           }
         },
         settings: {

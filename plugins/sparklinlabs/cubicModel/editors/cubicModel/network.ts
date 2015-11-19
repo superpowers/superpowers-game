@@ -174,6 +174,13 @@ onEditCommands.removeNode = (id: string) => {
   setupHelpers();
 };
 
+onEditCommands.moveNodeTextureOffset = (nodeIds: string[], offset: { x: number; y: number }) => {
+  for (let id of nodeIds) {
+    let node = data.cubicModelUpdater.cubicModelAsset.nodes.byId[id];
+    textureArea.updateNode(node);
+  }
+}
+
 onEditCommands.changeTextureWidth = () => {
   ui.textureWidthSelect.value = data.cubicModelUpdater.cubicModelAsset.pub.textureWidth.toString();
   textureArea.setupTexture();

@@ -155,12 +155,6 @@ export default class CubicModelRendererUpdater {
         break;
       }
 
-      case "shape.textureOffset": {
-        let geometry = rendererNode.shape.geometry as THREE.Geometry;
-        this.cubicModelRenderer.updateBoxNodeUv(geometry, node);
-        break;
-      }
-
       default: {
         switch (node.shape.type) {
           case "box":
@@ -210,6 +204,14 @@ export default class CubicModelRendererUpdater {
     rendererNode.pivot.parent.remove(rendererNode.pivot);
 
     delete this.cubicModelRenderer.byNodeId[nodeId];
+  }
+
+  _onEditCommand_moveNodeTextureOffset(nodeIds: string[], offset: { x: number; y: number }) {
+    for (let id of nodeIds) {
+      let node = this.cubicModelAsset.nodes.byId[id];
+      let geometry = this.cubicModelRenderer.byNodeId[id].shape.geometry as THREE.Geometry;
+      this.cubicModelRenderer.updateBoxNodeUv(geometry, node);
+    }
   }
 
   _onEditCommand_changeTextureWidth = () => { this._onChangeTextureSize(); }

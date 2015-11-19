@@ -11,7 +11,7 @@ import * as fs from "fs";
 import * as async from "async";
 import * as _ from "lodash";
 
-import CubicModelNodes, { Node, getShapeTextureSize } from "./CubicModelNodes";
+import CubicModelNodes, { Node, getShapeTextureSize, getShapeTextureFaceSize } from "./CubicModelNodes";
 
 export interface CubicModelAssetPub {
   pixelsPerUnit: number;
@@ -196,11 +196,11 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
       id: null, name: name, children: [],
       position: (options != null && options.transform != null && options.transform.position != null) ? options.transform.position : { x: 0, y: 0, z: 0 },
       orientation: (options != null && options.transform != null && options.transform.orientation != null) ? options.transform.orientation : { x: 0, y: 0, z: 0, w: 1 },
-      shape: (options != null && options.shape != null) ? options.shape : { type: "none", offset: { x: 0, y: 0, z: 0 }, textureOffset: { x: 0, y: 0 }, settings: null }
+      shape: (options != null && options.shape != null) ? options.shape : { type: "none", offset: { x: 0, y: 0, z: 0 }, textureOffset: {}, settings: null }
     };
 
     if (node.shape.type !== "none") {
-      node.shape.textureOffset = { x: 0, y: 0 };
+      let origin = { x: 0, y: 0 };
       let placed = false;
       let size = getShapeTextureSize(node.shape);
 
@@ -213,22 +213,25 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
               let otherNode = this.nodes.byId[otherNodeId];
               if (otherNode.shape.type === "none") continue;
 
-              let otherSize = getShapeTextureSize(otherNode.shape);
-              let otherOffset = otherNode.shape.textureOffset;
               // + 1 and - 1 because we need a one-pixel border
               // to avoid filtering issues
-              if ((i + size.width >= otherOffset.x - 1) && (j + size.height >= otherOffset.y - 1) &&
-              (i <= otherOffset.x + otherSize.width + 1) && (j <= otherOffset.y + otherSize.height + 1)) {
-                i = otherOffset.x + otherSize.width + 2;
-                pushed = true;
-                break;
+              for (let faceName in otherNode.shape.textureLayout) {
+                let faceOffset = otherNode.shape.textureLayout[faceName].offset;
+                let otherSize = getShapeTextureFaceSize(otherNode.shape, faceName);
+                if ((i + size.width >= faceOffset.x - 1) && (j + size.height >= faceOffset.y - 1) &&
+                (i <= faceOffset.x + otherSize.width + 1) && (j <= faceOffset.y + otherSize.height + 1)) {
+                  i = faceOffset.x + otherSize.width + 2;
+                  pushed = true;
+                  break;
+                }
               }
+              if (pushed) break;
             }
           } while(pushed);
 
           if (i < this.pub.textureWidth && i + size.width < this.pub.textureWidth) {
-            node.shape.textureOffset.x = i;
-            node.shape.textureOffset.y = j;
+            origin.x = i;
+            origin.y = j;
             placed = true;
             break;
           }
@@ -238,6 +241,19 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
 
       if (!placed)
         console.log("Could not find any room for the node's texture. Texture needs to be expanded and all blocks should be re-laid out from bigger to smaller!");
+
+      node.shape.textureLayout = {};
+      switch (node.shape.type) {
+        case "box":
+          let size = node.shape.settings.size as { x: number; y: number; z: number; };
+          node.shape.textureLayout["top"]    = { offset: { x: origin.x + size.z             , y: origin.y } };
+          node.shape.textureLayout["bottom"] = { offset: { x: origin.x + size.z + size.x    , y: origin.y } };
+          node.shape.textureLayout["front"]  = { offset: { x: origin.x + size.z             , y: origin.y + size.z } };
+          node.shape.textureLayout["back"]   = { offset: { x: origin.x + 2 * size.z + size.x, y: origin.y + size.z } };
+          node.shape.textureLayout["left"]   = { offset: { x: origin.x                      , y: origin.y + size.z } };
+          node.shape.textureLayout["right"]  = { offset: { x: origin.x + size.z + size.x    , y: origin.y + size.z } };
+          break;
+      }
     }
 
     let index = (options != null) ? options.index : null;
@@ -450,6 +466,24 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
     this.nodes.client_remove(id);
   }
 
+  server_moveNodeTextureOffset(client: any, nodeIds: string[], offset: { x: number; y: number }, callback: (err: string, nodeIds: string[], offset: { x: number; y: number }) => any) {
+    // TODO: add checks
+
+    this.client_moveNodeTextureOffset(nodeIds, offset);
+    callback(null, nodeIds, offset);
+    this.emit("change");
+  }
+
+  client_moveNodeTextureOffset(nodeIds: string[], offset: { x: number; y: number }) {
+    for (let id of nodeIds) {
+      let node = this.nodes.byId[id];
+      for (let faceName in node.shape.textureLayout) {
+        let faceOffset = node.shape.textureLayout[faceName].offset;
+        faceOffset.x += offset.x;
+        faceOffset.y += offset.y;
+      }
+    }
+  }
 
   // Texture
   server_changeTextureWidth(client: any, newWidth: number, callback: (err: string, newWidth: number) => void) {

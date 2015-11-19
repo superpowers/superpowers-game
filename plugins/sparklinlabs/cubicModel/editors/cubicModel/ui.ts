@@ -418,9 +418,7 @@ function onNewNodeClick() {
       }
     };
 
-    editAsset("addNode", name, options, (err: string, nodeId: string) => {
-      if (err != null) { alert(err); return; }
-
+    editAsset("addNode", name, options, (nodeId: string) => {
       ui.nodesTreeView.clearSelection();
       ui.nodesTreeView.addToSelection(ui.nodesTreeView.treeRoot.querySelector(`li[data-id='${nodeId}']`));
       setupSelectedNode();

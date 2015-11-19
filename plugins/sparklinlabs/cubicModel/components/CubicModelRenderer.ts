@@ -116,18 +116,19 @@ export default class CubicModelRenderer extends SupEngine.ActorComponent {
     let width = this.asset.textureWidth;
     let height = this.asset.textureHeight;
     let size = node.shape.settings.size;
-    let offset = node.shape.textureOffset;
 
+    let offset: { x: number; y: number; };
     let bottomLeft =  new THREE.Vector2();
     let bottomRight = new THREE.Vector2();
     let topLeft =     new THREE.Vector2();
     let topRight =    new THREE.Vector2();
 
     // Left Face
-    bottomLeft.set( (offset.x)          / width, (height - offset.y - size.z - size.y) / height);
-    bottomRight.set((offset.x + size.z) / width, (height - offset.y - size.z - size.y) / height);
-    topLeft.set(    (offset.x)          / width, (height - offset.y - size.z)          / height);
-    topRight.set(   (offset.x + size.z) / width, (height - offset.y - size.z)          / height);
+    offset = node.shape.textureLayout["left"].offset;
+    bottomLeft.set( (offset.x)          / width, (height - offset.y - size.y) / height);
+    bottomRight.set((offset.x + size.z) / width, (height - offset.y - size.y) / height);
+    topLeft.set(    (offset.x)          / width, (height - offset.y)          / height);
+    topRight.set(   (offset.x + size.z) / width, (height - offset.y)          / height);
     geometry.faceVertexUvs[0][2][0].copy(topLeft);
     geometry.faceVertexUvs[0][2][1].copy(bottomLeft);
     geometry.faceVertexUvs[0][2][2].copy(topRight);
@@ -136,10 +137,11 @@ export default class CubicModelRenderer extends SupEngine.ActorComponent {
     geometry.faceVertexUvs[0][3][2].copy(topRight);
 
     // Front Face
-    bottomLeft.set( (offset.x + size.z)          / width, (height - offset.y - size.z - size.y) / height);
-    bottomRight.set((offset.x + size.z + size.x) / width, (height - offset.y - size.z - size.y) / height);
-    topLeft.set(    (offset.x + size.z)          / width, (height - offset.y - size.z)          / height);
-    topRight.set(   (offset.x + size.z + size.x) / width, (height - offset.y - size.z)          / height);
+    offset = node.shape.textureLayout["front"].offset;
+    bottomLeft.set( (offset.x)          / width, (height - offset.y - size.y) / height);
+    bottomRight.set((offset.x + size.x) / width, (height - offset.y - size.y) / height);
+    topLeft.set(    (offset.x)          / width, (height - offset.y)          / height);
+    topRight.set(   (offset.x + size.x) / width, (height - offset.y)          / height);
     geometry.faceVertexUvs[0][8][0].copy(topLeft);
     geometry.faceVertexUvs[0][8][1].copy(bottomLeft);
     geometry.faceVertexUvs[0][8][2].copy(topRight);
@@ -148,10 +150,11 @@ export default class CubicModelRenderer extends SupEngine.ActorComponent {
     geometry.faceVertexUvs[0][9][2].copy(topRight);
 
     // Right Face
-    bottomLeft.set( (offset.x + size.z + size.x)     / width, (height - offset.y - size.z - size.y) / height);
-    bottomRight.set((offset.x + 2 * size.z + size.x) / width, (height - offset.y - size.z - size.y) / height);
-    topLeft.set(    (offset.x + size.z + size.x)     / width, (height - offset.y - size.z)          / height);
-    topRight.set(   (offset.x + 2 * size.z + size.x) / width, (height - offset.y - size.z)          / height);
+    offset = node.shape.textureLayout["right"].offset;
+    bottomLeft.set( (offset.x)          / width, (height - offset.y - size.y) / height);
+    bottomRight.set((offset.x + size.z) / width, (height - offset.y - size.y) / height);
+    topLeft.set(    (offset.x)          / width, (height - offset.y)          / height);
+    topRight.set(   (offset.x + size.z) / width, (height - offset.y)          / height);
     geometry.faceVertexUvs[0][0][0].copy(topLeft);
     geometry.faceVertexUvs[0][0][1].copy(bottomLeft);
     geometry.faceVertexUvs[0][0][2].copy(topRight);
@@ -159,11 +162,12 @@ export default class CubicModelRenderer extends SupEngine.ActorComponent {
     geometry.faceVertexUvs[0][1][1].copy(bottomRight);
     geometry.faceVertexUvs[0][1][2].copy(topRight);
 
-    // Bottom Face
-    bottomLeft.set( (offset.x + 2 * size.z + size.x)     / width, (height - offset.y - size.z - size.y) / height);
-    bottomRight.set((offset.x + 2 * size.z + 2 * size.x) / width, (height - offset.y - size.z - size.y) / height);
-    topLeft.set(    (offset.x + 2 * size.z + size.x)     / width, (height - offset.y - size.z)          / height);
-    topRight.set(   (offset.x + 2 * size.z + 2 * size.x) / width, (height - offset.y - size.z)          / height);
+    // Back Face
+    offset = node.shape.textureLayout["back"].offset;
+    bottomLeft.set( (offset.x)          / width, (height - offset.y - size.y) / height);
+    bottomRight.set((offset.x + size.x) / width, (height - offset.y - size.y) / height);
+    topLeft.set(    (offset.x)          / width, (height - offset.y)          / height);
+    topRight.set(   (offset.x + size.x) / width, (height - offset.y)          / height);
     geometry.faceVertexUvs[0][10][0].copy(topLeft);
     geometry.faceVertexUvs[0][10][1].copy(bottomLeft);
     geometry.faceVertexUvs[0][10][2].copy(topRight);
@@ -172,10 +176,11 @@ export default class CubicModelRenderer extends SupEngine.ActorComponent {
     geometry.faceVertexUvs[0][11][2].copy(topRight);
 
     // Top Face
-    bottomLeft.set( (offset.x + size.z)          / width, (height - offset.y - size.z) / height);
-    bottomRight.set((offset.x + size.z + size.x) / width, (height - offset.y - size.z) / height);
-    topLeft.set(    (offset.x + size.z)          / width, (height - offset.y)          / height);
-    topRight.set(   (offset.x + size.z + size.x) / width, (height - offset.y)          / height);
+    offset = node.shape.textureLayout["top"].offset;
+    bottomLeft.set( (offset.x)          / width, (height - offset.y - size.z) / height);
+    bottomRight.set((offset.x + size.x) / width, (height - offset.y - size.z) / height);
+    topLeft.set(    (offset.x)          / width, (height - offset.y)          / height);
+    topRight.set(   (offset.x + size.x) / width, (height - offset.y)          / height);
     geometry.faceVertexUvs[0][4][0].copy(topLeft);
     geometry.faceVertexUvs[0][4][1].copy(bottomLeft);
     geometry.faceVertexUvs[0][4][2].copy(topRight);
@@ -183,18 +188,18 @@ export default class CubicModelRenderer extends SupEngine.ActorComponent {
     geometry.faceVertexUvs[0][5][1].copy(bottomRight);
     geometry.faceVertexUvs[0][5][2].copy(topRight);
 
-    // Down Face
-    bottomLeft.set( (offset.x + size.z + size.x)     / width, (height - offset.y - size.z) / height);
-    bottomRight.set((offset.x + size.z + 2 * size.x) / width, (height - offset.y - size.z) / height);
-    topLeft.set(    (offset.x + size.z + size.x)     / width, (height - offset.y)          / height);
-    topRight.set(   (offset.x + size.z + 2 * size.x) / width, (height - offset.y)          / height);
+    // Bottom Face
+    offset = node.shape.textureLayout["bottom"].offset;
+    bottomLeft.set( (offset.x)          / width, (height - offset.y - size.z) / height);
+    bottomRight.set((offset.x + size.x) / width, (height - offset.y - size.z) / height);
+    topLeft.set(    (offset.x)          / width, (height - offset.y)          / height);
+    topRight.set(   (offset.x + size.x) / width, (height - offset.y)          / height);
     geometry.faceVertexUvs[0][6][0].copy(topLeft);
     geometry.faceVertexUvs[0][6][1].copy(bottomLeft);
     geometry.faceVertexUvs[0][6][2].copy(topRight);
     geometry.faceVertexUvs[0][7][0].copy(bottomLeft);
     geometry.faceVertexUvs[0][7][1].copy(bottomRight);
     geometry.faceVertexUvs[0][7][2].copy(topRight);
-
     geometry.uvsNeedUpdate = true;
   }
 

@@ -117,6 +117,7 @@ export function setupTexture() {
 }
 
 textureArea.mode = "layout";
+updateMode();
 document.querySelector(".texture-container .controls .mode-selection").addEventListener("click", (event) => {
   let target = <HTMLInputElement>event.target;
   if (target.tagName !== "INPUT") return;
@@ -170,7 +171,10 @@ export function updateNode(node: Node) {
     vertices.length = verticesCount;
   }
 
-  let origin = { x: node.shape.textureOffset.x, y: -node.shape.textureOffset.y };
+
+  //let origin = { x: node.shape.textureOffset.x, y: -node.shape.textureOffset.y };
+  // TEMPORARY
+  let origin = { x: node.shape.textureLayout["left"].offset.x, y: -node.shape.textureLayout["top"].offset.y };
 
   switch (node.shape.type) {
     case "box":
@@ -268,21 +272,23 @@ export function handleTextureArea() {
   if (!inputs.mouseButtons[0].isDown) isDragging = false;
 
   if (textureArea.mode === "layout") {
-    if (ui.nodesTreeView.selectedNodes.length !== 1) return;
+    if (ui.nodesTreeView.selectedNodes.length === 0) return;
 
-    let nodeId = ui.nodesTreeView.selectedNodes[0].dataset.id;
-    let node = data.cubicModelUpdater.cubicModelAsset.nodes.byId[nodeId];
     if (isDragging) {
-      let textureOffset = node.shape.textureOffset;
-      let x = mousePosition.x + dragOffset.x;
-      let y = mousePosition.y + dragOffset.y;
-      if (textureOffset.x !== x || textureOffset.y !== y)
-        editAsset("setNodeProperty", nodeId, `shape.textureOffset`, { x, y });
+      let x = mousePosition.x - dragOffset.x;
+      let y = mousePosition.y - dragOffset.y;
+
+      if (x !== 0 || y !== 0) {
+        let nodeIds = [] as string[];
+        for (let selectedNode of ui.nodesTreeView.selectedNodes) nodeIds.push(selectedNode.dataset.id);
+        editAsset("moveNodeTextureOffset", nodeIds, { x, y });
+
+        dragOffset.set(mousePosition.x, mousePosition.y, 0);
+      }
 
     } else if (inputs.mouseButtons[0].wasJustPressed) {
       isDragging = true;
-      let textureOffset = node.shape.textureOffset;
-      dragOffset.set(textureOffset.x - mousePosition.x, textureOffset.y - mousePosition.y, 0);
+      dragOffset.set(mousePosition.x, mousePosition.y, 0);
     }
 
   } else if (textureArea.mode === "paint") {
