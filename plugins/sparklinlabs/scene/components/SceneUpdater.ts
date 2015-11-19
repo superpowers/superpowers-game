@@ -43,12 +43,12 @@ export default class SceneUpdater {
     this.sceneAssetId = config.sceneAssetId;
     this.isInPrefab = config.isInPrefab;
 
-    if (this.sceneAssetId != null) this.projectClient.subAsset(this.sceneAssetId, "scene", this.sceneSubscriber);
+    if (this.sceneAssetId != null && this.sceneAssetId.length > 0) this.projectClient.subAsset(this.sceneAssetId, "scene", this.sceneSubscriber);
   }
 
   destroy() {
     this._clearScene();
-    if (this.sceneAssetId != null) this.projectClient.unsubAsset(this.sceneAssetId, this.sceneSubscriber);
+    if (this.sceneAssetId != null && this.sceneAssetId.length > 0) this.projectClient.unsubAsset(this.sceneAssetId, this.sceneSubscriber);
   }
 
   _onSceneAssetReceived(assetId: string, asset: SceneAsset) {
@@ -170,13 +170,13 @@ export default class SceneUpdater {
   config_setProperty(path: string, value: any) {
     switch (path) {
       case "prefabId":
-        if (this.sceneAssetId != null) this.projectClient.unsubAsset(this.sceneAssetId, this.sceneSubscriber);
+        if (this.sceneAssetId != null && this.sceneAssetId.length > 0) this.projectClient.unsubAsset(this.sceneAssetId, this.sceneSubscriber);
         this.sceneAssetId = value;
 
         this._clearScene();
         this.sceneAsset = null;
 
-        if (this.sceneAssetId != null) this.projectClient.subAsset(this.sceneAssetId, "scene", this.sceneSubscriber);
+        if (this.sceneAssetId != null && this.sceneAssetId.length > 0) this.projectClient.subAsset(this.sceneAssetId, "scene", this.sceneSubscriber);
         break;
     }
   }
