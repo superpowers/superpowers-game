@@ -3,7 +3,7 @@ import ui, {
   start as uiStart,
   setCameraMode, setCameraVerticalAxis, createNodeElement, setupSelectedNode, createComponentElement,
   setInspectorPosition, setInspectorOrientation, setInspectorScale,
-  setInspectorVisible, setInspectorLayer, setInspectorPrefabId,
+  setInspectorVisible, setInspectorLayer, setInspectorPrefabScene,
   setupInspectorLayers } from "./ui";
 import engine, { start as engineStart, setupHelpers } from "./engine";
 import * as async from "async";
@@ -200,8 +200,8 @@ onEditCommands.setNodeProperty = (id: string, path: string, value: any) => {
     case "layer":
       if (isInspected) setInspectorLayer(value);
       break;
-    case "prefabId":
-      if (isInspected) setInspectorPrefabId(value);
+    case "prefab.sceneAssetId":
+      if (isInspected) setInspectorPrefabScene(value);
       break;
   }
 

@@ -10,7 +10,9 @@ export interface Node extends SupCore.Data.Base.TreeNode {
   scale: { x: number; y: number; z: number };
   visible: boolean;
   layer: number;
-  prefabId: string;
+  prefab: {
+    sceneAssetId: string;
+  }
 }
 
 export default class SceneNodes extends SupCore.Data.Base.TreeById {
@@ -52,7 +54,12 @@ export default class SceneNodes extends SupCore.Data.Base.TreeById {
 
     visible: { type: "boolean", mutable: true },
     layer: { type: "integer", min: 0, mutable: true },
-    prefabId: { type: "string?", mutable: true },
+    prefab: {
+      type: "hash",
+      properties: {
+        "sceneAssetId": { type: "string?", mutable: true },
+      }
+    },
 
     components: { type: "array?" }
   }
@@ -101,7 +108,7 @@ export default class SceneNodes extends SupCore.Data.Base.TreeById {
     let node = this.byId[id];
     if (node == null) { callback(`Invalid node id: ${id}`); return; }
 
-    if (node.prefabId != null && node.prefabId.length > 0) this.emit("removeDependencies", [ node.prefabId ], `${id}_${node.prefabId}`);
+    if (node.prefab != null && node.prefab.sceneAssetId != null) this.emit("removeDependencies", [ node.prefab.sceneAssetId ], `${id}_${node.prefab.sceneAssetId}`);
 
     this.walkNode(node, null, (node) => {
       for (let componentId in this.componentsByNodeId[node.id].configsById) {
@@ -146,22 +153,22 @@ export default class SceneNodes extends SupCore.Data.Base.TreeById {
       super.setProperty(id, key, value, (err, actualValue) => {
         if (err != null) { callback(err); return; }
 
-        if (key === "prefabId") {
-          if (oldDepId.length > 0) this.emit("removeDependencies", [ oldDepId ], `${id}_${oldDepId}`);
-          if (actualValue.length > 0) this.emit("addDependencies", [ actualValue ], `${id}_${actualValue}`);
+        if (key === "prefab.sceneAssetId") {
+          if (oldDepId != null) this.emit("removeDependencies", [ oldDepId ], `${id}_${oldDepId}`);
+          if (actualValue != null) this.emit("addDependencies", [ actualValue ], `${id}_${actualValue}`);
         }
         callback(null, actualValue);
       });
     }
 
-    if (key !== "prefabId") {
+    if (key !== "prefab.sceneAssetId") {
       finish();
       return;
     }
 
-    // Check for prefabId
-    oldDepId = this.byId[id].prefabId;
-    if (value.length === 0) {
+    // Ensure prefab is valid
+    oldDepId = this.byId[id].prefab != null ? this.byId[id].prefab.sceneAssetId : null;
+    if (value == null) {
       finish();
       return;
     }
@@ -189,14 +196,14 @@ export default class SceneNodes extends SupCore.Data.Base.TreeById {
         let walk = (node: Node) => {
           if (!canUseScene) return;
 
-          if (node.prefabId != null && node.prefabId.length > 0) {
-            if (node.prefabId === this.sceneAsset.id) canUseScene = false;
-            else checkScene(node.prefabId);
+          if (node.prefab != null && node.prefab.sceneAssetId != null) {
+            if (node.prefab.sceneAssetId === this.sceneAsset.id) canUseScene = false;
+            else checkScene(node.prefab.sceneAssetId);
           }
           for (let child of node.children) walk(child);
         }
 
-        for (let node of asset.pub.nodes) walk(node);
+        for (let rootNode of asset.pub.nodes) walk(rootNode);
 
         acquiringScene--;
         if (acquiringScene === 0) {

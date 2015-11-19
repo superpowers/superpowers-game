@@ -19,13 +19,19 @@ export interface DuplicatedNode {
   index: number;
 }
 
+interface ScenePub {
+  formatVersion: number;
+  nodes: Node[];
+}
+
 export default class SceneAsset extends SupCore.Data.Base.Asset {
+  static currentFormatVersion = 1;
 
   static schema: SupCore.Data.Base.Schema = {
     nodes: { type: "array" },
   }
 
-  pub: { nodes: Node[] };
+  pub: ScenePub;
   componentPathsByDependentAssetId: { [assetId: string]: string[] };
   nodes: SceneNodes;
 
@@ -34,7 +40,10 @@ export default class SceneAsset extends SupCore.Data.Base.Asset {
   }
 
   init(options: any, callback: Function) {
-    this.pub = { nodes: [] };
+    this.pub = {
+      formatVersion: SceneAsset.currentFormatVersion,
+      nodes: []
+    };
     super.init(options, callback);
   }
 
@@ -43,18 +52,39 @@ export default class SceneAsset extends SupCore.Data.Base.Asset {
       if (err != null && err.code === "ENOENT") {
         fs.readFile(path.join(assetPath, "asset.json"), { encoding: "utf8" },(err, json) => {
           fs.rename(path.join(assetPath, "asset.json"), path.join(assetPath, "scene.json"), (err) => {
-            this.pub = JSON.parse(json);
-            this.setup();
-            this.emit("load");
+            this._onLoaded(assetPath, JSON.parse(json));
           });
-
         });
       } else {
-        this.pub = JSON.parse(json);
-        this.setup();
-        this.emit("load");
+        this._onLoaded(assetPath, JSON.parse(json));
       }
     });
+  }
+
+  migrate(assetPath: string, pub: ScenePub, callback: (hasMigrated: boolean) => void) {
+    if (pub.formatVersion === SceneAsset.currentFormatVersion) { callback(false); return; }
+
+    if (pub.formatVersion == null) {
+      // node.prefabId used to be set to the empty string
+      // when the node was a prefab but had no scene associated.
+      //
+      // It was replaced with node.prefab.sceneAssetId
+      // in Superpowers v0.16.
+      function migratePrefab(node: Node) {
+        let oldPrefabId = (node as any).prefabId;
+        if (oldPrefabId != null) {
+          delete (node as any).prefabId;
+          node.prefab = { sceneAssetId: oldPrefabId.length > 0 ? oldPrefabId : null };
+        } else {
+          for (let child of node.children) migratePrefab(child);
+        }
+      }
+      for (let rootNode of pub.nodes) migratePrefab(rootNode);
+
+      pub.formatVersion = 1;
+    }
+
+    callback(true);
   }
 
   save(assetPath: string, callback: (err: Error) => any) {
@@ -69,8 +99,8 @@ export default class SceneAsset extends SupCore.Data.Base.Asset {
     this.nodes.on("addDependencies", (depIds: string[], componentPath: string) => { this._onAddComponentDependencies(componentPath, depIds); });
     this.nodes.on("removeDependencies", (depIds: string[], componentPath: string) => { this._onRemoveComponentDependencies(componentPath, depIds); });
 
-    this.nodes.walk((node) => {
-      if (node.prefabId != null && node.prefabId.length > 0) this._onAddComponentDependencies(`${node.id}_${node.prefabId}`, [ node.prefabId ]);
+    this.nodes.walk((node: Node) => {
+      if (node.prefab != null && node.prefab.sceneAssetId != null) this._onAddComponentDependencies(`${node.id}_${node.prefab.sceneAssetId}`, [ node.prefab.sceneAssetId ]);
     })
 
     for (let nodeId in this.nodes.componentsByNodeId) {
@@ -102,7 +132,7 @@ export default class SceneAsset extends SupCore.Data.Base.Asset {
 
     let parentId = (options != null) ? options.parentId : null;
     let parentNode = this.nodes.byId[parentId];
-    if (parentNode != null && parentNode.prefabId != null) {
+    if (parentNode != null && parentNode.prefab != null) {
       callback("Can't create children node on prefabs", null, null, null);
       return
     }
@@ -120,7 +150,7 @@ export default class SceneAsset extends SupCore.Data.Base.Asset {
       position: (options != null && options.transform != null && options.transform.position != null) ? options.transform.position : { x: 0, y: 0, z: 0 },
       orientation: (options != null && options.transform != null && options.transform.orientation != null) ? options.transform.orientation : { x: 0, y: 0, z: 0, w: 1 },
       scale: (options != null && options.transform != null && options.transform.scale != null) ? options.transform.scale : { x: 1, y: 1, z: 1 },
-      visible: true, layer: 0, prefabId: (options.prefab) ? "" : null
+      visible: true, layer: 0, prefab: (options.prefab) ? { sceneAssetId: null } : null
     };
 
     let index = (options != null) ? options.index : null;
@@ -156,7 +186,7 @@ export default class SceneAsset extends SupCore.Data.Base.Asset {
     if (node == null) { callback(`Invalid node id: ${id}`, null, null, null); return; }
 
     let parentNode = this.nodes.byId[parentId];
-    if (parentNode != null && parentNode.prefabId != null) {
+    if (parentNode != null && parentNode.prefab != null) {
       callback("Can't move children node on prefabs", null, null, null);
       return
     }
@@ -245,7 +275,7 @@ export default class SceneAsset extends SupCore.Data.Base.Asset {
       position: _.cloneDeep(referenceNode.position),
       orientation: _.cloneDeep(referenceNode.orientation),
       scale: _.cloneDeep(referenceNode.scale),
-      visible: referenceNode.visible, layer: referenceNode.layer, prefabId: referenceNode.prefabId
+      visible: referenceNode.visible, layer: referenceNode.layer, prefab: _.cloneDeep(referenceNode.prefab)
     };
     let parentId = (parentNode != null) ? parentNode.id : null;
 
@@ -278,7 +308,7 @@ export default class SceneAsset extends SupCore.Data.Base.Asset {
             position: _.cloneDeep(childNode.position),
             orientation: _.cloneDeep(childNode.orientation),
             scale: _.cloneDeep(childNode.scale),
-            visible: childNode.visible, layer: childNode.layer, prefabId: childNode.prefabId
+            visible: childNode.visible, layer: childNode.layer, prefab: _.cloneDeep(childNode.prefab)
           };
           addNode(node, newNode.id, childIndex, childNode.children);
         }
@@ -352,7 +382,7 @@ export default class SceneAsset extends SupCore.Data.Base.Asset {
 
     let node = this.nodes.byId[nodeId];
 
-    if (node != null && node.prefabId != null) { callback("Can't add component on prefabs", null, null, null); return; }
+    if (node != null && node.prefab != null) { callback("Can't add component on prefabs", null, null, null); return; }
 
     let component: Component = {
       type: componentType,

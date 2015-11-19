@@ -18,8 +18,8 @@ namespace Sup {
 
     let walk = (node, parentActor) => {
       let actor: Actor;
-      if (node.prefabId != null) {
-        let prefabAsset = player.getOuterAsset(node.prefabId);
+      if (node.prefab != null) {
+        let prefabAsset = player.getOuterAsset(node.prefab.sceneAssetId);
         if (prefabAsset != null) {
           let result: any = appendScene(prefabAsset, parentActor, false);
           actor = result.actors[0];
@@ -44,7 +44,7 @@ namespace Sup {
 
           allComponents = allComponents.concat(result.allComponents);
 
-        } else throw new Error(`Undefined prefab in ${sceneAsset.name}`);
+        } else throw new Error(`The prefab "${node.name}" in scene "${sceneAsset.name} has no scene defined.`);
 
       } else {
         actor = player.createActor(node.name, parentActor, { visible: node.visible, layer: node.layer });

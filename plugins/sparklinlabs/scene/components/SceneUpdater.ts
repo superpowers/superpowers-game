@@ -43,12 +43,12 @@ export default class SceneUpdater {
     this.sceneAssetId = config.sceneAssetId;
     this.isInPrefab = config.isInPrefab;
 
-    if (this.sceneAssetId != null && this.sceneAssetId.length > 0) this.projectClient.subAsset(this.sceneAssetId, "scene", this.sceneSubscriber);
+    if (this.sceneAssetId != null) this.projectClient.subAsset(this.sceneAssetId, "scene", this.sceneSubscriber);
   }
 
   destroy() {
     this._clearScene();
-    if (this.sceneAssetId != null && this.sceneAssetId.length > 0) this.projectClient.unsubAsset(this.sceneAssetId, this.sceneSubscriber);
+    if (this.sceneAssetId != null) this.projectClient.unsubAsset(this.sceneAssetId, this.sceneSubscriber);
   }
 
   _onSceneAssetReceived(assetId: string, asset: SceneAsset) {
@@ -111,8 +111,8 @@ export default class SceneUpdater {
         nodeEditorData.actor.setLocalScale(value);
         if (!this.isInPrefab) this._onUpdateMarkerRecursive(id);
         break;
-      case "prefabId":
-        nodeEditorData.prefabUpdater.config_setProperty("prefabId", value);
+      case "prefab.sceneAssetId":
+        nodeEditorData.prefabUpdater.config_setProperty("sceneAssetId", value);
         break;
     }
   }
@@ -169,14 +169,14 @@ export default class SceneUpdater {
 
   config_setProperty(path: string, value: any) {
     switch (path) {
-      case "prefabId":
-        if (this.sceneAssetId != null && this.sceneAssetId.length > 0) this.projectClient.unsubAsset(this.sceneAssetId, this.sceneSubscriber);
+      case "sceneAssetId":
+        if (this.sceneAssetId != null) this.projectClient.unsubAsset(this.sceneAssetId, this.sceneSubscriber);
         this.sceneAssetId = value;
 
         this._clearScene();
         this.sceneAsset = null;
 
-        if (this.sceneAssetId != null && this.sceneAssetId.length > 0) this.projectClient.subAsset(this.sceneAssetId, "scene", this.sceneSubscriber);
+        if (this.sceneAssetId != null) this.projectClient.subAsset(this.sceneAssetId, "scene", this.sceneSubscriber);
         break;
     }
   }
@@ -205,9 +205,9 @@ export default class SceneUpdater {
     }
 
     this.bySceneNodeId[node.id] = { actor: nodeActor, markerActor, bySceneComponentId: {}, prefabUpdater: null };
-    if (node.prefabId != null) {
+    if (node.prefab != null) {
       this.bySceneNodeId[node.id].prefabUpdater = new SceneUpdater(this.projectClient,
-        { gameInstance: this.gameInstance, actor: nodeActor }, { sceneAssetId: node.prefabId, isInPrefab: true });
+        { gameInstance: this.gameInstance, actor: nodeActor }, { sceneAssetId: node.prefab.sceneAssetId, isInPrefab: true });
     }
 
     if (node.components != null) for (let component of node.components) this._createNodeActorComponent(node, component, nodeActor);

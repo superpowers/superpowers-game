@@ -180,7 +180,7 @@ ui.prefabOpenElt = <HTMLButtonElement>ui.inspectorElt.querySelector(".prefab but
 ui.prefabOpenElt.addEventListener("click", (event) => {
   let selectedNode = ui.nodesTreeView.selectedNodes[0];
   let node = data.sceneUpdater.sceneAsset.nodes.byId[selectedNode.dataset.id];
-  let id = node.prefabId;
+  let id = node.prefab.sceneAssetId;
   window.parent.postMessage({ type: "openEntry", id }, (<any>window.location).origin);
 })
 
@@ -261,7 +261,7 @@ export function createNodeElement(node: Node) {
 
   let nameSpan = document.createElement("span");
   nameSpan.classList.add("name");
-  if (node.prefabId != null) nameSpan.classList.add("prefab");
+  if (node.prefab != null) nameSpan.classList.add("prefab");
   nameSpan.textContent = node.name;
   liElt.appendChild(nameSpan);
 
@@ -332,7 +332,7 @@ export function setupSelectedNode() {
   ui.layerSelect.value = <any>node.layer;
 
   // If it's a prefab, disable various buttons
-  let isPrefab = node.prefabId != null;
+  let isPrefab = node.prefab != null;
   ui.newActorButton.disabled = isPrefab;
   ui.newPrefabButton.disabled = isPrefab;
   ui.renameNodeButton.disabled = false;
@@ -341,7 +341,7 @@ export function setupSelectedNode() {
 
   if (isPrefab) {
     if (ui.prefabRow.parentElement == null) ui.inspectorTbodyElt.appendChild(ui.prefabRow);
-    setInspectorPrefabId(node.prefabId);
+    setInspectorPrefabScene(node.prefab.sceneAssetId);
   } else if (ui.prefabRow.parentElement != null) ui.inspectorTbodyElt.removeChild(ui.prefabRow);
 
   // Setup component editors
@@ -435,9 +435,9 @@ export function setupInspectorLayers() {
   }
 }
 
-export function setInspectorPrefabId(prefabId: string) {
-  ui.prefabInput.value = prefabId.length === 0 ? "" : data.projectClient.entries.getPathFromId(prefabId);
-  ui.prefabOpenElt.disabled = prefabId.length === 0;
+export function setInspectorPrefabScene(sceneAssetId: string) {
+  ui.prefabInput.value = sceneAssetId != null ? data.projectClient.entries.getPathFromId(sceneAssetId) : "";
+  ui.prefabOpenElt.disabled = sceneAssetId == null;
 }
 
 function onNewNodeClick() {
@@ -563,12 +563,12 @@ function onPrefabInput(event: any) {
   let nodeId = ui.nodesTreeView.selectedNodes[0].dataset.id;
 
   if (event.target.value === "") {
-    socket.emit("edit:assets", info.assetId, "setNodeProperty", nodeId, "prefabId", "", (err: string) => { if (err != null) alert(err); });
+    socket.emit("edit:assets", info.assetId, "setNodeProperty", nodeId, "prefab.sceneAssetId", null, (err: string) => { if (err != null) alert(err); });
   }
   else {
     let entry = SupClient.findEntryByPath(data.projectClient.entries.pub, event.target.value);
     if (entry != null && entry.type === "scene") {
-      socket.emit("edit:assets", info.assetId, "setNodeProperty", nodeId, "prefabId", entry.id, (err: string) => { if (err != null) alert(err); });
+      socket.emit("edit:assets", info.assetId, "setNodeProperty", nodeId, "prefab.sceneAssetId", entry.id, (err: string) => { if (err != null) alert(err); });
     }
   }
 }
