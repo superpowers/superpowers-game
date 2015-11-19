@@ -55,7 +55,7 @@ export default class SceneNodes extends SupCore.Data.Base.TreeById {
     visible: { type: "boolean", mutable: true },
     layer: { type: "integer", min: 0, mutable: true },
     prefab: {
-      type: "hash",
+      type: "hash?",
       properties: {
         "sceneAssetId": { type: "string?", mutable: true },
       }
