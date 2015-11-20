@@ -7,7 +7,7 @@ export default function(file: File, type: string, callback: (err: Error, result:
     switch (type) {
       case "json":
         try { result = JSON.parse((<FileReader>event.target).result); }
-        catch(err) { callback(err, null); return; }
+        catch (err) { callback(err, null); return; }
         break;
 
       default:

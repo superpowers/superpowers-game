@@ -28,7 +28,7 @@ export function loadAsset(player: SupRuntime.Player, entry: any, callback: (err:
       try {
         font = new FontFace(data.name, `url(${player.dataURL}assets/${encodeURIComponent(entry.storagePath)}/font.dat)`);
         (<any>document).fonts.add(font);
-      } catch(e) {}
+      } catch (e) { /* Ignore */ }
 
       if (font != null) font.load().then(() => { callback(null, data); }, () => { callback(null, data); });
       else callback(null, data);
