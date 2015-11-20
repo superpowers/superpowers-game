@@ -58,43 +58,11 @@ body
   background #f0f0f0
 
 .nodes-buttons
-  display flex
-  background rgba(0,0,0,0.05)
-  border-bottom 1px solid #acacac
-
-  button
-    flex 1
-    height 35px
-    border none
-    box-shadow none
-    background-color transparent
-    background-position center center
-    background-repeat no-repeat
-
-    opacity 0.5
-    cursor pointer
-  
-    &:hover
-      background-color rgba(0,0,0,0.1)
-      opacity 1
-
-    &:active
-      background-color #fff
-
-    &:disabled
-      opacity 0.2
-      cursor default
-
-  .new-actor
-    background-image url(images/nodes/new-actor.svg)
-  .new-prefab
-    background-image url(images/nodes/new-prefab.svg)
-  .rename-node
-    background-image url(images/nodes/rename-node.svg)
-  .duplicate-node
-    background-image url(images/nodes/duplicate-node.svg)
-  .delete-node
-    background-image url(images/nodes/delete-node.svg)
+  .new-actor { background-image: url(images/nodes/new-actor.svg); }
+  .new-prefab { background-image: url(images/nodes/new-prefab.svg); }
+  .rename-node { background-image: url(/images/actions/rename.svg); }
+  .duplicate-node { background-image: url(/images/actions/duplicate.svg); }
+  .delete-node { background-image: url(/images/actions/delete.svg); }
 
 .nodes-tree-view
   min-height 100px

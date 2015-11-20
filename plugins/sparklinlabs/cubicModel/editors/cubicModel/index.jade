@@ -89,11 +89,11 @@ html
       .header
         span Nodes
 
-      .nodes-buttons
-        button.new-node New Node
-        button(disabled).rename-node Rename
-        button(disabled).duplicate-node Duplicate
-        button(disabled).delete-node Delete
+      .nodes-buttons.flat-button-strip
+        button(title="New Node").new-node
+        button(title="Rename (F2)",disabled).rename-node
+        button(title="Duplicate (Ctrl+D",disabled).duplicate-node
+        button(title="Delete (Delete)",disabled).delete-node
 
       .nodes-tree-view
       .inspector(hidden)
