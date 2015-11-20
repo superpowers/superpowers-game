@@ -1,5 +1,4 @@
-import * as async from "async";
-import CubicModelAsset, { DuplicatedNode, TextureEdit } from "../data/CubicModelAsset";
+import CubicModelAsset, { DuplicatedNode } from "../data/CubicModelAsset";
 import { Node } from "../data/CubicModelNodes";
 import CubicModelRenderer, { RendererNode } from "./CubicModelRenderer";
 let THREE = SupEngine.THREE;
@@ -93,7 +92,7 @@ export default class CubicModelRendererUpdater {
     matrix.multiplyMatrices(new THREE.Matrix4().getInverse(parent.matrixWorld), matrix);
     matrix.decompose(pivot.position, pivot.quaternion, pivot.scale);
     pivot.updateMatrixWorld(false);
-  }
+  };
 
   _onEditCommand_moveNodePivot = (id: string, value: { x: number; y: number; z: number; }) => {
     let rendererNode = this.cubicModelRenderer.byNodeId[id];
@@ -110,37 +109,34 @@ export default class CubicModelRendererUpdater {
       rendererNode.pivot.position.set(node.position.x + parentOffset.x, node.position.y + parentOffset.y, node.position.z + parentOffset.z);
 
       for (let child of rendererNode.children) walk(child, node.shape.offset);
-    }
+    };
     for (let child of rendererNode.children) walk(child, node.shape.offset);
 
     rendererNode.pivot.updateMatrixWorld(false);
-  }
+  };
 
   _onEditCommand_setNodeProperty = (id: string, path: string, value: any) => {
     let rendererNode = this.cubicModelRenderer.byNodeId[id];
     let node = this.cubicModelAsset.nodes.byId[id];
 
     switch (path) {
-      case "name": {
+      case "name":
         rendererNode.pivot.name = value;
         break;
-      }
 
-      case "position": {
+      case "position":
         let parentNode = this.cubicModelAsset.nodes.parentNodesById[id];
         let parentOffset = (parentNode != null) ? parentNode.shape.offset : { x: 0, y: 0, z: 0 };
         rendererNode.pivot.position.set(value.x + parentOffset.x, value.y + parentOffset.y, value.z + parentOffset.z);
         rendererNode.pivot.updateMatrixWorld(false);
         break;
-      }
 
-      case "orientation": {
+      case "orientation":
         rendererNode.pivot.quaternion.set(value.x, value.y, value.z, value.w);
         rendererNode.pivot.updateMatrixWorld(false);
         break;
-      }
 
-      case "shape.offset": {
+      case "shape.offset":
         rendererNode.shape.position.set(value.x, value.y, value.z);
 
         let walk = (rendererNode: RendererNode, parentOffset: { x: number; y: number; z: number; }) => {
@@ -148,50 +144,47 @@ export default class CubicModelRendererUpdater {
           rendererNode.pivot.position.set(node.position.x + parentOffset.x, node.position.y + parentOffset.y, node.position.z + parentOffset.z);
 
           for (let child of rendererNode.children) walk(child, node.shape.offset);
-        }
+        };
         for (let child of rendererNode.children) walk(child, node.shape.offset);
 
         rendererNode.pivot.updateMatrixWorld(false);
         break;
-      }
 
       default: {
         switch (node.shape.type) {
           case "box":
             switch (path) {
-              case "shape.settings.size": {
+              case "shape.settings.size":
                 let geometry = rendererNode.shape.geometry = new THREE.BoxGeometry(value.x, value.y, value.z);
                 this.cubicModelRenderer.updateBoxNodeUv(geometry, node);
                 break;
-              }
 
-              case "shape.settings.stretch": {
+              case "shape.settings.stretch":
                 rendererNode.shape.scale.set(value.x, value.y, value.z);
                 rendererNode.shape.updateMatrixWorld(false);
                 break;
-              }
             }
             break;
         }
         break;
       }
     }
-  }
+  };
 
   _onEditCommand_duplicateNode = (rootNode: Node, newNodes: DuplicatedNode[]) => {
     for (let newNode of newNodes) this._createRendererNode(newNode.node);
-  }
+  };
 
   _onEditCommand_removeNode = (id: string) => {
     this._recurseClearNode(id);
-  }
+  };
 
   _recurseClearNode(nodeId: string) {
     let rendererNode = this.cubicModelRenderer.byNodeId[nodeId];
     for (let childNode of rendererNode.children) this._recurseClearNode(childNode.nodeId);
 
     let parentPivot = rendererNode.pivot.parent;
-    let parentNodeId: string = parentPivot.userData.nodeId;
+    let parentNodeId: string = parentPivot.userData.cubicNodeId;
     if (parentNodeId != null) {
       let parentRendererNode = this.cubicModelRenderer.byNodeId[parentNodeId];
       parentRendererNode.children.splice(parentRendererNode.children.indexOf(rendererNode), 1);
@@ -214,8 +207,8 @@ export default class CubicModelRendererUpdater {
     }
   }
 
-  _onEditCommand_changeTextureWidth = () => { this._onChangeTextureSize(); }
-  _onEditCommand_changeTextureHeight = () => { this._onChangeTextureSize(); }
+  _onEditCommand_changeTextureWidth = () => { this._onChangeTextureSize(); };
+  _onEditCommand_changeTextureHeight = () => { this._onChangeTextureSize(); };
 
   _onChangeTextureSize() {
     for (let id in this.cubicModelAsset.nodes.byId) {

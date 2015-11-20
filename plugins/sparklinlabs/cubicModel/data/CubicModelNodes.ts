@@ -1,18 +1,25 @@
 import CubicModelAsset from "./CubicModelAsset";
 
+export interface XYZ { x: number; y: number; z: number; }
+
 export interface Node extends SupCore.Data.Base.TreeNode {
   children: Node[];
 
-  position: { x: number; y: number; z: number };
+  position: XYZ;
   orientation: { x: number; y: number; z: number; w: number };
 
   shape: Shape;
 }
 
-interface Shape {
+export interface Shape {
   type: string;
-  offset: { x: number; y: number; z: number; };
-  textureLayout: { [face: string]: { offset: { x: number; y: number; } } };
+  offset: XYZ;
+  textureLayoutCustom: boolean;
+  textureLayout: { [face: string]: {
+    offset: { x: number; y: number; };
+    mirror: { x: boolean; y: boolean; };
+    angle: number;
+  } };
   settings: any;
 }
 
@@ -99,6 +106,7 @@ export default class CubicModelNodes extends SupCore.Data.Base.TreeById {
             z: { type: "number", mutable: true },
           }
         },
+        textureLayoutCustom: { type: "boolean", mutable: true },
         textureLayout: {
           type: "hash",
           values: {
@@ -110,8 +118,15 @@ export default class CubicModelNodes extends SupCore.Data.Base.TreeById {
                   x: { type: "number" },
                   y: { type: "number" }
                 }
-              }
-
+              },
+              mirror: {
+                type: "hash",
+                properties: {
+                  x: { type: "boolean", mutable: true },
+                  y: { type: "boolean", mutable: true }
+                }
+              },
+              angle: { type: "number", mutable: true }
             }
           }
         },
@@ -121,7 +136,7 @@ export default class CubicModelNodes extends SupCore.Data.Base.TreeById {
         }
       }
     }
-  }
+  };
 
   pub: Node[];
   byId: { [id: string]: Node };

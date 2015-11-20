@@ -50,7 +50,7 @@ export function start() {
 
 let lastTimestamp = 0;
 let accumulatedTime = 0;
-function tick(timestamp=0) {
+function tick(timestamp = 0) {
   accumulatedTime += timestamp - lastTimestamp;
   lastTimestamp = timestamp;
   let { updates, timeLeft } = engine.gameInstance.tick(accumulatedTime, update);
@@ -192,7 +192,7 @@ function onTransformChange() {
   let value: any;
 
   switch(engine.transformHandleComponent.mode) {
-    case "translate": {
+    case "translate":
       switch (ui.translateMode) {
         case "all": transformType = "position"; break;
         case "shape": transformType = "shape.offset"; break;
@@ -225,9 +225,8 @@ function onTransformChange() {
 
       value = { x: position.x * pixelsPerUnit, y: position.y * pixelsPerUnit, z: position.z * pixelsPerUnit };
       break;
-    }
 
-    case "rotate": {
+    case "rotate":
       if (ui.translateMode === "pivot") target = pivot;
 
       transformType = "orientation";
@@ -239,13 +238,11 @@ function onTransformChange() {
       }
       value = { x: orientation.x, y: orientation.y, z: orientation.z, w: orientation.w };
       break;
-    }
 
-    case "scale": {
+    case "scale":
       transformType = "scale";
       value = { x: object.scale.x, y: object.scale.y, z: object.scale.z };
       break;
-    }
   }
 
   if (transformType !== "pivotPosition") {

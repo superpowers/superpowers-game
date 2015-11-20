@@ -1,5 +1,4 @@
-import info from "./info";
-import { socket, data, editAsset } from "./network";
+import { data, editAsset } from "./network";
 import engine, { setupHelpers } from "./engine";
 import { setSelectedNode as setTextureAreaSelectedNode } from "./textureArea";
 
@@ -56,7 +55,7 @@ document.addEventListener("keydown", (event) => {
   if (document.querySelector(".dialog") != null) return;
   let activeElement = <HTMLElement>document.activeElement;
   while (activeElement != null) {
-    if (activeElement == ui.canvasElt || activeElement == ui.treeViewElt) break;
+    if (activeElement === ui.canvasElt || activeElement === ui.treeViewElt) break;
     activeElement = activeElement.parentElement;
   }
   if (activeElement == null) return;
@@ -123,13 +122,13 @@ let addOption = (parent: HTMLSelectElement, value: number) => {
   optionElt.textContent = value.toString();
   optionElt.value = value.toString();
   parent.appendChild(optionElt);
-}
+};
 for (let size of CubicModelAsset.validTextureSizes) {
   addOption(ui.textureWidthSelect, size);
   addOption(ui.textureHeightSelect, size);
 }
-ui.textureWidthSelect.addEventListener("input", (event: any) => { editAsset("changeTextureWidth", parseInt(event.target.value)); })
-ui.textureHeightSelect.addEventListener("input", (event: any) => { editAsset("changeTextureHeight", parseInt(event.target.value)); })
+ui.textureWidthSelect.addEventListener("input", (event: any) => { editAsset("changeTextureWidth", parseInt(event.target.value)); });
+ui.textureHeightSelect.addEventListener("input", (event: any) => { editAsset("changeTextureHeight", parseInt(event.target.value)); });
 
 // Setup tree view
 ui.treeViewElt = <HTMLDivElement>document.querySelector(".nodes-tree-view");
@@ -185,6 +184,11 @@ function onNodeActivate() { ui.nodesTreeView.selectedNodes[0].classList.toggle("
 export function setupSelectedNode() {
   setupHelpers();
 
+  // Setup texture area
+  let nodeIds: string[] = [];
+  for (let node of ui.nodesTreeView.selectedNodes) nodeIds.push(node.dataset.id);
+  setTextureAreaSelectedNode(nodeIds);
+
   // Setup transform
   let nodeElt = ui.nodesTreeView.selectedNodes[0];
   if (nodeElt == null || ui.nodesTreeView.selectedNodes.length !== 1) {
@@ -193,8 +197,6 @@ export function setupSelectedNode() {
     ui.renameNodeButton.disabled = true;
     ui.duplicateNodeButton.disabled = true;
     ui.deleteNodeButton.disabled = true;
-
-    setTextureAreaSelectedNode(null);
     return;
   }
 
@@ -221,9 +223,6 @@ export function setupSelectedNode() {
   ui.renameNodeButton.disabled = false;
   ui.duplicateNodeButton.disabled = false;
   ui.deleteNodeButton.disabled = false;
-
-  // Setup texture area
-  setTextureAreaSelectedNode(node);
 }
 
 function roundForInspector(number: number) { return parseFloat(number.toFixed(3)); }
@@ -494,7 +493,7 @@ function onInspectorInputChange(event: any) {
   let propertyType = event.target.parentElement.parentElement.parentElement.className;
   let value: any;
 
-  if (context == "shape" && propertyType === "type") {
+  if (context === "shape" && propertyType === "type") {
     // Single value
     value = uiFields[propertyType].value;
   } else {

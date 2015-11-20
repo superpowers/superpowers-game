@@ -62,7 +62,7 @@ function onAssetReceived() {
 
 export function editAsset(...args: any[]) {
   let callback: Function;
-  if (typeof args[args.length-1] === "function") callback = args.pop();
+  if (typeof args[args.length - 1] === "function") callback = args.pop();
 
   args.push((err: string, id: string) => {
     if (err != null) { alert(err); return; }
@@ -90,7 +90,7 @@ onEditCommands.moveNode = (id: string, parentId: string, index: number) => {
   let isInspected = ui.nodesTreeView.selectedNodes.length === 1 && nodeElt === ui.nodesTreeView.selectedNodes[0];
 
   let parentElt: HTMLLIElement;
-  if (parentId != null) parentElt = ui.nodesTreeView.treeRoot.querySelector(`[data-id='${parentId}']`)
+  if (parentId != null) parentElt = ui.nodesTreeView.treeRoot.querySelector(`[data-id='${parentId}']`);
   ui.nodesTreeView.insertAt(nodeElt, "group", index, parentElt);
 
   // Refresh inspector
@@ -102,7 +102,7 @@ onEditCommands.moveNode = (id: string, parentId: string, index: number) => {
 
   // TODO: Only refresh if selection is affected
   setupHelpers();
-}
+};
 
 onEditCommands.moveNodePivot = (id: string, value: { x: number; y: number; z: number; }) => {
   let nodeElt = ui.nodesTreeView.treeRoot.querySelector(`[data-id='${id}']`);
@@ -145,7 +145,6 @@ onEditCommands.setNodeProperty = (id: string, path: string, value: any) => {
     case "shape.settings.stretch":
       if (isInspected) setInspectorBoxStretch(<THREE.Vector3>node.shape.settings.stretch);
       break;
-
   }
 
   textureArea.updateNode(node);
@@ -159,15 +158,14 @@ onEditCommands.duplicateNode = (rootNode: Node, newNodes: DuplicatedNode[]) => {
 
   // TODO: Only refresh if selection is affected
   setupHelpers();
-}
+};
 
 onEditCommands.removeNode = (id: string) => {
   let nodeElt = ui.nodesTreeView.treeRoot.querySelector(`[data-id='${id}']`);
   let isInspected = ui.nodesTreeView.selectedNodes.length === 1 && nodeElt === ui.nodesTreeView.selectedNodes[0];
-
-  textureArea.removeNode(id);
-
   ui.nodesTreeView.remove(nodeElt);
+  textureArea.updateRemovedNode();
+
   if (isInspected) setupSelectedNode();
 
   // TODO: Only refresh if selection is affected
@@ -179,13 +177,13 @@ onEditCommands.moveNodeTextureOffset = (nodeIds: string[], offset: { x: number; 
     let node = data.cubicModelUpdater.cubicModelAsset.nodes.byId[id];
     textureArea.updateNode(node);
   }
-}
+};
 
 onEditCommands.changeTextureWidth = () => {
   ui.textureWidthSelect.value = data.cubicModelUpdater.cubicModelAsset.pub.textureWidth.toString();
   textureArea.setupTexture();
-}
+};
 onEditCommands.changeTextureHeight = () => {
   ui.textureHeightSelect.value = data.cubicModelUpdater.cubicModelAsset.pub.textureHeight.toString();
   textureArea.setupTexture();
-}
+};

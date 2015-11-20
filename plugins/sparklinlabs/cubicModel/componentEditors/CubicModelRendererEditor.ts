@@ -2,7 +2,7 @@ import { CubicModelRendererConfigPub } from "../data/CubicModelRendererConfig";
 import CubicModelAsset from "../data/CubicModelAsset";
 
 export default class CubicModelRendererEditor {
-  tbody: HTMLTableSectionElement
+  tbody: HTMLTableSectionElement;
   projectClient: SupClient.ProjectClient;
   editConfig: any;
 
@@ -33,8 +33,8 @@ export default class CubicModelRendererEditor {
     this.projectClient = projectClient;
     this.editConfig = editConfig;
     this.cubicModelAssetId = config.cubicModelAssetId;
-    //this.animationId = config.animationId;
-    //this.shaderAssetId = config.shaderAssetId;
+    // this.animationId = config.animationId;
+    // this.shaderAssetId = config.shaderAssetId;
 
     let cubicModelRow = SupClient.table.appendRow(tbody, "Cubic Model");
     let cubicModelFields = SupClient.table.appendAssetField(cubicModelRow.valueCell, "");
@@ -180,7 +180,7 @@ export default class CubicModelRendererEditor {
         if (this.cubicModelAssetId != null) this.projectClient.unsubAsset(this.cubicModelAssetId, this);
         this.cubicModelAssetId = value;
         this.cubicModelButtonElt.disabled = this.cubicModelAssetId == null;
-        //this.animationSelectBox.disabled = true;
+        // this.animationSelectBox.disabled = true;
 
         if (this.cubicModelAssetId != null) {
           this.cubicModelTextField.value = this.projectClient.entries.getPathFromId(this.cubicModelAssetId);
@@ -268,7 +268,7 @@ export default class CubicModelRendererEditor {
     if (id === this.cubicModelAssetId) {
       this.cubicModelTextField.value = this.projectClient.entries.getPathFromId(this.cubicModelAssetId);
     } else if (id === this.shaderAssetId) {
-      //this.shaderTextField.value = this.projectClient.entries.getPathFromId(this.shaderAssetId);
+      // this.shaderTextField.value = this.projectClient.entries.getPathFromId(this.shaderAssetId);
     }
   }
   onSetEntryProperty(id: string, key: string, value: any) {
@@ -277,7 +277,7 @@ export default class CubicModelRendererEditor {
     if (id === this.cubicModelAssetId) {
       this.cubicModelTextField.value = this.projectClient.entries.getPathFromId(this.cubicModelAssetId);
     } else if (id === this.shaderAssetId) {
-      //this.shaderTextField.value = this.projectClient.entries.getPathFromId(this.shaderAssetId);
+      // this.shaderTextField.value = this.projectClient.entries.getPathFromId(this.shaderAssetId);
     }
   }
   onEntryTrashed(id: string) {}
@@ -301,8 +301,7 @@ export default class CubicModelRendererEditor {
     if (assetId !== this.cubicModelAssetId) return;
     if (command.indexOf("Animation") === -1) return;
 
-    /*
-    let animationId = this.animationSelectBox.value;
+    /*let animationId = this.animationSelectBox.value;
 
     this._clearAnimations();
 
@@ -318,8 +317,8 @@ export default class CubicModelRendererEditor {
     this._clearAnimations();
 
     this.cubicModelTextField.value = "";
-    //this.animationSelectBox.value = "";
-    //this.animationSelectBox.disabled = true;
+    // this.animationSelectBox.value = "";
+    // this.animationSelectBox.disabled = true;
   }
 
   // User interface
@@ -341,21 +340,21 @@ export default class CubicModelRendererEditor {
   _onChangeCubicModelAsset = (event: any) => {
     if (event.target.value === "") {
       this.editConfig("setProperty", "cubicModelAssetId", null);
-      //this.editConfig("setProperty", "animationId", null);
+      // this.editConfig("setProperty", "animationId", null);
     }
     else {
       let entry = SupClient.findEntryByPath(this.projectClient.entries.pub, event.target.value);
       if (entry != null && entry.type === "cubicModel") {
         this.editConfig("setProperty", "cubicModelAssetId", entry.id);
-        //this.editConfig("setProperty", "animationId", null);
+        // this.editConfig("setProperty", "animationId", null);
       }
     }
-  }
+  };
 
   _onChangeCubicModelAnimation = (event: any) => {
     let animationId = (event.target.value === "") ? null : event.target.value;
     this.editConfig("setProperty", "animationId", animationId);
-  }
+  };
 
   _onChangeShaderAsset = (event: any) => {
     if (event.target.value === "") this.editConfig("setProperty", "shaderAssetId", null);
@@ -363,5 +362,5 @@ export default class CubicModelRendererEditor {
       let entry = SupClient.findEntryByPath(this.projectClient.entries.pub, event.target.value);
       if (entry != null && entry.type === "shader") this.editConfig("setProperty", "shaderAssetId", entry.id);
     }
-  }
+  };
 }

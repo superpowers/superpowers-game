@@ -1,7 +1,4 @@
 let THREE = SupEngine.THREE;
-let tmpBoneMatrix = new THREE.Matrix4;
-let tmpVec = new THREE.Vector3;
-let tmpQuat = new THREE.Quaternion;
 
 import { CubicModelAssetPub } from "../data/cubicModelAsset";
 import { Node } from "../data/CubicModelNodes";
@@ -23,8 +20,8 @@ export default class CubicModelRenderer extends SupEngine.ActorComponent {
   byNodeId: { [nodeId: string]: RendererNode };
 
   materialType = "basic";
-  //castShadow = false;
-  //receiveShadow = false;
+  // castShadow = false;
+  // receiveShadow = false;
 
   constructor(actor: SupEngine.Actor) {
     super(actor, "ModelRenderer");
@@ -32,7 +29,7 @@ export default class CubicModelRenderer extends SupEngine.ActorComponent {
 
   _clearMesh() {
     this.actor.threeObject.remove(this.threeRoot);
-    this.threeRoot.traverse((obj: any) => { if (obj.dispose != null) obj.dispose() });
+    this.threeRoot.traverse((obj: any) => { if (obj.dispose != null) obj.dispose(); });
     this.threeRoot = null;
     this.byNodeId = null;
   }
@@ -82,7 +79,7 @@ export default class CubicModelRenderer extends SupEngine.ActorComponent {
     if (node.shape.type === "box") {
       let size = node.shape.settings.size;
       let boxGeometry = new THREE.BoxGeometry(size.x, size.y, size.z);
-      this.updateBoxNodeUv(boxGeometry, node)
+      this.updateBoxNodeUv(boxGeometry, node);
 
       shape = new THREE.Mesh(boxGeometry, material);
       shape.scale.set(node.shape.settings.stretch.x, node.shape.settings.stretch.y, node.shape.settings.stretch.z);
@@ -100,13 +97,10 @@ export default class CubicModelRenderer extends SupEngine.ActorComponent {
     pivot.position.set(node.position.x + parentOffset.x, node.position.y + parentOffset.y, node.position.z + parentOffset.z);
     pivot.quaternion.set(node.orientation.x, node.orientation.y, node.orientation.z, node.orientation.w);
     // NOTE: Hierarchical scale is not supported for now, we'll see if the need arises
-    //nodeObject.scale.set(node.scale.x, node.scale.y, node.scale.z);
+    // nodeObject.scale.set(node.scale.x, node.scale.y, node.scale.z);
 
-    if (parentRendererNode == null) {
-      this.threeRoot.add(pivot);
-    } else {
-      parentRendererNode.pivot.add(pivot);
-    }
+    if (parentRendererNode == null) this.threeRoot.add(pivot);
+    else parentRendererNode.pivot.add(pivot);
     pivot.updateMatrixWorld(false);
 
     return rendererNode;

@@ -1,6 +1,6 @@
-import ui from "./ui";
+import ui, { setupSelectedNode } from "./ui";
 import { data, editAsset } from "./network";
-import { Node } from "../../data/CubicModelNodes";
+import { Node, getShapeTextureFaceSize } from "../../data/CubicModelNodes";
 import { TextureEdit } from "../../data/CubicModelAsset";
 
 let THREE = SupEngine.THREE;
@@ -11,8 +11,8 @@ let textureArea: {
   shapeLineMeshesByNodeId: { [nodeId: string]: THREE.LineSegments; }
 
   textureMesh: THREE.Mesh;
-  //gridRenderer: any;
-  //selectionRenderer: SelectionRenderer;
+  // gridRenderer: any;
+  // selectionRenderer: SelectionRenderer;
 
   mode: string;
   paintTool: string;
@@ -81,8 +81,8 @@ document.addEventListener("paste", (event: ClipboardEvent) => {
     textureArea.pasteMesh.position.set(image.width / 2, -image.height / 2, 1);
     textureArea.gameInstance.threeScene.add(textureArea.pasteMesh);
     textureArea.pasteMesh.updateMatrixWorld(false);
-  }
-})
+  };
+});
 
 textureArea.gameInstance = new SupEngine.GameInstance(canvas);
 textureArea.gameInstance.threeRenderer.setClearColor(0xbbbbbb);
@@ -142,8 +142,8 @@ function updateMode() {
 }
 
 textureArea.colorInput = <HTMLInputElement>document.querySelector("input.color");
-const lineMaterial = new THREE.LineBasicMaterial({ color: 0xff00ff, opacity: 0.4, depthTest: false, depthWrite: false, transparent: true })
-const selectedLineMaterial = new THREE.LineBasicMaterial({ color: 0xff00ff, opacity: 1, depthTest: false, depthWrite: false, transparent: true })
+const lineMaterial = new THREE.LineBasicMaterial({ color: 0xff00ff, opacity: 0.4, depthTest: false, depthWrite: false, transparent: true });
+const selectedLineMaterial = new THREE.LineBasicMaterial({ color: 0xff00ff, opacity: 1, depthTest: false, depthWrite: false, transparent: true });
 const verticesByShapeType: { [type: string]: number } = {
   "none": 0,
   "box": 20
@@ -171,8 +171,7 @@ export function updateNode(node: Node) {
     vertices.length = verticesCount;
   }
 
-
-  //let origin = { x: node.shape.textureOffset.x, y: -node.shape.textureOffset.y };
+  // let origin = { x: node.shape.textureOffset.x, y: -node.shape.textureOffset.y };
   // TEMPORARY
   let origin = { x: node.shape.textureLayout["left"].offset.x, y: -node.shape.textureLayout["top"].offset.y };
 
@@ -228,20 +227,27 @@ export function updateNode(node: Node) {
   (<THREE.Geometry>line.geometry).verticesNeedUpdate = true;
 }
 
-export function removeNode(nodeId: string) {
-  let line = textureArea.shapeLineMeshesByNodeId[nodeId];
-  line.parent.remove(line);
-  line.geometry.dispose();
+export function updateRemovedNode() {
+  for (let nodeId in textureArea.shapeLineMeshesByNodeId) {
+    if (data.cubicModelUpdater.cubicModelAsset.nodes.byId[nodeId] != null) continue;
 
-  delete textureArea.shapeLineMeshesByNodeId[nodeId];
+    let line = textureArea.shapeLineMeshesByNodeId[nodeId];
+    line.parent.remove(line);
+    line.geometry.dispose();
+    delete textureArea.shapeLineMeshesByNodeId[nodeId];
+  }
 }
 
-let selectedNodeLineMesh: THREE.LineSegments;
-export function setSelectedNode(node: Node) {
-  if (selectedNodeLineMesh != null) selectedNodeLineMesh.material = lineMaterial;
+let selectedNodeLineMeshes: THREE.LineSegments[] = [];
+export function setSelectedNode(nodeIds: string[]) {
+  for (let selectedNodeLineMesh of selectedNodeLineMeshes) selectedNodeLineMesh.material = lineMaterial;
+  selectedNodeLineMeshes.length = 0;
 
-  selectedNodeLineMesh = (node != null) ? textureArea.shapeLineMeshesByNodeId[node.id] : null;
-  if (selectedNodeLineMesh != null) selectedNodeLineMesh.material = selectedLineMaterial;
+  for (let nodeId of nodeIds) {
+    let selectedNodeLineMesh = textureArea.shapeLineMeshesByNodeId[nodeId];
+    selectedNodeLineMesh.material = selectedLineMaterial;
+    selectedNodeLineMeshes.push(selectedNodeLineMesh);
+  }
 }
 
 let mousePosition = new THREE.Vector3();
@@ -249,10 +255,13 @@ let cameraPosition = new THREE.Vector3();
 
 let isDrawing = false;
 let isDragging = false;
-let dragOffset = new THREE.Vector3();
+let isMouseDown = false;
+let hasMouseMoved = false;
+let previousMousePosition = new THREE.Vector3();
 
 export function handleTextureArea() {
   let inputs = textureArea.gameInstance.input;
+  let keys = (<any>window).KeyEvent;
 
   mousePosition.set(inputs.mousePosition.x, inputs.mousePosition.y, 0);
   cameraComponent.actor.getLocalPosition(cameraPosition);
@@ -269,39 +278,79 @@ export function handleTextureArea() {
   mousePosition.y -= cameraPosition.y;
   mousePosition.y = Math.floor(mousePosition.y);
 
-  if (!inputs.mouseButtons[0].isDown) isDragging = false;
-
   if (textureArea.mode === "layout") {
-    if (ui.nodesTreeView.selectedNodes.length === 0) return;
+    if (isMouseDown && !inputs.mouseButtons[0].isDown) {
+      isDragging = false;
+      isMouseDown = false;
 
-    if (isDragging) {
-      let x = mousePosition.x - dragOffset.x;
-      let y = mousePosition.y - dragOffset.y;
+      if (!hasMouseMoved && !isDragging) {
+        let hoveredNodeIds = getHoveredNodeIds();
+
+        let isShiftDown = inputs.keyboardButtons[keys.DOM_VK_SHIFT].isDown;
+        if (!isShiftDown) ui.nodesTreeView.clearSelection();
+        if (hoveredNodeIds.length > 0) {
+          if (!isShiftDown) {
+            let nodeElt = ui.nodesTreeView.treeRoot.querySelector(`li[data-id='${hoveredNodeIds[0]}']`);
+            ui.nodesTreeView.addToSelection(nodeElt);
+          } else {
+            for (let nodeId of hoveredNodeIds) {
+              let isAlreadyAdded = false;
+              for (let nodeElt of ui.nodesTreeView.selectedNodes) {
+                if (nodeId === nodeElt.dataset.id) {
+                  isAlreadyAdded = true;
+                  break;
+                }
+              }
+              if (!isAlreadyAdded) {
+                let nodeElt = ui.nodesTreeView.treeRoot.querySelector(`li[data-id='${nodeId}']`);
+                ui.nodesTreeView.addToSelection(nodeElt);
+                break;
+              }
+            }
+          }
+        }
+        setupSelectedNode();
+      }
+      hasMouseMoved = false;
+
+    } else if (isDragging) {
+      let x = mousePosition.x - previousMousePosition.x;
+      let y = mousePosition.y - previousMousePosition.y;
 
       if (x !== 0 || y !== 0) {
+        hasMouseMoved = true;
+
         let nodeIds = [] as string[];
         for (let selectedNode of ui.nodesTreeView.selectedNodes) nodeIds.push(selectedNode.dataset.id);
         editAsset("moveNodeTextureOffset", nodeIds, { x, y });
-
-        dragOffset.set(mousePosition.x, mousePosition.y, 0);
       }
 
     } else if (inputs.mouseButtons[0].wasJustPressed) {
-      isDragging = true;
-      dragOffset.set(mousePosition.x, mousePosition.y, 0);
+      isMouseDown = true;
+      hasMouseMoved = false;
+
+      let hoveredNodeIds = getHoveredNodeIds();
+      for (let selectedNode of ui.nodesTreeView.selectedNodes) {
+        if (hoveredNodeIds.indexOf(selectedNode.dataset.id) !== -1) {
+          isDragging = true;
+          break;
+        }
+      }
     }
+    previousMousePosition.set(mousePosition.x, mousePosition.y, 0);
 
   } else if (textureArea.mode === "paint") {
+    if (isMouseDown && !inputs.mouseButtons[0].isDown) isMouseDown = false;
+
     // Paste element
     if (textureArea.pasteMesh != null) {
-      if (isDragging) {
-        textureArea.pasteMesh.position.x = mousePosition.x + dragOffset.x;
-        textureArea.pasteMesh.position.y = -mousePosition.y + dragOffset.y;
+      if (isMouseDown) {
+        textureArea.pasteMesh.position.x = mousePosition.x + previousMousePosition.x;
+        textureArea.pasteMesh.position.y = -mousePosition.y + previousMousePosition.y;
         textureArea.pasteMesh.updateMatrixWorld(false);
         return;
       }
 
-      let keys = (<any>window).KeyEvent;
       if (inputs.keyboardButtons[keys.DOM_VK_RIGHT].wasJustPressed) {
         textureArea.pasteMesh.position.x += 1;
         textureArea.pasteMesh.updateMatrixWorld(false);
@@ -325,8 +374,8 @@ export function handleTextureArea() {
         let height = pasteCtx.canvas.height;
         if (mousePosition.x > position.x - width  / 2 &&  mousePosition.x < position.x + width  / 2 &&
           -mousePosition.y > position.y - height / 2 && -mousePosition.y < position.y + height / 2) {
-          isDragging = true;
-          dragOffset.set(position.x - mousePosition.x, position.y + mousePosition.y, 0);
+          isMouseDown = true;
+          previousMousePosition.set(position.x - mousePosition.x, position.y + mousePosition.y, 0);
           return;
         }
 
@@ -345,7 +394,7 @@ export function handleTextureArea() {
             let y = startY + j;
             if (y < 0 || y >= data.cubicModelUpdater.cubicModelAsset.pub.textureHeight) continue;
 
-            edits.push({ x, y, value: { r: imageData[index], g: imageData[index + 1], b: imageData[index + 2], a: imageData[index + 3] } })
+            edits.push({ x, y, value: { r: imageData[index], g: imageData[index + 1], b: imageData[index + 2], a: imageData[index + 3] } });
           }
         }
         editAsset("editTexture", "map", edits);
@@ -402,11 +451,31 @@ export function handleTextureArea() {
       let index = mousePosition.y * data.cubicModelUpdater.cubicModelAsset.pub.textureWidth + mousePosition.x;
       index *= 4;
 
-      if (textureData[index + 0] !== brush.r || textureData[index + 1] !== brush.g || textureData[index + 2] !== brush.b ||textureData[index + 3] !== brush.a) {
+      if (textureData[index + 0] !== brush.r || textureData[index + 1] !== brush.g || textureData[index + 2] !== brush.b || textureData[index + 3] !== brush.a) {
         let edits: TextureEdit[] = [];
         edits.push({ x: mousePosition.x, y: mousePosition.y, value: brush });
-        editAsset("editTexture", mapName, edits)
+        editAsset("editTexture", mapName, edits);
       }
     }
   }
+}
+
+function getHoveredNodeIds() {
+  let hoveredNodeIds = [] as string[];
+
+  for (let nodeId in data.cubicModelUpdater.cubicModelAsset.nodes.byId) {
+    let node = data.cubicModelUpdater.cubicModelAsset.nodes.byId[nodeId];
+
+    for (let faceName in node.shape.textureLayout) {
+      let face = node.shape.textureLayout[faceName];
+      let size = getShapeTextureFaceSize(node.shape, faceName);
+
+      if (mousePosition.x >= face.offset.x && mousePosition.x < face.offset.x + size.width &&
+      mousePosition.y >= face.offset.y && mousePosition.y < face.offset.y + size.height) {
+        hoveredNodeIds.push(nodeId);
+        break;
+      }
+    }
+  }
+  return hoveredNodeIds;
 }

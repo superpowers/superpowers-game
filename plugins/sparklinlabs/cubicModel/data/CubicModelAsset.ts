@@ -11,7 +11,7 @@ import * as fs from "fs";
 import * as async from "async";
 import * as _ from "lodash";
 
-import CubicModelNodes, { Node, getShapeTextureSize, getShapeTextureFaceSize } from "./CubicModelNodes";
+import CubicModelNodes, { XYZ, Node, Shape, getShapeTextureSize, getShapeTextureFaceSize } from "./CubicModelNodes";
 
 export interface CubicModelAssetPub {
   pixelsPerUnit: number;
@@ -73,12 +73,13 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
 
   init(options: any, callback: Function) {
     this.server.data.resources.acquire("cubicModelSettings", null, (err: Error, cubicModelSettings: any) => {
+      let initialSize = 256;
       this.pub = {
         pixelsPerUnit: cubicModelSettings.pub.pixelsPerUnit,
         nodes: [],
-        textureWidth: 128,
-        textureHeight: 128,
-        maps: { map: new ArrayBuffer(128 * 128 * 4) },
+        textureWidth: initialSize,
+        textureHeight: initialSize,
+        maps: { map: new ArrayBuffer(initialSize * initialSize * 4) },
         mapSlots: {
           map: "map",
           light: null,
@@ -181,7 +182,7 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
       texture.magFilter = THREE.NearestFilter;
       texture.minFilter = THREE.NearestFilter;
 
-      let imageData = new ImageData(this.textureDatas[mapName], this.pub.textureWidth, this.pub.textureHeight)
+      let imageData = new ImageData(this.textureDatas[mapName], this.pub.textureWidth, this.pub.textureHeight);
       ctx.putImageData(imageData, 0, 0);
       this.clientTextureDatas[mapName] = { imageData, ctx };
     }
@@ -190,7 +191,6 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
   // Nodes
   server_addNode(client: any, name: string, options: any, callback: (err: string, node: Node, parentId: string, index: number) => any) {
     let parentId = (options != null) ? options.parentId : null;
-    let parentNode = this.nodes.byId[parentId];
 
     let node: Node = {
       id: null, name: name, children: [],
@@ -198,6 +198,7 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
       orientation: (options != null && options.transform != null && options.transform.orientation != null) ? options.transform.orientation : { x: 0, y: 0, z: 0, w: 1 },
       shape: (options != null && options.shape != null) ? options.shape : { type: "none", offset: { x: 0, y: 0, z: 0 }, textureOffset: {}, settings: null }
     };
+    node.shape.textureLayoutCustom = false;
 
     if (node.shape.type !== "none") {
       let origin = { x: 0, y: 0 };
@@ -242,16 +243,44 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
       if (!placed)
         console.log("Could not find any room for the node's texture. Texture needs to be expanded and all blocks should be re-laid out from bigger to smaller!");
 
-      node.shape.textureLayout = {};
       switch (node.shape.type) {
         case "box":
           let size = node.shape.settings.size as { x: number; y: number; z: number; };
-          node.shape.textureLayout["top"]    = { offset: { x: origin.x + size.z             , y: origin.y } };
-          node.shape.textureLayout["bottom"] = { offset: { x: origin.x + size.z + size.x    , y: origin.y } };
-          node.shape.textureLayout["front"]  = { offset: { x: origin.x + size.z             , y: origin.y + size.z } };
-          node.shape.textureLayout["back"]   = { offset: { x: origin.x + 2 * size.z + size.x, y: origin.y + size.z } };
-          node.shape.textureLayout["left"]   = { offset: { x: origin.x                      , y: origin.y + size.z } };
-          node.shape.textureLayout["right"]  = { offset: { x: origin.x + size.z + size.x    , y: origin.y + size.z } };
+          node.shape.textureLayout = {
+            "top": {
+              offset: { x: origin.x + size.z, y: origin.y },
+              mirror: { x: false, y: false },
+              angle: 0
+            },
+            "bottom": {
+              offset: { x: origin.x + size.z + size.x, y: origin.y },
+              mirror: { x: false, y: false },
+              angle: 0
+            },
+            "front": {
+              offset: { x: origin.x + size.z, y: origin.y + size.z },
+              mirror: { x: false, y: false },
+              angle: 0
+            },
+            "back": {
+              offset: { x: origin.x + 2 * size.z + size.x, y: origin.y + size.z },
+              mirror: { x: false, y: false },
+              angle: 0
+            },
+            "left": {
+              offset: { x: origin.x, y: origin.y + size.z },
+              mirror: { x: false, y: false },
+              angle: 0
+            },
+            "right": {
+              offset: { x: origin.x + size.z + size.x, y: origin.y + size.z },
+              mirror: { x: false, y: false },
+              angle: 0
+            }
+          };
+          break;
+        case "none":
+          node.shape.textureLayout = {};
           break;
       }
     }
@@ -271,8 +300,12 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
 
 
   server_setNodeProperty(client: any, id: string, path: string, value: any, callback: (err: string, id: string, path: string, value: any) => any) {
+    let oldSize = this.nodes.byId[id].shape.settings.size;
+
     this.nodes.setProperty(id, path, value, (err, actualValue) => {
       if (err != null) { callback(err, null, null, null); return; }
+
+      if (path === "shape.settings.size") this._updateNodeUvFromSize(oldSize, this.nodes.byId[id].shape);
 
       callback(null, id, path, actualValue);
       this.emit("change");
@@ -280,7 +313,33 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
   }
 
   client_setNodeProperty(id: string, path: string, value: any) {
+    let oldSize = this.nodes.byId[id].shape.settings.size;
     this.nodes.client_setProperty(id, path, value);
+    if (path === "shape.settings.size") this._updateNodeUvFromSize(oldSize, this.nodes.byId[id].shape);
+  }
+
+  _updateNodeUvFromSize(oldSize: XYZ, shape: Shape) {
+    if (shape.textureLayoutCustom) return;
+
+    switch (shape.type) {
+      case "box":
+        let newSize: XYZ = shape.settings.size;
+        let x = newSize.x - oldSize.x;
+        let z = newSize.z - oldSize.z;
+
+        shape.textureLayout["top"].offset.x += z;
+        shape.textureLayout["bottom"].offset.x += x + z;
+
+        shape.textureLayout["front"].offset.x += z;
+        shape.textureLayout["right"].offset.x += x + z;
+        shape.textureLayout["back"].offset.x += x + 2 * z;
+
+        shape.textureLayout["front"].offset.y += z;
+        shape.textureLayout["back"].offset.y += z;
+        shape.textureLayout["left"].offset.y += z;
+        shape.textureLayout["right"].offset.y += z;
+        break;
+    }
   }
 
   server_moveNodePivot(client: any, id: string, value: { x: number; y: number; z: number; }, callback: (err: string, id: string, value: { x: number; y: number; z: number; }) => any) {
@@ -337,7 +396,7 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
     });
   }
 
-  computeGlobalMatrix(node: Node, includeShapeOffset=false) {
+  computeGlobalMatrix(node: Node, includeShapeOffset = false) {
     let defaultScale = new THREE.Vector3(1, 1, 1);
     let matrix = new THREE.Matrix4().compose(<THREE.Vector3>node.position, <THREE.Quaternion>node.orientation, defaultScale);
 
@@ -346,7 +405,7 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
     let parentPosition  = new THREE.Vector3();
     let parentOffset = new THREE.Vector3();
     while (parentNode != null) {
-      parentPosition.set(parentNode.position.x,parentNode.position.y,parentNode.position.z);
+      parentPosition.set(parentNode.position.x, parentNode.position.y, parentNode.position.z);
       parentOffset.set(parentNode.shape.offset.x, parentNode.shape.offset.y, parentNode.shape.offset.z);
       parentOffset.applyQuaternion(<THREE.Quaternion>parentNode.orientation);
       parentPosition.add(parentOffset);
@@ -366,7 +425,7 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
     let parentPosition  = new THREE.Vector3();
     let parentOffset = new THREE.Vector3();
     while (parentNode != null) {
-      parentPosition.set(parentNode.position.x,parentNode.position.y,parentNode.position.z);
+      parentPosition.set(parentNode.position.x, parentNode.position.y, parentNode.position.z);
       parentOffset.set(parentNode.shape.offset.x, parentNode.shape.offset.y, parentNode.shape.offset.z);
       parentOffset.applyQuaternion(<THREE.Quaternion>parentNode.orientation);
       parentPosition.add(parentOffset);
@@ -402,9 +461,9 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
     if (referenceNode == null) { callback(`Invalid node id: ${id}`, null, null); return; }
 
     let newNodes: DuplicatedNode[] = [];
-    let totalNodeCount = 0
+    let totalNodeCount = 0;
     let walk = (node: Node) => {
-      totalNodeCount += 1
+      totalNodeCount += 1;
       for (let childNode of node.children) walk(childNode);
     };
     walk(referenceNode);
@@ -441,7 +500,7 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
           addNode(node, newNode.id, childIndex, childNode.children);
         }
       });
-    }
+    };
     addNode(rootNode, parentId, index, referenceNode.children);
   }
 

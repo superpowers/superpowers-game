@@ -17,7 +17,7 @@ export function loadAsset(player: SupRuntime.Player, entry: any, callback: (err:
         texture.minFilter = SupEngine.THREE.NearestFilter;
 
         player.getAssetData(`assets/${entry.storagePath}/map-${key}.dat`, "arraybuffer", (err, map) => {
-          let imageData = new ImageData(new Uint8ClampedArray(map), data.textureWidth, data.textureHeight)
+          let imageData = new ImageData(new Uint8ClampedArray(map), data.textureWidth, data.textureHeight);
           ctx.putImageData(imageData, 0, 0);
           cb();
         });
