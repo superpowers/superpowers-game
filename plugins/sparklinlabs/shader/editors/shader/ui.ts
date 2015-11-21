@@ -1,4 +1,3 @@
-import info from "./info";
 import { data, editAsset } from "./network";
 import { setupPreview } from "./engine";
 import Uniforms, { UniformPub } from "../../data/Uniforms";

@@ -1,4 +1,3 @@
-import info from "./info";
 import ui, { setupProperty, setupAnimation, updateSelectedAnimation, setupAdvancedTextures, setupMap } from "./ui";
 import animationArea, { centerCamera as centerAnimationCamera } from "./animationArea";
 import spritesheetArea, { updateSelection, centerCamera as centerSpritesheetCamera } from "./spritesheetArea";
@@ -8,7 +7,7 @@ import SpriteRendererUpdater from "../../components/SpriteRendererUpdater";
 
 export let data: { projectClient?: SupClient.ProjectClient; spriteUpdater?: SpriteRendererUpdater };
 
-export let socket = SupClient.connect(info.projectId);
+export let socket = SupClient.connect(SupClient.query.project);
 socket.on("connect", onConnected);
 socket.on("disconnect", SupClient.onDisconnected);
 
@@ -19,7 +18,7 @@ function onConnected() {
 
   let spriteActor = new SupEngine.Actor(animationArea.gameInstance, "Sprite");
   let spriteRenderer = new SpriteRenderer(spriteActor);
-  let config = { spriteAssetId: info.assetId, materialType: "basic" };
+  let config = { spriteAssetId: SupClient.query.asset, materialType: "basic" };
   let receiveCallbacks = { sprite: onAssetReceived };
   let editCallbacks = { sprite: onEditCommands };
 
@@ -90,7 +89,7 @@ export function editAsset(...args: any[]) {
     if (err != null) { alert(err); return; }
     if (callback != null) callback(id);
   });
-  socket.emit("edit:assets", info.assetId, ...args);
+  socket.emit("edit:assets", SupClient.query.asset, ...args);
 }
 
 onEditCommands.setProperty = (path: string, value: any) => {

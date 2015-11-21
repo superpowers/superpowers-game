@@ -1,4 +1,3 @@
-import info from "./info";
 import ui, { setupEditor, refreshErrors, showParameterPopup, clearParameterPopup } from "./ui";
 
 import * as async from "async";
@@ -17,7 +16,7 @@ export let data = {
   fileNamesByScriptId: <{ [name: string]: string }>{}
 };
 
-export let socket = SupClient.connect(info.projectId);
+export let socket = SupClient.connect(SupClient.query.project);
 socket.on("welcome", onWelcome);
 socket.on("disconnect", SupClient.onDisconnected);
 
@@ -154,13 +153,13 @@ var scriptSubscriber = {
     let file = { id: asset.id, text: asset.pub.text, version: asset.pub.revisionId.toString() }
     data.files[fileName] = file;
 
-    if (asset.id === info.assetId) {
+    if (asset.id === SupClient.query.asset) {
       data.asset = asset;
 
       (<any>ui.errorPaneStatus.classList.toggle)("has-draft", data.asset.hasDraft);
       ui.editor.setText(data.asset.pub.draft);
-      if (info.line != null && info.ch != null)
-        ui.editor.codeMirrorInstance.getDoc().setCursor({ line: parseInt(info.line), ch: parseInt(info.ch) });
+      if (SupClient.query["line"] != null && SupClient.query["ch"] != null)
+        ui.editor.codeMirrorInstance.getDoc().setCursor({ line: parseInt(SupClient.query["line"], 10), ch: parseInt(SupClient.query["ch"], 10) });
     }
 
     if (!allScriptsReceived) {
@@ -177,7 +176,7 @@ var scriptSubscriber = {
   },
 
   onAssetEdited: (id: string, command: string, ...args: any[]) => {
-    if (id !== info.assetId) {
+    if (id !== SupClient.query.asset) {
       if (command === "saveText") {
         let fileName = `${data.projectClient.entries.getPathFromId(id)}.ts`;
         let asset = data.assetsById[id];
@@ -195,7 +194,7 @@ var scriptSubscriber = {
   },
 
   onAssetTrashed: (id: string) => {
-    if (id !== info.assetId) return;
+    if (id !== SupClient.query.asset) return;
 
     ui.editor.clear();
     if (ui.errorCheckTimeout != null) clearTimeout(ui.errorCheckTimeout);
@@ -324,7 +323,7 @@ function startAutocomplete() {
   data.typescriptWorker.postMessage({
     type: "getCompletionAt",
     tokenString: activeCompletion.token.string,
-    name: data.fileNamesByScriptId[info.assetId],
+    name: data.fileNamesByScriptId[SupClient.query.asset],
     start: activeCompletion.start
   });
 }

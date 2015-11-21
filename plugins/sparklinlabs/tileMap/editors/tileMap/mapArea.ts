@@ -1,4 +1,3 @@
-import info from "./info";
 import ui, { selectBrush, selectEraser, selectSelection } from "./ui";
 import tileSetArea from "./tileSetArea";
 import { socket, data } from "./network";
@@ -246,7 +245,7 @@ function editMap(edits: Edits[]) {
   }
 
   if (actualEdits.length === 0) return;
-  socket.emit("edit:assets", info.assetId, "editMap", layer.id, actualEdits, (err: string) => {
+  socket.emit("edit:assets", SupClient.query.asset, "editMap", layer.id, actualEdits, (err: string) => {
     if (err != null) { alert(err); return; }
   });
 }

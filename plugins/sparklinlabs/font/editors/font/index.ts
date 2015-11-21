@@ -1,8 +1,6 @@
 import TextRenderer from "../../components/TextRenderer";
 import TextRendererUpdater from "../../components/TextRendererUpdater";
 
-let qs = require("querystring").parse(window.location.search.slice(1));
-let info = { projectId: qs.project, assetId: qs.asset };
 let data: {projectClient?: SupClient.ProjectClient; textUpdater?: TextRendererUpdater};
 let ui: {
   gameInstance: SupEngine.GameInstance,
@@ -16,7 +14,7 @@ let ui: {
 let socket: SocketIOClient.Socket;
 
 function start() {
-  socket = SupClient.connect(info.projectId);
+  socket = SupClient.connect(SupClient.query.project);
   socket.on("connect", onConnected);
   socket.on("disconnect", SupClient.onDisconnected);
   SupClient.setupHotkeys();
@@ -50,27 +48,27 @@ function start() {
 
     if (setting === "filtering" || setting === "color") {
       settingObj.addEventListener("change", (event: any) => {
-        socket.emit("edit:assets", info.assetId, "setProperty", event.target.dataset.name, event.target.value, (err: string) => { if (err != null) alert(err); });
+        socket.emit("edit:assets", SupClient.query.asset, "setProperty", event.target.dataset.name, event.target.value, (err: string) => { if (err != null) alert(err); });
       });
     } else if (setting === "charset") {
       settingObj.addEventListener("change", (event: any) => {
         let charset = (event.target.value !== "") ? event.target.value : null;
-        socket.emit("edit:assets", info.assetId, "setProperty", event.target.dataset.name, charset, (err: string) => { if (err != null) alert(err); });
+        socket.emit("edit:assets", SupClient.query.asset, "setProperty", event.target.dataset.name, charset, (err: string) => { if (err != null) alert(err); });
       });
     } else if (setting === "isBitmap") {
       settingObj.addEventListener("click", (event: any) => {
-        socket.emit("edit:assets", info.assetId, "setProperty", event.target.dataset.name, event.target.checked, (err: string) => { if (err != null) alert(err); });
+        socket.emit("edit:assets", SupClient.query.asset, "setProperty", event.target.dataset.name, event.target.checked, (err: string) => { if (err != null) alert(err); });
       });
     } else {
       settingObj.addEventListener("change", (event: any) => {
-        socket.emit("edit:assets", info.assetId, "setProperty", event.target.dataset.name, parseInt(event.target.value), (err: string) => { if (err != null) alert(err); });
+        socket.emit("edit:assets", SupClient.query.asset, "setProperty", event.target.dataset.name, parseInt(event.target.value), (err: string) => { if (err != null) alert(err); });
       });
     }
   });
 
   ui.colorPicker = <HTMLInputElement>document.querySelector("input.color-picker");
   ui.colorPicker.addEventListener("change", (event: any) => {
-    socket.emit("edit:assets", info.assetId, "setProperty", "color", event.target.value.slice(1), (err: string) => { if (err != null) alert(err); });
+    socket.emit("edit:assets", SupClient.query.asset, "setProperty", "color", event.target.value.slice(1), (err: string) => { if (err != null) alert(err); });
   })
 
   ui.vectorFontTBody = <HTMLTableSectionElement>document.querySelector("tbody.vector-font");
@@ -87,7 +85,7 @@ function onConnected() {
 
   let textActor = new SupEngine.Actor(ui.gameInstance, "Text");
   let textRenderer = new TextRenderer(textActor);
-  let config = { fontAssetId: info.assetId, text: "The quick brown fox jumps over the lazy dog", alignment: "center" };
+  let config = { fontAssetId: SupClient.query.asset, text: "The quick brown fox jumps over the lazy dog", alignment: "center" };
   let receiveCallbacks = { font: onAssetReceived };
   let editCallbacks = { font: onEditCommands };
   data.textUpdater = new TextRendererUpdater(data.projectClient, textRenderer, config, receiveCallbacks, editCallbacks);
@@ -137,7 +135,7 @@ function onFileSelectChange(event: any) {
 
   let reader = new FileReader();
   reader.onload = (event: any) => {
-    socket.emit("edit:assets", info.assetId, "upload", event.target.result, (err: string) => {
+    socket.emit("edit:assets", SupClient.query.asset, "upload", event.target.result, (err: string) => {
       if (err != null) { alert(err); return; }
     });
   };

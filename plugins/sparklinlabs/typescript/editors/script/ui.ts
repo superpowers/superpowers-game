@@ -1,4 +1,3 @@
-import info from "./info";
 import { socket, data, scheduleErrorCheck, setNextCompletion } from "./network";
 
 /* tslint:disable */
@@ -88,7 +87,7 @@ export function setupEditor(clientId: number) {
 
         data.typescriptWorker.postMessage({
           type: "getDefinitionAt",
-          name: data.fileNamesByScriptId[info.assetId],
+          name: data.fileNamesByScriptId[SupClient.query.asset],
           start
         });
       }
@@ -131,7 +130,7 @@ export function setupEditor(clientId: number) {
 
 let localVersionNumber = 0;
 function onEditText(text: string, origin: string) {
-  let localFileName = data.fileNamesByScriptId[info.assetId];
+  let localFileName = data.fileNamesByScriptId[SupClient.query.asset];
   let localFile = data.files[localFileName];
   localFile.text = text;
   localVersionNumber++;
@@ -145,7 +144,7 @@ function onEditText(text: string, origin: string) {
 }
 
 function onSendOperation(operation: OperationData) {
-  socket.emit("edit:assets", info.assetId, "editText", operation, data.asset.document.getRevisionId(), (err: string) => {
+  socket.emit("edit:assets", SupClient.query.asset, "editText", operation, data.asset.document.getRevisionId(), (err: string) => {
     if (err != null) { alert(err); SupClient.onDisconnected(); }
   });
 }
@@ -215,7 +214,7 @@ export function refreshErrors(errors: Array<{file: string; position: { line: num
       scriptCell.textContent = error.file.substring(0, error.file.length - 3);
     } else scriptCell.textContent = "Internal";
 
-    if (error.file !== data.fileNamesByScriptId[info.assetId]) {
+    if (error.file !== data.fileNamesByScriptId[SupClient.query.asset]) {
       ui.errorsTBody.appendChild(errorRow);
       continue;
     }
@@ -260,7 +259,7 @@ function onErrorTBodyClick(event: MouseEvent) {
   let line = target.dataset["line"];
   let character = target.dataset["character"];
 
-  if (assetId === info.assetId) {
+  if (assetId === SupClient.query.asset) {
     ui.editor.codeMirrorInstance.getDoc().setCursor({ line: parseInt(line, 10), ch: parseInt(character, 10) });
     ui.editor.codeMirrorInstance.focus();
   } else {
@@ -277,7 +276,7 @@ saveButton.addEventListener("click", (event: MouseEvent) => {
 });
 
 function onSaveText() {
-  socket.emit("edit:assets", info.assetId, "saveText", (err: string) => { if (err != null) { alert(err); SupClient.onDisconnected(); }});
+  socket.emit("edit:assets", SupClient.query.asset, "saveText", (err: string) => { if (err != null) { alert(err); SupClient.onDisconnected(); }});
 }
 
 // Info popup
@@ -308,7 +307,7 @@ document.addEventListener("mousemove", (event) => {
     ui.infoTimeout = null;
     data.typescriptWorker.postMessage({
       type: "getQuickInfoAt",
-      name: data.fileNamesByScriptId[info.assetId],
+      name: data.fileNamesByScriptId[SupClient.query.asset],
       start
     });
   }, 200);
@@ -424,7 +423,7 @@ function scheduleParameterHint() {
 
     data.typescriptWorker.postMessage({
       type: "getParameterHintAt",
-      name: data.fileNamesByScriptId[info.assetId],
+      name: data.fileNamesByScriptId[SupClient.query.asset],
       start
     });
 

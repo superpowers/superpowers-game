@@ -1,4 +1,3 @@
-import info from "./info";
 import { searchAsset } from "./ui";
 
 import ScriptAsset from "../../data/ScriptAsset";
@@ -8,11 +7,10 @@ export let data: {
   projectClient?: SupClient.ProjectClient,
 } = {};
 
-export let socket = SupClient.connect(info.projectId);
+export let socket = SupClient.connect(SupClient.query.project);
 socket.on("connect", onConnected);
 socket.on("disconnect", SupClient.onDisconnected);
 
-let onEditCommands: any = {};
 function onConnected() {
   data.assetsById = {};
 

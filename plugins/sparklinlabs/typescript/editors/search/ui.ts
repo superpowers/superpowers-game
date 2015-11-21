@@ -1,4 +1,3 @@
-import info from "./info";
 import { data } from "./network";
 
 let ui: {
@@ -16,7 +15,7 @@ ui.resultsPane = <HTMLDivElement>document.querySelector(".results");
 
 ui.searchInput = <HTMLInputElement>document.querySelector(".search input");
 ui.searchInput.focus();
-ui.searchInput.addEventListener("keydown", (event: any) => { if (event.keyCode === 13) search(); })
+ui.searchInput.addEventListener("keydown", (event: any) => { if (event.keyCode === 13) search(); });
 
 ui.matchCaseCheckbox = <HTMLInputElement>document.getElementById("match-case-checkbox");
 
@@ -24,7 +23,7 @@ document.querySelector(".search button").addEventListener("click", (event: any) 
 ui.statusSpan = <HTMLSpanElement>document.querySelector(".search span");
 
 // Handle request from another tab
-ui.searchInput.value = info.text != null ? info.text : "";
+ui.searchInput.value = SupClient.query["text"] != null ? SupClient.query["text"] : "";
 search();
 
 window.addEventListener("message", (event: any) => {

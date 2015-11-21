@@ -1,4 +1,3 @@
-import info from "./info";
 import { socket, data } from "./network";
 import ui, { setupSelectedNode } from "./ui";
 import textureArea, { handleTextureArea } from "./textureArea";
@@ -25,7 +24,9 @@ engine.cameraActor.setLocalPosition(new THREE.Vector3(0, 0, 10));
 
 let cameraComponent = new SupEngine.componentClasses["Camera"](engine.cameraActor);
 cameraComponent.layers = [ 0, -1 ];
+/* tslint:disable:no-unused-expression */
 new SupEngine.editorComponentClasses["Camera3DControls"](engine.cameraActor, cameraComponent);
+/* tslint:enable:no-unused-expression */
 
 let markerActor = new SupEngine.Actor(engine.gameInstance, "Marker", null, { layer: -1 });
 engine.transformMarkerComponent = new SupEngine.editorComponentClasses["TransformMarker"](markerActor);
@@ -246,8 +247,8 @@ function onTransformChange() {
   }
 
   if (transformType !== "pivotPosition") {
-    socket.emit("edit:assets", info.assetId, "setNodeProperty", nodeId, transformType, value, (err: string) => { if (err != null) alert(err); });
+    socket.emit("edit:assets", SupClient.query.asset, "setNodeProperty", nodeId, transformType, value, (err: string) => { if (err != null) alert(err); });
   } else {
-    socket.emit("edit:assets", info.assetId, "moveNodePivot", nodeId, value, (err: string) => { if (err != null) alert(err); });
+    socket.emit("edit:assets", SupClient.query.asset, "moveNodePivot", nodeId, value, (err: string) => { if (err != null) alert(err); });
   }
 }

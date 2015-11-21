@@ -1,4 +1,3 @@
-import info from "./info";
 import ui, {
   createNodeElement,
   setupSelectedNode,
@@ -18,7 +17,7 @@ import { Node } from "../../data/CubicModelNodes";
 
 export let data: { projectClient?: SupClient.ProjectClient; cubicModelUpdater?: CubicModelRendererUpdater };
 
-export let socket = SupClient.connect(info.projectId);
+export let socket = SupClient.connect(SupClient.query.project);
 socket.on("connect", onConnected);
 socket.on("disconnect", SupClient.onDisconnected);
 
@@ -29,7 +28,7 @@ function onConnected() {
 
   let cubicModelActor = new SupEngine.Actor(engine.gameInstance, "Cubic Model");
   let cubicModelRenderer = new CubicModelRenderer(cubicModelActor);
-  let config = { cubicModelAssetId: info.assetId/*, materialType: "basic"*/ };
+  let config = { cubicModelAssetId: SupClient.query.asset/*, materialType: "basic"*/ };
   let receiveCallbacks = { cubicModel: onAssetReceived };
   let editCallbacks = { cubicModel: onEditCommands };
 
@@ -68,7 +67,7 @@ export function editAsset(...args: any[]) {
     if (err != null) { alert(err); return; }
     if (callback != null) callback(id);
   });
-  socket.emit("edit:assets", info.assetId, ...args);
+  socket.emit("edit:assets", SupClient.query.asset, ...args);
 }
 
 onEditCommands.setProperty = (path: string, value: any) => {

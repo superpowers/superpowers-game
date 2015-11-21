@@ -1,4 +1,3 @@
-import info from "./info";
 import ui, {
   start as uiStart,
   setCameraMode, setCameraVerticalAxis, createNodeElement, setupSelectedNode, createComponentElement,
@@ -23,7 +22,7 @@ export let data: {
 
 export let socket: SocketIOClient.Socket;
 
-socket = SupClient.connect(info.projectId);
+socket = SupClient.connect(SupClient.query.project);
 socket.on("welcome", onWelcome);
 socket.on("disconnect", SupClient.onDisconnected);
 
@@ -83,7 +82,7 @@ var sceneSettingSubscriber = {
     data.sceneUpdater = new SceneUpdater(
       data.projectClient,
       { gameInstance: engine.gameInstance, actor: null },
-      { sceneAssetId: info.assetId, isInPrefab: false },
+      { sceneAssetId: SupClient.query.asset, isInPrefab: false },
       { scene: onSceneAssetReceived },
       { scene: onEditCommands }
     );

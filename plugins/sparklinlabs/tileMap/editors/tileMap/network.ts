@@ -1,4 +1,3 @@
-import info from "./info";
 import ui, { setupLayer, selectBrush, refreshLayersId } from "./ui";
 import mapArea, { setupPattern } from "./mapArea";
 import tileSetArea from "./tileSetArea";
@@ -13,7 +12,7 @@ import TileSetRendererUpdater from "../../components/TileSetRendererUpdater";
 
 export let data: { projectClient?: SupClient.ProjectClient; tileMapUpdater?: TileMapRendererUpdater, tileSetUpdater?: TileSetRendererUpdater } = {};
 
-export let socket = SupClient.connect(info.projectId);
+export let socket = SupClient.connect(SupClient.query.project);
 socket.on("connect", onConnected);
 socket.on("disconnect", SupClient.onDisconnected);
 
@@ -25,7 +24,7 @@ function onConnected() {
 
   let tileMapActor = new SupEngine.Actor(mapArea.gameInstance, "Tile Map");
   let tileMapRenderer = new TileMapRenderer(tileMapActor);
-  let config = { tileMapAssetId: info.assetId, tileSetAssetId: <string>null, materialType: "basic" };
+  let config = { tileMapAssetId: SupClient.query.asset, tileSetAssetId: <string>null, materialType: "basic" };
   let receiveCallbacks = { tileMap: onTileMapAssetReceived };
   let editCallbacks = { tileMap: onEditCommands };
   data.tileMapUpdater = new TileMapRenderer.Updater(data.projectClient, tileMapRenderer, config, receiveCallbacks, editCallbacks);

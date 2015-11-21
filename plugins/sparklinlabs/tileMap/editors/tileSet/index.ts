@@ -1,20 +1,17 @@
 import TileSetRenderer from "../../components/TileSetRenderer";
 import TileSetRendererUpdater from "../../components/TileSetRendererUpdater";
-import * as querystring from "querystring";
 
 /* tslint:disable */
 let TreeView = require("dnd-tree-view");
 let PerfectResize = require("perfect-resize");
 /* tslint:enable */
 
-let qs = querystring.parse(window.location.search.slice(1));
-let info = { projectId: qs.project, assetId: qs.asset };
 let data: { projectClient?: SupClient.ProjectClient; tileSetUpdater?: TileSetRendererUpdater; selectedTile?: { x: number; y: number; } };
 let ui: any = {};
 let socket: SocketIOClient.Socket;
 
 function start() {
-  socket = SupClient.connect(info.projectId);
+  socket = SupClient.connect(SupClient.query.project);
   socket.on("connect", onConnected);
   socket.on("disconnect", SupClient.onDisconnected);
   SupClient.setupHotkeys();
@@ -44,14 +41,14 @@ function start() {
 
   ui.gridWidthInput = document.querySelector("input.grid-width");
   ui.gridWidthInput.addEventListener("change", () => {
-    socket.emit("edit:assets", info.assetId, "setProperty", "grid.width", parseInt(ui.gridWidthInput.value, 10), (err: string) => {
+    socket.emit("edit:assets", SupClient.query.asset, "setProperty", "grid.width", parseInt(ui.gridWidthInput.value, 10), (err: string) => {
       if (err != null) { alert(err); return; }
     });
   });
 
   ui.gridHeightInput = document.querySelector("input.grid-height");
   ui.gridHeightInput.addEventListener("change", () => {
-    socket.emit("edit:assets", info.assetId, "setProperty", "grid.height", parseInt(ui.gridHeightInput.value, 10), (err: string) => {
+    socket.emit("edit:assets", SupClient.query.asset, "setProperty", "grid.height", parseInt(ui.gridHeightInput.value, 10), (err: string) => {
       if (err != null) { alert(err); return; }
     });
   });
@@ -76,7 +73,7 @@ function onConnected() {
 
   let tileSetActor = new SupEngine.Actor(ui.gameInstance, "Tile Set");
   let tileSetRenderer = new TileSetRenderer(tileSetActor);
-  let config = { tileSetAssetId: info.assetId };
+  let config = { tileSetAssetId: SupClient.query.asset };
   let receiveCallbacks = { tileSet: onAssetReceived };
   let editCallbacks = { tileSet: onEditCommands };
 
@@ -179,7 +176,7 @@ function addTileProperty(name: string, value = "") {
   valueInput.className = "value";
   valueInput.value = value;
   valueInput.addEventListener("input", () => {
-    socket.emit("edit:assets", info.assetId, "editTileProperty", data.selectedTile, ui.selectedProperty, valueInput.value, (err: string) => {
+    socket.emit("edit:assets", SupClient.query.asset, "editTileProperty", data.selectedTile, ui.selectedProperty, valueInput.value, (err: string) => {
       if (err != null) { alert(err); return; }
     });
   });
@@ -195,7 +192,7 @@ function onFileSelectChange(event: Event) {
 
   let reader = new FileReader;
   reader.onload = (event) => {
-    socket.emit("edit:assets", info.assetId, "upload", reader.result, (err: string) => {
+    socket.emit("edit:assets", SupClient.query.asset, "upload", reader.result, (err: string) => {
       if (err != null) { alert(err); return; }
     });
   };
@@ -250,7 +247,7 @@ function onNewPropertyClick() {
     /* tslint:enable:no-unused-expression */
     if (name == null) return;
 
-    socket.emit("edit:assets", info.assetId, "addTileProperty", data.selectedTile, name, (err: string, id: string) => {
+    socket.emit("edit:assets", SupClient.query.asset, "addTileProperty", data.selectedTile, name, (err: string, id: string) => {
       if (err != null) { alert(err); return; }
 
       ui.selectedProperty = name;
@@ -277,7 +274,7 @@ function onRenamePropertyClick() {
     /* tslint:enable:no-unused-expression */
     if (newName == null) return;
 
-    socket.emit("edit:assets", info.assetId, "renameTileProperty", data.selectedTile, ui.selectedProperty, newName, (err: string) => { if (err != null) { alert(err); return; } });
+    socket.emit("edit:assets", SupClient.query.asset, "renameTileProperty", data.selectedTile, ui.selectedProperty, newName, (err: string) => { if (err != null) { alert(err); return; } });
   });
 }
 
@@ -288,7 +285,7 @@ function onDeletePropertyClick() {
     /* tslint:enable:no-unused-expression */
     if (!confirm) return;
 
-    socket.emit("edit:assets", info.assetId, "deleteTileProperty", data.selectedTile, ui.selectedProperty, (err: string) => { if (err != null) { alert(err); return; } });
+    socket.emit("edit:assets", SupClient.query.asset, "deleteTileProperty", data.selectedTile, ui.selectedProperty, (err: string) => { if (err != null) { alert(err); return; } });
   });
 }
 

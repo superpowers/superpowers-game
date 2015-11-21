@@ -1,5 +1,4 @@
 import ui from "./ui";
-import info from "./info";
 import { data } from "./network";
 import { createShaderMaterial } from "../../components/Shader";
 
@@ -50,7 +49,7 @@ export function setupPreview(options = { useDraft: false }) {
       break;
     case "Asset":
       let componentClassName: string;
-      let config = { materialType: "shader", shaderAssetId: info.assetId, spriteAssetId: <string>null, modelAssetId: <string>null };
+      let config = { materialType: "shader", shaderAssetId: SupClient.query.asset, spriteAssetId: <string>null, modelAssetId: <string>null };
       if (ui.previewEntry.type === "sprite") {
         componentClassName = "SpriteRenderer";
         config.spriteAssetId = ui.previewEntry.id;

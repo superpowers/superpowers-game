@@ -1,14 +1,11 @@
 import SoundAsset from "../../data/SoundAsset";
-import * as querystring from "querystring";
 
-let qs = querystring.parse(window.location.search.slice(1));
-let info = { projectId: qs.project, assetId: qs.asset };
 let data: any = null;
 let ui: { streamingSelect?: HTMLSelectElement; audioElt?: HTMLAudioElement; } = {};
 let socket: SocketIOClient.Socket = null;
 
 function start() {
-  socket = SupClient.connect(info.projectId);
+  socket = SupClient.connect(SupClient.query.project);
   socket.on("connect", onConnected);
   socket.on("disconnect", SupClient.onDisconnected);
   socket.on("edit:assets", onAssetEdited);
@@ -27,7 +24,7 @@ function start() {
   // Sidebar
   ui.streamingSelect = <HTMLSelectElement>document.querySelector(".property-streaming");
   ui.streamingSelect.addEventListener("change", (event) => {
-    socket.emit("edit:assets", info.assetId, "setProperty", "streaming", ui.streamingSelect.value === "true", (err: string) => {
+    socket.emit("edit:assets", SupClient.query.asset, "setProperty", "streaming", ui.streamingSelect.value === "true", (err: string) => {
       if (err != null) { alert(err); return; }
     });
   });
@@ -38,11 +35,11 @@ let onAssetCommands: any = {};
 
 function onConnected() {
   data = {};
-  socket.emit("sub", "assets", info.assetId, onAssetReceived);
+  socket.emit("sub", "assets", SupClient.query.asset, onAssetReceived);
 }
 
 function onAssetReceived(err: string, asset: any) {
-  data.asset = new SoundAsset(info.assetId, asset);
+  data.asset = new SoundAsset(SupClient.query.asset, asset);
 
   setupSound();
   setupProperty("streaming", data.asset.pub.streaming);
@@ -61,7 +58,7 @@ function onFileSelectChange(event: any) {
 
   let reader = new FileReader();
   reader.onload = (event) => {
-    socket.emit("edit:assets", info.assetId, "upload", reader.result, (err: string) => {
+    socket.emit("edit:assets", SupClient.query.asset, "upload", reader.result, (err: string) => {
       if (err != null) { alert(err); return; }
     });
   };

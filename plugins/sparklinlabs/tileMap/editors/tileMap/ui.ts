@@ -1,4 +1,3 @@
-import info from "./info";
 import { socket, data } from "./network";
 import mapArea, { setupPattern, setupFillPattern, flipTilesVertically, flipTilesHorizontally, rotateTiles } from "./mapArea";
 import tileSetArea from "./tileSetArea";
@@ -54,7 +53,7 @@ ui.settings = {};
 
   settingObj.addEventListener("change", (event) => {
     let value = (setting === "layerDepthOffset") ? parseFloat(settingObj.value) : parseInt(settingObj.value, 10);
-    socket.emit("edit:assets", info.assetId, "setProperty", setting, value, (err: string) => { if (err != null) { alert(err); return; } });
+    socket.emit("edit:assets", SupClient.query.asset, "setProperty", setting, value, (err: string) => { if (err != null) { alert(err); return; } });
   });
 });
 
@@ -107,11 +106,11 @@ document.addEventListener("keyup", (event) => {
 function onTileSetChange(event: Event) {
   let value = (<HTMLInputElement>event.target).value;
   if (value === "")
-    socket.emit("edit:assets", info.assetId, "changeTileSet", null, (err: string) => { if (err != null) { alert(err); return; } });
+    socket.emit("edit:assets", SupClient.query.asset, "changeTileSet", null, (err: string) => { if (err != null) { alert(err); return; } });
 
   let entry = SupClient.findEntryByPath(data.projectClient.entries.pub, value);
   if (entry != null && entry.type === "tileSet") {
-    socket.emit("edit:assets", info.assetId, "changeTileSet", entry.id, (err: string) => { if (err != null) { alert(err); return; } });
+    socket.emit("edit:assets", SupClient.query.asset, "changeTileSet", entry.id, (err: string) => { if (err != null) { alert(err); return; } });
   }
 }
 
@@ -142,7 +141,7 @@ function onResizeMapClick() {
 
       if (newWidth === data.tileMapUpdater.tileMapAsset.pub.width && newHeight === data.tileMapUpdater.tileMapAsset.pub.height) return;
 
-      socket.emit("edit:assets", info.assetId, "resizeMap", newWidth, newHeight, (err: string) => {
+      socket.emit("edit:assets", SupClient.query.asset, "resizeMap", newWidth, newHeight, (err: string) => {
         if (err != null) { alert(err); }
       });
     });
@@ -171,7 +170,7 @@ function onMoveMapClick() {
 
       if (horizontalOffset === 0 && verticalOffset === 0) return;
 
-      socket.emit("edit:assets", info.assetId, "moveMap", horizontalOffset, verticalOffset, (err: string) => {
+      socket.emit("edit:assets", SupClient.query.asset, "moveMap", horizontalOffset, verticalOffset, (err: string) => {
         if (err != null) { alert(err); }
       });
     });
@@ -191,7 +190,7 @@ function onNewLayerClick() {
 
     let index = SupClient.getTreeViewInsertionPoint(ui.layersTreeView).index;
     index = data.tileMapUpdater.tileMapAsset.pub.layers.length - index + 1;
-    socket.emit("edit:assets", info.assetId, "newLayer", name, index, (err: string, layerId: string) => {
+    socket.emit("edit:assets", SupClient.query.asset, "newLayer", name, index, (err: string, layerId: string) => {
       if (err != null) { alert(err); return; }
 
       ui.layersTreeView.clearSelection();
@@ -217,7 +216,7 @@ function onRenameLayerClick() {
     /* tslint:enable:no-unused-expression */
     if (newName == null) return;
 
-    socket.emit("edit:assets", info.assetId, "renameLayer", layer.id, newName, (err: string) => {
+    socket.emit("edit:assets", SupClient.query.asset, "renameLayer", layer.id, newName, (err: string) => {
       if (err != null) { alert(err); return; }
     });
   });
@@ -231,7 +230,7 @@ function onDeleteLayerClick() {
     if (!confirm) return;
 
     let selectedNode = ui.layersTreeView.selectedNodes[0];
-    socket.emit("edit:assets", info.assetId, "deleteLayer", selectedNode.dataset.id, (err: string) => {
+    socket.emit("edit:assets", SupClient.query.asset, "deleteLayer", selectedNode.dataset.id, (err: string) => {
       if (err != null) { alert(err); return; }
     });
   });
@@ -241,7 +240,7 @@ function onLayerDrop(dropInfo: any, orderedNodes: any[]) {
   let id = orderedNodes[0].dataset.id;
   let newIndex = SupClient.getListViewDropIndex(dropInfo, data.tileMapUpdater.tileMapAsset.layers, true);
 
-  socket.emit("edit:assets", info.assetId, "moveLayer", id, newIndex, (err: string) => {
+  socket.emit("edit:assets", SupClient.query.asset, "moveLayer", id, newIndex, (err: string) => {
     if (err != null) { alert(err); return; }
   });
 

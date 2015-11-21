@@ -1,14 +1,12 @@
 import * as async from "async";
 
-let qs = require("querystring").parse(window.location.search.slice(1));
-let info = { projectId: qs.project };
 let data: {
   projectClient: SupClient.ProjectClient;
 };
 
 let ui: any = {};
 
-let socket = SupClient.connect(info.projectId);
+let socket = SupClient.connect(SupClient.query.project);
 socket.on("welcome", onWelcome);
 socket.on("disconnect", SupClient.onDisconnected);
 SupClient.setupHotkeys();

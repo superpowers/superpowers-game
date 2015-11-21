@@ -1,4 +1,3 @@
-import info from "./info";
 import ui, { setupUniform, setUniformValueInputs, setupAttribute, setupEditors } from "./ui";
 import { setupPreview } from "./engine";
 import ShaderAsset from "../../data/ShaderAsset";
@@ -7,7 +6,7 @@ import { AttributePub } from "../../data/Attributes";
 
 export let data: { projectClient?: SupClient.ProjectClient, shaderAsset?: ShaderAsset, previewComponentUpdater?: any };
 
-export let socket = SupClient.connect(info.projectId);
+export let socket = SupClient.connect(SupClient.query.project);
 socket.on("welcome", onWelcome);
 socket.on("disconnect", SupClient.onDisconnected);
 
@@ -15,7 +14,7 @@ function onWelcome(clientId: number) {
   data = { projectClient: new SupClient.ProjectClient(socket, { subEntries: true }) };
   setupEditors(clientId);
 
-  data.projectClient.subAsset(info.assetId, "shader", { onAssetReceived, onAssetEdited, onAssetTrashed });
+  data.projectClient.subAsset(SupClient.query.asset, "shader", { onAssetReceived, onAssetEdited, onAssetTrashed });
 }
 
 function onAssetReceived(assetId: string, asset: ShaderAsset) {
@@ -44,7 +43,7 @@ export function editAsset(...args: any[]) {
     if (err != null) { alert(err); return; }
     if (callback != null) callback(id);
   });
-  socket.emit("edit:assets", info.assetId, ...args);
+  socket.emit("edit:assets", SupClient.query.asset, ...args);
 }
 
 let onEditCommands: any = {};

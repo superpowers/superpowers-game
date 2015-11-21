@@ -1,4 +1,3 @@
-import info from "./info";
 import ui, { setupAnimation, updateSelectedAnimation, setupOpacity, setupAdvancedTextures, setupMap } from "./ui";
 import engine from "./engine";
 
@@ -9,7 +8,7 @@ export let data: { projectClient?: SupClient.ProjectClient; modelUpdater?: Model
 
 export let socket: SocketIOClient.Socket;
 
-socket = SupClient.connect(info.projectId);
+socket = SupClient.connect(SupClient.query.project);
 socket.on("connect", onConnected);
 socket.on("disconnect", SupClient.onDisconnected);
 
@@ -20,7 +19,7 @@ function onConnected() {
 
   let modelActor = new SupEngine.Actor(engine.gameInstance, "Model");
   let modelRenderer = new ModelRenderer(modelActor);
-  let config: any = { modelAssetId: info.assetId, animationId: null, materialType: "phong" };
+  let config: any = { modelAssetId: SupClient.query.asset, animationId: null, materialType: "phong" };
   let receiveCallbacks = { model: onAssetReceived };
   let editCallbacks = { model: onEditCommands };
 
@@ -52,7 +51,7 @@ export function editAsset(...args: any[]) {
     if (err != null) { alert(err); return; }
     if (callback != null) callback(id);
   });
-  socket.emit("edit:assets", info.assetId, ...args);
+  socket.emit("edit:assets", SupClient.query.asset, ...args);
 }
 
 onEditCommands.setProperty = (path: string, value: any) => {

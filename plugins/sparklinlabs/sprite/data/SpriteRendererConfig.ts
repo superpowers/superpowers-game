@@ -34,7 +34,7 @@ export default class SpriteRendererConfig extends SupCore.Data.Base.ComponentCon
     };
     return emptyConfig;
   }
-  
+
   pub: SpriteRendererConfigPub;
 
   constructor(pub: SpriteRendererConfigPub) {

@@ -1,7 +1,5 @@
 import "./links";
 
-let qs = require("querystring").parse(window.location.search.slice(1));
-let info = { projectId: qs.project };
 let data: { room: SupCore.Data.Room; };
 let socket: SocketIOClient.Socket;
 
@@ -12,7 +10,7 @@ let ui = {
 };
 
 function start() {
-  socket = SupClient.connect(info.projectId);
+  socket = SupClient.connect(SupClient.query.project);
   socket.on("connect", onConnected);
   socket.on("disconnect", SupClient.onDisconnected);
   SupClient.setupHotkeys();

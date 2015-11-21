@@ -1,9 +1,6 @@
 import * as async from "async";
 let highlight = require("highlight.js"); // import * as highlight from "highlight.js";
 
-let qs = require("querystring").parse(window.location.search.slice(1));
-let info = { projectId: qs.project };
-
 SupClient.setupHotkeys();
 
 let searchElt = <HTMLInputElement>document.querySelector("input[type=search]");
@@ -14,7 +11,7 @@ let preElts: HTMLPreElement[];
 
 function findText(containerNode: Node, offset: number) {
   let node = containerNode;
-  
+
   let index = 0;
   while (node != null) {
     if (node.nodeType == Node.TEXT_NODE) {
@@ -37,7 +34,7 @@ function findText(containerNode: Node, offset: number) {
   }
 }
 
-let socket = SupClient.connect(info.projectId);
+let socket = SupClient.connect(SupClient.query.project);
 socket.on("welcome", onWelcome);
 
 function onWelcome(clientId: number, config: { buildPort: number; systemName: string; }) {
