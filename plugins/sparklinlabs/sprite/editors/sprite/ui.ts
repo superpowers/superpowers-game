@@ -1,12 +1,13 @@
-import info from "./info";
 import { data, editAsset } from "./network";
 import animationArea from "./animationArea";
 import spritesheetArea, { updateSelection } from "./spritesheetArea";
 
 import SpriteAsset from "../../data/SpriteAsset";
 
+/* tslint:disable */
 let PerfectResize = require("perfect-resize");
 let TreeView = require("dnd-tree-view");
+/* tslint:enable */
 
 let ui: {
   allSettings?: string[];
@@ -45,7 +46,9 @@ document.querySelector("button.download").addEventListener("click", () => {
   downloadTexture(textureName);
 });
 
-ui.allSettings = ["filtering", "pixelsPerUnit", "framesPerSecond", "opacity", "alphaTest", "frameOrder", "grid.width", "grid.height", "origin.x", "origin.y"]
+ui.allSettings = [
+  "filtering", "pixelsPerUnit", "framesPerSecond", "opacity", "alphaTest",
+  "frameOrder", "grid.width", "grid.height", "origin.x", "origin.y" ];
 ui.settings = {};
 ui.allSettings.forEach((setting: string) => {
   let parts = setting.split(".");
@@ -77,7 +80,7 @@ ui.allSettings.forEach((setting: string) => {
       if (setting.indexOf("origin") !== -1)
         settingObj.addEventListener("change", (event: any) => { editAsset("setProperty", setting, event.target.value / 100); });
       else
-        settingObj.addEventListener("change", (event: any) => { editAsset("setProperty", setting, parseInt(event.target.value)); });
+        settingObj.addEventListener("change", (event: any) => { editAsset("setProperty", setting, parseInt(event.target.value, 10)); });
       break;
   }
 });
@@ -152,7 +155,14 @@ function onFileSelectChange(event: any) {
 }
 
 function downloadTexture(textureName: string) {
-  SupClient.dialogs.prompt("Enter a name for the image.", null, "Image", "Download", (name) => {
+  let options = {
+    initialValue: "Image",
+    validationLabel: "Download"
+  };
+
+  /* tslint:disable:no-unused-expression */
+  new SupClient.dialogs.PromptDialog("Enter a name for the image.", options, (name) => {
+    /* tslint:enable:no-unused-expression */
     if (name == null) return;
 
     let a = document.createElement("a");
@@ -175,10 +185,17 @@ function onSetGridWidth(event: any) {
   let texture = data.spriteUpdater.spriteAsset.pub.textures["map"];
   if (texture == null) return;
 
-  SupClient.dialogs.prompt("How many frames per row?", null, "1", "Set grid width", (framesPerRow) => {
+  let options = {
+    initialValue: "1",
+    validationLabel: "Set grid width"
+  };
+
+  /* tslint:disable:no-unused-expression */
+  new SupClient.dialogs.PromptDialog("How many frames per row?", options, (framesPerRow) => {
+    /* tslint:enable:no-unused-expression */
     if (framesPerRow == null) return;
 
-    let framesPerRowNum = parseInt(framesPerRow);
+    let framesPerRowNum = parseInt(framesPerRow, 10);
     if (isNaN(framesPerRowNum)) return;
 
     editAsset("setProperty", "grid.width", Math.floor(texture.size.width / framesPerRowNum));
@@ -189,10 +206,17 @@ function onSetGridHeight(event: any) {
   let texture = data.spriteUpdater.spriteAsset.pub.textures["map"];
   if (texture == null) return;
 
-  SupClient.dialogs.prompt("How many frames per column?", null, "1", "Set grid height", (framesPerColumn) => {
+  let options = {
+    initialValue: "1",
+    validationLabel: "Set grid height"
+  };
+
+  /* tslint:disable:no-unused-expression */
+  new SupClient.dialogs.PromptDialog("How many frames per column?", options, (framesPerColumn) => {
+    /* tslint:enable:no-unused-expression */
     if (framesPerColumn == null) return;
 
-    let framesPerColumnNum = parseInt(framesPerColumn);
+    let framesPerColumnNum = parseInt(framesPerColumn, 10);
     if (isNaN(framesPerColumnNum)) return;
 
     editAsset("setProperty", "grid.height", Math.floor(texture.size.height / framesPerColumnNum));
@@ -200,7 +224,14 @@ function onSetGridHeight(event: any) {
 }
 
 function onNewAnimationClick() {
-  SupClient.dialogs.prompt("Enter a name for the animation.", null, "Animation", "Create", (name) => {
+  let options = {
+    initialValue: "Animation",
+    validationLabel: "Create"
+  };
+
+  /* tslint:disable:no-unused-expression */
+  new SupClient.dialogs.PromptDialog("Enter a name for the animation.", options, (name) => {
+    /* tslint:enable:no-unused-expression */
     if (name == null) return;
 
     editAsset("newAnimation", name, (animationId: string) => {
@@ -217,7 +248,14 @@ function onRenameAnimationClick() {
   let selectedNode = ui.animationsTreeView.selectedNodes[0];
   let animation = data.spriteUpdater.spriteAsset.animations.byId[selectedNode.dataset.id];
 
-  SupClient.dialogs.prompt("Enter a new name for the animation.", null, animation.name, "Rename", (newName) => {
+  let options = {
+    initialValue: animation.name,
+    validationLabel: "Rename"
+  };
+
+  /* tslint:disable:no-unused-expression */
+  new SupClient.dialogs.PromptDialog("Enter a new name for the animation.", options, (newName) => {
+    /* tslint:enable:no-unused-expression */
     if (newName == null) return;
 
     editAsset("setAnimationProperty", animation.id, "name", newName);
@@ -226,7 +264,9 @@ function onRenameAnimationClick() {
 
 function onDeleteAnimationClick() {
   if (ui.animationsTreeView.selectedNodes.length === 0) return;
-  SupClient.dialogs.confirm("Are you sure you want to delete the selected animations?", "Delete", (confirm) => {
+  /* tslint:disable:no-unused-expression */
+  new SupClient.dialogs.ConfirmDialog("Are you sure you want to delete the selected animations?", "Delete", (confirm) => {
+    /* tslint:enable:no-unused-expression */
     if (!confirm) return;
 
     ui.animationsTreeView.selectedNodes.forEach((selectedNode: any) => { editAsset("deleteAnimation", selectedNode.dataset.id); });
@@ -284,7 +324,7 @@ function onPlayAnimation() {
 
 function onChangeAnimationTime() {
   if (data.spriteUpdater == null) return;
-  data.spriteUpdater.spriteRenderer.setAnimationFrameTime(parseInt(ui.animationSlider.value));
+  data.spriteUpdater.spriteRenderer.setAnimationFrameTime(parseInt(ui.animationSlider.value, 10));
 }
 
 export function setupProperty(path: string, value: any) {
@@ -310,7 +350,7 @@ export function setupProperty(path: string, value: any) {
   if (path === "opacity") {
     obj[parts[parts.length - 1]].disabled = value == null;
     ui.opacityCheckbox.checked = value != null;
-    spritesheetArea.spriteRenderer.setOpacity(value != null ? 1 : null)
+    spritesheetArea.spriteRenderer.setOpacity(value != null ? 1 : null);
   }
 
   if (path === "alphaTest" && spritesheetArea.spriteRenderer.material != null) {
@@ -359,9 +399,9 @@ export function setupAnimation(animation: any, index: number) {
   liElt.appendChild(startFrameIndexInput);
 
   startFrameIndexInput.addEventListener("change", (event: any) => {
-    let startFrameIndex = parseInt(event.target.value);
+    let startFrameIndex = parseInt(event.target.value, 10);
     editAsset("setAnimationProperty", animation.id, "startFrameIndex", startFrameIndex);
-    ui.selectedAnimationId
+
     if (startFrameIndex > data.spriteUpdater.spriteAsset.animations.byId[ui.selectedAnimationId].endFrameIndex)
       editAsset("setAnimationProperty", animation.id, "endFrameIndex", startFrameIndex);
   });
@@ -374,9 +414,9 @@ export function setupAnimation(animation: any, index: number) {
   liElt.appendChild(endFrameIndexInput);
 
   endFrameIndexInput.addEventListener("change", (event: any) => {
-    let endFrameIndex = parseInt(event.target.value);
+    let endFrameIndex = parseInt(event.target.value, 10);
     editAsset("setAnimationProperty", animation.id, "endFrameIndex", endFrameIndex);
-    ui.selectedAnimationId
+
     if (endFrameIndex < data.spriteUpdater.spriteAsset.animations.byId[ui.selectedAnimationId].startFrameIndex)
       editAsset("setAnimationProperty", animation.id, "startFrameIndex", endFrameIndex);
   });
@@ -397,11 +437,18 @@ export function setupAnimation(animation: any, index: number) {
 function onEditMapSlot(event: any) {
   if (event.target.value !== "" && data.spriteUpdater.spriteAsset.pub.maps[event.target.value] == null) return;
   let slot = event.target.value !== "" ? event.target.value : null;
-  editAsset("setMapSlot", event.target.dataset.name, slot)
+  editAsset("setMapSlot", event.target.dataset.name, slot);
 }
 
 function onNewMapClick() {
-  SupClient.dialogs.prompt("Enter a new name for the map.", null, "map", "Create", (name) => {
+  let options = {
+    initialValue: "map",
+    validationLabel: "Create"
+  };
+
+  /* tslint:disable:no-unused-expression */
+  new SupClient.dialogs.PromptDialog("Enter a new name for the map.", options, (name) => {
+    /* tslint:enable:no-unused-expression */
     if (name == null) return;
 
     editAsset("newMap", name);
@@ -419,7 +466,7 @@ function onMapFileSelectChange(event: any) {
   let element = <HTMLInputElement>event.target;
   reader.readAsArrayBuffer(element.files[0]);
   (<HTMLFormElement>element.parentElement).reset();
-  return
+  return;
 }
 
 function onRenameMapClick() {
@@ -428,7 +475,14 @@ function onRenameMapClick() {
   let selectedNode = ui.texturesTreeView.selectedNodes[0];
   let textureName = selectedNode.dataset.name;
 
-  SupClient.dialogs.prompt("Enter a new name for the texture.", null, textureName, "Rename", (newName) => {
+  let options = {
+    initialValue: textureName,
+    validationLabel: "Rename"
+  };
+
+  /* tslint:disable:no-unused-expression */
+  new SupClient.dialogs.PromptDialog("Enter a new name for the texture.", options, (newName) => {
+    /* tslint:enable:no-unused-expression */
     if (newName == null) return;
 
     editAsset("renameMap", textureName, newName);
@@ -438,7 +492,9 @@ function onRenameMapClick() {
 function onDeleteMapClick() {
   if (ui.texturesTreeView.selectedNodes.length === 0) return;
 
-  SupClient.dialogs.confirm("Are you sure you want to delete the selected textures?", "Delete", (confirm) => {
+  /* tslint:disable:no-unused-expression */
+  new SupClient.dialogs.ConfirmDialog("Are you sure you want to delete the selected textures?", "Delete", (confirm) => {
+    /* tslint:enable:no-unused-expression */
     if (!confirm) return;
 
     for (let selectedNode of ui.texturesTreeView.selectedNodes) editAsset("deleteMap", selectedNode.dataset.name);

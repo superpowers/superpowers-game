@@ -4,7 +4,7 @@ import * as querystring from "querystring";
 let qs = querystring.parse(window.location.search.slice(1));
 let info = { projectId: qs.project, assetId: qs.asset };
 let data: any = null;
-let ui: {streamingSelect?: HTMLSelectElement; audioElt?: HTMLAudioElement;} = {};
+let ui: { streamingSelect?: HTMLSelectElement; audioElt?: HTMLAudioElement; } = {};
 let socket: SocketIOClient.Socket = null;
 
 function start() {
@@ -64,13 +64,20 @@ function onFileSelectChange(event: any) {
     socket.emit("edit:assets", info.assetId, "upload", reader.result, (err: string) => {
       if (err != null) { alert(err); return; }
     });
-  }
+  };
   reader.readAsArrayBuffer(event.target.files[0]);
   event.target.parentElement.reset();
 }
 
 function onDownloadSound() {
-  SupClient.dialogs.prompt("Enter the name of the sound", null, "Sound.wav", "OK", (name) => {
+  let options = {
+    initialValue: "Sound.wav",
+    validationLabel: "OK"
+  };
+
+  /* tslint:disable:no-unused-expression */
+  new SupClient.dialogs.PromptDialog("Enter the name of the sound", options, (name) => {
+    /* tslint:enable:no-unused-expression */
     if (name == null) return;
 
     let a = document.createElement("a");

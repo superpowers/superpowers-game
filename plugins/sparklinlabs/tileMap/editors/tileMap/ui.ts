@@ -3,8 +3,10 @@ import { socket, data } from "./network";
 import mapArea, { setupPattern, setupFillPattern, flipTilesVertically, flipTilesHorizontally, rotateTiles } from "./mapArea";
 import tileSetArea from "./tileSetArea";
 
+/* tslint:disable */
 let TreeView = require("dnd-tree-view");
 let PerfectResize = require("perfect-resize");
+/* tslint:enable */
 
 let tmpPosition = new SupEngine.THREE.Vector3();
 let tmpScale = new SupEngine.THREE.Vector3();
@@ -51,7 +53,7 @@ ui.settings = {};
   let settingObj = ui.settings[setting] = <HTMLInputElement>document.querySelector(queryName);
 
   settingObj.addEventListener("change", (event) => {
-    let value = (setting === "layerDepthOffset") ? parseFloat(settingObj.value) : parseInt(settingObj.value);
+    let value = (setting === "layerDepthOffset") ? parseFloat(settingObj.value) : parseInt(settingObj.value, 10);
     socket.emit("edit:assets", info.assetId, "setProperty", setting, value, (err: string) => { if (err != null) { alert(err); return; } });
   });
 });
@@ -60,7 +62,7 @@ ui.gridCheckbox = <HTMLInputElement>document.querySelector("input.grid-checkbox"
 ui.gridCheckbox.addEventListener("change", onChangeGridDisplay);
 ui.highlightCheckbox = <HTMLInputElement>document.querySelector("input.highlight-checkbox");
 ui.highlightCheckbox.addEventListener("change", onChangeHighlight);
-ui.highlightSlider = <HTMLInputElement>document.querySelector("input.highlight-slider")
+ui.highlightSlider = <HTMLInputElement>document.querySelector("input.highlight-slider");
 ui.highlightSlider.addEventListener("input", onChangeHighlight);
 
 ui.brushToolButton = <HTMLInputElement>document.querySelector("input#Brush");
@@ -82,7 +84,7 @@ document.querySelector("button.delete-layer").addEventListener("click", onDelete
 ui.mousePositionLabel = {
   x: <HTMLLabelElement>document.querySelector("label.position-x"),
   y: <HTMLLabelElement>document.querySelector("label.position-y")
-}
+};
 
 // Keybindings
 SupClient.setupHotkeys();
@@ -114,14 +116,28 @@ function onTileSetChange(event: Event) {
 }
 
 function onResizeMapClick() {
-  SupClient.dialogs.prompt("Enter a new width for the map.", null, data.tileMapUpdater.tileMapAsset.pub.width.toString(), "Resize", (newWidthString) => {
+  let options = {
+    initialValue: data.tileMapUpdater.tileMapAsset.pub.width.toString(),
+    validationLabel: "Resize"
+  };
+
+  /* tslint:disable:no-unused-expression */
+  new SupClient.dialogs.PromptDialog("Enter a new width for the map.", options, (newWidthString) => {
+    /* tslint:enable:no-unused-expression */
     if (newWidthString == null) return;
-    let newWidth = parseInt(newWidthString);
+    let newWidth = parseInt(newWidthString, 10);
     if (isNaN(newWidth)) return;
 
-    SupClient.dialogs.prompt("Enter a new height for the map.", null, data.tileMapUpdater.tileMapAsset.pub.height.toString(), "Resize", (newHeightString) => {
+    let options = {
+      initialValue: data.tileMapUpdater.tileMapAsset.pub.height.toString(),
+      validationLabel: "Resize"
+    };
+
+    /* tslint:disable:no-unused-expression */
+    new SupClient.dialogs.PromptDialog("Enter a new height for the map.", options, (newHeightString) => {
+      /* tslint:enable:no-unused-expression */
       if (newHeightString == null) return;
-      let newHeight = parseInt(newHeightString);
+      let newHeight = parseInt(newHeightString, 10);
       if (isNaN(newHeight)) return;
 
       if (newWidth === data.tileMapUpdater.tileMapAsset.pub.width && newHeight === data.tileMapUpdater.tileMapAsset.pub.height) return;
@@ -134,14 +150,23 @@ function onResizeMapClick() {
 }
 
 function onMoveMapClick() {
-  SupClient.dialogs.prompt("Enter the horizontal offset.", null, "0", "Apply offset", (horizontalOffsetString) => {
+  let options = {
+    initialValue: "0",
+    validationLabel: "Apply offset"
+  };
+
+  /* tslint:disable:no-unused-expression */
+  new SupClient.dialogs.PromptDialog("Enter the horizontal offset.", options, (horizontalOffsetString) => {
+    /* tslint:enable:no-unused-expression */
     if (horizontalOffsetString == null) return;
-    let horizontalOffset = parseInt(horizontalOffsetString);
+    let horizontalOffset = parseInt(horizontalOffsetString, 10);
     if (isNaN(horizontalOffset)) return;
 
-    SupClient.dialogs.prompt("Enter the vertical offset.", null, "0", "Apply offset", (verticalOffsetString) => {
+    /* tslint:disable:no-unused-expression */
+    new SupClient.dialogs.PromptDialog("Enter the vertical offset.", options, (verticalOffsetString) => {
+      /* tslint:enable:no-unused-expression */
       if (verticalOffsetString == null) return;
-      let verticalOffset = parseInt(verticalOffsetString);
+      let verticalOffset = parseInt(verticalOffsetString, 10);
       if (isNaN(verticalOffset)) return;
 
       if (horizontalOffset === 0 && verticalOffset === 0) return;
@@ -154,7 +179,14 @@ function onMoveMapClick() {
 }
 
 function onNewLayerClick() {
-  SupClient.dialogs.prompt("Enter a name for the layer.", null, "Layer", "Create", (name) => {
+  let options = {
+    initialValue: "Layer",
+    validationLabel: "Create"
+  };
+
+  /* tslint:disable:no-unused-expression */
+  new SupClient.dialogs.PromptDialog("Enter a name for the layer.", options, (name) => {
+    /* tslint:enable:no-unused-expression */
     if (name == null) return;
 
     let index = SupClient.getTreeViewInsertionPoint(ui.layersTreeView).index;
@@ -175,7 +207,14 @@ function onRenameLayerClick() {
   let selectedNode = ui.layersTreeView.selectedNodes[0];
   let layer = data.tileMapUpdater.tileMapAsset.layers.byId[selectedNode.dataset["id"]];
 
-  SupClient.dialogs.prompt("Enter a new name for the layer.", null, layer.name, "Rename", (newName) => {
+  let options = {
+    initialValue: layer.name,
+    validationLabel: "Rename"
+  };
+
+  /* tslint:disable:no-unused-expression */
+  new SupClient.dialogs.PromptDialog("Enter a new name for the layer.", options, (newName) => {
+    /* tslint:enable:no-unused-expression */
     if (newName == null) return;
 
     socket.emit("edit:assets", info.assetId, "renameLayer", layer.id, newName, (err: string) => {
@@ -186,7 +225,9 @@ function onRenameLayerClick() {
 
 function onDeleteLayerClick() {
   if (ui.layersTreeView.selectedNodes.length !== 1) return;
-  SupClient.dialogs.confirm("Are you sure you want to delete the selected layer?", "Delete", (confirm) => {
+  /* tslint:disable:no-unused-expression */
+  new SupClient.dialogs.ConfirmDialog("Are you sure you want to delete the selected layer?", "Delete", (confirm) => {
+    /* tslint:enable:no-unused-expression */
     if (!confirm) return;
 
     let selectedNode = ui.layersTreeView.selectedNodes[0];
@@ -198,9 +239,6 @@ function onDeleteLayerClick() {
 
 function onLayerDrop(dropInfo: any, orderedNodes: any[]) {
   let id = orderedNodes[0].dataset.id;
-
-  let layer = data.tileMapUpdater.tileMapAsset.layers.byId[id];
-  let currentIndex = data.tileMapUpdater.tileMapAsset.pub.layers.indexOf(layer);
   let newIndex = SupClient.getListViewDropIndex(dropInfo, data.tileMapUpdater.tileMapAsset.layers, true);
 
   socket.emit("edit:assets", info.assetId, "moveLayer", id, newIndex, (err: string) => {
@@ -221,7 +259,7 @@ function onLayerSelect() {
 
   let pub = data.tileMapUpdater.tileMapAsset.pub;
   let layer = data.tileMapUpdater.tileMapAsset.layers.byId[tileSetArea.selectedLayerId];
-  let z = (pub.layers.indexOf(layer) + 0.5) * pub.layerDepthOffset
+  let z = (pub.layers.indexOf(layer) + 0.5) * pub.layerDepthOffset;
   mapArea.patternActor.setLocalPosition(new SupEngine.THREE.Vector3(0, 0, z));
 }
 
@@ -241,7 +279,7 @@ function onChangeHighlight() {
   }
 }
 
-export function selectBrush(x?: number, y?: number, width=1, height=1) {
+export function selectBrush(x?: number, y?: number, width = 1, height = 1) {
   ui.brushToolButton.checked = true;
 
   if (data.tileMapUpdater.tileSetAsset == null || data.tileMapUpdater.tileSetAsset.pub == null) return;
@@ -320,7 +358,7 @@ export function setupLayer(layer: TileMapLayerPub, index: number) {
 
   let indexSpan = document.createElement("span");
   indexSpan.classList.add("index");
-  indexSpan.textContent = `${index} -`
+  indexSpan.textContent = `${index} -`;
   liElt.appendChild(indexSpan);
 
   let nameSpan = document.createElement("span");

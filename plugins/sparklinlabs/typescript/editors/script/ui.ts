@@ -1,7 +1,9 @@
 import info from "./info";
 import { socket, data, scheduleErrorCheck, setNextCompletion } from "./network";
 
+/* tslint:disable */
 let PerfectResize = require("perfect-resize");
+/* tslint:enable */
 
 let ui: {
   editor?: TextEditorWidget;
@@ -33,7 +35,7 @@ window.addEventListener("message", (event) => {
   if (event.data.type === "activate") ui.editor.codeMirrorInstance.focus();
 
   if (event.data.line != null && event.data.ch != null)
-    ui.editor.codeMirrorInstance.getDoc().setCursor({ line: parseInt(event.data.line), ch: parseInt(event.data.ch) });
+    ui.editor.codeMirrorInstance.getDoc().setCursor({ line: parseInt(event.data.line, 10), ch: parseInt(event.data.ch, 10) });
 });
 
 // Context menu
@@ -169,7 +171,7 @@ ui.errorPaneStatus.addEventListener("click", (event: any) => {
   ui.editor.codeMirrorInstance.refresh();
 });
 
-export function refreshErrors(errors: Array<{file: string; position: {line: number; character: number;}; length: number; message: string}>) {
+export function refreshErrors(errors: Array<{file: string; position: { line: number; character: number; }; length: number; message: string}>) {
   // Remove all previous erros
   for (let textMarker of ui.editor.codeMirrorInstance.getDoc().getAllMarks()) {
     if ((<any>textMarker).className !== "line-error") continue;
@@ -211,7 +213,7 @@ export function refreshErrors(errors: Array<{file: string; position: {line: numb
     if (error.file !== "") {
       errorRow.dataset["assetId"] = data.files[error.file].id;
       scriptCell.textContent = error.file.substring(0, error.file.length - 3);
-    } else scriptCell.textContent = "Internal"
+    } else scriptCell.textContent = "Internal";
 
     if (error.file !== data.fileNamesByScriptId[info.assetId]) {
       ui.errorsTBody.appendChild(errorRow);
@@ -237,7 +239,7 @@ export function refreshErrors(errors: Array<{file: string; position: {line: numb
 
   let otherErrorsCount = errors.length - selfErrorsCount;
   if (selfErrorsCount > 0) {
-    if (otherErrorsCount == 0) ui.errorPaneInfo.textContent = `${selfErrorsCount} error${selfErrorsCount > 1 ? "s" : ""}`;
+    if (otherErrorsCount === 0) ui.errorPaneInfo.textContent = `${selfErrorsCount} error${selfErrorsCount > 1 ? "s" : ""}`;
     else ui.errorPaneInfo.textContent = `${selfErrorsCount} error${selfErrorsCount > 1 ? "s" : ""} in this script, ${otherErrorsCount} in other scripts`;
   } else {
     ui.errorPaneInfo.textContent = `${errors.length} error${errors.length > 1 ? "s" : ""} in other scripts`;
@@ -259,7 +261,7 @@ function onErrorTBodyClick(event: MouseEvent) {
   let character = target.dataset["character"];
 
   if (assetId === info.assetId) {
-    ui.editor.codeMirrorInstance.getDoc().setCursor({ line: parseInt(line), ch: parseInt(character) });
+    ui.editor.codeMirrorInstance.getDoc().setCursor({ line: parseInt(line, 10), ch: parseInt(character, 10) });
     ui.editor.codeMirrorInstance.focus();
   } else {
     let origin: string = (<any>window.location).origin;
@@ -299,7 +301,6 @@ document.addEventListener("mousemove", (event) => {
     ui.infoPosition = ui.editor.codeMirrorInstance.coordsChar({ left: event.clientX, top: event.clientY });
     if ((<any>ui.infoPosition).outside) return;
 
-    let token = ui.editor.codeMirrorInstance.getTokenAt(ui.infoPosition);
     let start = 0;
     for (let i = 0; i < ui.infoPosition.line; i++) start += ui.editor.codeMirrorInstance.getDoc().getLine(i).length + 1;
     start += ui.infoPosition.ch;
@@ -353,12 +354,12 @@ var parameterPopupKeyMap = {
     let endSelection = { line: cursorPosition.line, ch: cursorPosition.ch + selectedSignature.parameters[ui.selectedArgumentIndex + 1].length };
     ui.editor.codeMirrorInstance.getDoc().setSelection(cursorPosition, endSelection);
   }
-}
+};
 
 export function showParameterPopup(texts: { prefix: string; parameters: string[]; suffix: string; }[], selectedItemIndex: number, selectedArgumentIndex: number) {
   ui.signatureTexts = texts;
   ui.selectedArgumentIndex = selectedArgumentIndex;
-  updateParameterHint(selectedItemIndex)
+  updateParameterHint(selectedItemIndex);
 
   let position = ui.editor.codeMirrorInstance.getDoc().getCursor();
   let coordinates  = ui.editor.codeMirrorInstance.cursorCoords(position, "page");
@@ -467,12 +468,19 @@ function scheduleCompletion() {
 // Global search
 function onGlobalSearch() {
   if (window.parent == null) {
-    //TODO: find a way so it works ? or display an information saying that you can't ?
+    // TODO: Find a way to make it work? or display a message saying that you can't?
     return;
   }
 
-  let selection = ui.editor.codeMirrorInstance.getDoc().getSelection();
-  SupClient.dialogs.prompt("Search in all TypeScript scripts.", "Find in project", selection, "Search", (text) => {
+  let options = {
+    placeholder: "Find in project",
+    initialValue: ui.editor.codeMirrorInstance.getDoc().getSelection(),
+    validationLabel: "Search"
+  };
+
+  /* tslint:disable:no-unused-expression */
+  new SupClient.dialogs.PromptDialog("Search in all TypeScript scripts.", options, (text) => {
+    /* tslint:enable:no-unused-expression */
     if (text == null) {
       ui.editor.codeMirrorInstance.focus();
       return;

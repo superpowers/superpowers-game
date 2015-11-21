@@ -1,11 +1,12 @@
-import info from "./info";
 import { data, editAsset } from "./network";
 
 import importModel, { ImportLogEntry } from "./importers/index";
 import ModelAsset from "../../data/ModelAsset";
 
+/* tslint:disable */
 let PerfectResize = require("perfect-resize");
 let TreeView = require("dnd-tree-view");
+/* tslint:enable */
 
 let ui: {
   filteringSelect?: HTMLSelectElement;
@@ -46,7 +47,7 @@ modelFileSelect.addEventListener("change", onModelFileSelectChange);
 document.querySelector(".model button.upload").addEventListener("click", () => { modelFileSelect.click(); });
 
 // Primary map upload
-let primaryMapFileSelect = <HTMLInputElement>document.querySelector(".map input.file-select")
+let primaryMapFileSelect = <HTMLInputElement>document.querySelector(".map input.file-select");
 primaryMapFileSelect.addEventListener("change", onPrimaryMapFileSelectChange);
 ui.mapUploadButton = <HTMLInputElement>document.querySelector(".map button.upload");
 ui.mapUploadButton.addEventListener("click", () => { primaryMapFileSelect.click(); });
@@ -231,11 +232,18 @@ function onPrimaryMapFileSelectChange(event: Event) {
   let element = <HTMLInputElement>event.target;
   reader.readAsArrayBuffer(element.files[0]);
   (<HTMLFormElement>element.parentElement).reset();
-  return
+  return;
 }
 
 function downloadTexture(textureName: string) {
-  SupClient.dialogs.prompt("Enter a name for the image.", null, "Image", "Download", (name) => {
+  let options = {
+    initialValue: "Image",
+    validationLabel: "Download"
+  };
+
+  /* tslint:disable:no-unused-expression */
+  new SupClient.dialogs.PromptDialog("Enter a name for the image.", options, (name) => {
+    /* tslint:enable:no-unused-expression */
     if (name == null) return;
 
     let a = document.createElement("a");
@@ -257,7 +265,14 @@ function onCheckOpacity(event: any) { editAsset("setProperty", "opacity", (event
 function onChangeOpacity(event: any) { editAsset("setProperty", "opacity", parseFloat(event.target.value)); }
 
 function onNewAnimationClick() {
-  SupClient.dialogs.prompt("Enter a name for the animation.", null, "Animation", "Create", (name) => {
+  let options = {
+    initialValue: "Animation",
+    validationLabel: "Create"
+  };
+
+  /* tslint:disable:no-unused-expression */
+  new SupClient.dialogs.PromptDialog("Enter a name for the animation.", options, (name) => {
+    /* tslint:enable:no-unused-expression */
     if (name == null) return;
 
     editAsset("newAnimation", name, null, null, (animationId: string) => {
@@ -292,7 +307,14 @@ function onRenameAnimationClick() {
   let selectedNode = ui.animationsTreeView.selectedNodes[0];
   let animation = data.modelUpdater.modelAsset.animations.byId[selectedNode.dataset.id];
 
-  SupClient.dialogs.prompt("Enter a new name for the animation.", null, animation.name, "Rename", (newName) => {
+  let options = {
+    initialValue: animation.name,
+    validationLabel: "Rename"
+  };
+
+  /* tslint:disable:no-unused-expression */
+  new SupClient.dialogs.PromptDialog("Enter a new name for the animation.", options, (newName) => {
+    /* tslint:enable:no-unused-expression */
     if (newName == null) return;
 
     editAsset("setAnimationProperty", animation.id, "name", newName);
@@ -302,7 +324,9 @@ function onRenameAnimationClick() {
 function onDeleteAnimationClick() {
   if (ui.animationsTreeView.selectedNodes.length === 0) return;
 
-  SupClient.dialogs.confirm("Are you sure you want to delete the selected animations?", "Delete", (confirm) => {
+  /* tslint:disable:no-unused-expression */
+  new SupClient.dialogs.ConfirmDialog("Are you sure you want to delete the selected animations?", "Delete", (confirm) => {
+    /* tslint:enable:no-unused-expression */
     if (!confirm) return;
 
     for (let selectedNode of ui.animationsTreeView.selectedNodes) editAsset("deleteAnimation", selectedNode.dataset.id);
@@ -320,7 +344,7 @@ function onAnimationDrop(dropInfo: any, orderedNodes: HTMLLIElement[]) {
 }
 
 export function updateSelectedAnimation() {
-  let selectedAnimElt = ui.animationsTreeView.selectedNodes[0]
+  let selectedAnimElt = ui.animationsTreeView.selectedNodes[0];
   if (selectedAnimElt != null) ui.selectedAnimationId = selectedAnimElt.dataset.id;
   else ui.selectedAnimationId = null;
 
@@ -348,11 +372,18 @@ export function setupAnimation(animation: any, index: number) {
 function onEditMapSlot(event: any) {
   if (event.target.value !== "" && data.modelUpdater.modelAsset.pub.maps[event.target.value] == null) return;
   let slot = event.target.value !== "" ? event.target.value : null;
-  editAsset("setMapSlot", event.target.dataset.name, slot)
+  editAsset("setMapSlot", event.target.dataset.name, slot);
 }
 
 function onNewMapClick() {
-  SupClient.dialogs.prompt("Enter a new name for the map.", null, "map", "Create", (name) => {
+  let options = {
+    initialValue: "map",
+    validationLabel: "Create"
+  };
+
+  /* tslint:disable:no-unused-expression */
+  new SupClient.dialogs.PromptDialog("Enter a new name for the map.", options, (name) => {
+    /* tslint:enable:no-unused-expression */
     if (name == null) return;
 
     editAsset("newMap", name);
@@ -374,7 +405,7 @@ function onMapFileSelectChange(event: any) {
   let element = <HTMLInputElement>event.target;
   reader.readAsArrayBuffer(element.files[0]);
   (<HTMLFormElement>element.parentElement).reset();
-  return
+  return;
 }
 
 function onRenameMapClick() {
@@ -383,7 +414,14 @@ function onRenameMapClick() {
   let selectedNode = ui.texturesTreeView.selectedNodes[0];
   let textureName = selectedNode.dataset.name;
 
-  SupClient.dialogs.prompt("Enter a new name for the texture.", null, textureName, "Rename", (newName) => {
+  let options = {
+    initialValue: textureName,
+    validationLabel: "Rename"
+  };
+
+  /* tslint:disable:no-unused-expression */
+  new SupClient.dialogs.PromptDialog("Enter a new name for the texture.", options, (newName) => {
+    /* tslint:enable:no-unused-expression */
     if (newName == null) return;
 
     editAsset("renameMap", textureName, newName);
@@ -393,15 +431,17 @@ function onRenameMapClick() {
 function onDeleteMapClick() {
   if (ui.texturesTreeView.selectedNodes.length === 0) return;
 
-  SupClient.dialogs.confirm("Are you sure you want to delete the selected textures?", "Delete", (confirm) => {
-    if (!confirm) return;
+  /* tslint:disable:no-unused-expression */
+  new SupClient.dialogs.ConfirmDialog("Are you sure you want to delete the selected textures?", "Delete", (confirmed) => {
+    /* tslint:enable:no-unused-expression */
+    if (!confirmed) return;
 
     for (let selectedNode of ui.texturesTreeView.selectedNodes) editAsset("deleteMap", selectedNode.dataset.name);
   });
 }
 
 export function updateSelectedMap() {
-  let selectedMapElt = ui.texturesTreeView.selectedNodes[0]
+  let selectedMapElt = ui.texturesTreeView.selectedNodes[0];
   if (selectedMapElt != null) ui.selectedTextureName = selectedMapElt.dataset.name;
   else ui.selectedTextureName = null;
 

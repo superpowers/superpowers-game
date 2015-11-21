@@ -6,8 +6,10 @@ import CubicModelAsset from "../../data/CubicModelAsset";
 import { Node } from "../../data/CubicModelNodes";
 
 let THREE = SupEngine.THREE;
+/* tslint:disable */
 let PerfectResize = require("perfect-resize");
 let TreeView = require("dnd-tree-view");
+/* tslint:enable */
 
 let ui: {
   canvasElt: HTMLCanvasElement;
@@ -127,8 +129,8 @@ for (let size of CubicModelAsset.validTextureSizes) {
   addOption(ui.textureWidthSelect, size);
   addOption(ui.textureHeightSelect, size);
 }
-ui.textureWidthSelect.addEventListener("input", (event: any) => { editAsset("changeTextureWidth", parseInt(event.target.value)); });
-ui.textureHeightSelect.addEventListener("input", (event: any) => { editAsset("changeTextureHeight", parseInt(event.target.value)); });
+ui.textureWidthSelect.addEventListener("input", (event: any) => { editAsset("changeTextureWidth", parseInt(event.target.value, 10)); });
+ui.textureHeightSelect.addEventListener("input", (event: any) => { editAsset("changeTextureHeight", parseInt(event.target.value, 10)); });
 
 // Setup tree view
 ui.treeViewElt = <HTMLDivElement>document.querySelector(".nodes-tree-view");
@@ -386,7 +388,14 @@ for (let input of ui.inspectorFields.shape.box.stretch) input.addEventListener("
 
 function onNewNodeClick() {
   // TODO: Allow choosing shape and default texture color
-  SupClient.dialogs.prompt("Enter a name for the node.", null, "Node", "Create", (name) => {
+  let options = {
+    initialValue: "Node",
+    validationLabel: "Create"
+  };
+
+  /* tslint:disable:no-unused-expression */
+  new SupClient.dialogs.PromptDialog("Enter a name for the node.", options, (name) => {
+    /* tslint:enable:no-unused-expression */
     if (name == null) return;
 
     let options = SupClient.getTreeViewInsertionPoint(ui.nodesTreeView);
@@ -432,7 +441,14 @@ function onRenameNodeClick() {
   let selectedNode = ui.nodesTreeView.selectedNodes[0];
   let node = data.cubicModelUpdater.cubicModelAsset.nodes.byId[selectedNode.dataset.id];
 
-  SupClient.dialogs.prompt("Enter a new name for the node.", null, node.name, "Rename", (newName) => {
+  let options = {
+    initialValue: node.name,
+    validationLabel: "Rename"
+  };
+
+  /* tslint:disable:no-unused-expression */
+  new SupClient.dialogs.PromptDialog("Enter a new name for the node.", options, (newName) => {
+    /* tslint:enable:no-unused-expression */
     if (newName == null) return;
 
     editAsset("setNodeProperty", node.id, "name", newName);
@@ -445,7 +461,14 @@ function onDuplicateNodeClick() {
   let selectedNode = ui.nodesTreeView.selectedNodes[0];
   let node = data.cubicModelUpdater.cubicModelAsset.nodes.byId[selectedNode.dataset.id];
 
-  SupClient.dialogs.prompt("Enter a name for the new node.", null, node.name, "Duplicate", (newName) => {
+  let options = {
+    initialValue: node.name,
+    validationLabel: "Duplicate"
+  };
+
+  /* tslint:disable:no-unused-expression */
+  new SupClient.dialogs.PromptDialog("Enter a name for the new node.", options, (newName) => {
+    /* tslint:enable:no-unused-expression */
     if (newName == null) return;
     let options = SupClient.getTreeViewInsertionPoint(ui.nodesTreeView);
 
@@ -461,7 +484,9 @@ function onDuplicateNodeClick() {
 
 function onDeleteNodeClick() {
   if (ui.nodesTreeView.selectedNodes.length === 0) return;
-  SupClient.dialogs.confirm("Are you sure you want to delete the selected nodes?", "Delete", (confirm) => {
+  /* tslint:disable:no-unused-expression */
+  new SupClient.dialogs.ConfirmDialog("Are you sure you want to delete the selected nodes?", "Delete", (confirm) => {
+    /* tslint:enable:no-unused-expression */
     if (!confirm) return;
 
     for (let selectedNode of ui.nodesTreeView.selectedNodes) {

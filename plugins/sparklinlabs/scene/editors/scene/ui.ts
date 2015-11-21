@@ -6,8 +6,10 @@ import { Node } from "../../data/SceneNodes";
 import { Component } from "../../data/SceneComponents";
 
 let THREE = SupEngine.THREE;
+/* tslint:disable */
 let TreeView = require("dnd-tree-view");
 let PerfectResize = require("perfect-resize");
+/* tslint:enable */
 
 let ui: {
   canvasElt: HTMLCanvasElement;
@@ -57,7 +59,7 @@ document.addEventListener("keydown", (event) => {
   if (document.querySelector(".dialog") != null) return;
   let activeElement = <HTMLElement>document.activeElement;
   while (activeElement != null) {
-    if (activeElement == ui.canvasElt || activeElement == ui.treeViewElt) break;
+    if (activeElement === ui.canvasElt || activeElement === ui.treeViewElt) break;
     activeElement = activeElement.parentElement;
   }
   if (activeElement == null) return;
@@ -182,7 +184,7 @@ ui.prefabOpenElt.addEventListener("click", (event) => {
   let node = data.sceneUpdater.sceneAsset.nodes.byId[selectedNode.dataset.id];
   let id = node.prefab.sceneAssetId;
   window.parent.postMessage({ type: "openEntry", id }, (<any>window.location).origin);
-})
+});
 
 for (let transformType in ui.transform) {
   let inputs: HTMLInputElement[] = (<any>ui).transform[transformType];
@@ -253,7 +255,7 @@ function onGridVisibleChange(event: UIEvent) {
 document.getElementById("show-light").addEventListener("change", (event: any) => {
   if (event.target.checked) engine.gameInstance.threeScene.add(engine.ambientLight);
   else engine.gameInstance.threeScene.remove(engine.ambientLight);
-})
+});
 
 export function createNodeElement(node: Node) {
   let liElt = document.createElement("li");
@@ -441,14 +443,32 @@ export function setInspectorPrefabScene(sceneAssetId: string) {
 }
 
 function onNewNodeClick() {
-  SupClient.dialogs.prompt("Enter a name for the actor.", null, "Actor", "Create", { pattern: SupClient.namePattern, title: SupClient.namePatternDescription }, (name) => {
+  let options = {
+    initialValue: "Actor",
+    validationLabel: "Create",
+    pattern: SupClient.namePattern,
+    title: SupClient.namePatternDescription
+  };
+
+  /* tslint:disable:no-unused-expression */
+  new SupClient.dialogs.PromptDialog("Enter a name for the actor.", options, (name) => {
+    /* tslint:enable:no-unused-expression */
     if (name == null) return;
     createNewNode(name, false);
   });
 }
 
 function onNewPrefabClick() {
-  SupClient.dialogs.prompt("Enter a name for the prefab.", null, "Prefab", "Create", { pattern: SupClient.namePattern, title: SupClient.namePatternDescription }, (name) => {
+  let options = {
+    initialValue: "Prefab",
+    validationLabel: "Create",
+    pattern: SupClient.namePattern,
+    title: SupClient.namePatternDescription
+  };
+
+  /* tslint:disable:no-unused-expression */
+  new SupClient.dialogs.PromptDialog("Enter a name for the prefab.", options, (name) => {
+    /* tslint:enable:no-unused-expression */
     if (name == null) return;
     createNewNode(name, true);
   });
@@ -483,7 +503,16 @@ function onRenameNodeClick() {
   let selectedNode = ui.nodesTreeView.selectedNodes[0];
   let node = data.sceneUpdater.sceneAsset.nodes.byId[selectedNode.dataset.id];
 
-  SupClient.dialogs.prompt("Enter a new name for the actor.", null, node.name, "Rename", { pattern: SupClient.namePattern, title: SupClient.namePatternDescription }, (newName) => {
+  let options = {
+    initialValue: node.name,
+    validationLabel: "Rename",
+    pattern: SupClient.namePattern,
+    title: SupClient.namePatternDescription
+  };
+
+  /* tslint:disable:no-unused-expression */
+  new SupClient.dialogs.PromptDialog("Enter a new name for the actor.", options, (newName) => {
+    /* tslint:enable:no-unused-expression */
     if (newName == null) return;
 
     socket.emit("edit:assets", info.assetId, "setNodeProperty", node.id, "name", newName, (err: string) => { if (err != null) alert(err); });
@@ -496,7 +525,16 @@ function onDuplicateNodeClick() {
   let selectedNode = ui.nodesTreeView.selectedNodes[0];
   let node = data.sceneUpdater.sceneAsset.nodes.byId[selectedNode.dataset.id];
 
-  SupClient.dialogs.prompt("Enter a name for the new actor.", null, node.name, "Duplicate", { pattern: SupClient.namePattern, title: SupClient.namePatternDescription }, (newName) => {
+  let options = {
+    initialValue: node.name,
+    validationLabel: "Duplicate",
+    pattern: SupClient.namePattern,
+    title: SupClient.namePatternDescription
+  };
+
+  /* tslint:disable:no-unused-expression */
+  new SupClient.dialogs.PromptDialog("Enter a name for the new actor.", options, (newName) => {
+    /* tslint:enable:no-unused-expression */
     if (newName == null) return;
     let options = SupClient.getTreeViewInsertionPoint(ui.nodesTreeView);
 
@@ -512,7 +550,9 @@ function onDuplicateNodeClick() {
 
 function onDeleteNodeClick() {
   if (ui.nodesTreeView.selectedNodes.length === 0) return;
-  SupClient.dialogs.confirm("Are you sure you want to delete the selected actors?", "Delete", (confirm) => {
+  /* tslint:disable:no-unused-expression */
+  new SupClient.dialogs.ConfirmDialog("Are you sure you want to delete the selected actors?", "Delete", (confirm) => {
+    /* tslint:enable:no-unused-expression */
     if (!confirm) return;
 
     for (let selectedNode of ui.nodesTreeView.selectedNodes) {
@@ -554,7 +594,7 @@ function onLayerChange(event: any) {
   if (ui.nodesTreeView.selectedNodes.length !== 1) return;
 
   let nodeId = ui.nodesTreeView.selectedNodes[0].dataset.id;
-  socket.emit("edit:assets", info.assetId, "setNodeProperty", nodeId, "layer", parseInt(event.target.value), (err: string) => { if (err != null) alert(err); });
+  socket.emit("edit:assets", info.assetId, "setNodeProperty", nodeId, "layer", parseInt(event.target.value, 10), (err: string) => { if (err != null) alert(err); });
 }
 
 function onPrefabInput(event: any) {
@@ -578,23 +618,23 @@ export function createComponentElement(nodeId: string, component: Component) {
   componentElt.dataset["componentId"] = component.id;
 
   let template = <any>document.getElementById("component-cartridge-template");
-  let clone = <any>document.importNode(template.content, true);;
+  let clone = <any>document.importNode(template.content, true);
 
   clone.querySelector(".type").textContent = component.type;
   let table = clone.querySelector(".settings");
 
   let editConfig = (command: string, ...args: any[]) => {
-    let callback = (err: string) => { if (err != null) alert(err); }
+    let callback = (err: string) => { if (err != null) alert(err); };
 
     // Override callback if one is given
-    let lastArg = args[args.length-1];
+    let lastArg = args[args.length - 1];
     if (typeof lastArg === "function") callback = args.pop();
 
     // Prevent setting a NaN value
     if (command === "setProperty" && typeof args[1] === "number" && isNaN(args[1])) return;
 
     socket.emit("edit:assets", info.assetId, "editComponent", nodeId, component.id, command, ...args, callback);
-  }
+  };
   let componentEditorPlugin = SupClient.componentEditorClasses[component.type];
   ui.componentEditors[component.id] = new componentEditorPlugin(table.querySelector("tbody"), component.config, data.projectClient, editConfig);
 
@@ -616,7 +656,9 @@ export function createComponentElement(nodeId: string, component: Component) {
 }
 
 function onNewComponentClick() {
-  SupClient.dialogs.select("Select the type of component to create.", ui.availableComponents, "Create", { size: 5 }, (type) => {
+  /* tslint:disable:no-unused-expression */
+  new SupClient.dialogs.SelectDialog("Select the type of component to create.", ui.availableComponents, "Create", { size: 5 }, (type) => {
+    /* tslint:enable:no-unused-expression */
     if (type == null) return;
 
     let nodeId = ui.nodesTreeView.selectedNodes[0].dataset.id;
@@ -626,7 +668,9 @@ function onNewComponentClick() {
 }
 
 function onDeleteComponentClick(event: any) {
-  SupClient.dialogs.confirm("Are you sure you want to delete this component?", "Delete", (confirm) => {
+  /* tslint:disable:no-unused-expression */
+  new SupClient.dialogs.ConfirmDialog("Are you sure you want to delete this component?", "Delete", (confirm) => {
+    /* tslint:enable:no-unused-expression */
     if (!confirm) return;
 
     let nodeId = ui.nodesTreeView.selectedNodes[0].dataset.id;
@@ -674,5 +718,5 @@ function onChangeCamera2DZ() {
   if (isNaN(z)) return;
 
   engine.cameraActor.threeObject.position.setZ(z);
-  engine.cameraActor.threeObject.updateMatrixWorld(false)
+  engine.cameraActor.threeObject.updateMatrixWorld(false);
 }

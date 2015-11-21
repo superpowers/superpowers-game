@@ -2,8 +2,10 @@ import TileSetRenderer from "../../components/TileSetRenderer";
 import TileSetRendererUpdater from "../../components/TileSetRendererUpdater";
 import * as querystring from "querystring";
 
+/* tslint:disable */
 let TreeView = require("dnd-tree-view");
 let PerfectResize = require("perfect-resize");
+/* tslint:enable */
 
 let qs = querystring.parse(window.location.search.slice(1));
 let info = { projectId: qs.project, assetId: qs.asset };
@@ -42,14 +44,14 @@ function start() {
 
   ui.gridWidthInput = document.querySelector("input.grid-width");
   ui.gridWidthInput.addEventListener("change", () => {
-    socket.emit("edit:assets", info.assetId, "setProperty", "grid.width", parseInt(ui.gridWidthInput.value), (err: string) => {
+    socket.emit("edit:assets", info.assetId, "setProperty", "grid.width", parseInt(ui.gridWidthInput.value, 10), (err: string) => {
       if (err != null) { alert(err); return; }
     });
   });
 
   ui.gridHeightInput = document.querySelector("input.grid-height");
   ui.gridHeightInput.addEventListener("change", () => {
-    socket.emit("edit:assets", info.assetId, "setProperty", "grid.height", parseInt(ui.gridHeightInput.value), (err: string) => {
+    socket.emit("edit:assets", info.assetId, "setProperty", "grid.height", parseInt(ui.gridHeightInput.value, 10), (err: string) => {
       if (err != null) { alert(err); return; }
     });
   });
@@ -118,20 +120,20 @@ onEditCommands.renameTileProperty = (tile: { x: number; y: number; }, name: stri
     ui.selectedProperty = newName;
     ui.propertiesTreeView.addToSelection(liElt);
   }
-}
+};
 
 onEditCommands.deleteTileProperty = (tile: { x: number; y: number; }, name: string) => {
   if (tile.x !== data.selectedTile.x && tile.y !== data.selectedTile.y) return;
 
   ui.propertiesTreeView.remove(ui.propertiesTreeView.treeRoot.querySelector(`li[data-name="${name}"]`));
-}
+};
 
 onEditCommands.editTileProperty = (tile: { x: number; y: number; }, name: string, value: string) => {
   if (tile.x !== data.selectedTile.x && tile.y !== data.selectedTile.y) return;
 
   let liElt = ui.propertiesTreeView.treeRoot.querySelector(`li[data-name="${name}"]`);
   liElt.querySelector(".value").value = value;
-}
+};
 
 function setupProperty(key: string, value: any) {
   switch (key) {
@@ -163,7 +165,7 @@ function selectTile(tile: { x: number; y: number; }) {
   }
 }
 
-function addTileProperty(name: string, value="") {
+function addTileProperty(name: string, value = "") {
   let liElt = document.createElement("li");
   liElt.dataset["name"] = name;
 
@@ -203,7 +205,14 @@ function onFileSelectChange(event: Event) {
 }
 
 function onDownloadTileset(event: Event) {
-  SupClient.dialogs.prompt("Enter a name for the image.", null, "Tile set", "Download", (name) => {
+  let options = {
+    initialValue: "Tile set",
+    validationLabel: "Download"
+  };
+
+  /* tslint:disable:no-unused-expression */
+  new SupClient.dialogs.PromptDialog("Enter a name for the image.", options, (name) => {
+    /* tslint:enable:no-unused-expression */
     if (name == null) return;
 
     let a = document.createElement("a");
@@ -231,7 +240,14 @@ function onPropertySelect() {
 }
 
 function onNewPropertyClick() {
-  SupClient.dialogs.prompt("Enter a name for the property.", null, "property", "Create", (name) => {
+  let options = {
+    initialValue: "property",
+    validationLabel: "Create"
+  };
+
+  /* tslint:disable:no-unused-expression */
+  new SupClient.dialogs.PromptDialog("Enter a name for the property.", options, (name) => {
+    /* tslint:enable:no-unused-expression */
     if (name == null) return;
 
     socket.emit("edit:assets", info.assetId, "addTileProperty", data.selectedTile, name, (err: string, id: string) => {
@@ -251,7 +267,14 @@ function onNewPropertyClick() {
 function onRenamePropertyClick() {
   if (ui.propertiesTreeView.selectedNodes.length !== 1) return;
 
-  SupClient.dialogs.prompt("Enter a new name for the property.", null, ui.selectedProperty, "Rename", (newName) => {
+  let options = {
+    initialValue: ui.selectedProperty,
+    validationLabel: "Rename"
+  };
+
+  /* tslint:disable:no-unused-expression */
+  new SupClient.dialogs.PromptDialog("Enter a new name for the property.", options, (newName) => {
+    /* tslint:enable:no-unused-expression */
     if (newName == null) return;
 
     socket.emit("edit:assets", info.assetId, "renameTileProperty", data.selectedTile, ui.selectedProperty, newName, (err: string) => { if (err != null) { alert(err); return; } });
@@ -260,7 +283,9 @@ function onRenamePropertyClick() {
 
 function onDeletePropertyClick() {
   if (ui.selectedProperty == null) return;
-  SupClient.dialogs.confirm("Are you sure you want to delete the selected property?", "Delete", (confirm) => {
+  /* tslint:disable:no-unused-expression */
+  new SupClient.dialogs.ConfirmDialog("Are you sure you want to delete the selected property?", "Delete", (confirm) => {
+    /* tslint:enable:no-unused-expression */
     if (!confirm) return;
 
     socket.emit("edit:assets", info.assetId, "deleteTileProperty", data.selectedTile, ui.selectedProperty, (err: string) => { if (err != null) { alert(err); return; } });
@@ -270,7 +295,7 @@ function onDeletePropertyClick() {
 // Drawing
 let lastTimestamp = 0;
 let accumulatedTime = 0;
-function tick(timestamp=0) {
+function tick(timestamp = 0) {
   requestAnimationFrame(tick);
 
   accumulatedTime += timestamp - lastTimestamp;
@@ -283,7 +308,7 @@ function tick(timestamp=0) {
 
 function handleTilesetArea() {
   if (data == null || data.tileSetUpdater.tileSetAsset == null) return;
-  
+
   let pub = data.tileSetUpdater.tileSetAsset.pub;
   if (pub.texture == null) return;
 
@@ -294,7 +319,6 @@ function handleTilesetArea() {
     let ratio = data.tileSetUpdater.tileSetAsset.pub.grid.width / data.tileSetUpdater.tileSetAsset.pub.grid.height;
     let y = Math.floor(mouseY * ratio);
 
-    
     if (x >= 0 && x < pub.texture.image.width / pub.grid.width &&
     y >= 0 && y < pub.texture.image.height / pub.grid.height &&
     (x !== data.selectedTile.x || y !== data.selectedTile.y)) {
