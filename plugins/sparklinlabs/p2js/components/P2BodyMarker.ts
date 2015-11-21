@@ -15,7 +15,7 @@ export default class P2BodyMarker extends SupEngine.ActorComponent {
     if (this.mesh != null) this.mesh.visible = active;
   }
 
-  setRectangle(width: number, height: number) {
+  setBox(width: number, height: number) {
     if (this.mesh != null) this._clearRenderer();
 
     let geometry = new THREE.Geometry();

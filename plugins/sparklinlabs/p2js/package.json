@@ -8,6 +8,6 @@
     "url": "https://bitbucket.org/superpowers/sup-game-sparklinlabs-plugins"
   },
   "dependencies": {
-    "p2": "^0.6.0"
+    "p2": "^0.7.1"
   }
 }

@@ -9,7 +9,7 @@ export default class P2BodyMarkerUpdater {
     this.config = config;
 
     switch (this.config.shape) {
-      case "rectangle": { this.bodyRenderer.setRectangle(this.config.width, this.config.height); break; }
+      case "box": { this.bodyRenderer.setBox(this.config.width, this.config.height); break; }
       case "circle": { this.bodyRenderer.setCircle(this.config.radius); break; }
     }
     this.bodyRenderer.setOffset(this.config.offsetX, this.config.offsetY);
@@ -18,8 +18,8 @@ export default class P2BodyMarkerUpdater {
   destroy() {}
 
   config_setProperty(path: string, value: any) {
-    if (path === "width" || path === "height" || (path === "shape" && value === "rectangle")) {
-      this.bodyRenderer.setRectangle(this.config.width, this.config.height);
+    if (path === "width" || path === "height" || (path === "shape" && value === "box")) {
+      this.bodyRenderer.setBox(this.config.width, this.config.height);
     }
 
     if (path === "radius" || (path === "shape" && value === "circle")) {

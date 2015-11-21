@@ -41,15 +41,15 @@ export default class P2BodyEditor {
 
     let shapeRow = SupClient.table.appendRow(this.tbody, "Shape");
     this.fields["shape"] = SupClient.table.appendSelectBox(shapeRow.valueCell, {
-      "rectangle": "Rectangle",
+      "box": "Box",
       "circle": "Circle"
     });
-    this.fields["shape"].value = config.shape
+    this.fields["shape"].value = config.shape;
     this.fields["shape"].addEventListener("change", (event: any) => {
       this.editConfig("setProperty", "shape", event.target.value);
     });
 
-    // Rectangle
+    // Box
     this.widthRow = SupClient.table.appendRow(this.tbody, "Width");
     this.shapeRows.push(this.widthRow.row);
     this.fields["width"] = SupClient.table.appendNumberField(this.widthRow.valueCell, config.width, 0);
@@ -80,7 +80,7 @@ export default class P2BodyEditor {
     this.shapeRows.length = 0;
 
     switch (shape) {
-      case "rectangle": {
+      case "box": {
         this.tbody.appendChild(this.widthRow.row);
         this.shapeRows.push(this.widthRow.row);
         this.tbody.appendChild(this.heightRow.row);

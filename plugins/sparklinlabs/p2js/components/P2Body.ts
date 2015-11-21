@@ -42,21 +42,21 @@ export default class P2Body extends SupEngine.ActorComponent {
 
     this.shape = config.shape;
     switch (this.shape) {
-      case "rectangle": {
+      case "box": {
         this.width = (config.width != null) ? config.width : 0.5;
         this.height = (config.height != null) ? config.height : 0.5;
-        this.body.addShape(new (<any>window).p2.Rectangle(this.width, this.height))
+        this.body.addShape(new (<any>window).p2.Box({ width: this.width, height: this.height }));
         break;
       }
       case "circle": {
         this.radius = (config.radius != null) ? config.radius : 1;
-        this.body.addShape(new (<any>window).p2.Circle(this.radius))
+        this.body.addShape(new (<any>window).p2.Circle({ radius: this.radius }));
         break;
       }
       }
-    this.body.position = [this.actorPosition.x, this.actorPosition.y]
-    this.body.shapeOffsets[0] = [this.offsetX, this.offsetY]
-    this.body.angle = this.actorAngles.z
+    this.body.position = [ this.actorPosition.x, this.actorPosition.y ];
+    this.body.shapes[0].position = [ this.offsetX, this.offsetY ];
+    this.body.angle = this.actorAngles.z;
   }
 
   update() {
