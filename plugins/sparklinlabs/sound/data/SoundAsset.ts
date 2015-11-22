@@ -15,11 +15,11 @@ export default class SoundAsset extends SupCore.Data.Base.Asset {
 
     sound: { type: "buffer" },
     streaming: { type: "boolean", mutable: true }
-  }
+  };
 
   pub: SoundAssetPub;
 
-  constructor(id: string, pub: any, server?: ProjectServer) {
+  constructor(id: string, pub: SoundAssetPub, server?: ProjectServer) {
     super(id, pub, SoundAsset.schema, server);
   }
 
@@ -73,7 +73,7 @@ export default class SoundAsset extends SupCore.Data.Base.Asset {
     });
   }
 
-  server_upload(client: any, sound: any, callback: (err: string, sound?: Buffer) => any) {
+  server_upload(client: any, sound: Buffer, callback: (err: string, sound?: Buffer) => any) {
     if (!(sound instanceof Buffer)) { callback("Sound must be an ArrayBuffer"); return; }
 
     this.pub.sound = sound;
@@ -82,7 +82,7 @@ export default class SoundAsset extends SupCore.Data.Base.Asset {
     this.emit("change");
   }
 
-  client_upload(sound: any) {
+  client_upload(sound: Buffer) {
     this.pub.sound = sound;
   }
 }
