@@ -104,7 +104,7 @@ window.fetch("plugins.json").then((response) => response.json()).then((pluginsIn
   }, (err) => {
     if (err != null) console.log(err);
     // Load game
-    let buildPath = (qs.project != null) ? `/builds/${qs.project}/${qs.build}/` : "../../";
+    let buildPath = (qs.project != null) ? `/builds/${qs.project}/${qs.build}/` : "./";
     player = new SupRuntime.Player(canvas, buildPath, { debug: qs.debug != null });
     player.load(onLoadProgress, onLoaded);
   });
