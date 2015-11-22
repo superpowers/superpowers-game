@@ -1,6 +1,10 @@
 import SoundAsset from "../../data/SoundAsset";
 
-let data: any = null;
+let data: {
+  projectClient: SupClient.ProjectClient;
+  asset: SoundAsset;
+} = {} as any;
+
 let ui: { streamingSelect?: HTMLSelectElement; audioElt?: HTMLAudioElement; } = {};
 let socket: SocketIOClient.Socket = null;
 
@@ -8,8 +12,6 @@ function start() {
   socket = SupClient.connect(SupClient.query.project);
   socket.on("connect", onConnected);
   socket.on("disconnect", SupClient.onDisconnected);
-  socket.on("edit:assets", onAssetEdited);
-  socket.on("trash:assets", SupClient.onAssetTrashed);
   SupClient.setupHotkeys();
 
   // Main
@@ -34,19 +36,25 @@ function start() {
 let onAssetCommands: any = {};
 
 function onConnected() {
-  data = {};
-  socket.emit("sub", "assets", SupClient.query.asset, onAssetReceived);
+  data.projectClient = new SupClient.ProjectClient(socket);
+
+  let soundSubscriber = {
+    onAssetReceived,
+    onAssetEdited,
+    onAssetTrashed: SupClient.onAssetTrashed
+  };
+
+  data.projectClient.subAsset(SupClient.query.asset, "sound", soundSubscriber);
 }
 
-function onAssetReceived(err: string, asset: any) {
-  data.asset = new SoundAsset(SupClient.query.asset, asset);
+function onAssetReceived(err: string, asset: SoundAsset) {
+  data.asset = asset;
 
   setupSound();
   setupProperty("streaming", data.asset.pub.streaming);
 }
 
 function onAssetEdited(id: string, command: string, ...args: any[]) {
-  Object.getPrototypeOf(data.asset)[`client_${command}`].apply(data.asset, args);
   if (onAssetCommands[command] != null) onAssetCommands[command].apply(data.asset, args);
 }
 
