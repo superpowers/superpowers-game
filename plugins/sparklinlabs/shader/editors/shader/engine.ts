@@ -10,9 +10,12 @@ let gameInstance = new SupEngine.GameInstance(canvasElt);
 let cameraActor = new SupEngine.Actor(gameInstance, "Camera");
 cameraActor.setLocalPosition(new THREE.Vector3(0, 0, 10));
 let cameraComponent = new SupEngine.componentClasses["Camera"](cameraActor);
-let cameraControls = new SupEngine.editorComponentClasses["Camera3DControls"](cameraActor, cameraComponent);
+/* tslint:disable:no-unused-expression */
+new SupEngine.editorComponentClasses["Camera3DControls"](cameraActor, cameraComponent);
+/* tslint:enable:no-unused-expression */
 
-let leonardTexture = THREE.ImageUtils.loadTexture("/plugins/sparklinlabs/shader/editors/shader/leonard.png");
+let loader = new THREE.TextureLoader();
+let leonardTexture = loader.load("leonard.png", undefined);
 leonardTexture.magFilter = THREE.NearestFilter;
 leonardTexture.minFilter = THREE.NearestFilter;
 
