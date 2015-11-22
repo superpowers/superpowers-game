@@ -32,7 +32,7 @@ export default class TileSetRendererUpdater {
       onAssetReceived: this._onTileSetAssetReceived,
       onAssetEdited: this._onTileSetAssetEdited,
       onAssetTrashed: this._onTileSetAssetTrashed
-    }
+    };
 
     if (this.tileSetAssetId != null) this.client.subAsset(this.tileSetAssetId, "tileSet", this.tileSetSubscriber);
   }
@@ -68,8 +68,8 @@ export default class TileSetRendererUpdater {
       }
 
       if (this.receiveAssetCallbacks != null && this.receiveAssetCallbacks.tileSet != null) this.receiveAssetCallbacks.tileSet();
-    })
-  }
+    });
+  };
 
   _prepareTexture(texture: THREE.Texture, callback: Function) {
     if (texture == null) {
@@ -82,14 +82,17 @@ export default class TileSetRendererUpdater {
   }
 
   _onTileSetAssetEdited = (id: string, command: string, ...args: any[]) => {
+    let callEditCallback = true;
     let commandFunction = (<any>this)[`_onEditCommand_${command}`];
-    if (commandFunction != null) commandFunction.apply(this, args);
+    if (commandFunction != null) {
+      if (commandFunction.apply(this, args) === false) callEditCallback = false;
+    }
 
-    if (this.editAssetCallbacks != null && this.editAssetCallbacks.tileSet != null) {
+    if (callEditCallback && this.editAssetCallbacks != null) {
       let editCallback = this.editAssetCallbacks.tileSet[command];
       if (editCallback != null) editCallback.apply(null, args);
     }
-  }
+  };
 
   _onEditCommand_upload() {
     let texture = this.tileSetAsset.pub.texture;
@@ -100,6 +103,9 @@ export default class TileSetRendererUpdater {
       let height = texture.image.height / this.tileSetAsset.pub.grid.height;
       this.tileSetRenderer.gridRenderer.resize(width, height);
       this.tileSetRenderer.gridRenderer.setRatio({ x: 1, y: this.tileSetAsset.pub.grid.width / this.tileSetAsset.pub.grid.height });
+
+      let editCallback = (this.editAssetCallbacks != null) ? this.editAssetCallbacks.tileSet["upload"] : null;
+      if (editCallback != null) editCallback();
     });
   }
 
@@ -124,5 +130,5 @@ export default class TileSetRendererUpdater {
       // and let editors handle things how they want
       SupClient.onAssetTrashed();
     }
-  }
+  };
 }
