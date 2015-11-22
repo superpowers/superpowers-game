@@ -1,5 +1,10 @@
 import * as async from "async";
 
+interface Project {
+  name: string;
+  assets: Asset[];
+}
+
 interface Asset {
   id: string;
   name: string;
@@ -20,7 +25,7 @@ export default class Player {
   entriesByPath: {[name: string]: any} = {};
   resources: {[name: string]: any} = {};
 
-  _assetsById: {[name: string]: any} = {};
+  private assetsById: {[name: string]: any} = {};
   outerAssetsById: {[name: string]: any} = {};
 
   resourcesToLoad: string[];
@@ -31,7 +36,7 @@ export default class Player {
   lastTimestamp: number;
   tickAnimationFrameId: number;
 
-  constructor(canvas: HTMLCanvasElement, dataURL: string, options: {debug?: boolean; enableOnExit?: boolean;}) {
+  constructor(canvas: HTMLCanvasElement, dataURL: string, options: { debug?: boolean; enableOnExit?: boolean; }) {
     this.canvas = canvas;
     this.dataURL = dataURL;
 
@@ -46,7 +51,7 @@ export default class Player {
       progress++;
       let total = this.resourcesToLoad.length + this.assetsToLoad.length;
       progressCallback(progress, total);
-    }
+    };
     async.series([
       (cb) => { this._loadManifest(cb); },
       (cb) => { this._loadResources(innerProgressCallback, cb); },
@@ -57,17 +62,17 @@ export default class Player {
     ], callback);
   }
 
-  _loadManifest(callback: any) {
-    this.getAssetData("game.json", "json", (err: any, gameData: {name: string; assets: Asset[]}) => {
+  _loadManifest(callback: Function) {
+    this.getAssetData("project.json", "json", (err: any, project: Project) => {
       if (err != null) { callback(new Error("Failed to load game manifest")); return; }
 
-      this.gameName = gameData.name;
-      document.title = gameData.name;
+      this.gameName = project.name;
+      document.title = project.name;
 
       this.resourcesToLoad = Object.keys(SupRuntime.resourcePlugins);
 
       this.assetsToLoad = [];
-      let walk = (asset: Asset, parent="") => {
+      let walk = (asset: Asset, parent = "") => {
         let children: string[];
         if (asset.children != null) {
           children = [];
@@ -78,8 +83,8 @@ export default class Player {
         parent += `${asset.name}/`;
         if (asset.children == null) return;
         for (let child of asset.children) { walk(child, parent); }
-      }
-      for (let asset of gameData.assets) { walk(asset); }
+      };
+      for (let asset of project.assets) { walk(asset); }
 
       callback();
     });
@@ -92,12 +97,12 @@ export default class Player {
     let onResourceLoaded = (err: any, resourceName: string, resource: any) => {
       if (err != null) { callback(new Error(`Failed to load resource ${resourceName}: ${err.message}`)); return; }
 
-      this.resources[resourceName] = resource
+      this.resources[resourceName] = resource;
 
       progressCallback();
       resourcesLoaded++;
       if (resourcesLoaded === this.resourcesToLoad.length) callback();
-    }
+    };
 
     // NOTE: Have to use .forEach because of TS4091 (closure references block-scoped variable)
     this.resourcesToLoad.forEach((resourceName) => {
@@ -123,12 +128,12 @@ export default class Player {
 
       this.entriesById[entry.id] = entry;
       this.entriesByPath[entry.path] = entry;
-      this._assetsById[entry.id] = asset;
+      this.assetsById[entry.id] = asset;
 
       progressCallback();
       assetsLoaded++;
       if (assetsLoaded === this.assetsToLoad.length) callback();
-    }
+    };
 
     // NOTE: Have to use .forEach because of TS4091 (closure references block-scoped variable)
     this.assetsToLoad.forEach((entry) => {
@@ -179,7 +184,7 @@ export default class Player {
     this.tick();
   }
 
-  tick = (timestamp=0) => {
+  tick = (timestamp = 0) => {
     this.tickAnimationFrameId = requestAnimationFrame(this.tick);
 
     this.accumulatedTime += timestamp - this.lastTimestamp;
@@ -190,7 +195,7 @@ export default class Player {
     if (this.gameInstance.exited) { cancelAnimationFrame(this.tickAnimationFrameId); return; }
 
     if (updates > 0) this.gameInstance.draw();
-  }
+  };
 
   getAssetData(path: string, responseType: string, callback: (err: Error, data?: any) => any) {
     window.fetch(`${this.dataURL}${path}`)
@@ -205,7 +210,7 @@ export default class Player {
 
   getOuterAsset(assetId: number) {
     let outerAsset = this.outerAssetsById[assetId];
-    let asset = this._assetsById[assetId];
+    let asset = this.assetsById[assetId];
     let entry = this.entriesById[assetId];
 
     if (outerAsset == null && asset != null) {
