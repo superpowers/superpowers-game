@@ -2,16 +2,17 @@ import * as async from "async";
 
 interface Project {
   name: string;
-  assets: Asset[];
+  assets: Entry[];
 }
 
-interface Asset {
+interface Entry {
   id: string;
   name: string;
-  path: string;
-  storagePath: string;
   type: string;
   children?: any[];
+
+  path: string;
+  storagePath: string;
 }
 
 export default class Player {
@@ -21,16 +22,16 @@ export default class Player {
 
   gameInstance: SupEngine.GameInstance;
 
-  entriesById: {[name: string]: any} = {};
-  entriesByPath: {[name: string]: any} = {};
-  resources: {[name: string]: any} = {};
+  entriesById: { [name: string]: any; } = {};
+  entriesByPath: { [name: string]: any; } = {};
+  resources: { [name: string]: any; } = {};
 
-  private assetsById: {[name: string]: any} = {};
-  outerAssetsById: {[name: string]: any} = {};
+  private assetsById: { [name: string]: any; } = {};
+  outerAssetsById: { [name: string]: any; } = {};
 
   resourcesToLoad: string[];
 
-  assetsToLoad: Asset[];
+  assetsToLoad: Entry[];
 
   accumulatedTime: number;
   lastTimestamp: number;
@@ -72,7 +73,7 @@ export default class Player {
       this.resourcesToLoad = Object.keys(SupRuntime.resourcePlugins);
 
       this.assetsToLoad = [];
-      let walk = (asset: Asset, parent = "") => {
+      let walk = (asset: Entry, parent = "") => {
         let children: string[];
         if (asset.children != null) {
           children = [];

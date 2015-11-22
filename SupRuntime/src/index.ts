@@ -13,7 +13,7 @@ interface RuntimePlugin {
 export let plugins: { [name: string]: RuntimePlugin } = {}
 export function registerPlugin(name: string, plugin: RuntimePlugin) {
   if (plugins[name] != null) {
-    console.error(`SupRuntime.register: Tried to register two or more plugins named "${name}"`);
+    console.error(`SupRuntime.registerPlugin: Tried to register two or more plugins named "${name}"`);
     return;
   }
 
