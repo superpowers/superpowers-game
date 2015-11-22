@@ -66,7 +66,7 @@ let onLoaded = (err: Error) => {
       loadingElt.parentElement.removeChild(loadingElt);
 
       player.run();
-      return
+      return;
     }, (qs.project == null) ? 500 : 0);
   }, (qs.project == null) ? 500 : 0);
 }
