@@ -7,12 +7,32 @@ interface KeyState {
   wasJustReleased: boolean;
 }
 
+interface MouseButtonState {
+  isDown: boolean;
+  wasJustPressed: boolean;
+  wasJustReleased: boolean;
+}
+
+interface TouchState {
+  isDown: boolean;
+  wasStarted: boolean;
+  wasEnded: boolean;
+  position: { x: number; y: number; };
+}
+
+interface GamepadButtonState {
+  isDown: boolean;
+  wasJustPressed: boolean;
+  wasJustReleased: boolean;
+  value: number;
+}
+
 export default class Input extends EventEmitter {
   static maxTouches = 10;
 
   canvas: HTMLCanvasElement;
 
-  mouseButtons: Array<{isDown: boolean; wasJustPressed: boolean; wasJustReleased: boolean;}> = [];
+  mouseButtons: MouseButtonState[] = [];
   mouseButtonsDown: boolean[] = [];
   mousePosition = { x: 0, y: 0 };
   newMousePosition: { x: number; y: number; };
@@ -20,7 +40,7 @@ export default class Input extends EventEmitter {
   newMouseDelta = { x: 0, y: 0 };
   newScrollDelta: number;
 
-  touches: Array<{isDown: boolean; wasStarted: boolean; wasEnded: boolean; position: {x: number; y: number;}}> = [];
+  touches: TouchState[] = [];
   touchesDown: boolean[] = [];
 
   keyboardButtons: KeyState[] = [];
@@ -29,15 +49,15 @@ export default class Input extends EventEmitter {
   textEntered = "";
   newTextEntered = "";
 
-  gamepadsButtons: { isDown: boolean; wasJustPressed: boolean; wasJustReleased: boolean; value: number; }[][] = [];
+  gamepadsButtons: GamepadButtonState[][] = [];
   gamepadsAxes: number[][] = [];
 
   exited = false;
 
-  _wantsPointerLock = false;
-  _wantsFullscreen = false;
-  _wasPointerLocked = false;
-  _wasFullscreen = false;
+  private wantsPointerLock = false;
+  private wantsFullscreen = false;
+  private wasPointerLocked = false;
+  private wasFullscreen = false;
 
   constructor(canvas: HTMLCanvasElement, options: { enableOnExit?: boolean } = {}) {
     super();
@@ -54,21 +74,21 @@ export default class Input extends EventEmitter {
     this.canvas.addEventListener("DOMMouseScroll", this._onMouseWheel);
     this.canvas.addEventListener("mousewheel", this._onMouseWheel);
 
-    if ("onpointerlockchange" in document) document.addEventListener('pointerlockchange', this._onPointerLockChange, false);
-    else if ("onmozpointerlockchange" in document) document.addEventListener('mozpointerlockchange', this._onPointerLockChange, false);
-    else if ("onwebkitpointerlockchange" in document) document.addEventListener('webkitpointerlockchange', this._onPointerLockChange, false);
+    if ("onpointerlockchange" in document) document.addEventListener("pointerlockchange", this._onPointerLockChange, false);
+    else if ("onmozpointerlockchange" in document) document.addEventListener("mozpointerlockchange", this._onPointerLockChange, false);
+    else if ("onwebkitpointerlockchange" in document) document.addEventListener("webkitpointerlockchange", this._onPointerLockChange, false);
 
-    if ("onpointerlockerror" in document) document.addEventListener('pointerlockerror', this._onPointerLockError, false);
-    else if ("onmozpointerlockerror" in document) document.addEventListener('mozpointerlockerror', this._onPointerLockError, false);
-    else if ("onwebkitpointerlockerror" in document) document.addEventListener('webkitpointerlockerror', this._onPointerLockError, false);
+    if ("onpointerlockerror" in document) document.addEventListener("pointerlockerror", this._onPointerLockError, false);
+    else if ("onmozpointerlockerror" in document) document.addEventListener("mozpointerlockerror", this._onPointerLockError, false);
+    else if ("onwebkitpointerlockerror" in document) document.addEventListener("webkitpointerlockerror", this._onPointerLockError, false);
 
-    if ("onfullscreenchange" in document) document.addEventListener('fullscreenchange', this._onFullscreenChange, false);
-    else if ("onmozfullscreenchange" in document) document.addEventListener('mozfullscreenchange', this._onFullscreenChange, false);
-    else if ("onwebkitfullscreenchange" in document) document.addEventListener('webkitfullscreenchange', this._onFullscreenChange, false);
+    if ("onfullscreenchange" in document) document.addEventListener("fullscreenchange", this._onFullscreenChange, false);
+    else if ("onmozfullscreenchange" in document) document.addEventListener("mozfullscreenchange", this._onFullscreenChange, false);
+    else if ("onwebkitfullscreenchange" in document) document.addEventListener("webkitfullscreenchange", this._onFullscreenChange, false);
 
-    if ("onfullscreenerror" in document) document.addEventListener('fullscreenerror', this._onFullscreenError, false);
-    else if ("onmozfullscreenerror" in document) document.addEventListener('mozfullscreenerror', this._onFullscreenError, false);
-    else if ("onwebkitfullscreenerror" in document) document.addEventListener('webkitfullscreenerror', this._onFullscreenError, false);
+    if ("onfullscreenerror" in document) document.addEventListener("fullscreenerror", this._onFullscreenError, false);
+    else if ("onmozfullscreenerror" in document) document.addEventListener("mozfullscreenerror", this._onFullscreenError, false);
+    else if ("onwebkitfullscreenerror" in document) document.addEventListener("webkitfullscreenerror", this._onFullscreenError, false);
 
     // Touch
     this.canvas.addEventListener("touchstart", this._onTouchStart);
@@ -112,21 +132,21 @@ export default class Input extends EventEmitter {
     this.canvas.removeEventListener("DOMMouseScroll", this._onMouseWheel);
     this.canvas.removeEventListener("mousewheel", this._onMouseWheel);
 
-    if ("onpointerlockchange" in document) document.removeEventListener('pointerlockchange', this._onPointerLockChange, false);
-    else if ("onmozpointerlockchange" in document) document.removeEventListener('mozpointerlockchange', this._onPointerLockChange, false);
-    else if ("onwebkitpointerlockchange" in document) document.removeEventListener('webkitpointerlockchange', this._onPointerLockChange, false);
+    if ("onpointerlockchange" in document) document.removeEventListener("pointerlockchange", this._onPointerLockChange, false);
+    else if ("onmozpointerlockchange" in document) document.removeEventListener("mozpointerlockchange", this._onPointerLockChange, false);
+    else if ("onwebkitpointerlockchange" in document) document.removeEventListener("webkitpointerlockchange", this._onPointerLockChange, false);
 
-    if ("onpointerlockerror" in document) document.removeEventListener('pointerlockerror', this._onPointerLockError, false);
-    else if ("onmozpointerlockerror" in document) document.removeEventListener('mozpointerlockerror', this._onPointerLockError, false);
-    else if ("onwebkitpointerlockerror" in document) document.removeEventListener('webkitpointerlockerror', this._onPointerLockError, false);
+    if ("onpointerlockerror" in document) document.removeEventListener("pointerlockerror", this._onPointerLockError, false);
+    else if ("onmozpointerlockerror" in document) document.removeEventListener("mozpointerlockerror", this._onPointerLockError, false);
+    else if ("onwebkitpointerlockerror" in document) document.removeEventListener("webkitpointerlockerror", this._onPointerLockError, false);
 
-    if ("onfullscreenchange" in document) document.removeEventListener('fullscreenchange', this._onFullscreenChange, false);
-    else if ("onmozfullscreenchange" in document) document.removeEventListener('mozfullscreenchange', this._onFullscreenChange, false);
-    else if ("onwebkitfullscreenchange" in document) document.removeEventListener('webkitfullscreenchange', this._onFullscreenChange, false);
+    if ("onfullscreenchange" in document) document.removeEventListener("fullscreenchange", this._onFullscreenChange, false);
+    else if ("onmozfullscreenchange" in document) document.removeEventListener("mozfullscreenchange", this._onFullscreenChange, false);
+    else if ("onwebkitfullscreenchange" in document) document.removeEventListener("webkitfullscreenchange", this._onFullscreenChange, false);
 
-    if ("onfullscreenerror" in document) document.removeEventListener('fullscreenerror', this._onFullscreenError, false);
-    else if ("onmozfullscreenerror" in document) document.removeEventListener('mozfullscreenerror', this._onFullscreenError, false);
-    else if ("onwebkitfullscreenerror" in document) document.removeEventListener('webkitfullscreenerror', this._onFullscreenError, false);
+    if ("onfullscreenerror" in document) document.removeEventListener("fullscreenerror", this._onFullscreenError, false);
+    else if ("onmozfullscreenerror" in document) document.removeEventListener("mozfullscreenerror", this._onFullscreenError, false);
+    else if ("onwebkitfullscreenerror" in document) document.removeEventListener("webkitfullscreenerror", this._onFullscreenError, false);
 
     this.canvas.removeEventListener("touchstart", this._onTouchStart);
     this.canvas.removeEventListener("touchend", this._onTouchEnd);
@@ -180,14 +200,14 @@ export default class Input extends EventEmitter {
 
 
   lockMouse() {
-    this._wantsPointerLock = true;
+    this.wantsPointerLock = true;
     this.newMouseDelta.x = 0;
     this.newMouseDelta.y = 0;
   }
 
   unlockMouse() {
-    this._wantsPointerLock = false;
-    this._wasPointerLocked = false;
+    this.wantsPointerLock = false;
+    this.wasPointerLocked = false;
     if (!this._isPointerLocked()) return;
 
     if ((<any>document).exitPointerLock) (<any>document).exitPointerLock();
@@ -209,24 +229,24 @@ export default class Input extends EventEmitter {
 
   _onPointerLockChange = () => {
     let isPointerLocked = this._isPointerLocked();
-    if (this._wasPointerLocked != isPointerLocked) {
+    if (this.wasPointerLocked != isPointerLocked) {
       this.emit("mouseLockStateChange", isPointerLocked ? "active" : "suspended");
-      this._wasPointerLocked = isPointerLocked;
+      this.wasPointerLocked = isPointerLocked;
     }
-  }
+  };
 
   _onPointerLockError = () => {
-    if (this._wasPointerLocked) {
+    if (this.wasPointerLocked) {
       this.emit("mouseLockStateChange", "suspended");
-      this._wasPointerLocked = false;
+      this.wasPointerLocked = false;
     }
-  }
+  };
 
 
-  goFullscreen() { this._wantsFullscreen = true; }
+  goFullscreen() { this.wantsFullscreen = true; }
   exitFullscreen() {
-    this._wantsFullscreen = false;
-    this._wasFullscreen = false;
+    this.wantsFullscreen = false;
+    this.wasFullscreen = false;
     if (!this._isFullscreen()) return;
 
     if((<any>document).exitFullscreen) (<any>document).exitFullscreen();
@@ -248,27 +268,27 @@ export default class Input extends EventEmitter {
 
   _onFullscreenChange = () => {
     let isFullscreen = this._isFullscreen();
-    if (this._wasFullscreen != isFullscreen) {
+    if (this.wasFullscreen != isFullscreen) {
       this.emit("fullscreenStateChange", isFullscreen ? "active" : "suspended");
-      this._wasFullscreen = isFullscreen;
+      this.wasFullscreen = isFullscreen;
     }
-  }
+  };
 
   _onFullscreenError = () => {
-    if (this._wasFullscreen) {
+    if (this.wasFullscreen) {
       this.emit("fullscreenStateChange", "suspended");
-      this._wasFullscreen = false;
+      this.wasFullscreen = false;
     }
-  }
+  };
 
 
-  _onBlur = () => { this.reset(); }
+  _onBlur = () => { this.reset(); };
 
   _onMouseMove = (event: any) => {
     event.preventDefault();
 
-    if (this._wantsPointerLock) {
-      if (this._wasPointerLocked) {
+    if (this.wantsPointerLock) {
+      if (this.wasPointerLocked) {
         let delta = { x: 0, y: 0 };
         if (event.movementX != null) { delta.x = event.movementX; delta.y = event.movementY; }
         else if (event.webkitMovementX != null) { delta.x = event.webkitMovementX; delta.y = event.webkitMovementY; }
@@ -281,34 +301,34 @@ export default class Input extends EventEmitter {
       let rect = event.target.getBoundingClientRect();
       this.newMousePosition = { x: event.clientX - rect.left, y: event.clientY - rect.top };
     }
-  }
+  };
 
   _onMouseDown = (event: MouseEvent) => {
     event.preventDefault();
     this.canvas.focus();
     this.mouseButtonsDown[event.button] = true;
 
-    if (this._wantsFullscreen && !this._wasFullscreen) this._doGoFullscreen();
-    if (this._wantsPointerLock && !this._wasPointerLocked) this._doPointerLock();
-  }
+    if (this.wantsFullscreen && !this.wasFullscreen) this._doGoFullscreen();
+    if (this.wantsPointerLock && !this.wasPointerLocked) this._doPointerLock();
+  };
 
   _onMouseUp = (event: MouseEvent) => {
     if (this.mouseButtonsDown[event.button]) event.preventDefault();
     this.mouseButtonsDown[event.button] = false;
 
-    if (this._wantsFullscreen && !this._wasFullscreen) this._doGoFullscreen();
-    if (this._wantsPointerLock && !this._wasPointerLocked) this._doPointerLock();
-  }
+    if (this.wantsFullscreen && !this.wasFullscreen) this._doGoFullscreen();
+    if (this.wantsPointerLock && !this.wasPointerLocked) this._doPointerLock();
+  };
 
   _onContextMenu = (event: Event) => {
     event.preventDefault();
-  }
+  };
 
   _onMouseWheel = (event: MouseWheelEvent) => {
     event.preventDefault();
     this.newScrollDelta = (event.wheelDelta > 0 || event.detail < 0) ? 1 : -1;
     return false;
-  }
+  };
 
   _onTouchStart = (event: any) => {
     event.preventDefault();
@@ -326,7 +346,7 @@ export default class Input extends EventEmitter {
         this.mouseButtonsDown[0] = true;
       }
     }
-  }
+  };
 
   _onTouchEnd = (event: any) => {
     event.preventDefault();
@@ -336,7 +356,7 @@ export default class Input extends EventEmitter {
       this.touchesDown[touch.identifier] = false;
       if (touch.identifier === 0) this.mouseButtonsDown[0] = false;
     }
-  }
+  };
 
   _onTouchMove = (event: any) => {
     event.preventDefault();
@@ -350,7 +370,7 @@ export default class Input extends EventEmitter {
 
       if (touch.identifier === 0) this.newMousePosition = { x: touch.clientX - rect.left, y: touch.clientY - rect.top };
     }
-  }
+  };
 
   // TODO: stop using keyCode when KeyboardEvent.code is supported more widely
   // See https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent.code
@@ -363,7 +383,7 @@ export default class Input extends EventEmitter {
     else this.autoRepeatedKey = event.keyCode;
 
     return !isControlKey;
-  }
+  };
 
   _onKeyPress = (event: KeyboardEvent) => {
     if (event.keyCode > 0 && event.keyCode < 32) return;
@@ -371,11 +391,11 @@ export default class Input extends EventEmitter {
     if (event.char != null) this.newTextEntered += event.char;
     else if (event.charCode !== 0) this.newTextEntered += String.fromCharCode(event.charCode);
     else this.newTextEntered += String.fromCharCode(event.keyCode);
-  }
+  };
 
   _onKeyUp = (event: KeyboardEvent) => {
     this.keyboardButtonsDown[event.keyCode] = false;
-  }
+  };
 
   _doExitCallback = () => {
     // NOTE: It seems window.onbeforeunload might be called twice
@@ -383,14 +403,14 @@ export default class Input extends EventEmitter {
     // http://stackoverflow.com/questions/8711393/onbeforeunload-fires-twice
     if (!this.exited) this.emit("exit");
     this.exited = true;
-  }
+  };
 
   update() {
     this.mouseButtonsDown[5] = this.newScrollDelta > 0;
     this.mouseButtonsDown[6] = this.newScrollDelta < 0;
     if (this.newScrollDelta !== 0) this.newScrollDelta = 0;
 
-    if (this._wantsPointerLock) {
+    if (this.wantsPointerLock) {
       this.mouseDelta.x = this.newMouseDelta.x;
       this.mouseDelta.y = this.newMouseDelta.y;
       this.newMouseDelta.x = 0;
@@ -463,16 +483,16 @@ export default class Input extends EventEmitter {
       }
 
       for (let stick = 0; stick < 2; stick++) {
-        if (gamepad.axes[2*stick] == null || gamepad.axes[2*stick+1] == null) continue;
+        if (gamepad.axes[2 * stick] == null || gamepad.axes[2 * stick + 1] == null) continue;
 
-        let axisLength = Math.sqrt( Math.pow(Math.abs(gamepad.axes[2*stick]), 2) + Math.pow(Math.abs(gamepad.axes[2*stick+1]), 2) );
+        let axisLength = Math.sqrt( Math.pow(Math.abs(gamepad.axes[2 * stick]), 2) + Math.pow(Math.abs(gamepad.axes[2 * stick + 1]), 2) );
         if (axisLength < 0.25) {
-          this.gamepadsAxes[index][2*stick] = 0;
-          this.gamepadsAxes[index][2*stick+1] = 0;
+          this.gamepadsAxes[index][2 * stick] = 0;
+          this.gamepadsAxes[index][2 * stick + 1] = 0;
         }
         else {
-          this.gamepadsAxes[index][2*stick] = gamepad.axes[2*stick];
-          this.gamepadsAxes[index][2*stick+1] = gamepad.axes[2*stick+1];
+          this.gamepadsAxes[index][2 * stick] = gamepad.axes[2 * stick];
+          this.gamepadsAxes[index][2 * stick + 1] = gamepad.axes[2 * stick + 1];
         }
       }
     }
@@ -597,5 +617,5 @@ if ((<any>global).window != null && (<any>window).KeyEvent == null) {
     DOM_VK_CLOSE_BRACKET: 221,
     DOM_VK_QUOTE: 222,
     DOM_VK_META: 224
-  }
+  };
 }
