@@ -11,7 +11,7 @@ export default class Uniforms extends SupCore.Data.Base.ListById {
     name: { type: "string", minLength: 1, maxLength: 80, mutable: true },
     type: { type: "enum", items: ["f", "c", "v2", "v3", "v4", "t"], mutable: true },
     value: { type: "any", mutable: true }
-  }
+  };
 
   pub: UniformPub[];
   byId: { [id: string]: UniformPub};

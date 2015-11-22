@@ -13,57 +13,64 @@ html
       .left
         .uniforms
           .header
-            span Uniforms
-            input.use-light-uniforms(type="checkbox")
-            span Use lights
+            .info Uniforms
+            .settings
+              input#use-light-uniforms(type="checkbox")
+              label(for="use-light-uniforms") Use lights
           .list
             table
-              tr.grey
-                td Name
-                td Type
-                td Value
-              tr.grey
+              tr
+                th Name
+                th Type
+                th Value
+              tr.immutable
                 td time
                 td f
                 td 0
-
-          .new-uniform
-            input(placeholder="New uniform")
+              tr.new
+                td
+                  input(type="text",placeholder="New uniform")
+                td
+                td
 
         .attributes
-          span.header Attributes
+          .header
+            .info Attributes
           .list
             table
-              tr.grey
-                td Name
-                td Type
-                td Value
-
-          .new-attribute
-            input(placeholder="New attribute")
+              tr
+                th Name
+                th Type
+                th Value
+              tr.new
+                td
+                  input(type="text",placeholder="New attribute")
+                td
+                td
 
       .preview
-        .title
-          span Preview
-          select
-            option Plane
-            option Box
-            option Sphere
-            option Asset
-          input
+        .header
+          .info Preview
+          .settings
+            select
+              option Plane
+              option Box
+              option Sphere
+              option Asset
+            input.preview-asset-path(type="text",placeholder="Asset path",hidden)
         canvas(tabindex="0")
 
     .shaders
       .vertex
         .header
-          span Vertex Shader
-          button(disabled title="Ctrl+S") Save
+          button(title="Ctrl+S",hidden) Save
+          .info Vertex Shader
         .text-editor-container
           textarea(disabled).text-editor
       .fragment
         .header
-          span Fragment Shader
-          button(disabled title="Ctrl+S") Save
+          button(title="Ctrl+S",hidden) Save
+          .info Fragment Shader
         .text-editor-container
           textarea(disabled).text-editor
 

@@ -3,17 +3,19 @@ import { setupPreview } from "./engine";
 import Uniforms, { UniformPub } from "../../data/Uniforms";
 import Attributes, { AttributePub } from "../../data/Attributes";
 
+/* tslint:disable */
 let PerfectResize = require("perfect-resize");
+/* tslint:enable */
 
 let ui: {
   uniformsList?: HTMLTableElement;
   useLightUniformsCheckbox?: HTMLInputElement;
   attributesList?: HTMLTableElement;
   vertexEditor?: TextEditorWidget;
-  vertexHeader?:HTMLDivElement;
+  vertexHeader?: HTMLDivElement;
   vertexSaveElt?: HTMLButtonElement;
   fragmentEditor?: TextEditorWidget;
-  fragmentHeader?:HTMLDivElement;
+  fragmentHeader?: HTMLDivElement;
   fragmentSaveElt?: HTMLButtonElement;
 
   previewTypeSelect?: HTMLSelectElement;
@@ -28,7 +30,7 @@ ui.uniformsList = <HTMLTableElement>document.querySelector(".uniforms tbody");
 export function setupUniform(uniform: UniformPub) {
   let rowElt = document.createElement("tr");
   rowElt.dataset["id"] = uniform.id;
-  ui.uniformsList.appendChild(rowElt);
+  ui.uniformsList.insertBefore(rowElt, ui.uniformsList.lastChild);
 
   let nameElt = document.createElement("td");
   let nameInputElt = document.createElement("input");
@@ -36,7 +38,7 @@ export function setupUniform(uniform: UniformPub) {
   nameInputElt.addEventListener("change", (event: any) => {
     if (event.target.value === "") editAsset("deleteUniform", rowElt.dataset["id"]);
     else editAsset("setUniformProperty", rowElt.dataset["id"], "name", event.target.value);
-  })
+  });
   nameInputElt.value = uniform.name;
   nameElt.appendChild(nameInputElt);
   rowElt.appendChild(nameElt);
@@ -51,7 +53,7 @@ export function setupUniform(uniform: UniformPub) {
   selectTypeElt.classList.add("type");
   selectTypeElt.addEventListener("change", (event: any) => {
     editAsset("setUniformProperty", rowElt.dataset["id"], "type", event.target.value);
-  })
+  });
   selectTypeElt.value = uniform.type;
   typeElt.appendChild(selectTypeElt);
   rowElt.appendChild(typeElt);
@@ -75,7 +77,7 @@ export function setUniformValueInputs(id: string) {
       let floatInputElt = document.createElement("input");
       floatInputElt.type = "number";
       floatInputElt.classList.add("float");
-      floatInputElt.addEventListener("change", (event: any) => { editAsset("setUniformProperty", id, "value", parseFloat(event.target.value)); })
+      floatInputElt.addEventListener("change", (event: any) => { editAsset("setUniformProperty", id, "value", parseFloat(event.target.value)); });
       floatInputElt.value = uniform.value;
       valueRowElt.appendChild(floatInputElt);
       break;
@@ -90,7 +92,7 @@ export function setUniformValueInputs(id: string) {
     case "t":
       let textInputElt = document.createElement("input");
       textInputElt.classList.add("text");
-      textInputElt.addEventListener("change", (event: any) => { editAsset("setUniformProperty", id, "value", event.target.value); })
+      textInputElt.addEventListener("change", (event: any) => { editAsset("setUniformProperty", id, "value", event.target.value); });
       textInputElt.value = uniform.value;
       valueRowElt.appendChild(textInputElt);
       break;
@@ -111,30 +113,30 @@ function setArrayUniformInputs(id: string, parentElt: HTMLDivElement, name: stri
         values.push(parseFloat(elt.value));
       }
       editAsset("setUniformProperty", id, "value", values);
-    })
+    });
     inputElt.value = uniform.value[i];
     parentElt.appendChild(inputElt);
   }
 }
 
-let newUniformInput = <HTMLInputElement>document.querySelector(".new-uniform input");
+let newUniformInput = <HTMLInputElement>document.querySelector(".uniforms .new input");
 newUniformInput.addEventListener("keyup", (event: any) => {
   if (event.keyCode === 13) {
     editAsset("newUniform", event.target.value);
     event.target.value = "";
   }
-})
+});
 
-ui.useLightUniformsCheckbox = <HTMLInputElement>document.querySelector("input.use-light-uniforms");
+ui.useLightUniformsCheckbox = <HTMLInputElement>document.getElementById("use-light-uniforms");
 ui.useLightUniformsCheckbox.addEventListener("change", (event: any) => {
   editAsset("setProperty", "useLightUniforms", event.target.checked);
-})
+});
 
 ui.attributesList = <HTMLTableElement>document.querySelector(".attributes tbody");
 export function setupAttribute(attribute: AttributePub) {
   let rowElt = document.createElement("tr");
   rowElt.dataset["id"] = attribute.id;
-  ui.attributesList.appendChild(rowElt);
+  ui.attributesList.insertBefore(rowElt, ui.attributesList.lastChild);
 
   let nameElt = document.createElement("td");
   let nameInputElt = document.createElement("input");
@@ -142,7 +144,7 @@ export function setupAttribute(attribute: AttributePub) {
   nameInputElt.addEventListener("change", (event: any) => {
     if (event.target.value === "") editAsset("deleteAttribute", rowElt.dataset["id"]);
     else editAsset("setAttributeProperty", rowElt.dataset["id"], "name", event.target.value);
-  })
+  });
   nameInputElt.value = attribute.name;
   nameElt.appendChild(nameInputElt);
   rowElt.appendChild(nameElt);
@@ -155,7 +157,7 @@ export function setupAttribute(attribute: AttributePub) {
     selectTypeElt.appendChild(optionElt);
   }
   selectTypeElt.classList.add("type");
-  selectTypeElt.addEventListener("change", (event: any) => { editAsset("setAttributeProperty", rowElt.dataset["id"], "type", event.target.value); })
+  selectTypeElt.addEventListener("change", (event: any) => { editAsset("setAttributeProperty", rowElt.dataset["id"], "type", event.target.value); });
   selectTypeElt.value = attribute.type;
   typeElt.appendChild(selectTypeElt);
   rowElt.appendChild(typeElt);
@@ -165,13 +167,13 @@ export function setupAttribute(attribute: AttributePub) {
   rowElt.appendChild(valueElt);
 }
 
-let newAttributeInput = <HTMLInputElement>document.querySelector(".new-attribute input");
+let newAttributeInput = <HTMLInputElement>document.querySelector(".attributes .new input");
 newAttributeInput.addEventListener("keyup", (event: any) => {
   if (event.keyCode === 13) {
     editAsset("newAttribute", event.target.value);
     event.target.value = "";
   }
-})
+});
 
 let shadersPane = document.querySelector(".shaders");
 let shaderPaneResizeHandle = new PerfectResize(shadersPane, "bottom");
@@ -235,10 +237,12 @@ export function setupEditors(clientId: number) {
 }
 
 let previewPane = document.querySelector(".preview");
+/* tslint:disable:no-unused-expression */
 new PerfectResize(previewPane, "right");
+/* tslint:enable:no-unused-expression */
 ui.previewTypeSelect = <HTMLSelectElement>previewPane.querySelector("select");
 ui.previewTypeSelect.addEventListener("change", () => {
-  ui.previewAssetInput.style.display = (ui.previewTypeSelect.value === "Asset") ? "initial" : "none";
+  ui.previewAssetInput.hidden = ui.previewTypeSelect.value !== "Asset";
   setupPreview();
 });
 

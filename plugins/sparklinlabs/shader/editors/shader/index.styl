@@ -3,19 +3,24 @@ body
   flex-flow column
 
   .header
-    padding 3px 0px 3px 40%
+    background #444
+    color #fff
+    display flex
+    align-items center
 
-    &.has-draft
-      background-color #37d
-    &.has-errors
-      background-color #a44
+    &.has-draft { background-color: #37d; padding-left: 0.25em; }
+    &.has-errors { background-color: #a44; }
 
-    span
-        padding 4px
+    .info
+      padding 0.5em
+      flex 1
+    .settings
+      padding 0.5em
+      display flex
+      align-items center
 
   .top
     flex 1
-    padding 5px
     display flex
     flex-flow row
     min-height 200px
@@ -24,7 +29,6 @@ body
     flex 1
     display flex
     flex-flow column
-    padding-right 5px
     min-width 300px
 
   .uniforms, .attributes
@@ -34,7 +38,6 @@ body
 
     .list
       overflow-y auto
-      margin-bottom 10px
 
     table
       width 100%
@@ -43,13 +46,10 @@ body
     tr
       height 2em
 
-      &.grey td
-        color #666
+      &.immutable td { color: #666; padding: 0.5em; }
+      th { background: #eee; padding: 0.5em; }
 
-      &:first-child td
-        text-align center
-
-    td
+    td, th
       text-align left
       border 1px solid #ccc
       width 45%
@@ -65,34 +65,24 @@ body
 
       input, select
         width 100%
-        height 100%
         border none
+      input
+        padding 0.5em
 
   .preview
     display flex
     flex-flow column
-    padding-left 5px
     width 50%
     min-width 300px
 
-    .title
-      display flex
-      padding-bottom 5px
-
-      span
-        margin 0 5% 0 40%
-
-      input
-        margin-left 5px
-        width 30%
-        display none
+    .preview-asset-path
+      margin-left 0.5em
 
     canvas
       flex 1
       background-color black
 
   .shaders
-    padding 5px
     display flex
     min-height 200px
     height 50%
@@ -100,11 +90,9 @@ body
     .vertex, .fragment
       display flex
       flex-flow column
-      margin 0 2px 0 2px
       min-width 300px
 
     .vertex
-      padding-right 5px
       flex 1
 
     .fragment

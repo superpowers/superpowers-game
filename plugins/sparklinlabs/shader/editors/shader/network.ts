@@ -26,18 +26,18 @@ function onAssetReceived(assetId: string, asset: ShaderAsset) {
   ui.vertexEditor.setText(asset.pub.vertexShader.draft);
   let hasVertexDraft = asset.pub.vertexShader.draft !== asset.pub.vertexShader.text;
   (<any>ui.vertexHeader.classList).toggle("has-draft", hasVertexDraft);
-  ui.vertexSaveElt.disabled = !hasVertexDraft;
+  ui.vertexSaveElt.hidden = !hasVertexDraft;
   ui.fragmentEditor.setText(asset.pub.fragmentShader.draft);
   let hasFragmentDraft = asset.pub.fragmentShader.draft !== asset.pub.fragmentShader.text;
   (<any>ui.fragmentHeader.classList).toggle("has-draft", hasFragmentDraft);
-  ui.fragmentSaveElt.disabled = !hasFragmentDraft;
+  ui.fragmentSaveElt.hidden = !hasFragmentDraft;
 
   setupPreview();
 }
 
 export function editAsset(...args: any[]) {
   let callback: Function;
-  if (typeof args[args.length-1] === "function") callback = args.pop();
+  if (typeof args[args.length - 1] === "function") callback = args.pop();
 
   args.push((err: string, id: string) => {
     if (err != null) { alert(err); return; }
@@ -61,13 +61,13 @@ onEditCommands.setProperty = (path: string, value: any) => {
       ui.useLightUniformsCheckbox.checked = value;
       break;
   }
-}
+};
 
-onEditCommands.newUniform = (uniform: UniformPub) => { setupUniform(uniform); }
+onEditCommands.newUniform = (uniform: UniformPub) => { setupUniform(uniform); };
 onEditCommands.deleteUniform = (id: string) => {
   let rowElt = <HTMLTableRowElement>ui.uniformsList.querySelector(`[data-id='${id}']`);
   rowElt.parentElement.removeChild(rowElt);
-}
+};
 onEditCommands.setUniformProperty = (id: string, key: string, value: any) => {
   let rowElt = <HTMLDivElement>ui.uniformsList.querySelector(`[data-id='${id}']`);
   if (key === "value") {
@@ -95,45 +95,45 @@ onEditCommands.setUniformProperty = (id: string, key: string, value: any) => {
     fieldElt.value = value;
   }
   if (key === "type") setUniformValueInputs(id);
-}
+};
 
 function setUniformValues(parentElt: HTMLDivElement, name: string, values: number[]) {
   for (let i = 0; i < values.length; i++)
     (<HTMLInputElement>parentElt.querySelector(`.${name}_${i}`)).value = values[i].toString();
 }
 
-onEditCommands.newAttribute = (attribute: AttributePub) => { setupAttribute(attribute); }
+onEditCommands.newAttribute = (attribute: AttributePub) => { setupAttribute(attribute); };
 onEditCommands.deleteAttribute = (id: string) => {
   let rowElt = <HTMLTableRowElement>ui.attributesList.querySelector(`[data-id='${id}']`);
   rowElt.parentElement.removeChild(rowElt);
-}
+};
 onEditCommands.setAttributeProperty = (id: string, key: string, value: any) => {
   let rowElt = <HTMLDivElement>ui.attributesList.querySelector(`[data-id='${id}']`);
   let fieldElt = <HTMLInputElement>rowElt.querySelector(`.${key}`);
   fieldElt.value = value;
-}
+};
 
 onEditCommands.editVertexShader = (operationData: OperationData) => {
   ui.vertexEditor.receiveEditText(operationData);
   (<any>ui.vertexHeader.classList).toggle("has-draft", true);
-  ui.vertexSaveElt.disabled = false;
-}
+  ui.vertexSaveElt.hidden = false;
+};
 onEditCommands.saveVertexShader = () => {
   (<any>ui.vertexHeader.classList).toggle("has-draft", false);
   (<any>ui.vertexHeader.classList).toggle("has-errors", false);
-  ui.vertexSaveElt.disabled = true;
-}
+  ui.vertexSaveElt.hidden = true;
+};
 
 onEditCommands.editFragmentShader = (operationData: OperationData) => {
   ui.fragmentEditor.receiveEditText(operationData);
   (<any>ui.fragmentHeader.classList).toggle("has-draft", true);
-  ui.fragmentSaveElt.disabled = false;
-}
+  ui.fragmentSaveElt.hidden = false;
+};
 onEditCommands.saveFragmentShader = () => {
   (<any>ui.fragmentHeader.classList).toggle("has-draft", false);
   (<any>ui.fragmentHeader.classList).toggle("has-errors", false);
-  ui.fragmentSaveElt.disabled = true;
-}
+  ui.fragmentSaveElt.hidden = true;
+};
 
 function onAssetTrashed() {
   SupClient.onAssetTrashed();

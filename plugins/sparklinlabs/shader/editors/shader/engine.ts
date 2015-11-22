@@ -78,8 +78,7 @@ export function setupPreview(options = { useDraft: false }) {
 
 let lastTimestamp = 0;
 let accumulatedTime = 0;
-let frame = 0;
-function tick(timestamp=0) {
+function tick(timestamp = 0) {
   requestAnimationFrame(tick);
 
   accumulatedTime += timestamp - lastTimestamp;

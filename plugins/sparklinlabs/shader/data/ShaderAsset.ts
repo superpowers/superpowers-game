@@ -11,7 +11,7 @@ import Attributes, { AttributePub } from "./Attributes";
 
 interface ShaderCode {
   text: string;
-  draft: string
+  draft: string;
   revisionId: number;
 }
 
@@ -49,7 +49,7 @@ export default class ShaderAsset extends SupCore.Data.Base.Asset {
         revisionId: { type: "integer" }
       }
     }
-  }
+  };
 
   uniforms: Uniforms;
   attributes: Attributes;
@@ -86,7 +86,7 @@ varying vec2 vUv;
 void main() {
 ${tab}gl_FragColor = texture2D(map, vUv);
 }
-`
+`;
       this.pub = {
         formatVersion: ShaderAsset.currentFormatVersion,
 
@@ -125,12 +125,12 @@ ${tab}gl_FragColor = texture2D(map, vUv);
           text: <any>pub.vertexShader,
           draft: <any>pub.vertexShader,
           revisionId: 0
-        }
+        };
         pub.fragmentShader = {
           text: <any>pub.fragmentShader,
           draft: <any>pub.fragmentShader,
           revisionId: 0
-        }
+        };
         this._onLoaded(assetPath, pub);
         return;
       }
@@ -165,7 +165,7 @@ ${tab}gl_FragColor = texture2D(map, vUv);
           });
         }
       ]);
-    }
+    };
 
     fs.readFile(path.join(assetPath, "shader.json"), { encoding: "utf8" }, (err, json) => {
       // NOTE: "asset.json" was renamed to "shader.json" in Superpowers 0.11
@@ -266,9 +266,9 @@ ${tab}gl_FragColor = texture2D(map, vUv);
       }
     }
 
-    let uniform: UniformPub = { id: null, name, type: "f", value: "0.0" }
+    let uniform: UniformPub = { id: null, name, type: "f", value: "0.0" };
     this.uniforms.add(uniform, null, (err, actualIndex) => {
-      if (err != null) { callback(err, null, null); return }
+      if (err != null) { callback(err, null, null); return; }
 
       callback(null, uniform, actualIndex);
       this.emit("change");
@@ -290,7 +290,7 @@ ${tab}gl_FragColor = texture2D(map, vUv);
 
   client_deleteUniform(id: string) {
     this.uniforms.client_remove(id);
-    return
+    return;
   }
 
   server_setUniformProperty(client: any, id: string, key: string, value: any, callback: (err: string, id?: string, key?: string, actualValue?: any) => any) {
@@ -324,9 +324,9 @@ ${tab}gl_FragColor = texture2D(map, vUv);
       }
     }
 
-    let attribute: AttributePub = { id: null, name, type: "f" }
+    let attribute: AttributePub = { id: null, name, type: "f" };
     this.attributes.add(attribute, null, (err, actualIndex) => {
-      if (err != null) { callback(err, null, null); return }
+      if (err != null) { callback(err, null, null); return; }
 
       callback(null, attribute, actualIndex);
       this.emit("change");
@@ -348,7 +348,7 @@ ${tab}gl_FragColor = texture2D(map, vUv);
 
   client_deleteAttribute(id: string) {
     this.attributes.client_remove(id);
-    return
+    return;
   }
 
   server_setAttributeProperty(client: any, id: string, key: string, value: any, callback: (err: string, id?: string, key?: string, actualValue?: any) => any) {
