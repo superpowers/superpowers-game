@@ -43,7 +43,7 @@ class TextEditorWidget {
 
   constructor(projectClient: SupClient.ProjectClient, clientId: number, textArea: HTMLTextAreaElement, options: TextEditorWidgetOptions) {
     let extraKeys: { [name: string]: string|Function|boolean } = {
-      "F9": () => {},
+      "F9": () => { /* Disable line re-ordering */ },
       "Ctrl-T": false,
       "Tab": (cm: any) => {
         if (cm.getSelection() !== "") cm.execCommand("indentMore")

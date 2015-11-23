@@ -63,12 +63,12 @@ document.addEventListener("keydown", (event) => {
   }
   if (activeElement == null) return;
 
-  if (event.keyCode === 78 && (event.ctrlKey || event.metaKey)) { // CTRL-N
+  if (event.keyCode === 78 && (event.ctrlKey || event.metaKey)) { // Ctrl+N
     event.preventDefault();
     onNewNodeClick();
   }
 
-  if (event.keyCode === 80 && (event.ctrlKey || event.metaKey)) { // CTRL-P
+  if (event.keyCode === 80 && (event.ctrlKey || event.metaKey)) { // Ctrl+P
     event.preventDefault();
     event.stopPropagation();
     onNewPrefabClick();

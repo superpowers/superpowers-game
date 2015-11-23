@@ -38,19 +38,16 @@ window.addEventListener("message", (event) => {
 });
 
 // Context menu
-// TODO: Restore context menu. iframe seems to block access to modules
-/*
 if (window.navigator.userAgent.indexOf("Electron") !== -1 != null) {
-  let nodeRequire = require;
-  let remote = nodeRequire("remote");
+  let remote: GitHubElectron.Remote = (top as any).global.require("remote");
   let win = remote.getCurrentWindow();
-  let Menu = remote.require("menu");
-  let MenuItem = remote.require("menu-item");
+  let Menu: typeof GitHubElectron.Menu = remote.require("menu");
+  let MenuItem: typeof GitHubElectron.MenuItem = remote.require("menu-item");
 
-  let menu: GitHubElectron.Menu = new Menu();
-  menu.append(new MenuItem({ label: "Cut (Ctrl-X)", click: () => { document.execCommand("cut"); } }));
-  menu.append(new MenuItem({ label: "Copy (Ctrl-C)", click: () => { document.execCommand("copy"); } }));
-  menu.append(new MenuItem({ label: "Paste (Ctrl-V)", click: () => { document.execCommand("paste"); } }));
+  let menu = new Menu();
+  menu.append(new MenuItem({ label: "Cut (Ctrl+X)", click: () => { document.execCommand("cut"); } }));
+  menu.append(new MenuItem({ label: "Copy (Ctrl+C)", click: () => { document.execCommand("copy"); } }));
+  menu.append(new MenuItem({ label: "Paste (Ctrl+V)", click: () => { document.execCommand("paste"); } }));
 
   document.querySelector(".text-editor-container").addEventListener("contextmenu", (event: any) => {
     event.preventDefault();
@@ -58,7 +55,7 @@ if (window.navigator.userAgent.indexOf("Electron") !== -1 != null) {
     menu.popup(win, event.screenX - bounds.x, event.screenY - bounds.y);
     return false;
   });
-}*/
+}
 
 // Setup editor
 export function setupEditor(clientId: number) {
