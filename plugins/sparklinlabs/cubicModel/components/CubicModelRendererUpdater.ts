@@ -83,8 +83,15 @@ export default class CubicModelRendererUpdater {
   }
 
   _onEditCommand_moveNode = (id: string, parentId: string, index: number) => {
-    let pivot = this.cubicModelRenderer.byNodeId[id].pivot;
+    let rendererNode = this.cubicModelRenderer.byNodeId[id];
+    let pivot = rendererNode.pivot;
     let matrix = pivot.matrixWorld.clone();
+
+      let previousParentId = pivot.parent.userData.cubicNodeId;
+    if (previousParentId != null) {
+      let parentNode = this.cubicModelRenderer.byNodeId[previousParentId];
+      parentNode.children.splice(parentNode.children.indexOf(rendererNode), 1);
+    }
 
     let parent = (parentId != null) ? this.cubicModelRenderer.byNodeId[parentId].pivot : this.cubicModelRenderer.threeRoot;
     parent.add(pivot);
