@@ -4,6 +4,7 @@ import { Node, getShapeTextureFaceSize } from "../../data/CubicModelNodes";
 import { TextureEdit } from "../../data/CubicModelAsset";
 
 let THREE = SupEngine.THREE;
+let tmpVector3 = new THREE.Vector3();
 
 let textureArea: {
   gameInstance: SupEngine.GameInstance;
@@ -11,44 +12,30 @@ let textureArea: {
   shapeLineMeshesByNodeId: { [nodeId: string]: THREE.LineSegments; }
 
   textureMesh: THREE.Mesh;
-  // gridRenderer: any;
-  // selectionRenderer: SelectionRenderer;
+  selectionRenderer: any;
 
   mode: string;
   paintTool: string;
   colorInput: HTMLInputElement;
 
+  pasteActor: SupEngine.Actor;
   pasteMesh: THREE.Mesh;
 } = <any>{ shapeLineMeshesByNodeId: {} };
 export default textureArea;
 
 let canvas = <HTMLCanvasElement>document.querySelector(".texture-container canvas");
-/*document.addEventListener("copy", (event: ClipboardEvent) => {
-  console.log("copy?");
-  if (document.activeElement !== canvas) return;
+if (SupClient.isApp) {
+  let remote: GitHubElectron.Remote = (top as any).global.require("remote");
+  let clipboard: typeof GitHubElectron.Clipboard = remote.require("clipboard");
+  let nativeImage: typeof GitHubElectron.NativeImage = remote.require("native-image");
 
-  //event.clipboardData.clearData();
-  let ctx = data.cubicModelUpdater.textures["map"].ctx;
+  document.addEventListener("copy", (event: ClipboardEvent) => {
+    if (document.activeElement !== canvas) return;
 
-  //event.clipboardData.setData("text/plain", "bonjour");
-  // let typedArray = new Uint8Array(data.cubicModelUpdater.textures["map"].imageData.data);
-  // let blob = new Blob([ typedArray ], { type: "image/png" });
-
-  let imageData = data.cubicModelUpdater.textures["map"].ctx.canvas.toDataURL().replace(/^data:image\/(png|jpg);base64,/, "")
-  event.clipboardData.setData("image/png", imageData);
-
-  let dataURL = data.cubicModelUpdater.textures["map"].ctx.canvas.toDataURL();
-  let parts = dataURL.split(',');
-  let raw = decodeURIComponent(parts[1]);
-
-  // event.clipboardData.clearData();
-  // event.clipboardData.items.clear();
-  // event.clipboardData.items.add(new File([raw], "test", { type: "image/png" }));
-  console.log(event.clipboardData.types);
-  // console.log(event.clipboardData.files.item(0));
-  event.preventDefault();
-  console.log("copy");
-});*/
+    let dataURL = data.cubicModelUpdater.cubicModelAsset.clientTextureDatas["map"].ctx.canvas.toDataURL();
+    clipboard.writeImage(nativeImage.createFromDataUrl(dataURL));
+  });
+}
 
 let pasteCtx = document.createElement("canvas").getContext("2d");
 document.addEventListener("paste", (event: ClipboardEvent) => {
@@ -57,10 +44,7 @@ document.addEventListener("paste", (event: ClipboardEvent) => {
   if (event.clipboardData.items[0].type.indexOf("image") === -1) return;
   if (textureArea.mode !== "paint") return;
 
-  if (textureArea.pasteMesh != null) {
-    textureArea.gameInstance.threeScene.remove(textureArea.pasteMesh);
-    textureArea.pasteMesh = null;
-  }
+  if (textureArea.pasteMesh != null) clearPasteSelection();
 
   let imageBlob = (<any>event.clipboardData.items[0]).getAsFile();
   let image = new Image();
@@ -78,9 +62,13 @@ document.addEventListener("paste", (event: ClipboardEvent) => {
     let geom = new THREE.PlaneBufferGeometry(image.width, image.height, 1, 1);
     let mat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, map: texture });
     textureArea.pasteMesh = new THREE.Mesh(geom, mat);
-    textureArea.pasteMesh.position.set(image.width / 2, -image.height / 2, 1);
-    textureArea.gameInstance.threeScene.add(textureArea.pasteMesh);
-    textureArea.pasteMesh.updateMatrixWorld(false);
+    textureArea.pasteActor.threeObject.add(textureArea.pasteMesh);
+    textureArea.pasteActor.setLocalPosition(tmpVector3.set(image.width / 2, -image.height / 2, 1));
+
+    textureArea.selectionRenderer.setSize(image.width, image.height);
+    textureArea.selectionRenderer.actor.setParent(textureArea.pasteActor);
+    textureArea.selectionRenderer.actor.setLocalPosition(tmpVector3.set(0, 0, 5));
+    textureArea.selectionRenderer.actor.threeObject.visible = true;
   };
 });
 
@@ -95,6 +83,17 @@ cameraComponent.setOrthographicScale(10);
 textureArea.cameraControls = new SupEngine.editorComponentClasses["Camera2DControls"](cameraActor, cameraComponent,
   { zoomSpeed: 1.5, zoomMin: 1, zoomMax: 200 });
 
+let selectionActor = new SupEngine.Actor(textureArea.gameInstance, "Selection");
+textureArea.selectionRenderer = new SupEngine.editorComponentClasses["SelectionRenderer"](selectionActor);
+
+textureArea.pasteActor = new SupEngine.Actor(textureArea.gameInstance, "Paste");
+
+function clearPasteSelection() {
+  textureArea.pasteActor.threeObject.remove(textureArea.pasteMesh);
+  textureArea.selectionRenderer.actor.setParent(null);
+  textureArea.selectionRenderer.actor.threeObject.visible = false;
+  textureArea.pasteMesh = null;
+}
 
 export function setup() {
   setupTexture();
@@ -124,6 +123,7 @@ document.querySelector(".texture-container .controls .mode-selection").addEventL
 
   textureArea.mode = target.value;
   updateMode();
+  clearPasteSelection();
 });
 
 textureArea.paintTool = "brush";
@@ -345,9 +345,8 @@ export function handleTextureArea() {
     // Paste element
     if (textureArea.pasteMesh != null) {
       if (isMouseDown) {
-        textureArea.pasteMesh.position.x = mousePosition.x + previousMousePosition.x;
-        textureArea.pasteMesh.position.y = -mousePosition.y + previousMousePosition.y;
-        textureArea.pasteMesh.updateMatrixWorld(false);
+        tmpVector3.set(mousePosition.x + previousMousePosition.x, -mousePosition.y + previousMousePosition.y, 0);
+        textureArea.pasteActor.setLocalPosition(tmpVector3);
         return;
       }
 
@@ -369,7 +368,7 @@ export function handleTextureArea() {
       }
 
       if (inputs.mouseButtons[0].wasJustPressed) {
-        let position = textureArea.pasteMesh.position;
+        let position = textureArea.pasteActor.getLocalPosition(tmpVector3);
         let width = pasteCtx.canvas.width;
         let height = pasteCtx.canvas.height;
         if (mousePosition.x > position.x - width  / 2 &&  mousePosition.x < position.x + width  / 2 &&
@@ -382,8 +381,8 @@ export function handleTextureArea() {
         let imageData = pasteCtx.getImageData(0, 0, width, height).data;
         let edits: TextureEdit[] = [];
 
-        let startX = textureArea.pasteMesh.position.x - width / 2;
-        let startY = -textureArea.pasteMesh.position.y - height / 2;
+        let startX = position.x - width / 2;
+        let startY = -position.y - height / 2;
 
         for (let i = 0; i < width; i++) {
           for (let j = 0; j < height; j++) {
@@ -399,8 +398,7 @@ export function handleTextureArea() {
         }
         editAsset("editTexture", "map", edits);
 
-        textureArea.gameInstance.threeScene.remove(textureArea.pasteMesh);
-        textureArea.pasteMesh = null;
+        clearPasteSelection();
       }
       return;
     }
