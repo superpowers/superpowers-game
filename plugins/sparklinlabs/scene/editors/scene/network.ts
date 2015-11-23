@@ -28,7 +28,7 @@ socket.on("disconnect", SupClient.onDisconnected);
 
 function onWelcome() {
   data = { projectClient: new SupClient.ProjectClient(socket, { subEntries: true }) };
-  
+
   loadPlugins(() => {
     engineStart();
     uiStart();
@@ -41,8 +41,6 @@ function onWelcome() {
 function loadPlugins(callback: ErrorCallback) {
   window.fetch(`/systems/${SupCore.system.name}/plugins.json`).then((response) => response.json()).then((pluginsInfo: SupCore.PluginsInfo) => {
     async.each(pluginsInfo.list, (pluginName, pluginCallback) => {
-      if (pluginName === "sparklinlabs/scene") { pluginCallback(); return; }
-
       async.series([
 
         (cb) => {
