@@ -20,9 +20,10 @@ import Camera2DControls from "./components/Camera2DControls";
 import Camera3DControls from "./components/Camera3DControls";
 import FlatColorRenderer from "./components/FlatColorRenderer";
 import GridRenderer from "./components/GridRenderer";
+import SelectionRenderer from "./components/SelectionRenderer";
 
 export let editorComponentClasses: { [name: string]: new(...args: any[]) => ActorComponent } = {
-  Camera2DControls, Camera3DControls, FlatColorRenderer, GridRenderer
+  Camera2DControls, Camera3DControls, FlatColorRenderer, GridRenderer, SelectionRenderer
 };
 
 export function registerEditorComponentClass(name: string, componentClass: new(...args: any[]) => ActorComponent) {
