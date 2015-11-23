@@ -116,6 +116,29 @@ ui.pixelsPerUnitInput.addEventListener("change", onChangePixelsPerUnit);
 
 function onChangePixelsPerUnit(event: any) { editAsset("setProperty", "pixelsPerUnit", parseFloat(event.target.value)); }
 
+// Texture download
+document.querySelector("button.download").addEventListener("click", (event) => {
+  let options = {
+    initialValue: "Texture",
+    validationLabel: "Download"
+  };
+
+  /* tslint:disable:no-unused-expression */
+  new SupClient.dialogs.PromptDialog("Enter a name for the texture.", options, (name) => {
+    /* tslint:enable:no-unused-expression */
+    if (name == null) return;
+
+    let a = document.createElement("a");
+    document.body.appendChild(a);
+    a.style.display = "none";
+    a.href = data.cubicModelUpdater.cubicModelAsset.clientTextureDatas["map"].ctx.canvas.toDataURL();
+
+    (<any>a).download = name + ".png";
+    a.click();
+    document.body.removeChild(a);
+  });
+})
+
 // Texture size
 ui.textureWidthSelect = document.querySelector("select.property-texture-width") as HTMLSelectElement;
 ui.textureHeightSelect = document.querySelector("select.property-texture-height") as HTMLSelectElement;
