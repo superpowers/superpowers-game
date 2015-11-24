@@ -22,8 +22,6 @@ function loadPlugins() {
   .then((response) => response.json())
   .then((pluginsInfo: SupCore.PluginsInfo) => {
     async.each(pluginsInfo.list, (pluginName, pluginCallback) => {
-      if (pluginName === "sparklinlabs/settings") { pluginCallback(); return; }
-
       async.series([
 
         (cb) => {
