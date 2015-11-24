@@ -57,6 +57,16 @@ function setupDocs() {
     function onDocumentationLoaded(content: string) {
       articleElt.innerHTML = marked(content);
       anchorElt.textContent = articleElt.firstElementChild.textContent;
+
+      let linkElts = articleElt.querySelectorAll("a") as NodeListOf<HTMLAnchorElement>;
+      for (let i = 0; i < linkElts.length; i++) {
+        if (SupClient.isApp) {
+          linkElts[i].addEventListener("click", (event: any) => {
+            event.preventDefault();
+            top.postMessage({ type: "openLink", content: event.target.href }, window.location.origin);
+          });
+        } else linkElts[i].target = "_blank";
+      }
     }
 
     window.fetch(`${SupClient.plugins["documentation"][name].path}/documentation/${name}-${language}.md`)
