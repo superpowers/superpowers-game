@@ -37,7 +37,10 @@ let ui: {
   prefabOpenElt: HTMLButtonElement;
 
   availableComponents: { [name: string]: string };
-  componentEditors: { [id: string]: SupClient.ComponentEditorObject };
+  componentEditors: { [id: string]: {
+    destroy(): void;
+    config_setProperty(path: string, value: any): void;
+  } };
   newComponentButton: HTMLButtonElement;
 
   cameraMode: string;
@@ -213,7 +216,7 @@ document.querySelector(".main .controls .transform-mode").addEventListener("clic
 
 ui.availableComponents = {};
 export function start() {
-  for (let componentName in SupClient.componentEditorClasses) ui.availableComponents[componentName] = componentName;
+  for (let componentName in SupClient.plugins["componentEditors"]) ui.availableComponents[componentName] = componentName;
 }
 
 // Transform
@@ -634,7 +637,7 @@ export function createComponentElement(nodeId: string, component: Component) {
 
     socket.emit("edit:assets", SupClient.query.asset, "editComponent", nodeId, component.id, command, ...args, callback);
   };
-  let componentEditorPlugin = SupClient.componentEditorClasses[component.type];
+  let componentEditorPlugin = SupClient.plugins["componentEditors"][component.type].content;
   ui.componentEditors[component.id] = new componentEditorPlugin(table.querySelector("tbody"), component.config, data.projectClient, editConfig);
 
   let shrinkButton = clone.querySelector(".shrink-component");

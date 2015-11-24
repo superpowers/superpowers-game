@@ -1,3 +1,3 @@
 import SpriteSettingsEditor from "./SpriteSettingsEditor";
 
-SupClient.registerSettingsEditorClass("Sprite", SpriteSettingsEditor);
+SupClient.registerPlugin("settingsEditors", "Sprite", SpriteSettingsEditor);

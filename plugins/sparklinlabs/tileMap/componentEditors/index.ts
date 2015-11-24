@@ -1,3 +1,3 @@
 import TileMapRendererEditor from "./TileMapRendererEditor";
 
-SupClient.registerComponentEditorClass("TileMapRenderer", TileMapRendererEditor);
+SupClient.registerPlugin("componentEditors", "TileMapRenderer", TileMapRendererEditor);

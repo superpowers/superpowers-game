@@ -60,8 +60,9 @@ function loadPlugins(callback: ErrorCallback) {
         },
 
         (cb) => {
+          SupClient.activePluginPath = `/systems/${SupCore.system.name}/plugins/${pluginName}`;
           let componentEditorsScript = document.createElement("script");
-          componentEditorsScript.src = `/systems/${SupCore.system.name}/plugins/${pluginName}/componentEditors.js`;
+          componentEditorsScript.src = `${SupClient.activePluginPath}/componentEditors.js`;
           componentEditorsScript.addEventListener("load", () => { cb(null, null); } );
           componentEditorsScript.addEventListener("error", () => { cb(null, null); } );
           document.body.appendChild(componentEditorsScript);

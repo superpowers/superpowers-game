@@ -1,3 +1,3 @@
 import TextRendererEditor from "./TextRendererEditor";
 
-SupClient.registerComponentEditorClass("TextRenderer", TextRendererEditor);
+SupClient.registerPlugin("componentEditors", "TextRenderer", TextRendererEditor);

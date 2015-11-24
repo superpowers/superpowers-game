@@ -1,3 +1,3 @@
 import LightSettingsEditor from "./LightSettingsEditor";
 
-SupClient.registerSettingsEditorClass("Light", LightSettingsEditor);
+SupClient.registerPlugin("settingsEditors", "Light", LightSettingsEditor);

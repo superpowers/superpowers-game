@@ -1,3 +1,3 @@
 import CameraEditor from "./CameraEditor";
 
-SupClient.registerComponentEditorClass("Camera", CameraEditor)
+let a = SupClient.registerPlugin("componentEditors", "Camera", CameraEditor);

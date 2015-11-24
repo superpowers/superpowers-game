@@ -35,8 +35,9 @@ function loadPlugins() {
         },
 
         (cb) => {
+          SupClient.activePluginPath = `/systems/${SupCore.system.name}/plugins/${pluginName}`;
           let settingsEditorScript = document.createElement("script");
-          settingsEditorScript.src = `/systems/${SupCore.system.name}/plugins/${pluginName}/settingsEditors.js`;
+          settingsEditorScript.src = `${SupClient.activePluginPath}/settingsEditors.js`;
           settingsEditorScript.addEventListener("load", () => { cb(null, null); } );
           settingsEditorScript.addEventListener("error", () => { cb(null, null); } );
           document.body.appendChild(settingsEditorScript);
@@ -51,11 +52,11 @@ function setupSettings() {
   let navListElt = document.querySelector("nav ul");
   let mainElt = document.querySelector("main");
 
-  let sortedNames = Object.keys(SupClient.settingsEditorClasses);
-  sortedNames.sort((a, b) => { return (a.toLowerCase() < b.toLowerCase()) ? -1 : 1 });
+  let sortedNames = Object.keys(SupClient.plugins["settingsEditors"]);
+  sortedNames.sort((a, b) => { return (a.toLowerCase() < b.toLowerCase()) ? -1 : 1; });
 
   for (let name of sortedNames) {
-     let settingEditorClass = SupClient.settingsEditorClasses[name];
+    let settingEditorClass = SupClient.plugins["settingsEditors"][name].content;
 
     let liElt = document.createElement("li");
     let anchorElt = document.createElement("a");

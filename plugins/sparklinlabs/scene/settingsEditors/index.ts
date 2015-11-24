@@ -1,3 +1,3 @@
 import SceneSettingsEditor from "./SceneSettingsEditor";
 
-SupClient.registerSettingsEditorClass("Scene", SceneSettingsEditor);
+SupClient.registerPlugin("settingsEditors", "Scene", SceneSettingsEditor);

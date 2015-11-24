@@ -1,3 +1,3 @@
 import ProjectSettingsEditor from "./ProjectSettingsEditor";
 
-SupClient.registerSettingsEditorClass("Project", ProjectSettingsEditor);
+SupClient.registerPlugin("settingsEditors", "Project", ProjectSettingsEditor);

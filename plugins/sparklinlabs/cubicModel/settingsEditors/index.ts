@@ -1,3 +1,3 @@
 import CubicModelSettingsEditor from "./CubicModelSettingsEditor";
 
-SupClient.registerSettingsEditorClass("CubicModel", CubicModelSettingsEditor);
+SupClient.registerPlugin("settingsEditors", "CubicModel", CubicModelSettingsEditor);

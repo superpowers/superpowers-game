@@ -1,3 +1,3 @@
 import ModelRendererEditor from "./ModelRendererEditor";
 
-SupClient.registerComponentEditorClass("ModelRenderer", ModelRendererEditor);
+SupClient.registerPlugin("componentEditors", "ModelRenderer", ModelRendererEditor);

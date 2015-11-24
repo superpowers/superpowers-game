@@ -1,3 +1,3 @@
 import TileMapSettingsEditor from "./TileMapSettingsEditor";
 
-SupClient.registerSettingsEditorClass("TileMap", TileMapSettingsEditor);
+SupClient.registerPlugin("settingsEditors", "TileMap", TileMapSettingsEditor);

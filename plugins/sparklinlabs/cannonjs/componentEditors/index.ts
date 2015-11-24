@@ -1,3 +1,3 @@
 import CannonBodyEditor from "./CannonBodyEditor";
 
-SupClient.registerComponentEditorClass("CannonBody", CannonBodyEditor);
+SupClient.registerPlugin("componentEditors", "CannonBody", CannonBodyEditor);

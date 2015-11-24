@@ -1,3 +1,3 @@
 import TextEditorSettingsEditor from "./TextEditorSettingsEditor";
 
-SupClient.registerSettingsEditorClass("TextEditor", TextEditorSettingsEditor);
+SupClient.registerPlugin("settingsEditors", "TextEditor", TextEditorSettingsEditor);
