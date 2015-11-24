@@ -38,7 +38,7 @@ window.addEventListener("message", (event) => {
 });
 
 // Context menu
-if (window.navigator.userAgent.indexOf("Electron") !== -1 != null) {
+if (window.navigator.userAgent.indexOf("Electron") !== -1) {
   let remote: GitHubElectron.Remote = (top as any).global.require("remote");
   let win = remote.getCurrentWindow();
   let Menu: typeof GitHubElectron.Menu = remote.require("menu");
