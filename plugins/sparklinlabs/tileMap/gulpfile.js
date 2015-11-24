@@ -41,6 +41,7 @@ makeBrowserify("./componentEditors/index.js", "./public", "componentEditors");
 makeBrowserify("./runtime/index.js", "./public", "runtime");
 makeBrowserify("./api/index.js", "./public", "api");
 makeBrowserify("./settingsEditors/index.js", "./public", "settingsEditors");
+makeBrowserify("./documentation/index.js", "./public", "documentation");
 var editors = require("fs").readdirSync("./editors");
 editors.forEach(function(editor) {
   makeBrowserify("./editors/" + editor + "/index.js", "./public/editors", editor + "/index");

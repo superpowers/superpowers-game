@@ -40,7 +40,7 @@ function onWelcome() {
 
 function loadPlugins(callback: ErrorCallback) {
   window.fetch(`/systems/${SupCore.system.name}/plugins.json`).then((response) => response.json()).then((pluginsInfo: SupCore.PluginsInfo) => {
-    async.each(pluginsInfo.list, (pluginName, pluginCallback) => {
+    async.eachSeries(pluginsInfo.list, (pluginName, pluginCallback) => {
       async.series([
 
         (cb) => {
