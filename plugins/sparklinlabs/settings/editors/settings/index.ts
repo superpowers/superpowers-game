@@ -18,7 +18,9 @@ function onWelcome() {
 }
 
 function loadPlugins() {
-  window.fetch(`/systems/${SupCore.system.name}/plugins.json`).then((response) => response.json()).then((pluginsInfo: SupCore.PluginsInfo) => {
+  window.fetch(`/systems/${SupCore.system.name}/plugins.json`)
+  .then((response) => response.json())
+  .then((pluginsInfo: SupCore.PluginsInfo) => {
     async.each(pluginsInfo.list, (pluginName, pluginCallback) => {
       if (pluginName === "sparklinlabs/settings") { pluginCallback(); return; }
 
