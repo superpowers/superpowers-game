@@ -416,11 +416,11 @@ namespace Sup {
 
     getBehavior(behaviorClass) {
       let foundBehavior = this.__behaviors[behaviorClass["name"]];
-      if (foundBehavior != null) return foundBehavior;
+      if (foundBehavior != null && !foundBehavior.isDestroyed()) return foundBehavior;
 
       for (let behaviorName in this.__behaviors) {
         let behavior = this.__behaviors[behaviorName];
-        if (Object.getPrototypeOf(behavior) instanceof behaviorClass) return behavior;
+        if (Object.getPrototypeOf(behavior) instanceof behaviorClass && !behavior.isDestroyed()) return behavior;
       }
       return null;
     }
