@@ -23,5 +23,5 @@ export default class Behavior extends SupEngine.ActorComponent {
     super._destroy();
   }
 
-  setIsLayerActive(active: boolean) {}
+  setIsLayerActive(active: boolean) { /* Nothing to render */ }
 }

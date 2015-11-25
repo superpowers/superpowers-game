@@ -17,12 +17,14 @@ export function setupComponent(player: SupRuntime.Player, component: any, config
     }
 
     if (behaviorPropertyInfo == null) {
-      console.warn(`Tried to set a property named ${name} on behavior class ${component.__outer.constructor.name} but no such property is declared. Skipping.`);
+      console.warn(`Tried to set a property named ${name} on behavior class ${component.__outer.constructor.name} ` +
+      `but no such property is declared. Skipping.`);
       continue;
     }
 
     if (behaviorPropertyInfo.type !== valueInfo.type) {
-      console.warn(`Tried to set a value of type ${valueInfo.type} for property ${component.__outer.constructor.name}.${name} but property type is declared as ${behaviorPropertyInfo.type}. Skipping.`);
+      console.warn(`Tried to set a value of type ${valueInfo.type} for property ${component.__outer.constructor.name}.${name} ` +
+      `but property type is declared as ${behaviorPropertyInfo.type}. Skipping.`);
       continue;
     }
 
