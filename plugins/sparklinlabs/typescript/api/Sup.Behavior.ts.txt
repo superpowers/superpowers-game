@@ -20,6 +20,11 @@ namespace Sup {
       this.__inner.__outer = this;
       this.actor.__behaviors[this.constructor["name"]] = this;
     }
+    
+    destroy() {
+      delete this.actor.__behaviors[this.constructor["name"]];
+      super.destroy();
+    }
   }
 
   export function registerBehavior(behaviorClass) {
