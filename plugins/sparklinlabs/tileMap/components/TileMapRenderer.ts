@@ -79,6 +79,7 @@ export default class TileMapRenderer extends SupEngine.ActorComponent {
   }
 
   _destroy() {
+    this._clearLayerMeshes();
     this.tileMap = null;
     this.tileSet = null;
     super._destroy();
