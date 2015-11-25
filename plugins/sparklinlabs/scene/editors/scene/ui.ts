@@ -216,7 +216,9 @@ document.querySelector(".main .controls .transform-mode").addEventListener("clic
 
 ui.availableComponents = {};
 export function start() {
-  for (let componentName in SupClient.plugins["componentEditors"]) ui.availableComponents[componentName] = componentName;
+  let componentNames = Object.keys(SupClient.plugins["componentEditors"]);
+  componentNames.sort((a, b) => a.localeCompare(b));
+  for (let componentName of componentNames) ui.availableComponents[componentName] = componentName;
 }
 
 // Transform
@@ -659,7 +661,7 @@ export function createComponentElement(nodeId: string, component: Component) {
 
 function onNewComponentClick() {
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.SelectDialog("Select the type of component to create.", ui.availableComponents, "Create", { size: 5 }, (type) => {
+  new SupClient.dialogs.SelectDialog("Select the type of component to create.", ui.availableComponents, "Create", { size: 12 }, (type) => {
     /* tslint:enable:no-unused-expression */
     if (type == null) return;
 
