@@ -1,17 +1,14 @@
 # Tile Map editor
 
-***
+## Controls
 
-### Controls
-Use **left click** to place a tile and **right click** to pick a tile from the map.
+Use **Left click** to place a tile and **Right click** to pick a tile from the map.
 
-Use the **middle click** to move the view around. You can use **Alt+left click** alternatively.
+Use the **Middle click** to move the view around. Alternatively, you can use **Alt+Left click**.
 
-Use the **mouse wheel** or **+/-** to zoom the view.
+Use the **Mouse wheel** or **+/-** to zoom in and out.
 
-***
-
-### Hotkeys
+## Hotkeys
 
 The tile map editor has some hotkeys to help you build your map quickly.
 
@@ -25,4 +22,4 @@ With the selection tool, activated with **S**:
  * Use **M** to move your selection
  * Use **D** to duplicate your selection
 
-Use **E** to activate the eraser tool and **F** to activate the fill tool.
+Use **E** to switch to the eraser tool and **F** to activate the flood fill tool.

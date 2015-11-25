@@ -69,10 +69,10 @@ function setupDocs() {
       }
     }
 
-    window.fetch(`${SupClient.plugins["documentation"][name].path}/documentation/${name}-${language}.md`)
+    window.fetch(`${SupClient.plugins["documentation"][name].path}/documentation/${name}.${language}.md`)
       .then((response) => {
         if (response.status === 404) {
-          window.fetch(`${SupClient.plugins["documentation"][name].path}/documentation/${name}-en.md`)
+          window.fetch(`${SupClient.plugins["documentation"][name].path}/documentation/${name}.en.md`)
             .then((response) => response.text() ).then(onDocumentationLoaded);
           return;
         }
