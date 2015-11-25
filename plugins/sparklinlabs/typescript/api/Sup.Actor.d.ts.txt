@@ -122,6 +122,7 @@ declare namespace Sup {
 
     addBehavior<T extends Behavior>(behaviorClass: new(actor: Actor, properties?: { [key: string]: any; }) => T, properties?: { [key: string]: any; }): T;
     getBehavior<T extends Behavior>(behaviorClass: { prototype: T }): T;
+    getBehaviors<T extends Behavior>(behaviorClass: { prototype: T }): T[];
   }
 
   class ActorComponent {

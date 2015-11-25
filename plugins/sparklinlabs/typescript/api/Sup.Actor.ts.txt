@@ -22,7 +22,7 @@ namespace Sup {
 
   export class Actor {
     __inner: any;
-    __behaviors: { [key: string]: any; };
+    __behaviors: { [key: string]: Behavior[]; };
 
     // INSERT_COMPONENT_ACCESSORS
 
@@ -415,14 +415,39 @@ namespace Sup {
     }
 
     getBehavior(behaviorClass) {
-      let foundBehavior = this.__behaviors[behaviorClass["name"]];
-      if (foundBehavior != null && !foundBehavior.isDestroyed()) return foundBehavior;
+      let behaviorList = this.__behaviors[behaviorClass["name"]];
+      if (behaviorList != null) {
+        for (let behavior of behaviorList) {
+          if (!behavior.isDestroyed()) return behavior;
+        }
+      }
+
+      // Check for behaviors inheriting from the specified class
+      for (let behaviorName in this.__behaviors) {
+        let behaviorList = this.__behaviors[behaviorName];
+        for (let behavior of behaviorList) {
+          if (Object.getPrototypeOf(behavior) instanceof behaviorClass && !behavior.isDestroyed()) {
+            return behavior;
+          }
+        }
+      }
+
+      return null;
+    }
+
+    getBehaviors(behaviorClass) {
+      let foundBehaviors = [];
 
       for (let behaviorName in this.__behaviors) {
-        let behavior = this.__behaviors[behaviorName];
-        if (Object.getPrototypeOf(behavior) instanceof behaviorClass && !behavior.isDestroyed()) return behavior;
+        let behaviorList = this.__behaviors[behaviorName];
+        for (let behavior of behaviorList) {
+          if (behavior instanceof behaviorClass && !behavior.isDestroyed()) {
+            foundBehaviors.push(behavior);
+          }
+        }
       }
-      return null;
+
+      return foundBehaviors;
     }
   }
 

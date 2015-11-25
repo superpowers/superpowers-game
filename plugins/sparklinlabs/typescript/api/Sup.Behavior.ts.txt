@@ -18,11 +18,16 @@ namespace Sup {
       this.__inner = new SupEngine.componentClasses.Behavior(actor, funcs);
 
       this.__inner.__outer = this;
-      this.actor.__behaviors[this.constructor["name"]] = this;
+      
+      let behaviorList = this.actor.__behaviors[this.constructor["name"]];
+      if (behaviorList == null) behaviorList = this.actor.__behaviors[this.constructor["name"]] = [];
+      behaviorList.push(this);
     }
     
     destroy() {
-      delete this.actor.__behaviors[this.constructor["name"]];
+      let behaviorList = this.actor.__behaviors[this.constructor["name"]];
+      behaviorList.splice(behaviorList.indexOf(this), 1);
+      if (behaviorList.length === 0) delete this.actor.__behaviors[this.constructor["name"]];
       super.destroy();
     }
   }
