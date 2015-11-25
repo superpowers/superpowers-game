@@ -30,6 +30,8 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
   animationTimer: number;
   playbackSpeed = 1;
 
+  private frameToSecond: number;
+
   constructor(actor: SupEngine.Actor) {
     super(actor, "SpriteRenderer");
   }
@@ -43,6 +45,7 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
     this.animationsByName = {};
     if (this.asset == null || this.asset.textures[this.asset.mapSlots["map"]] == null) return;
 
+    this.frameToSecond = this.actor.gameInstance.framesPerSecond / this.asset.framesPerSecond;
     this.updateAnimationsByName();
 
     this.geometry = new THREE.PlaneBufferGeometry(this.asset.grid.width, this.asset.grid.height);
@@ -155,7 +158,7 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
     this.actor.gameInstance.threeScene.traverse((object: any) => {
       let material: THREE.Material = object.material;
       if (material != null) material.needsUpdate = true;
-    })
+    });
   }
 
   _destroy() {
@@ -179,8 +182,8 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
     }
 
     let left   = (frameX     * this.asset.grid.width) / (<any>map).size.width;
-    let right  = ((frameX+1) * this.asset.grid.width) / (<any>map).size.width;
-    let bottom = ((<any>map).size.height - (frameY+1) * this.asset.grid.height) / (<any>map).size.height;
+    let right  = ((frameX + 1) * this.asset.grid.width) / (<any>map).size.width;
+    let bottom = ((<any>map).size.height - (frameY + 1) * this.asset.grid.height) / (<any>map).size.height;
     let top    = ((<any>map).size.height - frameY     * this.asset.grid.height) / (<any>map).size.height;
 
     if (this.horizontalFlip) [ left, right ] = [ right, left ];
@@ -195,7 +198,7 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
     uvs.array[6] = right; uvs.array[7] = bottom;
   }
 
-  setAnimation(newAnimationName: string, newAnimationLooping=true) {
+  setAnimation(newAnimationName: string, newAnimationLooping = true) {
     if (newAnimationName != null) {
       let animation = this.animationsByName[newAnimationName];
       if (animation == null) throw new Error(`Animation ${newAnimationName} doesn't exist`);
@@ -205,7 +208,8 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
 
       this.animation = animation;
       this.animationName = newAnimationName;
-      this.animationTimer = 0;
+      if (this.playbackSpeed * animation.speed >= 0) this.animationTimer = 0;
+      else this.animationTimer = this.getAnimationFrameCount() / this.frameToSecond - 1;
       this.isAnimationPlaying = true;
       this.updateFrame();
     }
@@ -222,7 +226,7 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
     if (this.animationName == null) return;
     if (frameTime < 0 || frameTime > this.getAnimationFrameCount()) throw new Error(`Frame time must be >= 0 and < ${this.getAnimationFrameCount()}`);
 
-    this.animationTimer = Math.ceil(frameTime * this.actor.gameInstance.framesPerSecond / this.asset.framesPerSecond);
+    this.animationTimer = frameTime * this.frameToSecond;
     this.updateFrame();
   }
 
@@ -233,7 +237,7 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
 
   getAnimationFrameIndex() {
     if (this.animationName == null) return 0;
-    return this.computeAbsoluteFrameIndex() - this.animation.startFrameIndex;
+    return Math.floor(this.computeAbsoluteFrameTime()) - this.animation.startFrameIndex;
   }
 
   getAnimationFrameCount() {
@@ -241,11 +245,15 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
     return this.animation.endFrameIndex - this.animation.startFrameIndex + 1;
   }
 
-  playAnimation(animationLooping=true) {
+  playAnimation(animationLooping = true) {
     this.animationLooping = animationLooping;
     this.isAnimationPlaying = true;
+    if (this.animationLooping) return;
 
-    if (!this.animationLooping && this.getAnimationFrameIndex() === this.getAnimationFrameCount() - 1) this.animationTimer = 0;
+    if (this.playbackSpeed * this.animation.speed > 0 && this.getAnimationFrameIndex() === this.getAnimationFrameCount() - 1)
+      this.animationTimer = 0;
+    else if (this.playbackSpeed * this.animation.speed < 0 && this.getAnimationFrameIndex() === 0)
+      this.animationTimer = (this.getAnimationFrameCount() - 0.01) * this.frameToSecond;
   }
   pauseAnimation() { this.isAnimationPlaying = false; }
 
@@ -258,52 +266,34 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
   }
 
   computeAbsoluteFrameTime() {
-    let frame: number;
-    if (this.playbackSpeed * this.animation.speed >= 0) {
-      frame = this.animation.startFrameIndex;
-      frame += this.animationTimer * this.playbackSpeed * this.animation.speed / this.actor.gameInstance.framesPerSecond * this.asset.framesPerSecond;
-    } else {
-      frame = this.animation.endFrameIndex;
-      frame -= this.animationTimer * Math.abs(this.playbackSpeed * this.animation.speed) / this.actor.gameInstance.framesPerSecond * this.asset.framesPerSecond;
-    }
+    let frame = this.animation.startFrameIndex;
+    frame += this.animationTimer / this.frameToSecond;
     return frame;
   }
 
-  computeAbsoluteFrameIndex() {
-    let frame: number;
-    if (this.playbackSpeed * this.animation.speed >= 0) {
-      frame = this.animation.startFrameIndex;
-      frame += Math.floor(this.animationTimer * this.playbackSpeed * this.animation.speed / this.actor.gameInstance.framesPerSecond * this.asset.framesPerSecond);
-    } else {
-      frame = this.animation.endFrameIndex;
-      frame -= Math.floor(this.animationTimer * Math.abs(this.playbackSpeed * this.animation.speed) / this.actor.gameInstance.framesPerSecond * this.asset.framesPerSecond);
-    }
-    return frame;
-  }
-
-  updateFrame(flagFrameUpdated=true) {
+  updateFrame(flagFrameUpdated = true) {
     if (flagFrameUpdated) this.hasFrameBeenUpdated = true;
 
-    let frame = this.computeAbsoluteFrameIndex();
+    let frame = Math.floor(this.computeAbsoluteFrameTime());
     if (frame > this.animation.endFrameIndex) {
       if (this.animationLooping) {
         frame = this.animation.startFrameIndex;
-        this.animationTimer = 1;
+        this.animationTimer = this.playbackSpeed * this.animation.speed;
       }
       else {
         frame = this.animation.endFrameIndex;
-        this.animationTimer -= 1;
+        this.animationTimer = (this.getAnimationFrameCount() - 0.01) * this.frameToSecond;
         this.isAnimationPlaying = false;
       }
 
     } else if (frame < this.animation.startFrameIndex) {
       if (this.animationLooping) {
         frame = this.animation.endFrameIndex;
-        this.animationTimer = 1;
+        this.animationTimer = (this.getAnimationFrameCount() - 0.01) * this.frameToSecond + this.playbackSpeed * this.animation.speed;
       }
       else {
         frame = this.animation.startFrameIndex;
-        this.animationTimer -= 1;
+        this.animationTimer = 0;
         this.isAnimationPlaying = false;
       }
     }
@@ -328,7 +318,7 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
   _tickAnimation() {
     if (this.animationName == null || !this.isAnimationPlaying) return;
 
-    this.animationTimer += 1;
+    this.animationTimer += this.playbackSpeed * this.animation.speed;
     this.updateFrame();
   }
 
