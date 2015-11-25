@@ -1,8 +1,9 @@
 if (SupClient.isApp) {
+  let shell: GitHubElectron.Shell = (top as any).global.require("remote").require("shell");
   document.querySelector(".sidebar .links").addEventListener("click", (event: any) => {
     if (event.target.tagName !== "A") return;
 
     event.preventDefault();
-    window.parent.postMessage({ type: "openLink", content: event.target.href }, window.location.origin)
+    shell.openExternal(event.target.href);
   });
 }

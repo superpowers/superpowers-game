@@ -1,5 +1,7 @@
 import { data } from "./network";
 
+SupClient.setupHotkeys();
+
 let ui: {
   textToSearch?: string;
   searchRegExp?: RegExp;

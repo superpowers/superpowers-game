@@ -59,13 +59,16 @@ function setupDocs() {
       anchorElt.textContent = articleElt.firstElementChild.textContent;
 
       let linkElts = articleElt.querySelectorAll("a") as NodeListOf<HTMLAnchorElement>;
-      for (let i = 0; i < linkElts.length; i++) {
-        if (SupClient.isApp) {
+      if (SupClient.isApp) {
+        let shell: GitHubElectron.Shell = (top as any).global.require("remote").require("shell");
+        for (let i = 0; i < linkElts.length; i++) {
           linkElts[i].addEventListener("click", (event: any) => {
             event.preventDefault();
-            top.postMessage({ type: "openLink", content: event.target.href }, window.location.origin);
+            shell.openExternal(event.target.href);
           });
-        } else linkElts[i].target = "_blank";
+        }
+      } else {
+        for (let i = 0; i < linkElts.length; i++) linkElts[i].target = "_blank";
       }
     }
 
