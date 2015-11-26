@@ -1,65 +1,25 @@
 body
   display flex
 
-nav
-  width 250px
-  overflow-y auto
-  position fixed
-  top 0
-  background #ddd
-  bottom 0
-
-  ol
-    list-style none
-    margin 0
-    padding 0
-
-  li
-    padding 0
-    margin 0
-
-  > ol > li
-    text-transform uppercase
-    color #666
-    background #ccc
-    padding 0.25em 0.5em
-
-  > ol ol
-    padding 0.5em
-
-  a
-    display block
-    color #444
-    padding 0.25em 0.5em
-    text-decoration none
-
-    &:hover
-      background #ccc
-
-    &.active
-      background #444
-      color #eee
-
 main
-  margin-left 250px
-  padding 1em
   flex 1
 
-  > header 
-    font-size 2.5em
-    margin-bottom 0.33em
-    background-color #ddd
-    padding-left 0.5em
-  
-  > div:last-child
-    margin-bottom 20em
+  > header
+    font-size 2em
+    background-color #eee
+    color #666
+    padding 0.25em 0.5em
+    text-transform uppercase
+    border-bottom 1px solid #aaa
+    &:not(:first-child) { border-top: 1px solid #aaa; }
+
+  > div
+    display flex
+    flex-wrap wrap
 
 section
-  margin-bottom 1em
-
-  &:not(:first-child)
-    border-top: 1px solid #ccc;
-    padding-top: 1em;
+  padding 1em
+  width calc(500px + 2em)
 
   header
     font-size 1.5em
