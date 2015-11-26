@@ -1,0 +1,34 @@
+[
+  {
+    "id": "0",
+    "name": "Scene",
+    "type": "scene"
+  },
+  {
+    "id": "4",
+    "name": "Tile Set",
+    "type": "tileSet"
+  },
+  {
+    "id": "6",
+    "name": "Map",
+    "type": "tileMap"
+  },
+  {
+    "id": "1",
+    "name": "Player",
+    "type": null,
+    "children": [
+      {
+        "id": "2",
+        "name": "Sprite",
+        "type": "sprite"
+      },
+      {
+        "id": "3",
+        "name": "Behavior",
+        "type": "script"
+      }
+    ]
+  }
+]
