@@ -13,7 +13,6 @@ SupClient.setupHotkeys();
 
 function onWelcome() {
   data = { projectClient: new SupClient.ProjectClient(socket), };
-  
   loadPlugins();
 }
 
@@ -46,15 +45,44 @@ function loadPlugins() {
   });
 }
 
+
 function setupSettings() {
-  let navListElt = document.querySelector("nav ul");
+  let navListElt = document.querySelector("nav ol");
   let mainElt = document.querySelector("main");
 
   let sortedNames = Object.keys(SupClient.plugins["settingsEditors"]);
   sortedNames.sort((a, b) => { return (a.toLowerCase() < b.toLowerCase()) ? -1 : 1; });
 
+  let createSection = (namespace: string) => {
+    let linkHeaderElt = document.createElement("li");
+    linkHeaderElt.textContent = namespace;
+    navListElt.appendChild(linkHeaderElt);
+    let linkRootElt = document.createElement("ol");
+    linkRootElt.classList.add(`namespace-${namespace}`);
+    navListElt.appendChild(linkRootElt);
+
+    let sectionHeaderElt = document.createElement("header");
+    sectionHeaderElt.textContent = namespace;
+    mainElt.appendChild(sectionHeaderElt);
+    let sectionRootElt = document.createElement("div");
+    sectionRootElt.classList.add(`namespace-${namespace}`);
+    mainElt.appendChild(sectionRootElt);
+
+    return { linkRootElt, sectionRootElt };
+  };
+
+  // Create general section first so we are sure it is displayed above
+  createSection("General");
+
   for (let name of sortedNames) {
-    let settingEditorClass = SupClient.plugins["settingsEditors"][name].content;
+    let namespace = SupClient.plugins["settingsEditors"][name].content.namespace;
+    let linkRootElt = navListElt.querySelector(`ol.namespace-${namespace}`) as HTMLOListElement;
+    let sectionRootElt = mainElt.querySelector(`div.namespace-${namespace}`) as HTMLDivElement;
+    if (linkRootElt == null) {
+      let section = createSection(namespace);
+      linkRootElt = section.linkRootElt;
+      sectionRootElt = section.sectionRootElt;
+    }
 
     let liElt = document.createElement("li");
     let anchorElt = document.createElement("a");
@@ -62,19 +90,23 @@ function setupSettings() {
     anchorElt.href = `#${name}`;
     anchorElt.textContent = name;
     liElt.appendChild(anchorElt);
-    navListElt.appendChild(liElt);
+    linkRootElt.appendChild(liElt);
 
     let sectionElt = document.createElement("section");
     sectionElt.id = `settings-${name}`;
-    mainElt.appendChild(sectionElt);
+    sectionRootElt.appendChild(sectionElt);
 
     let headerElt = document.createElement("header");
-    headerElt.textContent = name;
+    let sectionAnchorElt = document.createElement("a");
+    sectionAnchorElt.name = name;
+    sectionAnchorElt.textContent = name;
+    headerElt.appendChild(sectionAnchorElt);
     sectionElt.appendChild(headerElt);
 
     let divElt = document.createElement("div");
     sectionElt.appendChild(divElt);
 
+    let settingEditorClass = SupClient.plugins["settingsEditors"][name].content.editor;
     new settingEditorClass(divElt, data.projectClient);
   }
 
@@ -82,21 +114,18 @@ function setupSettings() {
     if (event.target.tagName !== "A") return;
 
     (<HTMLAnchorElement>navListElt.querySelector("li a.active")).classList.remove("active");
-    (<HTMLElement>mainElt.querySelector("section.active")).classList.remove("active");
     event.target.classList.add("active");
-    document.getElementById(`settings-${event.target.textContent}`).classList.add("active");
   });
 
   if (window.location.hash.length > 1) {
     let hash = window.location.hash.substring(1);
     let sectionElt = document.getElementById(`settings-${hash}`);
     if (sectionElt != null) {
-      sectionElt.classList.add("active");
+      sectionElt.scrollIntoView();
       document.getElementById(`link-${hash}`).classList.add("active");
       return;
     }
   }
 
   (<HTMLAnchorElement>navListElt.querySelector("li a")).classList.add("active");
-  (<HTMLElement>mainElt.querySelector("section")).classList.add("active");
 }
