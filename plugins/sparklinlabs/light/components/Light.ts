@@ -53,6 +53,9 @@ export default class Light extends SupEngine.ActorComponent {
         let spotLight = new THREE.SpotLight(this.color, this.intensity, this.distance, this.angle * Math.PI / 180);
         spotLight.target.position.copy(this.target);
         spotLight.target.updateMatrixWorld(false);
+        spotLight.shadow.mapSize.copy(this.shadow.mapSize);
+        spotLight.shadow.bias = this.shadow.bias;
+        spotLight.shadow.darkness = this.shadow.darkness;
         spotLight.shadow.camera = new THREE.PerspectiveCamera(
           this.shadow.camera.fov,
           this.shadow.mapSize.x / this.shadow.mapSize.y,
