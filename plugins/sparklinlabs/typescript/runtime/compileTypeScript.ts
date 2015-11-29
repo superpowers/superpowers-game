@@ -1,6 +1,6 @@
 import * as ts from "typescript";
 
-export default function compileTypeScript(sourceFileNames: string[], sourceFiles: {[name: string]: string}, libSource: string, compilerOptions: ts.CompilerOptions={}) {
+export default function compileTypeScript(sourceFileNames: string[], sourceFiles: {[name: string]: string}, libSource: string, compilerOptions: ts.CompilerOptions = {}) {
   if (compilerOptions.target == null) compilerOptions.target = ts.ScriptTarget.ES5;
 
   let script = "";
@@ -36,14 +36,14 @@ export default function compileTypeScript(sourceFileNames: string[], sourceFiles
         script += `\n${text}`;
       }
     },
-    
+
     fileExists: (path: string) => { return path === "lib.d.ts" || sourceFiles[path] != null; },
     getDefaultLibFileName: () => "lib.d.ts",
     useCaseSensitiveFileNames: () => false,
     getCanonicalFileName: (filename: string) => filename,
     getCurrentDirectory: () => "",
     getNewLine: () => "\n"
-  }
+  };
 
   // Create a program from inputs
   let program = ts.createProgram(sourceFileNames, compilerOptions, compilerHost);
@@ -59,12 +59,14 @@ export default function compileTypeScript(sourceFileNames: string[], sourceFiles
   }
 
   return {
-    errors: errors.map((e: any) => { return {
-      file: e.file.fileName,
-      position: e.file.getLineAndCharacterOfPosition(e.start),
-      length: e.length,
-      message: ts.flattenDiagnosticMessageText(e.messageText, "\n")
-    }}),
+    errors: errors.map((e: any) => {
+      return {
+        file: e.file.fileName,
+        position: e.file.getLineAndCharacterOfPosition(e.start),
+        length: e.length,
+        message: ts.flattenDiagnosticMessageText(e.messageText, "\n")
+      };
+    }),
     program, typeChecker, script, sourceMaps, files
-  }
+  };
 }

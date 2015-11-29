@@ -1,9 +1,9 @@
-import * as async from "async"
-import * as convert from "convert-source-map"
+import * as async from "async";
+import * as convert from "convert-source-map";
 // No definition file for combine-source-map module
 let combine: any = require("combine-source-map");
 import compileTypeScript from "./compileTypeScript";
-import * as fs from "fs"
+import * as fs from "fs";
 
 let globalNames: string[] = [];
 let globals: {[name: string]: string} = {};
@@ -16,7 +16,7 @@ let actorComponentTypesByName: {[name: string]: any} = {};
 let actorComponentAccessors: string[] = [];
 
 export function init(player: any, callback: Function) {
-  player.behaviorClasses = {}
+  player.behaviorClasses = {};
 
   player.createActor = (name: string, parentActor: any, options?: { visible?: boolean; layer?: number }) => { return new (<any>window).Sup.Actor(name, parentActor, options); };
 
@@ -24,7 +24,9 @@ export function init(player: any, callback: Function) {
     if (type === "Behavior") {
       let behaviorClass = player.behaviorClasses[config.behaviorName];
       if (behaviorClass == null) {
-        throw new Error(`Could not find a behavior class named "${config.behaviorName}" for actor "${actor.getName()}". Make sure you're using the class name, not the script's name and that the class is declared before the behavior component is created (or before the scene is loaded).`);
+        throw new Error(`Could not find a behavior class named "${config.behaviorName}" for actor "${actor.getName()}". ` +
+        "Make sure you're using the class name, not the script's name and that the class is declared " +
+        "before the behavior component is created (or before the scene is loaded).");
       }
       return new behaviorClass(actor.__inner);
     } else {
@@ -35,7 +37,7 @@ export function init(player: any, callback: Function) {
       }
       return new actorComponentTypesByName[type](actor);
     }
-  }
+  };
 
   for (let pluginName in SupCore.system.api.contexts["typescript"].plugins) {
     let plugin = SupCore.system.api.contexts["typescript"].plugins[pluginName];
@@ -91,7 +93,7 @@ export function start(player: SupRuntime.Player, callback: Function) {
       count++;
     }
     return count;
-  }
+  };
 
   jsGlobals.script = `(function() {
 var player = _player; _player = undefined;
@@ -107,14 +109,14 @@ ${jsGlobals.script}
     line += getLineCounts(file.text);
   }
 
-  let code =`${jsGlobals.script}${results.script}
+  let code = `${jsGlobals.script}${results.script}
 //# sourceMappingURL=data:application/json;charset=utf-8;base64,${combinedSourceMap.base64()}`;
 
   // Execute the generated code
   let scriptFunction = new Function("_player", code);
   scriptFunction(player);
 
-  callback()
+  callback();
 }
 
 export function loadAsset(player: SupRuntime.Player, entry: any, callback: (err: Error, asset?: any) => any) {
