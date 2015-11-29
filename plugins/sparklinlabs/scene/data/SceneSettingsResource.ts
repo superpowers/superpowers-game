@@ -18,8 +18,8 @@ export default class SceneSettingsResource extends SupCore.Data.Base.Resource {
 
   pub: SceneSettingsResourcePub;
 
-  constructor(pub: any, server: ProjectServer) {
-    super(pub, SceneSettingsResource.schema, server);
+  constructor(id: string, pub: any, server: ProjectServer) {
+    super(id, pub, SceneSettingsResource.schema, server);
   }
 
   init(callback: Function) {

@@ -7,8 +7,8 @@ export default class LightSettingsResource extends SupCore.Data.Base.Resource {
     shadowMapType: { type: "enum", items: [ "basic", "pcf", "pcfSoft" ], mutable: true },
   }
 
-  constructor(pub: any, server: ProjectServer) {
-    super(pub, LightSettingsResource.schema, server);
+  constructor(id: string, pub: any, server: ProjectServer) {
+    super(id, pub, LightSettingsResource.schema, server);
   }
 
   init(callback: Function) {

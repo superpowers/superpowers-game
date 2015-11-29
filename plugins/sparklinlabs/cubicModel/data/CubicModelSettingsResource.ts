@@ -4,8 +4,8 @@ export default class CubicModelSettingsResource extends SupCore.Data.Base.Resour
     pixelsPerUnit: { type: "integer", min: 1, mutable: true }
   };
 
-  constructor(pub: any, server: ProjectServer) {
-    super(pub, CubicModelSettingsResource.schema, server);
+  constructor(id: string, pub: any, server: ProjectServer) {
+    super(id, pub, CubicModelSettingsResource.schema, server);
   }
 
   init(callback: Function) {

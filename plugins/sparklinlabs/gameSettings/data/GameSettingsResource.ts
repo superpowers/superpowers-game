@@ -23,12 +23,12 @@ export default class GameSettingsResource extends SupCore.Data.Base.Resource {
       type: "array", mutable: true, minLength: 0, maxLength: 8,
       items: { type: "string", minLength: 1, maxLength: 80 }
     }
-  }
+  };
 
   pub: GameSettingsResourcePub;
 
-  constructor(pub: GameSettingsResourcePub, server?: ProjectServer) {
-    super(pub, GameSettingsResource.schema, server);
+  constructor(id: string, pub: GameSettingsResourcePub, server?: ProjectServer) {
+    super(id, pub, GameSettingsResource.schema, server);
   }
 
   init(callback: Function) {

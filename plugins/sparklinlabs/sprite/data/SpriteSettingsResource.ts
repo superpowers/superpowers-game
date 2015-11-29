@@ -10,8 +10,8 @@ export default class SpriteSettingsResource extends SupCore.Data.Base.Resource {
     alphaTest: { type: "number", min: 0, max: 1, mutable: true }
   }
 
-  constructor(pub: any, server: ProjectServer) {
-    super(pub, SpriteSettingsResource.schema, server);
+  constructor(id: string, pub: any, server: ProjectServer) {
+    super(id, pub, SpriteSettingsResource.schema, server);
   }
 
   init(callback: Function) {

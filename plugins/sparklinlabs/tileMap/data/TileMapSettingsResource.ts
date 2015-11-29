@@ -34,8 +34,8 @@ export default class TileMapSettingsResource extends SupCore.Data.Base.Resource 
 
   pub: TileMapSettingsResourcePub;
 
-  constructor(pub: TileMapSettingsResourcePub, server: ProjectServer) {
-    super(pub, TileMapSettingsResource.schema, server);
+  constructor(id: string, pub: TileMapSettingsResourcePub, server: ProjectServer) {
+    super(id, pub, TileMapSettingsResource.schema, server);
   }
 
   init(callback: Function) {

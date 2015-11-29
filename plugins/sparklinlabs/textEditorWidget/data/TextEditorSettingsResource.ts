@@ -12,8 +12,8 @@ export default class TextEditorSettingsResource extends SupCore.Data.Base.Resour
 
   pub: TextEditorSettingsResourcePub;
 
-  constructor(pub: any, server: ProjectServer) {
-    super(pub, TextEditorSettingsResource.schema, server);
+  constructor(id: string, pub: any, server: ProjectServer) {
+    super(id, pub, TextEditorSettingsResource.schema, server);
   }
 
   init(callback: Function) {

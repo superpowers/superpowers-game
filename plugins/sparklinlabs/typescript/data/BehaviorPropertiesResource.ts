@@ -37,8 +37,8 @@ export default class BehaviorPropertiesResource extends SupCore.Data.Base.Resour
   behaviorNamesByScriptId: {[scriptId: string]: string[];};
   propertiesByNameByBehavior: {[behaviorName: string]: {[propertyName: string]: BehaviorProperty}};
 
-  constructor(pub: any, server: ProjectServer) {
-    super(pub, BehaviorPropertiesResource.schema, server);
+  constructor(id: string, pub: any, server: ProjectServer) {
+    super(id, pub, BehaviorPropertiesResource.schema, server);
   }
 
   setup() {
