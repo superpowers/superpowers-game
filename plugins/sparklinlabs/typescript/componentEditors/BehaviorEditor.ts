@@ -1,10 +1,8 @@
 import BehaviorPropertiesResource, { BehaviorProperty } from "../data/BehaviorPropertiesResource";
 
-let behaviorEditorDataListIndex = 0;
-
 interface Config {
   behaviorName: string;
-  propertyValues: { [name: string]: { value: any, type: string }; }
+  propertyValues: { [name: string]: { value: any, type: string }; };
 }
 
 export default class BehaviorEditor {
@@ -15,8 +13,7 @@ export default class BehaviorEditor {
 
   behaviorPropertiesResource: BehaviorPropertiesResource;
 
-  behaviorNamesDataListElt: HTMLDataListElement;
-  behaviorNameField: HTMLInputElement;
+  behaviorNameField: HTMLSelectElement;
   behaviorPropertiesHeaderRow: HTMLTableRowElement;
 
   propertySettingsByName: { [name: string]: SupClient.table.RowParts };
@@ -27,14 +24,11 @@ export default class BehaviorEditor {
     this.projectClient = projectClient;
     this.editConfig = editConfig;
 
-    this.behaviorNamesDataListElt = document.createElement("datalist");
-    this.behaviorNamesDataListElt.id = `behavior-editor-datalist-${behaviorEditorDataListIndex++}`;
-    this.tbody.appendChild(this.behaviorNamesDataListElt);
-
+    // Using a <select> rather than <input> + <datalist> because of bugs in Chrome and Electron
+    // See https://trello.com/c/jNNRLgdb/651 and https://github.com/atom/electron/issues/360
     let behaviorNameRow = SupClient.table.appendRow(this.tbody, "Class");
-    this.behaviorNameField = SupClient.table.appendTextField(behaviorNameRow.valueCell, this.config.behaviorName);
-    this.behaviorNameField.setAttribute("list", this.behaviorNamesDataListElt.id);
-    this.behaviorNameField.addEventListener("change", this._onChangeBehaviorName);
+    this.behaviorNameField = SupClient.table.appendSelectBox(behaviorNameRow.valueCell, { "": "(None)" });
+    this.behaviorNameField.addEventListener("change", this.onChangeBehaviorName);
 
     SupClient.table.appendHeader(this.tbody, "Customizable Properties");
 
@@ -48,21 +42,24 @@ export default class BehaviorEditor {
   onResourceReceived = (resourceId: string, resource: BehaviorPropertiesResource) => {
     this.behaviorPropertiesResource = resource;
     this._buildBehaviorPropertiesUI();
-  }
+  };
 
   onResourceEdited = (resourceId: string, command: string, ...args: any[]) => {
     if (command === "setScriptBehaviors" || command === "clearScriptBehaviors") this._buildBehaviorPropertiesUI();
-  }
+  };
 
   _buildBehaviorPropertiesUI() {
     // Setup behavior list
-    this.behaviorNamesDataListElt.innerHTML = "";
+    while (this.behaviorNameField.childElementCount > 1) this.behaviorNameField.removeChild(this.behaviorNameField.lastElementChild);
     for (let behaviorName in this.behaviorPropertiesResource.pub.behaviors) {
-      let option = document.createElement("option");
-      option.value = behaviorName;
-      option.textContent = behaviorName;
-      this.behaviorNamesDataListElt.appendChild(option);
+      SupClient.table.appendSelectOption(this.behaviorNameField, behaviorName, behaviorName);
     }
+
+    if (this.config.behaviorName.length > 0 && this.behaviorPropertiesResource.pub.behaviors[this.config.behaviorName] == null) {
+      SupClient.table.appendSelectOption(this.behaviorNameField, this.config.behaviorName, `(Missing) ${this.config.behaviorName}`);
+    }
+
+    this.behaviorNameField.value = this.config.behaviorName;
 
     // Clear old property settings
     for (let name in this.propertySettingsByName) {
@@ -154,60 +151,56 @@ export default class BehaviorEditor {
         if (propertyField == null) {
           propertySetting.valueCell.innerHTML = "";
           propertyField = SupClient.table.appendTextField(propertySetting.valueCell, "");
-          propertyField.addEventListener("change", this._onChangePropertyValue);
+          propertyField.addEventListener("change", this.onChangePropertyValue);
         }
 
         propertyField.value = `(Incompatible type: ${propertyValueInfo.type})`;
         propertyField.disabled = true;
-        
+
         propertyFields = [ propertyField ];
-        break;
-      }
+      } break;
 
       case "boolean": {
         let propertyField = <HTMLInputElement>propertySetting.valueCell.querySelector("input[type=checkbox]");
         if (propertyField == null) {
           propertySetting.valueCell.innerHTML = "";
           propertyField = SupClient.table.appendBooleanField(propertySetting.valueCell, false);
-          propertyField.addEventListener("change", this._onChangePropertyValue);
+          propertyField.addEventListener("change", this.onChangePropertyValue);
         }
 
         propertyField.checked = propertyValue;
         propertyField.disabled = propertyValueInfo == null;
-        
+
         propertyFields = [ propertyField ];
-        break;
-      }
+      } break;
 
       case "number": {
         let propertyField = <HTMLInputElement>propertySetting.valueCell.querySelector("input[type=number]");
         if (propertyField == null) {
           propertySetting.valueCell.innerHTML = "";
           propertyField = SupClient.table.appendNumberField(propertySetting.valueCell, 0);
-          propertyField.addEventListener("change", this._onChangePropertyValue);
+          propertyField.addEventListener("change", this.onChangePropertyValue);
         }
 
         propertyField.value = propertyValue;
         propertyField.disabled = propertyValueInfo == null;
-        
+
         propertyFields = [ propertyField ];
-        break;
-      }
+      } break;
 
       case "string": {
         let propertyField = <HTMLInputElement>propertySetting.valueCell.querySelector("input[type=text]");
         if (propertyField == null) {
           propertySetting.valueCell.innerHTML = "";
           propertyField = SupClient.table.appendTextField(propertySetting.valueCell, "");
-          propertyField.addEventListener("change", this._onChangePropertyValue);
+          propertyField.addEventListener("change", this.onChangePropertyValue);
         }
 
         propertyField.value = propertyValue;
         propertyField.disabled = propertyValueInfo == null;
-        
+
         propertyFields = [ propertyField ];
-        break;
-      }
+      } break;
 
       case "Sup.Math.Vector2":
       case "Sup.Math.Vector3": {
@@ -217,17 +210,16 @@ export default class BehaviorEditor {
           let defaultValues = uiType === "Sup.Math.Vector3" ? [ 0, 0, 0 ] : [ 0, 0 ];
           propertyFields = SupClient.table.appendNumberFields(propertySetting.valueCell, defaultValues);
 
-          for (let field of propertyFields) field.addEventListener("change", this._onChangePropertyValue);
+          for (let field of propertyFields) field.addEventListener("change", this.onChangePropertyValue);
         } else {
           propertyFields = Array.prototype.slice.call(vectorContainer.querySelectorAll("input"));
         }
-        
+
         propertyFields[0].value = (propertyValue != null) ? propertyValue.x : "";
         propertyFields[1].value = (propertyValue != null) ? propertyValue.y : "";
         if (uiType === "Sup.Math.Vector3") propertyFields[2].value = (propertyValue != null) ? propertyValue.z : "";
         for (let field of propertyFields) field.disabled = propertyValueInfo == null;
-        break;
-      }
+      } break;
 
       // TODO: Support more types
       default: {
@@ -236,7 +228,7 @@ export default class BehaviorEditor {
         return;
       }
     }
-    
+
     for (let field of propertyFields) {
       field.dataset["behaviorPropertyName"] = property.name;
       field.dataset["behaviorPropertyType"] = property.type;
@@ -264,19 +256,19 @@ export default class BehaviorEditor {
     this._createPropertyField(name);
   }
 
-  _onChangeBehaviorName = (event: any) => { this.editConfig("setProperty", "behaviorName", event.target.value); }
+  private onChangeBehaviorName = (event: any) => { this.editConfig("setProperty", "behaviorName", event.target.value); };
 
-  // _onChangePropertySet = (event: any) => {}
+  // private onChangePropertySet = (event: any) => {}
 
-  _onChangePropertyValue = (event: any) => {
+  private onChangePropertyValue = (event: any) => {
     let propertyName = event.target.dataset.behaviorPropertyName;
     let propertyType = event.target.dataset.behaviorPropertyType;
     let propertyValue: any;
 
     switch (propertyType) {
       case "boolean": propertyValue = event.target.checked; break;
-      case "number": propertyValue = parseFloat(event.target.value); break
-      case "string": propertyValue = event.target.value; break
+      case "number": propertyValue = parseFloat(event.target.value); break;
+      case "string": propertyValue = event.target.value; break;
       case "Sup.Math.Vector2":
       case "Sup.Math.Vector3": {
         let parent =  (<HTMLDivElement>event.target.parentElement);
@@ -284,15 +276,14 @@ export default class BehaviorEditor {
           x: parseFloat((<HTMLInputElement>parent.children[0]).value),
           y: parseFloat((<HTMLInputElement>parent.children[1]).value)
         };
-        
+
         if (propertyType === "Sup.Math.Vector3") propertyValue.z = parseFloat((<HTMLInputElement>parent.children[2]).value);
-        break;
-      }
-      default: console.error(`Unsupported property type: ${propertyType}`); break
+      } break;
+      default: console.error(`Unsupported property type: ${propertyType}`); break;
     }
 
     this.editConfig("setBehaviorPropertyValue", propertyName, propertyType, propertyValue, (err: string) => {
       if (err != null) { alert(err); return; }
     });
-  }
+  };
 }
