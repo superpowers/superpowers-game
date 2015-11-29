@@ -19,7 +19,7 @@ export default class SceneComponents extends SupCore.Data.Base.ListById {
   constructor(pub: any, sceneAsset?: SceneAsset) {
     super(pub, SceneComponents.schema);
     this.sceneAsset = sceneAsset;
-    
+
     let system = (this.sceneAsset.server != null) ? this.sceneAsset.server.system : SupCore.system;
 
     for (let item of this.pub) {
@@ -28,7 +28,8 @@ export default class SceneComponents extends SupCore.Data.Base.ListById {
       if (componentConfigClass == null) {
         if (sceneAsset != null) {
           let scenePath = sceneAsset.server.data.entries.getPathFromId(sceneAsset.id);
-          throw new Error(`Could not find component config class for type ${item.type} in scene ${scenePath} of project ${sceneAsset.server.data.manifest.pub.name} (${sceneAsset.server.data.manifest.pub.id})`);
+          throw new Error(`Could not find component config class for type ${item.type} in scene ${scenePath} ` +
+          `of project ${sceneAsset.server.data.manifest.pub.name} (${sceneAsset.server.data.manifest.pub.id})`);
         } else {
           throw new Error(`Could not find component config class for type ${item.type}`);
         }

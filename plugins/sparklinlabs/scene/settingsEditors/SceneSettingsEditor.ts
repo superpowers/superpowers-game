@@ -36,9 +36,9 @@ export default class SceneSettingsEditor {
       if (setting === "formatVersion") continue;
       this.fields[setting].value = resource.pub[setting];
     }
-  }
+  };
 
   onResourceEdited = (resourceId: string, command: string, propertyName: string) => {
     this.fields[propertyName].value = this.resource.pub[propertyName];
-  }
+  };
 }

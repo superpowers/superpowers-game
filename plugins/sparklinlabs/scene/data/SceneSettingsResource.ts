@@ -1,6 +1,3 @@
-import * as path from "path";
-import * as fs from "fs";
-
 interface SceneSettingsResourcePub {
   formatVersion: number;
 
@@ -17,7 +14,7 @@ export default class SceneSettingsResource extends SupCore.Data.Base.Resource {
 
     defaultCameraMode: { type: "enum", items: [ "3D", "2D" ], mutable: true },
     defaultVerticalAxis: { type: "enum", items: [ "Y", "Z" ], mutable: true }
-  }
+  };
 
   pub: SceneSettingsResourcePub;
 

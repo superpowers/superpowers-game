@@ -97,7 +97,7 @@ var gameSettingSubscriber = {
   },
 
   onResourceEdited: (resourceId: string, command: string, propertyName: string) => {
-    if (propertyName == "customLayers") setupInspectorLayers();
+    if (propertyName === "customLayers") setupInspectorLayers();
   }
 };
 
@@ -120,7 +120,7 @@ function onSceneAssetReceived(/*err: string, asset: SceneAsset*/) {
 
     if (node.children != null && node.children.length > 0) {
       liElt.classList.add("collapsed");
-      for (let child of node.children) walk(child, node, liElt)
+      for (let child of node.children) walk(child, node, liElt);
     }
 
     // Compute scene bounding box
@@ -151,7 +151,7 @@ onEditCommands.addNode = (node: Node, parentId: string, index: number) => {
   let parentElt: HTMLLIElement;
   if (parentId != null) parentElt = ui.nodesTreeView.treeRoot.querySelector(`[data-id='${parentId}']`);
   ui.nodesTreeView.insertAt(nodeElt, "group", index, parentElt);
-}
+};
 
 onEditCommands.moveNode = (id: string, parentId: string, index: number) => {
   // Reparent tree node
@@ -159,7 +159,7 @@ onEditCommands.moveNode = (id: string, parentId: string, index: number) => {
   let isInspected = ui.nodesTreeView.selectedNodes.length === 1 && nodeElt === ui.nodesTreeView.selectedNodes[0];
 
   let parentElt: HTMLLIElement;
-  if (parentId != null) parentElt = ui.nodesTreeView.treeRoot.querySelector(`[data-id='${parentId}']`)
+  if (parentId != null) parentElt = ui.nodesTreeView.treeRoot.querySelector(`[data-id='${parentId}']`);
   ui.nodesTreeView.insertAt(nodeElt, "group", index, parentElt);
 
   // Refresh inspector
@@ -172,7 +172,7 @@ onEditCommands.moveNode = (id: string, parentId: string, index: number) => {
 
   // TODO: Only refresh if selection is affected
   setupHelpers();
-}
+};
 
 onEditCommands.setNodeProperty = (id: string, path: string, value: any) => {
   let nodeElt = ui.nodesTreeView.treeRoot.querySelector(`[data-id='${id}']`);
@@ -205,14 +205,14 @@ onEditCommands.setNodeProperty = (id: string, path: string, value: any) => {
 
   // TODO: Only refresh if selection is affected
   setupHelpers();
-}
+};
 
 onEditCommands.duplicateNode = (rootNode: Node, newNodes: DuplicatedNode[]) => {
   for (let newNode of newNodes) onEditCommands.addNode(newNode.node, newNode.parentId, newNode.index);
 
   // TODO: Only refresh if selection is affected
   setupHelpers();
-}
+};
 
 onEditCommands.removeNode = (id: string) => {
   let nodeElt = ui.nodesTreeView.treeRoot.querySelector(`[data-id='${id}']`);
@@ -222,7 +222,7 @@ onEditCommands.removeNode = (id: string) => {
   if (isInspected) setupSelectedNode();
   // TODO: Only refresh if selection is affected
   else setupHelpers();
-}
+};
 
 onEditCommands.addComponent = (nodeId: string, nodeComponent: Component, index: number) => {
   let isInspected = ui.nodesTreeView.selectedNodes.length === 1 && nodeId === ui.nodesTreeView.selectedNodes[0].dataset.id;
@@ -235,7 +235,7 @@ onEditCommands.addComponent = (nodeId: string, nodeComponent: Component, index: 
 
   // TODO: Only refresh if selection is affected
   setupHelpers();
-}
+};
 
 onEditCommands.editComponent = (nodeId: string, componentId: string, command: string, ...args: any[]) => {
   let isInspected = ui.nodesTreeView.selectedNodes.length === 1 && nodeId === ui.nodesTreeView.selectedNodes[0].dataset.id;
@@ -247,7 +247,7 @@ onEditCommands.editComponent = (nodeId: string, componentId: string, command: st
 
   // TODO: Only refresh if selection is affected
   setupHelpers();
-}
+};
 
 onEditCommands.removeComponent = (nodeId: string, componentId: string) => {
   let isInspected = ui.nodesTreeView.selectedNodes.length === 1 && nodeId === ui.nodesTreeView.selectedNodes[0].dataset.id;
@@ -262,4 +262,4 @@ onEditCommands.removeComponent = (nodeId: string, componentId: string) => {
 
   // TODO: Only refresh if selection is affected
   setupHelpers();
-}
+};

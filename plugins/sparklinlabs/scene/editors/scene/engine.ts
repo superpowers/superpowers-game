@@ -2,8 +2,6 @@ import { socket, data } from "./network";
 import ui, { setupSelectedNode } from "./ui";
 
 let THREE = SupEngine.THREE;
-import { Node } from "../../data/SceneNodes";
-import { Component } from "../../data/SceneComponents";
 
 let engine: {
   gameInstance: SupEngine.GameInstance;
@@ -58,7 +56,7 @@ export function updateCameraMode() {
     engine.cameraControls = new SupEngine.editorComponentClasses["Camera3DControls"](engine.cameraActor, engine.cameraComponent);
     engine.cameraControls.movementSpeed = ui.cameraSpeedSlider.value;
   } else {
-    engine.cameraActor.setLocalOrientation(new SupEngine.THREE.Quaternion().setFromAxisAngle(new SupEngine.THREE.Vector3(0, 1, 0), 0))
+    engine.cameraActor.setLocalOrientation(new SupEngine.THREE.Quaternion().setFromAxisAngle(new SupEngine.THREE.Vector3(0, 1, 0), 0));
     engine.cameraComponent.setOrthographicMode(true);
     engine.cameraControls = new SupEngine.editorComponentClasses["Camera2DControls"](engine.cameraActor, engine.cameraComponent, {
       zoomSpeed: 1.5,
@@ -82,7 +80,7 @@ export function updateCameraMode() {
 
 let lastTimestamp = 0;
 let accumulatedTime = 0;
-function tick(timestamp=0) {
+function tick(timestamp = 0) {
   accumulatedTime += timestamp - lastTimestamp;
   lastTimestamp = timestamp;
   let { updates, timeLeft } = engine.gameInstance.tick(accumulatedTime, update);
@@ -206,8 +204,7 @@ function onTransformChange() {
         position.applyMatrix4(mtx);
       }
       value = { x: position.x, y: position.y, z: position.z };
-      break;
-    }
+    } break;
 
     case "rotate": {
       transformType = "orientation";
@@ -218,14 +215,12 @@ function onTransformChange() {
         orientation.multiply(q);
       }
       value = { x: orientation.x, y: orientation.y, z: orientation.z, w: orientation.w };
-      break;
-    }
+    } break;
 
     case "scale": {
       transformType = "scale";
       value = { x: object.scale.x, y: object.scale.y, z: object.scale.z };
-      break;
-    }
+    } break;
   }
 
   socket.emit("edit:assets", SupClient.query.asset, "setNodeProperty", nodeId, transformType, value, (err: string) => { if (err != null) alert(err); });

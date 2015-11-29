@@ -25,7 +25,7 @@ export default  class CameraMarker extends SupEngine.ActorComponent {
     this.projectionNeedsUpdate = true;
 
     let geometry = new THREE.Geometry();
-    for (let i = 0; i < 24; i++) geometry.vertices.push(new THREE.Vector3(0,0,0));
+    for (let i = 0; i < 24; i++) geometry.vertices.push(new THREE.Vector3(0, 0, 0));
 
     this.line = new THREE.LineSegments(geometry, new THREE.LineBasicMaterial( { color: 0xffffff, opacity: 0.5, transparent: true } ));
     this.actor.threeObject.add(this.line);

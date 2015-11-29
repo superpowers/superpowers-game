@@ -29,7 +29,7 @@ export default class SceneAsset extends SupCore.Data.Base.Asset {
 
   static schema: SupCore.Data.Base.Schema = {
     nodes: { type: "array" },
-  }
+  };
 
   pub: ScenePub;
   componentPathsByDependentAssetId: { [assetId: string]: string[] };
@@ -48,9 +48,9 @@ export default class SceneAsset extends SupCore.Data.Base.Asset {
   }
 
   load(assetPath: string) {
-    fs.readFile(path.join(assetPath, "scene.json"), { encoding: "utf8" },(err, json) => {
+    fs.readFile(path.join(assetPath, "scene.json"), { encoding: "utf8" }, (err, json) => {
       if (err != null && err.code === "ENOENT") {
-        fs.readFile(path.join(assetPath, "asset.json"), { encoding: "utf8" },(err, json) => {
+        fs.readFile(path.join(assetPath, "asset.json"), { encoding: "utf8" }, (err, json) => {
           fs.rename(path.join(assetPath, "asset.json"), path.join(assetPath, "scene.json"), (err) => {
             this._onLoaded(assetPath, JSON.parse(json));
           });
@@ -101,7 +101,7 @@ export default class SceneAsset extends SupCore.Data.Base.Asset {
 
     this.nodes.walk((node: Node) => {
       if (node.prefab != null && node.prefab.sceneAssetId != null) this._onAddComponentDependencies(`${node.id}_${node.prefab.sceneAssetId}`, [ node.prefab.sceneAssetId ]);
-    })
+    });
 
     for (let nodeId in this.nodes.componentsByNodeId) {
       let components = this.nodes.componentsByNodeId[nodeId];
@@ -134,7 +134,7 @@ export default class SceneAsset extends SupCore.Data.Base.Asset {
     let parentNode = this.nodes.byId[parentId];
     if (parentNode != null && parentNode.prefab != null) {
       callback("Can't create children node on prefabs", null, null, null);
-      return
+      return;
     }
 
     if (this.nodes.pub.length !== 0 && parentNode == null) {
@@ -188,7 +188,7 @@ export default class SceneAsset extends SupCore.Data.Base.Asset {
     let parentNode = this.nodes.byId[parentId];
     if (parentNode != null && parentNode.prefab != null) {
       callback("Can't move children node on prefabs", null, null, null);
-      return
+      return;
     }
 
     if (parentNode == null) {
@@ -313,7 +313,7 @@ export default class SceneAsset extends SupCore.Data.Base.Asset {
           addNode(node, newNode.id, childIndex, childNode.children);
         }
       });
-    }
+    };
     addNode(rootNode, parentId, index, referenceNode.children);
   }
 
@@ -339,7 +339,7 @@ export default class SceneAsset extends SupCore.Data.Base.Asset {
 
   // Components
   _onAddComponentDependencies(componentPath: string, depIds: string[]) {
-    //console.log `Adding component dependencies: ${componentPath} - ${depIds}`
+    // console.log `Adding component dependencies: ${componentPath} - ${depIds}`
     let addedDepIds: string[] = [];
 
     for (let depId of depIds) {
@@ -355,12 +355,12 @@ export default class SceneAsset extends SupCore.Data.Base.Asset {
   }
 
   _onRemoveComponentDependencies(componentPath: string, depIds: string[]) {
-    //console.log `Removing component dependencies: ${componentPath} - ${depIds}`
+    // console.log `Removing component dependencies: ${componentPath} - ${depIds}`
     let removedDepIds: string[] = [];
 
     for (let depId of depIds) {
       let componentPaths = this.componentPathsByDependentAssetId[depId];
-      let index = (componentPaths != null) ? componentPaths.indexOf(componentPath): null;
+      let index = (componentPaths != null) ? componentPaths.indexOf(componentPath) : null;
       if (index != null && index !== -1) {
         componentPaths.splice(index, 1);
 

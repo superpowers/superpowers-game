@@ -1,4 +1,3 @@
-import SceneComponent from "./SceneComponent";
 import SceneAsset, { DuplicatedNode } from "../data/SceneAsset";
 import { Node } from "../data/SceneNodes";
 import { Component } from "../data/SceneComponents";
@@ -60,7 +59,7 @@ export default class SceneUpdater {
       if (node.children != null && node.children.length > 0) {
         for (let child of node.children) walk(child);
       }
-    }
+    };
     for (let node of asset.nodes.pub) walk(node);
 
     if (this.receiveAssetCallbacks != null) this.receiveAssetCallbacks.scene();
@@ -85,7 +84,7 @@ export default class SceneUpdater {
     let parentNodeActor = (this.bySceneNodeId[parentId] != null) ? this.bySceneNodeId[parentId].actor : null;
     nodeActor.setParent(parentNodeActor);
     this._onUpdateMarkerRecursive(id);
-  }
+  };
 
   _onUpdateMarkerRecursive(nodeId: string) {
     this.sceneAsset.nodes.walkNode(this.sceneAsset.nodes.byId[nodeId], null, (descendantNode) => {
@@ -115,15 +114,15 @@ export default class SceneUpdater {
         nodeEditorData.prefabUpdater.config_setProperty("sceneAssetId", value);
         break;
     }
-  }
+  };
 
   _onEditCommand_duplicateNode = (rootNode: Node, newNodes: DuplicatedNode[]) => {
     for (let newNode of newNodes) this._createNodeActor(newNode.node);
-  }
+  };
 
   _onEditCommand_removeNode = (id: string) => {
     this._recurseClearActor(id);
-  }
+  };
 
   _recurseClearActor(nodeId: string) {
     let nodeEditorData = this.bySceneNodeId[nodeId];
@@ -148,19 +147,19 @@ export default class SceneUpdater {
 
   _onEditCommand_addComponent = (nodeId: string, nodeComponent: Component, index: number) => {
     this._createNodeActorComponent(this.sceneAsset.nodes.byId[nodeId], nodeComponent, this.bySceneNodeId[nodeId].actor);
-  }
+  };
 
   _onEditCommand_editComponent = (nodeId: string, componentId: string, command: string, ...args: any[]) => {
     let componentUpdater = this.bySceneNodeId[nodeId].bySceneComponentId[componentId].componentUpdater;
     if (componentUpdater[`config_${command}`] != null) componentUpdater[`config_${command}`].call(componentUpdater, ...args);
-  }
+  };
 
   _onEditCommand_removeComponent = (nodeId: string, componentId: string) => {
     this.gameInstance.destroyComponent(this.bySceneNodeId[nodeId].bySceneComponentId[componentId].component);
 
     this.bySceneNodeId[nodeId].bySceneComponentId[componentId].componentUpdater.destroy();
     delete this.bySceneNodeId[nodeId].bySceneComponentId[componentId];
-  }
+  };
 
   _onSceneAssetTrashed() {
     this._clearScene();
@@ -195,7 +194,7 @@ export default class SceneUpdater {
     nodeActor.threeObject.scale.copy(<THREE.Vector3>node.scale);
     nodeActor.threeObject.updateMatrixWorld(false);
     (<any>nodeActor).sceneNodeId = node.id;
-    
+
     let markerActor: SupEngine.Actor;
     if (!this.isInPrefab) {
       markerActor = new SupEngine.Actor(this.gameInstance, `${nodeId} Marker`, null, { layer: -1 });

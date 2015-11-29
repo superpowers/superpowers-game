@@ -12,7 +12,7 @@ export interface Node extends SupCore.Data.Base.TreeNode {
   layer: number;
   prefab: {
     sceneAssetId: string;
-  }
+  };
 }
 
 export default class SceneNodes extends SupCore.Data.Base.TreeById {
@@ -62,7 +62,7 @@ export default class SceneNodes extends SupCore.Data.Base.TreeById {
     },
 
     components: { type: "array?" }
-  }
+  };
 
   pub: Node[];
   byId: { [id: string]: Node };
@@ -159,7 +159,7 @@ export default class SceneNodes extends SupCore.Data.Base.TreeById {
         }
         callback(null, actualValue);
       });
-    }
+    };
 
     if (key !== "prefab.sceneAssetId") {
       finish();
@@ -201,7 +201,7 @@ export default class SceneNodes extends SupCore.Data.Base.TreeById {
             else checkScene(node.prefab.sceneAssetId);
           }
           for (let child of node.children) walk(child);
-        }
+        };
 
         for (let rootNode of asset.pub.nodes) walk(rootNode);
 
@@ -211,7 +211,7 @@ export default class SceneNodes extends SupCore.Data.Base.TreeById {
           else callback("Cannot use this scene, it will create an infinite loop");
         }
       });
-    }
+    };
     checkScene(value);
   }
 }

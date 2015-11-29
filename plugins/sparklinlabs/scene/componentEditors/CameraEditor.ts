@@ -1,6 +1,6 @@
 export default class CameraEditor {
-  projectClient: SupClient.ProjectClient
-  editConfig: any
+  projectClient: SupClient.ProjectClient;
+  editConfig: any;
 
   modeSelectBox: HTMLSelectElement;
   fovRowParts: SupClient.table.RowParts;
@@ -25,18 +25,18 @@ export default class CameraEditor {
 
     this.orthographicScaleRowParts = SupClient.table.appendRow(tbody, "Orthographic scale");
     this.orthographicScaleField = SupClient.table.appendNumberField(this.orthographicScaleRowParts.valueCell, config.orthographicScale, 0.1, null, 0.1);
-    
+
     if (config.mode === "perspective") this.orthographicScaleRowParts.row.style.display = "none";
     else this.fovRowParts.row.style.display = "none";
-    
+
     let depthRow = SupClient.table.appendRow(tbody, "Depth", { title: "Used to determine in which order to render multiple cameras" });
     this.depthField = SupClient.table.appendNumberField(depthRow.valueCell, config.depth);
-    
+
     let layersRow = SupClient.table.appendRow(tbody, "Layers", { title: "Which layers to be render and in which order" });
     let layersField = SupClient.table.appendTextField(layersRow.valueCell, "");
     layersField.disabled = true;
     layersField.placeholder = "(not yet customizable)";
-    
+
     let nearClippingPlaneRow = SupClient.table.appendRow(tbody, "Near plane");
     this.nearClippingPlaneField = SupClient.table.appendNumberField(nearClippingPlaneRow.valueCell, config.nearClippingPlane, 0.1);
 
@@ -50,19 +50,19 @@ export default class CameraEditor {
     let widthRow = SupClient.table.appendRow(tbody, "Width / Height");
     [ this.viewportFields.width, this.viewportFields.height ] = SupClient.table.appendNumberFields(widthRow.valueCell, [ config.viewport.width, config.viewport.height ], 0, 1, 0.1);
 
-    this.modeSelectBox.addEventListener("change", this._onChangeMode);
-    this.fovField.addEventListener("input", this._onChangeFOV);
-    this.orthographicScaleField.addEventListener("input", this._onChangeOrthographicScale);
-    this.depthField.addEventListener("change", this._onChangeDepth);
-    this.nearClippingPlaneField.addEventListener("change", this._onChangeNearClippingPlane);
-    this.farClippingPlaneField.addEventListener("change", this._onChangeFarClippingPlane);
-    this.viewportFields.x.addEventListener("change", this._onChangeViewportX);
-    this.viewportFields.y.addEventListener("change", this._onChangeViewportY);
-    this.viewportFields.width.addEventListener("change", this._onChangeViewportWidth);
-    this.viewportFields.height.addEventListener("change", this._onChangeViewportHeight);
+    this.modeSelectBox.addEventListener("change", this.onChangeMode);
+    this.fovField.addEventListener("input", this.onChangeFOV);
+    this.orthographicScaleField.addEventListener("input", this.onChangeOrthographicScale);
+    this.depthField.addEventListener("change", this.onChangeDepth);
+    this.nearClippingPlaneField.addEventListener("change", this.onChangeNearClippingPlane);
+    this.farClippingPlaneField.addEventListener("change", this.onChangeFarClippingPlane);
+    this.viewportFields.x.addEventListener("change", this.onChangeViewportX);
+    this.viewportFields.y.addEventListener("change", this.onChangeViewportY);
+    this.viewportFields.width.addEventListener("change", this.onChangeViewportWidth);
+    this.viewportFields.height.addEventListener("change", this.onChangeViewportHeight);
   }
 
-  destroy() {}
+  destroy() { /* Nothing to do */ }
 
   config_setProperty(path: string, value: any) {
     switch(path) {
@@ -70,28 +70,27 @@ export default class CameraEditor {
         this.modeSelectBox.value = value;
         this.orthographicScaleRowParts.row.style.display = (value === "perspective") ? "none" : "";
         this.fovRowParts.row.style.display = (value === "perspective") ? "" : "none";
-        break;
-      }
-      case "fov": { this.fovField.value = value; break; }
-      case "orthographicScale": { this.orthographicScaleField.value = value; break; }
-      case "depth": { this.depthField.value = value; break; }
-      case "nearClippingPlane": { this.nearClippingPlaneField.value = value; break; }
-      case "farClippingPlane": { this.farClippingPlaneField.value = value; break; }
-      case "viewport.x": { this.viewportFields.x.value = value; break; }
-      case "viewport.y": { this.viewportFields.y.value = value; break; }
-      case "viewport.width": { this.viewportFields.width.value = value; break; }
-      case "viewport.height": { this.viewportFields.height.value = value; break; }
+      } break;
+      case "fov": { this.fovField.value = value; } break;
+      case "orthographicScale": { this.orthographicScaleField.value = value; } break;
+      case "depth": { this.depthField.value = value; } break;
+      case "nearClippingPlane": { this.nearClippingPlaneField.value = value; } break;
+      case "farClippingPlane": { this.farClippingPlaneField.value = value; } break;
+      case "viewport.x": { this.viewportFields.x.value = value; } break;
+      case "viewport.y": { this.viewportFields.y.value = value; } break;
+      case "viewport.width": { this.viewportFields.width.value = value; } break;
+      case "viewport.height": { this.viewportFields.height.value = value; } break;
     }
   }
 
-  _onChangeMode = (event: any) => { this.editConfig("setProperty", "mode", event.target.value); }
-  _onChangeFOV = (event: any) => { this.editConfig("setProperty", "fov", parseFloat(event.target.value)); }
-  _onChangeOrthographicScale = (event: any) => { this.editConfig("setProperty", "orthographicScale", parseFloat(event.target.value)); }
-  _onChangeDepth = (event: any) => { this.editConfig("setProperty", "depth", parseFloat(event.target.value)); }
-  _onChangeNearClippingPlane = (event: any) => { this.editConfig("setProperty", "nearClippingPlane", parseFloat(event.target.value)); }
-  _onChangeFarClippingPlane = (event: any) => { this.editConfig("setProperty", "farClippingPlane", parseFloat(event.target.value)); }
-  _onChangeViewportX = (event: any) => { this.editConfig("setProperty", "viewport.x", parseFloat(event.target.value)); }
-  _onChangeViewportY = (event: any) => { this.editConfig("setProperty", "viewport.y", parseFloat(event.target.value)); }
-  _onChangeViewportWidth = (event: any) => { this.editConfig("setProperty", "viewport.width", parseFloat(event.target.value)); }
-  _onChangeViewportHeight = (event: any) => { this.editConfig("setProperty", "viewport.height", parseFloat(event.target.value)); }
+  private onChangeMode = (event: any) => { this.editConfig("setProperty", "mode", event.target.value); };
+  private onChangeFOV = (event: any) => { this.editConfig("setProperty", "fov", parseFloat(event.target.value)); };
+  private onChangeOrthographicScale = (event: any) => { this.editConfig("setProperty", "orthographicScale", parseFloat(event.target.value)); };
+  private onChangeDepth = (event: any) => { this.editConfig("setProperty", "depth", parseFloat(event.target.value)); };
+  private onChangeNearClippingPlane = (event: any) => { this.editConfig("setProperty", "nearClippingPlane", parseFloat(event.target.value)); };
+  private onChangeFarClippingPlane = (event: any) => { this.editConfig("setProperty", "farClippingPlane", parseFloat(event.target.value)); };
+  private onChangeViewportX = (event: any) => { this.editConfig("setProperty", "viewport.x", parseFloat(event.target.value)); };
+  private onChangeViewportY = (event: any) => { this.editConfig("setProperty", "viewport.y", parseFloat(event.target.value)); };
+  private onChangeViewportWidth = (event: any) => { this.editConfig("setProperty", "viewport.width", parseFloat(event.target.value)); };
+  private onChangeViewportHeight = (event: any) => { this.editConfig("setProperty", "viewport.height", parseFloat(event.target.value)); };
 }
