@@ -132,7 +132,7 @@ Sup.registerBehavior(${behaviorName});
   }
 
   restore() {
-    if (this.hasDraft) this.emit("setDiagnostic", "draft", "info");
+    if (this.hasDraft) this.emit("setBadge", "draft", "info");
   }
 
   destroy(callback: Function) {
@@ -217,7 +217,7 @@ Sup.registerBehavior(${behaviorName});
 
     if (!this.hasDraft) {
       this.hasDraft = true;
-      this.emit("setDiagnostic", "draft", "info");
+      this.emit("setBadge", "draft", "info");
     }
     this.emit("change");
   }
@@ -242,7 +242,7 @@ Sup.registerBehavior(${behaviorName});
 
       if (this.hasDraft) {
         this.hasDraft = false;
-        this.emit("clearDiagnostic", "draft");
+        this.emit("clearBadge", "draft");
       }
 
       this.emit("change");
