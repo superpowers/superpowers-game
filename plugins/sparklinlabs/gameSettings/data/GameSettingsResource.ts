@@ -61,4 +61,26 @@ export default class GameSettingsResource extends SupCore.Data.Base.Resource {
 
     callback(true);
   }
+
+  restore() {
+    if (this.pub.startupSceneId != null && this.server.data.entries.byId[this.pub.startupSceneId] != null) {
+      this.emit("setAssetBadge", this.pub.startupSceneId, "startupScene", "info");
+    }
+  }
+
+  server_setProperty(client: any, path: string, value: number|string|boolean, callback: (err: string, path?: string, value?: any) => any) {
+    let oldSceneId: string;
+    if (path === "startupSceneId") oldSceneId = this.pub.startupSceneId;
+
+    this.setProperty(path, value, (err, actualValue) => {
+      if (err != null) { callback(err); return; }
+
+      if (path === "startupSceneId") {
+        if (oldSceneId != null && this.server.data.entries.byId[oldSceneId] != null) this.emit("clearAssetBadge", oldSceneId, "startupScene");
+        if (actualValue != null && this.server.data.entries.byId[actualValue] != null) this.emit("setAssetBadge", actualValue, "startupScene", "info");
+      }
+
+      callback(null, path, actualValue);
+    });
+  }
 }
