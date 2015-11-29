@@ -23,12 +23,19 @@ interface CompileTypeScriptResults {
   files: Array<{name: string; text: string}>;
 }
 
+let ts: any;
+let compileTypeScript:
+  (sourceFileNames: string[],
+  sourceFiles: { [name: string]: string },
+  libSource: string, compilerOptions: ts.CompilerOptions)
+  => CompileTypeScriptResults;
+let globalDefs = "";
+
 if ((<any>global).window == null) {
   let serverRequire = require;
-  var ts = serverRequire("typescript");
+  ts = serverRequire("typescript");
 
-  var compileTypeScript: (sourceFileNames: string[], sourceFiles: { [name: string]: string }, libSource: string, compilerOptions: ts.CompilerOptions) => CompileTypeScriptResults = serverRequire("../runtime/compileTypeScript").default;
-  var globalDefs = "";
+  compileTypeScript = serverRequire("../runtime/compileTypeScript").default;
 
   let actorComponentAccessors: string[] = [];
   for (let pluginName in SupCore.system.api.contexts["typescript"].plugins) {
@@ -42,7 +49,7 @@ if ((<any>global).window == null) {
 
 interface ScriptAssetPub {
   text: string;
-  draft: string
+  draft: string;
   revisionId: number;
 }
 
@@ -111,7 +118,7 @@ Sup.registerBehavior(${behaviorName});
         text: defaultContent,
         draft: defaultContent,
         revisionId: 0
-      }
+      };
 
       this.server.data.resources.acquire("behaviorProperties", null, (err: Error, behaviorProperties: BehaviorPropertiesResource) => {
         if (behaviorProperties.pub.behaviors[behaviorName] == null) {
@@ -146,13 +153,13 @@ Sup.registerBehavior(${behaviorName});
   load(assetPath: string) {
     // NOTE: asset.json was removed in Superpowers 0.10
     // The empty callback is required to not fail if the file already doesn't exist
-    fs.unlink(path.join(assetPath, "asset.json"), (err) => {});
+    fs.unlink(path.join(assetPath, "asset.json"), (err) => { /* Ignore */ });
 
     // NOTE: We must not set this.pub with a temporary value right now, otherwise
     // the asset will be considered loaded by Dictionary.acquire
     // and the acquire callback will be called immediately
 
-    let pub: ScriptAssetPub
+    let pub: ScriptAssetPub;
     let readDraft = (text: string) => {
       fs.readFile(path.join(assetPath, "draft.ts"), { encoding: "utf8" }, (err, draft) => {
         // NOTE: draft.txt was renamed to draft.ts in Superpowers 0.11
@@ -163,7 +170,7 @@ Sup.registerBehavior(${behaviorName});
 
             if (draft != null) {
               if (draft !== text) fs.writeFile(path.join(assetPath, "draft.ts"), draft, { encoding: "utf8" });
-              fs.unlink(path.join(assetPath, "draft.txt"), (err) => {});
+              fs.unlink(path.join(assetPath, "draft.txt"), (err) => { /* Ignore */ });
             }
 
           });
@@ -172,7 +179,7 @@ Sup.registerBehavior(${behaviorName});
           this._onLoaded(assetPath, pub);
         }
       });
-    }
+    };
 
     fs.readFile(path.join(assetPath, "script.ts"), { encoding: "utf8" }, (err, text) => {
       // NOTE: script.txt was renamed to script.ts in Superpowers 0.11
@@ -180,7 +187,7 @@ Sup.registerBehavior(${behaviorName});
         fs.readFile(path.join(assetPath, "script.txt"), { encoding: "utf8" }, (err, text) => {
           readDraft(text);
           fs.writeFile(path.join(assetPath, "script.ts"), text, { encoding: "utf8" });
-          fs.unlink(path.join(assetPath, "script.txt"), (err) => {});
+          fs.unlink(path.join(assetPath, "script.txt"), (err) => { /* Ignore */ });
         });
       } else readDraft(text);
     });
@@ -249,7 +256,8 @@ Sup.registerBehavior(${behaviorName});
     };
 
     let compile = () => {
-      try { var results = compileTypeScript(scriptNames, scripts, globalDefs, { sourceMap: false }); }
+      let results: CompileTypeScriptResults;
+      try { results = compileTypeScript(scriptNames, scripts, globalDefs, { sourceMap: false }); }
       catch (e) { finish(); return; }
 
       if(results.errors.length > 0) { finish(); return; }
