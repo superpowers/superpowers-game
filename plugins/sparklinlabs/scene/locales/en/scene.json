@@ -1,0 +1,25 @@
+{
+  "top": {
+    "camera": {
+      "title": "Camera",
+      "mode": "Mode",
+      "verticalAxis": "Up Axis",
+      "speed": "Speed"
+    },
+    "transform": {
+      "title": "Transform",
+      "move": "Move",
+      "rotate": "Rotate",
+      "scale": "Scale",
+      "local": "Local"
+    },
+    "grid": {
+      "title": "Grid",
+      "size": "Size",
+      "visible": "Visible"
+    },
+    "light": {
+      "title": "Light"
+    }
+  }
+}

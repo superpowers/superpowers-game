@@ -20,39 +20,39 @@ html
     .main
       .controls
         .camera
-          .title Camera
+          .title= scene.top.camera.title
           .camera-mode
-            label(for="toggle-camera-button") Mode
+            label(for="toggle-camera-button")= scene.top.camera.mode
             button#toggle-camera-button 3D
           .camera-vertical-axis
-            label(for="toggle-camera-vertical-axis") Up Axis
+            label(for="toggle-camera-vertical-axis")= scene.top.camera.verticalAxis
             button#toggle-camera-vertical-axis Y
           .camera-speed
-            label(for="camera-speed-slider") Speed
+            label(for="camera-speed-slider")= scene.top.camera.speed
             input#camera-speed-slider(type="range",min="0.05",max="2.0",step="0.05")
           .camera-2d-z(hidden)
             label(for="camera-2d-z") Z
             input#camera-2d-z(type="number",value="5")
         .transform-mode
-          .title Transform
+          .title= scene.top.transform.title
           div
             input#transform-mode-translate(type="radio",name="transformMode",value="translate",checked)
-            label(for="transform-mode-translate",title="E") Move
+            label(for="transform-mode-translate",title="E")= scene.top.transform.move
             input#transform-mode-rotate(type="radio",name="transformMode",value="rotate")
-            label(for="transform-mode-rotate",title="R") Rotate
+            label(for="transform-mode-rotate",title="R")= scene.top.transform.rotate
             input#transform-mode-scale(type="radio",name="transformMode",value="scale")
-            label(for="transform-mode-scale",title="T") Scale
+            label(for="transform-mode-scale",title="T")= scene.top.transform.scale
             input#transform-space(type="checkbox")
-            label(for="transform-space",title="L") Local
+            label(for="transform-space",title="L")= scene.top.transform.local
         .grid
-          .title Grid
+          .title= scene.top.grid.title
           div
-            label(for="grid-step") Size
+            label(for="grid-step")= scene.top.grid.size
             input#grid-step(type="number",value="1",min="0")
             input#grid-visible(type="checkbox")
-            label(for="grid-visible") Visible
+            label(for="grid-visible")= scene.top.grid.visible
         .light
-          .title Light
+          .title= scene.top.light.title
           div
             input#show-light(type="checkbox")
       canvas(tabindex="0")

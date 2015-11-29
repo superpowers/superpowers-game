@@ -1,17 +1,35 @@
 var gulp = require("gulp");
-var tasks = [ "jade", "stylus" ];
+var tasks = [];
+var fs = require("fs");
 
 // Jade
 var jade = require("gulp-jade");
-gulp.task("jade", function() {
-  return gulp.src("./editors/**/index.jade").pipe(jade()).pipe(gulp.dest("./public/editors"));
-});
+var rename = require("gulp-rename");
+var locales = fs.readdirSync("./locales");
+locales.forEach(function(locale) {
+  var locals = {};
+  var files = fs.readdirSync("./locales/" + locale);
+  files.forEach(function(fileName) {
+    var file = fs.readFileSync("./locales/" + locale + "/" + fileName, { encoding: "utf8" } );
+    locals[fileName.slice(0, fileName.lastIndexOf("."))] = JSON.parse(file);
+  });
+  
+  gulp.task("jade-" + locale, function() {
+    return gulp.src("./editors/**/index.jade")
+      .pipe(jade({ locals: locals }))
+      .pipe(rename({ extname: "." + locale + ".html" }))
+      .pipe(gulp.dest("./public/editors"));
+  });
+  tasks.push("jade-" + locale);
+})
+
 
 // Stylus
 var stylus = require("gulp-stylus");
 gulp.task("stylus", function() {
   return gulp.src("./editors/**/index.styl").pipe(stylus({ errors: true })).pipe(gulp.dest("./public/editors"));
 });
+tasks.push("stylus");
 
 // TypeScript
 var ts = require("gulp-typescript");
@@ -42,7 +60,7 @@ makeBrowserify("./runtime/index.js", "./public", "runtime");
 makeBrowserify("./api/index.js", "./public", "api");
 makeBrowserify("./settingsEditors/index.js", "./public", "settingsEditors");
 makeBrowserify("./documentation/index.js", "./public", "documentation");
-var editors = require("fs").readdirSync("./editors");
+var editors = fs.readdirSync("./editors");
 editors.forEach(function(editor) {
   makeBrowserify("./editors/" + editor + "/index.js", "./public/editors", editor + "/index");
 })

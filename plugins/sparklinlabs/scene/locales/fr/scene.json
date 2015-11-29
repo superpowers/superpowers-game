@@ -1,0 +1,25 @@
+{
+  "top": {
+    "camera": {
+      "title": "Camera",
+      "mode": "Mode",
+      "verticalAxis": "Axe vertical",
+      "speed": "Vitesse"
+    },
+    "transform": {
+      "title": "Transformation",
+      "move": "Translater",
+      "rotate": "Orienter",
+      "scale": "Etirer",
+      "local": "Local"
+    },
+    "grid": {
+      "title": "Grille",
+      "size": "Taille",
+      "visible": "Visible"
+    },
+    "light": {
+      "title": "Lumière"
+    }
+  }
+}
