@@ -54,7 +54,6 @@ interface ScriptAssetPub {
 }
 
 export default class ScriptAsset extends SupCore.Data.Base.Asset {
-
   static schema: SupCore.Data.Base.Schema = {
     text: { type: "string" },
     draft: { type: "string" },

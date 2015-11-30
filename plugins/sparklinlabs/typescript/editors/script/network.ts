@@ -146,8 +146,8 @@ var entriesSubscriber = {
 
 let allScriptsReceived = false;
 
-var scriptSubscriber = {
-  onAssetReceived: (err: string, asset: ScriptAsset) => {
+var scriptSubscriber: SupClient.AssetSubscriber = {
+  onAssetReceived: (id: string, asset: ScriptAsset) => {
     data.assetsById[asset.id] = asset;
     let fileName = `${data.projectClient.entries.getPathFromId(asset.id)}.ts`;
     let file = { id: asset.id, text: asset.pub.text, version: asset.pub.revisionId.toString() }
