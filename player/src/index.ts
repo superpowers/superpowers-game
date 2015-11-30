@@ -10,7 +10,7 @@ SupCore.system = new SupCore.System("");
 
 // In app, open links in a browser window
 let playerWindow: GitHubElectron.BrowserWindow;
-if ((<any>window).process) {
+if (window.navigator.userAgent.indexOf("Electron") !== -1) {
   let nodeRequire = require;
   playerWindow = nodeRequire("remote").getCurrentWindow();
 
