@@ -21,5 +21,12 @@
     "light": {
       "title": "Light"
     }
+  },
+  "treeView": {
+    "newActor": {
+      "title": "New actor (Ctrl+N)",
+      "prompt": "Enter a name for the actor.",
+      "initialValue": "Actor"
+    }
   }
 }

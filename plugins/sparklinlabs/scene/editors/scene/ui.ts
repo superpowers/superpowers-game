@@ -216,9 +216,13 @@ document.querySelector(".main .controls .transform-mode").addEventListener("clic
 
 ui.availableComponents = {};
 export function start() {
+  console.log("start");
+  
   let componentNames = Object.keys(SupClient.plugins["componentEditors"]);
   componentNames.sort((a, b) => a.localeCompare(b));
   for (let componentName of componentNames) ui.availableComponents[componentName] = componentName;
+  
+  ui.newActorButton.title = SupClient.i18n.t("sceneEditor:treeView.newActor.title");
 }
 
 // Transform
@@ -448,14 +452,14 @@ export function setInspectorPrefabScene(sceneAssetId: string) {
 
 function onNewNodeClick() {
   let options = {
-    initialValue: "Actor",
+    initialValue: SupClient.i18n.t("sceneEditor:treeView.newActor.initialValue"),
     validationLabel: "Create",
     pattern: SupClient.namePattern,
     title: SupClient.namePatternDescription
   };
 
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.PromptDialog("Enter a name for the actor.", options, (name) => {
+  new SupClient.dialogs.PromptDialog(SupClient.i18n.t("sceneEditor:treeView.newActor.prompt"), options, (name) => {
     /* tslint:enable:no-unused-expression */
     if (name == null) return;
     createNewNode(name, false);

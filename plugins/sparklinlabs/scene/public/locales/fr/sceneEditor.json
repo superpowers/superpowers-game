@@ -21,5 +21,12 @@
     "light": {
       "title": "Lumière"
     }
+  },
+  "treeView": {
+    "newActor": {
+      "title": "Nouvel acteur (Ctrl+N)",
+      "prompt": "Entrez le nom de l'acteur.",
+      "initialValue": "Acteur"
+    }
   }
 }
