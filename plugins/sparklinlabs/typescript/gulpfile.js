@@ -14,7 +14,7 @@ gulp.task("jade", function() {
 var stylus = require("gulp-stylus");
 var cssimport = require("gulp-cssimport");
 gulp.task("stylus", function() {
-  return gulp.src("./editors/**/index.styl").pipe(stylus({ errors: true })).pipe(cssimport()).pipe(gulp.dest("./public/editors"));
+  return gulp.src("./editors/**/index.styl").pipe(stylus({ errors: true, compress: true })).pipe(cssimport()).pipe(gulp.dest("./public/editors"));
 });
 
 // TypeScript

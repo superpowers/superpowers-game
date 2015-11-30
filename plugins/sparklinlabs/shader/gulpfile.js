@@ -10,7 +10,7 @@ gulp.task("jade", function() {
 // Stylus
 var stylus = require("gulp-stylus");
 gulp.task("stylus", function() {
-  return gulp.src("./editors/**/index.styl").pipe(stylus({ errors: true })).pipe(gulp.dest("./public/editors"));
+  return gulp.src("./editors/**/index.styl").pipe(stylus({ errors: true, compress: true })).pipe(gulp.dest("./public/editors"));
 });
 
 // TypeScript
