@@ -101,7 +101,7 @@ makeBrowserify("./documentation/index.js", "./public", "documentation");
 var editors = fs.readdirSync("./editors");
 editors.forEach(function(editor) {
   makeBrowserify("./editors/" + editor + "/index.js", "./public/editors", editor + "/index");
-})
+});
 
 // All
 gulp.task("default", tasks);

@@ -38,7 +38,7 @@ function makeBrowserify(source, destination, output) {
 var editors = require("fs").readdirSync("./editors");
 editors.forEach(function(editor) {
   makeBrowserify("./editors/" + editor + "/index.js", "./public/editors", editor + "/index");
-})
+});
 makeBrowserify("./documentation/index.js", "./public", "documentation");
 
 // All
