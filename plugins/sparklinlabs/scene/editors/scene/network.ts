@@ -30,12 +30,10 @@ function onWelcome() {
   data = { projectClient: new SupClient.ProjectClient(socket, { subEntries: true }) };
 
   loadPlugins(() => {
-    console.log("plugins loaded");
     SupClient.i18n.load("sceneEditor", () => {
-      console.log("locales loaded");
       engineStart();
       uiStart();
-  
+
       data.projectClient.subResource("sceneSettings", sceneSettingSubscriber);
       data.projectClient.subResource("gameSettings", gameSettingSubscriber);
     });

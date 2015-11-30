@@ -216,13 +216,9 @@ document.querySelector(".main .controls .transform-mode").addEventListener("clic
 
 ui.availableComponents = {};
 export function start() {
-  console.log("start");
-  
   let componentNames = Object.keys(SupClient.plugins["componentEditors"]);
   componentNames.sort((a, b) => a.localeCompare(b));
   for (let componentName of componentNames) ui.availableComponents[componentName] = componentName;
-  
-  ui.newActorButton.title = SupClient.i18n.t("sceneEditor:treeView.newActor.title");
 }
 
 // Transform
@@ -276,13 +272,14 @@ export function createNodeElement(node: Node) {
   liElt.appendChild(nameSpan);
 
   let visibleButton = document.createElement("button");
-  visibleButton.textContent = "Hide";
+  visibleButton.textContent = SupClient.i18n.t("sceneEditor:treeView.visible.hide");
   visibleButton.classList.add("show");
   visibleButton.addEventListener("click", (event: any) => {
     event.stopPropagation();
     let actor = data.sceneUpdater.bySceneNodeId[event.target.parentElement.dataset["id"]].actor;
     actor.threeObject.visible = !actor.threeObject.visible;
-    visibleButton.textContent = (actor.threeObject.visible) ? "Hide" : "Show";
+    let visible = actor.threeObject.visible ? "hide" : "show";
+    visibleButton.textContent = SupClient.i18n.t(`sceneEditor:treeView.visible.hide`)
     if (actor.threeObject.visible) visibleButton.classList.add("show");
     else visibleButton.classList.remove("show");
   });
@@ -453,7 +450,7 @@ export function setInspectorPrefabScene(sceneAssetId: string) {
 function onNewNodeClick() {
   let options = {
     initialValue: SupClient.i18n.t("sceneEditor:treeView.newActor.initialValue"),
-    validationLabel: "Create",
+    validationLabel: SupClient.i18n.t("sceneEditor:treeView.newActor.validate"),
     pattern: SupClient.namePattern,
     title: SupClient.namePatternDescription
   };
@@ -468,14 +465,14 @@ function onNewNodeClick() {
 
 function onNewPrefabClick() {
   let options = {
-    initialValue: "Prefab",
-    validationLabel: "Create",
+    initialValue: SupClient.i18n.t("sceneEditor:treeView.newPrefab.title"),
+    validationLabel: SupClient.i18n.t("sceneEditor:treeView.newPrefab.validate"),
     pattern: SupClient.namePattern,
     title: SupClient.namePatternDescription
   };
 
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.PromptDialog("Enter a name for the prefab.", options, (name) => {
+  new SupClient.dialogs.PromptDialog(SupClient.i18n.t("sceneEditor:treeView.newPrefab.prompt"), options, (name) => {
     /* tslint:enable:no-unused-expression */
     if (name == null) return;
     createNewNode(name, true);
@@ -513,13 +510,13 @@ function onRenameNodeClick() {
 
   let options = {
     initialValue: node.name,
-    validationLabel: "Rename",
+    validationLabel: SupClient.i18n.t("sceneEditor:treeView.renameActor.validate"),
     pattern: SupClient.namePattern,
     title: SupClient.namePatternDescription
   };
 
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.PromptDialog("Enter a new name for the actor.", options, (newName) => {
+  new SupClient.dialogs.PromptDialog(SupClient.i18n.t("sceneEditor:treeView.renameActor.prompt"), options, (newName) => {
     /* tslint:enable:no-unused-expression */
     if (newName == null) return;
 
@@ -535,13 +532,13 @@ function onDuplicateNodeClick() {
 
   let options = {
     initialValue: node.name,
-    validationLabel: "Duplicate",
+    validationLabel: SupClient.i18n.t("sceneEditor:treeView.duplicateActor.validate"),
     pattern: SupClient.namePattern,
     title: SupClient.namePatternDescription
   };
 
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.PromptDialog("Enter a name for the new actor.", options, (newName) => {
+  new SupClient.dialogs.PromptDialog(SupClient.i18n.t("sceneEditor:treeView.duplicateActor.prompt"), options, (newName) => {
     /* tslint:enable:no-unused-expression */
     if (newName == null) return;
     let options = SupClient.getTreeViewInsertionPoint(ui.nodesTreeView);
@@ -558,8 +555,11 @@ function onDuplicateNodeClick() {
 
 function onDeleteNodeClick() {
   if (ui.nodesTreeView.selectedNodes.length === 0) return;
+  
+  let confirmString = SupClient.i18n.t("sceneEditor:treeView.deleteActor.confirm");
+  let validateString = SupClient.i18n.t("sceneEditor:treeView.duplicateActor.validate");
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.ConfirmDialog("Are you sure you want to delete the selected actors?", "Delete", (confirm) => {
+  new SupClient.dialogs.ConfirmDialog(confirmString, validateString, (confirm) => {
     /* tslint:enable:no-unused-expression */
     if (!confirm) return;
 
@@ -664,8 +664,10 @@ export function createComponentElement(nodeId: string, component: Component) {
 }
 
 function onNewComponentClick() {
+  let selectString = SupClient.i18n.t("sceneEditor:inspector.newComponent.select");
+  let validateString = SupClient.i18n.t("sceneEditor:inspector.newComponent.validate");
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.SelectDialog("Select the type of component to create.", ui.availableComponents, "Create", { size: 12 }, (type) => {
+  new SupClient.dialogs.SelectDialog(selectString, ui.availableComponents, validateString, { size: 12 }, (type) => {
     /* tslint:enable:no-unused-expression */
     if (type == null) return;
 
@@ -676,8 +678,10 @@ function onNewComponentClick() {
 }
 
 function onDeleteComponentClick(event: any) {
+  let confirmString = SupClient.i18n.t("sceneEditor:inspector.deleteComponent.confirm");
+  let validateString = SupClient.i18n.t("sceneEditor:inspector.deleteComponent.validate");
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.ConfirmDialog("Are you sure you want to delete this component?", "Delete", (confirm) => {
+  new SupClient.dialogs.ConfirmDialog(confirmString, validateString, (confirm) => {
     /* tslint:enable:no-unused-expression */
     if (!confirm) return;
 

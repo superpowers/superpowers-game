@@ -59,54 +59,54 @@ html
 
     .sidebar
       .nodes-buttons.flat-button-strip
-        button.new-actor
-        button(title="New prefab (Ctrl+P)").new-prefab
-        button(title="Rename (F2)",disabled).rename-node
-        button(title="Duplicate (Ctrl+D)",disabled).duplicate-node
-        button(title="Delete (Delete)",disabled).delete-node
+        button(title=t("sceneEditor:treeView.newActor.title")).new-actor
+        button(title=t("sceneEditor:treeView.newPrefab.title")).new-prefab
+        button(title=t("sceneEditor:treeView.renameActor.title"),disabled).rename-node
+        button(title=t("sceneEditor:treeView.duplicateActor.title"),disabled).duplicate-node
+        button(title=t("sceneEditor:treeView.deleteActor.title"),disabled).delete-node
 
       .nodes-tree-view
 
       .inspector(hidden)
         table.transform.properties
           tr.position
-            th.label  Position
+            th.label=t("sceneEditor:inspector.position")
             td
               .inputs
                 input(type="number").x
                 input(type="number").y
                 input(type="number").z
           tr.orientation
-            th.label Orientation
+            th.label=t("sceneEditor:inspector.orientation")
             td
               .inputs
                 input(type="number").x
                 input(type="number").y
                 input(type="number").z
           tr.scale
-            th.label Scale
+            th.label=t("sceneEditor:inspector.scale")
             td
               .inputs
                 input(type="number").x
                 input(type="number").y
                 input(type="number").z
           tr.visible
-            th.label Visible
+            th.label=t("sceneEditor:inspector.visible")
             td
               input(type="checkbox")
           tr.layer
-            th.label Layer
+            th.label=t("sceneEditor:inspector.layer")
             td
               select
                 option(value="0") Default
           tr.prefab
-            th.label Prefab
+            th.label=t("sceneEditor:inspector.prefab")
             td
               div
                 input
                 button Open
         .components-buttons
-          button.new-component New Component
+          button.new-component=t("sceneEditor:inspector.newComponent.title")
         .components
 
     script(src="/SupCore.js")

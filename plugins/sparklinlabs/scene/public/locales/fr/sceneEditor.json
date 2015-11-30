@@ -26,7 +26,50 @@
     "newActor": {
       "title": "Nouvel acteur (Ctrl+N)",
       "prompt": "Entrez le nom de l'acteur.",
-      "initialValue": "Acteur"
+      "initialValue": "Acteur",
+      "validate": "Créer"
+    },
+    "newPrefab": {
+      "title": "Nouveau préfab (Ctrl+P)",
+      "prompt": "Entrez le nom du préfab.",
+      "initialValue": "Préfab",
+      "validate": "Créer"
+    },
+    "renameActor": {
+      "title": "Renommer (F2)",
+      "prompt": "Entrez un nouveau nom pour l'acteur.",
+      "validate": "Renommer"
+    },
+    "duplicateActor": {
+      "title": "Dupliquer (Ctrl+D)",
+      "prompt": "Entrez le nom pour le nouvel acteur.",
+      "validate": "Dupliquer"
+    },
+    "deleteActor": {
+      "title": "Supprimer (Suppr)",
+      "confirm": "Etes-vous sûr de vouloir supprimer les acteurs sélectionnés ?",
+      "validate": "Supprimer"
+    },
+    "visible": {
+      "show": "Montrer",
+      "hide": "Cacher"
+    }
+  },
+  "inspector": {
+    "position": "Position",
+    "orientation": "Orientation",
+    "scale": "Echelle",
+    "visible": "Visible",
+    "layer": "Couche de rendu",
+    "prefab": "Préfab",
+    "newComponent":{
+      "title": "Nouveau Composant",
+      "select": "Sélectionnez le type de composant à créer.",
+      "validate": "Créer"
+    },
+    "deleteComponent": {
+      "confirm": "Etes-vous sûr de vouloir supprimer le composant sélectionné ?",
+      "validate": "Supprimer"
     }
   }
 }
