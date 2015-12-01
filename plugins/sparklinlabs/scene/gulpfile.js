@@ -5,13 +5,14 @@ var fs = require("fs");
 // Jade
 var jade = require("gulp-jade");
 var rename = require("gulp-rename");
-var locales = fs.readdirSync("./public/locales");
+var localesPath = "./public/locales/";
+var locales = fs.readdirSync(localesPath);
 
 function loadLocales(locale) {
-  var localsByContext = {};
-  var files = fs.readdirSync("./public/locales/" + locale);
-  files.forEach(function(fileName) {
-    var file = fs.readFileSync("./public/locales/" + locale + "/" + fileName, { encoding: "utf8" } );
+  var localsByContext = {};"./public/locales/";
+  var files = fs.readdirSync(localesPath + locale);
+  files.forEach(function(fileName) {"./public/locales/";
+    var file = fs.readFileSync(localesPath + locale + "/" + fileName, { encoding: "utf8" } );
     localsByContext[fileName.slice(0, fileName.lastIndexOf("."))] = JSON.parse(file);
   });
   
@@ -32,7 +33,6 @@ function loadLocales(locale) {
     for (var i = 0 ; i < keys.length; i++)
       checkRecursively(defaultLocals, localsByContext, keys[i], keys[i]);
   }
-  
   return localsByContext;
 }
 
