@@ -6,6 +6,7 @@ import ui, {
   setupInspectorLayers } from "./ui";
 import engine, { start as engineStart, setupHelpers } from "./engine";
 import * as async from "async";
+import * as path from "path";
 
 let THREE = SupEngine.THREE;
 import { DuplicatedNode } from "../../data/SceneAsset";
@@ -29,8 +30,8 @@ socket.on("disconnect", SupClient.onDisconnected);
 function onWelcome() {
   data = { projectClient: new SupClient.ProjectClient(socket, { subEntries: true }) };
 
-  loadPlugins(() => {
-    SupClient.i18n.load("sceneEditor", () => {
+  loadPlugins((err, locales) => {
+    SupClient.i18n.load(locales, () => {
       engineStart();
       uiStart();
 
@@ -40,7 +41,10 @@ function onWelcome() {
   });
 }
 
-function loadPlugins(callback: ErrorCallback) {
+function loadPlugins(callback: (err: Error, locales: SupClient.i18n.File[]) => void) {
+  let locales: SupClient.i18n.File[] = [];
+  locales.push({ root: path.join(window.location.pathname, "../.."), name: "sceneEditor" });
+  
   window.fetch(`/systems/${SupCore.system.name}/plugins.json`).then((response) => response.json()).then((pluginsInfo: SupCore.PluginsInfo) => {
     async.eachSeries(pluginsInfo.list, (pluginName, pluginCallback) => {
       async.series([
@@ -65,13 +69,17 @@ function loadPlugins(callback: ErrorCallback) {
           SupClient.activePluginPath = `/systems/${SupCore.system.name}/plugins/${pluginName}`;
           let componentEditorsScript = document.createElement("script");
           componentEditorsScript.src = `${SupClient.activePluginPath}/componentEditors.js`;
-          componentEditorsScript.addEventListener("load", () => { cb(null, null); } );
+          componentEditorsScript.addEventListener("load", () => {
+            
+            locales.push({ root: SupClient.activePluginPath, name: "componentEditors" });
+            cb(null, null);
+          } );
           componentEditorsScript.addEventListener("error", () => { cb(null, null); } );
           document.body.appendChild(componentEditorsScript);
         },
 
       ], pluginCallback);
-    }, callback);
+    }, (err) => { callback(err, locales); });
   });
 }
 

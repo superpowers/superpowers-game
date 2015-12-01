@@ -1,0 +1,22 @@
+{
+  "camera": {
+    "mode": "Mode",
+    "modeOptions": {
+      "perspective": "Perspective",
+      "orthographic": "Orthographique"
+    },
+    "fieldOfView": "Champ de vision",
+    "orthographicScale": "Echelle Orthographique",
+    "depth": "Profondeur",
+    "depthTitle": "Utilisé pour déterminer l'ordre de rendu de plusieurs caméras",
+    "layers": "Couches de rendu",
+    "layersTitle": "Quelles couches rendre et dans quel ordre",
+    "nearPlane": "Plan proche",
+    "farPlane": "Plan lointain",
+    "viewport": {
+      "title": "Fenêtre de rendu",
+      "position": "Haut / Gauche",
+      "size": "Largeur / Hauteur"
+    }
+  }
+}

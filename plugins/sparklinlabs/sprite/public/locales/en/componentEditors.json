@@ -1,0 +1,17 @@
+{
+  "spriteRenderer": {
+    "sprite": "Sprite",
+    "animation": "Animation",
+    "animationNone": "(None)",
+    "flip": "Flip",
+    "shadow": {
+      "title": "Shadow",
+      "cast": "Cast",
+      "receive": "Receive"
+    },
+    "color": "Color",
+    "opacity": "Opacity",
+    "material": "Material",
+    "shader": "Shader"
+  }
+}

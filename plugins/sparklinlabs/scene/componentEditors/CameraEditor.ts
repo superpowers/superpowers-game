@@ -16,38 +16,43 @@ export default class CameraEditor {
     this.projectClient = projectClient;
     this.editConfig = editConfig;
 
-    let modeRow = SupClient.table.appendRow(tbody, "Mode");
-    this.modeSelectBox = SupClient.table.appendSelectBox(modeRow.valueCell,
-      { perspective: "Perspective", orthographic: "Orthographic" }, config.mode);
+    let modeRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:camera.mode"));
+    let modeOptions: { [value: string]: string; } = {
+      perspective: SupClient.i18n.t("componentEditors:camera.modeOptions.perspective"),
+      orthographic: SupClient.i18n.t("componentEditors:camera.modeOptions.orthographic")
+    };
+    this.modeSelectBox = SupClient.table.appendSelectBox(modeRow.valueCell, modeOptions, config.mode);
 
-    this.fovRowParts = SupClient.table.appendRow(tbody, "Field of view");
+    this.fovRowParts = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:camera.fieldOfView"));
     this.fovField = SupClient.table.appendNumberField(this.fovRowParts.valueCell, config.fov, 0.1, 179.9, 0.1);
 
-    this.orthographicScaleRowParts = SupClient.table.appendRow(tbody, "Orthographic scale");
+    this.orthographicScaleRowParts = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:camera.orthographicScale"));
     this.orthographicScaleField = SupClient.table.appendNumberField(this.orthographicScaleRowParts.valueCell, config.orthographicScale, 0.1, null, 0.1);
 
     if (config.mode === "perspective") this.orthographicScaleRowParts.row.style.display = "none";
     else this.fovRowParts.row.style.display = "none";
 
-    let depthRow = SupClient.table.appendRow(tbody, "Depth", { title: "Used to determine in which order to render multiple cameras" });
+    let depthOptions = { title: SupClient.i18n.t("componentEditors:camera.depthTitle") };
+    let depthRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:camera.depth"), depthOptions);
     this.depthField = SupClient.table.appendNumberField(depthRow.valueCell, config.depth);
 
-    let layersRow = SupClient.table.appendRow(tbody, "Layers", { title: "Which layers to be render and in which order" });
+    let layersOptions = { title: SupClient.i18n.t("componentEditors:camera.layersTitle") };
+    let layersRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:camera.layers"), layersOptions);
     let layersField = SupClient.table.appendTextField(layersRow.valueCell, "");
     layersField.disabled = true;
     layersField.placeholder = "(not yet customizable)";
 
-    let nearClippingPlaneRow = SupClient.table.appendRow(tbody, "Near plane");
+    let nearClippingPlaneRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:camera.nearPlane"));
     this.nearClippingPlaneField = SupClient.table.appendNumberField(nearClippingPlaneRow.valueCell, config.nearClippingPlane, 0.1);
 
-    let farClippingPlaneRow = SupClient.table.appendRow(tbody, "Far plane");
+    let farClippingPlaneRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:camera.farPlane"));
     this.farClippingPlaneField = SupClient.table.appendNumberField(farClippingPlaneRow.valueCell, config.farClippingPlane, 0.1);
 
-    SupClient.table.appendHeader(tbody, "Viewport");
-    let viewportXRow = SupClient.table.appendRow(tbody, "Top / Left");
+    SupClient.table.appendHeader(tbody, SupClient.i18n.t("componentEditors:camera.viewport.title"));
+    let viewportXRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:camera.viewport.position"));
     [ this.viewportFields.x, this.viewportFields.y ] = SupClient.table.appendNumberFields(viewportXRow.valueCell, [ config.viewport.x, config.viewport.y ], 0, 1, 0.1);
 
-    let widthRow = SupClient.table.appendRow(tbody, "Width / Height");
+    let widthRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:camera.viewport.size"));
     [ this.viewportFields.width, this.viewportFields.height ] = SupClient.table.appendNumberFields(widthRow.valueCell, [ config.viewport.width, config.viewport.height ], 0, 1, 0.1);
 
     this.modeSelectBox.addEventListener("change", this.onChangeMode);
