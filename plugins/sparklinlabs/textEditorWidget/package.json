@@ -8,7 +8,9 @@
     "url": "https://bitbucket.org/superpowers/sup-game-sparklinlabs-plugins"
   },
   "dependencies": {
-    "codemirror": "^5.8.0",
     "operational-transform": "^0.2.3"
+  },
+  "devDependencies": {
+    "codemirror": "^5.8.0"
   }
 }

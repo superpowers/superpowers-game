@@ -1,5 +1,5 @@
 var gulp = require("gulp");
-var tasks = [ "stylus" ];
+var tasks = [ "stylus", "copy-cm-modes" ];
 
 // Stylus
 var stylus = require("gulp-stylus");
@@ -33,6 +33,11 @@ function makeBrowserify(source, destination, output) {
 makeBrowserify("./data/index.js", "./public", "data");
 makeBrowserify("./settingsEditors/index.js", "./public", "settingsEditors");
 makeBrowserify("./widget/index.js", "./public/widget", "index");
+
+// Copy CodeMirror modes
+gulp.task("copy-cm-modes", function() {
+  return gulp.src([ "node_modules/codemirror/mode/**/*" ]).pipe(gulp.dest("public/codemirror/mode"));
+});
 
 // All
 gulp.task("default", tasks);

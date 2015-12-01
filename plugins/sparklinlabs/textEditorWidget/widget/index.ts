@@ -10,8 +10,6 @@ require("codemirror/addon/comment/comment");
 require("codemirror/addon/hint/show-hint");
 require("codemirror/addon/selection/active-line");
 require("codemirror/keymap/sublime");
-require("codemirror/mode/javascript/javascript");
-require("codemirror/mode/clike/clike");
 require("codemirror/addon/fold/foldcode");
 require("codemirror/addon/fold/foldgutter");
 require("codemirror/addon/fold/brace-fold");
