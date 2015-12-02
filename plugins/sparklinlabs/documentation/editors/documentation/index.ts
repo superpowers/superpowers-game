@@ -38,9 +38,7 @@ function setupDocs() {
   let sortedNames = Object.keys(SupClient.plugins["documentation"]);
   sortedNames.sort((a, b) => { return (a.toLowerCase() < b.toLowerCase()) ? -1 : 1; });
 
-  let language = window.navigator.language;
-  let separatorIndex = language.indexOf("-");
-  if (separatorIndex !== -1) language = language.slice(0, separatorIndex);
+  let language = SupClient.cookies.get("language");
 
   sortedNames.forEach((name) => {
     let liElt = document.createElement("li");
