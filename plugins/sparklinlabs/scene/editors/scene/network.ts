@@ -44,7 +44,7 @@ function onWelcome() {
 function loadPlugins(callback: (err: Error, locales: SupClient.i18n.File[]) => void) {
   let locales: SupClient.i18n.File[] = [];
   locales.push({ root: path.join(window.location.pathname, "../.."), name: "sceneEditor" });
-  
+
   window.fetch(`/systems/${SupCore.system.name}/plugins.json`).then((response) => response.json()).then((pluginsInfo: SupCore.PluginsInfo) => {
     async.eachSeries(pluginsInfo.list, (pluginName, pluginCallback) => {
       async.series([
@@ -70,7 +70,7 @@ function loadPlugins(callback: (err: Error, locales: SupClient.i18n.File[]) => v
           let componentEditorsScript = document.createElement("script");
           componentEditorsScript.src = `${SupClient.activePluginPath}/componentEditors.js`;
           componentEditorsScript.addEventListener("load", () => {
-            
+
             locales.push({ root: SupClient.activePluginPath, name: "componentEditors" });
             cb(null, null);
           } );
