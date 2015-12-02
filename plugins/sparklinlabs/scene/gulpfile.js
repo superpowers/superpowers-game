@@ -62,6 +62,13 @@ locales.forEach(function(locale) {
   tasks.push("jade-" + locale);
 })
 
+gulp.task("jade-none", function() {
+  return gulp.src("./editors/**/index.jade")
+    .pipe(jade({ locals: { t: function(path) { return path; } } }))
+    .pipe(rename({ extname: ".none.html" }))
+    .pipe(gulp.dest("./public/editors"));
+});
+tasks.push("jade-none");
 
 // Stylus 
 var stylus = require("gulp-stylus");
