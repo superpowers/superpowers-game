@@ -452,7 +452,7 @@ function onNewNodeClick() {
     initialValue: SupClient.i18n.t("sceneEditor:treeView.newActor.initialValue"),
     validationLabel: SupClient.i18n.t("sceneEditor:treeView.newActor.validate"),
     pattern: SupClient.namePattern,
-    title: SupClient.namePatternDescription
+    title: SupClient.i18n.t("supClient:namePatternDescription")
   };
 
   /* tslint:disable:no-unused-expression */
@@ -468,7 +468,7 @@ function onNewPrefabClick() {
     initialValue: SupClient.i18n.t("sceneEditor:treeView.newPrefab.title"),
     validationLabel: SupClient.i18n.t("sceneEditor:treeView.newPrefab.validate"),
     pattern: SupClient.namePattern,
-    title: SupClient.namePatternDescription
+    title: SupClient.i18n.t("supClient:namePatternDescription")
   };
 
   /* tslint:disable:no-unused-expression */
@@ -512,7 +512,7 @@ function onRenameNodeClick() {
     initialValue: node.name,
     validationLabel: SupClient.i18n.t("sceneEditor:treeView.renameActor.validate"),
     pattern: SupClient.namePattern,
-    title: SupClient.namePatternDescription
+    title: SupClient.i18n.t("supClient:namePatternDescription")
   };
 
   /* tslint:disable:no-unused-expression */
@@ -534,7 +534,7 @@ function onDuplicateNodeClick() {
     initialValue: node.name,
     validationLabel: SupClient.i18n.t("sceneEditor:treeView.duplicateActor.validate"),
     pattern: SupClient.namePattern,
-    title: SupClient.namePatternDescription
+    title: SupClient.i18n.t("supClient:namePatternDescription")
   };
 
   /* tslint:disable:no-unused-expression */
