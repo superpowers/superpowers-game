@@ -1,7 +1,0 @@
-{
-  "id": "JOoH",
-  "name": "2D Platformer",
-  "description": "A template for building ArcadePhysics2D platformer games, using code from the Basic 2D Collision tutorial.",
-  "system": "supGame",
-  "formatVersion": 2
-}

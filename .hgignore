@@ -3,5 +3,6 @@ node_modules/
 player/**.js
 SupEngine/**.js
 SupRuntime/**.js
-public/
 plugins/
+syntax: regexp
+^public/(?!(locales|templates/))
