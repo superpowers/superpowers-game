@@ -1,0 +1,11 @@
+{
+  "links": {
+    "title": "Links",
+    "officialWebsite": "Official website",
+    "devRoadmap": "Development roadmap",
+    "skypeGroupChat": "Skype group chat: ",
+    "forums": "Forums: ",
+    "chatPlaceholder": "Type here to chat"
+  },
+  "onlineMembers": "Online members"
+}

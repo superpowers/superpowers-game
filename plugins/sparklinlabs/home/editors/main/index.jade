@@ -11,28 +11,28 @@ html
       .chat
         ol
       .chat-input
-        textarea(placeholder="Type here to chat",maxlength=300)
+        textarea(placeholder=t("home:links.chatPlaceholder"),maxlength=300)
     .sidebar
       .links
-        .header Links
+        .header=t("home:links.title")
         .content
           ul
             li
-              a(href="https://sparklinlabs.com/",target="_blank") Official website
+              a(href="https://sparklinlabs.com/",target="_blank")=t("home:links.officialWebsite")
             li
-              a(href="https://trello.com/b/eQUeNKrq/superpowers",target="_blank") Development roadmap
+              a(href="https://trello.com/b/eQUeNKrq/superpowers",target="_blank")=t("home:links.devRoadmap")
             li
-              | Skype group chat: 
+              span=t("home:links.skypeGroupChat")
               a(href="https://sparklinlabs.com/skype/en",target="_blank") EN
               |  &middot; 
               a(href="https://sparklinlabs.com/skype/fr",target="_blank") FR
             li
-              | Forums: 
+              span=t("home:links.forums")
               a(href="https://reddit.com/r/superpowers",target="_blank") EN
               |  &middot; 
               a(href="https://reddit.com/r/superpowers_fr",target="_blank") FR
       .members
-        .header Online members
+        .header=t("home:onlineMembers")
         .content
           ul
 

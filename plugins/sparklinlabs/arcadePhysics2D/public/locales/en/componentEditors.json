@@ -1,0 +1,17 @@
+{
+  "arcadeBody2D": {
+    "type": "Type",
+    "typeOptions": {
+      "box": "Box",
+      "tileMap": "Tile Map"
+    },
+
+    "movable": "Movable",
+    "size": "Size",
+    "offset": "Offset",
+
+    "tileMap": "Tile Map",
+    "tileSetProperty": "Tile Set Property",
+    "layers": "Layers"
+  }
+}

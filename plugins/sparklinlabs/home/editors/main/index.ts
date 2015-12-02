@@ -1,3 +1,4 @@
+import * as path from "path";
 import "./links";
 
 let data: { room: SupCore.Data.Room; };
@@ -147,4 +148,4 @@ function onChatInputKeyDown(event: any) {
   this.value = "";
 };
 
-start();
+SupClient.i18n.load([{ root: path.join(window.location.pathname, "../.."), name: "home" }], start);
