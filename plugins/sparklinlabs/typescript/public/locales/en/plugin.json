@@ -1,0 +1,13 @@
+{
+  "editors": {
+    "script": {
+      "title": "Script"
+    },
+    "apiBrowser": {
+      "title": "TypeScript API browser"
+    },
+    "search": {
+      "title": "TypeScript global search"
+    }
+  }
+}
