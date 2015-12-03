@@ -12,14 +12,14 @@ function loadLocales(locale) {
   var localsByContext = {};"./public/locales/";
   var files = fs.readdirSync(localesPath + locale);
   files.forEach(function(fileName) {"./public/locales/";
-    var file = fs.readFileSync(localesPath + locale + "/" + fileName, { encoding: "utf8" } );
+    var file = fs.readFileSync(localesPath + locale + "/" + fileName, { encoding: "utf8" });
     localsByContext[fileName.slice(0, fileName.lastIndexOf("."))] = JSON.parse(file);
   });
   
   if (defaultLocals != null) {
     function checkRecursively(defaultRoot, root, key, path) {
       if (root[key] == undefined) {
-        console.log("Missing key in " + locale + " translation: " + path)
+        console.log("Missing key in " + locale + " translation: " + path);
         root[key] = defaultRoot[key];
       
       } else if (typeof defaultRoot[key] === "object") {
@@ -56,7 +56,7 @@ locales.forEach(function(locale) {
         }}
        }))
 
-    if (locale !== "en") result.pipe(rename({ extname: "." + locale + ".html" }))
+    if (locale !== "en") result.pipe(rename({ extname: "." + locale + ".html" }));
     return result.pipe(gulp.dest("./public/editors"));
   });
   tasks.push("jade-" + locale);
