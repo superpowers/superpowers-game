@@ -4,5 +4,6 @@ player/**.js
 SupEngine/**.js
 SupRuntime/**.js
 plugins/
+public/templates.json
 syntax: regexp
-^public/(?!(locales|templates/))
+^public/(?!(locales|templates))
