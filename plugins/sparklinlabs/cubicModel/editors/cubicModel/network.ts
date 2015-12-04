@@ -1,4 +1,3 @@
-import * as path from "path";
 import ui, {
   createNodeElement,
   setupSelectedNode,
@@ -19,7 +18,7 @@ import { Node } from "../../data/CubicModelNodes";
 export let data: { projectClient?: SupClient.ProjectClient; cubicModelUpdater?: CubicModelRendererUpdater };
 
 export let socket: SocketIOClient.Socket;
-SupClient.i18n.load([{ root: path.join(window.location.pathname, "../.."), name: "cubicModelEditor" }], () => {
+SupClient.i18n.load([{ root: `${window.location.pathname}/../..`, name: "cubicModelEditor" }], () => {
   socket = SupClient.connect(SupClient.query.project);
   socket.on("connect", onConnected);
   socket.on("disconnect", SupClient.onDisconnected);

@@ -6,7 +6,6 @@ import ui, {
   setupInspectorLayers } from "./ui";
 import engine, { start as engineStart, setupHelpers } from "./engine";
 import * as async from "async";
-import * as path from "path";
 
 let THREE = SupEngine.THREE;
 import { DuplicatedNode } from "../../data/SceneAsset";
@@ -43,7 +42,7 @@ function onWelcome() {
 
 function loadPlugins(callback: (err: Error, locales: SupClient.i18n.File[]) => void) {
   let locales: SupClient.i18n.File[] = [];
-  locales.push({ root: path.join(window.location.pathname, "../.."), name: "sceneEditor" });
+  locales.push({ root: `${window.location.pathname}/../..`, name: "sceneEditor" });
 
   window.fetch(`/systems/${SupCore.system.name}/plugins.json`).then((response) => response.json()).then((pluginsInfo: SupCore.PluginsInfo) => {
     async.eachSeries(pluginsInfo.list, (pluginName, pluginCallback) => {
