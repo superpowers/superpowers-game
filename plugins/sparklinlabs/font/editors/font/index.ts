@@ -4,7 +4,7 @@ import TextRendererUpdater from "../../components/TextRendererUpdater";
 let data: {projectClient?: SupClient.ProjectClient; textUpdater?: TextRendererUpdater};
 let ui: {
   gameInstance: SupEngine.GameInstance,
-  
+
   allSettings: string[],
   settings: { [name: string]: any; }
   colorPicker: HTMLInputElement,
@@ -29,11 +29,13 @@ function start() {
   let cameraComponent = new SupEngine.componentClasses["Camera"](cameraActor);
   cameraComponent.setOrthographicMode(true);
   cameraComponent.setOrthographicScale(5);
+  /* tslint:disable:no-unused-expression */
   new SupEngine.editorComponentClasses["Camera2DControls"](cameraActor, cameraComponent, {
     zoomSpeed: 1.5,
     zoomMin: 1,
     zoomMax: 200
   });
+  /* tslint:enable:no-unused-expression */
 
   // Sidebar
   let fileSelect = <HTMLInputElement>document.querySelector("input.file-select");
@@ -61,7 +63,7 @@ function start() {
       });
     } else {
       settingObj.addEventListener("change", (event: any) => {
-        socket.emit("edit:assets", SupClient.query.asset, "setProperty", event.target.dataset.name, parseInt(event.target.value), (err: string) => { if (err != null) alert(err); });
+        socket.emit("edit:assets", SupClient.query.asset, "setProperty", event.target.dataset.name, parseInt(event.target.value, 10), (err: string) => { if (err != null) alert(err); });
       });
     }
   });
@@ -69,7 +71,7 @@ function start() {
   ui.colorPicker = <HTMLInputElement>document.querySelector("input.color-picker");
   ui.colorPicker.addEventListener("change", (event: any) => {
     socket.emit("edit:assets", SupClient.query.asset, "setProperty", "color", event.target.value.slice(1), (err: string) => { if (err != null) alert(err); });
-  })
+  });
 
   ui.vectorFontTBody = <HTMLTableSectionElement>document.querySelector("tbody.vector-font");
   ui.bitmapFontTBody = <HTMLTableSectionElement>document.querySelector("tbody.bitmap-font");
@@ -114,10 +116,11 @@ onEditCommands.setProperty = (path: string, value: any) => {
   else if (path === "charset") {
     ui.settings["charsetOffset"].disabled = data.textUpdater.fontAsset.pub.isBitmap && data.textUpdater.fontAsset.pub.charset != null;
   }
-}
+};
 
 function refreshFontMode() {
-  document.querySelector(".sidebar .font-or-image th").textContent = data.textUpdater.fontAsset.pub.isBitmap ? "Texture" : "Font";
+  let fontOrImageString = SupClient.i18n.t(`fontEditor:${data.textUpdater.fontAsset.pub.isBitmap ? "texture" : "font"}`);
+  document.querySelector(".sidebar .font-or-image th").textContent = fontOrImageString;
 
   if (data.textUpdater.fontAsset.pub.isBitmap) {
     ui.vectorFontTBody.hidden = true;
@@ -151,4 +154,4 @@ function draw() {
   ui.gameInstance.draw();
 }
 
-start();
+SupClient.i18n.load([{ root: `${window.location.pathname}/../..`, name: "fontEditor" }], start);

@@ -1,0 +1,14 @@
+{
+  "bitmap": "Bitmap",
+  "font": "Font",
+  "texture": "Texture",
+  "filtering": "Filtering",
+  "pixelated": "Pixelated",
+  "smooth": "Smooth",
+  "pixelsPerUnit": "Pixels / Unit",
+  "size": "Size (pixels)",
+  "color": "Color",
+  "gridSize": "Grid Size",
+  "charset": "Charset",
+  "charsetOffset": "Charset offset"
+}

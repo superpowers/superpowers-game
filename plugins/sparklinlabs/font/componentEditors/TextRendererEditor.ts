@@ -1,5 +1,5 @@
 export default class TextRendererEditor {
-  projectClient: SupClient.ProjectClient
+  projectClient: SupClient.ProjectClient;
   editConfig: any;
 
   fields: {[key: string]: any} = {};
@@ -14,18 +14,18 @@ export default class TextRendererEditor {
     this.projectClient = projectClient;
     this.fontAssetId = config.fontAssetId;
 
-    let fontRow = SupClient.table.appendRow(tbody, "Font");
+    let fontRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:TextRenderer.font"));
     let fontName = (config.fontAssetId != null) ? this.projectClient.entries.getPathFromId(this.fontAssetId) : "";
     let fontFields = SupClient.table.appendAssetField(fontRow.valueCell, fontName);
     this.fields["fontAssetId"] = fontFields.textField;
-    this.fields["fontAssetId"].addEventListener("input", this._onChangeFontAsset);
+    this.fields["fontAssetId"].addEventListener("input", this.onChangeFontAsset);
     this.fontButtonElt = fontFields.buttonElt;
     this.fontButtonElt.addEventListener("click", (event) => {
       window.parent.postMessage({ type: "openEntry", id: this.fontAssetId }, (<any>window.location).origin);
     });
     this.fontButtonElt.disabled = this.fontAssetId == null;
 
-    let textRow = SupClient.table.appendRow(tbody, "Text");
+    let textRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:TextRenderer.text"));
     this.fields["text"] = SupClient.table.appendTextAreaField(textRow.valueCell, config.text);
     this.fields["text"].addEventListener("input", (event: any) => {
       this.pendingModification += 1;
@@ -35,22 +35,32 @@ export default class TextRendererEditor {
       });
     });
 
-    let alignmentRow = SupClient.table.appendRow(tbody, "Alignment");
-    this.fields["alignment"] = SupClient.table.appendSelectBox(alignmentRow.valueCell, {"left": "Left", "center": "Center", "right": "Right"}, config.alignment);
+    let alignmentRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:TextRenderer.align.title"));
+    let alignmentOptions: { [key: string]: string } = {
+      "left": SupClient.i18n.t("componentEditors:TextRenderer.align.left"),
+      "center": SupClient.i18n.t("componentEditors:TextRenderer.align.center"),
+      "right": SupClient.i18n.t("componentEditors:TextRenderer.align.right")
+    };
+    this.fields["alignment"] = SupClient.table.appendSelectBox(alignmentRow.valueCell, alignmentOptions, config.alignment);
     this.fields["alignment"].addEventListener("change", (event: any) => { this.editConfig("setProperty", "alignment", event.target.value); });
 
-    let verticalAlignmentRow = SupClient.table.appendRow(tbody, "Vertical Align");
-    this.fields["verticalAlignment"] = SupClient.table.appendSelectBox(verticalAlignmentRow.valueCell, {"top": "Top", "center": "Center", "bottom": "Bottom"}, config.verticalAlignment);
+    let verticalAlignmentRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:TextRenderer.verticalAlign.title"));
+    let verticalAlignmentOptions: { [key: string]: string } = {
+      "top": SupClient.i18n.t("componentEditors:TextRenderer.verticalAlign.top"),
+      "center": SupClient.i18n.t("componentEditors:TextRenderer.verticalAlign.center"),
+      "bottom": SupClient.i18n.t("componentEditors:TextRenderer.verticalAlign.bottom")
+    };
+    this.fields["verticalAlignment"] = SupClient.table.appendSelectBox(verticalAlignmentRow.valueCell, verticalAlignmentOptions, config.verticalAlignment);
     this.fields["verticalAlignment"].addEventListener("change", (event: any) => { this.editConfig("setProperty", "verticalAlignment", event.target.value); });
 
-    let sizeRow = SupClient.table.appendRow(tbody, "Size");
+    let sizeRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:TextRenderer.size"));
     this.fields["size"] = SupClient.table.appendNumberField(sizeRow.valueCell, config.size, 0);
     this.fields["size"].addEventListener("change", (event: any) => {
-      let size = (event.target.value !== "") ? parseInt(event.target.value) : null;
+      let size = (event.target.value !== "") ? parseInt(event.target.value, 10) : null;
       this.editConfig("setProperty", "size", size);
     });
 
-    let colorRow = SupClient.table.appendRow(tbody, "Color");
+    let colorRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:TextRenderer.color"));
     let colorInputs = SupClient.table.appendColorField(colorRow.valueCell, config.color);
 
     this.fields["color"] = colorInputs.textField;
@@ -82,22 +92,22 @@ export default class TextRendererEditor {
     } else this.fields[path].value = value;
   }
 
-  _onChangeFontAsset = (event: any) => {
+  private onChangeFontAsset = (event: any) => {
     if (event.target.value === "") this.editConfig("setProperty", "fontAssetId", null);
     else {
       let  entry = SupClient.findEntryByPath(this.projectClient.entries.pub, event.target.value);
       if (entry != null && entry.type === "font") this.editConfig("setProperty", "fontAssetId", entry.id);
     }
-  }
+  };
 
   // Network callbacks
-  onEntriesReceived(entries: SupCore.Data.Entries) {}
-  onEntryAdded(entry: any, parentId: string, index: number) {}
+  onEntriesReceived(entries: SupCore.Data.Entries) { /* Nothing to do here */ }
+  onEntryAdded(entry: any, parentId: string, index: number) { /* Nothing to do here */ }
   onEntryMoved(id: string, parentId: string, index: number) {
     if (id === this.fontAssetId) this.fields["fontAssetId"].value = this.projectClient.entries.getPathFromId(this.fontAssetId);
   }
   onSetEntryProperty(id: string, key: string, value: any) {
     if (id === this.fontAssetId) this.fields["fontAssetId"].value = this.projectClient.entries.getPathFromId(this.fontAssetId);
   }
-  onEntryTrashed(id: string) {}
+  onEntryTrashed(id: string) { /* Nothing to do here */ }
 }
