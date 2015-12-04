@@ -13,34 +13,34 @@ html
       table.properties
         tbody.main
           tr
-            th=t("fontEditor:bitmap")
+            th= t("fontEditor:bitmap")
             td
               input(type="checkbox").property-isBitmap
           tr.font-or-image
-            th=t("fontEditor:font")
+            th= t("fontEditor:font")
             td
-              button.upload=t("common:upload")
+              button.upload= t("common:upload")
               form(style="display: none")
                 input.file-select(type="file")
-              button.download=t("common:download")
+              button.download= t("common:download")
           tr
-            th=t("fontEditor:filtering")
+            th= t("fontEditor:filtering")
             td
               select.property-filtering
-                option(value='pixelated')=t("fontEditor:pixelated")
-                option(value='smooth')=t("fontEditor:smooth")
+                option(value='pixelated')= t("fontEditor:pixelated")
+                option(value='smooth')= t("fontEditor:smooth")
           tr
-            th=t("fontEditor:pixelsPerUnit")
+            th= t("fontEditor:pixelsPerUnit")
             td
               input(type="number").property-pixelsPerUnit
 
         tbody.vector-font
           tr
-            th=t("fontEditor:size")
+            th= t("fontEditor:size")
             td
               input(type="number").property-size
           tr
-            th=t("fontEditor:color")
+            th= t("fontEditor:color")
             td
               .inputs
                 input.color.property-color
@@ -48,17 +48,17 @@ html
 
         tbody.bitmap-font
           tr
-            th=t("fontEditor:gridSize")
+            th= t("fontEditor:gridSize")
             td
               .inputs
                 input(type="number").property-gridWidth
                 input(type="number").property-gridHeight
           tr
-            th=t("fontEditor:charset")
+            th= t("fontEditor:charset")
             td
               input.property-charset
           tr
-            th=t("fontEditor:charsetOffset")
+            th= t("fontEditor:charsetOffset")
             td
               input(type="number").property-charsetOffset
 

@@ -13,59 +13,59 @@ html
       .model-container
         .controls
           .transform-settings
-            .title=t("cubicModelEditor:3dView.settings.title")
+            .title= t("cubicModelEditor:3dView.settings.title")
             div
               input#translate-pivot-shape(type="checkbox",checked)
-              label(for="translate-pivot-shape")=t("cubicModelEditor:3dView.settings.linkShapeToPivot")
+              label(for="translate-pivot-shape")= t("cubicModelEditor:3dView.settings.linkShapeToPivot")
           .transform-mode
-            .title=t("cubicModelEditor:3dView.transform.title")
+            .title= t("cubicModelEditor:3dView.transform.title")
             div
               input#transform-mode-translate-pivot(type="radio",name="transformMode",value="translate",data-target="pivot",checked)
-              label(for="transform-mode-translate-pivot")=t("cubicModelEditor:3dView.transform.movePivot")
+              label(for="transform-mode-translate-pivot")= t("cubicModelEditor:3dView.transform.movePivot")
               input#transform-mode-translate-shape(type="radio",name="transformMode",value="translate",data-target="shape")
-              label(for="transform-mode-translate-shape")=t("cubicModelEditor:3dView.transform.moveShape")
+              label(for="transform-mode-translate-shape")= t("cubicModelEditor:3dView.transform.moveShape")
               input#transform-mode-rotate(type="radio",name="transformMode",value="rotate")
-              label(for="transform-mode-rotate")=t("cubicModelEditor:3dView.transform.rotate")
+              label(for="transform-mode-rotate")= t("cubicModelEditor:3dView.transform.rotate")
               input#transform-mode-stretch(type="radio",name="transformMode",value="stretch")
-              label(for="transform-mode-stretch")=t("cubicModelEditor:3dView.transform.stretch")
+              label(for="transform-mode-stretch")= t("cubicModelEditor:3dView.transform.stretch")
               input#transform-space(type="checkbox")
-              label(for="transform-space")=t("cubicModelEditor:3dView.transform.local")
+              label(for="transform-space")= t("cubicModelEditor:3dView.transform.local")
           .grid
-            .title=t("cubicModelEditor:3dView.grid.title")
+            .title= t("cubicModelEditor:3dView.grid.title")
             div
-              label(for="grid-step")=t("cubicModelEditor:3dView.grid.size")
+              label(for="grid-step")= t("cubicModelEditor:3dView.grid.size")
               input#grid-step(type="number",value="1",min="0")
               input#grid-visible(type="checkbox")
-              label(for="grid-visible")=t("cubicModelEditor:3dView.grid.visible")
+              label(for="grid-visible")= t("cubicModelEditor:3dView.grid.visible")
         canvas(tabindex="0")
 
       .texture-container
         .controls
           .mode-selection
-            .title=t("cubicModelEditor:textureView.mode.title")
+            .title= t("cubicModelEditor:textureView.mode.title")
             div
               input#layout-mode(type="radio",name="mode",value="layout",checked)
-              label(for="layout-mode")=t("cubicModelEditor:textureView.mode.layout")
+              label(for="layout-mode")= t("cubicModelEditor:textureView.mode.layout")
               input#paint-mode(type="radio",name="mode",value="paint")
-              label(for="paint-mode")=t("cubicModelEditor:textureView.mode.paint")
+              label(for="paint-mode")= t("cubicModelEditor:textureView.mode.paint")
 
           .layout-mode-container
-            .title=t("cubicModelEditor:textureView.layoutMode.title")
+            .title= t("cubicModelEditor:textureView.layoutMode.title")
             div
               input#translate-texture(type="checkbox")
-              label(for="translate-texture")=t("cubicModelEditor:textureView.layoutMode.linkTextureToUV")
+              label(for="translate-texture")= t("cubicModelEditor:textureView.layoutMode.linkTextureToUV")
 
           .paint-mode-container(hidden)
-            .title=t("cubicModelEditor:textureView.paintMode.tool")
+            .title= t("cubicModelEditor:textureView.paintMode.tool")
             .tool
               input#brush-tool(type="radio",name="tool",value="brush",checked)
-              label(for="brush-tool")=t("cubicModelEditor:textureView.paintMode.brush")
+              label(for="brush-tool")= t("cubicModelEditor:textureView.paintMode.brush")
               input#eraser-tool(type="radio",name="tool",value="eraser")
-              label(for="eraser-tool")=t("cubicModelEditor:textureView.paintMode.eraser")
+              label(for="eraser-tool")= t("cubicModelEditor:textureView.paintMode.eraser")
               input#fill-tool(type="radio",name="tool",value="fill")
-              label(for="fill-tool")=t("cubicModelEditor:textureView.paintMode.fill")
+              label(for="fill-tool")= t("cubicModelEditor:textureView.paintMode.fill")
 
-            .title=t("cubicModelEditor:textureView.paintMode.color")
+            .title= t("cubicModelEditor:textureView.paintMode.color")
             div
               input.color(type="color")
 
@@ -74,45 +74,45 @@ html
     .sidebar
       table.settings.properties
         tr
-          th(colspan="2")=t("cubicModelEditor:sidebar.settings.cubicModel.title")
+          th(colspan="2")= t("cubicModelEditor:sidebar.settings.cubicModel.title")
         tr
-          th=t("cubicModelEditor:sidebar.settings.cubicModel.pixelsPerUnit")
+          th= t("cubicModelEditor:sidebar.settings.cubicModel.pixelsPerUnit")
           td
             input.property-pixelsPerUnit(type="number")
         
         tr
-          th=t("cubicModelEditor:sidebar.settings.cubicModel.texture")
+          th= t("cubicModelEditor:sidebar.settings.cubicModel.texture")
           td
-            button.download=t("common:download")
+            button.download= t("common:download")
         tr
-          th=t("cubicModelEditor:sidebar.settings.cubicModel.textureSize")
+          th= t("cubicModelEditor:sidebar.settings.cubicModel.textureSize")
           td
             .inputs
               select.property-texture-width
               select.property-texture-height
 
       .header
-        span=t("cubicModelEditor:sidebar.nodes.title")
+        span= t("cubicModelEditor:sidebar.nodes.title")
 
       .nodes-buttons.flat-button-strip
-        button(title=t("cubicModelEditor:sidebar.nodes.newNode.title"),disabled).new-node
-        button(title=t("cubicModelEditor:sidebar.nodes.rename.title"),disabled).rename-node
-        button(title=t("cubicModelEditor:sidebar.nodes.duplicate.title"),disabled).duplicate-node
-        button(title=t("cubicModelEditor:sidebar.nodes.delete.title"),disabled).delete-node
+        button(title= t("cubicModelEditor:sidebar.nodes.newNode.title"),disabled).new-node
+        button(title= t("cubicModelEditor:sidebar.nodes.rename.title"),disabled).rename-node
+        button(title= t("cubicModelEditor:sidebar.nodes.duplicate.title"),disabled).duplicate-node
+        button(title= t("cubicModelEditor:sidebar.nodes.delete.title"),disabled).delete-node
 
       .nodes-tree-view
       .inspector(hidden)
         table
           tbody.transform
             tr.position
-              th.label=t("cubicModelEditor:sidebar.inspector.position")
+              th.label= t("cubicModelEditor:sidebar.inspector.position")
               td
                 .inputs
                   input(type="number").x
                   input(type="number").y
                   input(type="number").z
             tr.orientation
-              th.label=t("cubicModelEditor:sidebar.inspector.orientation")
+              th.label= t("cubicModelEditor:sidebar.inspector.orientation")
               td
                 .inputs
                   input(type="number").x
@@ -120,15 +120,15 @@ html
                   input(type="number").z
           tbody.shape
             tr
-              th(colspan="2")=t("cubicModelEditor:sidebar.inspector.shape")
+              th(colspan="2")= t("cubicModelEditor:sidebar.inspector.shape")
             tr.type
-              th=t("cubicModelEditor:sidebar.inspector.shapeType")
+              th= t("cubicModelEditor:sidebar.inspector.shapeType")
               td
                 select
                   // option(value="") (None)
-                  option(value="box")=t("cubicModelEditor:sidebar.inspector.shapeOptions.box")
+                  option(value="box")= t("cubicModelEditor:sidebar.inspector.shapeOptions.box")
             tr.offset
-              th=t("cubicModelEditor:sidebar.inspector.offset")
+              th= t("cubicModelEditor:sidebar.inspector.offset")
               td
                 .inputs
                   input(type="number").x
@@ -136,14 +136,14 @@ html
                   input(type="number").z
           tbody.box-shape
             tr.size
-              th=t("cubicModelEditor:sidebar.inspector.size")
+              th= t("cubicModelEditor:sidebar.inspector.size")
               td
                 .inputs
                   input(type="number").width
                   input(type="number").height
                   input(type="number").depth
             tr.stretch
-              th=t("cubicModelEditor:sidebar.inspector.stretch")
+              th= t("cubicModelEditor:sidebar.inspector.stretch")
               td
                 .inputs
                   input(type="number").width
