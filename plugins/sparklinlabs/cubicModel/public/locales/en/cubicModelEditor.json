@@ -1,0 +1,90 @@
+{
+  "3dView": {
+    "settings": {
+      "title": "Settings",
+      "linkShapeToPivot": "Link shape to pivot"
+    },
+    "transform": {
+      "title": "Transform",
+      "movePivot": "Move pivot",
+      "moveShape": "Move shape",
+      "rotate": "Rotate",
+      "stretch": "Stretch",
+      "local": "Local"
+    },
+    "grid": {
+      "title": "Grid",
+      "size": "Size",
+      "visible": "Visible"
+    }
+  },
+  "textureView": {
+    "mode": {
+      "title": "Mode",
+      "layout": "Layout",
+      "paint": "Paint"
+    },
+    "layoutMode": {
+      "title": "Settings",
+      "linkTextureToUV": "Link texture to UV"
+    },
+    "paintMode": {
+      "tool": "Tool",
+      "brush": "Brush",
+      "eraser": "Eraser",
+      "fill": "Fill",
+      "color": "Color"
+    }
+  },
+  "sidebar": {
+    "settings": {
+      "cubicModel": {
+        "title": "Cubic Model",
+        "pixelsPerUnit": "Pixels per unit",
+        "texture": "Texture",
+        "download": {
+          "prompt": "Enter a name for the texture.",
+          "validate": "Download"
+        },
+        "textureSize": "Texture size (px)"
+      }
+    },
+    "nodes": {
+      "title": "Nodes",
+      "newNode": {
+        "title": "New node",
+        "prompt": "Enter a name for the node.",
+        "validate": "Create"
+      },
+      "rename": {
+        "title": "Rename (F2)",
+        "prompt": "Enter a new name for the node.",
+        "validate": "Rename"
+      },
+      "duplicate": {
+        "title": "Duplicate (Ctrl+D)",
+        "prompt": "Enter a name for the new node.",
+        "validate": "Duplicate"
+      },
+      "delete": {
+        "title": "Delete (Delete)",
+        "confirm": "Are you sure you want to delete the selected nodes?",
+        "validate": "Delete"
+      },
+      "hide": "Hide",
+      "show": "Show"
+    },
+    "inspector": {
+      "position": "Position",
+      "orientation": "Orientation",
+      "shape": "Shape",
+      "shapeType": "Type",
+      "shapeOptions": {
+        "box": "Box"
+      },
+      "offset": "Offset",
+      "size": "Size",
+      "stretch": "Stretch"
+    }
+  }
+}

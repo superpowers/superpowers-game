@@ -1,3 +1,4 @@
+import * as path from "path";
 import ui, {
   createNodeElement,
   setupSelectedNode,
@@ -17,9 +18,12 @@ import { Node } from "../../data/CubicModelNodes";
 
 export let data: { projectClient?: SupClient.ProjectClient; cubicModelUpdater?: CubicModelRendererUpdater };
 
-export let socket = SupClient.connect(SupClient.query.project);
-socket.on("connect", onConnected);
-socket.on("disconnect", SupClient.onDisconnected);
+export let socket: SocketIOClient.Socket;
+SupClient.i18n.load([{ root: path.join(window.location.pathname, "../.."), name: "cubicModelEditor" }], () => {
+  socket = SupClient.connect(SupClient.query.project);
+  socket.on("connect", onConnected);
+  socket.on("disconnect", SupClient.onDisconnected);
+});
 
 let onEditCommands: any = {};
 function onConnected() {
@@ -55,6 +59,8 @@ function onAssetReceived() {
   ui.pixelsPerUnitInput.value = pub.pixelsPerUnit.toString();
   ui.textureWidthSelect.value = pub.textureWidth.toString();
   ui.textureHeightSelect.value = pub.textureHeight.toString();
+
+  (document.querySelector("button.new-node") as HTMLInputElement).disabled = false;
 
   textureArea.setup();
 }

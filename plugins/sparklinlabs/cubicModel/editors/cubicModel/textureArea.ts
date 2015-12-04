@@ -137,7 +137,7 @@ document.querySelector(".texture-container .controls .paint-mode-container .tool
 function updateMode() {
   for (let mode of ["layout", "paint"]) {
     let container = <HTMLDivElement>document.querySelector(`.${mode}-mode-container`);
-    container.style.display = mode === textureArea.mode ? "" : "none";
+    container.hidden = mode !== textureArea.mode;
   }
 }
 

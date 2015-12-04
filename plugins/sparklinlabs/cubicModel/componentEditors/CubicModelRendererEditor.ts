@@ -36,10 +36,10 @@ export default class CubicModelRendererEditor {
     // this.animationId = config.animationId;
     // this.shaderAssetId = config.shaderAssetId;
 
-    let cubicModelRow = SupClient.table.appendRow(tbody, "Cubic Model");
+    let cubicModelRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:CubicModelRenderer.cubicModel"));
     let cubicModelFields = SupClient.table.appendAssetField(cubicModelRow.valueCell, "");
     this.cubicModelTextField = cubicModelFields.textField;
-    this.cubicModelTextField.addEventListener("input", this._onChangeCubicModelAsset);
+    this.cubicModelTextField.addEventListener("input", this.onChangeCubicModelAsset);
     this.cubicModelTextField.disabled = true;
     this.cubicModelButtonElt = cubicModelFields.buttonElt;
     this.cubicModelButtonElt.addEventListener("click", (event) => {
@@ -263,7 +263,7 @@ export default class CubicModelRendererEditor {
     }*/
   }
 
-  onEntryAdded(entry: any, parentId: string, index: number) {}
+  onEntryAdded(entry: any, parentId: string, index: number) { /* Nothing to do here */ }
   onEntryMoved(id: string, parentId: string, index: number) {
     if (id === this.cubicModelAssetId) {
       this.cubicModelTextField.value = this.projectClient.entries.getPathFromId(this.cubicModelAssetId);
@@ -280,7 +280,7 @@ export default class CubicModelRendererEditor {
       // this.shaderTextField.value = this.projectClient.entries.getPathFromId(this.shaderAssetId);
     }
   }
-  onEntryTrashed(id: string) {}
+  onEntryTrashed(id: string) { /* Nothing to do here */ }
 
   onAssetReceived(assetId: string, asset: any) {
     if (assetId !== this.cubicModelAssetId) return;
@@ -314,7 +314,7 @@ export default class CubicModelRendererEditor {
   }
 
   onAssetTrashed() {
-    this._clearAnimations();
+    this.clearAnimations();
 
     this.cubicModelTextField.value = "";
     // this.animationSelectBox.value = "";
@@ -322,7 +322,7 @@ export default class CubicModelRendererEditor {
   }
 
   // User interface
-  _clearAnimations() {
+  private clearAnimations() {
     /*while (true) {
       let child = this.animationSelectBox.children[1];
       if (child == null) break;
@@ -330,14 +330,14 @@ export default class CubicModelRendererEditor {
     }*/
   }
 
-  _updateShaderField(materialType: string) {
+  // private updateShaderField(materialType: string) {
     // let shaderRow = this.shaderTextField.parentElement.parentElement.parentElement;
     // if (materialType === "shader") {
     //   if (shaderRow.parentElement == null) this.tbody.appendChild(shaderRow);
     // } else if (shaderRow.parentElement != null) shaderRow.parentElement.removeChild(shaderRow);
-  }
+  // }
 
-  _onChangeCubicModelAsset = (event: any) => {
+  private onChangeCubicModelAsset = (event: any) => {
     if (event.target.value === "") {
       this.editConfig("setProperty", "cubicModelAssetId", null);
       // this.editConfig("setProperty", "animationId", null);
@@ -351,16 +351,16 @@ export default class CubicModelRendererEditor {
     }
   };
 
-  _onChangeCubicModelAnimation = (event: any) => {
-    let animationId = (event.target.value === "") ? null : event.target.value;
-    this.editConfig("setProperty", "animationId", animationId);
-  };
+  // private onChangeCubicModelAnimation = (event: any) => {
+  //   let animationId = (event.target.value === "") ? null : event.target.value;
+  //   this.editConfig("setProperty", "animationId", animationId);
+  // };
 
-  _onChangeShaderAsset = (event: any) => {
-    if (event.target.value === "") this.editConfig("setProperty", "shaderAssetId", null);
-    else {
-      let entry = SupClient.findEntryByPath(this.projectClient.entries.pub, event.target.value);
-      if (entry != null && entry.type === "shader") this.editConfig("setProperty", "shaderAssetId", entry.id);
-    }
-  };
+  // private onChangeShaderAsset = (event: any) => {
+  //   if (event.target.value === "") this.editConfig("setProperty", "shaderAssetId", null);
+  //   else {
+  //     let entry = SupClient.findEntryByPath(this.projectClient.entries.pub, event.target.value);
+  //     if (entry != null && entry.type === "shader") this.editConfig("setProperty", "shaderAssetId", entry.id);
+  //   }
+  // };
 }

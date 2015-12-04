@@ -120,11 +120,11 @@ function onChangePixelsPerUnit(event: any) { editAsset("setProperty", "pixelsPer
 document.querySelector("button.download").addEventListener("click", (event) => {
   let options = {
     initialValue: "Texture",
-    validationLabel: "Download"
+    validationLabel: SupClient.i18n.t("cubicModelEditor:settings.cubicModel.download.validate")
   };
 
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.PromptDialog("Enter a name for the texture.", options, (name) => {
+  new SupClient.dialogs.PromptDialog(SupClient.i18n.t("cubicModelEditor:settings.cubicModel.download.prompt"), options, (name) => {
     /* tslint:enable:no-unused-expression */
     if (name == null) return;
 
@@ -137,7 +137,7 @@ document.querySelector("button.download").addEventListener("click", (event) => {
     a.click();
     document.body.removeChild(a);
   });
-})
+});
 
 // Texture size
 ui.textureWidthSelect = document.querySelector("select.property-texture-width") as HTMLSelectElement;
@@ -171,13 +171,13 @@ export function createNodeElement(node: Node) {
   liElt.appendChild(nameSpan);
 
   let visibleButton = document.createElement("button");
-  visibleButton.textContent = "Hide";
+  visibleButton.textContent = SupClient.i18n.t("cubicModelEditor:sidebar.nodes.hide");
   visibleButton.classList.add("show");
   visibleButton.addEventListener("click", (event: any) => {
     event.stopPropagation();
     let { shape } = data.cubicModelUpdater.cubicModelRenderer.byNodeId[event.target.parentElement.dataset["id"]];
     shape.visible = !shape.visible;
-    visibleButton.textContent = (shape.visible) ? "Hide" : "Show";
+    visibleButton.textContent = SupClient.i18n.t(`cubicModelEditor:sidebar.nodes.${(shape.visible) ? "hide" : "show"}`)
     if (shape.visible) visibleButton.classList.add("show");
     else visibleButton.classList.remove("show");
   });
@@ -413,11 +413,11 @@ function onNewNodeClick() {
   // TODO: Allow choosing shape and default texture color
   let options = {
     initialValue: "Node",
-    validationLabel: "Create"
+    validationLabel: SupClient.i18n.t("cubicModelEditor:sidebar.nodes.newNode.validate")
   };
 
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.PromptDialog("Enter a name for the node.", options, (name) => {
+  new SupClient.dialogs.PromptDialog(SupClient.i18n.t("cubicModelEditor:sidebar.nodes.newNode.prompt"), options, (name) => {
     /* tslint:enable:no-unused-expression */
     if (name == null) return;
 
@@ -466,11 +466,11 @@ function onRenameNodeClick() {
 
   let options = {
     initialValue: node.name,
-    validationLabel: "Rename"
+    validationLabel: SupClient.i18n.t("cubicModelEditor:sidebar.nodes.rename.validate")
   };
 
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.PromptDialog("Enter a new name for the node.", options, (newName) => {
+  new SupClient.dialogs.PromptDialog(SupClient.i18n.t("cubicModelEditor:sidebar.nodes.rename.prompt"), options, (newName) => {
     /* tslint:enable:no-unused-expression */
     if (newName == null) return;
 
@@ -486,11 +486,11 @@ function onDuplicateNodeClick() {
 
   let options = {
     initialValue: node.name,
-    validationLabel: "Duplicate"
+    validationLabel: SupClient.i18n.t("cubicModelEditor:sidebar.nodes.duplicate.validate")
   };
 
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.PromptDialog("Enter a name for the new node.", options, (newName) => {
+  new SupClient.dialogs.PromptDialog(SupClient.i18n.t("cubicModelEditor:sidebar.nodes.duplicate.prompt"), options, (newName) => {
     /* tslint:enable:no-unused-expression */
     if (newName == null) return;
     let options = SupClient.getTreeViewInsertionPoint(ui.nodesTreeView);
@@ -507,8 +507,11 @@ function onDuplicateNodeClick() {
 
 function onDeleteNodeClick() {
   if (ui.nodesTreeView.selectedNodes.length === 0) return;
+
+  let confirmString = SupClient.i18n.t("cubicModelEditor:sidebar.nodes.delete.confirm");
+  let validateString = SupClient.i18n.t("cubicModelEditor:sidebar.nodes.delete.validate");
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.ConfirmDialog("Are you sure you want to delete the selected nodes?", "Delete", (confirm) => {
+  new SupClient.dialogs.ConfirmDialog(confirmString, validateString, (confirm) => {
     /* tslint:enable:no-unused-expression */
     if (!confirm) return;
 
