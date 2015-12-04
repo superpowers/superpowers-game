@@ -90,14 +90,15 @@ html
               option(value="rows")= t("spriteEditor:sidebar.settings.animation.frameOrder.rows")
               option(value="columns")= t("spriteEditor:sidebar.settings.animation.frameOrder.columns")
 
-      .header
-        span= t("spriteEditor:sidebar.animations.title")
-      .animations-buttons.button-strip
-        button.new-animation= t("spriteEditor:sidebar.animations.new")
-        button(disabled).rename-animation= t("spriteEditor:sidebar.animations.rename")
-        button(disabled).delete-animation= t("spriteEditor:sidebar.animations.delete")
-
-      .animations-tree-view
+      .animations
+        .header
+          span= t("spriteEditor:sidebar.animations.title")
+        .animations-buttons.button-strip
+          button.new-animation= t("spriteEditor:sidebar.animations.new")
+          button(disabled).rename-animation= t("spriteEditor:sidebar.animations.rename")
+          button(disabled).delete-animation= t("spriteEditor:sidebar.animations.delete")
+  
+        .animations-tree-view
 
       .advanced-textures.collapsed
         .header
