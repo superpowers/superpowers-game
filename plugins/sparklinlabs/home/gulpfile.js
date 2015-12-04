@@ -11,7 +11,7 @@ var locales = fs.readdirSync(localesPath);
 function loadLocales(locale) {
   var localsByContext = {};
   var files = fs.readdirSync(localesPath + locale);
-  files.forEach(function(fileName) {"./public/locales/";
+  files.forEach(function(fileName) {
     var file = fs.readFileSync(localesPath + locale + "/" + fileName, { encoding: "utf8" });
     localsByContext[fileName.slice(0, fileName.lastIndexOf("."))] = JSON.parse(file);
   });
@@ -25,13 +25,13 @@ function loadLocales(locale) {
       
       } else if (typeof defaultRoot[key] === "object") {
         var keys = Object.keys(defaultRoot[key]);
-        for (var i = 0 ; i < keys.length; i++) {
+        for (var i = 0; i < keys.length; i++) {
           checkRecursively(defaultRoot[key], root[key], keys[i], path + "." + keys[i]);
         }
       }
     }
     var keys = Object.keys(defaultLocals);
-    for (var i = 0 ; i < keys.length; i++)
+    for (var i = 0; i < keys.length; i++)
       checkRecursively(defaultLocals, localsByContext, keys[i], keys[i]);
   }
   return localsByContext;
@@ -71,7 +71,7 @@ gulp.task("jade-none", function() {
 });
 tasks.push("jade-none");
 
-// Stylus 
+// Stylus
 var stylus = require("gulp-stylus");
 gulp.task("stylus", function() {
   return gulp.src("./editors/**/index.styl").pipe(stylus({ errors: true, compress: true })).pipe(gulp.dest("./public/editors"));
