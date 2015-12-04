@@ -26,11 +26,11 @@ export default class BehaviorEditor {
 
     // Using a <select> rather than <input> + <datalist> because of bugs in Chrome and Electron
     // See https://trello.com/c/jNNRLgdb/651 and https://github.com/atom/electron/issues/360
-    let behaviorNameRow = SupClient.table.appendRow(this.tbody, "Class");
-    this.behaviorNameField = SupClient.table.appendSelectBox(behaviorNameRow.valueCell, { "": "(None)" });
+    let behaviorNameRow = SupClient.table.appendRow(this.tbody, SupClient.i18n.t("componentEditors:Behavior.class"));
+    this.behaviorNameField = SupClient.table.appendSelectBox(behaviorNameRow.valueCell, { "": SupClient.i18n.t("common:none") });
     this.behaviorNameField.addEventListener("change", this.onChangeBehaviorName);
 
-    SupClient.table.appendHeader(this.tbody, "Customizable Properties");
+    SupClient.table.appendHeader(this.tbody, SupClient.i18n.t("componentEditors:Behavior.customizableProperties"));
 
     this.propertySettingsByName = {};
 
