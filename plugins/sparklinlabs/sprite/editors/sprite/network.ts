@@ -8,7 +8,7 @@ import SpriteRendererUpdater from "../../components/SpriteRendererUpdater";
 export let data: { projectClient?: SupClient.ProjectClient; spriteUpdater?: SpriteRendererUpdater };
 
 export let socket: SocketIOClient.Socket;
-SupClient.i18n.load([{ root: `${window.location.pathname}/../..`, name: "cubicModelEditor" }], () => {
+SupClient.i18n.load([{ root: `${window.location.pathname}/../..`, name: "spriteEditor" }], () => {
   socket = SupClient.connect(SupClient.query.project);
   socket.on("connect", onConnected);
   socket.on("disconnect", SupClient.onDisconnected);

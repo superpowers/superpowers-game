@@ -155,12 +155,12 @@ function onFileSelectChange(event: any) {
 
 function downloadTexture(textureName: string) {
   let options = {
-    initialValue: "Image",
-    validationLabel: "Download"
+    initialValue: SupClient.i18n.t("spriteEditor:sidebar.settings.sprite.texture.download.defaultName"),
+    validationLabel: SupClient.i18n.t("common:actions.download")
   };
 
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.PromptDialog("Enter a name for the image.", options, (name) => {
+  new SupClient.dialogs.PromptDialog(SupClient.i18n.t("spriteEditor:sidebar.settings.sprite.texture.download.prompt"), options, (name) => {
     /* tslint:enable:no-unused-expression */
     if (name == null) return;
 
@@ -187,12 +187,12 @@ function onSetGridSize(event: any) {
   // TODO: Replace with a single popup
   let options = {
     initialValue: "",
-    validationLabel: SupClient.i18n.t("spriteEditor:actions.setGridWidth"),
+    validationLabel: SupClient.i18n.t("spriteEditor:sidebar.settings.sprite.grid.setWidth"),
     cancelLabel: SupClient.i18n.t("common:actions.skip")
   };
 
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.PromptDialog("How many frames per row?", options, (framesPerRow) => {
+  new SupClient.dialogs.PromptDialog(SupClient.i18n.t("spriteEditor:sidebar.settings.sprite.grid.widthPrompt"), options, (framesPerRow) => {
     /* tslint:enable:no-unused-expression */
     if (framesPerRow != null) {
       let framesPerRowNum = parseInt(framesPerRow, 10);
@@ -201,10 +201,10 @@ function onSetGridSize(event: any) {
       editAsset("setProperty", "grid.width", Math.floor(texture.size.width / framesPerRowNum));
     }
 
-    options.validationLabel = SupClient.i18n.t("spriteEditor:actions.setGridHeight");
+    options.validationLabel = SupClient.i18n.t("spriteEditor:sidebar.settings.sprite.grid.setHeight");
 
     /* tslint:disable:no-unused-expression */
-    new SupClient.dialogs.PromptDialog("How many frames per column?", options, (framesPerColumn) => {
+    new SupClient.dialogs.PromptDialog(SupClient.i18n.t("spriteEditor:sidebar.settings.sprite.grid.heightPrompt"), options, (framesPerColumn) => {
       /* tslint:enable:no-unused-expression */
       if (framesPerColumn != null) {
         let framesPerColumnNum = parseInt(framesPerColumn, 10);
@@ -223,7 +223,7 @@ function onNewAnimationClick() {
   };
 
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.PromptDialog("Enter a name for the animation.", options, (name) => {
+  new SupClient.dialogs.PromptDialog(SupClient.i18n.t("spriteEditor:sidebar.animations.newAnimationPrompt"), options, (name) => {
     /* tslint:enable:no-unused-expression */
     if (name == null) return;
 
@@ -247,7 +247,7 @@ function onRenameAnimationClick() {
   };
 
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.PromptDialog("Enter a new name for the animation.", options, (newName) => {
+  new SupClient.dialogs.PromptDialog(SupClient.i18n.t("spriteEditor:sidebar.animations.renameAnimationPrompt"), options, (newName) => {
     /* tslint:enable:no-unused-expression */
     if (newName == null) return;
 
@@ -258,7 +258,7 @@ function onRenameAnimationClick() {
 function onDeleteAnimationClick() {
   if (ui.animationsTreeView.selectedNodes.length === 0) return;
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.ConfirmDialog("Are you sure you want to delete the selected animations?", "Delete", (confirm) => {
+  new SupClient.dialogs.ConfirmDialog(SupClient.i18n.t("spriteEditor:sidebar.animations.deleteAnimationPrompt"), "Delete", (confirm) => {
     /* tslint:enable:no-unused-expression */
     if (!confirm) return;
 
@@ -436,11 +436,11 @@ function onEditMapSlot(event: any) {
 function onNewMapClick() {
   let options = {
     initialValue: "map",
-    validationLabel: "Create"
+    validationLabel: SupClient.i18n.t("common:actions.create")
   };
 
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.PromptDialog("Enter a new name for the map.", options, (name) => {
+  new SupClient.dialogs.PromptDialog(SupClient.i18n.t("spriteEditor:sidebar.advancedTextures.newMapPrompt"), options, (name) => {
     /* tslint:enable:no-unused-expression */
     if (name == null) return;
 
@@ -470,11 +470,11 @@ function onRenameMapClick() {
 
   let options = {
     initialValue: textureName,
-    validationLabel: "Rename"
+    validationLabel: SupClient.i18n.t("common:actions.rename")
   };
 
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.PromptDialog("Enter a new name for the texture.", options, (newName) => {
+  new SupClient.dialogs.PromptDialog(SupClient.i18n.t("spriteEditor:sidebar.advancedTextures.renameMapPrompt"), options, (newName) => {
     /* tslint:enable:no-unused-expression */
     if (newName == null) return;
 
@@ -486,7 +486,7 @@ function onDeleteMapClick() {
   if (ui.texturesTreeView.selectedNodes.length === 0) return;
 
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.ConfirmDialog("Are you sure you want to delete the selected textures?", "Delete", (confirm) => {
+  new SupClient.dialogs.ConfirmDialog(SupClient.i18n.t("spriteEditor:sidebar.advancedTextures.deleteMapPrompt"), SupClient.i18n.t("common:actions.delete"), (confirm) => {
     /* tslint:enable:no-unused-expression */
     if (!confirm) return;
 

@@ -8,11 +8,19 @@
         "title": "Sprite",
         "texture": {
           "title": "Texture",
-          "size": "Texture size (px)"
+          "size": "Texture size (px)",
+          "download": {
+            "prompt": "Enter a name for the image.",
+            "defaultName": "Image"
+          }
         },
         "grid": {
           "size": "Grid size",
-          "setup": "Setup"
+          "setup": "Setup",
+          "widthPrompt": "How many frames per row?",
+          "setWidth": "Set grid width",
+          "heightPrompt": "How many frames per column?",
+          "setHeight": "Set grid height"
         },
         "origin": "Origin (%)"
       },
@@ -41,7 +49,10 @@
       "title": "Animations",
       "new": "New",
       "rename": "Rename",
-      "delete": "Delete"
+      "delete": "Delete",
+      "newAnimationPrompt": "Enter a name for the animation.",
+      "renameAnimationPrompt": "Enter a new name for the animation.",
+      "deleteAnimationPrompt": "Are you sure you want to delete the selected animations?"
     },
     "advancedTextures": {
       "title": "Advanced Textures",
@@ -49,11 +60,10 @@
       "lightMap": "Light map",
       "specularMap": "Specular map",
       "alphaMap": "Alpha map",
-      "normalMap": "Normal map (Phong)"
+      "normalMap": "Normal map (Phong)",
+      "newMapPrompt": "Enter a new name for the map.",
+      "renameMapPrompt": "Enter a new name for the texture.",
+      "deleteMapPrompt": "Are you sure you want to delete the selected textures?"
     }
-  },
-  "actions": {
-    "setGridWidth": "Set grid width",
-    "setGridHeight": "Set grid height"
   }
 }
