@@ -20,39 +20,39 @@ html
     .main
       .controls
         .camera
-          .title= t("sceneEditor:top.camera.title")
+          .title= t("sceneEditor:controls.camera.title")
           .camera-mode
-            label(for="toggle-camera-button")= t("sceneEditor:top.camera.mode")
+            label(for="toggle-camera-button")= t("sceneEditor:controls.camera.mode")
             button#toggle-camera-button 3D
           .camera-vertical-axis
-            label(for="toggle-camera-vertical-axis")= t("sceneEditor:top.camera.verticalAxis")
+            label(for="toggle-camera-vertical-axis")= t("sceneEditor:controls.camera.verticalAxis")
             button#toggle-camera-vertical-axis Y
           .camera-speed
-            label(for="camera-speed-slider")= t("sceneEditor:top.camera.speed")
+            label(for="camera-speed-slider")= t("sceneEditor:controls.camera.speed")
             input#camera-speed-slider(type="range",min="0.05",max="2.0",step="0.05")
           .camera-2d-z(hidden)
             label(for="camera-2d-z") Z
             input#camera-2d-z(type="number",value="5")
         .transform-mode
-          .title= t("sceneEditor:top.transform.title")
+          .title= t("sceneEditor:controls.transform.title")
           div
             input#transform-mode-translate(type="radio",name="transformMode",value="translate",checked)
-            label(for="transform-mode-translate",title="E")= t("sceneEditor:top.transform.move")
+            label(for="transform-mode-translate",title="E")= t("sceneEditor:controls.transform.move")
             input#transform-mode-rotate(type="radio",name="transformMode",value="rotate")
-            label(for="transform-mode-rotate",title="R")= t("sceneEditor:top.transform.rotate")
+            label(for="transform-mode-rotate",title="R")= t("sceneEditor:controls.transform.rotate")
             input#transform-mode-scale(type="radio",name="transformMode",value="scale")
-            label(for="transform-mode-scale",title="T")= t("sceneEditor:top.transform.scale")
+            label(for="transform-mode-scale",title="T")= t("sceneEditor:controls.transform.scale")
             input#transform-space(type="checkbox")
-            label(for="transform-space",title="L")= t("sceneEditor:top.transform.local")
+            label(for="transform-space",title="L")= t("sceneEditor:controls.transform.local")
         .grid
-          .title= t("sceneEditor:top.grid.title")
+          .title= t("sceneEditor:controls.grid.title")
           div
-            label(for="grid-step")= t("sceneEditor:top.grid.size")
+            label(for="grid-step")= t("sceneEditor:controls.grid.size")
             input#grid-step(type="number",value="1",min="0")
             input#grid-visible(type="checkbox")
-            label(for="grid-visible")= t("sceneEditor:top.grid.visible")
+            label(for="grid-visible")= t("sceneEditor:controls.grid.visible")
         .light
-          .title= t("sceneEditor:top.light.title")
+          .title= t("sceneEditor:controls.light.title")
           div
             input#show-light(type="checkbox")
       canvas(tabindex="0")
