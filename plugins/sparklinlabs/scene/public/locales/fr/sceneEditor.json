@@ -8,9 +8,9 @@
     },
     "transform": {
       "title": "Transformation",
-      "move": "Translater",
+      "move": "Déplacer",
       "rotate": "Orienter",
-      "scale": "Etirer",
+      "scale": "Étirer",
       "local": "Local"
     },
     "grid": {
@@ -47,7 +47,7 @@
     },
     "deleteActor": {
       "title": "Supprimer (Suppr)",
-      "confirm": "Etes-vous sûr de vouloir supprimer les acteurs sélectionnés ?",
+      "confirm": "Êtes-vous sûr de vouloir supprimer les acteurs sélectionnés ?",
       "validate": "Supprimer"
     },
     "visible": {
@@ -58,7 +58,7 @@
   "inspector": {
     "position": "Position",
     "orientation": "Orientation",
-    "scale": "Echelle",
+    "scale": "Échelle",
     "visible": "Visible",
     "layer": "Couche de rendu",
     "prefab": "Préfab",
@@ -68,7 +68,7 @@
       "validate": "Créer"
     },
     "deleteComponent": {
-      "confirm": "Etes-vous sûr de vouloir supprimer le composant sélectionné ?",
+      "confirm": "Êtes-vous sûr de vouloir supprimer le composant sélectionné ?",
       "validate": "Supprimer"
     }
   }
