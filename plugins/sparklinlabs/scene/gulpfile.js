@@ -9,13 +9,14 @@ var localesPath = "./public/locales/";
 var locales = fs.readdirSync(localesPath);
 
 function loadLocales(locale) {
-  var localsByContext = {};"./public/locales/";
+  var localsByContext = {};
   var files = fs.readdirSync(localesPath + locale);
   files.forEach(function(fileName) {"./public/locales/";
     var file = fs.readFileSync(localesPath + locale + "/" + fileName, { encoding: "utf8" });
     localsByContext[fileName.slice(0, fileName.lastIndexOf("."))] = JSON.parse(file);
   });
-  
+  localsByContext["common"] = JSON.parse(fs.readFileSync("../../../../../public/locales/" + locale + "/common.json", { encoding: "utf8" }));
+
   if (defaultLocals != null) {
     function checkRecursively(defaultRoot, root, key, path) {
       if (root[key] == undefined) {
