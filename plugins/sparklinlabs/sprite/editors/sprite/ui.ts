@@ -188,7 +188,7 @@ function onSetGridSize(event: any) {
   let options = {
     initialValue: "",
     validationLabel: SupClient.i18n.t("spriteEditor:actions.setGridWidth"),
-    cancelLabel: SupClient.i18n.t("common:skip")
+    cancelLabel: SupClient.i18n.t("common:actions.skip")
   };
 
   /* tslint:disable:no-unused-expression */

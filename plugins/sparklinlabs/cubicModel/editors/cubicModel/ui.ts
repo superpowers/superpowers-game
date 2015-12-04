@@ -120,7 +120,7 @@ function onChangePixelsPerUnit(event: any) { editAsset("setProperty", "pixelsPer
 document.querySelector("button.download").addEventListener("click", (event) => {
   let options = {
     initialValue: "Texture",
-    validationLabel: SupClient.i18n.t("common:download")
+    validationLabel: SupClient.i18n.t("common:actions.download")
   };
 
   /* tslint:disable:no-unused-expression */

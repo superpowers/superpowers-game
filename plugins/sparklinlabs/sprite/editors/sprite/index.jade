@@ -29,11 +29,11 @@ html
         tr
           th= t("spriteEditor:sidebar.settings.sprite.texture.title")
           td
-            button.upload= t("common:upload")
+            button.upload= t("common:actions.upload")
             form(style="display: none")
               input.file-select(type="file",accept="image/*")
 
-            button.download= t("common:download")
+            button.download= t("common:actions.download")
         tr
           th= t("spriteEditor:sidebar.settings.sprite.texture.size")
           td.image-size
@@ -131,10 +131,10 @@ html
             button.new-map New
             form(style="display: none")
               input.file-select.upload-map(type="file",multiple)
-            button(disabled).upload-map= t("common:upload")
-            button(disabled).download-map= t("common:download")
-            button(disabled).rename-map= t("common:rename")
-            button(disabled).delete-map= t("common:delete")
+            button(disabled).upload-map= t("common:actions.upload")
+            button(disabled).download-map= t("common:actions.download")
+            button(disabled).rename-map= t("common:actions.rename")
+            button(disabled).delete-map= t("common:actions.delete")
           .textures-tree-view
 
     script(src="/SupCore.js")
