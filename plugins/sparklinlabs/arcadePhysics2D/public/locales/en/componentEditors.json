@@ -1,5 +1,5 @@
 {
-  "arcadeBody2D": {
+  "ArcadeBody2D": {
     "label": "Arcade Body 2D",
     "type": "Type",
     "typeOptions": {
