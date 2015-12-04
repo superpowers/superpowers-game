@@ -8,20 +8,11 @@ gulp.task("stylus", function() {
   return gulp.src("./widget/**/index.styl").pipe(stylus({ errors: true, compress: true })).pipe(cssimport()).pipe(gulp.dest("./public/widget"));
 });
 
-// TypeScript
-var ts = require("gulp-typescript");
-var tsProject = ts.createProject("./tsconfig.json");
-
-gulp.task("typescript", function() {
-  var tsResult = tsProject.src().pipe(ts(tsProject));
-  return tsResult.js.pipe(gulp.dest("./"));
-});
-
 // Browserify
 var browserify = require("browserify");
 var vinylSourceStream = require("vinyl-source-stream");
 function makeBrowserify(source, destination, output) {
-  gulp.task(output + "-browserify", [ "typescript" ], function() {
+  gulp.task(output + "-browserify", function() {
     var bundler = browserify(source, { standalone: "TextEditorWidget" });
     bundler.transform("brfs");
     function bundle() { return bundler.bundle().pipe(vinylSourceStream(output + ".js")).pipe(gulp.dest(destination)); };
@@ -30,8 +21,6 @@ function makeBrowserify(source, destination, output) {
   tasks.push(output + "-browserify");
 }
 
-makeBrowserify("./data/index.js", "./public", "data");
-makeBrowserify("./settingsEditors/index.js", "./public", "settingsEditors");
 makeBrowserify("./widget/index.js", "./public/widget", "index");
 
 // Copy CodeMirror modes

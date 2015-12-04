@@ -1,20 +1,14 @@
 var gulp = require("gulp");
-var tasks = [];
+var tasks = [ "copy" ];
 
-// TypeScript
-var ts = require("gulp-typescript");
-var tsProject = ts.createProject("./tsconfig.json");
-
-gulp.task("typescript", function() {
-  var tsResult = tsProject.src().pipe(ts(tsProject));
-  return tsResult.js.pipe(gulp.dest("./"));
-});
+// Copy
+gulp.task("copy", function () { return gulp.src("node_modules/highlight.js/styles/railscasts.css").pipe(gulp.dest("./public/editors/apiBrowser/")); });
 
 // Browserify
 var browserify = require("browserify");
 var vinylSourceStream = require("vinyl-source-stream");
 function makeBrowserify(source, destination, output) {
-  gulp.task(output + "-browserify", [ "typescript" ], function() {
+  gulp.task(output + "-browserify", function() {
     var bundler = browserify(source);
     bundler.transform("brfs");
     function bundle() { return bundler.bundle().pipe(vinylSourceStream(output + ".js")).pipe(gulp.dest(destination)); };
@@ -23,8 +17,7 @@ function makeBrowserify(source, destination, output) {
   tasks.push(output + "-browserify");
 }
 
-makeBrowserify("./runtime/index.js", "./public", "runtime");
-makeBrowserify("./api/index.js", "./public", "api");
+makeBrowserify("./editors/script/typescriptWorker.js", "./public/editors", "script/typescriptWorker");
 
 // All
 gulp.task("default", tasks);

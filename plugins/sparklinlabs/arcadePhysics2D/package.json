@@ -1,6 +1,6 @@
 {
-  "name": "superpowers-game-sparklinlabs-shader-plugin",
-  "description": "Shader plugin for Superpowers, the HTML5 2D+3D game maker",
+  "name": "superpowers-game-sparklinlabs-arcade-physics-2d-plugin",
+  "description": "Arcade Physics 2D plugin for Superpowers, the HTML5 2D+3D game maker",
   "version": "1.0.0",
   "license": "ISC",
   "repository": {
@@ -9,8 +9,5 @@
   },
   "scripts": {
     "build": "gulp --gulpfile=../../../../../scripts/pluginGulpfile.js --cwd=."
-  },
-  "dependencies": {
-    "operational-transform": "^0.2.3"
   }
 }

@@ -7,6 +7,9 @@
     "type": "hg",
     "url": "https://bitbucket.org/superpowers/sup-game-sparklinlabs-plugins"
   },
+  "scripts": {
+    "build": "gulp --gulpfile=../../../../../scripts/pluginGulpfile.js --cwd=."
+  },
   "dependencies": {
     "tween.js": "^0.14.0"
   }
