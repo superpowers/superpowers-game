@@ -1,5 +1,6 @@
 {
   "CannonBody": {
+    "label": "Cannon Body",
     "mass": "Mass",
     "fixedRotation": "Fixed rotation",
     "offset": "Offset",

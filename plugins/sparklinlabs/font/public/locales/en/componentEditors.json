@@ -1,5 +1,6 @@
 {
   "TextRenderer": {
+    "label": "Text Renderer",
     "font": "Font",
     "text": "Text",
     "align": {

@@ -1,5 +1,6 @@
 {
-  "camera": {
+  "Camera": {
+    "label": "Camera",
     "mode": "Mode",
     "modeOptions": {
       "perspective": "Perspective",

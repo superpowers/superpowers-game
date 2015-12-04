@@ -36,7 +36,7 @@ export default class SpriteRendererEditor {
     this.animationId = config.animationId;
     this.shaderAssetId = config.shaderAssetId;
 
-    let spriteRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:spriteRenderer.sprite"));
+    let spriteRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:SpriteRenderer.sprite"));
     let spriteFields = SupClient.table.appendAssetField(spriteRow.valueCell, "");
     this.spriteTextField = spriteFields.textField;
     this.spriteTextField.addEventListener("input", this._onChangeSpriteAsset);
@@ -47,12 +47,12 @@ export default class SpriteRendererEditor {
     });
     this.spriteButtonElt.disabled = this.spriteAssetId == null;
 
-    let animationRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:spriteRenderer.animation"));
-    this.animationSelectBox = SupClient.table.appendSelectBox(animationRow.valueCell, { "": SupClient.i18n.t("componentEditors:spriteRenderer.animationNone") });
+    let animationRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:SpriteRenderer.animation"));
+    this.animationSelectBox = SupClient.table.appendSelectBox(animationRow.valueCell, { "": SupClient.i18n.t("componentEditors:SpriteRenderer.animationNone") });
     this.animationSelectBox.addEventListener("change", this._onChangeSpriteAnimation);
     this.animationSelectBox.disabled = true;
 
-    let flipRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:spriteRenderer.flip"));
+    let flipRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:SpriteRenderer.flip"));
     let flipDiv = <any>document.createElement("div");
     flipDiv.classList.add("inputs");
     flipRow.valueCell.appendChild(flipDiv);
@@ -75,14 +75,14 @@ export default class SpriteRendererEditor {
       this.editConfig("setProperty", "verticalFlip", event.target.checked);
     });
 
-    let shadowRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:spriteRenderer.shadow.title"));
+    let shadowRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:SpriteRenderer.shadow.title"));
     let shadowDiv = <any>document.createElement("div");
     shadowDiv.classList.add("inputs");
     shadowRow.valueCell.appendChild(shadowDiv);
 
     let castSpan = document.createElement("span");
     castSpan.style.marginLeft = "5px";
-    castSpan.textContent = SupClient.i18n.t("componentEditors:spriteRenderer.shadow.cast");
+    castSpan.textContent = SupClient.i18n.t("componentEditors:SpriteRenderer.shadow.cast");
     shadowDiv.appendChild(castSpan);
     this.castShadowField = SupClient.table.appendBooleanField(shadowDiv, config.castShadow);
     this.castShadowField.addEventListener("change", (event: any) => {
@@ -92,7 +92,7 @@ export default class SpriteRendererEditor {
 
     let receiveSpan = document.createElement("span");
     receiveSpan.style.marginLeft = "5px";
-    receiveSpan.textContent = SupClient.i18n.t("componentEditors:spriteRenderer.shadow.receive");
+    receiveSpan.textContent = SupClient.i18n.t("componentEditors:SpriteRenderer.shadow.receive");
     shadowDiv.appendChild(receiveSpan);
     this.receiveShadowField = SupClient.table.appendBooleanField(shadowDiv, config.receiveShadow);
     this.receiveShadowField.addEventListener("change", (event: any) => {
@@ -100,7 +100,7 @@ export default class SpriteRendererEditor {
     });
     this.receiveShadowField.disabled = true;
 
-    let colorRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:spriteRenderer.color"));
+    let colorRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:SpriteRenderer.color"));
     let colorInputs = SupClient.table.appendColorField(colorRow.valueCell, config.color);
 
     this.colorField = colorInputs.textField;
@@ -115,7 +115,7 @@ export default class SpriteRendererEditor {
     });
     this.colorPicker.disabled = true;
 
-    let opacityRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:spriteRenderer.opacity"), { checkbox: true } );
+    let opacityRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:SpriteRenderer.opacity"), { checkbox: true } );
     this.overrideOpacityField = opacityRow.checkbox;
     this.overrideOpacityField.checked = config.overrideOpacity;
     this.overrideOpacityField.addEventListener("change", (event: any) => {
@@ -143,14 +143,14 @@ export default class SpriteRendererEditor {
     this.opacityField.step = "0.1";
     this.opacityField.disabled = !config.overrideOpacity;
 
-    let materialRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:spriteRenderer.material"));
+    let materialRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:SpriteRenderer.material"));
     this.materialSelectBox = SupClient.table.appendSelectBox(materialRow.valueCell, { "basic": "Basic", "phong": "Phong", "shader": "Shader" }, config.materialType);
     this.materialSelectBox.addEventListener("change", (event: any) => {
       this.editConfig("setProperty", "materialType", event.target.value);
     })
     this.materialSelectBox.disabled = true;
 
-    let shaderRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:spriteRenderer.shader"));
+    let shaderRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:SpriteRenderer.shader"));
     let shaderFields = SupClient.table.appendAssetField(shaderRow.valueCell, "");
     this.shaderTextField = shaderFields.textField;
     this.shaderTextField.addEventListener("input", this._onChangeShaderAsset);

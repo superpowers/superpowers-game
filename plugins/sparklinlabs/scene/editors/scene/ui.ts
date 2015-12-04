@@ -216,9 +216,13 @@ document.querySelector(".main .controls .transform-mode").addEventListener("clic
 
 ui.availableComponents = {};
 export function start() {
-  let componentNames = Object.keys(SupClient.plugins["componentEditors"]);
-  componentNames.sort((a, b) => a.localeCompare(b));
-  for (let componentName of componentNames) ui.availableComponents[componentName] = componentName;
+  let componentTypes = Object.keys(SupClient.plugins["componentEditors"]);
+  componentTypes.sort((a, b) => {
+    let componentLabelA = SupClient.i18n.t(`componentEditors:${a}.label`);
+    let componentLabelB = SupClient.i18n.t(`componentEditors:${b}.label`);
+    return componentLabelA.localeCompare(componentLabelB);
+  });
+  for (let componentType of componentTypes) ui.availableComponents[componentType] = SupClient.i18n.t(`componentEditors:${componentType}.label`);
 }
 
 // Transform
@@ -555,7 +559,7 @@ function onDuplicateNodeClick() {
 
 function onDeleteNodeClick() {
   if (ui.nodesTreeView.selectedNodes.length === 0) return;
-  
+
   let confirmString = SupClient.i18n.t("sceneEditor:treeView.deleteActor.confirm");
   let validateString = SupClient.i18n.t("sceneEditor:treeView.duplicateActor.validate");
   /* tslint:disable:no-unused-expression */
@@ -628,7 +632,7 @@ export function createComponentElement(nodeId: string, component: Component) {
   let template = <any>document.getElementById("component-cartridge-template");
   let clone = <any>document.importNode(template.content, true);
 
-  clone.querySelector(".type").textContent = component.type;
+  clone.querySelector(".type").textContent = SupClient.i18n.t(`componentEditors:${component.type}.label`);
   let table = clone.querySelector(".settings");
 
   let editConfig = (command: string, ...args: any[]) => {
