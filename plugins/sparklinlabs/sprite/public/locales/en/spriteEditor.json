@@ -1,0 +1,59 @@
+{
+  "preview": {
+    "loop": "Loop"
+  },
+  "sidebar": {
+    "settings": {
+      "sprite": {
+        "title": "Sprite",
+        "texture": {
+          "title": "Texture",
+          "size": "Texture size (px)"
+        },
+        "grid": {
+          "size": "Grid size",
+          "setup": "Setup"
+        },
+        "origin": "Origin (%)"
+      },
+      "rendering": {
+        "title": "Rendering",
+        "pixelsPerUnit": "Pixels / unit",
+        "filtering": {
+          "title": "Filtering",
+          "pixelated": "Pixelated",
+          "smooth": "Smooth"
+        },
+        "opacity": "Opacity",
+        "alphaTest": "Alpha test"
+      },
+      "animation": {
+         "title": "Animation",
+         "framesPerSecond": "Frames / second",
+         "frameOrder": {
+           "title": "Frame order",
+           "rows": "Rows",
+           "columns": "Columns"
+         }
+      }
+    },
+    "animations": {
+      "title": "Animations",
+      "new": "New",
+      "rename": "Rename",
+      "delete": "Delete"
+    },
+    "advancedTextures": {
+      "title": "Advanced Textures",
+      "map": "Map",
+      "lightMap": "Light map",
+      "specularMap": "Specular map",
+      "alphaMap": "Alpha map",
+      "normalMap": "Normal map (Phong)"
+    }
+  },
+  "actions": {
+    "setGridWidth": "Set grid width",
+    "setGridHeight": "Set grid height"
+  }
+}

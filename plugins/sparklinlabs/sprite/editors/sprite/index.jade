@@ -20,114 +20,109 @@ html
           button(disabled).animation-play ▐ ▌
           input(disabled,type="range",value="0").animation-slider
           input#loop-checkbox(type="checkbox",checked).animation-loop
-          label(for="loop-checkbox") Loop
+          label(for="loop-checkbox")= t("spriteEditor:preview.loop")
 
     .sidebar
       table.properties
         tr
-          th(colspan="2") Sprite
+          th(colspan="2")= t("spriteEditor:sidebar.settings.sprite.title")
         tr
-          th Texture
+          th= t("spriteEditor:sidebar.settings.sprite.texture.title")
           td
-            button.upload Upload
+            button.upload= t("common:upload")
             form(style="display: none")
               input.file-select(type="file",accept="image/*")
 
-            button.download Download
+            button.download= t("common:download")
         tr
-          th Texture size (px)
+          th= t("spriteEditor:sidebar.settings.sprite.texture.size")
           td.image-size
             input(type="text",readonly)
         tr
-          th Grid width
+          th= t("spriteEditor:sidebar.settings.sprite.grid.size")
           td
             .inputs
               input.property-grid-width(type="number")
-              button.set-grid-width Set
-        tr
-          th Grid height
-          td
-            .inputs
               input.property-grid-height(type="number")
-              button.set-grid-height Set
+              button.set-grid-size= t("spriteEditor:sidebar.settings.sprite.grid.setup")
         tr
-          th Origin (%)
+          th= t("spriteEditor:sidebar.settings.sprite.origin")
           td
             .inputs
               input.property-origin-x(type="number")
               input.property-origin-y(type="number")
 
         tr
-          th(colspan="2") Rendering
+          th(colspan="2")= t("spriteEditor:sidebar.settings.rendering.title")
         tr
-          th Pixels /&nbsp;unit
+          th= t("spriteEditor:sidebar.settings.rendering.pixelsPerUnit")
           td
             input(type="number",min="1").property-pixelsPerUnit
         tr
-          th Filtering
+          th= t("spriteEditor:sidebar.settings.rendering.filtering.title")
           td
             select.property-filtering
-              option(value="pixelated") Pixelated
-              option(value="smooth") Smooth
+              option(value="pixelated")= t("spriteEditor:sidebar.settings.rendering.filtering.pixelated")
+              option(value="smooth")= t("spriteEditor:sidebar.settings.rendering.filtering.smooth")
         tr
           th
             div
-              div Opacity
+              div= t("spriteEditor:sidebar.settings.rendering.opacity")
               input(type="checkbox").opacity-checkbox
           td
             input(type="number",min="0",max="1",step="0.1").property-opacity
         tr
-          th Alpha test
+          th= t("spriteEditor:sidebar.settings.rendering.alphaTest")
           td
             input(type="number",min="0",max="1",step="0.1").property-alphaTest
 
         tr
-          th(colspan="2") Animation
+          th(colspan="2")= t("spriteEditor:sidebar.settings.animation.title")
         tr
-          th Frames /&nbsp;second
+          th= t("spriteEditor:sidebar.settings.animation.framesPerSecond")
           td
             input(type="number",min="1").property-framesPerSecond
 
         tr
-          th Frame order
+          th= t("spriteEditor:sidebar.settings.animation.frameOrder.title")
           td
             select.property-frameOrder
-              option(value="rows") Rows
-              option(value="columns") Columns
+              option(value="rows")= t("spriteEditor:sidebar.settings.animation.frameOrder.rows")
+              option(value="columns")= t("spriteEditor:sidebar.settings.animation.frameOrder.columns")
 
       .header
-        span Animations
+        span= t("spriteEditor:sidebar.animations.title")
       .animations-buttons.button-strip
-        button.new-animation New
-        button(disabled).rename-animation Rename
-        button(disabled).delete-animation Delete
+        button.new-animation= t("spriteEditor:sidebar.animations.new")
+        button(disabled).rename-animation= t("spriteEditor:sidebar.animations.rename")
+        button(disabled).delete-animation= t("spriteEditor:sidebar.animations.delete")
 
       .animations-tree-view
 
       .advanced-textures.collapsed
         .header
-          .label Advanced Textures
+          .label= t("spriteEditor:sidebar.advancedTextures.title")
           button.plus +
         .content
           table.properties
             tr
-              th Map
+              th= t("spriteEditor:sidebar.advancedTextures.map")
               td
                 input.map-map
             tr
-              th Light map
+              th= t("spriteEditor:sidebar.advancedTextures.lightMap")
               td
                 input.map-light
             tr
-              th Specular map
+              th= t("spriteEditor:sidebar.advancedTextures.specularMap")
               td
                 input.map-specular
             tr
-              th Alpha map
+              th= t("spriteEditor:sidebar.advancedTextures.alphaMap")
               td
                 input.map-alpha
             tr
-              th Normal map (Phong)
+              th= t("spriteEditor:sidebar.advancedTextures.normalMap")
               td
                 input.map-normal
 
@@ -135,10 +130,10 @@ html
             button.new-map New
             form(style="display: none")
               input.file-select.upload-map(type="file",multiple)
-            button(disabled).upload-map Upload
-            button(disabled).download-map Download
-            button(disabled).rename-map Rename
-            button(disabled).delete-map Delete
+            button(disabled).upload-map= t("common:upload")
+            button(disabled).download-map= t("common:download")
+            button(disabled).rename-map= t("common:rename")
+            button(disabled).delete-map= t("common:delete")
           .textures-tree-view
 
     script(src="/SupCore.js")

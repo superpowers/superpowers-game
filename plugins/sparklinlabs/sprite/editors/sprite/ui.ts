@@ -86,8 +86,7 @@ ui.allSettings.forEach((setting: string) => {
 });
 ui.opacityCheckbox = <HTMLInputElement>document.querySelector("input.opacity-checkbox");
 ui.opacityCheckbox.addEventListener("click", onCheckOpacity);
-document.querySelector("button.set-grid-width").addEventListener("click", onSetGridWidth);
-document.querySelector("button.set-grid-height").addEventListener("click", onSetGridHeight);
+document.querySelector("button.set-grid-size").addEventListener("click", onSetGridSize);
 
 ui.imageSize = <HTMLInputElement>document.querySelector("td.image-size input");
 
@@ -181,45 +180,39 @@ function onCheckOpacity(event: any) {
   editAsset("setProperty", "opacity", opacity);
 }
 
-function onSetGridWidth(event: any) {
+function onSetGridSize(event: any) {
   let texture = data.spriteUpdater.spriteAsset.pub.textures["map"];
   if (texture == null) return;
 
+  // TODO: Replace with a single popup
   let options = {
-    initialValue: "1",
-    validationLabel: "Set grid width"
+    initialValue: "",
+    validationLabel: SupClient.i18n.t("spriteEditor:actions.setGridWidth"),
+    cancelLabel: SupClient.i18n.t("common:skip")
   };
 
   /* tslint:disable:no-unused-expression */
   new SupClient.dialogs.PromptDialog("How many frames per row?", options, (framesPerRow) => {
     /* tslint:enable:no-unused-expression */
-    if (framesPerRow == null) return;
+    if (framesPerRow != null) {
+      let framesPerRowNum = parseInt(framesPerRow, 10);
+      if (isNaN(framesPerRowNum)) return;
 
-    let framesPerRowNum = parseInt(framesPerRow, 10);
-    if (isNaN(framesPerRowNum)) return;
+      editAsset("setProperty", "grid.width", Math.floor(texture.size.width / framesPerRowNum));
+    }
 
-    editAsset("setProperty", "grid.width", Math.floor(texture.size.width / framesPerRowNum));
-  });
-}
+    options.validationLabel = SupClient.i18n.t("spriteEditor:actions.setGridHeight");
 
-function onSetGridHeight(event: any) {
-  let texture = data.spriteUpdater.spriteAsset.pub.textures["map"];
-  if (texture == null) return;
+    /* tslint:disable:no-unused-expression */
+    new SupClient.dialogs.PromptDialog("How many frames per column?", options, (framesPerColumn) => {
+      /* tslint:enable:no-unused-expression */
+      if (framesPerColumn != null) {
+        let framesPerColumnNum = parseInt(framesPerColumn, 10);
+        if (isNaN(framesPerColumnNum)) return;
 
-  let options = {
-    initialValue: "1",
-    validationLabel: "Set grid height"
-  };
-
-  /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.PromptDialog("How many frames per column?", options, (framesPerColumn) => {
-    /* tslint:enable:no-unused-expression */
-    if (framesPerColumn == null) return;
-
-    let framesPerColumnNum = parseInt(framesPerColumn, 10);
-    if (isNaN(framesPerColumnNum)) return;
-
-    editAsset("setProperty", "grid.height", Math.floor(texture.size.height / framesPerColumnNum));
+        editAsset("setProperty", "grid.height", Math.floor(texture.size.height / framesPerColumnNum));
+      }
+    });
   });
 }
 
