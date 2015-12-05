@@ -5,6 +5,7 @@
 
 import * as async from "async";
 import * as querystring from "querystring";
+import supFetch from "../../../../SupClient/src/fetch";
 
 SupCore.system = new SupCore.System("");
 
@@ -43,7 +44,7 @@ let player: SupRuntime.Player;
 let onLoadProgress = (value: number, max: number) => {
   progressBar.value = value;
   progressBar.max = max;
-}
+};
 let onLoaded = (err: Error) => {
   if (err != null) {
     console.error(err);
@@ -69,10 +70,10 @@ let onLoaded = (err: Error) => {
       return;
     }, (qs.project == null) ? 500 : 0);
   }, (qs.project == null) ? 500 : 0);
-}
+};
 
 // Load plugins
-window.fetch("plugins.json").then((response) => response.json()).then((pluginsInfo: SupCore.PluginsInfo) => {
+supFetch("plugins.json", "json", (err: Error, pluginsInfo: SupCore.PluginsInfo) => {
   async.each(pluginsInfo.list, (pluginName, pluginCallback) => {
     async.series([
 

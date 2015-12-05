@@ -1,4 +1,5 @@
 import * as async from "async";
+import supFetch from "../../../../SupClient/src/fetch";
 
 interface Project {
   name: string;
@@ -199,14 +200,7 @@ export default class Player {
   };
 
   getAssetData(path: string, responseType: string, callback: (err: Error, data?: any) => any) {
-    window.fetch(`${this.dataURL}${path}`)
-    .then((response) => {
-      if (responseType === "json") return response.json();
-      else if (responseType === "text") return response.text();
-      else return response.arrayBuffer();
-    })
-    .then((result) => { callback(null, result); })
-    .catch((err) => { callback(new Error(`Could not get ${path}`)); return; });
+    supFetch(`${this.dataURL}${path}`, responseType, callback);
   }
 
   getOuterAsset(assetId: number) {
