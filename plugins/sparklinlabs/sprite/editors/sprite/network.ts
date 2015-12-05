@@ -31,7 +31,6 @@ function onConnected() {
 function onAssetReceived() {
   let pub = data.spriteUpdater.spriteAsset.pub;
   let texture = pub.textures[pub.mapSlots["map"]];
-  let map = pub.maps[pub.mapSlots["map"]];
 
   spritesheetArea.spritesheet = {
     textures: { map: texture },
@@ -71,7 +70,7 @@ function onAssetReceived() {
   ui.allSettings.forEach((setting: string) => {
     let parts = setting.split(".");
     let obj = <any>pub;
-    parts.slice(0, parts.length - 1).forEach((part) => { obj = obj[part]; })
+    parts.slice(0, parts.length - 1).forEach((part) => { obj = obj[part]; });
     setupProperty(setting, obj[parts[parts.length - 1]]);
   });
 
@@ -86,7 +85,7 @@ function onAssetReceived() {
 
 export function editAsset(...args: any[]) {
   let callback: Function;
-  if (typeof args[args.length-1] === "function") callback = args.pop();
+  if (typeof args[args.length - 1] === "function") callback = args.pop();
 
   args.push((err: string, id: string) => {
     if (err != null) { alert(err); return; }
@@ -120,11 +119,11 @@ onEditCommands.setAnimationProperty = (id: string, key: string, value: any) => {
     case "name": animationElt.querySelector(".name").textContent = value; break;
     case "startFrameIndex":
       animationElt.querySelector(".start-frame-index").value = value;
-      if (id == ui.selectedAnimationId) updateSelection();
+      if (id === ui.selectedAnimationId) updateSelection();
       break;
     case "endFrameIndex":
       animationElt.querySelector(".end-frame-index").value = value;
-      if (id == ui.selectedAnimationId) updateSelection();
+      if (id === ui.selectedAnimationId) updateSelection();
       break;
     case "speed":
       animationElt.querySelector(".speed").value = value;
@@ -150,9 +149,9 @@ function updateSpritesheet() {
   ui.imageSize.value = `${texture.size.width} × ${texture.size.height}`;
 }
 
-onEditCommands.setMaps = () => { updateSpritesheet() };
+onEditCommands.setMaps = () => { updateSpritesheet(); };
 
-onEditCommands.newMap = (name: string) => { setupMap(name); }
+onEditCommands.newMap = (name: string) => { setupMap(name); };
 
 onEditCommands.renameMap = (oldName: string, newName: string) => {
   let pub = data.spriteUpdater.spriteAsset.pub;
@@ -163,7 +162,7 @@ onEditCommands.renameMap = (oldName: string, newName: string) => {
 
   for (let slotName in pub.mapSlots)
     if (ui.mapSlotsInput[slotName].value === oldName) ui.mapSlotsInput[slotName].value = newName;
-}
+};
 
 onEditCommands.deleteMap = (name: string) => {
   let textureElt = ui.texturesTreeView.treeRoot.querySelector(`[data-name="${name}"]`);
@@ -172,9 +171,9 @@ onEditCommands.deleteMap = (name: string) => {
   let pub = data.spriteUpdater.spriteAsset.pub;
   for (let slotName in pub.mapSlots)
     if (ui.mapSlotsInput[slotName].value === name) ui.mapSlotsInput[slotName].value = "";
-}
+};
 
 onEditCommands.setMapSlot = (slot: string, map: string) => {
   ui.mapSlotsInput[slot].value = map != null ? map : "";
   if (slot === "map") updateSpritesheet();
-}
+};
