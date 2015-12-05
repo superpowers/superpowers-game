@@ -283,7 +283,7 @@ export function createNodeElement(node: Node) {
     let actor = data.sceneUpdater.bySceneNodeId[event.target.parentElement.dataset["id"]].actor;
     actor.threeObject.visible = !actor.threeObject.visible;
     let visible = actor.threeObject.visible ? "hide" : "show";
-    visibleButton.textContent = SupClient.i18n.t(`sceneEditor:treeView.visible.hide`)
+    visibleButton.textContent = SupClient.i18n.t(`sceneEditor:treeView.visible.${visible}`);
     if (actor.threeObject.visible) visibleButton.classList.add("show");
     else visibleButton.classList.remove("show");
   });
