@@ -1,0 +1,15 @@
+{
+  "P2Body": {
+    "label": "P2 Body",
+    "mass": "Mass",
+    "fixedRotation": "Fixed rotation",
+    "offset": "Offset",
+    "shape": "Shape",
+    "shapeOptions": {
+      "box": "Box",
+      "circle": "Circle"
+    },
+    "size": "Size",
+    "radius": "Radius"
+  }
+}

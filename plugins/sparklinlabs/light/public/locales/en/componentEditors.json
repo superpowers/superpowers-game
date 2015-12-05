@@ -1,0 +1,30 @@
+{
+  "Light": {
+    "label": "Light",
+    "type": "Type",
+    "typeOptions": {
+      "ambient": "Ambient",
+      "point": "Point",
+      "spot": "Spot",
+      "directional": "Directional"
+    },
+
+    "color": "Color",
+    "intensity": "Intensity",
+    "distance": "Distance",
+    "angle": "Angle",
+    "target": "Target",
+    "castShadow": "Cast Shadow",
+    
+    "shadowSettings": {
+      "title": "Shadow Settings",
+      "mapSize": "Map Size",
+      "bias": "Bias",
+      "darkness": "Darkness",
+      "near-far": "Near / Far",
+      "fov": "Fov",
+      "top-bottom": "Top / Bottom",
+      "left-right": "Left / Right"
+    }
+  }
+}

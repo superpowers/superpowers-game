@@ -6,8 +6,7 @@ export default class P2BodyEditor {
   fields: { [name: string]: HTMLInputElement|HTMLSelectElement } = {};
   shapeRows: HTMLTableRowElement[] = [];
 
-  widthRow: SupClient.table.RowParts;
-  heightRow: SupClient.table.RowParts;
+  sizeRow: SupClient.table.RowParts;
   radiusRow: SupClient.table.RowParts;
 
   constructor(tbody: HTMLTableSectionElement, config: any, projectClient: SupClient.ProjectClient, editConfig: any) {
@@ -15,57 +14,57 @@ export default class P2BodyEditor {
     this.projectClient = projectClient;
     this.editConfig = editConfig;
 
-    let massRow = SupClient.table.appendRow(this.tbody, "Mass");
+    let massRow = SupClient.table.appendRow(this.tbody, SupClient.i18n.t("componentEditors:P2Body.mass"));
     this.fields["mass"] = SupClient.table.appendNumberField(massRow.valueCell, config.mass, 0);
     this.fields["mass"].addEventListener("change", (event: any) => {
       this.editConfig("setProperty", "mass", parseFloat(event.target.value));
     });
 
-    let fixedRotationRow = SupClient.table.appendRow(this.tbody, "Fixed rotation");
+    let fixedRotationRow = SupClient.table.appendRow(this.tbody, SupClient.i18n.t("componentEditors:P2Body.fixedRotation"));
     this.fields["fixedRotation"] = SupClient.table.appendBooleanField(fixedRotationRow.valueCell, config.fixedRotation);
     this.fields["fixedRotation"].addEventListener("click", (event: any) => {
       this.editConfig("setProperty", "fixedRotation", event.target.checked);
     });
 
-    let offsetX = SupClient.table.appendRow(this.tbody, "Offset X");
-    this.fields["offsetX"] = SupClient.table.appendNumberField(offsetX.valueCell, config.offsetX);
+    let offsetRow = SupClient.table.appendRow(this.tbody, SupClient.i18n.t("componentEditors:P2Body.offset"));
+    let offsetFields = SupClient.table.appendNumberFields(offsetRow.valueCell, [config.offsetX, config.offsetY]);
+    this.fields["offsetX"] = offsetFields[0];
     this.fields["offsetX"].addEventListener("change", (event: any) => {
       this.editConfig("setProperty", "offsetX", parseFloat(event.target.value));
     });
 
-    let offsetY = SupClient.table.appendRow(this.tbody, "Offset Y");
-    this.fields["offsetY"] = SupClient.table.appendNumberField(offsetY.valueCell, config.offsetY);
+    this.fields["offsetY"] = offsetFields[1];
     this.fields["offsetY"].addEventListener("change", (event: any) => {
       this.editConfig("setProperty", "offsetY", parseFloat(event.target.value));
     });
 
-    let shapeRow = SupClient.table.appendRow(this.tbody, "Shape");
-    this.fields["shape"] = SupClient.table.appendSelectBox(shapeRow.valueCell, {
-      "box": "Box",
-      "circle": "Circle"
-    });
-    this.fields["shape"].value = config.shape;
+    let shapeRow = SupClient.table.appendRow(this.tbody, SupClient.i18n.t("componentEditors:P2Body.shape"));
+    let shapeOptions: { [key: string]: string} = {
+      "box": SupClient.i18n.t("componentEditors:P2Body.shapeOptions.box"),
+      "circle": SupClient.i18n.t("componentEditors:P2Body.shapeOptions.circle")
+    };
+    this.fields["shape"] = SupClient.table.appendSelectBox(shapeRow.valueCell, shapeOptions, config.shape);
     this.fields["shape"].addEventListener("change", (event: any) => {
       this.editConfig("setProperty", "shape", event.target.value);
     });
 
     // Box
-    this.widthRow = SupClient.table.appendRow(this.tbody, "Width");
-    this.shapeRows.push(this.widthRow.row);
-    this.fields["width"] = SupClient.table.appendNumberField(this.widthRow.valueCell, config.width, 0);
+    this.sizeRow = SupClient.table.appendRow(this.tbody, SupClient.i18n.t("componentEditors:P2Body.size"));
+    this.shapeRows.push(this.sizeRow.row);
+
+    let sizeFields = SupClient.table.appendNumberFields(this.sizeRow.valueCell, [config.width, config.height], 0);
+    this.fields["width"] = sizeFields[0];
     this.fields["width"].addEventListener("change", (event: any) => {
       this.editConfig("setProperty", "width", parseFloat(event.target.value));
     });
 
-    this.heightRow = SupClient.table.appendRow(this.tbody, "Height");
-    this.shapeRows.push(this.heightRow.row);
-    this.fields["height"] = SupClient.table.appendNumberField(this.heightRow.valueCell, config.height, 0);
+    this.fields["height"] = sizeFields[1];
     this.fields["height"].addEventListener("change", (event: any) => {
       this.editConfig("setProperty", "height", parseFloat(event.target.value));
     });
 
     // Circle
-    this.radiusRow = SupClient.table.appendRow(this.tbody, "Radius");
+    this.radiusRow = SupClient.table.appendRow(this.tbody, SupClient.i18n.t("componentEditors:P2Body.radius"));
     this.shapeRows.push(this.radiusRow.row);
     this.fields["radius"] = SupClient.table.appendNumberField(this.radiusRow.valueCell, config.radius, 0);
     this.fields["radius"].addEventListener("change", (event: any) => {
@@ -81,22 +80,18 @@ export default class P2BodyEditor {
 
     switch (shape) {
       case "box": {
-        this.tbody.appendChild(this.widthRow.row);
-        this.shapeRows.push(this.widthRow.row);
-        this.tbody.appendChild(this.heightRow.row);
-        this.shapeRows.push(this.heightRow.row);
-        break;
-      }
+        this.tbody.appendChild(this.sizeRow.row);
+        this.shapeRows.push(this.sizeRow.row);
+      } break;
 
       case "circle": {
         this.tbody.appendChild(this.radiusRow.row);
         this.shapeRows.push(this.radiusRow.row);
-        break;
-      }
+      } break;
     }
   }
 
-  destroy() {}
+  destroy() { /* Nothing to do here */ }
 
   config_setProperty(path: string, value: any) {
     if (path === "fixedRotation") (<HTMLInputElement>this.fields["fixedRotation"]).checked = value;
