@@ -37,15 +37,15 @@ class SoundPlayer {
       audio.src = <string>this.buffer;
       this.source = this.audioCtx.createMediaElementSource(audio);
       // FIXME: Very new so not included in d.ts file just yet
-      if ((<any>this.source)["mediaElement"] == null) { this.source = null; return; }
-      (<any>this.source)["mediaElement"].loop = this.isLooping;
+      if ((this.source as any)["mediaElement"] == null) { this.source = null; return; }
+      (this.source as any)["mediaElement"].loop = this.isLooping;
     }
     else {
       // Assuming AudioBuffer
       let source = this.source = this.audioCtx.createBufferSource();
       source.buffer = <AudioBuffer>this.buffer;
       source.loop = this.isLooping;
-      
+
       // NOTE: As of November 2015, playbackRate is not supported on MediaElementSources
       // so let's only apply it for buffer sources
       source.playbackRate.value = Math.pow(2, this.pitch);
@@ -67,9 +67,9 @@ class SoundPlayer {
 
     this.startTime = this.audioCtx.currentTime - this.offset;
 
-    if ((<any>this.source)["mediaElement"] != null) {
-      (<any>this.source)["mediaElement"].currentTime = this.offset;
-      (<any>this.source)["mediaElement"].play();
+    if ((this.source as any)["mediaElement"] != null) {
+      (this.source as any)["mediaElement"].currentTime = this.offset;
+      (this.source as any)["mediaElement"].play();
     }
     else (this.source as AudioBufferSourceNode).start(0, this.offset);
   }
@@ -78,15 +78,15 @@ class SoundPlayer {
     if (this.audioCtx == null) return;
 
     if (this.source != null) {
-      if ((<any>this.source)["mediaElement"] != null) {
-        (<any>this.source)["mediaElement"].pause();
-        (<any>this.source)["mediaElement"].currentTime = 0;
+      if ((this.source as any)["mediaElement"] != null) {
+        (this.source as any)["mediaElement"].pause();
+        (this.source as any)["mediaElement"].currentTime = 0;
       }
       else (this.source as AudioBufferSourceNode).stop(0);
 
       this.source.disconnect();
       delete this.source;
-      
+
       this.gainNode.disconnect();
       delete this.gainNode;
 
@@ -101,11 +101,11 @@ class SoundPlayer {
   pause() {
     if (this.audioCtx == null || this.source == null) return;
 
-    this.offset = this.audioCtx.currentTime - this.startTime
+    this.offset = this.audioCtx.currentTime - this.startTime;
 
-    if ((<any>this.source).mediaElement != null) (<any>this.source).mediaElement.pause();
+    if ((this.source as any).mediaElement != null) (this.source as any).mediaElement.pause();
     else (this.source as AudioBufferSourceNode).stop(0);
-    
+
     this.source.disconnect();
     delete this.source;
 
@@ -122,8 +122,8 @@ class SoundPlayer {
     // Workaround Webkit audio's lack of support for the onended callback
     if (this.state === SoundPlayer.State.Playing) {
       // FIXME: Very new so not included in d.ts file just yet
-      if ((<any>this.source).playbackState != null && (<any>this.source).playbackState === (<any>this.source).FINISHED_STATE) this.state = SoundPlayer.State.Stopped;
-      else if ((<any>this.source).mediaElement != null && (<any>this.source).mediaElement.paused) this.state = SoundPlayer.State.Stopped;
+      if ((this.source as any).playbackState != null && (this.source as any).playbackState === (this.source as any).FINISHED_STATE) this.state = SoundPlayer.State.Stopped;
+      else if ((this.source as any).mediaElement != null && (this.source as any).mediaElement.paused) this.state = SoundPlayer.State.Stopped;
     }
 
     return this.state;
@@ -133,8 +133,8 @@ class SoundPlayer {
     this.isLooping = isLooping;
     if (this.source == null) return;
 
-    if ((<any>this.source).mediaElement != null) {
-      (<any>this.source).mediaElement.loop = this.isLooping;
+    if ((this.source as any).mediaElement != null) {
+      (this.source as any).mediaElement.loop = this.isLooping;
     } else {
       (this.source as AudioBufferSourceNode).loop  = this.isLooping;
     }
