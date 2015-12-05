@@ -22,8 +22,8 @@ namespace Sup {
       play() { this.__inner.play(); return this; }
       stop() { this.__inner.stop(); return this; }
       pause() { this.__inner.pause(); return this; }
-      isPlaying() { return this.__inner.state === SoundPlayer.State.Playing; }
-      getState() { return this.__inner.state; }
+      isPlaying() { return this.__inner.getState() === SoundPlayer.State.Playing; }
+      getState() { return this.__inner.getState(); }
 
       getLoop() { return this.__inner.isLooping; }
       setLoop(looping) { this.__inner.setLoop(looping); return this; }
