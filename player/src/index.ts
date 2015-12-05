@@ -74,6 +74,12 @@ let onLoaded = (err: Error) => {
 
 // Load plugins
 supFetch("plugins.json", "json", (err: Error, pluginsInfo: SupCore.PluginsInfo) => {
+  if (err != null) {
+    console.log(err);
+    onLoaded(new Error("Could not load plugins list."));
+    return;
+  }
+
   async.each(pluginsInfo.list, (pluginName, pluginCallback) => {
     async.series([
 
