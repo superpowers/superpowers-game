@@ -62,7 +62,8 @@ class SoundPlayer {
     this.source.connect(this.gainNode);
 
     this.state = SoundPlayer.State.Playing;
-    this.source.addEventListener("ended", () => { this.state = SoundPlayer.State.Stopped; });
+    // NOTE: As of Chrome 46, addEventListener("ended") doesn't work!
+    (this.source as any).onended = () => { this.state = SoundPlayer.State.Stopped; };
 
     this.startTime = this.audioCtx.currentTime - this.offset;
 
