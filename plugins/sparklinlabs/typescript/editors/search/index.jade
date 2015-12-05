@@ -1,17 +1,17 @@
 doctype html
 html
   head
-    title TypeScript global search
+    title= t("searchEditor:title")
     link(rel="stylesheet",href="/styles/reset.css")
     link(rel="stylesheet",href="index.css")
 
   body
     .search
-      input(type="text",placeholder="Find in project")
+      input(type="text",placeholder= t("searchEditor:searchPlaceholder"))
       input#match-case-checkbox(type="checkbox")
-      label(for="match-case-checkbox") Match case
-      button Search
-      span No results found
+      label(for="match-case-checkbox")= t("searchEditor:matchCase")
+      button= t("common:actions.search")
+      span= t("searchEditor:noResults")
 
     .results
 

@@ -73,7 +73,7 @@ export function searchAsset(assetId: string) {
   if (results.length === 0) {
     if (nameElt != null) nameElt.parentElement.removeChild(nameElt);
     if (tableElt != null) tableElt.parentElement.removeChild(tableElt);
-    refreshStatus();
+    refreshGlobalStatus();
     return;
   }
 
@@ -87,7 +87,7 @@ export function searchAsset(assetId: string) {
       tableElt.classList.toggle("collapsed");
     });
   }
-  nameElt.textContent = `${results.length} result${results.length > 1 ? "s" : ""} in "${name}.ts"`;
+  refreshFileStatus(name, nameElt, results.length);
 
   if (tableElt == null) {
     tableElt = document.createElement("table");
@@ -146,7 +146,7 @@ export function searchAsset(assetId: string) {
 
     let lineElt = document.createElement("td");
     rowElt.appendChild(lineElt);
-    lineElt.textContent = (line+1).toString();
+    lineElt.textContent = (line + 1).toString();
 
     let textElt = document.createElement("td");
     rowElt.appendChild(textElt);
@@ -163,22 +163,27 @@ export function searchAsset(assetId: string) {
     endElt.textContent = textParts[line].slice(column + ui.textToSearch.length);
     textElt.appendChild(endElt);
   }
-  refreshStatus();
+  refreshGlobalStatus();
 }
 
-function refreshStatus() {
-  let results = 0;
-  let files = 0;
+function refreshGlobalStatus() {
+  let resultsCount = 0;
+  let filesCount = 0;
 
   for (let index = 1; index < ui.resultsPane.children.length; index += 2) {
-    results += (<HTMLTableElement>ui.resultsPane.children[index]).children.length;
-    files += 1;
+    resultsCount += (<HTMLTableElement>ui.resultsPane.children[index]).children.length;
+    filesCount += 1;
   }
 
-  if (results === 0) ui.statusSpan.textContent = "No results found";
+  if (resultsCount === 0) ui.statusSpan.textContent = SupClient.i18n.t("searchEditor:noResults");
   else {
-    let resultPlurial = results > 1 ? "s" : "";
-    let filePlurial = files > 1 ? "s" : ""
-    ui.statusSpan.textContent = `${results} result${resultPlurial} found in ${files} file${filePlurial}`;
+    let results = SupClient.i18n.t(`searchEditor:${resultsCount === 1 ? "oneResult" : "severalResults"}`, { results: resultsCount.toString() });
+    let files = SupClient.i18n.t(`searchEditor:${filesCount === 1 ? "oneFile" : "severalFiles"}`, { files: filesCount.toString() });
+    ui.statusSpan.textContent = SupClient.i18n.t("searchEditor:resultInfo", { results, files });
   }
+}
+
+export function refreshFileStatus(fileName: string, nameElt: HTMLSpanElement, count: number) {
+  let results = SupClient.i18n.t(`searchEditor:${count === 1 ? "oneResult" : "severalResults"}`, { results: count.toString() });
+  nameElt.textContent = SupClient.i18n.t("searchEditor:fileInfo", { results, fileName });
 }

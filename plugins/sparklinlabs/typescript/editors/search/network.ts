@@ -1,4 +1,4 @@
-import { searchAsset } from "./ui";
+import { searchAsset, refreshFileStatus } from "./ui";
 
 import ScriptAsset from "../../data/ScriptAsset";
 
@@ -7,23 +7,32 @@ export let data: {
   projectClient?: SupClient.ProjectClient,
 } = {};
 
-export let socket = SupClient.connect(SupClient.query.project);
-socket.on("connect", onConnected);
-socket.on("disconnect", SupClient.onDisconnected);
+export let socket: SocketIOClient.Socket;
+SupClient.i18n.load([{ root: `${window.location.pathname}/../..`, name: "searchEditor" }], () => {
+  socket = SupClient.connect(SupClient.query.project);
+  socket.on("connect", onConnected);
+  socket.on("disconnect", SupClient.onDisconnected);
+});
 
-function onConnected() {
-  data.assetsById = {};
+let scriptSubscriber = {
+  onAssetReceived: (err: string, asset: ScriptAsset) => {
+    data.assetsById[asset.id] = asset;
+    searchAsset(asset.id);
+  },
 
-  data.projectClient = new SupClient.ProjectClient(socket);
-  data.projectClient.subEntries(entriesSubscriber);
-}
+  onAssetEdited: (id: string, command: string, ...args: any[]) => {
+    if (command === "editText") searchAsset(id);
+  },
 
-var entriesSubscriber = {
+  onAssetTrashed: (id: string) => { /* Nothing to do here */ },
+};
+
+let entriesSubscriber = {
   onEntriesReceived: (entries: SupCore.Data.Entries) => {
     entries.walk((entry) => {
       if (entry.type !== "script") return;
       data.projectClient.subAsset(entry.id, "script", scriptSubscriber);
-    })
+    });
   },
 
   onEntryAdded: (newEntry: any, parentId: string, index: number) => {
@@ -39,7 +48,7 @@ var entriesSubscriber = {
     if (nameElt != null) {
       let tableElt = <HTMLTableElement>document.querySelector(`table[data-id='${id}']`);
       let name = data.projectClient.entries.getPathFromId(id);
-      nameElt.textContent = `${tableElt.children.length} results in "${name}.ts"`;
+      refreshFileStatus(name, nameElt, tableElt.children.length);
     }
   },
 
@@ -51,7 +60,7 @@ var entriesSubscriber = {
     if (nameElt != null) {
       let tableElt = <HTMLTableElement>document.querySelector(`table[data-id='${id}']`);
       let name = data.projectClient.entries.getPathFromId(id);
-      nameElt.textContent = `${tableElt.children.length} results in "${name}.ts"`;
+      refreshFileStatus(name, nameElt, tableElt.children.length);
     }
   },
 
@@ -64,17 +73,11 @@ var entriesSubscriber = {
     if (nameElt != null) nameElt.parentElement.removeChild(nameElt);
     if (tableElt != null) tableElt.parentElement.removeChild(tableElt);
   },
-}
+};
 
-var scriptSubscriber = {
-  onAssetReceived: (err: string, asset: ScriptAsset) => {
-    data.assetsById[asset.id] = asset;
-    searchAsset(asset.id);
-  },
+function onConnected() {
+  data.assetsById = {};
 
-  onAssetEdited: (id: string, command: string, ...args: any[]) => {
-    if (command === "editText") searchAsset(id);
-  },
-
-  onAssetTrashed: (id: string) => {},
+  data.projectClient = new SupClient.ProjectClient(socket);
+  data.projectClient.subEntries(entriesSubscriber);
 }
