@@ -469,7 +469,7 @@ function onNewNodeClick() {
 
 function onNewPrefabClick() {
   let options = {
-    initialValue: SupClient.i18n.t("sceneEditor:treeView.newPrefab.title"),
+    initialValue: SupClient.i18n.t("sceneEditor:treeView.newPrefab.initialValue"),
     validationLabel: SupClient.i18n.t("sceneEditor:treeView.newPrefab.validate"),
     pattern: SupClient.namePattern,
     title: SupClient.i18n.t("common:namePatternDescription")
