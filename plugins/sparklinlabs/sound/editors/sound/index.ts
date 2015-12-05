@@ -1,5 +1,9 @@
 import SoundAsset from "../../data/SoundAsset";
 
+/* tslint:disable */
+let PerfectResize = require("perfect-resize");
+/* tslint:enable */
+
 let data: {
   projectClient: SupClient.ProjectClient;
   asset: SoundAsset;
@@ -76,12 +80,12 @@ function onFileSelectChange(event: any) {
 
 function onDownloadSound() {
   let options = {
-    initialValue: "Sound.wav",
-    validationLabel: "OK"
+    initialValue: SupClient.i18n.t("soundEditor:sidebar.settings.sound.file.download.defaultName"),
+    validationLabel: SupClient.i18n.t("common:actions.download")
   };
 
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.PromptDialog("Enter the name of the sound", options, (name) => {
+  new SupClient.dialogs.PromptDialog(SupClient.i18n.t("soundEditor:sidebar.settings.sound.file.download.prompt"), options, (name) => {
     /* tslint:enable:no-unused-expression */
     if (name == null) return;
 
@@ -116,4 +120,4 @@ onAssetCommands.upload = setupSound;
 onAssetCommands.setProperty = setupProperty;
 
 // Start
-start();
+SupClient.i18n.load([{ root: `${window.location.pathname}/../..`, name: "soundEditor" }], start);

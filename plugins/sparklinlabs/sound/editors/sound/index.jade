@@ -2,6 +2,7 @@ doctype html
 html
   head
     link(rel="stylesheet",href="/styles/reset.css")
+    link(rel="stylesheet",href="/styles/perfectResize.css")
     link(rel="stylesheet",href="/styles/dialogs.css")
     link(rel="stylesheet",href="/styles/properties.css")
     link(rel="stylesheet",href="index.css")
@@ -13,22 +14,22 @@ html
     .sidebar
       table.properties
         tr
-          th(colspan="2") Sound
+          th(colspan="2")= t("soundEditor:sidebar.settings.sound.title")
         tr
-          th File
+          th= t("soundEditor:sidebar.settings.sound.file.title")
           td
-            button.upload Upload
+            button.upload= t("common:actions.upload")
             form(style="display: none")
               input.file-select(type="file",accept="audio/*")
 
-            button.download Download
+            button.download= t("common:actions.download")
 
         tr
-          th Streaming
+          th= t("soundEditor:sidebar.settings.sound.streaming")
           td
             select.property-streaming
-              option(value="false") Disabled
-              option(value="true") Enabled
+              option(value="false")= t("common:states.enabled")
+              option(value="true")= t("common:states.disabled")
 
     script(src="/SupCore.js")
     script(src="../../../../../SupEngine.js")
