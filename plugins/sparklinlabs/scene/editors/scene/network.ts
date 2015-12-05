@@ -44,7 +44,7 @@ function loadPlugins(callback: (err: Error, locales: SupClient.i18n.File[]) => v
   let locales: SupClient.i18n.File[] = [];
   locales.push({ root: `${window.location.pathname}/../..`, name: "sceneEditor" });
 
-  window.fetch(`/systems/${SupCore.system.name}/plugins.json`).then((response) => response.json()).then((pluginsInfo: SupCore.PluginsInfo) => {
+  SupClient.fetch(`/systems/${SupCore.system.name}/plugins.json`, "json", (err: Error, pluginsInfo: SupCore.PluginsInfo) => {
     async.eachSeries(pluginsInfo.list, (pluginName, pluginCallback) => {
       async.series([
 

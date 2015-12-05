@@ -15,9 +15,7 @@ function onWelcome() {
 }
 
 function loadPlugins() {
-  window.fetch(`/systems/${SupCore.system.name}/plugins.json`)
-  .then((response) => response.json())
-  .then((pluginsInfo: SupCore.PluginsInfo) => {
+  SupClient.fetch(`/systems/${SupCore.system.name}/plugins.json`, "json", (err: Error, pluginsInfo: SupCore.PluginsInfo) => {
     async.eachSeries(pluginsInfo.list, (pluginName, pluginCallback) => {
       async.series([
 

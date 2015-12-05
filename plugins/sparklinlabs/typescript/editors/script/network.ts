@@ -27,10 +27,10 @@ function onWelcome(clientId: number) {
 }
 
 function loadPlugins() {
-  window.fetch(`/systems/${SupCore.system.name}/plugins.json`).then((response) => response.json()).then((pluginsInfo: SupCore.PluginsInfo) => {
+  SupClient.fetch(`/systems/${SupCore.system.name}/plugins.json`, "json", (err: Error, pluginsInfo: SupCore.PluginsInfo) => {
     async.each(pluginsInfo.list, (pluginName, pluginCallback) => {
       if (pluginName === "sparklinlabs/typescript") { pluginCallback(); return; }
-    
+
       let apiScript = document.createElement("script");
       apiScript.src = `/systems/${SupCore.system.name}/plugins/${pluginName}/api.js`;
       apiScript.addEventListener("load", () => { pluginCallback(); } );

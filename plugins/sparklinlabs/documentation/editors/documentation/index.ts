@@ -17,9 +17,7 @@ function onWelcome() {
 }
 
 function loadPlugins() {
-  window.fetch(`/systems/${SupCore.system.name}/plugins.json`)
-  .then((response) => response.json())
-  .then((pluginsInfo: SupCore.PluginsInfo) => {
+  SupClient.fetch(`/systems/${SupCore.system.name}/plugins.json`, "json", (err: Error, pluginsInfo: SupCore.PluginsInfo) => {
     async.eachSeries(pluginsInfo.list, (pluginName, pluginCallback) => {
       SupClient.activePluginPath = `/systems/${SupCore.system.name}/plugins/${pluginName}`;
       let documentationScript = document.createElement("script");
@@ -70,15 +68,15 @@ function setupDocs() {
       }
     }
 
-    window.fetch(`${SupClient.plugins["documentation"][name].path}/documentation/${name}.${language}.md`)
-      .then((response) => {
-        if (response.status === 404) {
-          window.fetch(`${SupClient.plugins["documentation"][name].path}/documentation/${name}.en.md`)
-            .then((response) => response.text() ).then(onDocumentationLoaded);
-          return;
-        }
-        return response.text().then(onDocumentationLoaded);
-      });
+    SupClient.fetch(`${SupClient.plugins["documentation"][name].path}/documentation/${name}.${language}.md`, "text", (err, data) => {
+      if (err != null) {
+        SupClient.fetch(`${SupClient.plugins["documentation"][name].path}/documentation/${name}.en.md`, "text", (err, data) => {
+          onDocumentationLoaded(data);
+        });
+        return;
+      }
+      onDocumentationLoaded(data);
+    });
   });
 
   navListElt.addEventListener("click", (event: any) => {

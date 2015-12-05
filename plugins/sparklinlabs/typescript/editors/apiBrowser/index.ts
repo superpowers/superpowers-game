@@ -38,7 +38,7 @@ let socket = SupClient.connect(SupClient.query.project);
 socket.on("welcome", onWelcome);
 
 function onWelcome(clientId: number, config: { buildPort: number; systemName: string; }) {
-  window.fetch(`/systems/${config.systemName}/plugins.json`).then((response) => response.json()).then((pluginsInfo: SupCore.PluginsInfo) => {
+  SupClient.fetch(`/systems/${config.systemName}/plugins.json`, "json", (err: Error, pluginsInfo: SupCore.PluginsInfo) => {
     async.each(pluginsInfo.list, (pluginName, pluginCallback) => {
       async.series([
         (cb) => {
