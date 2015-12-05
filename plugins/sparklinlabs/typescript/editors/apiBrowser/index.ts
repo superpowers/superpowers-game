@@ -14,7 +14,7 @@ function findText(containerNode: Node, offset: number) {
 
   let index = 0;
   while (node != null) {
-    if (node.nodeType == Node.TEXT_NODE) {
+    if (node.nodeType === Node.TEXT_NODE) {
       let length = (node as Text).data.length;
       if (index + length > offset) return { node, index: offset - index };
       else index += length;
@@ -72,7 +72,7 @@ function onAPILoaded() {
   allDefs["Sup.Actor"] = allDefs["Sup.Actor"].replace("// INSERT_COMPONENT_ACCESSORS", actorComponentAccessors.join("\n    "));
 
   let sortedDefNames = Object.keys(allDefs);
-  sortedDefNames.sort((a, b) => { return (a.toLowerCase() < b.toLowerCase()) ? -1 : 1 });
+  sortedDefNames.sort((a, b) => (a.toLowerCase() < b.toLowerCase()) ? -1 : 1);
   sortedDefNames.unshift(sortedDefNames.splice(sortedDefNames.indexOf("Built-ins"), 1)[0]);
 
   preElts = [];
@@ -92,8 +92,8 @@ function onAPILoaded() {
     nameElt.className = "name";
     nameElt.textContent = name;
     anchorElt.appendChild(nameElt);
-    
-    let resultsElt = document.createElement("span")
+
+    let resultsElt = document.createElement("span");
     resultsElt.className = "results";
     anchorElt.appendChild(resultsElt);
 
@@ -102,8 +102,8 @@ function onAPILoaded() {
     mainElt.appendChild(articleElt);
 
     let preElt = document.createElement("pre");
-    
-    let content = highlight.highlight("typescript", defs, true).value
+
+    let content = highlight.highlight("typescript", defs, true).value;
     content = "<div>" + content.replace(/\n\n/g, "\n \n").replace(/\n/g, "</div><div>") + "</div>";
     preElt.innerHTML = content;
     articleElt.appendChild(preElt);
@@ -131,13 +131,10 @@ function onAPILoaded() {
     let needle = searchElt.value.toLowerCase();
     if (needle.length < 3) return;
 
-    let resultsByDefName = {};
-
     if (results == null) {
       results = [];
       resultIndex = 0;
 
-      let i = 0;
       for (let i = 0; i < sortedDefNames.length; i++) {
         let defName = sortedDefNames[i];
         let def = allDefs[defName].toLowerCase().replace(/\n\n/g, " ").replace(/\n/g, "");
@@ -185,7 +182,7 @@ function onAPILoaded() {
       let containerRect = mainElt.getBoundingClientRect();
 
       if (elementRect.top < containerRect.top) element.scrollIntoView(true);
-      else if (elementRect.bottom > containerRect.bottom) element.scrollIntoView(false); 
+      else if (elementRect.bottom > containerRect.bottom) element.scrollIntoView(false);
     } else {
       clearActiveArticle();
       noSearchResultsElt.classList.add("active");

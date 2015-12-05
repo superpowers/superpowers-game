@@ -13,7 +13,7 @@
   "dependencies": {
     "combine-source-map": "^0.7.1",
     "convert-source-map": "^1.1.1",
-    "highlight.js": "^8.9.1",
+    "highlight.js": "^9.0.0",
     "operational-transform": "^0.2.3"
   }
 }
