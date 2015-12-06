@@ -1,7 +1,7 @@
 doctype html
 html
   head
-    title TypeScript API browser
+    title= t("apiBrowserEditor:title")
     link(rel="stylesheet",href="/styles/reset.css")
     link(rel="stylesheet",href="index.css")
     link(rel="stylesheet",href="railscasts.css")
@@ -9,14 +9,14 @@ html
   body
     nav
       form
-        input(type="search",placeholder="Search",minlength="3",autofocus)
+        input(type="search",placeholder= t("common:actions.search"),minlength="3",autofocus)
       .defs
         ul
 
     main
       article.no-results
-        header Search results
-        p No results found.
+        header= t("apiBrowserEditor:searchResults")
+        p= t("apiBrowserEditor:noResults")
 
     script(src="/SupCore.js")
     script(src="/SupClient.js")
