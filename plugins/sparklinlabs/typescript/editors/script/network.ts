@@ -16,50 +16,82 @@ export let data = {
   fileNamesByScriptId: <{ [name: string]: string }>{}
 };
 
-export let socket = SupClient.connect(SupClient.query.project);
-socket.on("welcome", onWelcome);
-socket.on("disconnect", SupClient.onDisconnected);
+export let socket: SocketIOClient.Socket;
+SupClient.i18n.load([{ root: `${window.location.pathname}/../..`, name: "scriptEditor" }], () => {
+  socket = SupClient.connect(SupClient.query.project);
+  socket.on("welcome", onWelcome);
+  socket.on("disconnect", SupClient.onDisconnected);
+});
 
-let onEditCommands: any = {};
-function onWelcome(clientId: number) {
-  data.clientId = clientId;
-  loadPlugins();
-}
+let onAssetCommands: any = {};
+onAssetCommands.editText = (operationData: OperationData) => {
+  ui.errorPaneStatus.classList.add("has-draft");
+  ui.editor.receiveEditText(operationData);
+};
 
-function loadPlugins() {
-  SupClient.fetch(`/systems/${SupCore.system.name}/plugins.json`, "json", (err: Error, pluginsInfo: SupCore.PluginsInfo) => {
-    async.each(pluginsInfo.list, (pluginName, pluginCallback) => {
-      if (pluginName === "sparklinlabs/typescript") { pluginCallback(); return; }
+onAssetCommands.saveText = () => {
+  ui.errorPaneStatus.classList.remove("has-draft");
+};
 
-      let apiScript = document.createElement("script");
-      apiScript.src = `/systems/${SupCore.system.name}/plugins/${pluginName}/api.js`;
-      apiScript.addEventListener("load", () => { pluginCallback(); } );
-      apiScript.addEventListener("error", () => { pluginCallback(); } );
-      document.body.appendChild(apiScript);
-    }, (err) => {
-      // Read API definitions
-      let globalDefs = "";
+let allScriptsReceived = false;
+let scriptSubscriber: SupClient.AssetSubscriber = {
+  onAssetReceived: (id: string, asset: ScriptAsset) => {
+    data.assetsById[asset.id] = asset;
+    let fileName = `${data.projectClient.entries.getPathFromId(asset.id)}.ts`;
+    let file = { id: asset.id, text: asset.pub.text, version: asset.pub.revisionId.toString() };
+    data.files[fileName] = file;
 
-      let actorComponentAccessors: string[] = [];
-      for (let pluginName in SupCore.system.api.contexts["typescript"].plugins) {
-        let plugin = SupCore.system.api.contexts["typescript"].plugins[pluginName];
-        if (plugin.defs != null) globalDefs += plugin.defs;
-        if (plugin.exposeActorComponent != null) actorComponentAccessors.push(`${plugin.exposeActorComponent.propertyName}: ${plugin.exposeActorComponent.className};`);
+    if (asset.id === SupClient.query.asset) {
+      data.asset = asset;
+
+      (<any>ui.errorPaneStatus.classList.toggle)("has-draft", data.asset.hasDraft);
+      ui.editor.setText(data.asset.pub.draft);
+      if (SupClient.query["line"] != null && SupClient.query["ch"] != null)
+        ui.editor.codeMirrorInstance.getDoc().setCursor({ line: parseInt(SupClient.query["line"], 10), ch: parseInt(SupClient.query["ch"], 10) });
+    }
+
+    if (!allScriptsReceived) {
+      if (Object.keys(data.files).length === data.fileNames.length) {
+        allScriptsReceived = true;
+        data.typescriptWorker.postMessage({ type: "setup", fileNames: data.fileNames, files: data.files });
+        scheduleErrorCheck();
       }
+    } else {
+      // All scripts have been received so this must be a newly created script
+      data.typescriptWorker.postMessage({ type: "addFile", fileName, index: data.fileNames.indexOf(fileName), file });
+      scheduleErrorCheck();
+    }
+  },
 
-      globalDefs = globalDefs.replace("// INSERT_COMPONENT_ACCESSORS", actorComponentAccessors.join("\n    "));
-      data.fileNames.push("lib.d.ts");
-      data.files["lib.d.ts"] = { id: "lib.d.ts", text: globalDefs, version: "" };
+  onAssetEdited: (id: string, command: string, ...args: any[]) => {
+    if (id !== SupClient.query.asset) {
+      if (command === "saveText") {
+        let fileName = `${data.projectClient.entries.getPathFromId(id)}.ts`;
+        let asset = data.assetsById[id];
+        let file = data.files[fileName];
+        file.text = asset.pub.text;
+        file.version = asset.pub.revisionId.toString();
 
-      data.projectClient = new SupClient.ProjectClient(socket);
-      data.projectClient.subEntries(entriesSubscriber);
+        data.typescriptWorker.postMessage({ type: "updateFile", fileName, text: file.text, version: file.version });
+        scheduleErrorCheck();
+      }
+      return;
+    }
 
-      setupEditor(data.clientId);
-    });
-  });
-}
+    if (onAssetCommands[command] != null) onAssetCommands[command].apply(data.asset, args);
+  },
 
-var entriesSubscriber = {
+  onAssetTrashed: (id: string) => {
+    if (id !== SupClient.query.asset) return;
+
+    ui.editor.clear();
+    if (ui.errorCheckTimeout != null) clearTimeout(ui.errorCheckTimeout);
+    if (ui.completionTimeout != null) clearTimeout(ui.completionTimeout);
+    SupClient.onAssetTrashed();
+  },
+};
+
+let entriesSubscriber = {
   onEntriesReceived: (entries: SupCore.Data.Entries) => {
     entries.walk((entry) => {
       if (entry.type !== "script") return;
@@ -68,7 +100,7 @@ var entriesSubscriber = {
       data.fileNames.push(fileName);
       data.fileNamesByScriptId[entry.id] = fileName;
       data.projectClient.subAsset(entry.id, "script", scriptSubscriber);
-    })
+    });
   },
 
   onEntryAdded: (newEntry: any, parentId: string, index: number) => {
@@ -142,76 +174,7 @@ var entriesSubscriber = {
     data.typescriptWorker.postMessage({ type: "removeFile", fileName });
     scheduleErrorCheck();
   },
-}
-
-let allScriptsReceived = false;
-
-var scriptSubscriber: SupClient.AssetSubscriber = {
-  onAssetReceived: (id: string, asset: ScriptAsset) => {
-    data.assetsById[asset.id] = asset;
-    let fileName = `${data.projectClient.entries.getPathFromId(asset.id)}.ts`;
-    let file = { id: asset.id, text: asset.pub.text, version: asset.pub.revisionId.toString() }
-    data.files[fileName] = file;
-
-    if (asset.id === SupClient.query.asset) {
-      data.asset = asset;
-
-      (<any>ui.errorPaneStatus.classList.toggle)("has-draft", data.asset.hasDraft);
-      ui.editor.setText(data.asset.pub.draft);
-      if (SupClient.query["line"] != null && SupClient.query["ch"] != null)
-        ui.editor.codeMirrorInstance.getDoc().setCursor({ line: parseInt(SupClient.query["line"], 10), ch: parseInt(SupClient.query["ch"], 10) });
-    }
-
-    if (!allScriptsReceived) {
-      if (Object.keys(data.files).length === data.fileNames.length) {
-        allScriptsReceived = true;
-        data.typescriptWorker.postMessage({ type: "setup", fileNames: data.fileNames, files: data.files });
-        scheduleErrorCheck();
-      }
-    } else {
-      // All scripts have been received so this must be a newly created script
-      data.typescriptWorker.postMessage({ type: "addFile", fileName, index: data.fileNames.indexOf(fileName), file });
-      scheduleErrorCheck();
-    }
-  },
-
-  onAssetEdited: (id: string, command: string, ...args: any[]) => {
-    if (id !== SupClient.query.asset) {
-      if (command === "saveText") {
-        let fileName = `${data.projectClient.entries.getPathFromId(id)}.ts`;
-        let asset = data.assetsById[id];
-        let file = data.files[fileName];
-        file.text = asset.pub.text;
-        file.version = asset.pub.revisionId.toString();
-
-        data.typescriptWorker.postMessage({ type: "updateFile", fileName, text: file.text, version: file.version });
-        scheduleErrorCheck();
-      }
-      return
-    }
-
-    if (onAssetCommands[command] != null) onAssetCommands[command].apply(data.asset, args);
-  },
-
-  onAssetTrashed: (id: string) => {
-    if (id !== SupClient.query.asset) return;
-
-    ui.editor.clear();
-    if (ui.errorCheckTimeout != null) clearTimeout(ui.errorCheckTimeout);
-    if (ui.completionTimeout != null) clearTimeout(ui.completionTimeout);
-    SupClient.onAssetTrashed();
-  },
-}
-
-var onAssetCommands: any = {};
-onAssetCommands.editText = (operationData: OperationData) => {
-  ui.errorPaneStatus.classList.add("has-draft");
-  ui.editor.receiveEditText(operationData);
-}
-
-onAssetCommands.saveText = () => {
-  ui.errorPaneStatus.classList.remove("has-draft");
-}
+};
 
 let isCheckingForErrors = false;
 let hasScheduledErrorCheck = false;
@@ -276,7 +239,7 @@ data.typescriptWorker.onmessage = (event: MessageEvent) => {
     case "quickInfo":
       if (ui.infoTimeout == null) {
         ui.infoElement.textContent = event.data.text;
-        ui.editor.codeMirrorInstance.addWidget(ui.infoPosition, ui.infoElement, false)
+        ui.editor.codeMirrorInstance.addWidget(ui.infoPosition, ui.infoElement, false);
       }
       break;
 
@@ -301,9 +264,6 @@ function startErrorCheck() {
   hasScheduledErrorCheck = false;
   data.typescriptWorker.postMessage({ type: "checkForErrors" });
 }
-      activeCompletion = null;
-
-
 
 export function scheduleErrorCheck() {
   if (ui.errorCheckTimeout != null) clearTimeout(ui.errorCheckTimeout);
@@ -331,4 +291,42 @@ function startAutocomplete() {
 export function setNextCompletion(completion: CompletionRequest) {
   nextCompletion = completion;
   if(activeCompletion == null) startAutocomplete();
+}
+
+function onWelcome(clientId: number) {
+  data.clientId = clientId;
+  loadPlugins();
+}
+
+function loadPlugins() {
+  SupClient.fetch(`/systems/${SupCore.system.name}/plugins.json`, "json", (err: Error, pluginsInfo: SupCore.PluginsInfo) => {
+    async.each(pluginsInfo.list, (pluginName, pluginCallback) => {
+      if (pluginName === "sparklinlabs/typescript") { pluginCallback(); return; }
+
+      let apiScript = document.createElement("script");
+      apiScript.src = `/systems/${SupCore.system.name}/plugins/${pluginName}/api.js`;
+      apiScript.addEventListener("load", () => { pluginCallback(); } );
+      apiScript.addEventListener("error", () => { pluginCallback(); } );
+      document.body.appendChild(apiScript);
+    }, (err) => {
+      // Read API definitions
+      let globalDefs = "";
+
+      let actorComponentAccessors: string[] = [];
+      for (let pluginName in SupCore.system.api.contexts["typescript"].plugins) {
+        let plugin = SupCore.system.api.contexts["typescript"].plugins[pluginName];
+        if (plugin.defs != null) globalDefs += plugin.defs;
+        if (plugin.exposeActorComponent != null) actorComponentAccessors.push(`${plugin.exposeActorComponent.propertyName}: ${plugin.exposeActorComponent.className};`);
+      }
+
+      globalDefs = globalDefs.replace("// INSERT_COMPONENT_ACCESSORS", actorComponentAccessors.join("\n    "));
+      data.fileNames.push("lib.d.ts");
+      data.files["lib.d.ts"] = { id: "lib.d.ts", text: globalDefs, version: "" };
+
+      data.projectClient = new SupClient.ProjectClient(socket);
+      data.projectClient.subEntries(entriesSubscriber);
+
+      setupEditor(data.clientId);
+    });
+  });
 }

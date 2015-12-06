@@ -45,17 +45,54 @@ if (window.navigator.userAgent.indexOf("Electron") !== -1) {
   let MenuItem: typeof GitHubElectron.MenuItem = remote.require("menu-item");
 
   let menu = new Menu();
-  menu.append(new MenuItem({ label: "Cut (Ctrl+X)", click: () => { document.execCommand("cut"); } }));
-  menu.append(new MenuItem({ label: "Copy (Ctrl+C)", click: () => { document.execCommand("copy"); } }));
-  menu.append(new MenuItem({ label: "Paste (Ctrl+V)", click: () => { document.execCommand("paste"); } }));
+  menu.append(new MenuItem({ label: SupClient.i18n.t("scriptEditor:contextMenu.cut"), click: () => { document.execCommand("cut"); } }));
+  menu.append(new MenuItem({ label: SupClient.i18n.t("scriptEditor:contextMenu.copy"), click: () => { document.execCommand("copy"); } }));
+  menu.append(new MenuItem({ label: SupClient.i18n.t("scriptEditor:contextMenu.paste"), click: () => { document.execCommand("paste"); } }));
 
   document.querySelector(".text-editor-container").addEventListener("contextmenu", (event: any) => {
     event.preventDefault();
-    let bounds = win.getBounds()
+    let bounds = win.getBounds();
     menu.popup(win, event.screenX - bounds.x, event.screenY - bounds.y);
     return false;
   });
 }
+
+// Parameter hint popup
+ui.parameterElement = <HTMLDivElement>document.querySelector(".popup-parameter");
+ui.parameterElement.parentElement.removeChild(ui.parameterElement);
+ui.parameterElement.style.display = "";
+
+let parameterPopupKeyMap = {
+  "Esc": () => { clearParameterPopup(); },
+  "Up": () => { updateParameterHint(ui.selectedSignatureIndex - 1); },
+  "Down": () => { updateParameterHint(ui.selectedSignatureIndex + 1); },
+  "Enter": () => {
+    let selectedSignature = ui.signatureTexts[ui.selectedSignatureIndex];
+    if (selectedSignature.parameters.length === 0) return;
+
+    let cursorPosition = ui.editor.codeMirrorInstance.getDoc().getCursor();
+    let text = "";
+
+    for (let parameterIndex = 0; parameterIndex < selectedSignature.parameters.length; parameterIndex++) {
+      if (parameterIndex !== 0) text += ", ";
+      text += selectedSignature.parameters[parameterIndex];
+    }
+    ui.editor.codeMirrorInstance.getDoc().replaceRange(text, cursorPosition, null);
+    let endSelection = { line: cursorPosition.line, ch: cursorPosition.ch + selectedSignature.parameters[0].length };
+    ui.editor.codeMirrorInstance.getDoc().setSelection(cursorPosition, endSelection);
+  },
+  "Tab": () => {
+    let selectedSignature = ui.signatureTexts[ui.selectedSignatureIndex];
+    if (selectedSignature.parameters.length === 0) return;
+    if (ui.selectedArgumentIndex === selectedSignature.parameters.length - 1) return;
+
+    let cursorPosition = ui.editor.codeMirrorInstance.getDoc().getCursor();
+
+    cursorPosition.ch += 2;
+    let endSelection = { line: cursorPosition.line, ch: cursorPosition.ch + selectedSignature.parameters[ui.selectedArgumentIndex + 1].length };
+    ui.editor.codeMirrorInstance.getDoc().setSelection(cursorPosition, endSelection);
+  }
+};
 
 // Setup editor
 export function setupEditor(clientId: number) {
@@ -179,7 +216,7 @@ export function refreshErrors(errors: Array<{file: string; position: { line: num
   ui.errorsTBody.innerHTML = "";
 
   if (errors.length === 0) {
-    ui.errorPaneInfo.textContent = "No errors";
+    ui.errorPaneInfo.textContent = SupClient.i18n.t("scriptEditor:errors.noErrors");
     ui.errorPaneStatus.classList.remove("has-errors");
     return;
   }
@@ -232,14 +269,17 @@ export function refreshErrors(errors: Array<{file: string; position: { line: num
     gutter.innerHTML = "●";
     ui.editor.codeMirrorInstance.setGutterMarker(line, "line-error-gutter", gutter);
   }
-
   let otherErrorsCount = errors.length - selfErrorsCount;
+
+  let selfErrorsValue = SupClient.i18n.t(`scriptEditor:errors.${selfErrorsCount > 1 ? "severalErrors" : "oneError"}`, { errors: selfErrorsCount.toString() });
+  let selfErrors = SupClient.i18n.t("scriptEditor:errors.selfErrorsInfo", { errors: selfErrorsValue.toString() });
+  let otherErrorsValue = SupClient.i18n.t(`scriptEditor:errors.${otherErrorsCount > 1 ? "severalErrors" : "oneError"}`, { errors: selfErrorsCount.toString() });
+  let otherErrors = SupClient.i18n.t("scriptEditor:errors.otherErrorsInfo", { errors: otherErrorsValue.toString() });
+
   if (selfErrorsCount > 0) {
-    if (otherErrorsCount === 0) ui.errorPaneInfo.textContent = `${selfErrorsCount} error${selfErrorsCount > 1 ? "s" : ""}`;
-    else ui.errorPaneInfo.textContent = `${selfErrorsCount} error${selfErrorsCount > 1 ? "s" : ""} in this script, ${otherErrorsCount} in other scripts`;
-  } else {
-    ui.errorPaneInfo.textContent = `${errors.length} error${errors.length > 1 ? "s" : ""} in other scripts`;
-  }
+    if (otherErrorsCount === 0) ui.errorPaneInfo.textContent = selfErrors;
+    else ui.errorPaneInfo.textContent = SupClient.i18n.t("scriptEditor:errors.bothErrorsInfo", { selfErrors, otherErrors });
+  } else ui.errorPaneInfo.textContent = otherErrors;
 }
 
 function onErrorTBodyClick(event: MouseEvent) {
@@ -315,42 +355,7 @@ function clearInfoPopup() {
   if (ui.infoTimeout != null) clearTimeout(ui.infoTimeout);
 }
 
-// Parameter hint popup
-ui.parameterElement = <HTMLDivElement>document.querySelector(".popup-parameter");
-ui.parameterElement.parentElement.removeChild(ui.parameterElement);
-ui.parameterElement.style.display = "";
 
-var parameterPopupKeyMap = {
-  "Esc": () => { clearParameterPopup(); },
-  "Up": () => { updateParameterHint(ui.selectedSignatureIndex - 1); },
-  "Down": () => { updateParameterHint(ui.selectedSignatureIndex + 1); },
-  "Enter": () => {
-    let selectedSignature = ui.signatureTexts[ui.selectedSignatureIndex];
-    if (selectedSignature.parameters.length === 0) return;
-
-    let cursorPosition = ui.editor.codeMirrorInstance.getDoc().getCursor();
-    let text = "";
-
-    for (let parameterIndex = 0; parameterIndex < selectedSignature.parameters.length; parameterIndex++) {
-      if (parameterIndex !== 0) text += ", ";
-      text += selectedSignature.parameters[parameterIndex];
-    }
-    ui.editor.codeMirrorInstance.getDoc().replaceRange(text, cursorPosition, null);
-    let endSelection = { line: cursorPosition.line, ch: cursorPosition.ch + selectedSignature.parameters[0].length };
-    ui.editor.codeMirrorInstance.getDoc().setSelection(cursorPosition, endSelection);
-  },
-  "Tab": () => {
-    let selectedSignature = ui.signatureTexts[ui.selectedSignatureIndex];
-    if (selectedSignature.parameters.length === 0) return;
-    if (ui.selectedArgumentIndex === selectedSignature.parameters.length - 1) return;
-
-    let cursorPosition = ui.editor.codeMirrorInstance.getDoc().getCursor();
-
-    cursorPosition.ch += 2;
-    let endSelection = { line: cursorPosition.line, ch: cursorPosition.ch + selectedSignature.parameters[ui.selectedArgumentIndex + 1].length };
-    ui.editor.codeMirrorInstance.getDoc().setSelection(cursorPosition, endSelection);
-  }
-};
 
 export function showParameterPopup(texts: { prefix: string; parameters: string[]; suffix: string; }[], selectedItemIndex: number, selectedArgumentIndex: number) {
   ui.signatureTexts = texts;
@@ -469,13 +474,13 @@ function onGlobalSearch() {
   }
 
   let options = {
-    placeholder: "Find in project",
+    placeholder: SupClient.i18n.t("scriptEditor:globalSearch.placeholder"),
     initialValue: ui.editor.codeMirrorInstance.getDoc().getSelection(),
-    validationLabel: "Search"
+    validationLabel: SupClient.i18n.t("common:actions.search")
   };
 
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.PromptDialog("Search in all TypeScript scripts.", options, (text) => {
+  new SupClient.dialogs.PromptDialog(SupClient.i18n.t("scriptEditor:globalSearch.prompt"), options, (text) => {
     /* tslint:enable:no-unused-expression */
     if (text == null) {
       ui.editor.codeMirrorInstance.focus();

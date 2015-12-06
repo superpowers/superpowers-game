@@ -14,25 +14,26 @@ html
     .error-pane
       .status
         .draft
-          button(title="Apply changes (Ctrl+S)") Save
-          |  Draft &mdash;
-        .info Loading...
+          button(title= t("scriptEditor:applyChanges"))= t("common:actions.save")
+          span.label= t("scriptEditor:draft")
+          span  &mdash;
+        .info= t("scriptEditor:loading")
         button.toggle –
 
       .errors(disabled)
         table
           thead
             tr
-              th Line
-              th Message
-              th Script
+              th= t("scriptEditor:errors.line")
+              th= t("scriptEditor:errors.message")
+              th= t("scriptEditor:errors.script")
           tbody
 
     .popup-parameter(style="display: none")
-      span.item ? / ?
-      span.prefix function(
-      span.parameter parameter: Type
-      span.suffix ): Type;
+      span.item
+      span.prefix
+      span.parameter
+      span.suffix
 
     script(src="/SupCore.js")
     script(src="/SupClient.js")
