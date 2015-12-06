@@ -56,6 +56,7 @@
     },
     "advancedTextures": {
       "title": "Advanced Textures",
+      "new": "New",
       "map": "Map",
       "lightMap": "Light map",
       "specularMap": "Specular map",
