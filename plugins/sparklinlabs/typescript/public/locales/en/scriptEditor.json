@@ -1,7 +1,6 @@
 {
   "applyChanges": "Apply changes (Ctrl+S)",
   "draft": "Draft",
-  "loading": "Loading...",
   
   "errors": {
     "noErrors": "No errors",
@@ -11,7 +10,7 @@
     "selfErrorsInfo": "${errors} in this script",
     "otherErrorsInfo": "${errors} in other scripts",
     "bothErrorsInfo": "${selfErrors}, ${otherErrors}",
-    
+
     "line": "Line",
     "message": "Message",
     "script": "Script"
@@ -22,7 +21,7 @@
     "copy": "Copy (Ctrl+C)",
     "paste": "Paste (Ctrl+V)"
   },
-  
+
   "globalSearch": {
     "prompt": "Search in all TypeScript scripts.",
     "placeholder": "Find in project"
