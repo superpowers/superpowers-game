@@ -8,13 +8,15 @@ export let data: { projectClient?: SupClient.ProjectClient; modelUpdater?: Model
 
 export let socket: SocketIOClient.Socket;
 
-socket = SupClient.connect(SupClient.query.project);
-socket.on("connect", onConnected);
-socket.on("disconnect", SupClient.onDisconnected);
+SupClient.i18n.load([{ root: `${window.location.pathname}/../..`, name: "modelEditor" }], () => {
+  socket = SupClient.connect(SupClient.query.project);
+  socket.on("connect", onConnected);
+  socket.on("disconnect", SupClient.onDisconnected);
+});
 
 let onEditCommands: any = {};
 function onConnected() {
-  data = {}
+  data = {};
   data.projectClient = new SupClient.ProjectClient(socket, { subEntries: false });
 
   let modelActor = new SupEngine.Actor(engine.gameInstance, "Model");
@@ -45,7 +47,7 @@ function onAssetReceived() {
 
 export function editAsset(...args: any[]) {
   let callback: Function;
-  if (typeof args[args.length-1] === "function") callback = args.pop();
+  if (typeof args[args.length - 1] === "function") callback = args.pop();
 
   args.push((err: string, id: string) => {
     if (err != null) { alert(err); return; }
@@ -72,7 +74,7 @@ onEditCommands.setProperty = (path: string, value: any) => {
       setupAdvancedTextures(value);
       break;
   }
-}
+};
 
 onEditCommands.newAnimation = (animation: any, index: number) => {
   setupAnimation(animation, index);
@@ -99,7 +101,7 @@ onEditCommands.setAnimationProperty = (id: string, key: string, value: any) => {
 
 onEditCommands.newMap = (name: string) => {
   setupMap(name);
-}
+};
 
 onEditCommands.renameMap = (oldName: string, newName: string) => {
   let pub = data.modelUpdater.modelAsset.pub;
@@ -110,7 +112,7 @@ onEditCommands.renameMap = (oldName: string, newName: string) => {
 
   for (let slotName in pub.mapSlots)
     if (ui.mapSlotsInput[slotName].value === oldName) ui.mapSlotsInput[slotName].value = newName;
-}
+};
 
 onEditCommands.deleteMap = (name: string) => {
   let textureElt = ui.texturesTreeView.treeRoot.querySelector(`[data-name="${name}"]`);
@@ -119,8 +121,8 @@ onEditCommands.deleteMap = (name: string) => {
   let pub = data.modelUpdater.modelAsset.pub;
   for (let slotName in pub.mapSlots)
     if (ui.mapSlotsInput[slotName].value === name) ui.mapSlotsInput[slotName].value = "";
-}
+};
 
 onEditCommands.setMapSlot = (slot: string, map: string) => {
   ui.mapSlotsInput[slot].value = map != null ? map : "";
-}
+};

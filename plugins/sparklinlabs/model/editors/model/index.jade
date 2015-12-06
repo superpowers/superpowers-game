@@ -14,117 +14,117 @@ html
 
       .error-pane.collapsed
         .status
-          .info No errors
+          .info= t("modelEditor:status.noErrors")
           button.toggle.plus +
 
         .errors(disabled)
           table
             thead
               tr
-                th Line
-                th Type
-                th Message
-                th File
+                th= t("modelEditor:status.line")
+                th= t("modelEditor:status.type")
+                th= t("modelEditor:status.message")
+                th= t("modelEditor:status.file")
             tbody
 
     .sidebar
       table.properties
         tr.model
-          th Model
+          th= t("modelEditor:sidebar.settings.model")
           td
-            button.upload Upload
+            button.upload= t("common:actions.upload")
             form(style="display: none")
               input.file-select(type="file",multiple)
 
         tr.map
-          th Texture
+          th= t("modelEditor:sidebar.settings.texture")
           td
-            button.upload Upload
+            button.upload= t("common:actions.upload")
             form(style="display: none")
               input.file-select(type="file",accept="image/*")
-            button.download Download
+            button.download= t("common:actions.download")
 
         tr
-          th Filtering
+          th= t("modelEditor:sidebar.settings.filtering.title")
           td
             select.filtering
-              option(value="pixelated") Pixelated
-              option(value="smooth") Smooth
+              option(value="pixelated")= t("modelEditor:sidebar.settings.filtering.pixelated")
+              option(value="smooth")= t("modelEditor:sidebar.settings.filtering.smooth")
 
         tr
-          th Wrapping
+          th= t("modelEditor:sidebar.settings.wrapping.title")
           td
             select.wrapping
-              option(value="clampToEdge") Clamp To Edge
-              option(value="repeat") Repeat
-              option(value="mirroredRepeat") Mirrored Repeat
+              option(value="clampToEdge")= t("modelEditor:sidebar.settings.wrapping.clampToEdge")
+              option(value="repeat")= t("modelEditor:sidebar.settings.wrapping.repeat")
+              option(value="mirroredRepeat")= t("modelEditor:sidebar.settings.wrapping.mirroredRepeat")
 
         tr
-          th Show skeleton
+          th= t("modelEditor:sidebar.settings.showSkeleton")
           td
             input.show-skeleton(type="checkbox")
 
         tr
           th
-            span Unit ratio
+            span= t("modelEditor:sidebar.settings.unitRatio")
           td
             input(type="number" min="0").property-unitRatio
 
         tr
           th
             div
-              div Opacity
+              div= t("modelEditor:sidebar.settings.opacity")
               input(type="checkbox").opacity-checkbox
           td
             input(type="number" min="0" max="1" step="0.1").property-opacity
 
       .header
-        span Animations
+        span= t("modelEditor:sidebar.animations.title")
       .animations-buttons.button-strip
-        button.new-animation New
+        button.new-animation= t("modelEditor:sidebar.animations.new")
         form(style="display: none")
           input.file-select.upload-animation(type="file",multiple)
-        button(disabled).upload-animation Upload
-        button(disabled).rename-animation Rename
-        button(disabled).delete-animation Delete
+        button(disabled).upload-animation= t("common:actions.upload")
+        button(disabled).rename-animation= t("common:actions.rename")
+        button(disabled).delete-animation= t("common:actions.delete")
 
       .animations-tree-view
 
       .advanced-textures.collapsed
         .header
-          .label Advanced Textures
+          .label= t("modelEditor:sidebar.advancedTextures.title")
           button.plus +
         .content
           table.properties
             tr
-              th Map
+              th= t("modelEditor:sidebar.advancedTextures.map")
               td
                 input.map-map
             tr
-              th Light map
+              th= t("modelEditor:sidebar.advancedTextures.lightMap")
               td
                 input.map-light
             tr
-              th Specular map
+              th= t("modelEditor:sidebar.advancedTextures.specularMap")
               td
                 input.map-specular
             tr
-              th Alpha map
+              th= t("modelEditor:sidebar.advancedTextures.alphaMap")
               td
                 input.map-alpha
             tr
-              th Normal map (Phong)
+              th= t("modelEditor:sidebar.advancedTextures.normalMap")
               td
                 input.map-normal
 
           .textures-buttons.button-strip
-            button.new-map New
+            button.new-map= t("modelEditor:sidebar.advancedTextures.new")
             form(style="display: none")
               input.file-select.upload-map(type="file",multiple)
-            button(disabled).upload-map Upload
-            button(disabled).download-map Download
-            button(disabled).rename-map Rename
-            button(disabled).delete-map Delete
+            button(disabled).upload-map= t("common:actions.upload")
+            button(disabled).download-map= t("common:actions.download")
+            button(disabled).rename-map= t("common:actions.rename")
+            button(disabled).delete-map= t("common:actions.delete")
           .textures-tree-view
 
     script(src="/SupCore.js")
