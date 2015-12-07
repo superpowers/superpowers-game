@@ -1,5 +1,5 @@
 import * as async from "async";
-let highlight = require("highlight.js"); // import * as highlight from "highlight.js";
+let hljs = require("highlight.js"); // import * as highlight from "highlight.js";
 
 SupClient.setupHotkeys();
 
@@ -14,7 +14,8 @@ function findText(containerNode: Node, offset: number) {
 
   let index = 0;
   while (node != null) {
-    if (node.nodeType === Node.TEXT_NODE) {
+    if (node.nodeType === Node.ELEMENT_NODE && (node as HTMLElement).tagName === "BR") index++;
+    else if (node.nodeType === Node.TEXT_NODE) {
       let length = (node as Text).data.length;
       if (index + length > offset) return { node, index: offset - index };
       else index += length;
@@ -66,7 +67,7 @@ function onAPILoaded() {
       name = plugin.exposeActorComponent.className;
       actorComponentAccessors.push(`${plugin.exposeActorComponent.propertyName}: ${plugin.exposeActorComponent.className};`);
     }
-    if (plugin.defs != null) allDefs[name] = plugin.defs;
+    if (plugin.defs != null) allDefs[name] = plugin.defs.replace(/\r\n/g, "\n");
   }
 
   allDefs["Sup.Actor"] = allDefs["Sup.Actor"].replace("// INSERT_COMPONENT_ACCESSORS", actorComponentAccessors.join("\n    "));
@@ -103,8 +104,9 @@ function onAPILoaded() {
 
     let preElt = document.createElement("pre");
 
-    let content = highlight.highlight("typescript", defs, true).value;
-    content = "<div>" + content.replace(/\n\n/g, "\n \n").replace(/\n/g, "</div><div>") + "</div>";
+    let content = hljs.highlight("typescript", defs, true).value;
+    content = content.replace(/\n/g, "<br>");
+
     preElt.innerHTML = content;
     articleElt.appendChild(preElt);
     preElts.push(preElt);
@@ -137,7 +139,7 @@ function onAPILoaded() {
 
       for (let i = 0; i < sortedDefNames.length; i++) {
         let defName = sortedDefNames[i];
-        let def = allDefs[defName].toLowerCase().replace(/\n\n/g, " ").replace(/\n/g, "");
+        let def = allDefs[defName].toLowerCase();
         let preElt = preElts[i];
 
         if (preElt.parentElement.classList.contains("active")) resultIndex = results.length;
@@ -177,7 +179,11 @@ function onAPILoaded() {
       selection.addRange(range);
 
       // Scroll into view if needed
-      let element = result.start.node.parentElement;
+      let elementNode = result.start.node;
+      while (elementNode.nodeType !== elementNode.ELEMENT_NODE) {
+        elementNode = (elementNode.nextSibling != null) ? elementNode.nextSibling : elementNode.parentElement;
+      }
+      let element = elementNode as HTMLElement;
       let elementRect = element.getBoundingClientRect();
       let containerRect = mainElt.getBoundingClientRect();
 
