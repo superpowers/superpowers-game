@@ -2,7 +2,7 @@ import { ModelRendererConfigPub } from "../data/ModelRendererConfig";
 import ModelAsset from "../data/ModelAsset";
 
 export default class ModelRendererEditor {
-  tbody: HTMLTableSectionElement
+  tbody: HTMLTableSectionElement;
   projectClient: SupClient.ProjectClient;
   editConfig: any;
 
@@ -37,10 +37,10 @@ export default class ModelRendererEditor {
     this.animationId = config.animationId;
     this.shaderAssetId = config.shaderAssetId;
 
-    let modelRow = SupClient.table.appendRow(tbody, "Model");
+    let modelRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:ModelRenderer.model"));
     let modelFields = SupClient.table.appendAssetField(modelRow.valueCell, "");
     this.modelTextField = modelFields.textField;
-    this.modelTextField.addEventListener("input", this._onChangeModelAsset);
+    this.modelTextField.addEventListener("input", this.onChangeModelAsset);
     this.modelTextField.disabled = true;
     this.modelButtonElt = modelFields.buttonElt;
     this.modelButtonElt.addEventListener("click", (event) => {
@@ -48,19 +48,19 @@ export default class ModelRendererEditor {
     });
     this.modelButtonElt.disabled = this.modelAssetId == null;
 
-    let animationRow = SupClient.table.appendRow(tbody, "Animation");
-    this.animationSelectBox = SupClient.table.appendSelectBox(animationRow.valueCell, { "": "(None)" });
-    this.animationSelectBox.addEventListener("change", this._onChangeModelAnimation);
+    let animationRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:ModelRenderer.animation"));
+    this.animationSelectBox = SupClient.table.appendSelectBox(animationRow.valueCell, { "": SupClient.i18n.t("common:none") });
+    this.animationSelectBox.addEventListener("change", this.onChangeModelAnimation);
     this.animationSelectBox.disabled = true;
 
-    let shadowRow = SupClient.table.appendRow(tbody, "Shadow");
+    let shadowRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:ModelRenderer.shadow.title"));
     let shadowDiv = <any>document.createElement("div");
     shadowDiv.classList.add("inputs");
     shadowRow.valueCell.appendChild(shadowDiv);
 
     let castSpan = document.createElement("span");
     castSpan.style.marginLeft = "5px";
-    castSpan.textContent = "Cast";
+    castSpan.textContent = SupClient.i18n.t("componentEditors:ModelRenderer.shadow.cast");
     shadowDiv.appendChild(castSpan);
     this.castShadowField = SupClient.table.appendBooleanField(shadowDiv, config.castShadow);
     this.castShadowField.addEventListener("change", (event: any) => {
@@ -70,7 +70,7 @@ export default class ModelRendererEditor {
 
     let receiveSpan = document.createElement("span");
     receiveSpan.style.marginLeft = "5px";
-    receiveSpan.textContent = "Receive";
+    receiveSpan.textContent = SupClient.i18n.t("componentEditors:ModelRenderer.shadow.receive");
     shadowDiv.appendChild(receiveSpan);
     this.receiveShadowField = SupClient.table.appendBooleanField(shadowDiv, config.receiveShadow);
     this.receiveShadowField.addEventListener("change", (event: any) => {
@@ -78,7 +78,7 @@ export default class ModelRendererEditor {
     });
     this.receiveShadowField.disabled = true;
 
-    let colorRow = SupClient.table.appendRow(tbody, "Color");
+    let colorRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:ModelRenderer.color"));
     let colorInputs = SupClient.table.appendColorField(colorRow.valueCell, config.color);
 
     this.colorField = colorInputs.textField;
@@ -93,7 +93,7 @@ export default class ModelRendererEditor {
     });
     this.colorPicker.disabled = true;
 
-    let opacityRow = SupClient.table.appendRow(tbody, "Opacity", { checkbox: true } );
+    let opacityRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:ModelRenderer.opacity"), { checkbox: true } );
     this.overrideOpacityField = opacityRow.checkbox;
     this.overrideOpacityField.checked = config.overrideOpacity;
     this.overrideOpacityField.addEventListener("change", (event: any) => {
@@ -121,17 +121,17 @@ export default class ModelRendererEditor {
     this.opacityField.step = "0.1";
     this.opacityField.disabled = !config.overrideOpacity;
 
-    let materialRow = SupClient.table.appendRow(tbody, "Material");
+    let materialRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:ModelRenderer.material"));
     this.materialSelectBox = SupClient.table.appendSelectBox(materialRow.valueCell, { "basic": "Basic", "phong": "Phong", "shader": "Shader" }, config.materialType);
     this.materialSelectBox.addEventListener("change", (event: any) => {
       this.editConfig("setProperty", "materialType", event.target.value);
-    })
+    });
     this.materialSelectBox.disabled = true;
 
-    let shaderRow = SupClient.table.appendRow(tbody, "Shader");
+    let shaderRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:ModelRenderer.shader"));
     let shaderFields = SupClient.table.appendAssetField(shaderRow.valueCell, "");
     this.shaderTextField = shaderFields.textField;
-    this.shaderTextField.addEventListener("input", this._onChangeShaderAsset);
+    this.shaderTextField.addEventListener("input", this.onChangeShaderAsset);
     this.shaderTextField.disabled = true;
     this.shaderButtonElt = shaderFields.buttonElt;
     this.shaderButtonElt.addEventListener("click", (event) => {
@@ -237,7 +237,7 @@ export default class ModelRendererEditor {
     }
   }
 
-  onEntryAdded(entry: any, parentId: string, index: number) {}
+  onEntryAdded(entry: any, parentId: string, index: number) { /* Nothing to do here */ }
   onEntryMoved(id: string, parentId: string, index: number) {
     if (id === this.modelAssetId) {
       this.modelTextField.value = this.projectClient.entries.getPathFromId(this.modelAssetId);
@@ -254,7 +254,7 @@ export default class ModelRendererEditor {
       this.shaderTextField.value = this.projectClient.entries.getPathFromId(this.shaderAssetId);
     }
   }
-  onEntryTrashed(id: string) {}
+  onEntryTrashed(id: string) { /* Nothing to do here */ }
 
   onAssetReceived(assetId: string, asset: any) {
     if (assetId !== this.modelAssetId) return;
@@ -310,7 +310,7 @@ export default class ModelRendererEditor {
     } else if (shaderRow.parentElement != null) shaderRow.parentElement.removeChild(shaderRow);
   }
 
-  _onChangeModelAsset = (event: any) => {
+  private onChangeModelAsset = (event: any) => {
     if (event.target.value === "") {
       this.editConfig("setProperty", "modelAssetId", null);
       this.editConfig("setProperty", "animationId", null);
@@ -322,18 +322,18 @@ export default class ModelRendererEditor {
         this.editConfig("setProperty", "animationId", null);
       }
     }
-  }
+  };
 
-  _onChangeModelAnimation = (event: any) => {
+  private onChangeModelAnimation = (event: any) => {
     let animationId = (event.target.value === "") ? null : event.target.value;
     this.editConfig("setProperty", "animationId", animationId);
-  }
+  };
 
-  _onChangeShaderAsset = (event: any) => {
+  private onChangeShaderAsset = (event: any) => {
     if (event.target.value === "") this.editConfig("setProperty", "shaderAssetId", null);
     else {
       let entry = SupClient.findEntryByPath(this.projectClient.entries.pub, event.target.value);
       if (entry != null && entry.type === "shader") this.editConfig("setProperty", "shaderAssetId", entry.id);
     }
-  }
+  };
 }
