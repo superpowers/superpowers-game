@@ -203,12 +203,12 @@ function onFileSelectChange(event: Event) {
 
 function onDownloadTileset(event: Event) {
   let options = {
-    initialValue: "Tile set",
-    validationLabel: "Download"
+    initialValue: SupClient.i18n.t("tileSetEditor:texture.downloadInitialValue"),
+    validationLabel: SupClient.i18n.t("common:actions.download")
   };
 
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.PromptDialog("Enter a name for the image.", options, (name) => {
+  new SupClient.dialogs.PromptDialog(SupClient.i18n.t("tileSetEditor:texture.downloadPrompt"), options, (name) => {
     /* tslint:enable:no-unused-expression */
     if (name == null) return;
 
@@ -238,12 +238,12 @@ function onPropertySelect() {
 
 function onNewPropertyClick() {
   let options = {
-    initialValue: "property",
-    validationLabel: "Create"
+    initialValue: SupClient.i18n.t("tileSetEditor:newPropertyInitialValue"),
+    validationLabel: SupClient.i18n.t("common:actions.create")
   };
 
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.PromptDialog("Enter a name for the property.", options, (name) => {
+  new SupClient.dialogs.PromptDialog(SupClient.i18n.t("tileSetEditor:newPropertyPrompt"), options, (name) => {
     /* tslint:enable:no-unused-expression */
     if (name == null) return;
 
@@ -266,11 +266,11 @@ function onRenamePropertyClick() {
 
   let options = {
     initialValue: ui.selectedProperty,
-    validationLabel: "Rename"
+    validationLabel: SupClient.i18n.t("common:actions.rename")
   };
 
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.PromptDialog("Enter a new name for the property.", options, (newName) => {
+  new SupClient.dialogs.PromptDialog(SupClient.i18n.t("tileSetEditor:renamePropertyPrompt"), options, (newName) => {
     /* tslint:enable:no-unused-expression */
     if (newName == null) return;
 
@@ -280,8 +280,11 @@ function onRenamePropertyClick() {
 
 function onDeletePropertyClick() {
   if (ui.selectedProperty == null) return;
+
+  let confirmString = SupClient.i18n.t("tileSetEditor:deletePropertyConfirm");
+  let validateString = SupClient.i18n.t("common:actions.delete");
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.ConfirmDialog("Are you sure you want to delete the selected property?", "Delete", (confirm) => {
+  new SupClient.dialogs.ConfirmDialog(confirmString, validateString, (confirm) => {
     /* tslint:enable:no-unused-expression */
     if (!confirm) return;
 
@@ -325,5 +328,4 @@ function handleTilesetArea() {
   }
 }
 
-// Start
-start();
+SupClient.i18n.load([{ root: `${window.location.pathname}/../..`, name: "tileSetEditor" }], start);

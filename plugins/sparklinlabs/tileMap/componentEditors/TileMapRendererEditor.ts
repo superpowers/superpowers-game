@@ -25,7 +25,7 @@ export default class TileMapRendererEditor {
     this.tileSetAssetId = config.tileSetAssetId;
     this.shaderAssetId = config.shaderAssetId;
 
-    let tileMapRow = SupClient.table.appendRow(tbody, "Map");
+    let tileMapRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:TileMapRenderer.tileMap"));
     let tileMapFields = SupClient.table.appendAssetField(tileMapRow.valueCell, "");
     this.tileMapTextField = tileMapFields.textField;
     this.tileMapTextField.disabled = true;
@@ -35,18 +35,18 @@ export default class TileMapRendererEditor {
     });
     this.tileMapButtonElt.disabled = this.tileMapAssetId == null;
 
-    let tileSetRow = SupClient.table.appendRow(tbody, "Tile Set");
+    let tileSetRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:TileMapRenderer.tileSet"));
     this.tileSetTextField = SupClient.table.appendTextField(tileSetRow.valueCell, "");
     this.tileSetTextField.disabled = true;
 
-    let shadowRow = SupClient.table.appendRow(tbody, "Shadow");
+    let shadowRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:TileMapRenderer.shadow.title"));
     let shadowDiv = <any>document.createElement("div");
     shadowDiv.classList.add("inputs");
     shadowRow.valueCell.appendChild(shadowDiv);
 
     let castSpan = document.createElement("span");
     castSpan.style.marginLeft = "5px";
-    castSpan.textContent = "Cast";
+    castSpan.textContent = SupClient.i18n.t("componentEditors:TileMapRenderer.shadow.cast");
     shadowDiv.appendChild(castSpan);
     this.castShadowField = SupClient.table.appendBooleanField(shadowDiv, config.castShadow);
     this.castShadowField.addEventListener("change", (event: any) => {
@@ -56,7 +56,7 @@ export default class TileMapRendererEditor {
 
     let receiveSpan = document.createElement("span");
     receiveSpan.style.marginLeft = "5px";
-    receiveSpan.textContent = "Receive";
+    receiveSpan.textContent = SupClient.i18n.t("componentEditors:TileMapRenderer.shadow.receive");
     shadowDiv.appendChild(receiveSpan);
     this.receiveShadowField = SupClient.table.appendBooleanField(shadowDiv, config.receiveShadow);
     this.receiveShadowField.addEventListener("change", (event: any) => {
@@ -64,14 +64,14 @@ export default class TileMapRendererEditor {
     });
     this.receiveShadowField.disabled = true;
 
-    let materialRow = SupClient.table.appendRow(tbody, "Material");
+    let materialRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:TileMapRenderer.material"));
     this.materialSelectBox = SupClient.table.appendSelectBox(materialRow.valueCell, { "basic": "Basic", "phong": "Phong", "shader": "Shader" }, config.materialType);
     this.materialSelectBox.addEventListener("change", (event: any) => {
       this.editConfig("setProperty", "materialType", event.target.value);
     })
     this.materialSelectBox.disabled = true;
 
-    let shaderRow = SupClient.table.appendRow(tbody, "Shader");
+    let shaderRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:TileMapRenderer.shader"));
     let shaderFields = SupClient.table.appendAssetField(shaderRow.valueCell, "");
     this.shaderTextField = shaderFields.textField;
     this.shaderTextField.addEventListener("input", this._onChangeShaderAsset);

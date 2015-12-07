@@ -20,42 +20,39 @@ html
     .sidebar
       table.properties
         tr
-          th(colspan="2") Tile Map
+          th(colspan="2")= t("tileMapEditor:tileMap")
         tr
-          th Tile Set
+          th= t("tileMapEditor:tileSet")
           td
             input.property-tileSetId
 
         tr
-          th Pixels /&nbsp;unit
+          th= t("tileMapEditor:pixelsPerUnit")
           td
             input(type="number").property-pixelsPerUnit
 
         tr
-          th Depth offset
+          th= t("tileMapEditor:depthOffset")
           td
             input(type="number").property-layerDepthOffset
 
         tr
-          th Size
+          th= t("tileMapEditor:size")
           td
-            input(readonly).property-size
+            .inputs
+              input(readonly).property-size
+              button.resize= t("tileMapEditor:resize")
+              button.move= t("tileMapEditor:move")
 
         tr
-          th(colspan="2") Tools
+          th(colspan="2")= t("tileMapEditor:tools")
         tr
-          th Map Actions
-          td
-            button.resize Resize
-            button.move Move
-
-        tr
-          th(title="G") Grid
+          th(title="G")= t("tileMapEditor:grid")
           td
             input(type="checkbox",checked).grid-checkbox
 
         tr
-          th(title="I") Highlight
+          th(title="I")= t("tileMapEditor:highlight")
           td
             .inputs
               input(type="checkbox").highlight-checkbox
@@ -63,24 +60,24 @@ html
 
       .buttons
         input(type="radio",name="Tool",id="Brush",checked)
-        label(title="B",for="Brush") Brush
+        label(title="B",for="Brush")= t("tileMapEditor:brush")
         input(type="radio",name="Tool",id="Fill")
-        label(title="F",for="Fill") Fill
+        label(title="F",for="Fill")= t("tileMapEditor:fill")
         input(type="radio",name="Tool",id="Selection")
-        label(title="S",for="Selection") Selection
+        label(title="S",for="Selection")= t("tileMapEditor:selection")
         input(type="radio",name="Tool",id="Eraser")
-        label(title="E",for="Eraser") Eraser
+        label(title="E",for="Eraser")= t("tileMapEditor:eraser")
 
       canvas(tabindex="0").tileSet
 
       .header
-        span Layers
+        span= t("tileMapEditor:layers")
 
       .layers
         .layers-buttons
-          button.new-layer New layer
-          button.rename-layer Rename
-          button.delete-layer Delete
+          button.new-layer= t("common:actions.new")
+          button.rename-layer= t("common:actions.rename")
+          button.delete-layer= t("common:actions.delete")
 
         .layers-tree-view
 

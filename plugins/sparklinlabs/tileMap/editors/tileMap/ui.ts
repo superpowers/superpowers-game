@@ -117,27 +117,29 @@ function onTileSetChange(event: Event) {
 function onResizeMapClick() {
   let options = {
     initialValue: data.tileMapUpdater.tileMapAsset.pub.width.toString(),
-    validationLabel: "Resize"
+    validationLabel: SupClient.i18n.t("tileMapEditor:resize"),
+    cancelLabel: SupClient.i18n.t("common:actions.skip")
   };
 
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.PromptDialog("Enter a new width for the map.", options, (newWidthString) => {
+  new SupClient.dialogs.PromptDialog(SupClient.i18n.t("tileMapEditor:newWidthPrompt"), options, (newWidthString) => {
     /* tslint:enable:no-unused-expression */
-    if (newWidthString == null) return;
-    let newWidth = parseInt(newWidthString, 10);
-    if (isNaN(newWidth)) return;
+    let newWidth = data.tileMapUpdater.tileMapAsset.pub.width;
+    if (newWidthString != null && !isNaN(parseInt(newWidthString, 10)))
+      newWidth = parseInt(newWidthString, 10);
 
     let options = {
       initialValue: data.tileMapUpdater.tileMapAsset.pub.height.toString(),
-      validationLabel: "Resize"
+      validationLabel: SupClient.i18n.t("tileMapEditor:resize"),
+      cancelLabel: SupClient.i18n.t("common:actions.skip")
     };
 
     /* tslint:disable:no-unused-expression */
-    new SupClient.dialogs.PromptDialog("Enter a new height for the map.", options, (newHeightString) => {
+    new SupClient.dialogs.PromptDialog(SupClient.i18n.t("tileMapEditor:newHeightPrompt"), options, (newHeightString) => {
       /* tslint:enable:no-unused-expression */
-      if (newHeightString == null) return;
-      let newHeight = parseInt(newHeightString, 10);
-      if (isNaN(newHeight)) return;
+      let newHeight = data.tileMapUpdater.tileMapAsset.pub.height;
+      if (newHeightString != null && !isNaN(parseInt(newHeightString, 10)))
+        newHeight = parseInt(newHeightString, 10);
 
       if (newWidth === data.tileMapUpdater.tileMapAsset.pub.width && newHeight === data.tileMapUpdater.tileMapAsset.pub.height) return;
 
@@ -151,25 +153,25 @@ function onResizeMapClick() {
 function onMoveMapClick() {
   let options = {
     initialValue: "0",
-    validationLabel: "Apply offset"
+    validationLabel: SupClient.i18n.t("tileMapEditor:applyOffset"),
+    cancelLabel: SupClient.i18n.t("common:actions.skip")
   };
 
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.PromptDialog("Enter the horizontal offset.", options, (horizontalOffsetString) => {
+  new SupClient.dialogs.PromptDialog(SupClient.i18n.t("tileMapEditor:horizontalOffsetPrompt"), options, (horizontalOffsetString) => {
     /* tslint:enable:no-unused-expression */
-    if (horizontalOffsetString == null) return;
-    let horizontalOffset = parseInt(horizontalOffsetString, 10);
-    if (isNaN(horizontalOffset)) return;
+    let horizontalOffset = 0;
+    if (horizontalOffsetString != null && !isNaN(parseInt(horizontalOffsetString, 10)))
+      horizontalOffset = parseInt(horizontalOffsetString, 10);
 
     /* tslint:disable:no-unused-expression */
-    new SupClient.dialogs.PromptDialog("Enter the vertical offset.", options, (verticalOffsetString) => {
+    new SupClient.dialogs.PromptDialog(SupClient.i18n.t("tileMapEditor:verticalOffsetPrompt"), options, (verticalOffsetString) => {
       /* tslint:enable:no-unused-expression */
-      if (verticalOffsetString == null) return;
-      let verticalOffset = parseInt(verticalOffsetString, 10);
-      if (isNaN(verticalOffset)) return;
+      let verticalOffset = 0;
+      if (verticalOffsetString != null && !isNaN(parseInt(verticalOffsetString, 10)))
+        verticalOffset = parseInt(verticalOffsetString, 10);
 
       if (horizontalOffset === 0 && verticalOffset === 0) return;
-
       socket.emit("edit:assets", SupClient.query.asset, "moveMap", horizontalOffset, verticalOffset, (err: string) => {
         if (err != null) { alert(err); }
       });
@@ -179,12 +181,12 @@ function onMoveMapClick() {
 
 function onNewLayerClick() {
   let options = {
-    initialValue: "Layer",
-    validationLabel: "Create"
+    initialValue: SupClient.i18n.t("tileMapEditor:newLayerInitialValue"),
+    validationLabel: SupClient.i18n.t("common:actions.create")
   };
 
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.PromptDialog("Enter a name for the layer.", options, (name) => {
+  new SupClient.dialogs.PromptDialog(SupClient.i18n.t("tileMapEditor:newLayerPrompt"), options, (name) => {
     /* tslint:enable:no-unused-expression */
     if (name == null) return;
 
@@ -208,11 +210,11 @@ function onRenameLayerClick() {
 
   let options = {
     initialValue: layer.name,
-    validationLabel: "Rename"
+    validationLabel: SupClient.i18n.t("common:actions.rename")
   };
 
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.PromptDialog("Enter a new name for the layer.", options, (newName) => {
+  new SupClient.dialogs.PromptDialog(SupClient.i18n.t("tileMapEditor:renameLayerPrompt"), options, (newName) => {
     /* tslint:enable:no-unused-expression */
     if (newName == null) return;
 
@@ -224,8 +226,11 @@ function onRenameLayerClick() {
 
 function onDeleteLayerClick() {
   if (ui.layersTreeView.selectedNodes.length !== 1) return;
+
+  let confirmString = SupClient.i18n.t("tileMapEditor:deleteLayerConfirm");
+  let validateString = SupClient.i18n.t("common:actions.delete");
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.ConfirmDialog("Are you sure you want to delete the selected layer?", "Delete", (confirm) => {
+  new SupClient.dialogs.ConfirmDialog(confirmString, validateString, (confirm) => {
     /* tslint:enable:no-unused-expression */
     if (!confirm) return;
 

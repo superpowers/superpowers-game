@@ -15,37 +15,37 @@ html
     .sidebar
       table.properties
         tr
-          th(colspan="2") Tile Set
+          th(colspan="2")= t("tileSetEditor:tileSet")
         tr
-          th Texture
+          th= t("tileSetEditor:texture.title")
           td
-            button.upload Upload
+            button.upload= t("common:actions.upload")
             form(style="display: none")
               input.file-select(type="file",accept="image/*")
 
-            button.download Download
+            button.download= t("common:actions.download")
 
         tr
-          th Grid (px)
+          th= t("tileSetEditor:grid")
           td
             .inputs
               input(type='number' min="1").grid-width
               input(type='number' min="1").grid-height
 
         tr
-          th(colspan="2") Data
+          th(colspan="2")= t("tileSetEditor:data")
         tr
-          th Tile ID
+          th= t("tileSetEditor:tileID")
           td
             input(readonly).selected-tile-number
 
       .header
-        span Properties
+        span= t("tileSetEditor:properties")
 
       .properties-buttons
-        button.new-property New
-        button(disabled).rename-property Rename
-        button(disabled).delete-property Delete
+        button.new-property= t("common:actions.new")
+        button(disabled).rename-property= t("common:actions.rename")
+        button(disabled).delete-property= t("common:actions.delete")
 
       .properties-tree-view
 

@@ -12,9 +12,12 @@ import TileSetRendererUpdater from "../../components/TileSetRendererUpdater";
 
 export let data: { projectClient?: SupClient.ProjectClient; tileMapUpdater?: TileMapRendererUpdater, tileSetUpdater?: TileSetRendererUpdater } = {};
 
-export let socket = SupClient.connect(SupClient.query.project);
-socket.on("connect", onConnected);
-socket.on("disconnect", SupClient.onDisconnected);
+export let socket: SocketIOClient.Socket;
+SupClient.i18n.load([{ root: `${window.location.pathname}/../..`, name: "tileMapEditor" }], () => {
+  socket = SupClient.connect(SupClient.query.project);
+  socket.on("connect", onConnected);
+  socket.on("disconnect", SupClient.onDisconnected);
+});
 
 let onEditCommands: any = {};
 let onTileSetEditCommands: any = {};
