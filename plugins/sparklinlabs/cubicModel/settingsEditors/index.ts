@@ -1,3 +1,3 @@
 import CubicModelSettingsEditor from "./CubicModelSettingsEditor";
 
-SupClient.registerPlugin("settingsEditors", "CubicModel", { namespace: "Editors", editor: CubicModelSettingsEditor });
+SupClient.registerPlugin("settingsEditors", "CubicModel", { namespace: "editors", editor: CubicModelSettingsEditor });

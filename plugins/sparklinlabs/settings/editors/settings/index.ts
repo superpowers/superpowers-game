@@ -15,32 +15,36 @@ function onWelcome() {
 }
 
 function loadPlugins() {
+  let i18nFiles: SupClient.i18n.File[] = [];
+
   SupClient.fetch(`/systems/${SupCore.system.name}/plugins.json`, "json", (err: Error, pluginsInfo: SupCore.PluginsInfo) => {
     async.eachSeries(pluginsInfo.list, (pluginName, pluginCallback) => {
+      let pluginPath = `/systems/${SupCore.system.name}/plugins/${pluginName}`;
+      i18nFiles.push({ root: pluginPath, name: "settingsEditors" });
+
       async.series([
 
         (cb) => {
           let dataScript = document.createElement("script");
-          dataScript.src = `/systems/${SupCore.system.name}/plugins/${pluginName}/data.js`;
+          dataScript.src = `${pluginPath}/data.js`;
           dataScript.addEventListener("load", () => { cb(null, null); } );
           dataScript.addEventListener("error", () => { cb(null, null); } );
           document.body.appendChild(dataScript);
         },
 
         (cb) => {
-          SupClient.activePluginPath = `/systems/${SupCore.system.name}/plugins/${pluginName}`;
+          SupClient.activePluginPath = pluginPath;
           let settingsEditorScript = document.createElement("script");
-          settingsEditorScript.src = `${SupClient.activePluginPath}/settingsEditors.js`;
+          settingsEditorScript.src = `${pluginPath}/settingsEditors.js`;
           settingsEditorScript.addEventListener("load", () => { cb(null, null); } );
           settingsEditorScript.addEventListener("error", () => { cb(null, null); } );
           document.body.appendChild(settingsEditorScript);
         },
 
       ], pluginCallback);
-    }, (err) => { setupSettings(); });
+    }, (err) => { SupClient.i18n.load(i18nFiles, setupSettings); });
   });
 }
-
 
 function setupSettings() {
   let mainElt = document.querySelector("main");
@@ -50,7 +54,7 @@ function setupSettings() {
 
   let createSection = (namespace: string) => {
     let sectionHeaderElt = document.createElement("header");
-    sectionHeaderElt.textContent = namespace;
+    sectionHeaderElt.textContent = SupClient.i18n.t(`settingsEditors:namespaces.${namespace}`);
     mainElt.appendChild(sectionHeaderElt);
     let sectionRootElt = document.createElement("div");
     sectionRootElt.classList.add(`namespace-${namespace}`);
@@ -60,19 +64,12 @@ function setupSettings() {
   };
 
   // Create general section first so we are sure it is displayed above
-  createSection("General");
+  createSection("general");
 
   for (let name of sortedNames) {
     let namespace = SupClient.plugins["settingsEditors"][name].content.namespace;
     let sectionRootElt = mainElt.querySelector(`div.namespace-${namespace}`) as HTMLDivElement;
     if (sectionRootElt == null) sectionRootElt = createSection(namespace);
-
-    let liElt = document.createElement("li");
-    let anchorElt = document.createElement("a");
-    anchorElt.id = `link-${name}`;
-    anchorElt.href = `#${name}`;
-    anchorElt.textContent = name;
-    liElt.appendChild(anchorElt);
 
     let sectionElt = document.createElement("section");
     sectionElt.id = `settings-${name}`;
@@ -81,7 +78,7 @@ function setupSettings() {
     let headerElt = document.createElement("header");
     let sectionAnchorElt = document.createElement("a");
     sectionAnchorElt.name = name;
-    sectionAnchorElt.textContent = name;
+    sectionAnchorElt.textContent = SupClient.i18n.t(`settingsEditors:${name}.label`);
     headerElt.appendChild(sectionAnchorElt);
     sectionElt.appendChild(headerElt);
 

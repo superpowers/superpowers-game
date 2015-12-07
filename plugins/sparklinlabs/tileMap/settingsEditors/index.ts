@@ -1,3 +1,3 @@
 import TileMapSettingsEditor from "./TileMapSettingsEditor";
 
-SupClient.registerPlugin("settingsEditors", "TileMap", { namespace: "Editors", editor: TileMapSettingsEditor });
+SupClient.registerPlugin("settingsEditors", "TileMap", { namespace: "editors", editor: TileMapSettingsEditor });

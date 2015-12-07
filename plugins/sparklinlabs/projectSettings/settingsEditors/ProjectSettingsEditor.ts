@@ -14,7 +14,7 @@ export default class ProjectSettingsEditor {
 
       let button = <HTMLButtonElement>document.createElement("button");
       button.style.marginRight = "0.5em";
-      button.textContent = "Delete trashed assets from disk";
+      button.textContent = SupClient.i18n.t("settingsEditors:Project.deleteTrashedAssetsFromDisk");
       vacuumContainer.appendChild(button);
 
       let span = <HTMLSpanElement>document.createElement("span");
@@ -27,9 +27,9 @@ export default class ProjectSettingsEditor {
           if (err != null) { alert(err); return; }
 
           if (deletedCount > 0) {
-            if (deletedCount > 1) span.textContent = `${deletedCount} folders were removed.`;
-            else span.textContent = "1 folder was removed.";
-          } else span.textContent = "No folder were removed.";
+            if (deletedCount > 1) span.textContent = SupClient.i18n.t("settingsEditors:Project.severalFoldersRemoved", { folders: deletedCount.toString() });
+            else span.textContent = SupClient.i18n.t("settingsEditors:Project.oneFolderRemoved");
+          } else span.textContent = SupClient.i18n.t("settingsEditors:Project.noFoldersRemoved");
         });
       });
     }

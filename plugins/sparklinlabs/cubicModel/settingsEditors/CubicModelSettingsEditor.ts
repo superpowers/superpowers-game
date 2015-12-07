@@ -14,10 +14,10 @@ export default class CubicModelSettingsEditor {
 
     let { tbody } = SupClient.table.createTable(container);
 
-    this.pixelsPerUnitRow = SupClient.table.appendRow(tbody, "Pixels per unit");
+    this.pixelsPerUnitRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("settingsEditors:CubicModel.pixelsPerUnit"));
     this.fields["pixelsPerUnit"] = SupClient.table.appendNumberField(this.pixelsPerUnitRow.valueCell, "");
     this.fields["pixelsPerUnit"].addEventListener("change", (event: any) => {
-      this.projectClient.socket.emit("edit:resources", "cubicModelSettings", "setProperty", "pixelsPerUnit", parseInt(event.target.value), (err: string) => { if (err != null) alert(err); });
+      this.projectClient.socket.emit("edit:resources", "cubicModelSettings", "setProperty", "pixelsPerUnit", parseInt(event.target.value, 10), (err: string) => { if (err != null) alert(err); });
     });
 
     this.projectClient.subResource("cubicModelSettings", this);

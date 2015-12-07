@@ -1,0 +1,9 @@
+{
+  "Project": {
+    "label": "Project",
+    "deleteTrashedAssetsFromDisk": "Delete trashed assets from disk",
+    "noFoldersRemoved": "No folders were removed",
+    "oneFolderRemoved": "1 folder was removed",
+    "severalFoldersRemoved": "${folders} folders were removed"
+  }
+}

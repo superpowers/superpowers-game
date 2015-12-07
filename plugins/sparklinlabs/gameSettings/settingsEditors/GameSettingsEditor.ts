@@ -21,25 +21,25 @@ export default class GameSettingsEditor {
 
     let { tbody } = SupClient.table.createTable(container);
 
-    this.startupSceneRow = SupClient.table.appendRow(tbody, "Startup scene");
+    this.startupSceneRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("settingsEditors:Game.startupScene"));
     let startupSceneFields = SupClient.table.appendAssetField(this.startupSceneRow.valueCell, "");
     this.fields["startupSceneId"] = startupSceneFields.textField;
     this.startupSceneButton = startupSceneFields.buttonElt;
     this.startupSceneButton.disabled = true;
 
-    this.fpsRow = SupClient.table.appendRow(tbody, "Frames per second");
+    this.fpsRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("settingsEditors:Game.framesPerSecond"));
     this.fields["framesPerSecond"] = SupClient.table.appendNumberField(this.fpsRow.valueCell, "");
 
-    this.ratioRow = SupClient.table.appendRow(tbody, "Screen ratio");
+    this.ratioRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("settingsEditors:Game.screenRatio"));
     let ratioContainer = document.createElement("div");
     ratioContainer.className = "";
     this.ratioRow.valueCell.appendChild(ratioContainer);
 
     [ this.fields["ratioNumerator"], this.fields["ratioDenominator"] ] = SupClient.table.appendNumberFields(this.ratioRow.valueCell, [ "", "" ] );
-    this.fields["ratioNumerator"].placeholder = "Width";
-    this.fields["ratioDenominator"].placeholder = "Height";
+    this.fields["ratioNumerator"].placeholder = SupClient.i18n.t("settingsEditors:Game.width");
+    this.fields["ratioDenominator"].placeholder = SupClient.i18n.t("settingsEditors:Game.height");
 
-    this.customLayersRow = SupClient.table.appendRow(tbody, "Layers");
+    this.customLayersRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("settingsEditors:Game.layers"));
     this.layerContainers = document.createElement("div");
     this.layerContainers.className = "list";
     this.customLayersRow.valueCell.appendChild(this.layerContainers);
@@ -62,18 +62,18 @@ export default class GameSettingsEditor {
     });
     this.startupSceneButton.addEventListener("click", (event) => {
       window.parent.postMessage({ type: "openEntry", id: this.sceneAssetId }, (<any>window.location).origin);
-    })
+    });
 
     this.fields["framesPerSecond"].addEventListener("change", (event: any) => {
-      this.projectClient.socket.emit("edit:resources", "gameSettings", "setProperty", "framesPerSecond", parseInt(event.target.value), (err: string) => { if (err != null) alert(err); });
+      this.projectClient.socket.emit("edit:resources", "gameSettings", "setProperty", "framesPerSecond", parseInt(event.target.value, 10), (err: string) => { if (err != null) alert(err); });
     });
 
     this.fields["ratioNumerator"].addEventListener("change", (event: any) => {
-      this.projectClient.socket.emit("edit:resources", "gameSettings", "setProperty", "ratioNumerator", parseInt(event.target.value), (err: string) => { if (err != null) alert(err); });
+      this.projectClient.socket.emit("edit:resources", "gameSettings", "setProperty", "ratioNumerator", parseInt(event.target.value, 10), (err: string) => { if (err != null) alert(err); });
     });
 
     this.fields["ratioDenominator"].addEventListener("change", (event: any) => {
-      this.projectClient.socket.emit("edit:resources", "gameSettings", "setProperty", "ratioDenominator", parseInt(event.target.value), (err: string) => { if (err != null) alert(err); });
+      this.projectClient.socket.emit("edit:resources", "gameSettings", "setProperty", "ratioDenominator", parseInt(event.target.value, 10), (err: string) => { if (err != null) alert(err); });
     });
 
     this.projectClient.subEntries(this);
@@ -96,9 +96,9 @@ export default class GameSettingsEditor {
   onEntriesReceived = (entries: SupCore.Data.Entries) => {
     if (this.resource == null) return;
     this._setStartupScene(this.resource.pub.startupSceneId);
-  }
+  };
 
-  onEntryAdded() {}
+  onEntryAdded() { /* Nothing to do here */ }
   onEntryMoved(id: string, parentId: string, index: number) {
     if (id !== this.resource.pub.startupSceneId) return;
     this._setStartupScene(id);
@@ -124,14 +124,14 @@ export default class GameSettingsEditor {
         if (this.projectClient.entries != null) this._setStartupScene(resource.pub.startupSceneId);
       } else this.fields[setting].value = resource.pub[setting];
     }
-  }
+  };
 
   _setupCustomLayers() {
     this.customLayers = this.resource.pub.customLayers.slice(0);
     for (let i = 0; i < GameSettingsResource.schema["customLayers"].maxLength; i++) {
       let field = this.fields[`customLayer${i}`];
       if (i === this.customLayers.length) {
-        field.placeholder = "New layer...";
+        field.placeholder = SupClient.i18n.t("settingsEditors:Game.newLayer");
         field.value = "";
       } else {
         field.placeholder = "";
@@ -150,10 +150,10 @@ export default class GameSettingsEditor {
     if (propertyName === "customLayers") this._setupCustomLayers();
     else if (propertyName === "startupSceneId") this._setStartupScene(this.resource.pub.startupSceneId);
     else this.fields[propertyName].value = this.resource.pub[propertyName];
-  }
+  };
 
   onCustomLayerFieldChange = (event: any) => {
-    let index = parseInt(<string>event.target.dataset.customLayerIndex);
+    let index = parseInt(<string>event.target.dataset.customLayerIndex, 10);
     if (index > this.customLayers.length) return;
 
     if (index === this.customLayers.length) {
@@ -175,5 +175,5 @@ export default class GameSettingsEditor {
     }
 
     this.projectClient.socket.emit("edit:resources", "gameSettings", "setProperty", "customLayers", this.customLayers, (err: string) => { if (err != null) alert(err); });
-  }
+  };
 }

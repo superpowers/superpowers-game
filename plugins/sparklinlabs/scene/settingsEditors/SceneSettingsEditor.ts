@@ -12,14 +12,14 @@ export default class SceneSettingsEditor {
 
     let { tbody } = SupClient.table.createTable(container);
 
-    let defaultCameraModeRow = SupClient.table.appendRow(tbody, "Default camera mode");
+    let defaultCameraModeRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("settingsEditors:Scene.defaultCameraMode"));
     this.fields["defaultCameraMode"] = SupClient.table.appendSelectBox(defaultCameraModeRow.valueCell, { "3D": "3D", "2D": "2D" });
 
     this.fields["defaultCameraMode"].addEventListener("change", (event: any) => {
       this.projectClient.socket.emit("edit:resources", "sceneSettings", "setProperty", "defaultCameraMode", event.target.value, (err: string) => { if (err != null) alert(err); });
     });
 
-    let defaultVerticalAxisRow = SupClient.table.appendRow(tbody, "Default camera vertical axis");
+    let defaultVerticalAxisRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("settingsEditors:Scene.defaultCameraVerticalAxis"));
     this.fields["defaultVerticalAxis"] = SupClient.table.appendSelectBox(defaultVerticalAxisRow.valueCell, { "Y": "Y", "Z": "Z" });
 
     this.fields["defaultVerticalAxis"].addEventListener("change", (event: any) => {

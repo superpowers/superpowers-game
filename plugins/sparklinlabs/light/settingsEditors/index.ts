@@ -1,3 +1,3 @@
 import LightSettingsEditor from "./LightSettingsEditor";
 
-SupClient.registerPlugin("settingsEditors", "Light", { namespace: "Editors", editor: LightSettingsEditor });
+SupClient.registerPlugin("settingsEditors", "Light", { namespace: "editors", editor: LightSettingsEditor });
