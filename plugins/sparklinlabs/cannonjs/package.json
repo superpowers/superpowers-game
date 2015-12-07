@@ -11,6 +11,6 @@
     "build": "gulp --gulpfile=../../../../../scripts/pluginGulpfile.js --cwd=."
   },
   "dependencies": {
-    "cannon": "^0.6.1"
+    "cannon": "^0.6.2"
   }
 }
