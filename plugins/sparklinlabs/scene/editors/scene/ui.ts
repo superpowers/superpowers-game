@@ -447,8 +447,13 @@ export function setupInspectorLayers() {
 }
 
 export function setInspectorPrefabScene(sceneAssetId: string) {
-  ui.prefabInput.value = sceneAssetId != null ? data.projectClient.entries.getPathFromId(sceneAssetId) : "";
-  ui.prefabOpenElt.disabled = sceneAssetId == null;
+  if (sceneAssetId != null && data.projectClient.entries.byId[sceneAssetId] != null) {
+    ui.prefabInput.value = data.projectClient.entries.getPathFromId(sceneAssetId);
+    ui.prefabOpenElt.disabled = false;
+  } else {
+    ui.prefabInput.value = "";
+    ui.prefabOpenElt.disabled = true;
+  }
 }
 
 function onNewNodeClick() {
