@@ -12,7 +12,7 @@ export default class LightSettingsEditor {
 
     let { tbody } = SupClient.table.createTable(container);
 
-    let shadowMapTypeRow = SupClient.table.appendRow(tbody, "Shadow Map Type");
+    let shadowMapTypeRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("settingsEditors:Light.shadowMapType"));
     this.fields["shadowMapType"] = SupClient.table.appendSelectBox(shadowMapTypeRow.valueCell, { "basic": "Basic", "pcf": "PCF", "pcfSoft": "PCF Soft" });
 
     this.fields["shadowMapType"].addEventListener("change", (event: any) => {
@@ -28,9 +28,9 @@ export default class LightSettingsEditor {
     for (let setting in resource.pub) {
       this.fields[setting].value = resource.pub[setting];
     }
-  }
+  };
 
   onResourceEdited = (resourceId: string, command: string, propertyName: string) => {
     this.fields[propertyName].value = this.resource.pub[propertyName];
-  }
+  };
 }
