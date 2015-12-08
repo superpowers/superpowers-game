@@ -47,16 +47,12 @@
     },
     "animations": {
       "title": "Animations",
-      "new": "New",
-      "rename": "Rename",
-      "delete": "Delete",
       "newAnimationPrompt": "Enter a name for the animation.",
       "renameAnimationPrompt": "Enter a new name for the animation.",
       "deleteAnimationPrompt": "Are you sure you want to delete the selected animations?"
     },
     "advancedTextures": {
       "title": "Advanced Textures",
-      "new": "New",
       "map": "Map",
       "lightMap": "Light map",
       "specularMap": "Specular map",

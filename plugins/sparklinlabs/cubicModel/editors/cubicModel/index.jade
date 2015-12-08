@@ -95,10 +95,10 @@ html
         span= t("cubicModelEditor:sidebar.nodes.title")
 
       .nodes-buttons.flat-button-strip
-        button(title= t("cubicModelEditor:sidebar.nodes.newNode.title"),disabled).new-node
-        button(title= t("cubicModelEditor:sidebar.nodes.rename.title"),disabled).rename-node
-        button(title= t("cubicModelEditor:sidebar.nodes.duplicate.title"),disabled).duplicate-node
-        button(title= t("cubicModelEditor:sidebar.nodes.delete.title"),disabled).delete-node
+        button(title= t("cubicModelEditor:sidebar.nodes.newNode.title"),disabled, data-hotkey="control+N").new-node
+        button(title= t("common:actions.rename"),disabled, data-hotkey="F2").rename-node
+        button(title= t("common:actions.duplicate"),disabled, data-hotkey="control+D").duplicate-node
+        button(title= t("common:actions.delete"),disabled, data-hotkey="delete").delete-node
 
       .nodes-tree-view
       .inspector(hidden)

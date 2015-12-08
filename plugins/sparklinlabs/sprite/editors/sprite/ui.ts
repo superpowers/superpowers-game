@@ -219,7 +219,7 @@ function onSetGridSize(event: any) {
 function onNewAnimationClick() {
   let options = {
     initialValue: "Animation",
-    validationLabel: "Create"
+    validationLabel: SupClient.i18n.t("common:actions.create")
   };
 
   /* tslint:disable:no-unused-expression */
@@ -243,7 +243,7 @@ function onRenameAnimationClick() {
 
   let options = {
     initialValue: animation.name,
-    validationLabel: "Rename"
+    validationLabel: SupClient.i18n.t("common:actions.rename")
   };
 
   /* tslint:disable:no-unused-expression */
@@ -258,7 +258,7 @@ function onRenameAnimationClick() {
 function onDeleteAnimationClick() {
   if (ui.animationsTreeView.selectedNodes.length === 0) return;
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.ConfirmDialog(SupClient.i18n.t("spriteEditor:sidebar.animations.deleteAnimationPrompt"), "Delete", (confirm) => {
+  new SupClient.dialogs.ConfirmDialog(SupClient.i18n.t("spriteEditor:sidebar.animations.deleteAnimationPrompt"), SupClient.i18n.t("common:actions.delete"), (confirm) => {
     /* tslint:enable:no-unused-expression */
     if (!confirm) return;
 

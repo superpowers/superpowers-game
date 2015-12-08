@@ -51,8 +51,6 @@ let ui: {
 export default ui;
 
 // Hotkeys
-SupClient.setupHotkeys();
-
 document.addEventListener("keydown", (event) => {
   if (document.querySelector(".dialog") != null) return;
   let activeElement = <HTMLElement>document.activeElement;
@@ -413,7 +411,7 @@ function onNewNodeClick() {
   // TODO: Allow choosing shape and default texture color
   let options = {
     initialValue: "Node",
-    validationLabel: SupClient.i18n.t("cubicModelEditor:sidebar.nodes.newNode.validate")
+    validationLabel: SupClient.i18n.t("common:actions.create")
   };
 
   /* tslint:disable:no-unused-expression */
@@ -466,11 +464,11 @@ function onRenameNodeClick() {
 
   let options = {
     initialValue: node.name,
-    validationLabel: SupClient.i18n.t("cubicModelEditor:sidebar.nodes.rename.validate")
+    validationLabel: SupClient.i18n.t("common:actions.rename")
   };
 
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.PromptDialog(SupClient.i18n.t("cubicModelEditor:sidebar.nodes.rename.prompt"), options, (newName) => {
+  new SupClient.dialogs.PromptDialog(SupClient.i18n.t("cubicModelEditor:sidebar.nodes.renamePrompt"), options, (newName) => {
     /* tslint:enable:no-unused-expression */
     if (newName == null) return;
 
@@ -486,11 +484,11 @@ function onDuplicateNodeClick() {
 
   let options = {
     initialValue: node.name,
-    validationLabel: SupClient.i18n.t("cubicModelEditor:sidebar.nodes.duplicate.validate")
+    validationLabel: SupClient.i18n.t("common:actions.duplicate")
   };
 
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.PromptDialog(SupClient.i18n.t("cubicModelEditor:sidebar.nodes.duplicate.prompt"), options, (newName) => {
+  new SupClient.dialogs.PromptDialog(SupClient.i18n.t("cubicModelEditor:sidebar.nodes.duplicatePrompt"), options, (newName) => {
     /* tslint:enable:no-unused-expression */
     if (newName == null) return;
     let options = SupClient.getTreeViewInsertionPoint(ui.nodesTreeView);
@@ -508,8 +506,8 @@ function onDuplicateNodeClick() {
 function onDeleteNodeClick() {
   if (ui.nodesTreeView.selectedNodes.length === 0) return;
 
-  let confirmString = SupClient.i18n.t("cubicModelEditor:sidebar.nodes.delete.confirm");
-  let validateString = SupClient.i18n.t("cubicModelEditor:sidebar.nodes.delete.validate");
+  let confirmString = SupClient.i18n.t("cubicModelEditor:sidebar.nodes.deleteConfirm");
+  let validateString = SupClient.i18n.t("common:actions.delete");
   /* tslint:disable:no-unused-expression */
   new SupClient.dialogs.ConfirmDialog(confirmString, validateString, (confirm) => {
     /* tslint:enable:no-unused-expression */
@@ -569,5 +567,4 @@ function onInspectorInputChange(event: any) {
   } else {
     editAsset("moveNodePivot", nodeId, value);
   }
-
 }

@@ -81,7 +81,7 @@ html
       .header
         span= t("modelEditor:sidebar.animations.title")
       .animations-buttons.button-strip
-        button.new-animation= t("modelEditor:sidebar.animations.new")
+        button.new-animation= t("common:actions.new")
         form(style="display: none")
           input.file-select.upload-animation(type="file",multiple)
         button(disabled).upload-animation= t("common:actions.upload")
@@ -118,7 +118,7 @@ html
                 input.map-normal
 
           .textures-buttons.button-strip
-            button.new-map= t("modelEditor:sidebar.advancedTextures.new")
+            button.new-map= t("common:actions.new")
             form(style="display: none")
               input.file-select.upload-map(type="file",multiple)
             button(disabled).upload-map= t("common:actions.upload")

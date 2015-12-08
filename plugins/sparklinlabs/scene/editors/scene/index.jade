@@ -59,11 +59,11 @@ html
 
     .sidebar
       .nodes-buttons.flat-button-strip
-        button(title= t("sceneEditor:treeView.newActor.title")).new-actor
-        button(title= t("sceneEditor:treeView.newPrefab.title")).new-prefab
-        button(title= t("sceneEditor:treeView.renameActor.title"),disabled).rename-node
-        button(title= t("sceneEditor:treeView.duplicateActor.title"),disabled).duplicate-node
-        button(title= t("sceneEditor:treeView.deleteActor.title"),disabled).delete-node
+        button(title= t("sceneEditor:treeView.newActor.title"), data-hotkey="control+N").new-actor
+        button(title= t("sceneEditor:treeView.newPrefab.title"), data-hotkey="control+P").new-prefab
+        button(title= t("common:actions.rename"),disabled, data-hotkey="F2").rename-node
+        button(title= t("common:actions.duplicate"),disabled, data-hotkey="control+D").duplicate-node
+        button(title= t("common:actions.delete"),disabled, data-hotkey="delete").delete-node
 
       .nodes-tree-view
 

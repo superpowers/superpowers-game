@@ -237,12 +237,12 @@ function onPrimaryMapFileSelectChange(event: Event) {
 
 function downloadTexture(textureName: string) {
   let options = {
-    initialValue: "Image",
-    validationLabel: "Download"
+    initialValue: SupClient.i18n.t("modelEditor:sidebar.advancedTextures.downloadInitialValue"),
+    validationLabel: SupClient.i18n.t("common:actions.download")
   };
 
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.PromptDialog("Enter a name for the image.", options, (name) => {
+  new SupClient.dialogs.PromptDialog(SupClient.i18n.t("modelEditor:sidebar.advancedTextures.downloadPrompt"), options, (name) => {
     /* tslint:enable:no-unused-expression */
     if (name == null) return;
 
@@ -266,12 +266,12 @@ function onChangeOpacity(event: any) { editAsset("setProperty", "opacity", parse
 
 function onNewAnimationClick() {
   let options = {
-    initialValue: "Animation",
-    validationLabel: "Create"
+    initialValue: SupClient.i18n.t("modelEditor:sidebar.animations.new.initialValue"),
+    validationLabel: SupClient.i18n.t("common:actions.create")
   };
 
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.PromptDialog("Enter a name for the animation.", options, (name) => {
+  new SupClient.dialogs.PromptDialog(SupClient.i18n.t("modelEditor:sidebar.animations.new.prompt"), options, (name) => {
     /* tslint:enable:no-unused-expression */
     if (name == null) return;
 
@@ -309,11 +309,11 @@ function onRenameAnimationClick() {
 
   let options = {
     initialValue: animation.name,
-    validationLabel: "Rename"
+    validationLabel: SupClient.i18n.t("common:actions.rename")
   };
 
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.PromptDialog("Enter a new name for the animation.", options, (newName) => {
+  new SupClient.dialogs.PromptDialog(SupClient.i18n.t("modelEditor:sidebar.animations.renamePrompt"), options, (newName) => {
     /* tslint:enable:no-unused-expression */
     if (newName == null) return;
 
@@ -324,8 +324,10 @@ function onRenameAnimationClick() {
 function onDeleteAnimationClick() {
   if (ui.animationsTreeView.selectedNodes.length === 0) return;
 
+  let confirmString = SupClient.i18n.t("modelEditor:sidebar.animations.deleteConfirm");
+  let validateString = SupClient.i18n.t("common:actions.delete");
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.ConfirmDialog("Are you sure you want to delete the selected animations?", "Delete", (confirm) => {
+  new SupClient.dialogs.ConfirmDialog(confirmString, validateString, (confirm) => {
     /* tslint:enable:no-unused-expression */
     if (!confirm) return;
 
@@ -378,11 +380,11 @@ function onEditMapSlot(event: any) {
 function onNewMapClick() {
   let options = {
     initialValue: "map",
-    validationLabel: "Create"
+    validationLabel: SupClient.i18n.t("common:actions.create")
   };
 
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.PromptDialog("Enter a new name for the map.", options, (name) => {
+  new SupClient.dialogs.PromptDialog(SupClient.i18n.t("modelEditor:sidebar.advancedTextures.newMapPrompt"), options, (name) => {
     /* tslint:enable:no-unused-expression */
     if (name == null) return;
 
@@ -416,11 +418,11 @@ function onRenameMapClick() {
 
   let options = {
     initialValue: textureName,
-    validationLabel: "Rename"
+    validationLabel: SupClient.i18n.t("common:actions.rename")
   };
 
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.PromptDialog("Enter a new name for the texture.", options, (newName) => {
+  new SupClient.dialogs.PromptDialog(SupClient.i18n.t("modelEditor:sidebar.advancedTextures.renameMapPrompt"), options, (newName) => {
     /* tslint:enable:no-unused-expression */
     if (newName == null) return;
 
@@ -431,8 +433,10 @@ function onRenameMapClick() {
 function onDeleteMapClick() {
   if (ui.texturesTreeView.selectedNodes.length === 0) return;
 
+  let confirmString = SupClient.i18n.t("modelEditor:sidebar.advancedTextures.deleteMapConfirm");
+  let validateString = SupClient.i18n.t("common:actions.delete");
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.ConfirmDialog("Are you sure you want to delete the selected textures?", "Delete", (confirmed) => {
+  new SupClient.dialogs.ConfirmDialog(confirmString, validateString, (confirmed) => {
     /* tslint:enable:no-unused-expression */
     if (!confirmed) return;
 

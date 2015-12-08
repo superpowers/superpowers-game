@@ -31,11 +31,15 @@
     },
     "animations": {
       "title": "Animations",
-      "new": "New"
+      "new": {
+        "prompt": "Enter a name for the animation.",
+        "initialValue": "Animation"
+      },
+      "renamePrompt": "Enter a new name for the animation.",
+      "deleteConfirm": "Are you sure you want to delete the selected animations?"
     },
     "advancedTextures": {
       "title": "Advanced Textures",
-      "new": "New",
       "map": "Map",
       "lightMap": "Light map",
       "specularMap": "Specular map",
@@ -43,7 +47,9 @@
       "normalMap": "Normal map (Phong)",
       "newMapPrompt": "Enter a new name for the map.",
       "renameMapPrompt": "Enter a new name for the texture.",
-      "deleteMapPrompt": "Are you sure you want to delete the selected textures?"
+      "deleteMapConfirm": "Are you sure you want to delete the selected textures?",
+      "downloadPrompt": "Enter a name for the image.",
+      "downloadInitialValue": "Image"
     }
   }
 }

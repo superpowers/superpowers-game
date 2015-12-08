@@ -24,32 +24,18 @@
   },
   "treeView": {
     "newActor": {
-      "title": "New actor (Ctrl+N)",
+      "title": "New actor",
       "prompt": "Enter a name for the actor.",
-      "initialValue": "Actor",
-      "validate": "Create"
+      "initialValue": "Actor"
     },
     "newPrefab": {
-      "title": "New prefab (Ctrl+P)",
+      "title": "New prefab",
       "prompt": "Enter a name for the prefab",
-      "initialValue": "Prefab",
-      "validate": "Create"
+      "initialValue": "Prefab"
     },
-    "renameActor": {
-      "title": "Rename (F2)",
-      "prompt": "Enter a new name for the actor.",
-      "validate": "Rename"
-    },
-    "duplicateActor": {
-      "title": "Duplicate (Ctrl+D)",
-      "prompt": "Enter a name for the new actor.",
-      "validate": "Duplicate"
-    },
-    "deleteActor": {
-      "title": "Delete (Suppr)",
-      "confirm": "Are you sure you want to delete the selected actors?",
-      "validate": "Delete"
-    },
+    "renamePrompt": "Enter a new name for the actor.",
+    "duplicatePrompt": "Enter a name for the new actor.",
+    "deleteConfirm": "Are you sure you want to delete the selected actors?",
     "visible": {
       "show": "Show",
       "hide": "Hide"

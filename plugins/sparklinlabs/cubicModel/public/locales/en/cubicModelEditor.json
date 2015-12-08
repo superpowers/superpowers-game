@@ -52,24 +52,11 @@
       "title": "Nodes",
       "newNode": {
         "title": "New node",
-        "prompt": "Enter a name for the node.",
-        "validate": "Create"
+        "prompt": "Enter a name for the node."
       },
-      "rename": {
-        "title": "Rename (F2)",
-        "prompt": "Enter a new name for the node.",
-        "validate": "Rename"
-      },
-      "duplicate": {
-        "title": "Duplicate (Ctrl+D)",
-        "prompt": "Enter a name for the new node.",
-        "validate": "Duplicate"
-      },
-      "delete": {
-        "title": "Delete (Delete)",
-        "confirm": "Are you sure you want to delete the selected nodes?",
-        "validate": "Delete"
-      },
+      "renamePrompt": "Enter a new name for the node.",
+      "duplicatePrompt": "Enter a name for the new node.",
+      "deleteConfirm": "Are you sure you want to delete the selected nodes?",
       "hide": "Hide",
       "show": "Show"
     },

@@ -68,6 +68,7 @@ document.addEventListener("keydown", (event) => {
 
   if (event.keyCode === 78 && (event.ctrlKey || event.metaKey)) { // Ctrl+N
     event.preventDefault();
+    event.stopPropagation();
     onNewNodeClick();
   }
 
@@ -79,20 +80,22 @@ document.addEventListener("keydown", (event) => {
 
   if (event.keyCode === 113) { // F2
     event.preventDefault();
+    event.stopPropagation();
     onRenameNodeClick();
   }
 
   if (event.keyCode === 68 && (event.ctrlKey || event.metaKey)) { // Ctrl+D
     event.preventDefault();
+    event.stopPropagation();
     onDuplicateNodeClick();
   }
 
   if (event.keyCode === 46) { // Delete
     event.preventDefault();
+    event.stopPropagation();
     onDeleteNodeClick();
   }
 });
-SupClient.setupHotkeys();
 
 document.addEventListener("keydown", (event) => {
   if (document.querySelector("body > .dialog") != null) return;
@@ -216,6 +219,8 @@ document.querySelector(".main .controls .transform-mode").addEventListener("clic
 
 ui.availableComponents = {};
 export function start() {
+  SupClient.setupHotkeys();
+
   let componentTypes = Object.keys(SupClient.plugins["componentEditors"]);
   componentTypes.sort((a, b) => {
     let componentLabelA = SupClient.i18n.t(`componentEditors:${a}.label`);
@@ -459,7 +464,7 @@ export function setInspectorPrefabScene(sceneAssetId: string) {
 function onNewNodeClick() {
   let options = {
     initialValue: SupClient.i18n.t("sceneEditor:treeView.newActor.initialValue"),
-    validationLabel: SupClient.i18n.t("sceneEditor:treeView.newActor.validate"),
+    validationLabel: SupClient.i18n.t("common:actions.create"),
     pattern: SupClient.namePattern,
     title: SupClient.i18n.t("common:namePatternDescription")
   };
@@ -475,7 +480,7 @@ function onNewNodeClick() {
 function onNewPrefabClick() {
   let options = {
     initialValue: SupClient.i18n.t("sceneEditor:treeView.newPrefab.initialValue"),
-    validationLabel: SupClient.i18n.t("sceneEditor:treeView.newPrefab.validate"),
+    validationLabel: SupClient.i18n.t("common:actions.create"),
     pattern: SupClient.namePattern,
     title: SupClient.i18n.t("common:namePatternDescription")
   };
@@ -519,13 +524,13 @@ function onRenameNodeClick() {
 
   let options = {
     initialValue: node.name,
-    validationLabel: SupClient.i18n.t("sceneEditor:treeView.renameActor.validate"),
+    validationLabel: SupClient.i18n.t("common:actions.rename"),
     pattern: SupClient.namePattern,
     title: SupClient.i18n.t("common:namePatternDescription")
   };
 
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.PromptDialog(SupClient.i18n.t("sceneEditor:treeView.renameActor.prompt"), options, (newName) => {
+  new SupClient.dialogs.PromptDialog(SupClient.i18n.t("sceneEditor:treeView.renamePrompt"), options, (newName) => {
     /* tslint:enable:no-unused-expression */
     if (newName == null) return;
 
@@ -541,13 +546,13 @@ function onDuplicateNodeClick() {
 
   let options = {
     initialValue: node.name,
-    validationLabel: SupClient.i18n.t("sceneEditor:treeView.duplicateActor.validate"),
+    validationLabel: SupClient.i18n.t("common:actions.duplicate"),
     pattern: SupClient.namePattern,
     title: SupClient.i18n.t("common:namePatternDescription")
   };
 
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.PromptDialog(SupClient.i18n.t("sceneEditor:treeView.duplicateActor.prompt"), options, (newName) => {
+  new SupClient.dialogs.PromptDialog(SupClient.i18n.t("sceneEditor:treeView.duplicatePrompt"), options, (newName) => {
     /* tslint:enable:no-unused-expression */
     if (newName == null) return;
     let options = SupClient.getTreeViewInsertionPoint(ui.nodesTreeView);
@@ -565,8 +570,8 @@ function onDuplicateNodeClick() {
 function onDeleteNodeClick() {
   if (ui.nodesTreeView.selectedNodes.length === 0) return;
 
-  let confirmString = SupClient.i18n.t("sceneEditor:treeView.deleteActor.confirm");
-  let validateString = SupClient.i18n.t("sceneEditor:treeView.duplicateActor.validate");
+  let confirmString = SupClient.i18n.t("sceneEditor:treeView.deleteConfirm");
+  let validateString = SupClient.i18n.t("common:actions.delete");
   /* tslint:disable:no-unused-expression */
   new SupClient.dialogs.ConfirmDialog(confirmString, validateString, (confirm) => {
     /* tslint:enable:no-unused-expression */

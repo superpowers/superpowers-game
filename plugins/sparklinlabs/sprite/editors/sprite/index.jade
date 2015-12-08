@@ -94,9 +94,9 @@ html
         .header
           span= t("spriteEditor:sidebar.animations.title")
         .animations-buttons.button-strip
-          button.new-animation= t("spriteEditor:sidebar.animations.new")
-          button(disabled).rename-animation= t("spriteEditor:sidebar.animations.rename")
-          button(disabled).delete-animation= t("spriteEditor:sidebar.animations.delete")
+          button.new-animation= t("common:actions.new")
+          button(disabled).rename-animation= t("common:actions.rename")
+          button(disabled).delete-animation= t("common:actions.delete")
   
         .animations-tree-view
 
@@ -128,7 +128,7 @@ html
                 input.map-normal
 
           .textures-buttons.button-strip
-            button.new-map= t("spriteEditor:sidebar.advancedTextures.new")
+            button.new-map= t("common:actions.new")
             form(style="display: none")
               input.file-select.upload-map(type="file",multiple)
             button(disabled).upload-map= t("common:actions.upload")
