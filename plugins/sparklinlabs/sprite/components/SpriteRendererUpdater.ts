@@ -1,5 +1,3 @@
-import * as async from "async";
-let THREE = SupEngine.THREE;
 import SpriteAsset from "../data/SpriteAsset";
 import SpriteRenderer from "./SpriteRenderer";
 

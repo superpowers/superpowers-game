@@ -21,7 +21,7 @@ export default class SpriteRendererConfig extends SupCore.Data.Base.ComponentCon
     opacity: { type: "number?", min: 0, max: 1, mutable: true },
     materialType: { type: "enum", items: ["basic", "phong", "shader"], mutable: true },
     shaderAssetId: { type: "string?", min: 0, mutable: true }
-  }
+  };
 
   static create() {
     let emptyConfig: SpriteRendererConfigPub = {

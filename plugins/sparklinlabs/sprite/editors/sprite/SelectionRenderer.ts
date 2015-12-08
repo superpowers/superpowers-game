@@ -34,8 +34,8 @@ export default class SelectionRenderer extends SupEngine.ActorComponent {
         x = Math.floor(i / framesPerDirection);
         y = i % framesPerDirection;
       }
-      mesh.position.setX((x+0.5) * width);
-      mesh.position.setY(-(y+0.5) * height);
+      mesh.position.setX((x + 0.5) * width);
+      mesh.position.setY(-(y + 0.5) * height);
       mesh.updateMatrixWorld(false);
       this.actor.threeObject.add(mesh);
     }

@@ -3,7 +3,9 @@ import ui from "./ui";
 
 import SpriteOriginMarker from "./SpriteOriginMarker";
 
+/* tslint:disable */
 let PerfectResize = require("perfect-resize");
+/* tslint:enable */
 
 let animationArea: {
   gameInstance?: SupEngine.GameInstance;

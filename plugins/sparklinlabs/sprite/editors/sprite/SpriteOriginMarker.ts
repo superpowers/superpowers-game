@@ -14,7 +14,7 @@ export default class SpriteOriginMarker extends SupEngine.ActorComponent {
 
       new THREE.Vector3(0, -0.2, 0),
       new THREE.Vector3(0,  0.2, 0)
-    )
+    );
 
     this.line = new THREE.LineSegments(geometry, new THREE.LineBasicMaterial({ color: 0x333333, opacity: 0.25, transparent: true }));
     this.actor.threeObject.add(this.line);
@@ -27,7 +27,7 @@ export default class SpriteOriginMarker extends SupEngine.ActorComponent {
 
   setScale(scale: number) {
     this.line.scale.set(scale, scale, scale);
-    this.line.updateMatrixWorld(false)
+    this.line.updateMatrixWorld(false);
   }
 
   _destroy() {

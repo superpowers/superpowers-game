@@ -13,7 +13,7 @@ export default class SpriteAnimations extends SupCore.Data.Base.ListById {
     startFrameIndex: { type: "number", min: 0, mutable: true },
     endFrameIndex: { type: "number", min: 0, mutable: true },
     speed: { type: "number", mutable: true }
-  }
+  };
 
   pub: SpriteAnimationPub[];
   byId: { [id: string]: SpriteAnimationPub};

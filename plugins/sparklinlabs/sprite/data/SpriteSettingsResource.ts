@@ -1,6 +1,3 @@
-import * as path from "path";
-import * as fs from "fs";
-
 export default class SpriteSettingsResource extends SupCore.Data.Base.Resource {
 
   static schema: SupCore.Data.Base.Schema = {
@@ -8,7 +5,7 @@ export default class SpriteSettingsResource extends SupCore.Data.Base.Resource {
     pixelsPerUnit: { type: "number", minExcluded: 0, mutable: true },
     framesPerSecond: { type: "number", minExcluded: 0, mutable: true },
     alphaTest: { type: "number", min: 0, max: 1, mutable: true }
-  }
+  };
 
   constructor(id: string, pub: any, server: ProjectServer) {
     super(id, pub, SpriteSettingsResource.schema, server);

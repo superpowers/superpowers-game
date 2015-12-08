@@ -12,7 +12,7 @@ interface TextureWithSize extends THREE.Texture {
   size?: {
     width: number;
     height: number;
-  }
+  };
 }
 
 export interface SpriteAssetPub {
@@ -30,7 +30,7 @@ export interface SpriteAssetPub {
   alphaTest: number;
   frameOrder: string;
 
-  grid: { width: number; height: number;};
+  grid: { width: number; height: number; };
   origin: { x: number; y: number; };
 
   animations: SpriteAnimationPub[];
@@ -206,7 +206,7 @@ export default class SpriteAsset extends SupCore.Data.Base.Asset {
           specular: null,
           alpha: null,
           normal: null
-        }
+        };
       }
 
       // NOTE: Animation speed was introduced in Superpowers 0.12
@@ -377,7 +377,7 @@ export default class SpriteAsset extends SupCore.Data.Base.Asset {
       if (map === name) this.pub.mapSlots[slotName] = null;
     }
 
-    //NOTE: do not delete, the key must exist so the file can be deleted from the disk when the asset is saved
+    // NOTE: do not delete, the key must exist so the file can be deleted from the disk when the asset is saved
     this.pub.maps[name] = null;
   }
 
@@ -420,7 +420,7 @@ export default class SpriteAsset extends SupCore.Data.Base.Asset {
     let animation: SpriteAnimationPub = { id: null, name, startFrameIndex: 0, endFrameIndex: 0, speed: 1 };
 
     this.animations.add(animation, null, (err, actualIndex) => {
-      if (err != null) { callback(err); return }
+      if (err != null) { callback(err); return; }
 
       animation.name = SupCore.Data.ensureUniqueName(animation.id, animation.name, this.animations.pub);
 
@@ -444,7 +444,7 @@ export default class SpriteAsset extends SupCore.Data.Base.Asset {
 
   client_deleteAnimation(id: string) {
     this.animations.client_remove(id);
-    return
+    return;
   }
 
   server_moveAnimation(client: any, id: string, newIndex: number, callback: (err: string, id?: string, actualIndex?: number) => any) {
