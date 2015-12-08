@@ -29,33 +29,12 @@ let ui: {
 } = {};
 export default ui;
 
-SupClient.setupHotkeys();
 window.addEventListener("message", (event) => {
   if (event.data.type === "activate") ui.editor.codeMirrorInstance.focus();
 
   if (event.data.line != null && event.data.ch != null)
     ui.editor.codeMirrorInstance.getDoc().setCursor({ line: parseInt(event.data.line, 10), ch: parseInt(event.data.ch, 10) });
 });
-
-// Context menu
-if (window.navigator.userAgent.indexOf("Electron") !== -1) {
-  let remote: GitHubElectron.Remote = (top as any).global.require("remote");
-  let win = remote.getCurrentWindow();
-  let Menu: typeof GitHubElectron.Menu = remote.require("menu");
-  let MenuItem: typeof GitHubElectron.MenuItem = remote.require("menu-item");
-
-  let menu = new Menu();
-  menu.append(new MenuItem({ label: SupClient.i18n.t("scriptEditor:contextMenu.cut"), click: () => { document.execCommand("cut"); } }));
-  menu.append(new MenuItem({ label: SupClient.i18n.t("scriptEditor:contextMenu.copy"), click: () => { document.execCommand("copy"); } }));
-  menu.append(new MenuItem({ label: SupClient.i18n.t("scriptEditor:contextMenu.paste"), click: () => { document.execCommand("paste"); } }));
-
-  document.querySelector(".text-editor-container").addEventListener("contextmenu", (event: any) => {
-    event.preventDefault();
-    let bounds = win.getBounds();
-    menu.popup(win, event.screenX - bounds.x, event.screenY - bounds.y);
-    return false;
-  });
-}
 
 // Parameter hint popup
 ui.parameterElement = <HTMLDivElement>document.querySelector(".popup-parameter");
@@ -96,6 +75,8 @@ let parameterPopupKeyMap = {
 
 // Setup editor
 export function setupEditor(clientId: number) {
+  SupClient.setupHotkeys();
+
   let textArea = <HTMLTextAreaElement>document.querySelector(".text-editor");
   ui.editor = new TextEditorWidget(data.projectClient, clientId, textArea, {
     mode: "text/typescript",
@@ -160,6 +141,26 @@ export function setupEditor(clientId: number) {
     ui.completionOpened = false;
     if (ui.parameterElement.parentElement != null) ui.editor.codeMirrorInstance.addKeyMap(parameterPopupKeyMap);
   });
+
+  // Context menu
+if (window.navigator.userAgent.indexOf("Electron") !== -1) {
+    let remote: GitHubElectron.Remote = (top as any).global.require("remote");
+    let win = remote.getCurrentWindow();
+    let Menu: typeof GitHubElectron.Menu = remote.require("menu");
+    let MenuItem: typeof GitHubElectron.MenuItem = remote.require("menu-item");
+
+    let menu = new Menu();
+    menu.append(new MenuItem({ label: SupClient.i18n.t("scriptEditor:contextMenu.cut"), click: () => { document.execCommand("cut"); } }));
+    menu.append(new MenuItem({ label: SupClient.i18n.t("scriptEditor:contextMenu.copy"), click: () => { document.execCommand("copy"); } }));
+    menu.append(new MenuItem({ label: SupClient.i18n.t("scriptEditor:contextMenu.paste"), click: () => { document.execCommand("paste"); } }));
+
+    document.querySelector(".text-editor-container").addEventListener("contextmenu", (event: any) => {
+      event.preventDefault();
+      let bounds = win.getBounds();
+      menu.popup(win, event.screenX - bounds.x, event.screenY - bounds.y);
+      return false;
+    });
+  }
 }
 
 let localVersionNumber = 0;
