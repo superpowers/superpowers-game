@@ -6,9 +6,12 @@ import { AttributePub } from "../../data/Attributes";
 
 export let data: { projectClient?: SupClient.ProjectClient, shaderAsset?: ShaderAsset, previewComponentUpdater?: any };
 
-export let socket = SupClient.connect(SupClient.query.project);
-socket.on("welcome", onWelcome);
-socket.on("disconnect", SupClient.onDisconnected);
+export let socket: SocketIOClient.Socket;
+SupClient.i18n.load([], () => {
+  socket = SupClient.connect(SupClient.query.project);
+  socket.on("welcome", onWelcome);
+  socket.on("disconnect", SupClient.onDisconnected);
+});
 
 function onWelcome(clientId: number) {
   data = { projectClient: new SupClient.ProjectClient(socket, { subEntries: true }) };

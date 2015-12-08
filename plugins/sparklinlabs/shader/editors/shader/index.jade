@@ -13,64 +13,64 @@ html
       .left
         .uniforms
           .header
-            .info Uniforms
+            .info= t("shaderEditor:uniforms")
             .settings
               input#use-light-uniforms(type="checkbox")
-              label(for="use-light-uniforms") Use lights
+              label(for="use-light-uniforms")= t("shaderEditor:useLights")
           .list
             table
               tr
-                th Name
-                th Type
-                th Value
+                th= t("shaderEditor:name")
+                th= t("shaderEditor:type")
+                th= t("shaderEditor:value")
               tr.immutable
                 td time
                 td f
                 td 0
               tr.new
                 td
-                  input(type="text",placeholder="New uniform")
+                  input(type="text",placeholder= t("shaderEditor:newUniform"))
                 td
                 td
 
         .attributes
           .header
-            .info Attributes
+            .info= t("shaderEditor:attributes")
           .list
             table
               tr
-                th Name
-                th Type
-                th Value
+                th= t("shaderEditor:name")
+                th= t("shaderEditor:type")
+                th= t("shaderEditor:value")
               tr.new
                 td
-                  input(type="text",placeholder="New attribute")
+                  input(type="text",placeholder= t("shaderEditor:newAttribute"))
                 td
                 td
 
       .preview
         .header
-          .info Preview
+          .info= t("shaderEditor:preview")
           .settings
             select
-              option Plane
-              option Box
-              option Sphere
-              option Asset
-            input.preview-asset-path(type="text",placeholder="Asset path",hidden)
+              option= t("shaderEditor:plane")
+              option= t("shaderEditor:box")
+              option= t("shaderEditor:sphere")
+              option= t("shaderEditor:asset")
+            input.preview-asset-path(type="text",placeholder= t("shaderEditor:assetPath"),hidden)
         canvas(tabindex="0")
 
     .shaders
       .vertex
         .header
-          button(title="Ctrl+S",hidden) Save
-          .info Vertex Shader
+          button(title="Ctrl+S",hidden)= t("common:actions.save")
+          .info= t("shaderEditor:vertexShader")
         .text-editor-container
           textarea(disabled).text-editor
       .fragment
         .header
-          button(title="Ctrl+S",hidden) Save
-          .info Fragment Shader
+          button(title="Ctrl+S",hidden)= t("common:actions.save")
+          .info= t("shaderEditor:fragmentShader")
         .text-editor-container
           textarea(disabled).text-editor
 
