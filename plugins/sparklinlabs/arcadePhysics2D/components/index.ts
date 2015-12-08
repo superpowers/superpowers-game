@@ -67,7 +67,7 @@ namespace ArcadePhysics2D {
             if (options.moveBody) body1.position.x = (x + 1) * body2.mapToSceneFactor.x + body2.position.x + body1.width / 2;
             body1.touches.left = true;
           } else {
-            if (options.moveBody) body1.position.x = (x) * body2.mapToSceneFactor.x + body2.position.x - body1.width / 2 + epsilon;
+            if (options.moveBody) body1.position.x = (x) * body2.mapToSceneFactor.x + body2.position.x - body1.width / 2;
             body1.touches.right = true;
           }
           return true;
@@ -97,7 +97,7 @@ namespace ArcadePhysics2D {
             if (options.moveBody) body1.position.y = (y + 1) * body2.mapToSceneFactor.y + body2.position.y + body1.height / 2;
             body1.touches.bottom = true;
           } else {
-            if (options.moveBody) body1.position.y = (y) * body2.mapToSceneFactor.y + body2.position.y - body1.height / 2 + epsilon;
+            if (options.moveBody) body1.position.y = (y) * body2.mapToSceneFactor.y + body2.position.y - body1.height / 2;
             body1.touches.top = true;
           }
           return true;
