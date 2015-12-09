@@ -18,7 +18,9 @@ let actorComponentAccessors: string[] = [];
 export function init(player: any, callback: Function) {
   player.behaviorClasses = {};
 
-  player.createActor = (name: string, parentActor: any, options?: { visible?: boolean; layer?: number }) => { return new (<any>window).Sup.Actor(name, parentActor, options); };
+  player.createActor = (name: string, parentActor: any, options?: { visible?: boolean; layer?: number }) => {
+    return new (<any>window).Sup.Actor(name, parentActor, options);
+  };
 
   player.createComponent = (type: string, actor: any, config: any) => {
     if (type === "Behavior") {

@@ -33,6 +33,11 @@ namespace Sup {
       let innerParent = parent != null ? parent.__inner : null;
       let actor = new SupEngine.Actor(player.gameInstance, name, innerParent, options);
       this.__inner = actor;
+
+      // By default, we assume the actor has no component yet and as such, has been awoken
+      // (This value is overwritten when instantiating a scene with preset actors)
+      this.__inner.awoken = true;
+
       this.__behaviors = {};
       actor.__outer = this;
     }
