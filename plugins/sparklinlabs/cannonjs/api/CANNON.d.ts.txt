@@ -42,11 +42,11 @@ declare module CANNON {
         constructor(options?: IAABBOptions);
 
         clone() : AABB;
+        setFromPoints(points: Vec3[], position?: Vec3, quaternion?: Quaternion, skinSize?: number): void;
         copy(aabb: AABB): void;
         extend(aabb: AABB): void;
         getCorners( a: Vec3, b: Vec3, c: Vec3, d: Vec3, e: Vec3, f: Vec3, g: Vec3, h: Vec3 ) : void;
         overlaps(aabb: AABB): boolean;
-        setFromPoints(points: Vec3[], position?: Vec3, quaternion?: Quaternion, skinSize?: number): void;
         toLocalFrame( frame: Transform, target: AABB ) : AABB;
         toWorldFrame( frame: Transform, target: AABB ) : AABB;
     }
@@ -121,6 +121,10 @@ declare module CANNON {
     }
 
     export class Ray {
+
+        static CLOSEST: number;
+        static ANY: number;
+        static ALL: number;
 
         from: Vec3;
         to: Vec3;
@@ -308,9 +312,9 @@ declare module CANNON {
 
     export interface IRotationalEquationOptions {
 
-        axisA: Vec3;
-        axisB: Vec3;
-        maxForce: number;
+        axisA?: Vec3;
+        axisB?: Vec3;
+        maxForce?: number;
 
     }
 
@@ -470,7 +474,6 @@ declare module CANNON {
         updateEdges(): void;
         updateNormals(): void;
         updateTree(): void;
-        volume(): number;
 
     }
 
@@ -506,12 +509,12 @@ declare module CANNON {
 
         static pointToLocalFrame(position: Vec3, quaternion: Quaternion, worldPoint: Vec3, result?: Vec3): Vec3;
         static pointToWorldFrame(position: Vec3, quaternion: Quaternion, localPoint: Vec3, result?: Vec3): Vec3;
+        static vectorToWorldFrame(quaternion: Quaternion, localVector: Vec3, result: Vec3): Vec3;
+        static vectorToLocalFrame(position: Vec3, quaternion: Quaternion, worldVector: Vec3, result?: Vec3): Vec3;
 
         position: Vec3;
         quaternion: Quaternion;
 
-        vectorToWorldFrame(localVector: Vec3, result?: Vec3): Vec3;
-        vectorToLocalFrame(position: Vec3, quaternion: Quaternion, worldVector: Vec3, result?: Vec3): Vec3;
         pointToLocal(point: Vec3, result: Vec3): Vec3;
         pointToWorld(point: Vec3, result: Vec3): Vec3;
 
@@ -571,6 +574,14 @@ declare module CANNON {
         material?: number;
         type?: number;
         linearDamping?: number;
+        angularDamping?: number;
+        allowSleep?: boolean;
+        sleepSpeedLimit?: number;
+        sleepTimeLimit?: number;
+        collisionFilterGroup?: number;
+        collisionFilterMask?: number;
+        fixedRotation?: boolean;
+        shape?: Body;
 
     }
 
@@ -975,7 +986,7 @@ declare module CANNON {
 
         updateBoundingSphereRadius(): number;
         volume(): number;
-        calculateLocalInertia(mass: number, target: Vec3): Vec3;
+        calculateLocalInertia(mass: number, target?: Vec3): Vec3;
 
     }
 
