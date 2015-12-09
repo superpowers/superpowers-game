@@ -5,7 +5,6 @@ import ActorComponent from "./ActorComponent";
 let tmpMatrix = new THREE.Matrix4();
 let tmpVector3 = new THREE.Vector3();
 let tmpQuaternion = new THREE.Quaternion();
-let tmpEuler = new THREE.Euler();
 
 export default class Actor {
   name: string;
@@ -27,7 +26,7 @@ export default class Actor {
     this.threeObject.userData.isActor = true;
 
     if (this.parent != null) {
-      this.parent.children.push(this)
+      this.parent.children.push(this);
       this.parent.threeObject.add(this.threeObject);
       this.threeObject.updateMatrixWorld(false);
     } else {
@@ -82,12 +81,12 @@ export default class Actor {
   setGlobalPosition(pos: THREE.Vector3) {
     this.threeObject.parent.worldToLocal(pos);
     this.threeObject.position.set(pos.x, pos.y, pos.z);
-    this.threeObject.updateMatrixWorld(false)
+    this.threeObject.updateMatrixWorld(false);
   }
 
   setLocalPosition(pos: THREE.Vector3) {
     this.threeObject.position.copy(pos);
-    this.threeObject.updateMatrixWorld(false)
+    this.threeObject.updateMatrixWorld(false);
   }
 
   lookAt(target: THREE.Vector3, up = this.threeObject.up) {
@@ -130,7 +129,7 @@ export default class Actor {
     this.threeObject.updateMatrixWorld(false);
   }
 
-  setParent(newParent: Actor, keepLocal=false) {
+  setParent(newParent: Actor, keepLocal = false) {
     if (this.pendingForDestruction) throw new Error("Cannot set parent of destroyed actor");
     if (newParent != null && newParent.pendingForDestruction) throw new Error("Cannot reparent actor to destroyed actor");
 
