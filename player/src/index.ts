@@ -1,5 +1,4 @@
 /// <reference path="../../../../typings/tsd.d.ts" />
-/// <reference path="../../../../typings/github-electron/github-electron-renderer.d.ts" />
 /// <reference path="../../SupRuntime/SupRuntime.d.ts" />
 /// <reference path="../../../../SupCore/SupCore.d.ts" />
 
@@ -13,19 +12,20 @@ SupCore.system = new SupCore.System("");
 let playerWindow: GitHubElectron.BrowserWindow;
 if (window.navigator.userAgent.indexOf("Electron") !== -1) {
   let nodeRequire = require;
-  playerWindow = nodeRequire("remote").getCurrentWindow();
+  let electron = nodeRequire("electron");
+  playerWindow = electron.remote.getCurrentWindow();
 
   document.body.addEventListener("click", (event: any) => {
     if (event.target.tagName !== "A") return;
     event.preventDefault();
-    nodeRequire("shell").openExternal(event.target.href);
+    electron.shell.openExternal(event.target.href);
   });
 }
 let qs = querystring.parse(window.location.search.slice(1));
 
 document.body.addEventListener("keydown", (event) => {
   if (event.keyCode === (<any>window)["KeyEvent"].DOM_VK_F12) {
-    if (qs.project != null && playerWindow != null) playerWindow.toggleDevTools();
+    if (qs.project != null && playerWindow != null) playerWindow.webContents.toggleDevTools();
   }
 });
 
@@ -37,7 +37,7 @@ let progressBar = <HTMLProgressElement>document.querySelector("progress");
 let loadingElt = document.getElementById("loading");
 let canvas = <HTMLCanvasElement>document.querySelector("canvas");
 
-if (qs.debug != null && playerWindow != null) playerWindow.openDevTools();
+if (qs.debug != null && playerWindow != null) playerWindow.webContents.openDevTools();
 
 let player: SupRuntime.Player;
 
