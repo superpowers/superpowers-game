@@ -7,6 +7,6 @@ export default class SceneComponent extends SupEngine.ActorComponent {
   constructor(actor: SupEngine.Actor) {
     super(actor, "Scene");
   }
-  
-  setIsLayerActive(active: boolean) {}
+
+  setIsLayerActive(active: boolean) { /* Nothing to render */ }
 }

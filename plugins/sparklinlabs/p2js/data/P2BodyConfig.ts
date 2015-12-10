@@ -21,7 +21,7 @@ export default class P2BodyConfig extends SupCore.Data.Base.ComponentConfig {
       height: 1,
       radius: 1,
       length: 1
-    }
+    };
   }
 
   constructor(pub: any) {

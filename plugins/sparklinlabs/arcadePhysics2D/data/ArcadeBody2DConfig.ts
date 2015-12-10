@@ -32,7 +32,7 @@ export default class ArcadeBody2DConfig extends SupCore.Data.Base.ComponentConfi
     tileMapAssetId: { type: "string?", mutable: true },
     tileSetPropertyName: { type: "string?", mutable: true },
     layersIndex: { type: "string?", min: 0, mutable: true },
-  }
+  };
 
   static create() {
     let newConfig: ConfigPub = {
@@ -46,7 +46,7 @@ export default class ArcadeBody2DConfig extends SupCore.Data.Base.ComponentConfi
       tileMapAssetId: null,
       tileSetPropertyName: null,
       layersIndex: null,
-    }
+    };
     return newConfig;
   }
 

@@ -8,7 +8,7 @@ class CannonBodyMarker extends SupEngine.ActorComponent {
 
   mesh: THREE.Mesh;
 
-  constructor(actor:SupEngine.Actor) {
+  constructor(actor: SupEngine.Actor) {
     super(actor, "CannonBodyMarker");
   }
 
@@ -31,7 +31,7 @@ class CannonBodyMarker extends SupEngine.ActorComponent {
     let material = new THREE.MeshBasicMaterial({ wireframe: true, color: 0xf459e4, transparent: true, opacity: 0.2 });
     this.mesh = new THREE.Mesh(geometry, material);
     this.actor.threeObject.add(this.mesh);
-    this.mesh.updateMatrixWorld(false)
+    this.mesh.updateMatrixWorld(false);
   }
 
   setCylinder(radius: number, height: number) {
@@ -52,17 +52,14 @@ class CannonBodyMarker extends SupEngine.ActorComponent {
 
   _clearRenderer() {
     this.actor.threeObject.remove(this.mesh);
-    this.mesh.traverse((obj:any) => {
+    this.mesh.traverse((obj: any) => {
      if(obj.dispose != null) obj.dispose();
     });
-    this.mesh = null
-
+    this.mesh = null;
   }
 
   _destroy() {
     if (this.mesh != null) this._clearRenderer();
-    super._destroy()
-
+    super._destroy();
   }
-
 }

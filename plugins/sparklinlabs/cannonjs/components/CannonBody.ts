@@ -2,10 +2,10 @@ let THREE = SupEngine.THREE;
 
 export default class CannonBody extends SupEngine.ActorComponent {
 
-  body:any;
+  body: any;
   mass: number;
   fixedRotation: boolean;
-  offset: { x: number; y: number; z: number; }
+  offset: { x: number; y: number; z: number; };
 
   actorPosition = new THREE.Vector3();
   actorOrientation = new THREE.Quaternion();
@@ -13,7 +13,7 @@ export default class CannonBody extends SupEngine.ActorComponent {
   shape: string;
 
   // Box
-  halfSize: { x: number; y: number; z: number; }
+  halfSize: { x: number; y: number; z: number; };
 
   // Sphere and cylinder
   radius: number;
@@ -28,7 +28,7 @@ export default class CannonBody extends SupEngine.ActorComponent {
     (<any>SupEngine).Cannon.World.addBody(this.body);
   }
 
-  setIsLayerActive(active: boolean) {}
+  setIsLayerActive(active: boolean) { /* Nothing to render */ }
 
   setup(config: any) {
     this.mass = config.mass != null ? config.mass : 0;
@@ -101,7 +101,7 @@ export default class CannonBody extends SupEngine.ActorComponent {
     this.actor.setGlobalPosition(this.actorPosition);
 
     this.actorOrientation.set(this.body.quaternion.x, this.body.quaternion.y, this.body.quaternion.z, this.body.quaternion.w);
-    this.actor.setGlobalOrientation(this.actorOrientation)
+    this.actor.setGlobalOrientation(this.actorOrientation);
   }
 
   _destroy() {

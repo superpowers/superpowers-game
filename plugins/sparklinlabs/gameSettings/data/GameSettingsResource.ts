@@ -53,7 +53,7 @@ export default class GameSettingsResource extends SupCore.Data.Base.Resource {
       this.server.data.entries.walk((node) => {
         let path = this.server.data.entries.getPathFromId(node.id);
         if (path === (<any>pub).startupScene) pub.startupSceneId = node.id;
-      })
+      });
       delete (<any>pub).startupScene;
 
       pub.formatVersion = 1;

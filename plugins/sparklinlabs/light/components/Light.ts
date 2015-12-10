@@ -1,5 +1,4 @@
 let THREE = SupEngine.THREE;
-import { LightConfigPub } from "../data/LightConfig";
 import LightUpdater from "./LightUpdater";
 
 export default class Light extends SupEngine.ActorComponent {
@@ -20,7 +19,7 @@ export default class Light extends SupEngine.ActorComponent {
     bias: 0,
     // FIXME: Three.js has changed the default to 1.0, should we update?
     darkness: 0.5,
-    
+
     camera: {
       near: 0.1,
       far: 100,
@@ -84,7 +83,7 @@ export default class Light extends SupEngine.ActorComponent {
     this.actor.gameInstance.threeScene.traverse((object: any) => {
       let material: THREE.Material = object.material;
       if (material != null) material.needsUpdate = true;
-    })
+    });
   }
 
   setColor(color: number) {
@@ -205,7 +204,7 @@ export default class Light extends SupEngine.ActorComponent {
       this.actor.gameInstance.threeScene.traverse((object: any) => {
         let material: THREE.Material = object.material;
         if (material != null) material.needsUpdate = true;
-      })
+      });
     }
     super._destroy();
   }

@@ -23,7 +23,7 @@ export default class P2Body extends SupEngine.ActorComponent {
     (<any>SupEngine).P2.World.addBody(this.body);
   }
 
-  setIsLayerActive(active: boolean) {}
+  setIsLayerActive(active: boolean) { /* Nothing to render */ }
 
   setup(config: any) {
     this.mass = (config.mass != null) ? config.mass : 0;
@@ -46,14 +46,12 @@ export default class P2Body extends SupEngine.ActorComponent {
         this.width = (config.width != null) ? config.width : 0.5;
         this.height = (config.height != null) ? config.height : 0.5;
         this.body.addShape(new (<any>window).p2.Box({ width: this.width, height: this.height }));
-        break;
-      }
+      } break;
       case "circle": {
         this.radius = (config.radius != null) ? config.radius : 1;
         this.body.addShape(new (<any>window).p2.Circle({ radius: this.radius }));
-        break;
-      }
-      }
+      } break;
+    }
     this.body.position = [ this.actorPosition.x, this.actorPosition.y ];
     this.body.shapes[0].position = [ this.offsetX, this.offsetY ];
     this.body.angle = this.actorAngles.z;

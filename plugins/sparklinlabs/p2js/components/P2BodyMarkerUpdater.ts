@@ -9,13 +9,13 @@ export default class P2BodyMarkerUpdater {
     this.config = config;
 
     switch (this.config.shape) {
-      case "box": { this.bodyRenderer.setBox(this.config.width, this.config.height); break; }
-      case "circle": { this.bodyRenderer.setCircle(this.config.radius); break; }
+      case "box": { this.bodyRenderer.setBox(this.config.width, this.config.height); } break;
+      case "circle": { this.bodyRenderer.setCircle(this.config.radius); } break;
     }
     this.bodyRenderer.setOffset(this.config.offsetX, this.config.offsetY);
   }
 
-  destroy() {}
+  destroy() { /* Ignore */ }
 
   config_setProperty(path: string, value: any) {
     if (path === "width" || path === "height" || (path === "shape" && value === "box")) {

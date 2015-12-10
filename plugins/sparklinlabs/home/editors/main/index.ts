@@ -104,9 +104,9 @@ function appendHistoryEntry(entry: Entry) {
   authorSpan.textContent = entry.author;
   entryElt.appendChild(authorSpan);
 
-  let textSpan = document.createElement("span")
-  textSpan.className = "text"
-  textSpan.textContent = `: ${entry.text}`
+  let textSpan = document.createElement("span");
+  textSpan.className = "text";
+  textSpan.textContent = `: ${entry.text}`;
   entryElt.appendChild(textSpan);
 
   ui.chatHistory.appendChild(entryElt);
@@ -118,14 +118,14 @@ onRoomCommands.appendMessage = (entry: Entry) => {
   scrollToBottom();
 };
 
-function appendRoomUser(roomUser: {id: string, connectionCount: number;}) {
+function appendRoomUser(roomUser: { id: string connectionCount: number; }) {
   let roomUserElt = document.createElement("li");
   roomUserElt.dataset["userId"] = roomUser.id;
   roomUserElt.textContent = roomUser.id;
   ui.roomUsers.appendChild(roomUserElt);
 };
 
-onRoomCommands.join = (roomUser: {id: string, connectionCount: number;}) => {
+onRoomCommands.join = (roomUser: { id: string; connectionCount: number; }) => {
   if (roomUser.connectionCount === 1) appendRoomUser(roomUser);
 };
 

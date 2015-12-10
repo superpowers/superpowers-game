@@ -12,7 +12,7 @@ export default class LightUpdater {
   lightSettingsSubscriber = {
     onResourceReceived: this._onLightResourceRecevied.bind(this),
     onResourceEdited: this._onLightResourceEdited.bind(this)
-  }
+  };
 
   constructor(projectClient: SupClient.ProjectClient, light: Light, config: LightConfigPub) {
     this.projectClient = projectClient;
@@ -23,7 +23,7 @@ export default class LightUpdater {
     this.light.distance = config.distance;
     this.light.angle = config.angle;
     this.light.target.set(config.target.x, config.target.y, config.target.z);
-  
+
     this.light.castShadow = config.castShadow;
     this.light.shadow.mapSize.set(config.shadowMapSize.width, config.shadowMapSize.height);
     this.light.shadow.bias = config.shadowBias;
@@ -125,7 +125,7 @@ export default class LightUpdater {
     this.light.actor.gameInstance.threeScene.traverse((object: any) => {
       let material: THREE.Material = object.material;
       if (material != null) material.needsUpdate = true;
-    })
+    });
   }
 
   _onLightResourceRecevied(resourceId: string, resource: LightSettingsResource) {

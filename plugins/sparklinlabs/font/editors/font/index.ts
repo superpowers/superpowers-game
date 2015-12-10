@@ -1,7 +1,7 @@
 import TextRenderer from "../../components/TextRenderer";
 import TextRendererUpdater from "../../components/TextRendererUpdater";
 
-let data: {projectClient?: SupClient.ProjectClient; textUpdater?: TextRendererUpdater};
+let data: { projectClient?: SupClient.ProjectClient; textUpdater?: TextRendererUpdater; };
 let ui: {
   gameInstance: SupEngine.GameInstance,
 

@@ -36,7 +36,7 @@ export default class ArcadeBody2D extends SupEngine.ActorComponent {
     (<any>SupEngine).ArcadePhysics2D.allBodies.push(this);
   }
 
-  setIsLayerActive(active: boolean) {}
+  setIsLayerActive(active: boolean) { /* Nothing to render */ }
 
   setupBox(config: any) {
     this.type = "box";
@@ -70,11 +70,11 @@ export default class ArcadeBody2D extends SupEngine.ActorComponent {
     this.mapToSceneFactor = {
       x: this.tileSetAsset.__inner.data.grid.width / this.tileMapAsset.__inner.data.pixelsPerUnit,
       y: this.tileSetAsset.__inner.data.grid.height / this.tileMapAsset.__inner.data.pixelsPerUnit,
-    }
+    };
     this.tileSetPropertyName = config.tileSetPropertyName;
     if (config.layersIndex != null) {
       let layers = <string[]>config.layersIndex.split(",");
-      for (let layer of layers) this.layersIndex.push(parseInt(layer.trim()));
+      for (let layer of layers) this.layersIndex.push(parseInt(layer.trim(), 10));
     } else {
       for (let i = 0; i < this.tileMapAsset.__inner.data.layers.length; i++) this.layersIndex.push(i);
     }

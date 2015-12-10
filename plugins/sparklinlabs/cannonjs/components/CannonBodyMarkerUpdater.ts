@@ -19,12 +19,12 @@ export default class CannonBodyMarkerUpdater {
         break;
       case"cylinder":
         this.bodyRenderer.setCylinder(this.config.radius, this.config.height);
-        break
+        break;
     }
     this.bodyRenderer.setOffset(this.config.offset);
   }
 
-  destroy() {}
+  destroy() { /* Ignore */ }
 
   config_setProperty(path: string, value: any) {
     if (path.indexOf("halfSize") !== -1 || (path === "shape" && value === "box")) {

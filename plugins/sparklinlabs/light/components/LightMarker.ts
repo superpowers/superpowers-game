@@ -1,5 +1,5 @@
 let THREE = SupEngine.THREE;
-import Light from "./Light"
+import Light from "./Light";
 
 export default class LightMarker extends Light {
   lightMarker: THREE.PointLightHelper|THREE.SpotLightHelper|THREE.DirectionalLightHelper;
@@ -23,11 +23,11 @@ export default class LightMarker extends Light {
         break;
       case "spot":
         this.lightMarker = new THREE.SpotLightHelper(this.light, 1, 1);
-        //if (this.castShadow) this.cameraHelper = new THREE.CameraHelper((<THREE.SpotLight>this.light).shadowCamera);
+        // if (this.castShadow) this.cameraHelper = new THREE.CameraHelper((<THREE.SpotLight>this.light).shadowCamera);
         break;
       case "directional":
         this.lightMarker = new THREE.DirectionalLightHelper(this.light, 1);
-        //if (this.castShadow) this.cameraHelper = new THREE.CameraHelper((<THREE.DirectionalLight>this.light).shadowCamera);
+        // if (this.castShadow) this.cameraHelper = new THREE.CameraHelper((<THREE.DirectionalLight>this.light).shadowCamera);
         break;
     }
 
@@ -35,7 +35,7 @@ export default class LightMarker extends Light {
       this.actor.gameInstance.threeScene.add(this.lightMarker);
       this.lightMarker.updateMatrixWorld(true);
     }
-    //if (type === "spot" && this.cameraHelper != null && this.castShadow) this.actor.gameInstance.threeScene.add(this.cameraHelper);
+    // if (type === "spot" && this.cameraHelper != null && this.castShadow) this.actor.gameInstance.threeScene.add(this.cameraHelper);
   }
 
   setColor(color: number) {

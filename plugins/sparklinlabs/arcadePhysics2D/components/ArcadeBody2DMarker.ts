@@ -1,4 +1,3 @@
-import ArcadeBody2D from "./ArcadeBody2D";
 import ArcadeBody2DUpdater from "./ArcadeBody2DUpdater";
 
 let THREE = SupEngine.THREE;
