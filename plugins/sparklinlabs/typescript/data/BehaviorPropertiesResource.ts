@@ -1,9 +1,16 @@
-import * as path from "path";
-import * as fs from "fs";
-
 export interface BehaviorProperty {
   name: string;
   type: string;
+}
+
+export interface BehaviorPropertiesResourcePub {
+  behaviors: {
+    [behaviorName: string]: {
+      scriptId: string;
+      parentBehavior: string;
+      properties: BehaviorProperty[];
+    }
+  };
 }
 
 export default class BehaviorPropertiesResource extends SupCore.Data.Base.Resource {
@@ -30,20 +37,20 @@ export default class BehaviorPropertiesResource extends SupCore.Data.Base.Resour
         }
       }
     }
-  }
+  };
 
-  pub: {behaviors: {[behaviorName: string]: {scriptId: string; parentBehavior: string; properties: BehaviorProperty[]}}};
+  pub: BehaviorPropertiesResourcePub;
 
-  behaviorNamesByScriptId: {[scriptId: string]: string[];};
-  propertiesByNameByBehavior: {[behaviorName: string]: {[propertyName: string]: BehaviorProperty}};
+  behaviorNamesByScriptId: { [scriptId: string]: string[]; };
+  propertiesByNameByBehavior: { [behaviorName: string]: { [propertyName: string]: BehaviorProperty; } };
 
   constructor(id: string, pub: any, server: ProjectServer) {
     super(id, pub, BehaviorPropertiesResource.schema, server);
   }
 
   setup() {
-    this.behaviorNamesByScriptId = {}
-    this.propertiesByNameByBehavior = {}
+    this.behaviorNamesByScriptId = {};
+    this.propertiesByNameByBehavior = {};
 
     for (let behaviorName in this.pub.behaviors) {
       let behavior = this.pub.behaviors[behaviorName];

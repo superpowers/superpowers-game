@@ -18,7 +18,7 @@ export default class BehaviorConfig extends SupCore.Data.Base.ComponentConfig {
         }
       }
     }
-  }
+  };
 
   static create() { return { behaviorName: "", propertyValues: {} }; }
 
@@ -30,7 +30,7 @@ export default class BehaviorConfig extends SupCore.Data.Base.ComponentConfig {
   }
 
   server_setBehaviorPropertyValue(client: any, name: string, type: string, value: any, callback: (err: string, name: string, type: string, value: any) => any) {
-    this.pub.propertyValues[name] = { type, value }
+    this.pub.propertyValues[name] = { type, value };
     callback(null, name, type, value);
   }
 
@@ -39,7 +39,7 @@ export default class BehaviorConfig extends SupCore.Data.Base.ComponentConfig {
   }
 
   server_clearBehaviorPropertyValue(client: any, name: string, callback: (err: string, name: string) => any) {
-    delete this.pub.propertyValues[name]
+    delete this.pub.propertyValues[name];
     callback(null, name);
   }
 
