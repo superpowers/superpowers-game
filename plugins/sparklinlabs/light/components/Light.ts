@@ -175,7 +175,7 @@ export default class Light extends SupEngine.ActorComponent {
   }
 
   setShadowCameraFov(fov: number) {
-    this.shadow.camera.fov;
+    this.shadow.camera.fov = fov;
     if (this.type !== "spot") return;
 
     let shadow = (this.light as THREE.SpotLight|THREE.DirectionalLight).shadow;
