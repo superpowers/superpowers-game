@@ -56,11 +56,11 @@ function setupDocs() {
 
       let linkElts = articleElt.querySelectorAll("a") as NodeListOf<HTMLAnchorElement>;
       if (SupClient.isApp) {
-        let shell: GitHubElectron.Shell = (top as any).global.require("remote").require("shell");
+        let electron: GitHubElectron.Electron = (top as any).global.require("electron");
         for (let i = 0; i < linkElts.length; i++) {
           linkElts[i].addEventListener("click", (event: any) => {
             event.preventDefault();
-            shell.openExternal(event.target.href);
+            electron.shell.openExternal(event.target.href);
           });
         }
       } else {

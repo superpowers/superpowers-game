@@ -144,15 +144,13 @@ export function setupEditor(clientId: number) {
 
   // Context menu
 if (window.navigator.userAgent.indexOf("Electron") !== -1) {
-    let remote: GitHubElectron.Remote = (top as any).global.require("remote");
-    let win = remote.getCurrentWindow();
-    let Menu: typeof GitHubElectron.Menu = remote.require("menu");
-    let MenuItem: typeof GitHubElectron.MenuItem = remote.require("menu-item");
+    let electron: GitHubElectron.Electron = (top as any).global.require("electron");
+    let win = electron.remote.getCurrentWindow();
 
-    let menu = new Menu();
-    menu.append(new MenuItem({ label: SupClient.i18n.t("scriptEditor:contextMenu.cut"), click: () => { document.execCommand("cut"); } }));
-    menu.append(new MenuItem({ label: SupClient.i18n.t("scriptEditor:contextMenu.copy"), click: () => { document.execCommand("copy"); } }));
-    menu.append(new MenuItem({ label: SupClient.i18n.t("scriptEditor:contextMenu.paste"), click: () => { document.execCommand("paste"); } }));
+    let menu = new electron.remote.Menu();
+    menu.append(new electron.remote.MenuItem({ label: SupClient.i18n.t("scriptEditor:contextMenu.cut"), click: () => { document.execCommand("cut"); } }));
+    menu.append(new electron.remote.MenuItem({ label: SupClient.i18n.t("scriptEditor:contextMenu.copy"), click: () => { document.execCommand("copy"); } }));
+    menu.append(new electron.remote.MenuItem({ label: SupClient.i18n.t("scriptEditor:contextMenu.paste"), click: () => { document.execCommand("paste"); } }));
 
     document.querySelector(".text-editor-container").addEventListener("contextmenu", (event: any) => {
       event.preventDefault();
