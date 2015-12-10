@@ -118,7 +118,7 @@ onRoomCommands.appendMessage = (entry: Entry) => {
   scrollToBottom();
 };
 
-function appendRoomUser(roomUser: { id: string connectionCount: number; }) {
+function appendRoomUser(roomUser: { id: string; connectionCount: number; }) {
   let roomUserElt = document.createElement("li");
   roomUserElt.dataset["userId"] = roomUser.id;
   roomUserElt.textContent = roomUser.id;
