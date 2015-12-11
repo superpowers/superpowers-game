@@ -34,10 +34,14 @@ export default class BehaviorEditor {
 
     this.propertySettingsByName = {};
 
+    this.projectClient.subEntries(this);
     this.projectClient.subResource("behaviorProperties", this);
   }
 
-  destroy() { this.projectClient.unsubResource("behaviorProperties", this); }
+  destroy() {
+    this.projectClient.unsubResource("behaviorProperties", this);
+    this.projectClient.unsubEntries(this);
+  }
 
   onResourceReceived = (resourceId: string, resource: BehaviorPropertiesResource) => {
     this.behaviorPropertiesResource = resource;
@@ -48,14 +52,53 @@ export default class BehaviorEditor {
     if (command === "setScriptBehaviors" || command === "clearScriptBehaviors") this._buildBehaviorPropertiesUI();
   };
 
+  onEntriesReceived = () => { /* Ignore */ };
+  onEntryAdded = () => { /* Ignore */ };
+  onEntryTrashed = () => { /* Ignore */ };
+  onEntryMoved = (id: string) => {
+    if (this.behaviorPropertiesResource != null &&
+    this.behaviorPropertiesResource.behaviorNamesByScriptId[id] != null) {
+      this._buildBehaviorPropertiesUI();
+    }
+  };
+  onSetEntryProperty = (id: string, key: string) => {
+    if (key === "name" &&
+    this.behaviorPropertiesResource != null &&
+    this.behaviorPropertiesResource.behaviorNamesByScriptId[id] != null) {
+      this._buildBehaviorPropertiesUI();
+    }
+  };
+
   _buildBehaviorPropertiesUI() {
     // Setup behavior list
     while (this.behaviorNameField.childElementCount > 1) this.behaviorNameField.removeChild(this.behaviorNameField.lastElementChild);
 
-    let behaviorNames = Object.keys(this.behaviorPropertiesResource.pub.behaviors);
-    behaviorNames.sort();
-    for (let behaviorName of behaviorNames) {
-      SupClient.table.appendSelectOption(this.behaviorNameField, behaviorName, behaviorName);
+    let entries: (string|string[])[] = [];
+
+    for (let scriptId in this.behaviorPropertiesResource.behaviorNamesByScriptId) {
+      let behaviorNames = this.behaviorPropertiesResource.behaviorNamesByScriptId[scriptId];
+      if (behaviorNames.length > 1) {
+        entries.push([ this.projectClient.entries.getPathFromId(scriptId) ].concat(behaviorNames));
+      } else if (behaviorNames.length === 1) {
+        entries.push(behaviorNames[0]);
+      }
+    }
+
+    entries.sort((a, b) => {
+      if (Array.isArray(a)) a = a[0];
+      if (Array.isArray(b)) b = b[0];
+      return (a as string).localeCompare(b as string);
+    });
+
+    for (let entry of entries) {
+      if (Array.isArray(entry)) {
+        let group = SupClient.table.appendSelectOptionGroup(this.behaviorNameField, entry[0]);
+        for (let behaviorName of entry.slice(1)) {
+          SupClient.table.appendSelectOption(group, behaviorName, behaviorName);
+        }
+      } else {
+        SupClient.table.appendSelectOption(this.behaviorNameField, entry, entry);
+      }
     }
 
     if (this.config.behaviorName.length > 0 && this.behaviorPropertiesResource.pub.behaviors[this.config.behaviorName] == null) {
