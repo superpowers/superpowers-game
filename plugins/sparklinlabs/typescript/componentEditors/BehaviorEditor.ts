@@ -51,7 +51,10 @@ export default class BehaviorEditor {
   _buildBehaviorPropertiesUI() {
     // Setup behavior list
     while (this.behaviorNameField.childElementCount > 1) this.behaviorNameField.removeChild(this.behaviorNameField.lastElementChild);
-    for (let behaviorName in this.behaviorPropertiesResource.pub.behaviors) {
+
+    let behaviorNames = Object.keys(this.behaviorPropertiesResource.pub.behaviors);
+    behaviorNames.sort();
+    for (let behaviorName of behaviorNames) {
       SupClient.table.appendSelectOption(this.behaviorNameField, behaviorName, behaviorName);
     }
 
