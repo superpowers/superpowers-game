@@ -35,13 +35,11 @@ export interface SpriteAssetPub {
 
   animations: SpriteAnimationPub[];
 
-  // FIXME: This could be removed, the UI can use mapSlots or textures to determine its state
-  advancedTextures: boolean;
   mapSlots: { [name: string]: string; };
 }
 
 export default class SpriteAsset extends SupCore.Data.Base.Asset {
-  static currentFormatVersion = 1;
+  static currentFormatVersion = 2;
 
   static schema: SupCore.Data.Base.Schema = {
     formatVersion: { type: "integer" },
@@ -76,8 +74,6 @@ export default class SpriteAsset extends SupCore.Data.Base.Asset {
     },
 
     animations: { type: "array" },
-
-    advancedTextures: { type: "boolean", mutable: true },
 
     mapSlots: {
       type: "hash",
@@ -119,7 +115,6 @@ export default class SpriteAsset extends SupCore.Data.Base.Asset {
 
         animations: [],
 
-        advancedTextures: false,
         mapSlots: {
           map: "map",
           light: null,
@@ -198,8 +193,8 @@ export default class SpriteAsset extends SupCore.Data.Base.Asset {
 
       // NOTE: Support for multiple maps was introduced in Superpowers 0.11
       if (pub.frameOrder == null) pub.frameOrder = "rows";
-      if (pub.advancedTextures == null) {
-        pub.advancedTextures = false;
+      if ((pub as any).advancedTextures == null) {
+        (pub as any).advancedTextures = false;
         pub.mapSlots = {
           map: "map",
           light: null,
@@ -215,6 +210,11 @@ export default class SpriteAsset extends SupCore.Data.Base.Asset {
       }
 
       pub.formatVersion = 1;
+    }
+
+    if (pub.formatVersion === 1) {
+      delete (pub as any).advancedTextures;
+      pub.formatVersion = 2;
     }
 
     callback(true);

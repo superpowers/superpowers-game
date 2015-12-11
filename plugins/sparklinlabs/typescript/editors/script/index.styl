@@ -42,25 +42,12 @@ body
   margin-top -2px
 
 .error-pane
-  display flex
-  flex-flow column
   min-height 200px
   height 200px
 
-  .status
-    cursor pointer
-    background-color #444
-    color #fff
-    display flex
-    align-items center
-
-    &.has-draft
-      background-color #37d
-      .draft { display: block; }
-
-    &.has-errors
-      background-color #a44
-
+  .header
+    &.has-draft .draft { display: block; }
+  
     .draft
       display none
       padding-left 0.25em
@@ -70,32 +57,7 @@ body
       flex 1
       padding 0.5em
 
-    button.toggle
-      width 30px
-      align-self stretch
-      background transparent
-      border none
-      box-shadow none
-      padding 0
-      opacity 0.5
-      font-size 20px
-      font-weight bold
-      cursor pointer
-      color #fff
-
-      &:hover
-        opacity 1
-        background-color rgba(0,0,0,0.1)
-
-      &:active
-        background-color #fff
-        color #444
-
-      &:disabled
-        opacity 0.2
-        cursor default
-
-  .errors
+  .content
     flex 1
     overflow-y scroll
 
@@ -126,8 +88,3 @@ body
 
     td:last-child
       white-space nowrap
-
-  &.collapsed
-    min-height 0
-    height auto !important
-    .errors { display: none; }

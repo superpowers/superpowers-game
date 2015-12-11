@@ -1,4 +1,4 @@
-import ui, { setupProperty, setupAnimation, updateSelectedAnimation, setupAdvancedTextures, setupMap } from "./ui";
+import ui, { setupProperty, setupAnimation, updateSelectedAnimation, setupMap } from "./ui";
 import animationArea, { centerCamera as centerAnimationCamera } from "./animationArea";
 import spritesheetArea, { updateSelection, centerCamera as centerSpritesheetCamera } from "./spritesheetArea";
 
@@ -78,7 +78,6 @@ function onAssetReceived() {
     setupAnimation(animation, index);
   });
 
-  setupAdvancedTextures(pub.advancedTextures);
   for (let mapName in pub.maps) if (pub.maps[mapName] != null) setupMap(mapName);
   for (let slotName in pub.mapSlots) ui.mapSlotsInput[slotName].value = pub.mapSlots[slotName] != null ? pub.mapSlots[slotName] : "";
 }
@@ -95,8 +94,7 @@ export function editAsset(...args: any[]) {
 }
 
 onEditCommands.setProperty = (path: string, value: any) => {
-  if (path === "advancedTextures") setupAdvancedTextures(value);
-  else setupProperty(path, value);
+  setupProperty(path, value);
 };
 onEditCommands.newAnimation = (animation: any, index: number) => { setupAnimation(animation, index); };
 

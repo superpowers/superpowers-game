@@ -26,7 +26,6 @@ let ui: {
   mapUploadButton?: HTMLInputElement;
   mapDownloadButton?: HTMLInputElement;
   texturesToogleButton?: HTMLInputElement;
-  texturesPane?: HTMLDivElement;
   texturesTreeView?: any;
   selectedTextureName?: string;
 
@@ -94,14 +93,7 @@ document.querySelector("button.rename-animation").addEventListener("click", onRe
 document.querySelector("button.delete-animation").addEventListener("click", onDeleteAnimationClick);
 
 // Advanced textures
-ui.texturesPane = <HTMLDivElement>document.querySelector(".advanced-textures");
-let texturePaneResizeHandle = new PerfectResize(ui.texturesPane, "bottom");
-
-ui.texturesToogleButton = <HTMLInputElement>document.querySelector(".advanced-textures button.plus");
-ui.texturesToogleButton.addEventListener("click", () => {
-  let advancedTextures = !data.modelUpdater.modelAsset.pub.advancedTextures;
-  editAsset("setProperty", "advancedTextures", advancedTextures);
-});
+SupClient.setupCollapsablePane(document.querySelector(".advanced-textures") as HTMLDivElement);
 
 ui.texturesTreeView = new TreeView(document.querySelector(".textures-tree-view"));
 ui.texturesTreeView.on("selectionChange", updateSelectedMap);
@@ -130,20 +122,11 @@ document.querySelector("button.delete-map").addEventListener("click", onDeleteMa
 
 // Error pane
 ui.errorPane = <HTMLDivElement>document.querySelector(".error-pane");
-ui.errorPaneStatus = <HTMLDivElement>ui.errorPane.querySelector(".status");
+ui.errorPaneStatus = <HTMLDivElement>ui.errorPane.querySelector(".header");
 ui.errorPaneInfo = <HTMLDivElement>ui.errorPaneStatus.querySelector(".info");
-ui.errorsTBody = <HTMLTableSectionElement>ui.errorPane.querySelector(".errors tbody");
+ui.errorsTBody = <HTMLTableSectionElement>ui.errorPane.querySelector(".content tbody");
 
-let errorPaneResizeHandle = new PerfectResize(ui.errorPane, "bottom");
-errorPaneResizeHandle.handleElt.classList.add("disabled");
-
-let errorPaneToggleButton = ui.errorPane.querySelector("button.toggle");
-
-ui.errorPaneStatus.addEventListener("click", () => {
-  let collapsed = ui.errorPane.classList.toggle("collapsed");
-  errorPaneToggleButton.textContent = collapsed ? "+" : "–";
-  errorPaneResizeHandle.handleElt.classList.toggle("disabled", collapsed);
-});
+SupClient.setupCollapsablePane(ui.errorPane);
 
 function setImportLog(log: ImportLogEntry[]) {
   let errorsCount = 0;
@@ -472,13 +455,4 @@ export function setupOpacity(opacity: number) {
   ui.opacityInput.value = opacity != null ? opacity.toString() : "";
   ui.opacityInput.disabled = opacity == null;
   ui.opacityCheckbox.checked = opacity != null;
-}
-
-export function setupAdvancedTextures(advancedTextures: boolean) {
-  ui.mapUploadButton.disabled = advancedTextures;
-  ui.mapDownloadButton.disabled = advancedTextures;
-  // NOTE: .toggle signature lacks the second argument in TypeScript 1.5 alpha
-  (<any>ui.texturesPane.classList).toggle("collapsed", !advancedTextures);
-  ui.texturesToogleButton.textContent = !advancedTextures ? "+" : "–";
-  texturePaneResizeHandle.handleElt.classList.toggle("disabled", !advancedTextures);
 }

@@ -1,9 +1,5 @@
 import { socket, data, scheduleErrorCheck, setNextCompletion } from "./network";
 
-/* tslint:disable */
-let PerfectResize = require("perfect-resize");
-/* tslint:enable */
-
 let ui: {
   editor?: TextEditorWidget;
   previousLine?: number;
@@ -113,6 +109,8 @@ export function setupEditor(clientId: number) {
   });
   ui.previousLine = -1;
 
+  SupClient.setupCollapsablePane(ui.errorPane, () => { ui.editor.codeMirrorInstance.refresh(); });
+
   (<any>ui.editor.codeMirrorInstance).on("keyup", (instance: any, event: any) => {
     clearInfoPopup();
 
@@ -143,7 +141,7 @@ export function setupEditor(clientId: number) {
   });
 
   // Context menu
-if (window.navigator.userAgent.indexOf("Electron") !== -1) {
+  if (window.navigator.userAgent.indexOf("Electron") !== -1) {
     let electron: GitHubElectron.Electron = (top as any).global.require("electron");
     let win = electron.remote.getCurrentWindow();
 
@@ -184,24 +182,12 @@ function onSendOperation(operation: OperationData) {
 
 // Error pane
 ui.errorPane = <HTMLDivElement>document.querySelector(".error-pane");
-ui.errorPaneStatus = <HTMLDivElement>ui.errorPane.querySelector(".status");
+ui.errorPaneStatus = <HTMLDivElement>ui.errorPane.querySelector(".header");
 ui.errorPaneInfo = <HTMLDivElement>ui.errorPaneStatus.querySelector(".info");
 
-ui.errorsTBody = <HTMLTableSectionElement>ui.errorPane.querySelector(".errors tbody");
+let errorsContent = ui.errorPane.querySelector(".content") as HTMLDivElement;
+ui.errorsTBody = <HTMLTableSectionElement>errorsContent.querySelector("tbody");
 ui.errorsTBody.addEventListener("click", onErrorTBodyClick);
-
-let errorPaneResizeHandle = new PerfectResize(ui.errorPane, "bottom");
-errorPaneResizeHandle.on("drag", () => { ui.editor.codeMirrorInstance.refresh(); });
-
-let errorPaneToggleButton = ui.errorPane.querySelector("button.toggle");
-ui.errorPaneStatus.addEventListener("click", (event: any) => {
-  if (event.target.tagName === "BUTTON" && event.target.parentElement.className === "draft") return;
-
-  let collapsed = ui.errorPane.classList.toggle("collapsed");
-  errorPaneToggleButton.textContent = collapsed ? "+" : "–";
-  errorPaneResizeHandle.handleElt.classList.toggle("disabled", collapsed);
-  ui.editor.codeMirrorInstance.refresh();
-});
 
 export function refreshErrors(errors: Array<{file: string; position: { line: number; character: number; }; length: number; message: string}>) {
   // Remove all previous erros
@@ -308,6 +294,7 @@ function onErrorTBodyClick(event: MouseEvent) {
 let saveButton = ui.errorPane.querySelector(".draft button");
 saveButton.addEventListener("click", (event: MouseEvent) => {
   event.preventDefault();
+  event.stopPropagation();
   onSaveText();
 });
 

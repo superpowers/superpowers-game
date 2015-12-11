@@ -1,4 +1,4 @@
-import ui, { setupAnimation, updateSelectedAnimation, setupOpacity, setupAdvancedTextures, setupMap } from "./ui";
+import ui, { setupAnimation, updateSelectedAnimation, setupOpacity, setupMap } from "./ui";
 import engine from "./engine";
 
 import ModelRenderer from "../../components/ModelRenderer";
@@ -40,7 +40,6 @@ function onAssetReceived() {
   ui.unitRatioInput.value = pub.unitRatio.toString();
   setupOpacity(pub.opacity);
 
-  setupAdvancedTextures(pub.advancedTextures);
   for (let mapName in pub.maps) if (pub.maps[mapName] != null) setupMap(mapName);
   for (let slotName in pub.mapSlots) ui.mapSlotsInput[slotName].value = pub.mapSlots[slotName] != null ? pub.mapSlots[slotName] : "";
 }
@@ -69,9 +68,6 @@ onEditCommands.setProperty = (path: string, value: any) => {
       break;
     case "opacity":
       setupOpacity(value);
-      break;
-    case "advancedTextures":
-      setupAdvancedTextures(value);
       break;
   }
 };

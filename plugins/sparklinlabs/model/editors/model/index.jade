@@ -12,12 +12,11 @@ html
     .main
       canvas(tabindex="0")
 
-      .error-pane.collapsed
-        .status
+      .error-pane.collapsable.collapsed
+        .header
           .info= t("modelEditor:status.noErrors")
-          button.toggle.plus +
 
-        .errors(disabled)
+        .content(disabled, hidden)
           table
             thead
               tr
@@ -90,11 +89,10 @@ html
 
       .animations-tree-view
 
-      .advanced-textures.collapsed
+      .advanced-textures.collapsable.collapsed
         .header
           .label= t("modelEditor:sidebar.advancedTextures.title")
-          button.plus +
-        .content
+        .content(hidden)
           table.properties
             tr
               th= t("modelEditor:sidebar.advancedTextures.map")

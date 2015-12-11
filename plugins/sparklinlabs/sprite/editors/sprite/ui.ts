@@ -110,13 +110,14 @@ document.querySelector("input.animation-loop").addEventListener("change", (event
 
 // Advanced textures
 ui.texturesPane = <HTMLDivElement>document.querySelector(".advanced-textures");
-let texturePaneResizeHandle = new PerfectResize(ui.texturesPane, "bottom");
+SupClient.setupCollapsablePane(ui.texturesPane);
+// let texturePaneResizeHandle = new PerfectResize(ui.texturesPane, "bottom");
 
-ui.texturesToogleButton = <HTMLInputElement>document.querySelector(".advanced-textures button.plus");
-ui.texturesToogleButton.addEventListener("click", () => {
-  let advancedTextures = !data.spriteUpdater.spriteAsset.pub.advancedTextures;
-  editAsset("setProperty", "advancedTextures", advancedTextures);
-});
+// ui.texturesToogleButton = <HTMLInputElement>document.querySelector(".advanced-textures button.plus");
+// ui.texturesToogleButton.addEventListener("click", () => {
+//   let advancedTextures = !data.spriteUpdater.spriteAsset.pub.advancedTextures;
+//   editAsset("setProperty", "advancedTextures", advancedTextures);
+// });
 
 ui.texturesTreeView = new TreeView(document.querySelector(".textures-tree-view"));
 ui.texturesTreeView.on("selectionChange", updateSelectedMap);
@@ -492,12 +493,6 @@ function onDeleteMapClick() {
 
     for (let selectedNode of ui.texturesTreeView.selectedNodes) editAsset("deleteMap", selectedNode.dataset.name);
   });
-}
-
-export function setupAdvancedTextures(advancedTextures: boolean) {
-  (<any>ui.texturesPane.classList).toggle("collapsed", !advancedTextures);
-  ui.texturesToogleButton.textContent = !advancedTextures ? "+" : "–";
-  texturePaneResizeHandle.handleElt.classList.toggle("disabled", !advancedTextures);
 }
 
 export function updateSelectedMap() {

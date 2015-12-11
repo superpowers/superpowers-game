@@ -1,7 +1,6 @@
 import * as path from "path";
 import * as fs from "fs";
 import * as async from "async";
-import * as _ from "lodash";
 
 // Reference to THREE, client-side only
 let THREE: typeof SupEngine.THREE;
@@ -34,13 +33,11 @@ export interface ModelAssetPub {
 
   opacity: number;
 
-  // FIXME: This could be removed, the UI can use mapSlots or textures to determine its state
-  advancedTextures: boolean;
   mapSlots: { [name: string]: string; };
 }
 
 export default class ModelAsset extends SupCore.Data.Base.Asset {
-  static currentFormatVersion = 1;
+  static currentFormatVersion = 2;
 
   static schema: SupCore.Data.Base.Schema = {
     formatVersion: { type: "integer" },
@@ -82,8 +79,6 @@ export default class ModelAsset extends SupCore.Data.Base.Asset {
     animations: { type: "array" },
 
     opacity: { type: "number?", min: 0, max: 1, mutable: true },
-
-    advancedTextures: { type: "boolean", mutable: true },
 
     mapSlots: {
       type: "hash",
@@ -129,7 +124,6 @@ export default class ModelAsset extends SupCore.Data.Base.Asset {
       animations: [],
       opacity: null,
 
-      advancedTextures: false,
       mapSlots: {
         map: "map",
         light: null,
@@ -193,7 +187,7 @@ export default class ModelAsset extends SupCore.Data.Base.Asset {
         }
 
       ], (err) => { this._onLoaded(assetPath, pub); });
-    }
+    };
 
     fs.readFile(path.join(assetPath, "model.json"), { encoding: "utf8" }, (err, json) => {
       // NOTE: "asset.json" was renamed to "model.json" in Superpowers 0.11
@@ -218,15 +212,15 @@ export default class ModelAsset extends SupCore.Data.Base.Asset {
       // NOTE: New settings introduced in Superpowers 0.8
       if (typeof pub.opacity === "undefined") pub.opacity = 1;
 
-      if (pub.advancedTextures == null) {
-        pub.advancedTextures = false;
+      if ((pub as any).advancedTextures == null) {
+        (pub as any).advancedTextures = false;
         pub.mapSlots = {
           map: "map",
           light: null,
           specular: null,
           alpha: null,
           normal: null
-        }
+        };
       }
       if (pub.unitRatio == null) pub.unitRatio = 1;
 
@@ -237,6 +231,11 @@ export default class ModelAsset extends SupCore.Data.Base.Asset {
       if (pub.animations == null) pub.animations = [];
 
       pub.formatVersion = 1;
+    }
+
+    if (pub.formatVersion === 1) {
+      delete (pub as any).advancedTextures;
+      pub.formatVersion = 2;
     }
 
     callback(true);
@@ -591,7 +590,7 @@ export default class ModelAsset extends SupCore.Data.Base.Asset {
     if (violation != null) { callback(`Invalid duration: ${SupCore.Data.Base.formatRuleViolation(violation)}`); return; }
 
     let animation = this.animations.byId[id];
-    if (animation == null) { callback(`Invalid animation id: ${id}`); return }
+    if (animation == null) { callback(`Invalid animation id: ${id}`); return; }
 
     animation.duration = duration;
     animation.keyFrames = keyFrames;
