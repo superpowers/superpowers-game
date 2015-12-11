@@ -183,23 +183,12 @@ shaderPaneResizeHandle.on("drag", () => {
 });
 
 function onSaveVertex() {
-  try { setupPreview({ useDraft: true }); }
-  catch (e) {
-    (<any>ui.vertexHeader.classList).toggle("has-errors", true);
-    setupPreview();
-    return;
-  }
+  // if (!ui.vertexHeader.classList.contains("has-errors")) editAsset("saveVertexShader");
   editAsset("saveVertexShader");
 }
 
 function onSaveFragment() {
-  try { setupPreview({ useDraft: true }); }
-  catch (e) {
-    (<any>ui.fragmentHeader.classList).toggle("has-errors", true);
-    setupPreview();
-    return;
-  }
-  editAsset("saveFragmentShader");
+  if (!ui.fragmentHeader.classList.contains("has-errors")) editAsset("saveFragmentShader");
 }
 
 let fragmentShadersPane = shadersPane.querySelector(".fragment");
