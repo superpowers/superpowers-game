@@ -74,17 +74,19 @@ export default class Player {
       this.resourcesToLoad = Object.keys(SupRuntime.resourcePlugins);
 
       this.assetsToLoad = [];
-      let walk = (asset: Entry, parent = "") => {
+      let walk = (asset: Entry, parent = "", storagePath = "") => {
         let children: string[];
         if (asset.children != null) {
           children = [];
           for (let child of asset.children) { children.push(child.name); }
         }
         let path = `${parent}${asset.name}`;
-        this.assetsToLoad.push({ id: asset.id, name: asset.name, path, storagePath: `${asset.id}-${path.replace(new RegExp("/", "g"), "__")}`, type: asset.type, children });
+        storagePath += `${asset.name} (${asset.id})`;
+        this.assetsToLoad.push({ id: asset.id, name: asset.name, path, storagePath, type: asset.type, children });
         parent += `${asset.name}/`;
+        storagePath += "/";
         if (asset.children == null) return;
-        for (let child of asset.children) { walk(child, parent); }
+        for (let child of asset.children) { walk(child, parent, storagePath); }
       };
       for (let asset of project.assets) { walk(asset); }
 
