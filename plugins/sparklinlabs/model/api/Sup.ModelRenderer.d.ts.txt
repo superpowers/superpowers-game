@@ -1,10 +1,13 @@
 declare namespace Sup {
   class ModelRenderer extends ActorComponent {
-    constructor(actor: Actor, pathOrAsset?: string|Model, materialType?: ModelRenderer.MaterialType);
+    constructor(actor: Actor, pathOrAsset?: string|Model);
+    constructor(actor: Actor, pathOrAsset: string|Model, materialType?: ModelRenderer.MaterialType, shaderPathOrAsset?: string|Shader);
 
     getModel(): Model;
-    setModel(pathOrAsset?: string|Model, materialType?: ModelRenderer.MaterialType): ModelRenderer;
+    setModel(pathOrAsset: string|Model): ModelRenderer;
+    setModel(pathOrAsset: string|Model, materialType?: ModelRenderer.MaterialType, shaderPathOrAsset?: string|Shader): ModelRenderer;
     getMaterialType(): ModelRenderer.MaterialType;
+    getShader(): Shader;
     getOpacity(): number;
     setOpacity(opacity: number): ModelRenderer;
     getColor(): Color;
@@ -27,6 +30,6 @@ declare namespace Sup {
   }
 
   namespace ModelRenderer {
-    enum MaterialType { Basic, Phong }
+    enum MaterialType { Basic, Phong, Shader }
   }
 }

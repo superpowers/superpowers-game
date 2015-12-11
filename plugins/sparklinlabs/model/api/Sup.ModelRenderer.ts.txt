@@ -1,15 +1,11 @@
 namespace Sup {
-  let materialTypes = ["basic", "phong"];
+  let materialTypes = ["basic", "phong", "shader"];
 
   export class ModelRenderer extends Sup.ActorComponent {
-    constructor(actor: Actor, pathOrAsset: string|Model, materialIndex: number) {
+    constructor(actor: Actor, pathOrAsset?: string|Model, materialIndex?: number, shaderPathOrAsset?: string|Shader) {
       super(actor);
       this.__inner = new SupEngine.componentClasses.ModelRenderer(this.actor.__inner);
-      if (pathOrAsset != null) {
-        let modelAsset = (typeof pathOrAsset === "string") ? get(pathOrAsset, Model) : <Model>pathOrAsset;
-        this.__inner.opacity = modelAsset.__inner.opacity;
-        this.setModel(modelAsset, materialIndex);
-      }
+      if (pathOrAsset != null) this.setModel(pathOrAsset, materialIndex, shaderPathOrAsset);
       this.__inner.__outer = this;
       this.actor.modelRenderer = this;
     }
@@ -19,15 +15,28 @@ namespace Sup {
     }
 
     getModel() { return this.__inner.asset.__outer }
-    setModel(pathOrAsset: string|Model, materialIndex: number) {
+    setModel(pathOrAsset: string|Model, materialIndex?: number, shaderPathOrAsset?: string|Shader) {
       let material: string;
       if (materialIndex != null) material = materialTypes[materialIndex];
 
-      let modelAsset = (typeof pathOrAsset === "string") ? get(pathOrAsset, Model) : <Model>pathOrAsset;
-      this.__inner.setModel((modelAsset != null) ? modelAsset.__inner : null, material);
+      if (material === "shader" && shaderPathOrAsset == null) {
+        throw new Error(`Shader asset is missing when setting model on actor named "${this.actor.getName()}"`);
+      }
+
+      let modelAsset: Model;
+      if (pathOrAsset != null) {
+        modelAsset = (typeof pathOrAsset === "string") ? get(pathOrAsset, Model) : <Model>pathOrAsset;
+        this.__inner.opacity = modelAsset.__inner.opacity;
+      }
+      let shaderAsset: Shader;
+      if (shaderPathOrAsset != null)
+        shaderAsset = (typeof shaderPathOrAsset === "string") ? get(shaderPathOrAsset, Shader) : <Shader>shaderPathOrAsset;
+
+      this.__inner.setModel((modelAsset != null) ? modelAsset.__inner : null, material, (shaderAsset != null) ? shaderAsset.__inner : null);
       return this;
     }
     getMaterialType() { return materialTypes.indexOf(this.__inner.materialType); }
+    getShader() { return this.__inner.materialType === "shader" ? this.__inner.shaderAsset.__outer : null; }
     getOpacity() { return this.__inner.opacity; }
     setOpacity(opacity) { this.__inner.setOpacity(opacity); return this; }
     getColor() { return new Color(this.__inner.color.r, this.__inner.color.g, this.__inner.color.b); }
@@ -66,6 +75,6 @@ namespace Sup {
   }
 
   export namespace ModelRenderer {
-    export enum MaterialType { Basic, Phong };
+    export enum MaterialType { Basic, Phong, Shader };
   }
 }

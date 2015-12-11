@@ -1,15 +1,11 @@
 namespace Sup {
-  let materialTypes = ["basic", "phong"];
+  let materialTypes = ["basic", "phong", "shader"];
 
   export class SpriteRenderer extends Sup.ActorComponent {
-    constructor(actor: Actor, pathOrAsset: string|Sprite, materialIndex: number) {
+    constructor(actor: Actor, pathOrAsset?: string|Sprite, materialIndex?: number, shaderPathOrAsset?: string|Shader) {
       super(actor);
       this.__inner = new SupEngine.componentClasses.SpriteRenderer(this.actor.__inner);
-      if (pathOrAsset != null) {
-        let spriteAsset = (typeof pathOrAsset === "string") ? get(pathOrAsset, Sprite) : <Sprite>pathOrAsset;
-        this.__inner.opacity = spriteAsset.__inner.opacity;
-        this.setSprite(spriteAsset, materialIndex);
-      }
+      if (pathOrAsset != null) this.setSprite(pathOrAsset, materialIndex, shaderPathOrAsset);
       this.__inner.__outer = this;
       this.actor.spriteRenderer = this;
     }
@@ -19,15 +15,28 @@ namespace Sup {
     }
 
     getSprite() { return (this.__inner.asset != null) ? this.__inner.asset.__outer : null; }
-    setSprite(pathOrAsset: string|Sprite, materialIndex: number) {
+    setSprite(pathOrAsset: string|Sprite, materialIndex?: number, shaderPathOrAsset?: string|Shader) {
       let material: string;
       if (materialIndex != null) material = materialTypes[materialIndex];
 
-      let spriteAsset = (typeof pathOrAsset === "string") ? get(pathOrAsset, Sprite) : <Sprite>pathOrAsset;
-      this.__inner.setSprite((spriteAsset != null) ? spriteAsset.__inner : null, material);
+      if (material === "shader" && shaderPathOrAsset == null) {
+        throw new Error(`Shader asset is missing when setting sprite on actor named "${this.actor.getName()}"`);
+      }
+
+      let spriteAsset: Sprite;
+      if (pathOrAsset != null) {
+        spriteAsset = (typeof pathOrAsset === "string") ? get(pathOrAsset, Sprite) : <Sprite>pathOrAsset;
+        this.__inner.opacity = spriteAsset.__inner.opacity;
+      }
+      let shaderAsset: Shader;
+      if (shaderPathOrAsset != null)
+        shaderAsset = (typeof shaderPathOrAsset === "string") ? get(shaderPathOrAsset, Shader) : <Shader>shaderPathOrAsset;
+
+      this.__inner.setSprite((spriteAsset != null) ? spriteAsset.__inner : null, material, (shaderAsset != null) ? shaderAsset.__inner : null);
       return this;
     }
     getMaterialType() { return materialTypes.indexOf(this.__inner.materialType); }
+    getShader() { return this.__inner.materialType === "shader" ? this.__inner.shaderAsset.__outer : null; }
     setHorizontalFlip(horizontalFlip) { this.__inner.setHorizontalFlip(horizontalFlip); return this; }
     getHorizontalFlip() { return this.__inner.horizontalFlip; }
     setVerticalFlip(verticalFlip) { this.__inner.setVerticalFlip(verticalFlip); return this; }
@@ -69,6 +78,6 @@ namespace Sup {
   }
 
   export namespace SpriteRenderer {
-    export enum MaterialType { Basic, Phong };
+    export enum MaterialType { Basic, Phong, Shader };
   }
 }

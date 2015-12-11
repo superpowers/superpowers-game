@@ -24,6 +24,7 @@ export default class ModelRendererEditor {
   opacityField: HTMLInputElement;
 
   materialSelectBox: HTMLSelectElement;
+  shaderRow: HTMLTableRowElement;
   shaderTextField: HTMLInputElement;
   shaderButtonElt: HTMLButtonElement;
 
@@ -129,6 +130,7 @@ export default class ModelRendererEditor {
     this.materialSelectBox.disabled = true;
 
     let shaderRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:ModelRenderer.shader"));
+    this.shaderRow = shaderRow.row;
     let shaderFields = SupClient.table.appendAssetField(shaderRow.valueCell, "");
     this.shaderTextField = shaderFields.textField;
     this.shaderTextField.addEventListener("input", this.onChangeShaderAsset);
@@ -304,10 +306,9 @@ export default class ModelRendererEditor {
   }
 
   _updateShaderField(materialType: string) {
-    let shaderRow = this.shaderTextField.parentElement.parentElement.parentElement;
     if (materialType === "shader") {
-      if (shaderRow.parentElement == null) this.tbody.appendChild(shaderRow);
-    } else if (shaderRow.parentElement != null) shaderRow.parentElement.removeChild(shaderRow);
+      if (this.shaderRow.parentElement == null) this.tbody.appendChild(this.shaderRow);
+    } else if (this.shaderRow.parentElement != null) this.shaderRow.parentElement.removeChild(this.shaderRow);
   }
 
   private onChangeModelAsset = (event: any) => {

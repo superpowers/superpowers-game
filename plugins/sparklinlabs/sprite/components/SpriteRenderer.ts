@@ -16,6 +16,7 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
   geometry: THREE.PlaneBufferGeometry;
   material: THREE.MeshBasicMaterial|THREE.MeshPhongMaterial|THREE.ShaderMaterial;
   materialType = "basic";
+  shaderAsset: any;
   threeMesh: THREE.Mesh;
   horizontalFlip = false;
   verticalFlip = false;
@@ -41,6 +42,7 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
 
     this.asset = asset;
     if (materialType != null) this.materialType = materialType;
+    if (customShader != null) this.shaderAsset = customShader;
     this.animationName = null;
     this.animationsByName = {};
     if (this.asset == null || this.asset.textures[this.asset.mapSlots["map"]] == null) return;
@@ -52,9 +54,7 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
 
     if (this.materialType === "shader") {
       this.material = SupEngine.componentClasses["Shader"].createShaderMaterial(
-        customShader,
-        this.asset.textures,
-        this.geometry
+        this.shaderAsset, this.asset.textures, this.geometry
       );
       (<any>this.material).map = this.asset.textures[this.asset.mapSlots["map"]];
 

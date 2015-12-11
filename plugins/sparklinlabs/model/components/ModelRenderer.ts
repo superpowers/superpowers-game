@@ -54,6 +54,7 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
   material: THREE.MeshBasicMaterial|THREE.MeshPhongMaterial|THREE.ShaderMaterial;
   threeMesh: THREE.Mesh|THREE.SkinnedMesh;
   materialType = "basic";
+  shaderAsset: any;
   castShadow = false;
   receiveShadow = false;
 
@@ -91,13 +92,14 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
 
   setModel(asset: ModelAssetPub, materialType?: string, customShader?: any) {
     if (this.threeMesh != null) this._clearMesh();
-    this.animation = null;
-    this.animationsByName = {};
 
     this.asset = asset;
+    if (materialType != null) this.materialType = materialType;
+    if (customShader != null) this.shaderAsset = customShader;
+    this.animation = null;
+    this.animationsByName = {};
     if (asset == null || asset.attributes["position"] == null) return;
 
-    if (materialType != null) this.materialType = materialType;
     this.updateAnimationsByName();
 
     let geometry = new THREE.BufferGeometry;
@@ -133,7 +135,7 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
 
     if (this.materialType === "shader") {
       this.material = SupEngine.componentClasses["Shader"].createShaderMaterial(
-        customShader,
+        this.shaderAsset,
         this.asset.textures,
         geometry
       );

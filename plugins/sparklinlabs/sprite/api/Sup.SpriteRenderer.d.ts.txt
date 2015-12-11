@@ -1,10 +1,13 @@
 declare namespace Sup {
   class SpriteRenderer extends ActorComponent {
-    constructor(actor: Actor, pathOrAsset?: string|Sprite, materialType?: SpriteRenderer.MaterialType );
+    constructor(actor: Actor, pathOrAsset?: string|Sprite);
+    constructor(actor: Actor, pathOrAsset: string|Sprite, materialType?: SpriteRenderer.MaterialType, shaderPathOrAsset?: string|Shader);
 
     getSprite(): Sprite;
-    setSprite(pathOrAsset: string|Sprite, materialType?: SpriteRenderer.MaterialType): SpriteRenderer;
+    setSprite(pathOrAsset: string|Sprite): SpriteRenderer;
+    setSprite(pathOrAsset: string|Sprite, materialType?: SpriteRenderer.MaterialType, shaderPathOrAsset?: string|Shader): SpriteRenderer;
     getMaterialType(): SpriteRenderer.MaterialType;
+    getShader(): Shader;
     setHorizontalFlip(horizontalFlip: boolean): SpriteRenderer;
     getHorizontalFlip(): boolean;
     setVerticalFlip(verticalFlip: boolean): SpriteRenderer;
@@ -34,6 +37,6 @@ declare namespace Sup {
   }
 
   namespace SpriteRenderer {
-    enum MaterialType { Basic, Phong }
+    enum MaterialType { Basic, Phong, Shader }
   }
 }
