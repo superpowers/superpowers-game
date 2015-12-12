@@ -71,7 +71,7 @@ export default class TextRenderer extends SupEngine.ActorComponent {
 
     // Arbitrary value that should be enough for most fonts
     // We might want to make it configurable in the future
-    let heightBorder = fontSize * 0.2;
+    let heightBorder = fontSize * 0.3;
 
     let heightWithoutBorder = fontSize * texts.length;
     let height = heightWithoutBorder + heightBorder * 2;
