@@ -120,46 +120,60 @@ let entriesSubscriber = {
 
   onEntryMoved: (id: string, parentId: string, index: number) => {
     let entry = data.projectClient.entries.byId[id];
-    if (entry.type !== "script") return;
+    if (entry.type != null && entry.type !== "script") return;
 
-    let oldFileName = data.fileNamesByScriptId[id];
-    let newFileName = `${data.projectClient.entries.getPathFromId(id)}.ts`;
+    let renameFile = (entry: SupCore.Data.EntryNode) => {
+      if (entry.type == null) {
+        for (let child of entry.children) renameFile(child);
+      } else if (entry.type === "script") {
+        let oldFileName = data.fileNamesByScriptId[entry.id];
+        let newFileName = `${data.projectClient.entries.getPathFromId(entry.id)}.ts`;
 
-    data.fileNames.splice(data.fileNames.indexOf(oldFileName), 1);
-    let i = 0;
-    data.projectClient.entries.walk((entry) => {
-      if (entry.type !== "script") return;
-      if (entry.id === id) data.fileNames.splice(i, 0, newFileName);
-      i++;
-    });
+        data.fileNames.splice(data.fileNames.indexOf(oldFileName), 1);
+        let i = 0;
+        data.projectClient.entries.walk((nextEntry) => {
+          if (nextEntry.type !== "script") return;
+          if (nextEntry.id === entry.id) data.fileNames.splice(i, 0, newFileName);
+          i++;
+        });
 
-    data.fileNamesByScriptId[id] = newFileName;
-    let file = data.files[oldFileName];
-    data.files[newFileName] = file;
-    if (newFileName !== oldFileName) delete data.files[oldFileName];
+        data.fileNamesByScriptId[entry.id] = newFileName;
+        let file = data.files[oldFileName];
+        data.files[newFileName] = file;
+        if (newFileName !== oldFileName) delete data.files[oldFileName];
 
-    data.typescriptWorker.postMessage({ type: "removeFile", fileName: oldFileName });
-    data.typescriptWorker.postMessage({ type: "addFile", fileName: newFileName, index: data.fileNames.indexOf(newFileName), file });
+        data.typescriptWorker.postMessage({ type: "removeFile", fileName: oldFileName });
+        data.typescriptWorker.postMessage({ type: "addFile", fileName: newFileName, index: data.fileNames.indexOf(newFileName), file });
+      }
+    };
+    renameFile(entry);
     scheduleErrorCheck();
   },
 
   onSetEntryProperty: (id: string, key: string, value: any) => {
     let entry = data.projectClient.entries.byId[id];
-    if (entry.type !== "script" || key !== "name") return;
+    if ((entry.type != null && entry.type !== "script") || key !== "name") return;
 
-    let oldFileName = data.fileNamesByScriptId[id];
-    let newFileName = `${data.projectClient.entries.getPathFromId(entry.id)}.ts`;
-    if (newFileName === oldFileName) return;
+    let renameFile = (entry: SupCore.Data.EntryNode) => {
+      if (entry.type == null) {
+        for (let child of entry.children) renameFile(child);
+      } else if (entry.type === "script") {
+        let oldFileName = data.fileNamesByScriptId[entry.id];
+        let newFileName = `${data.projectClient.entries.getPathFromId(entry.id)}.ts`;
+        if (newFileName === oldFileName) return;
 
-    let scriptIndex = data.fileNames.indexOf(oldFileName);
-    data.fileNames[scriptIndex] = newFileName;
-    data.fileNamesByScriptId[id] = newFileName;
-    let file = data.files[oldFileName];
-    data.files[newFileName] = file;
-    delete data.files[oldFileName];
+        let scriptIndex = data.fileNames.indexOf(oldFileName);
+        data.fileNames[scriptIndex] = newFileName;
+        data.fileNamesByScriptId[entry.id] = newFileName;
+        let file = data.files[oldFileName];
+        data.files[newFileName] = file;
+        delete data.files[oldFileName];
 
-    data.typescriptWorker.postMessage({ type: "removeFile", fileName: oldFileName });
-    data.typescriptWorker.postMessage({ type: "addFile", fileName: newFileName, index: data.fileNames.indexOf(newFileName), file });
+        data.typescriptWorker.postMessage({ type: "removeFile", fileName: oldFileName });
+        data.typescriptWorker.postMessage({ type: "addFile", fileName: newFileName, index: data.fileNames.indexOf(newFileName), file });
+      }
+    };
+    renameFile(entry);
     scheduleErrorCheck();
   },
 
