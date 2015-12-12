@@ -144,9 +144,34 @@ namespace Sup {
       return player.gameInstance.input.gamepadsButtons[gamepad][key].wasJustReleased;
     }
 
+    export function setGamepadAxisDeadZone(deadZone) {
+      player.gameInstance.input.gamepadDeadZone = deadZone;
+    }
+
+    export function getGamepadAxisDeadZone() {
+      return player.gameInstance.input.gamepadDeadZone;
+    }
+
+    export function wasGamepadAxisJustPressed(gamepad, axis, positive, options: any={}) {
+      let axisInfo = player.gameInstance.input.gamepadsAxes[gamepad][axis];
+      if (axisInfo == null) { throw new Error("Invalid gamepad info"); }
+
+      if (positive) {
+        return axisInfo.wasPositiveJustPressed || (options.autoRepeat && axisInfo.wasPositiveJustAutoRepeated);
+      } else {
+        return axisInfo.wasNegativeJustPressed || (options.autoRepeat && axisInfo.wasNegativeJustAutoRepeated);
+      }
+    }
+
+    export function wasGamepadAxisJustReleased(gamepad, axis, positive) {
+      let axisInfo = player.gameInstance.input.gamepadsAxes[gamepad][axis];
+      if (axisInfo == null) { throw new Error("Invalid gamepad info"); }
+      return (positive ? axisInfo.wasPositiveJustReleased : axisInfo.wasNegativeJustReleased);
+    }
+
     export function getGamepadAxisValue(gamepad, axis) {
       if (player.gameInstance.input.gamepadsAxes[gamepad][axis] == null) { throw new Error("Invalid gamepad info"); }
-      return player.gameInstance.input.gamepadsAxes[gamepad][axis];
+      return player.gameInstance.input.gamepadsAxes[gamepad][axis].value;
     }
 
     export function getGamepadButtonValue(gamepad, button) {

@@ -53,7 +53,14 @@ declare namespace Sup {
     function isGamepadButtonDown(gamepad: number, button: number): boolean;
     function wasGamepadButtonJustPressed(gamepad: number, button: number): boolean;
     function wasGamepadButtonJustReleased(gamepad: number, button: number): boolean;
-    function getGamepadAxisValue(gamepad: number, axis: number): number;
     function getGamepadButtonValue(gamepad: number, button: number): number;
+    
+    // Default dead zone is 0.25
+    function setGamepadAxisDeadZone(deadZone: number);
+    function getGamepadAxisDeadZone(): number;
+
+    function wasGamepadAxisJustPressed(gamepad: number, axis: number, positive: boolean, options?: { autoRepeat?: boolean; }): boolean;
+    function wasGamepadAxisJustReleased(gamepad: number, axis: number, positive: boolean): boolean;
+    function getGamepadAxisValue(gamepad: number, axis: number): number;
   }
 }
