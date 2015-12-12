@@ -308,7 +308,7 @@ ui.saveButton.addEventListener("click", (event: MouseEvent) => {
 });
 
 ui.saveWithErrorsButton = ui.errorPane.querySelector(".draft button.save-with-errors") as HTMLButtonElement;
-ui.saveButton.addEventListener("click", (event: MouseEvent) => {
+ui.saveWithErrorsButton.addEventListener("click", (event: MouseEvent) => {
   event.preventDefault();
   event.stopPropagation();
   onSaveText(true);
