@@ -202,26 +202,33 @@ function onFileSelectChange(event: Event) {
 }
 
 function onDownloadTileset(event: Event) {
+  function triggerDownload(name: string) {
+    let anchor = document.createElement("a");
+    document.body.appendChild(anchor);
+    anchor.style.display = "none";
+    anchor.href = data.tileSetUpdater.tileSetAsset.url;
+
+    // Not yet supported in IE and Safari (http://caniuse.com/#feat=download)
+    (anchor as any).download = `${name}.png`;
+    anchor.click();
+    document.body.removeChild(anchor);
+  }
+
   let options = {
     initialValue: SupClient.i18n.t("tileSetEditor:texture.downloadInitialValue"),
     validationLabel: SupClient.i18n.t("common:actions.download")
   };
 
-  /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.PromptDialog(SupClient.i18n.t("tileSetEditor:texture.downloadPrompt"), options, (name) => {
-    /* tslint:enable:no-unused-expression */
-    if (name == null) return;
-
-    let a = document.createElement("a");
-    document.body.appendChild(a);
-    a.style.display = "none";
-    a.href = data.tileSetUpdater.tileSetAsset.url;
-
-    // Not yet supported in IE and Safari (http://caniuse.com/#feat=download)
-    (<any>a).download = `${name}.png`;
-    a.click();
-    document.body.removeChild(a);
-  });
+  if (SupClient.isApp) {
+    triggerDownload(options.initialValue);
+  } else {
+    /* tslint:disable:no-unused-expression */
+    new SupClient.dialogs.PromptDialog(SupClient.i18n.t("tileSetEditor:texture.downloadPrompt"), options, (name) => {
+      /* tslint:enable:no-unused-expression */
+      if (name == null) return;
+      triggerDownload(name);
+    });
+  }
 }
 
 function onPropertySelect() {

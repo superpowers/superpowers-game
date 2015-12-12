@@ -43,6 +43,7 @@
         "pixelsPerUnit": "Pixels per unit",
         "texture": "Texture",
         "download": {
+          "defaultName": "Texture",
           "prompt": "Enter a name for the texture."
         },
         "textureSize": "Texture size (px)"

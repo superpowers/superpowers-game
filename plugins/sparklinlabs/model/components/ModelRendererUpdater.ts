@@ -19,8 +19,6 @@ export default class ModelRendererUpdater {
   shaderAssetId: string;
   shaderPub: any;
 
-  mapObjectURLs: { [mapName: string]: string } = {};
-
   modelSubscriber = {
     onAssetReceived: this._onModelAssetReceived.bind(this),
     onAssetEdited: this._onModelAssetEdited.bind(this),
