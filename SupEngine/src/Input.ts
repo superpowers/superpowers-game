@@ -29,10 +29,18 @@ interface GamepadButtonState {
 
 interface GamepadAxisState {
   wasPositiveJustPressed: boolean;
+  wasPositiveJustAutoRepeated: boolean;
   wasPositiveJustReleased: boolean;
   wasNegativeJustPressed: boolean;
+  wasNegativeJustAutoRepeated: boolean;
   wasNegativeJustReleased: boolean;
   value: number;
+}
+
+interface GamepadAutoRepeat {
+  axis: number;
+  positive: boolean;
+  time: number;
 }
 
 export default class Input extends EventEmitter {
@@ -59,7 +67,10 @@ export default class Input extends EventEmitter {
 
   gamepadsButtons: GamepadButtonState[][] = [];
   gamepadsAxes: GamepadAxisState[][] = [];
-  gamepadDeadZone = 0.25;
+  gamepadsAutoRepeats: GamepadAutoRepeat[] = [];
+  gamepadAxisDeadZone = 0.25;
+  gamepadAxisAutoRepeatDelayMs = 500;
+  gamepadAxisAutoRepeatRateMs = 33;
 
   exited = false;
 
@@ -113,6 +124,7 @@ export default class Input extends EventEmitter {
     for (let i = 0; i < 4; i++) {
       this.gamepadsButtons[i] = [];
       this.gamepadsAxes[i] = [];
+      this.gamepadsAutoRepeats[i] = null;
     }
 
     // On exit
@@ -206,8 +218,10 @@ export default class Input extends EventEmitter {
       for (let axes = 0; axes < 4; axes++) {
         this.gamepadsAxes[i][axes] = {
           wasPositiveJustPressed: false,
-          wasNegativeJustPressed: false,
+          wasPositiveJustAutoRepeated: false,
           wasPositiveJustReleased: false,
+          wasNegativeJustPressed: false,
+          wasNegativeJustAutoRepeated: false,
           wasNegativeJustReleased: false,
           value: 0
         };
@@ -500,42 +514,80 @@ export default class Input extends EventEmitter {
       }
 
       const pressedValue = 0.5;
+      const now = Date.now();
+
       for (let stick = 0; stick < 2; stick++) {
         if (gamepad.axes[2 * stick] == null || gamepad.axes[2 * stick + 1] == null) continue;
-
         let axisLength = Math.sqrt( Math.pow(Math.abs(gamepad.axes[2 * stick]), 2) + Math.pow(Math.abs(gamepad.axes[2 * stick + 1]), 2) );
 
-        let axis0 = this.gamepadsAxes[index][2 * stick];
-        let axis1 = this.gamepadsAxes[index][2 * stick + 1];
+        let axes = [ this.gamepadsAxes[index][2 * stick], this.gamepadsAxes[index][2 * stick + 1] ];
 
-        let wasAxis0PositiveDown = axis0.value > pressedValue;
-        let wasAxis0NegativeDown = axis0.value < -pressedValue;
-        let wasAxis1PositiveDown = axis1.value > pressedValue;
-        let wasAxis1NegativeDown = axis1.value < -pressedValue;
+        let wasAxisDown = [
+          { positive: axes[0].value > pressedValue, negative: axes[0].value < -pressedValue },
+          { positive: axes[1].value > pressedValue, negative: axes[1].value < -pressedValue }
+        ];
 
-        if (axisLength < this.gamepadDeadZone) {
-          axis0.value = 0;
-          axis1.value = 0;
-        }
-        else {
-          axis0.value = gamepad.axes[2 * stick];
-          axis1.value = gamepad.axes[2 * stick + 1];
+        if (axisLength < this.gamepadAxisDeadZone) {
+          axes[0].value = 0;
+          axes[1].value = 0;
+        } else {
+          axes[0].value = gamepad.axes[2 * stick];
+          axes[1].value = gamepad.axes[2 * stick + 1];
         }
 
-        let isAxis0PositiveDown = axis0.value > pressedValue;
-        let isAxis0NegativeDown = axis0.value < -pressedValue;
-        let isAxis1PositiveDown = axis1.value > pressedValue;
-        let isAxis1NegativeDown = axis1.value < -pressedValue;
+        let isAxisDown = [
+          { positive: axes[0].value > pressedValue, negative: axes[0].value < -pressedValue },
+          { positive: axes[1].value > pressedValue, negative: axes[1].value < -pressedValue }
+        ];
 
-        axis0.wasPositiveJustPressed = !wasAxis0PositiveDown && isAxis0PositiveDown;
-        axis0.wasNegativeJustPressed = !wasAxis0NegativeDown && isAxis0NegativeDown;
-        axis0.wasPositiveJustReleased = wasAxis0PositiveDown && !isAxis0PositiveDown;
-        axis0.wasNegativeJustReleased = wasAxis0NegativeDown && !isAxis0NegativeDown;
+        axes[0].wasPositiveJustPressed = !wasAxisDown[0].positive && isAxisDown[0].positive;
+        axes[0].wasPositiveJustReleased = wasAxisDown[0].positive && !isAxisDown[0].positive;
+        axes[0].wasPositiveJustAutoRepeated = false;
 
-        axis1.wasPositiveJustPressed = !wasAxis1PositiveDown && isAxis1PositiveDown;
-        axis1.wasNegativeJustPressed = !wasAxis1NegativeDown && isAxis1NegativeDown;
-        axis1.wasPositiveJustReleased = wasAxis1PositiveDown && !isAxis1PositiveDown;
-        axis1.wasNegativeJustReleased = wasAxis1NegativeDown && !isAxis1NegativeDown;
+        axes[0].wasNegativeJustPressed = !wasAxisDown[0].negative && isAxisDown[0].negative;
+        axes[0].wasNegativeJustReleased = wasAxisDown[0].negative && !isAxisDown[0].negative;
+        axes[0].wasNegativeJustAutoRepeated = false;
+
+        axes[1].wasPositiveJustPressed = !wasAxisDown[1].positive && isAxisDown[1].positive;
+        axes[1].wasPositiveJustReleased = wasAxisDown[1].positive && !isAxisDown[1].positive;
+        axes[1].wasPositiveJustAutoRepeated = false;
+
+        axes[1].wasNegativeJustPressed = !wasAxisDown[1].negative && isAxisDown[1].negative;
+        axes[1].wasNegativeJustReleased = wasAxisDown[1].negative && !isAxisDown[1].negative;
+        axes[1].wasNegativeJustAutoRepeated = false;
+
+        let currentAutoRepeat = this.gamepadsAutoRepeats[index];
+        if (currentAutoRepeat != null) {
+          let axisIndex = currentAutoRepeat.axis - stick * 2;
+          if (axisIndex === 0 || axisIndex === 1) {
+            let autoRepeatedAxis = axes[axisIndex];
+            if ((currentAutoRepeat.positive && !isAxisDown[axisIndex].positive) ||
+            (!currentAutoRepeat.positive && !isAxisDown[axisIndex].negative)) {
+              // Auto-repeated axis has been released
+              currentAutoRepeat = this.gamepadsAutoRepeats[index] = null;
+            } else {
+              // Check for auto-repeat deadline
+              if (currentAutoRepeat.time <= now) {
+                if (currentAutoRepeat.positive) autoRepeatedAxis.wasPositiveJustAutoRepeated = true;
+                else autoRepeatedAxis.wasNegativeJustAutoRepeated = true;
+                currentAutoRepeat.time = now + this.gamepadAxisAutoRepeatRateMs;
+              }
+            }
+          }
+        }
+
+        let newAutoRepeat: GamepadAutoRepeat;
+        if (axes[0].wasPositiveJustPressed || axes[0].wasNegativeJustPressed) {
+          newAutoRepeat = { axis: stick * 2, positive: axes[0].wasPositiveJustPressed, time: now + this.gamepadAxisAutoRepeatDelayMs };
+        } else if (axes[1].wasPositiveJustPressed || axes[1].wasNegativeJustPressed) {
+          newAutoRepeat = { axis: stick * 2 + 1, positive: axes[1].wasPositiveJustPressed, time: now + this.gamepadAxisAutoRepeatDelayMs };
+        }
+
+        if (newAutoRepeat != null) {
+          if (currentAutoRepeat == null || currentAutoRepeat.axis !== newAutoRepeat.axis || currentAutoRepeat.positive !== newAutoRepeat.positive) {
+            this.gamepadsAutoRepeats[index] = newAutoRepeat;
+          }
+        }
       }
     }
   }
