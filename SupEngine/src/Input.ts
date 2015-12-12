@@ -27,6 +27,14 @@ interface GamepadButtonState {
   value: number;
 }
 
+interface GamepadAxisState {
+  wasPositiveJustPressed: boolean;
+  wasPositiveJustReleased: boolean;
+  wasNegativeJustPressed: boolean;
+  wasNegativeJustReleased: boolean;
+  value: number;
+}
+
 export default class Input extends EventEmitter {
   static maxTouches = 10;
 
@@ -50,7 +58,8 @@ export default class Input extends EventEmitter {
   newTextEntered = "";
 
   gamepadsButtons: GamepadButtonState[][] = [];
-  gamepadsAxes: number[][] = [];
+  gamepadsAxes: GamepadAxisState[][] = [];
+  gamepadDeadZone = 0.25;
 
   exited = false;
 
@@ -186,8 +195,23 @@ export default class Input extends EventEmitter {
 
     // Gamepads
     for (let i = 0; i < 4; i++) {
-      for (let button = 0; button < 16; button++) this.gamepadsButtons[i][button] = { isDown: false, wasJustPressed: false, wasJustReleased: false, value: 0 };
-      for (let axes = 0; axes < 4; axes++) this.gamepadsAxes[i][axes] = 0;
+      for (let button = 0; button < 16; button++) {
+        this.gamepadsButtons[i][button] = {
+          isDown: false,
+          wasJustPressed: false,
+          wasJustReleased: false,
+          value: 0
+        };
+      }
+      for (let axes = 0; axes < 4; axes++) {
+        this.gamepadsAxes[i][axes] = {
+          wasPositiveJustPressed: false,
+          wasNegativeJustPressed: false,
+          wasPositiveJustReleased: false,
+          wasNegativeJustReleased: false,
+          value: 0
+        };
+      }
     }
   }
 
@@ -475,18 +499,43 @@ export default class Input extends EventEmitter {
         button.wasJustReleased = wasDown && !button.isDown;
       }
 
+      const pressedValue = 0.5;
       for (let stick = 0; stick < 2; stick++) {
         if (gamepad.axes[2 * stick] == null || gamepad.axes[2 * stick + 1] == null) continue;
 
         let axisLength = Math.sqrt( Math.pow(Math.abs(gamepad.axes[2 * stick]), 2) + Math.pow(Math.abs(gamepad.axes[2 * stick + 1]), 2) );
-        if (axisLength < 0.25) {
-          this.gamepadsAxes[index][2 * stick] = 0;
-          this.gamepadsAxes[index][2 * stick + 1] = 0;
+
+        let axis0 = this.gamepadsAxes[index][2 * stick];
+        let axis1 = this.gamepadsAxes[index][2 * stick + 1];
+
+        let wasAxis0PositiveDown = axis0.value > pressedValue;
+        let wasAxis0NegativeDown = axis0.value < -pressedValue;
+        let wasAxis1PositiveDown = axis1.value > pressedValue;
+        let wasAxis1NegativeDown = axis1.value < -pressedValue;
+
+        if (axisLength < this.gamepadDeadZone) {
+          axis0.value = 0;
+          axis1.value = 0;
         }
         else {
-          this.gamepadsAxes[index][2 * stick] = gamepad.axes[2 * stick];
-          this.gamepadsAxes[index][2 * stick + 1] = gamepad.axes[2 * stick + 1];
+          axis0.value = gamepad.axes[2 * stick];
+          axis1.value = gamepad.axes[2 * stick + 1];
         }
+
+        let isAxis0PositiveDown = axis0.value > pressedValue;
+        let isAxis0NegativeDown = axis0.value < -pressedValue;
+        let isAxis1PositiveDown = axis1.value > pressedValue;
+        let isAxis1NegativeDown = axis1.value < -pressedValue;
+
+        axis0.wasPositiveJustPressed = !wasAxis0PositiveDown && isAxis0PositiveDown;
+        axis0.wasNegativeJustPressed = !wasAxis0NegativeDown && isAxis0NegativeDown;
+        axis0.wasPositiveJustReleased = wasAxis0PositiveDown && !isAxis0PositiveDown;
+        axis0.wasNegativeJustReleased = wasAxis0NegativeDown && !isAxis0NegativeDown;
+
+        axis1.wasPositiveJustPressed = !wasAxis1PositiveDown && isAxis1PositiveDown;
+        axis1.wasNegativeJustPressed = !wasAxis1NegativeDown && isAxis1NegativeDown;
+        axis1.wasPositiveJustReleased = wasAxis1PositiveDown && !isAxis1PositiveDown;
+        axis1.wasNegativeJustReleased = wasAxis1NegativeDown && !isAxis1NegativeDown;
       }
     }
   }
