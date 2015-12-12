@@ -58,14 +58,18 @@ namespace Sup {
 
     getChild(name) {
       let foundActor = this;
-      //for (let namePart of name.split("/")) {
-      name.split("/").forEach((namePart) => {
+      name.split("/").every((namePart) => {
         let currentFoundActor = null;
         player.gameInstance.tree.walkDown(foundActor.__inner, (actor) => {
           if (actor.name === namePart && !actor.pendingForDestruction && currentFoundActor == null) currentFoundActor = actor.__outer;
         });
-        if (currentFoundActor == null) return null;
-        foundActor = currentFoundActor;
+        if (currentFoundActor == null) {
+          foundActor = null;
+          return false;
+        } else {
+          foundActor = currentFoundActor;
+          return true;
+        }
       });
       return foundActor != this ? foundActor : null;
     }
