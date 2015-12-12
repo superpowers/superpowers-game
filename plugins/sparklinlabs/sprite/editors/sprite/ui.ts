@@ -187,7 +187,7 @@ function onSetGridSize(event: any) {
 
   // TODO: Replace with a single popup
   let options = {
-    initialValue: "",
+    initialValue: "1",
     validationLabel: SupClient.i18n.t("spriteEditor:sidebar.settings.sprite.grid.setWidth"),
     cancelLabel: SupClient.i18n.t("common:actions.skip")
   };
