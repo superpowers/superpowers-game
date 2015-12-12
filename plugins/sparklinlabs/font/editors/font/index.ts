@@ -119,7 +119,7 @@ onEditCommands.setProperty = (path: string, value: any) => {
 };
 
 function refreshFontMode() {
-  let fontOrImageString = SupClient.i18n.t(`fontEditor:${data.textUpdater.fontAsset.pub.isBitmap ? "texture" : "font"}`);
+  let fontOrImageString = SupClient.i18n.t(`fontEditor:${data.textUpdater.fontAsset.pub.isBitmap ? "texture" : "font.title"}`);
   document.querySelector(".sidebar .font-or-image th").textContent = fontOrImageString;
 
   if (data.textUpdater.fontAsset.pub.isBitmap) {
