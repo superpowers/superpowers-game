@@ -12,7 +12,12 @@ export default class TextRenderer extends SupEngine.ActorComponent {
 
   text: string;
   font: FontPub;
-  options: {alignment: string; verticalAlignment: string; size?: number; color?: string;};
+  options: {
+    alignment: string;
+    verticalAlignment: string;
+    size?: number;
+    color?: string;
+  };
   opacity = 1;
 
   constructor(actor: SupEngine.Actor) {
@@ -27,7 +32,7 @@ export default class TextRenderer extends SupEngine.ActorComponent {
     this.font = font;
     this._createMesh();
   }
-  setOptions(options: {alignment: string; verticalAlignment: string; size?: number; color?: string;}) {
+  setOptions(options: { alignment: string; verticalAlignment: string; size?: number; color?: string; }) {
     if (options.alignment == null) options.alignment = "center";
     if (options.verticalAlignment == null) options.verticalAlignment = "center";
     this.options = options;
@@ -63,7 +68,7 @@ export default class TextRenderer extends SupEngine.ActorComponent {
     ctx.font = `${fontSize}px ${this.font.name}`;
     let width = 1;
     for (let text of texts) width = Math.max(width, ctx.measureText(text).width);
-    
+
     // Arbitrary value that should be enough for most fonts
     // We might want to make it configurable in the future
     let heightBorder = fontSize * 0.2;
@@ -158,10 +163,10 @@ export default class TextRenderer extends SupEngine.ActorComponent {
         let tileX = index % charsByRow;
         let tileY = Math.floor(index / charsByRow);
 
-        let left   = ((tileX)     * this.font.gridWidth + 0.2) / this.font.texture.image.width;
+        let left   = (tileX * this.font.gridWidth + 0.2) / this.font.texture.image.width;
         let right  = ((tileX + 1) * this.font.gridWidth - 0.2) / this.font.texture.image.width;
-        let bottom = 1 - ((tileY+1) * this.font.gridHeight - 0.2) / this.font.texture.image.height;
-        let top    = 1 - (tileY     * this.font.gridHeight + 0.2) / this.font.texture.image.height;
+        let bottom = 1 - ((tileY + 1) * this.font.gridHeight - 0.2) / this.font.texture.image.height;
+        let top    = 1 - (tileY * this.font.gridHeight + 0.2) / this.font.texture.image.height;
 
         uvs.array[x * 8 + 0] = left;
         uvs.array[x * 8 + 1] = bottom;

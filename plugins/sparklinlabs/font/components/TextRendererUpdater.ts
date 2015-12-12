@@ -11,7 +11,12 @@ export default class TextRendererUpdater {
 
   fontAssetId: string;
   text: string;
-  options: {alignment: string; verticalAlignment: string; size?: number; color?: string;};
+  options: {
+    alignment: string;
+    verticalAlignment: string;
+    size?: number;
+    color?: string;
+  };
 
   fontSubscriber: {
     onAssetReceived: (assetId: string, asset: any) => any;
@@ -31,9 +36,9 @@ export default class TextRendererUpdater {
     this.options = {alignment: config.alignment, verticalAlignment: config.verticalAlignment, size: config.size, color: config.color};
 
     this.fontSubscriber = {
-      onAssetReceived: this._onFontAssetReceived,
-      onAssetEdited: this._onFontAssetEdited,
-      onAssetTrashed: this._onFontAssetTrashed
+      onAssetReceived: this.onFontAssetReceived,
+      onAssetEdited: this.onFontAssetEdited,
+      onAssetTrashed: this.onFontAssetTrashed
     };
     if (this.fontAssetId != null) this.client.subAsset(this.fontAssetId, "font", this.fontSubscriber);
   }
@@ -46,31 +51,28 @@ export default class TextRendererUpdater {
     switch (path) {
       case "fontAssetId": {
         if (this.fontAssetId != null) this.client.unsubAsset(this.fontAssetId, this.fontSubscriber);
-        this.fontAssetId = value
+        this.fontAssetId = value;
 
-        this.fontAsset = null
+        this.fontAsset = null;
         this.textRenderer.clearMesh();
 
         if (this.fontAssetId != null) this.client.subAsset(this.fontAssetId, "font", this.fontSubscriber);
-        break;
-      }
+      } break;
       case "text": {
         this.text = value;
         this.textRenderer.setText(this.text);
-        break;
-      }
+      } break;
       case "alignment":
       case "verticalAlignment":
       case "size":
       case "color": {
         (<any>this.options)[path] = (value !== "") ? value : null;
         this.textRenderer.setOptions(this.options);
-        break;
-      }
+      } break;
     }
   }
 
-  _onFontAssetReceived = (assetId: string, asset: FontAsset) => {
+  private onFontAssetReceived = (assetId: string, asset: FontAsset) => {
     this.fontAsset = asset;
 
     this.textRenderer.setText(this.text);
@@ -78,17 +80,17 @@ export default class TextRendererUpdater {
     this._setupFont();
 
     if (this.receiveAssetCallbacks != null) this.receiveAssetCallbacks.font(null);
-  }
+  };
 
-  _onFontAssetEdited = (id: string, command: string, ...args: any[]) => {
-    let commandFunction = (<any>this)[`_onEditCommand_${command}`];
+  private onFontAssetEdited = (id: string, command: string, ...args: any[]) => {
+    let commandFunction = (<any>this)[`onEditCommand_${command}`];
     if (commandFunction != null) commandFunction.apply(this, args);
 
     if (this.editAssetCallbacks != null) {
       let editCallback = this.editAssetCallbacks.font[command];
       if (editCallback != null) editCallback.apply(null, args);
     }
-  }
+  };
 
   _setupFont() {
     this.textRenderer.clearMesh();
@@ -103,22 +105,22 @@ export default class TextRendererUpdater {
       if (this.fontAsset.font == null) this.textRenderer.setFont(this.fontAsset.pub);
       else {
         this.fontAsset.font.load().then(
-          () => { this.textRenderer.setFont(this.fontAsset.pub) },
-          () => { this.textRenderer.setFont(this.fontAsset.pub) }
+          () => { this.textRenderer.setFont(this.fontAsset.pub); },
+          () => { this.textRenderer.setFont(this.fontAsset.pub); }
         );
       }
     }
   }
 
-  _onEditCommand_upload() { this._setupFont(); }
+  private onEditCommand_upload() { this._setupFont(); }
 
-  _onEditCommand_setProperty(path: string) {
+  private onEditCommand_setProperty(path: string) {
     if (path === "isBitmap") this._setupFont();
     else this.textRenderer.setFont(this.fontAsset.pub);
   }
 
-  _onFontAssetTrashed = () => {
+  private onFontAssetTrashed = () => {
     this.textRenderer.clearMesh();
     if (this.editAssetCallbacks != null) SupClient.onAssetTrashed();
-  }
+  };
 }
