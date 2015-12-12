@@ -26,7 +26,7 @@ export function loadAsset(player: SupRuntime.Player, entry: any, callback: (err:
 
       let font: any /* FontFace */;
       try {
-        font = new FontFace(data.name, `url(${player.dataURL}assets/${encodeURIComponent(entry.storagePath)}/font.dat)`);
+        font = new FontFace(data.name, `url(${player.dataURL}assets/${fixedEncodeURIComponent(entry.storagePath)}/font.dat)`);
         (<any>document).fonts.add(font);
       } catch (e) { /* Ignore */ }
 
@@ -34,6 +34,12 @@ export function loadAsset(player: SupRuntime.Player, entry: any, callback: (err:
       else callback(null, data);
 
     }
+  });
+}
+
+function fixedEncodeURIComponent(str: string) {
+  return encodeURIComponent(str).replace(/[!'()*]/g, function(c) {
+    return `%${c.charCodeAt(0).toString(16)}`;
   });
 }
 
