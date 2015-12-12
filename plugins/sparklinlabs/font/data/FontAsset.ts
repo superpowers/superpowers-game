@@ -160,29 +160,31 @@ export default class FontAsset extends SupCore.Data.Base.Asset {
   }
 
   _setupFiltering() {
-    if (this.pub.filtering === "pixelated") {
-      this.pub.texture.magFilter = THREE.NearestFilter;
-      this.pub.texture.minFilter = THREE.NearestFilter;
-    } else {
-      this.pub.texture.magFilter = THREE.LinearFilter;
-      this.pub.texture.minFilter = THREE.LinearFilter;
+    if (this.pub.texture != null) {
+      if (this.pub.filtering === "pixelated") {
+        this.pub.texture.magFilter = THREE.NearestFilter;
+        this.pub.texture.minFilter = THREE.NearestFilter;
+      } else {
+        this.pub.texture.magFilter = THREE.LinearFilter;
+        this.pub.texture.minFilter = THREE.LinearFilter;
+      }
+      this.pub.texture.needsUpdate = true;
     }
-    this.pub.texture.needsUpdate = true;
   }
 
   server_upload(client: any, font: any, callback: (err: string, font: any) => any) {
     if (!(font instanceof Buffer)) { callback("Image must be an ArrayBuffer", null); return; }
 
-    if (this.pub.isBitmap) this.pub.bitmap = font
-    else this.pub.font = font
+    if (this.pub.isBitmap) this.pub.bitmap = font;
+    else this.pub.font = font;
 
     callback(null, font);
     this.emit("change");
   }
 
   client_upload(font: any) {
-    if (this.pub.isBitmap) this.pub.bitmap = font
-    else this.pub.font = font
+    if (this.pub.isBitmap) this.pub.bitmap = font;
+    else this.pub.font = font;
 
     this._loadFont();
   }
