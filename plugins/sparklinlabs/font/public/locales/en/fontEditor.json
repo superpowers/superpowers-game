@@ -1,6 +1,12 @@
 {
   "bitmap": "Bitmap",
-  "font": "Font",
+  "font": {
+    "title": "Font",
+    "download": {
+      "prompt": "Enter a name for the font",
+      "defaultName": "Font"
+    }
+  },
   "texture": "Texture",
   "filtering": "Filtering",
   "pixelated": "Pixelated",
