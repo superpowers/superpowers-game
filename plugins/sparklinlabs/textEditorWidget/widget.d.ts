@@ -13,7 +13,6 @@ interface TextEditorWidgetOptions {
   editCallback?: EditCallback;
   mode: string;
   sendOperationCallback: SendOperationCallback;
-  saveCallback: Function;
 }
 
 declare class TextEditorWidget {

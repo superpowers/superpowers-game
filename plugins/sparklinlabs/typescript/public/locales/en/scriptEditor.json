@@ -1,5 +1,6 @@
 {
-  "applyChanges": "Apply changes (Ctrl+S)",
+  "applyChanges": "Apply changes",
+  "applyChangesWithErrors": "Apply changes with errors",
   "draft": "Draft",
   
   "errors": {

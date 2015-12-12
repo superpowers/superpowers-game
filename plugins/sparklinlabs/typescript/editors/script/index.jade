@@ -14,7 +14,8 @@ html
     .error-pane.collapsable
       .header
         .draft
-          button(title= t("scriptEditor:applyChanges"))= t("common:actions.save")
+          button.save(title= t("scriptEditor:applyChanges"),data-hotkey="control+S")= t("common:actions.save")
+          button.save-with-errors(hidden,title= t("scriptEditor:applyChangesWithErrors"),data-hotkey="control+Alt+S")= t("common:actions.saveWithErrors")
           span.label= t("scriptEditor:draft")
           span  &mdash;
         .info= t("common:states.loading")

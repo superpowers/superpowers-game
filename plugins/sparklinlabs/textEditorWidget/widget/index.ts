@@ -22,7 +22,6 @@ class TextEditorWidget {
 
   editCallback: EditCallback;
   sendOperationCallback: SendOperationCallback;
-  saveCallback: Function;
 
   clientId: number;
   tmpCodeMirrorDoc = new CodeMirror.Doc("");
@@ -58,9 +57,7 @@ class TextEditorWidget {
       "Shift-Ctrl-Z": () => { this.redo(); },
       "Shift-Cmd-Z": () => { this.redo(); },
       "Ctrl-Y": () => { this.redo(); },
-      "Cmd-Y": () => { this.redo(); },
-      "Ctrl-S": () => { this.saveCallback(); },
-      "Cmd-S": () => { this.saveCallback(); }
+      "Cmd-Y": () => { this.redo(); }
     }
     if (options.extraKeys != null) {
       for (let keyName in options.extraKeys) {
@@ -70,7 +67,6 @@ class TextEditorWidget {
 
     this.editCallback = options.editCallback;
     this.sendOperationCallback = options.sendOperationCallback;
-    this.saveCallback = options.saveCallback;
 
     this.codeMirrorInstance = CodeMirror.fromTextArea(textArea, {
       // theme: "monokai",

@@ -1,28 +1,30 @@
 import { socket, data, scheduleErrorCheck, setNextCompletion } from "./network";
 
 let ui: {
-  editor?: TextEditorWidget;
-  previousLine?: number;
+  editor: TextEditorWidget;
+  previousLine: number;
 
-  errorPane?: HTMLDivElement;
-  errorPaneStatus?: HTMLDivElement;
-  errorPaneInfo?: HTMLDivElement;
-  errorsTBody?: HTMLTableSectionElement;
+  errorPane: HTMLDivElement;
+  errorPaneStatus: HTMLDivElement;
+  errorPaneInfo: HTMLDivElement;
+  errorsTBody: HTMLTableSectionElement;
+  saveButton: HTMLButtonElement;
+  saveWithErrorsButton: HTMLButtonElement;
 
-  errorCheckTimeout?: number;
-  completionTimeout?: number;
-  completionOpened?: boolean;
+  errorCheckTimeout: number;
+  completionTimeout: number;
+  completionOpened: boolean;
 
-  infoElement?: HTMLDivElement;
-  infoPosition?: { line: number; ch: number; };
-  infoTimeout?: number;
+  infoElement: HTMLDivElement;
+  infoPosition: { line: number; ch: number; };
+  infoTimeout: number;
 
-  parameterElement?: HTMLDivElement;
-  parameterTimeout?: number;
-  signatureTexts?: { prefix: string; parameters: string[]; suffix: string; }[];
-  selectedSignatureIndex?: number;
-  selectedArgumentIndex?: number;
-} = {};
+  parameterElement: HTMLDivElement;
+  parameterTimeout: number;
+  signatureTexts: { prefix: string; parameters: string[]; suffix: string; }[];
+  selectedSignatureIndex: number;
+  selectedArgumentIndex: number;
+} = {} as any;
 export default ui;
 
 window.addEventListener("message", (event) => {
@@ -77,6 +79,10 @@ export function setupEditor(clientId: number) {
   ui.editor = new TextEditorWidget(data.projectClient, clientId, textArea, {
     mode: "text/typescript",
     extraKeys: {
+      "Ctrl-S": () => { onSaveText(false); },
+      "Cmd-S": () => { onSaveText(false); },
+      "Ctrl-Alt-S": () => { onSaveText(true); },
+      "Cmd-Alt-S": () => { onSaveText(true); },
       "Ctrl-Space": () => {
         scheduleParameterHint();
         scheduleCompletion();
@@ -104,8 +110,7 @@ export function setupEditor(clientId: number) {
       }
     },
     editCallback: onEditText,
-    sendOperationCallback: onSendOperation,
-    saveCallback: onSaveText
+    sendOperationCallback: onSendOperation
   });
   ui.previousLine = -1;
 
@@ -201,12 +206,16 @@ export function refreshErrors(errors: Array<{file: string; position: { line: num
   ui.errorsTBody.innerHTML = "";
 
   if (errors.length === 0) {
+    ui.saveButton.hidden = false;
+    ui.saveWithErrorsButton.hidden = true;
     ui.errorPaneInfo.textContent = SupClient.i18n.t("scriptEditor:errors.noErrors");
     ui.errorPaneStatus.classList.remove("has-errors");
     return;
   }
 
   ui.errorPaneStatus.classList.add("has-errors");
+  ui.saveButton.hidden = true;
+  ui.saveWithErrorsButton.hidden = false;
 
   let selfErrorsCount = 0;
   let lastSelfErrorRow: HTMLTableRowElement = null;
@@ -290,16 +299,37 @@ function onErrorTBodyClick(event: MouseEvent) {
   }
 }
 
-// Save button
-let saveButton = ui.errorPane.querySelector(".draft button");
-saveButton.addEventListener("click", (event: MouseEvent) => {
+// Save buttons
+ui.saveButton = ui.errorPane.querySelector(".draft button.save") as HTMLButtonElement;
+ui.saveButton.addEventListener("click", (event: MouseEvent) => {
   event.preventDefault();
   event.stopPropagation();
-  onSaveText();
+  onSaveText(false);
 });
 
-function onSaveText() {
-  socket.emit("edit:assets", SupClient.query.asset, "saveText", (err: string) => { if (err != null) { alert(err); SupClient.onDisconnected(); }});
+ui.saveWithErrorsButton = ui.errorPane.querySelector(".draft button.save-with-errors") as HTMLButtonElement;
+ui.saveButton.addEventListener("click", (event: MouseEvent) => {
+  event.preventDefault();
+  event.stopPropagation();
+  onSaveText(true);
+});
+
+function onSaveText(withErrors: boolean) {
+  if (ui.errorPaneStatus.classList.contains("has-errors") !== withErrors) return;
+
+  ui.saveButton.disabled = true;
+  ui.saveWithErrorsButton.disabled = true;
+  ui.saveButton.textContent = SupClient.i18n.t("common:states.saving");
+  ui.saveWithErrorsButton.textContent = SupClient.i18n.t("common:states.saving");
+
+  socket.emit("edit:assets", SupClient.query.asset, "saveText", (err: string) => {
+    if (err != null) { alert(err); SupClient.onDisconnected(); }
+
+  ui.saveButton.disabled = false;
+  ui.saveWithErrorsButton.disabled = false;
+    ui.saveButton.textContent = SupClient.i18n.t("common:actions.save");
+    ui.saveWithErrorsButton.textContent = SupClient.i18n.t("common:actions.saveWithErrors");
+  });
 }
 
 // Info popup
