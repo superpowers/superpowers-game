@@ -28,6 +28,10 @@ namespace Sup {
       this.tween.to(object, duration);
       return this;
     }
+    delay(amount) {
+      this.tween.delay(delay);
+      return this;
+    }
     easing(easing) {
       this.tween.easing(easing);
       return this;

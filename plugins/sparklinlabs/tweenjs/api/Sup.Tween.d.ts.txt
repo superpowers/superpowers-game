@@ -3,6 +3,7 @@ declare namespace Sup {
     constructor(actor: Sup.Actor, object: Object);
 
     to(object: Object, duration: number): Tween;
+    delay(amount: number): Tween;
     easing(easing): Tween;
     yoyo(yoyo: boolean): Tween;
     repeat(times: number): Tween;
