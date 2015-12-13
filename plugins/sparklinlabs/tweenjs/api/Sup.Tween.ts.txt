@@ -29,7 +29,7 @@ namespace Sup {
       return this;
     }
     delay(amount) {
-      this.tween.delay(delay);
+      this.tween.delay(amount);
       return this;
     }
     easing(easing) {
