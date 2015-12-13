@@ -1,5 +1,10 @@
 namespace Sup {
   export function log(message, ...optionalParams) { console.log.apply(console, [ message ].concat(optionalParams)); }
+  
+  export function setTimeout(delayMs, callback) { return window.setTimeout(callback, delayMs); }
+  export function clearTimeout(id) { return window.clearTimeout(id); }
+  export function setInterval(intervalMs, callback) { return window.setInterval(callback, intervalMs); }
+  export function clearInterval(id) { return window.clearInterval(id); }
 
   export function exit() {
     if (player.gameInstance.input.exited) return;
