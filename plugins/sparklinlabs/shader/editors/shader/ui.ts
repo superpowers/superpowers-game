@@ -209,19 +209,25 @@ export function setupEditors(clientId: number) {
   let vertexTextArea = <HTMLTextAreaElement>document.querySelector(".vertex textarea");
   ui.vertexEditor = new TextEditorWidget(data.projectClient, clientId, vertexTextArea, {
     mode: "x-shader/x-vertex",
+    extraKeys: {
+      "Ctrl-S": () => { onSaveVertex(); },
+      "Cmd-S": () => { onSaveVertex(); },
+    },
     sendOperationCallback: (operation: OperationData) => {
       editAsset("editVertexShader", operation, data.shaderAsset.vertexDocument.getRevisionId());
-    },
-    saveCallback: onSaveVertex
+    }
   });
 
   let fragmentTextArea = <HTMLTextAreaElement>document.querySelector(".fragment textarea");
   ui.fragmentEditor = new TextEditorWidget(data.projectClient, clientId, fragmentTextArea, {
     mode: "x-shader/x-fragment",
+    extraKeys: {
+      "Ctrl-S": () => { onSaveFragment(); },
+      "Cmd-S": () => { onSaveFragment(); },
+    },
     sendOperationCallback: (operation: OperationData) => {
       editAsset("editFragmentShader", operation, data.shaderAsset.fragmentDocument.getRevisionId());
-    },
-    saveCallback: onSaveFragment
+    }
   });
 }
 
