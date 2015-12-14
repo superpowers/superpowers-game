@@ -31,6 +31,9 @@ declare module TWEEN {
   export var Interpolation: TweenInterpolation;
 }
 
+// See http://sole.github.io/tween.js/examples/03_graphs.html
+// for visual representations of each easing mode
+
 interface TweenEasing {
   Linear: {
     None(k:number): number;
