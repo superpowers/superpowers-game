@@ -205,17 +205,16 @@ export function refreshErrors(errors: Array<{file: string; position: { line: num
 
   ui.errorsTBody.innerHTML = "";
 
+  ui.saveButton.hidden = false;
+  ui.saveWithErrorsButton.hidden = true;
+
   if (errors.length === 0) {
-    ui.saveButton.hidden = false;
-    ui.saveWithErrorsButton.hidden = true;
     ui.errorPaneInfo.textContent = SupClient.i18n.t("scriptEditor:errors.noErrors");
     ui.errorPaneStatus.classList.remove("has-errors");
     return;
   }
 
   ui.errorPaneStatus.classList.add("has-errors");
-  ui.saveButton.hidden = true;
-  ui.saveWithErrorsButton.hidden = false;
 
   let selfErrorsCount = 0;
   let lastSelfErrorRow: HTMLTableRowElement = null;
@@ -271,6 +270,9 @@ export function refreshErrors(errors: Array<{file: string; position: { line: num
   let otherErrors = SupClient.i18n.t("scriptEditor:errors.otherErrorsInfo", { errors: otherErrorsValue.toString() });
 
   if (selfErrorsCount > 0) {
+    ui.saveButton.hidden = true;
+    ui.saveWithErrorsButton.hidden = false;
+
     if (otherErrorsCount === 0) ui.errorPaneInfo.textContent = selfErrors;
     else ui.errorPaneInfo.textContent = SupClient.i18n.t("scriptEditor:errors.bothErrorsInfo", { selfErrors, otherErrors });
   } else ui.errorPaneInfo.textContent = otherErrors;
@@ -315,7 +317,7 @@ ui.saveWithErrorsButton.addEventListener("click", (event: MouseEvent) => {
 });
 
 function onSaveText(withErrors: boolean) {
-  if (ui.errorPaneStatus.classList.contains("has-errors") !== withErrors) return;
+  if (ui.saveButton.hidden !== withErrors) return;
 
   ui.saveButton.disabled = true;
   ui.saveWithErrorsButton.disabled = true;
