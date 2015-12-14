@@ -23,6 +23,7 @@ export interface SpriteAssetPub {
   textures?: { [name: string]: TextureWithSize; };
   maps: { [name: string]: Buffer; };
   filtering: string;
+  wrapping: string;
 
   pixelsPerUnit: number;
   framesPerSecond: number;
@@ -39,7 +40,7 @@ export interface SpriteAssetPub {
 }
 
 export default class SpriteAsset extends SupCore.Data.Base.Asset {
-  static currentFormatVersion = 2;
+  static currentFormatVersion = 3;
 
   static schema: SupCore.Data.Base.Schema = {
     formatVersion: { type: "integer" },
@@ -51,6 +52,7 @@ export default class SpriteAsset extends SupCore.Data.Base.Asset {
       }
     },
     filtering: { type: "enum", items: [ "pixelated", "smooth"], mutable: true },
+    wrapping: { type: "enum", items: [ "clampToEdge", "repeat", "mirroredRepeat"], mutable: true },
     pixelsPerUnit: { type: "number", minExcluded: 0, mutable: true },
     framesPerSecond: { type: "number", minExcluded: 0, mutable: true },
     opacity: { type: "number?", min: 0, max: 1, mutable: true },
@@ -104,6 +106,7 @@ export default class SpriteAsset extends SupCore.Data.Base.Asset {
 
         maps: { map: new Buffer(0) },
         filtering: spriteSettings.pub.filtering,
+        wrapping: "clampToEdge",
         pixelsPerUnit: spriteSettings.pub.pixelsPerUnit,
         framesPerSecond: spriteSettings.pub.framesPerSecond,
         opacity: null,
@@ -208,13 +211,18 @@ export default class SpriteAsset extends SupCore.Data.Base.Asset {
       for (let animation of pub.animations) {
         if (animation.speed == null) animation.speed = 1;
       }
-
       pub.formatVersion = 1;
     }
 
     if (pub.formatVersion === 1) {
       delete (pub as any).advancedTextures;
       pub.formatVersion = 2;
+    }
+
+  // NOTE : Wrapping was introduced in Superpowers 0.18
+    if (pub.formatVersion === 2) {
+      pub.wrapping = "clampToEdge";
+      pub.formatVersion = 3;
     }
 
     callback(true);
@@ -290,6 +298,14 @@ export default class SpriteAsset extends SupCore.Data.Base.Asset {
           texture.minFilter = THREE.NearestFilter;
         }
 
+        if (this.pub.wrapping === "repeat") {
+          texture.wrapS = SupEngine.THREE.RepeatWrapping;
+          texture.wrapT = SupEngine.THREE.RepeatWrapping;
+        } else if (this.pub.wrapping === "mirroredRepeat") {
+          texture.wrapS = SupEngine.THREE.MirroredRepeatWrapping;
+          texture.wrapT = SupEngine.THREE.MirroredRepeatWrapping;
+        }
+
         let typedArray = new Uint8Array(buffer);
         let blob = new Blob([ typedArray ], { type: "image/*" });
         image.src = this.mapObjectURLs[key] = URL.createObjectURL(blob);
@@ -320,6 +336,22 @@ export default class SpriteAsset extends SupCore.Data.Base.Asset {
           } else {
             texture.magFilter = THREE.LinearFilter;
             texture.minFilter = THREE.LinearMipMapLinearFilter;
+          }
+          texture.needsUpdate = true;
+        }
+        break;
+      case "wrapping":
+        for (let textureName in this.pub.textures) {
+          let texture = this.pub.textures[textureName];
+          if (value === "clampToEdge") {
+            texture.wrapS = SupEngine.THREE.ClampToEdgeWrapping;
+            texture.wrapT = SupEngine.THREE.ClampToEdgeWrapping;
+          } else if (value === "repeat") {
+            texture.wrapS = SupEngine.THREE.RepeatWrapping;
+            texture.wrapT = SupEngine.THREE.RepeatWrapping;
+          } else if (value === "mirroredRepeat") {
+            texture.wrapS = SupEngine.THREE.MirroredRepeatWrapping;
+            texture.wrapT = SupEngine.THREE.MirroredRepeatWrapping;
           }
           texture.needsUpdate = true;
         }

@@ -65,6 +65,13 @@ html
               option(value="pixelated")= t("spriteEditor:sidebar.settings.rendering.filtering.pixelated")
               option(value="smooth")= t("spriteEditor:sidebar.settings.rendering.filtering.smooth")
         tr
+          th= t("spriteEditor:sidebar.settings.rendering.wrapping.title")
+          td
+            select.property-wrapping
+              option(value="clampToEdge")= t("spriteEditor:sidebar.settings.rendering.wrapping.clampToEdge")
+              option(value="repeat")= t("spriteEditor:sidebar.settings.rendering.wrapping.repeat")
+              option(value="mirroredRepeat")= t("spriteEditor:sidebar.settings.rendering.wrapping.mirroredRepeat")
+        tr
           th
             div
               div= t("spriteEditor:sidebar.settings.rendering.opacity")

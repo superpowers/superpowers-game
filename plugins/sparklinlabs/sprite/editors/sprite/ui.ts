@@ -47,7 +47,7 @@ document.querySelector("button.download").addEventListener("click", () => {
 });
 
 ui.allSettings = [
-  "filtering", "pixelsPerUnit", "framesPerSecond", "opacity", "alphaTest",
+  "filtering", "wrapping", "pixelsPerUnit", "framesPerSecond", "opacity", "alphaTest",
   "frameOrder", "grid.width", "grid.height", "origin.x", "origin.y" ];
 ui.settings = {};
 ui.allSettings.forEach((setting: string) => {
@@ -67,6 +67,7 @@ ui.allSettings.forEach((setting: string) => {
 
   switch (setting) {
     case "filtering":
+    case "wrapping":
     case "frameOrder":
       settingObj.addEventListener("change", (event: any) => { editAsset("setProperty", setting, event.target.value); });
       break;
@@ -339,12 +340,25 @@ export function setupProperty(path: string, value: any) {
   let pub = data.spriteUpdater.spriteAsset.pub;
 
   if (path === "filtering" && spritesheetArea.spriteRenderer.asset != null) {
-    if (pub.filtering === "pixelated") {
+    if (value === "pixelated") {
       spritesheetArea.spritesheet.textures["map"].magFilter = SupEngine.THREE.NearestFilter;
       spritesheetArea.spritesheet.textures["map"].minFilter = SupEngine.THREE.NearestFilter;
     } else {
       spritesheetArea.spritesheet.textures["map"].magFilter = SupEngine.THREE.LinearFilter;
       spritesheetArea.spritesheet.textures["map"].minFilter = SupEngine.THREE.LinearMipMapLinearFilter;
+    }
+    spritesheetArea.spritesheet.textures["map"].needsUpdate = true;
+  }
+  if (path === "wrapping" && spritesheetArea.spriteRenderer.asset != null) {
+    if (value === "clampToEdge") {
+      spritesheetArea.spritesheet.textures["map"].wrapS = SupEngine.THREE.ClampToEdgeWrapping;
+      spritesheetArea.spritesheet.textures["map"].wrapT = SupEngine.THREE.ClampToEdgeWrapping;
+    } else if (value === "repeat") {
+      spritesheetArea.spritesheet.textures["map"].wrapS = SupEngine.THREE.RepeatWrapping;
+      spritesheetArea.spritesheet.textures["map"].wrapT = SupEngine.THREE.RepeatWrapping;
+    } else if (value === "mirroredRepeat") {
+      spritesheetArea.spritesheet.textures["map"].wrapS = SupEngine.THREE.MirroredRepeatWrapping;
+      spritesheetArea.spritesheet.textures["map"].wrapT = SupEngine.THREE.MirroredRepeatWrapping;
     }
     spritesheetArea.spritesheet.textures["map"].needsUpdate = true;
   }

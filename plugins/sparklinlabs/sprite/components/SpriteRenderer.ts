@@ -77,6 +77,10 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
     this.material.side = THREE.DoubleSide;
     this.setColor(this.color.r, this.color.g, this.color.b);
 
+    // TEMP
+    // this.asset.textures["map"].wrapS = THREE.RepeatWrapping;
+    // this.asset.textures["map"].wrapT = THREE.RepeatWrapping;
+
     this.threeMesh = new THREE.Mesh(this.geometry, this.material);
     this.setCastShadow(this.castShadow);
     this.threeMesh.receiveShadow = this.receiveShadow;

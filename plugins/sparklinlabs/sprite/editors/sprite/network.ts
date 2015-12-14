@@ -35,6 +35,7 @@ function onAssetReceived() {
   spritesheetArea.spritesheet = {
     textures: { map: texture },
     filtering: pub.filtering,
+    wrapping: pub.wrapping,
     pixelsPerUnit: pub.pixelsPerUnit,
     framesPerSecond: pub.framesPerSecond,
     alphaTest: pub.alphaTest,

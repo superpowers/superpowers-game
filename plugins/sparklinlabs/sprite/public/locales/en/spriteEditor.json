@@ -32,6 +32,12 @@
           "pixelated": "Pixelated",
           "smooth": "Smooth"
         },
+        "wrapping": {
+          "title": "Wrapping",
+          "clampToEdge": "Clamp to edge",
+          "repeat": "Repeat",
+          "mirroredRepeat": "Mirrored repeat"
+        },
         "opacity": "Opacity",
         "alphaTest": "Alpha test"
       },
