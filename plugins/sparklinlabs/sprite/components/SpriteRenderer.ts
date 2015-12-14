@@ -71,11 +71,11 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
       material.alphaMap = this.asset.textures[this.asset.mapSlots["alpha"]];
       if (this.materialType === "phong") (<THREE.MeshPhongMaterial>material).normalMap = this.asset.textures[this.asset.mapSlots["normal"]];
       material.alphaTest = this.asset.alphaTest;
-      material.color.setRGB(this.color.r, this.color.g, this.color.b);
       this.material = material;
       this.setOpacity(this.opacity);
     }
     this.material.side = THREE.DoubleSide;
+    this.setColor(this.color.r, this.color.g, this.color.b);
 
     this.threeMesh = new THREE.Mesh(this.geometry, this.material);
     this.setCastShadow(this.castShadow);
@@ -85,6 +85,16 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
     this.actor.threeObject.add(this.threeMesh);
     this.updateShape();
   }
+
+  setColor(r: number, g: number, b: number) {
+    this.color.r = r;
+    this.color.g = g;
+    this.color.b = b;
+    if (this.material instanceof THREE.ShaderMaterial) {
+      let uniforms = (<THREE.ShaderMaterial>this.material).uniforms;
+      if (uniforms.color != null) uniforms.color.value.setRGB(r, g, b);
+    } else (<THREE.MeshBasicMaterial>this.material).color.setRGB(r, g, b);
+   }
 
   updateShape() {
     if (this.threeMesh == null) return;
