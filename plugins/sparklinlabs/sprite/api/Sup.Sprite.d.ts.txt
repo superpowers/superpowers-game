@@ -8,5 +8,6 @@ declare namespace Sup {
     getAlphaTest(): number;
     getGridSize(): { width: number; height: number; };
     getOrigin(): Sup.Math.Vector2;
+    getAnimationList(): string[];
   }
 }
