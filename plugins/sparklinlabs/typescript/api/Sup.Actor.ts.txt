@@ -399,16 +399,19 @@ namespace Sup {
       this.__inner.getLocalScale(tmpVector3);
       tmpVector3.x = x;
       this.__inner.setLocalScale(tmpVector3);
+      return this;
     }
     setLocalScaleY(y: number) {
       this.__inner.getLocalScale(tmpVector3);
       tmpVector3.y = y;
       this.__inner.setLocalScale(tmpVector3);
+      return this;
     }
     setLocalScaleZ(z: number) {
       this.__inner.getLocalScale(tmpVector3);
       tmpVector3.z = z;
       this.__inner.setLocalScale(tmpVector3);
+      return this;
     }
 
     addBehavior(behaviorClass, properties) {
