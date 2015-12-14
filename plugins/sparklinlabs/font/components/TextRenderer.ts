@@ -137,6 +137,8 @@ export default class TextRenderer extends SupEngine.ActorComponent {
         transparent: true,
         opacity: this.opacity
       });
+      let color = (this.options.color != null) ? this.options.color : this.font.color;
+      material.color.setHex(parseInt(color, 16));
       this.threeMeshes[index] = new THREE.Mesh(geometry, material);
       switch (this.options.alignment) {
         case "center":  this.threeMeshes[index].position.setX(-geometry.width / 2 / this.font.pixelsPerUnit); break;

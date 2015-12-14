@@ -33,18 +33,18 @@ html
             th= t("fontEditor:pixelsPerUnit")
             td
               input(type="number").property-pixelsPerUnit
-
-        tbody.vector-font
-          tr
-            th= t("fontEditor:size")
-            td
-              input(type="number").property-size
           tr
             th= t("fontEditor:color")
             td
               .inputs
                 input.color.property-color
                 input(type="color").color-picker
+
+        tbody.vector-font
+          tr
+            th= t("fontEditor:size")
+            td
+              input(type="number").property-size
 
         tbody.bitmap-font
           tr
