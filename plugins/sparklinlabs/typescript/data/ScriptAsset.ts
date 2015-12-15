@@ -15,7 +15,7 @@ interface CompilationError {
 }
 
 interface CompileTypeScriptResults {
-  errors: any;
+  errors: CompilationError[];
   program: ts.Program;
   typeChecker: ts.TypeChecker;
   script: string;
@@ -236,14 +236,22 @@ Sup.registerBehavior(${behaviorName});
     this.pub.revisionId++;
   }
 
-  server_saveText(client: any, callback: (err: string) => any) {
-    this.pub.text = this.pub.draft;
+  server_applyDraftChanges(client: any, options: { ignoreErrors: boolean }, callback: (err: string) => any) {
+    let text = this.pub.draft;
 
     let scriptNames: string[] = [];
     let scripts: { [name: string]: string } = {};
     let ownScriptName = "";
 
-    let finish = () => {
+    let finish = (errors: CompilationError[]) => {
+      let foundSelfErrors = (errors != null) && errors.some((x) => x.file === ownScriptName);
+
+      if (foundSelfErrors && ! options.ignoreErrors) {
+        callback("foundSelfErrors");
+        return;
+      }
+
+      this.pub.text = text;
       callback(null);
 
       if (this.hasDraft) {
@@ -257,9 +265,9 @@ Sup.registerBehavior(${behaviorName});
     let compile = () => {
       let results: CompileTypeScriptResults;
       try { results = compileTypeScript(scriptNames, scripts, globalDefs, { sourceMap: false }); }
-      catch (e) { finish(); return; }
+      catch (e) { finish(null); return; }
 
-      if(results.errors.length > 0) { finish(); return; }
+      if(results.errors.length > 0) { finish(results.errors); return; }
 
       let libLocals = <ts.SymbolTable>(<any>results.program.getSourceFile("lib.d.ts")).locals;
       let supTypeSymbols: { [fullName: string]: ts.Symbol } = {
@@ -334,13 +342,13 @@ Sup.registerBehavior(${behaviorName});
       this.server.data.resources.acquire("behaviorProperties", null, (err: Error, behaviorProperties: BehaviorPropertiesResource) => {
         behaviorProperties.setScriptBehaviors(this.id, behaviors);
         this.server.data.resources.release("behaviorProperties", null);
-        finish();
+        finish(null);
       });
     };
 
     let remainingAssetsToLoad = Object.keys(this.server.data.entries.byId).length;
     let assetsLoading = 0;
-    this.server.data.entries.walk((entry: any) => {
+    this.server.data.entries.walk((entry: SupCore.Data.EntryNode) => {
       remainingAssetsToLoad--;
       if (entry.type !== "script") {
         if (remainingAssetsToLoad === 0 && assetsLoading === 0) compile();
@@ -349,10 +357,18 @@ Sup.registerBehavior(${behaviorName});
 
       let name = `${this.server.data.entries.getPathFromId(entry.id)}.ts`;
       scriptNames.push(name);
+
+      if (entry.id === this.id) {
+        ownScriptName = name;
+        scripts[name] = text;
+
+        if (remainingAssetsToLoad === 0 && assetsLoading === 0) compile();
+        return;
+      }
+
       assetsLoading++;
       this.server.data.assets.acquire(entry.id, null, (err: Error, asset: ScriptAsset) => {
         scripts[name] = asset.pub.text;
-        if (asset === this) ownScriptName = name;
 
         this.server.data.assets.release(entry.id, null);
         assetsLoading--;
@@ -362,5 +378,5 @@ Sup.registerBehavior(${behaviorName});
     });
   }
 
-  client_saveText() { this.pub.text = this.pub.draft; }
+  client_applyDraftChanges() { this.pub.text = this.pub.draft; }
 }

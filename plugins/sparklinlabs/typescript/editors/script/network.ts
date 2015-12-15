@@ -29,7 +29,7 @@ onAssetCommands.editText = (operationData: OperationData) => {
   ui.editor.receiveEditText(operationData);
 };
 
-onAssetCommands.saveText = () => {
+onAssetCommands.applyDraftChanges = () => {
   ui.errorPaneStatus.classList.remove("has-draft");
 };
 
@@ -65,7 +65,7 @@ let scriptSubscriber: SupClient.AssetSubscriber = {
 
   onAssetEdited: (id: string, command: string, ...args: any[]) => {
     if (id !== SupClient.query.asset) {
-      if (command === "saveText") {
+      if (command === "applyDraftChanges") {
         let fileName = `${data.projectClient.entries.getPathFromId(id)}.ts`;
         let asset = data.assetsById[id];
         let file = data.files[fileName];

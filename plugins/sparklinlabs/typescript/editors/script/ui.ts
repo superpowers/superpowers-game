@@ -79,10 +79,10 @@ export function setupEditor(clientId: number) {
   ui.editor = new TextEditorWidget(data.projectClient, clientId, textArea, {
     mode: "text/typescript",
     extraKeys: {
-      "Ctrl-S": () => { onSaveText(false); },
-      "Cmd-S": () => { onSaveText(false); },
-      "Ctrl-Alt-S": () => { onSaveText(true); },
-      "Cmd-Alt-S": () => { onSaveText(true); },
+      "Ctrl-S": () => { applyDraftChanges({ ignoreErrors: false }); },
+      "Cmd-S": () => { applyDraftChanges({ ignoreErrors: false }); },
+      "Ctrl-Alt-S": () => { applyDraftChanges({ ignoreErrors: true }); },
+      "Cmd-Alt-S": () => { applyDraftChanges({ ignoreErrors: true }); },
       "Ctrl-Space": () => {
         scheduleParameterHint();
         scheduleCompletion();
@@ -194,8 +194,15 @@ let errorsContent = ui.errorPane.querySelector(".content") as HTMLDivElement;
 ui.errorsTBody = <HTMLTableSectionElement>errorsContent.querySelector("tbody");
 ui.errorsTBody.addEventListener("click", onErrorTBodyClick);
 
-export function refreshErrors(errors: Array<{file: string; position: { line: number; character: number; }; length: number; message: string}>) {
-  // Remove all previous erros
+interface CompilationError {
+  file: string;
+  position: { line: number; character: number; };
+  length: number;
+  message: string;
+}
+
+export function refreshErrors(errors: CompilationError[]) {
+  // Remove all previous errors
   for (let textMarker of ui.editor.codeMirrorInstance.getDoc().getAllMarks()) {
     if ((<any>textMarker).className !== "line-error") continue;
     textMarker.clear();
@@ -306,29 +313,32 @@ ui.saveButton = ui.errorPane.querySelector(".draft button.save") as HTMLButtonEl
 ui.saveButton.addEventListener("click", (event: MouseEvent) => {
   event.preventDefault();
   event.stopPropagation();
-  onSaveText(false);
+  applyDraftChanges({ ignoreErrors: false });
 });
 
 ui.saveWithErrorsButton = ui.errorPane.querySelector(".draft button.save-with-errors") as HTMLButtonElement;
 ui.saveWithErrorsButton.addEventListener("click", (event: MouseEvent) => {
   event.preventDefault();
   event.stopPropagation();
-  onSaveText(true);
+  applyDraftChanges({ ignoreErrors: true });
 });
 
-function onSaveText(withErrors: boolean) {
-  if (ui.saveButton.hidden !== withErrors) return;
-
+function applyDraftChanges(options: { ignoreErrors: boolean }) {
   ui.saveButton.disabled = true;
   ui.saveWithErrorsButton.disabled = true;
+
   ui.saveButton.textContent = SupClient.i18n.t("common:states.saving");
-  ui.saveWithErrorsButton.textContent = SupClient.i18n.t("common:states.saving");
+  if (options.ignoreErrors) ui.saveWithErrorsButton.textContent = SupClient.i18n.t("common:states.saving");
 
-  socket.emit("edit:assets", SupClient.query.asset, "saveText", (err: string) => {
-    if (err != null) { alert(err); SupClient.onDisconnected(); }
+  socket.emit("edit:assets", SupClient.query.asset, "applyDraftChanges", options, (err: string) => {
+    if (err != null && err !== "foundSelfErrors") {
+      alert(err);
+      SupClient.onDisconnected();
+      return;
+    }
 
-  ui.saveButton.disabled = false;
-  ui.saveWithErrorsButton.disabled = false;
+    ui.saveButton.disabled = false;
+    ui.saveWithErrorsButton.disabled = false;
     ui.saveButton.textContent = SupClient.i18n.t("common:actions.save");
     ui.saveWithErrorsButton.textContent = SupClient.i18n.t("common:actions.saveWithErrors");
   });
