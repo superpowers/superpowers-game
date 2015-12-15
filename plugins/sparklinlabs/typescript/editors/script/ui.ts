@@ -339,8 +339,8 @@ function applyDraftChanges(options: { ignoreErrors: boolean }) {
 
     ui.saveButton.disabled = false;
     ui.saveWithErrorsButton.disabled = false;
-    ui.saveButton.textContent = SupClient.i18n.t("common:actions.save");
-    ui.saveWithErrorsButton.textContent = SupClient.i18n.t("common:actions.saveWithErrors");
+    ui.saveButton.textContent = SupClient.i18n.t("common:actions.applyChanges");
+    ui.saveWithErrorsButton.textContent = SupClient.i18n.t("common:actions.applyChangesWithErrors");
   });
 }
 

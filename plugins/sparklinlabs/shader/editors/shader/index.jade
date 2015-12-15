@@ -63,13 +63,13 @@ html
     .shaders
       .vertex
         .header
-          button(title="Ctrl+S",hidden)= t("common:actions.save")
+          button(title="Ctrl+S",hidden)= t("common:actions.applyChanges")
           .info= t("shaderEditor:vertexShader")
         .text-editor-container
           textarea(disabled).text-editor
       .fragment
         .header
-          button(title="Ctrl+S",hidden)= t("common:actions.save")
+          button(title="Ctrl+S",hidden)= t("common:actions.applyChanges")
           .info= t("shaderEditor:fragmentShader")
         .text-editor-container
           textarea(disabled).text-editor
