@@ -196,7 +196,7 @@ export default class Player {
 
     let { updates, timeLeft } = this.gameInstance.tick(this.accumulatedTime);
     this.accumulatedTime = timeLeft;
-    if (this.gameInstance.exited) { cancelAnimationFrame(this.tickAnimationFrameId); return; }
+    if (this.gameInstance.input.exited) { cancelAnimationFrame(this.tickAnimationFrameId); return; }
 
     if (updates > 0) this.gameInstance.draw();
   };

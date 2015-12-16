@@ -176,6 +176,7 @@ declare namespace SupEngine {
   class Input {
     static maxTouches: number;
 
+    exited: boolean;
     canvas: HTMLCanvasElement;
 
     mouseButtons: MouseButtonState[];
