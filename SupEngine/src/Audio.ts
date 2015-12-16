@@ -4,8 +4,8 @@ export default class Audio {
 
   constructor() {}
   getContext(): AudioContext {
-    if ((<any>window)["AudioContext"] == null) return null;
     if (this._ctx != null) return this._ctx;
+    if ((window as any).AudioContext == null) return null;
 
     this._ctx = new AudioContext();
     this.masterGain = this._ctx.createGain();
