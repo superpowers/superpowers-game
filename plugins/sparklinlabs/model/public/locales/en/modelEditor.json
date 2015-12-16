@@ -7,7 +7,7 @@
     "line": "Line",
     "type": "Type",
     "message": "Message",
-    "script": "Script"
+    "file": "File"
   },
   
   "sidebar": {
