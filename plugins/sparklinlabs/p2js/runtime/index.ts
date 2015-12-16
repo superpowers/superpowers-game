@@ -7,9 +7,9 @@ namespace P2 {
 };
 (<any>SupEngine).P2 = P2;
 
-SupEngine.registerEarlyUpdateFunction("P2js", () => {
+SupEngine.registerEarlyUpdateFunction("P2js", (gameInstance) => {
   if (!P2.autoUpdate) return;
-  P2.World.step(1/60);
+  P2.World.step(1 / gameInstance.framesPerSecond);
 });
 
 import * as P2Body from "./P2Body";

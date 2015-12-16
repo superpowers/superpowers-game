@@ -12,9 +12,9 @@ import * as CannonBody from "./CannonBody";
   autoUpdate: true
 };
 
-SupEngine.registerEarlyUpdateFunction("Cannonjs", (player:SupRuntime.Player) => {
+SupEngine.registerEarlyUpdateFunction("Cannonjs", (gameInstance) => {
   if (!(<any>SupEngine).Cannon.autoUpdate) return;
-  (<any>SupEngine).Cannon.World.step(1 / 60);
+  (<any>SupEngine).Cannon.World.step(1 / gameInstance.framesPerSecond);
 });
 
 SupRuntime.registerPlugin("CannonBody", CannonBody);
