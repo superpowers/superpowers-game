@@ -50,8 +50,8 @@ export function registerComponentClass(name: string, plugin: new(...args: any[])
   componentClasses[name] = plugin;
 };
 
-export let earlyUpdateFunctions: {[name: string]: Function} = {};
-export function registerEarlyUpdateFunction(name: string, callback: Function) {
+export let earlyUpdateFunctions: {[name: string]: (gameInstance: GameInstance) => void } = {};
+export function registerEarlyUpdateFunction(name: string, callback: (gameInstance: GameInstance) => void) {
   if (earlyUpdateFunctions[name] != null) {
     console.error(`SupEngine.registerEarlyUpdateFunction: Tried to register two or more functions named "${name}"`);
     return;

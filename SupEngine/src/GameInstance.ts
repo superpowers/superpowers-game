@@ -103,7 +103,7 @@ export default class GameInstance extends EventEmitter {
       this.componentsToBeStarted.splice(index, 1);
     }
 
-    for (let pluginName in SupEngine.earlyUpdateFunctions) SupEngine.earlyUpdateFunctions[pluginName]();
+    for (let pluginName in SupEngine.earlyUpdateFunctions) SupEngine.earlyUpdateFunctions[pluginName](this);
 
     // Update all actors
     this.cachedActors.forEach((actor) => { actor.update(); });

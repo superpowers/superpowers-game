@@ -6,14 +6,14 @@ declare let __tmpTHREE: typeof THREE;
 declare namespace SupEngine {
   let THREE: typeof __tmpTHREE;
 
-  let editorComponentClasses: {[name: string]: any};
+  let editorComponentClasses: { [name: string]: any };
   function registerEditorComponentClass(name: string, component: any): void;
 
-  let componentClasses: {[name: string]: any};
+  let componentClasses: { [name: string]: any };
   function registerComponentClass(name: string, plugin: any): void;
 
-  let earlyUpdateFunctions: any;
-  function registerEarlyUpdateFunction(name: string, callback: Function): void;
+  let earlyUpdateFunctions: { [name: string]: (gameInstance: GameInstance) => void };
+  function registerEarlyUpdateFunction(name: string, callback: (gameInstance: GameInstance) => void): void;
 
   class GameInstance extends EventEmitter {
     framesPerSecond: number;
@@ -35,8 +35,6 @@ declare namespace SupEngine {
 
     debug: boolean;
     skipRendering: boolean;
-    exitCallback: Function;
-    exited: boolean;
 
     constructor(canvas: HTMLCanvasElement, options?: { debug?: boolean; enableOnExit?: boolean; layers?: string[]; });
     setRatio(ratio?: number): void;
@@ -111,7 +109,7 @@ declare namespace SupEngine {
     _destroy(): void;
     _markDestructionPending(): void;
   }
-  
+
   interface ActorComponentUpdater {
     destroy(): void;
   }
@@ -132,26 +130,70 @@ declare namespace SupEngine {
     abstract setIsLayerActive(active: boolean): void;
   }
 
+  interface KeyState {
+    isDown: boolean;
+    wasJustPressed: boolean;
+    wasJustAutoRepeated: boolean;
+    wasJustReleased: boolean;
+  }
+
+  interface MouseButtonState {
+    isDown: boolean;
+    wasJustPressed: boolean;
+    wasJustReleased: boolean;
+  }
+
+  interface TouchState {
+    isDown: boolean;
+    wasStarted: boolean;
+    wasEnded: boolean;
+    position: { x: number; y: number; };
+  }
+
+  interface GamepadButtonState {
+    isDown: boolean;
+    wasJustPressed: boolean;
+    wasJustReleased: boolean;
+    value: number;
+  }
+
+  interface GamepadAxisState {
+    wasPositiveJustPressed: boolean;
+    wasPositiveJustAutoRepeated: boolean;
+    wasPositiveJustReleased: boolean;
+    wasNegativeJustPressed: boolean;
+    wasNegativeJustAutoRepeated: boolean;
+    wasNegativeJustReleased: boolean;
+    value: number;
+  }
+
+  interface GamepadAutoRepeat {
+    axis: number;
+    positive: boolean;
+    time: number;
+  }
+
   class Input {
     static maxTouches: number;
 
     canvas: HTMLCanvasElement;
 
-    mouseButtons: Array<{isDown: boolean; wasJustPressed: boolean; wasJustReleased: boolean;}>;
+    mouseButtons: MouseButtonState[];
     mouseButtonsDown: boolean[];
-    mousePosition: {x: number; y: number;};
-    newMousePosition: {x: number; y: number;};
-    mouseDelta: {x: number; y: number;};
+    mousePosition: {x: number; y: number; };
+    newMousePosition: {x: number; y: number; };
+    mouseDelta: {x: number; y: number; };
     newScrollDelta: number;
 
-    touches: Array<{isDown: boolean; wasStarted: boolean; wasEnded: boolean; position: {x: number; y: number;}}>;
+    touches: TouchState[];
     touchesDown: boolean[];
 
-    keyboardButtons: Array<{isDown: boolean; wasJustPressed: boolean; wasJustReleased: boolean;}>;
+    keyboardButtons: KeyState[];
     keyboardButtonsDown: boolean[];
 
-    gamepadsButtons: { isDown: boolean; wasJustPressed: boolean; wasJustReleased: boolean; value: number; }[][];
-    gamepadsAxes: number[][];
+    gamepadsButtons: GamepadButtonState[][];
+    gamepadsAxes: GamepadAxisState[][];
+    gamepadsAutoRepeats: GamepadAutoRepeat[];
 
     constructor(canvas: HTMLCanvasElement);
     destroy(): void;
