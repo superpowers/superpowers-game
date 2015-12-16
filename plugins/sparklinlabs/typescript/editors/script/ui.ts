@@ -144,24 +144,6 @@ export function setupEditor(clientId: number) {
     ui.completionOpened = false;
     if (ui.parameterElement.parentElement != null) ui.editor.codeMirrorInstance.addKeyMap(parameterPopupKeyMap);
   });
-
-  // Context menu
-  if (window.navigator.userAgent.indexOf("Electron") !== -1) {
-    let electron: GitHubElectron.Electron = (top as any).global.require("electron");
-    let win = electron.remote.getCurrentWindow();
-
-    let menu = new electron.remote.Menu();
-    menu.append(new electron.remote.MenuItem({ label: SupClient.i18n.t("scriptEditor:contextMenu.cut"), click: () => { document.execCommand("cut"); } }));
-    menu.append(new electron.remote.MenuItem({ label: SupClient.i18n.t("scriptEditor:contextMenu.copy"), click: () => { document.execCommand("copy"); } }));
-    menu.append(new electron.remote.MenuItem({ label: SupClient.i18n.t("scriptEditor:contextMenu.paste"), click: () => { document.execCommand("paste"); } }));
-
-    document.querySelector(".text-editor-container").addEventListener("contextmenu", (event: any) => {
-      event.preventDefault();
-      let bounds = win.getBounds();
-      menu.popup(win, event.screenX - bounds.x, event.screenY - bounds.y);
-      return false;
-    });
-  }
 }
 
 let localVersionNumber = 0;

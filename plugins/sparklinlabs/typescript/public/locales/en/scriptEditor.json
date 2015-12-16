@@ -16,12 +16,6 @@
     "message": "Message",
     "script": "Script"
   },
-  
-  "contextMenu": {
-    "cut": "Cut (Ctrl+X)",
-    "copy": "Copy (Ctrl+C)",
-    "paste": "Paste (Ctrl+V)"
-  },
 
   "globalSearch": {
     "prompt": "Search in all TypeScript scripts.",
