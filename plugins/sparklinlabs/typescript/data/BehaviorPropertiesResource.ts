@@ -7,6 +7,7 @@ export interface BehaviorPropertiesResourcePub {
   behaviors: {
     [behaviorName: string]: {
       scriptId: string;
+      line: number;
       parentBehavior: string;
       properties: BehaviorProperty[];
     }
@@ -67,19 +68,19 @@ export default class BehaviorPropertiesResource extends SupCore.Data.Base.Resour
     super.init(callback);
   }
 
-  setScriptBehaviors(scriptId: string, behaviors: {[behaviorName: string]: { properties: BehaviorProperty[]; parentBehavior: string }}) {
+  setScriptBehaviors(scriptId: string, behaviors: {[behaviorName: string]: { line: number; properties: BehaviorProperty[]; parentBehavior: string }}) {
     this.client_setScriptBehaviors(scriptId, behaviors);
     this.emit("command", "setScriptBehaviors", scriptId, behaviors);
     this.emit("change");
   }
 
-  client_setScriptBehaviors(scriptId: string, behaviors: {[behaviorName: string]: { properties: BehaviorProperty[]; parentBehavior: string }}) {
+  client_setScriptBehaviors(scriptId: string, behaviors: {[behaviorName: string]: { line: number; properties: BehaviorProperty[]; parentBehavior: string }}) {
     let oldBehaviorNames = (this.behaviorNamesByScriptId[scriptId] != null) ? this.behaviorNamesByScriptId[scriptId] : [];
     let newBehaviorNames: string[] = this.behaviorNamesByScriptId[scriptId] = [];
 
     for (let name in behaviors) {
       let behavior = behaviors[name];
-      this.pub.behaviors[name] = { scriptId, parentBehavior: behavior.parentBehavior, properties: behavior.properties };
+      this.pub.behaviors[name] = { scriptId, line: behavior.line, parentBehavior: behavior.parentBehavior, properties: behavior.properties };
       let propertiesByName: {[propertyName: string]: BehaviorProperty} = this.propertiesByNameByBehavior[name] = {};
       for (let property of behavior.properties) propertiesByName[property.name] = property;
       newBehaviorNames.push(name);

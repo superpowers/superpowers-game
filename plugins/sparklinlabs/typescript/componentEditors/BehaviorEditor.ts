@@ -14,6 +14,7 @@ export default class BehaviorEditor {
   behaviorPropertiesResource: BehaviorPropertiesResource;
 
   behaviorNameField: HTMLSelectElement;
+  openBehaviorButton: HTMLButtonElement;
   behaviorPropertiesHeaderRow: HTMLTableRowElement;
 
   propertySettingsByName: { [name: string]: SupClient.table.RowParts };
@@ -29,6 +30,15 @@ export default class BehaviorEditor {
     let behaviorNameRow = SupClient.table.appendRow(this.tbody, SupClient.i18n.t("componentEditors:Behavior.class"));
     this.behaviorNameField = SupClient.table.appendSelectBox(behaviorNameRow.valueCell, { "": SupClient.i18n.t("common:none") });
     this.behaviorNameField.addEventListener("change", this.onChangeBehaviorName);
+
+    this.openBehaviorButton = document.createElement("button");
+    this.openBehaviorButton.disabled = true;
+    this.openBehaviorButton.textContent = SupClient.i18n.t("common:actions.open");
+    behaviorNameRow.valueCell.appendChild(this.openBehaviorButton);
+    this.openBehaviorButton.addEventListener("click", this.onOpenBehavior);
+
+    behaviorNameRow.valueCell.style.display = "flex";
+    this.behaviorNameField.style.flex = "1";
 
     SupClient.table.appendHeader(this.tbody, SupClient.i18n.t("componentEditors:Behavior.customizableProperties"));
 
@@ -103,7 +113,8 @@ export default class BehaviorEditor {
 
     if (this.config.behaviorName.length > 0 && this.behaviorPropertiesResource.pub.behaviors[this.config.behaviorName] == null) {
       SupClient.table.appendSelectOption(this.behaviorNameField, this.config.behaviorName, `(Missing) ${this.config.behaviorName}`);
-    }
+      this.openBehaviorButton.disabled = true;
+    } else this.openBehaviorButton.disabled = false;
 
     this.behaviorNameField.value = this.config.behaviorName;
 
@@ -304,6 +315,11 @@ export default class BehaviorEditor {
 
   private onChangeBehaviorName = (event: any) => { this.editConfig("setProperty", "behaviorName", event.target.value); };
 
+  private onOpenBehavior = () => {
+    let behavior = this.behaviorPropertiesResource.pub.behaviors[this.config.behaviorName];
+    if (behavior != null)
+      window.parent.postMessage({ type: "openEntry", id: behavior.scriptId, options: { line: behavior.line != null ? behavior.line : 0, ch: 0 } }, window.location.origin);
+  }
   // private onChangePropertySet = (event: any) => {}
 
   private onChangePropertyValue = (event: any) => {

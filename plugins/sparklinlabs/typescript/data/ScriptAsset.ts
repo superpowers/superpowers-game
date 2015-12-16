@@ -121,8 +121,8 @@ Sup.registerBehavior(${behaviorName});
 
       this.server.data.resources.acquire("behaviorProperties", null, (err: Error, behaviorProperties: BehaviorPropertiesResource) => {
         if (behaviorProperties.pub.behaviors[behaviorName] == null) {
-          let behaviors: { [behaviorName: string]: { properties: Array<{name: string; type: string}>; parentBehavior: string; } } = {};
-          behaviors[behaviorName] = { properties: [], parentBehavior: null };
+          let behaviors: { [behaviorName: string]: { line: number, properties: Array<{name: string; type: string}>; parentBehavior: string; } } = {};
+          behaviors[behaviorName] = { line: 0, properties: [], parentBehavior: null };
           behaviorProperties.setScriptBehaviors(this.id, behaviors);
         }
 
@@ -283,9 +283,10 @@ Sup.registerBehavior(${behaviorName});
         supTypeSymbols["Sup.Math.Vector3"]
       ];
 
-      let behaviors: { [behaviorName: string]: { properties: Array<{ name: string, type: string }>; parentBehavior: string } } = {};
+      let behaviors: { [behaviorName: string]: { line: number, properties: Array<{ name: string, type: string }>; parentBehavior: string } } = {};
 
-      let ownLocals = <ts.SymbolTable>(<any>results.program.getSourceFile(ownScriptName)).locals;
+      let file = results.program.getSourceFile(ownScriptName);
+      let ownLocals = <ts.SymbolTable>(<any>file).locals;
       for (let symbolName in ownLocals) {
         let symbol = ownLocals[symbolName];
         if ((symbol.flags & ts.SymbolFlags.Class) !== ts.SymbolFlags.Class) continue;
@@ -308,8 +309,10 @@ Sup.registerBehavior(${behaviorName});
         let properties: Array<{ name: string, type: string }> = [];
 
         let parentBehavior: string = null;
-        if (parentTypeSymbol !== supTypeSymbols["Sup.Behavior"]) parentBehavior = results.typeChecker.getFullyQualifiedName(parentTypeSymbol);
-        behaviors[symbolName] = { properties, parentBehavior };
+        if (parentTypeSymbol !== supTypeSymbols["Sup.Behavior"])
+          parentBehavior = results.typeChecker.getFullyQualifiedName(parentTypeSymbol);
+        let line = file.getLineAndCharacterOfPosition(symbol.valueDeclaration.name.pos).line;
+        behaviors[symbolName] = { line, properties, parentBehavior };
 
         for (let memberName in symbol.members) {
           let member = symbol.members[memberName];
