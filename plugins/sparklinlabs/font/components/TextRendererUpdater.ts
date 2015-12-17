@@ -54,7 +54,7 @@ export default class TextRendererUpdater {
         this.fontAssetId = value;
 
         this.fontAsset = null;
-        this.textRenderer.clearMesh();
+        this.textRenderer.setFont(null);
 
         if (this.fontAssetId != null) this.client.subAsset(this.fontAssetId, "font", this.fontSubscriber);
       } break;

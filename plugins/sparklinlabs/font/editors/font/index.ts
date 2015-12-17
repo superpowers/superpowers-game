@@ -87,7 +87,7 @@ function onConnected() {
 
   let textActor = new SupEngine.Actor(ui.gameInstance, "Text");
   let textRenderer = new TextRenderer(textActor);
-  let config = { fontAssetId: SupClient.query.asset, text: "The quick brown fox jumps over the lazy dog", alignment: "center" };
+  let config = { fontAssetId: SupClient.query.asset, text: "The quick brown fox\njumps over the lazy dog", alignment: "center" };
   let receiveCallbacks = { font: onAssetReceived };
   let editCallbacks = { font: onEditCommands };
   data.textUpdater = new TextRendererUpdater(data.projectClient, textRenderer, config, receiveCallbacks, editCallbacks);

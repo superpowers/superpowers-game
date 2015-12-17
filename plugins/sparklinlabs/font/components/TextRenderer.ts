@@ -18,7 +18,7 @@ export default class TextRenderer extends SupEngine.ActorComponent {
     size?: number;
     color?: string;
   };
-  opacity = 1;
+  opacity: number;
 
   constructor(actor: SupEngine.Actor) {
     super(actor, "TextRenderer");
@@ -41,7 +41,16 @@ export default class TextRenderer extends SupEngine.ActorComponent {
 
   setOpacity(opacity: number) {
     this.opacity = opacity;
-    for (let mesh of this.threeMeshes) mesh.material.opacity = this.opacity;
+
+    for (let mesh of this.threeMeshes) {
+      if (this.opacity != null) {
+        mesh.material.transparent = true;
+        mesh.material.opacity = this.opacity;
+      } else {
+        mesh.material.transparent = false;
+        mesh.material.opacity = 1;
+      }
+    }
   }
 
   _createMesh() {
@@ -108,12 +117,11 @@ export default class TextRenderer extends SupEngine.ActorComponent {
     let material = new THREE.MeshBasicMaterial({
       map: this.texture,
       alphaTest: 0.01,
-      side: THREE.DoubleSide,
-      transparent: true,
-      opacity: this.opacity
+      side: THREE.DoubleSide
     });
 
     this.threeMeshes[0] = new THREE.Mesh(geometry, material);
+    this.setOpacity(this.opacity);
     switch (this.options.alignment) {
       case "left":  this.threeMeshes[0].position.setX( width / 2 / this.font.pixelsPerUnit); break;
       case "right": this.threeMeshes[0].position.setX(-width / 2 / this.font.pixelsPerUnit); break;
@@ -133,9 +141,7 @@ export default class TextRenderer extends SupEngine.ActorComponent {
       let material = new THREE.MeshBasicMaterial({
         map: this.font.texture,
         alphaTest: 0.1,
-        side: THREE.DoubleSide,
-        transparent: true,
-        opacity: this.opacity
+        side: THREE.DoubleSide
       });
       let color = (this.options.color != null) ? this.options.color : this.font.color;
       material.color.setHex(parseInt(color, 16));
@@ -183,6 +189,7 @@ export default class TextRenderer extends SupEngine.ActorComponent {
         uvs.array[x * 8 + 7] = top;
       }
     }
+    this.setOpacity(this.opacity);
   }
 
   clearMesh() {
