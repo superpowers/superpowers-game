@@ -1,5 +1,9 @@
 {
-  "bitmap": "Bitmap",
+  "type": "Font Type",
+  "typeOptions": {
+    "bitmap": "Bitmap",
+    "vector": "Vector Font"
+  },
   "font": {
     "title": "Font",
     "download": {
@@ -8,12 +12,14 @@
     }
   },
   "texture": "Texture",
+  "rendering": "Rendering",
   "filtering": "Filtering",
   "pixelated": "Pixelated",
   "smooth": "Smooth",
   "pixelsPerUnit": "Pixels / Unit",
-  "size": "Size (pixels)",
   "color": "Color",
+  "settings": "Settings",
+  "size": "Size (pixels)",
   "gridSize": "Grid Size",
   "charset": "Charset",
   "charsetOffset": "Charset offset"

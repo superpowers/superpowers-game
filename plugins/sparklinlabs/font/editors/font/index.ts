@@ -11,6 +11,8 @@ let ui: {
   vectorFontTBody: HTMLTableSectionElement,
   bitmapFontTBody: HTMLTableSectionElement
 } = <any>{};
+let noCharsetText = "The quick brown fox\njumps over the lazy dog\n\n0123456789 +-*/=";
+
 let socket: SocketIOClient.Socket;
 
 function start() {
@@ -53,13 +55,14 @@ function start() {
         socket.emit("edit:assets", SupClient.query.asset, "setProperty", event.target.dataset.name, event.target.value, (err: string) => { if (err != null) alert(err); });
       });
     } else if (setting === "charset") {
-      settingObj.addEventListener("change", (event: any) => {
+      settingObj.addEventListener("input", (event: any) => {
         let charset = (event.target.value !== "") ? event.target.value : null;
         socket.emit("edit:assets", SupClient.query.asset, "setProperty", event.target.dataset.name, charset, (err: string) => { if (err != null) alert(err); });
       });
     } else if (setting === "isBitmap") {
-      settingObj.addEventListener("click", (event: any) => {
-        socket.emit("edit:assets", SupClient.query.asset, "setProperty", event.target.dataset.name, event.target.checked, (err: string) => { if (err != null) alert(err); });
+      settingObj.addEventListener("change", (event: any) => {
+        let isBitmap = event.target.value === "bitmap";
+        socket.emit("edit:assets", SupClient.query.asset, "setProperty", event.target.dataset.name, isBitmap, (err: string) => { if (err != null) alert(err); });
       });
     } else {
       settingObj.addEventListener("change", (event: any) => {
@@ -87,7 +90,7 @@ function onConnected() {
 
   let textActor = new SupEngine.Actor(ui.gameInstance, "Text");
   let textRenderer = new TextRenderer(textActor);
-  let config = { fontAssetId: SupClient.query.asset, text: "The quick brown fox\njumps over the lazy dog", alignment: "center" };
+  let config = { fontAssetId: SupClient.query.asset, text: noCharsetText, alignment: "center" };
   let receiveCallbacks = { font: onAssetReceived };
   let editCallbacks = { font: onEditCommands };
   data.textUpdater = new TextRendererUpdater(data.projectClient, textRenderer, config, receiveCallbacks, editCallbacks);
@@ -96,25 +99,34 @@ function onConnected() {
 function onAssetReceived() {
   ui.allSettings.forEach((setting: string) => {
     if(setting === "isBitmap") {
-      ui.settings[setting].checked = data.textUpdater.fontAsset.pub.isBitmap;
+      ui.settings[setting].value = data.textUpdater.fontAsset.pub.isBitmap ? "bitmap" : "vector";
       refreshFontMode();
     } else {
       ui.settings[setting].value = (<any>data.textUpdater.fontAsset.pub)[setting];
     }
   });
 
+  if (data.textUpdater.fontAsset.pub.isBitmap && data.textUpdater.fontAsset.pub.charset != null)
+    data.textUpdater.config_setProperty("text", data.textUpdater.fontAsset.pub.charset);
+
   ui.colorPicker.value = `#${data.textUpdater.fontAsset.pub.color}`;
   ui.settings["charsetOffset"].disabled = data.textUpdater.fontAsset.pub.isBitmap && data.textUpdater.fontAsset.pub.charset != null;
 }
 onEditCommands.setProperty = (path: string, value: any) => {
   if(path === "isBitmap") {
-    ui.settings[path].checked = value;
+    ui.settings[path].value = value ? "bitmap" : "vector";
+    if (!value) data.textUpdater.config_setProperty("text", noCharsetText);
+    else {
+      let charset = data.textUpdater.fontAsset.pub.charset;
+      data.textUpdater.config_setProperty("text", charset != null ? charset : noCharsetText);
+    }
     refreshFontMode();
   } else ui.settings[path].value = value;
 
   if (path === "color") ui.colorPicker.value = `#${value}`;
   else if (path === "charset") {
-    ui.settings["charsetOffset"].disabled = data.textUpdater.fontAsset.pub.isBitmap && data.textUpdater.fontAsset.pub.charset != null;
+    data.textUpdater.config_setProperty("text", value != null ? value : noCharsetText);
+    ui.settings["charsetOffset"].disabled = value != null;
   }
 };
 

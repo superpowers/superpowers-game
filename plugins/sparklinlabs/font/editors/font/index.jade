@@ -13,9 +13,13 @@ html
       table.properties
         tbody.main
           tr
-            th= t("fontEditor:bitmap")
+            th(colspan="2")= t("fontEditor:font.title")
+          tr
+            th= t("fontEditor:type")
             td
-              input(type="checkbox").property-isBitmap
+              select.property-isBitmap
+                option(value="bitmap")= t("fontEditor:typeOptions.bitmap")
+                option(value="vector")= t("fontEditor:typeOptions.vector")
           tr.font-or-image
             th= t("fontEditor:font.title")
             td
@@ -23,6 +27,8 @@ html
               form(style="display: none")
                 input.file-select(type="file")
               button.download= t("common:actions.download")
+          tr
+            th(colspan="2")= t("fontEditor:rendering")
           tr
             th= t("fontEditor:filtering")
             td
@@ -39,6 +45,8 @@ html
               .inputs
                 input.color.property-color
                 input(type="color").color-picker
+          tr
+            th(colspan="2")= t("fontEditor:settings")
 
         tbody.vector-font
           tr
