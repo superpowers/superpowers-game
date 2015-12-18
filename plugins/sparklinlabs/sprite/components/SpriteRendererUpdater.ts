@@ -17,6 +17,7 @@ export default class SpriteRendererUpdater {
   shaderAssetId: string;
   shaderPub: any;
   overrideOpacity = false;
+  opacity: number;
 
   spriteSubscriber = {
     onAssetReceived: this._onSpriteAssetReceived.bind(this),
@@ -41,18 +42,20 @@ export default class SpriteRendererUpdater {
     this.materialType = config.materialType;
     this.shaderAssetId = config.shaderAssetId;
     if (config.overrideOpacity != null) this.overrideOpacity = config.overrideOpacity;
+    this.opacity = config.opacity;
     this.spriteAsset = null;
 
     this.spriteRenderer.horizontalFlip = config.horizontalFlip;
     this.spriteRenderer.verticalFlip = config.verticalFlip;
     this.spriteRenderer.castShadow = config.castShadow;
     this.spriteRenderer.receiveShadow = config.receiveShadow;
-    if (config.overrideOpacity) this.spriteRenderer.opacity = config.opacity;
+    if (config.overrideOpacity) this.spriteRenderer.setOpacity(config.opacity);
     if (config.color != null) {
       let hex = parseInt(config.color, 16);
-      this.spriteRenderer.color.r = (hex >> 16 & 255) / 255;
-      this.spriteRenderer.color.g = (hex >> 8 & 255) / 255;
-      this.spriteRenderer.color.b = (hex & 255) / 255;
+      let r = (hex >> 16 & 255) / 255;
+      let g = (hex >> 8 & 255) / 255;
+      let b = (hex & 255) / 255;
+      this.spriteRenderer.setColor(r, g, b);
     }
 
     if (this.spriteAssetId != null) this.client.subAsset(this.spriteAssetId, "sprite", this.spriteSubscriber);
@@ -240,20 +243,19 @@ export default class SpriteRendererUpdater {
 
       case "color":
         let hex = parseInt(value, 16);
-        this.spriteRenderer.color.r = (hex >> 16 & 255) / 255;
-        this.spriteRenderer.color.g = (hex >> 8 & 255) / 255;
-        this.spriteRenderer.color.b = (hex & 255) / 255;
-        let material = <THREE.MeshBasicMaterial>this.spriteRenderer.threeMesh.material;
-        material.color.setRGB(this.spriteRenderer.color.r, this.spriteRenderer.color.g, this.spriteRenderer.color.b);
-        material.needsUpdate = true;
+        let r = (hex >> 16 & 255) / 255;
+        let g = (hex >> 8 & 255) / 255;
+        let b = (hex & 255) / 255;
+        this.spriteRenderer.setColor(r, g, b);
         break;
 
       case "overrideOpacity":
         this.overrideOpacity = value;
-        this.spriteRenderer.setOpacity(value ? null : this.spriteAsset.pub.opacity);
+        this.spriteRenderer.setOpacity(value ? this.opacity : (this.spriteAsset != null ? this.spriteAsset.pub.opacity : null));
         break;
 
       case "opacity":
+        this.opacity = value;
         this.spriteRenderer.setOpacity(value);
         break;
 

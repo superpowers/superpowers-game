@@ -20,7 +20,7 @@ export default class SpriteRendererEditor {
   colorField: HTMLInputElement;
   colorPicker: HTMLInputElement;
   overrideOpacityField: HTMLInputElement;
-  transparentField: HTMLInputElement;
+  transparentField: HTMLSelectElement;
   opacityField: HTMLInputElement;
   materialSelectBox: HTMLSelectElement;
   shaderRow: HTMLTableRowElement;
@@ -28,6 +28,8 @@ export default class SpriteRendererEditor {
   shaderButtonElt: HTMLButtonElement;
 
   asset: SpriteAsset;
+  overrideOpacity: boolean;
+  opacity: number;
 
   constructor(tbody: HTMLTableSectionElement, config: SpriteRendererConfigPub, projectClient: SupClient.ProjectClient, editConfig: any) {
     this.tbody = tbody;
@@ -36,6 +38,9 @@ export default class SpriteRendererEditor {
     this.spriteAssetId = config.spriteAssetId;
     this.animationId = config.animationId;
     this.shaderAssetId = config.shaderAssetId;
+
+    this.overrideOpacity = config.overrideOpacity;
+    this.opacity = config.opacity;
 
     let spriteRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:SpriteRenderer.sprite"));
     let spriteFields = SupClient.table.appendAssetField(spriteRow.valueCell, "");
@@ -118,31 +123,33 @@ export default class SpriteRendererEditor {
 
     let opacityRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:SpriteRenderer.opacity"), { checkbox: true } );
     this.overrideOpacityField = opacityRow.checkbox;
-    this.overrideOpacityField.checked = config.overrideOpacity;
     this.overrideOpacityField.addEventListener("change", (event: any) => {
+      this.editConfig("setProperty", "opacity", this.asset != null ? this.asset.pub.opacity : null);
       this.editConfig("setProperty", "overrideOpacity", event.target.checked);
     });
 
     let opacityParent = document.createElement("div");
-    opacityParent.style.display = "flex";
-    opacityParent.style.alignItems = "center";
     opacityRow.valueCell.appendChild(opacityParent);
 
-    this.transparentField = SupClient.table.appendBooleanField(<any>opacityParent, config.opacity != null);
-    this.transparentField.style.width = "50%";
-    this.transparentField.style.borderRight = "1px solid #ccc";
-    this.transparentField.addEventListener("change", (event: any) => {
-      let opacity = (event.target.checked) ? 1 : null;
+    let transparentOptions: {[key: string]: string} = {
+      empty: "",
+      opaque: SupClient.i18n.t("componentEditors:SpriteRenderer.opaque"),
+      transparent: SupClient.i18n.t("componentEditors:SpriteRenderer.transparent"),
+    };
+    this.transparentField = SupClient.table.appendSelectBox(opacityParent, transparentOptions);
+    (this.transparentField.children[0] as HTMLOptionElement).hidden = true;
+    this.transparentField.addEventListener("change", (event) => {
+      let opacity = this.transparentField.value === "transparent" ? 1 : null;
       this.editConfig("setProperty", "opacity", opacity);
     });
-    this.transparentField.disabled = !config.overrideOpacity;
 
     this.opacityField = SupClient.table.appendNumberField(<any>opacityParent, config.opacity, 0, 1);
     this.opacityField.addEventListener("input", (event: any) => {
       this.editConfig("setProperty", "opacity", parseFloat(event.target.value));
     });
+    this.opacityField.style.marginTop = "0.2em";
     this.opacityField.step = "0.1";
-    this.opacityField.disabled = !config.overrideOpacity;
+    this.updateOpacityField();
 
     let materialRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:SpriteRenderer.material"));
     this.materialSelectBox = SupClient.table.appendSelectBox(materialRow.valueCell, { "basic": "Basic", "phong": "Phong", "shader": "Shader" }, config.materialType);
@@ -162,7 +169,7 @@ export default class SpriteRendererEditor {
       window.parent.postMessage({ type: "openEntry", id: this.shaderAssetId }, (<any>window.location).origin);
     });
     this.shaderButtonElt.disabled = this.shaderAssetId == null;
-    this._updateShaderField(config.materialType);
+    this.updateShaderField(config.materialType);
 
     this.projectClient.subEntries(this);
   }
@@ -178,7 +185,10 @@ export default class SpriteRendererEditor {
 
     switch (path) {
       case "spriteAssetId":
-        if (this.spriteAssetId != null) this.projectClient.unsubAsset(this.spriteAssetId, this);
+        if (this.spriteAssetId != null) {
+          this.asset = null;
+          this.projectClient.unsubAsset(this.spriteAssetId, this);
+        }
         this.spriteAssetId = value;
         this.spriteButtonElt.disabled = this.spriteAssetId == null;
         this.animationSelectBox.disabled = true;
@@ -217,22 +227,18 @@ export default class SpriteRendererEditor {
         break;
 
       case "overrideOpacity":
-        this.overrideOpacityField.checked = value;
-        this.transparentField.disabled = !value;
-        this.transparentField.checked = false;
-        this.opacityField.value = null;
-        this.opacityField.disabled = true;
+        this.overrideOpacity = value;
+        this.updateOpacityField();
         break;
 
       case "opacity":
-        this.transparentField.checked = value != null;
-        this.opacityField.disabled = value == null;
-        this.opacityField.value = value;
+        this.opacity = value;
+        this.updateOpacityField();
         break;
 
       case "materialType":
         this.materialSelectBox.value = value;
-        this._updateShaderField(value);
+        this.updateShaderField(value);
         break;
 
       case "shaderAssetId":
@@ -295,12 +301,16 @@ export default class SpriteRendererEditor {
 
     this.animationSelectBox.value = (this.animationId != null) ? this.animationId : "";
     this.animationSelectBox.disabled = false;
+
+    this.updateOpacityField();
   }
 
   onAssetEdited(assetId: string, command: string, ...args: any[]) {
     if (assetId !== this.spriteAssetId) return;
-    if (command.indexOf("Animation") === -1) return;
 
+    if (command === "setProperty" && args[0] === "opacity") this.updateOpacityField();
+
+    if (command.indexOf("Animation") === -1) return;
     let animationId = this.animationSelectBox.value;
 
     this._clearAnimations();
@@ -314,6 +324,7 @@ export default class SpriteRendererEditor {
   }
 
   onAssetTrashed() {
+    this.asset = null;
     this._clearAnimations();
 
     this.spriteTextField.value = "";
@@ -330,7 +341,22 @@ export default class SpriteRendererEditor {
     }
   }
 
-  _updateShaderField(materialType: string) {
+  private updateOpacityField() {
+    this.overrideOpacityField.checked = this.overrideOpacity;
+    this.transparentField.disabled = !this.overrideOpacity;
+    this.opacityField.hidden = !this.overrideOpacity || this.opacity == null;
+
+    if (!this.overrideOpacity && this.asset == null) {
+      this.transparentField.value = "empty";
+      this.opacityField.value = "";
+    } else {
+      let opacity = this.overrideOpacity ? this.opacity : this.asset.pub.opacity;
+      this.transparentField.value = opacity != null ? "transparent" : "opaque";
+      this.opacityField.value = opacity != null ? opacity.toString() : "";
+    }
+  }
+
+  private updateShaderField(materialType: string) {
     if (materialType === "shader") {
       if (this.shaderRow.parentElement == null) this.tbody.appendChild(this.shaderRow);
     } else if (this.shaderRow.parentElement != null) this.shaderRow.parentElement.removeChild(this.shaderRow);

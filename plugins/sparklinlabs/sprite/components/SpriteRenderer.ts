@@ -94,10 +94,13 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
     this.color.r = r;
     this.color.g = g;
     this.color.b = b;
+    if (this.material == null) return;
+
     if (this.material instanceof THREE.ShaderMaterial) {
       let uniforms = (<THREE.ShaderMaterial>this.material).uniforms;
       if (uniforms.color != null) uniforms.color.value.setRGB(r, g, b);
     } else (<THREE.MeshBasicMaterial>this.material).color.setRGB(r, g, b);
+    this.material.needsUpdate = true;
    }
 
   updateShape() {
