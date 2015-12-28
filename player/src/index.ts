@@ -15,10 +15,10 @@ if (window.navigator.userAgent.indexOf("Electron") !== -1) {
   let electron = nodeRequire("electron");
   playerWindow = electron.remote.getCurrentWindow();
 
-  document.body.addEventListener("click", (event: any) => {
-    if (event.target.tagName !== "A") return;
+  document.body.addEventListener("click", (event) => {
+    if ((event.target as HTMLElement).tagName !== "A") return;
     event.preventDefault();
-    electron.shell.openExternal(event.target.href);
+    electron.shell.openExternal((event.target as HTMLAnchorElement).href);
   });
 }
 let qs = querystring.parse(window.location.search.slice(1));
