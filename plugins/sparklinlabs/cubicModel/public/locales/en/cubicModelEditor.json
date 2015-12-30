@@ -1,0 +1,77 @@
+{
+  "3dView": {
+    "settings": {
+      "title": "Settings",
+      "linkShapeToPivot": "Link shape to pivot"
+    },
+    "transform": {
+      "title": "Transform",
+      "movePivot": "Move pivot",
+      "moveShape": "Move shape",
+      "rotate": "Rotate",
+      "stretch": "Stretch",
+      "local": "Local"
+    },
+    "grid": {
+      "title": "Grid",
+      "size": "Size",
+      "visible": "Visible"
+    }
+  },
+  "textureView": {
+    "mode": {
+      "title": "Mode",
+      "layout": "Layout",
+      "paint": "Paint"
+    },
+    "layoutMode": {
+      "title": "Settings",
+      "linkTextureToUV": "Link texture to UV"
+    },
+    "paintMode": {
+      "tool": "Tool",
+      "brush": "Brush",
+      "eraser": "Eraser",
+      "fill": "Fill",
+      "color": "Color"
+    }
+  },
+  "sidebar": {
+    "settings": {
+      "cubicModel": {
+        "title": "Cubic Model",
+        "pixelsPerUnit": "Pixels per unit",
+        "texture": "Texture",
+        "download": {
+          "defaultName": "Texture",
+          "prompt": "Enter a name for the texture."
+        },
+        "textureSize": "Texture size (px)"
+      }
+    },
+    "nodes": {
+      "title": "Nodes",
+      "newNode": {
+        "title": "New node",
+        "prompt": "Enter a name for the node."
+      },
+      "renamePrompt": "Enter a new name for the node.",
+      "duplicatePrompt": "Enter a name for the new node.",
+      "deleteConfirm": "Are you sure you want to delete the selected nodes?",
+      "hide": "Hide",
+      "show": "Show"
+    },
+    "inspector": {
+      "position": "Position",
+      "orientation": "Orientation",
+      "shape": "Shape",
+      "shapeType": "Type",
+      "shapeOptions": {
+        "box": "Box"
+      },
+      "offset": "Offset",
+      "size": "Size",
+      "stretch": "Stretch"
+    }
+  }
+}

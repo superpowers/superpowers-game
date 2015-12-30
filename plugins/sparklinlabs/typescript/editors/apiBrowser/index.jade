@@ -1,0 +1,23 @@
+doctype html
+html
+  head
+    title= t("plugin:editors.apiBrowser.title")
+    link(rel="stylesheet",href="/styles/reset.css")
+    link(rel="stylesheet",href="index.css")
+    link(rel="stylesheet",href="railscasts.css")
+
+  body
+    nav
+      form
+        input(type="search",placeholder= t("common:actions.search"),minlength="3",autofocus)
+      .defs
+        ul
+
+    main
+      article.no-results
+        header= t("apiBrowserEditor:searchResults")
+        p= t("apiBrowserEditor:noResults")
+
+    script(src="/SupCore.js")
+    script(src="/SupClient.js")
+    script(src="index.js")

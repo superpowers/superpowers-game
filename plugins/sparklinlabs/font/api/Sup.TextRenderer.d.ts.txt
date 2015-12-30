@@ -1,0 +1,20 @@
+declare namespace Sup {
+  class TextRenderer extends ActorComponent {
+    constructor(actor: Actor, text?: string|number, pathOrAsset?: string|Font, options?: {alignment?: string; verticalAlignment?: string; size?: number; color?: Color;});
+
+    getFont(): Font;
+    setFont(pathOrAsset: string|Font): TextRenderer;
+    getText(): string;
+    setText(text: string|number): TextRenderer;
+    getColor(): Color;
+    setColor(color: Color): TextRenderer;
+    getAlignment(): string;
+    setAlignment(alignment: string): TextRenderer;
+    getVerticalAlignment(): string;
+    setVerticalAlignment(verticalAlignment: string): TextRenderer;
+    getSize(): number;
+    setSize(size: number): TextRenderer;
+    getOpacity(): number;
+    setOpacity(opacity: number): TextRenderer;
+  }
+}

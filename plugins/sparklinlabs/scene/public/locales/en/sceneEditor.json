@@ -1,0 +1,61 @@
+{
+  "controls": {
+    "camera": {
+      "title": "Camera",
+      "mode": "Mode",
+      "verticalAxis": "Up Axis",
+      "speed": "Speed"
+    },
+    "transform": {
+      "title": "Transform",
+      "move": "Move",
+      "rotate": "Rotate",
+      "scale": "Scale",
+      "local": "Local"
+    },
+    "grid": {
+      "title": "Grid",
+      "size": "Size",
+      "visible": "Visible"
+    },
+    "light": {
+      "title": "Light"
+    }
+  },
+  "treeView": {
+    "newActor": {
+      "title": "New actor",
+      "prompt": "Enter a name for the actor.",
+      "initialValue": "Actor"
+    },
+    "newPrefab": {
+      "title": "New prefab",
+      "prompt": "Enter a name for the prefab",
+      "initialValue": "Prefab"
+    },
+    "renamePrompt": "Enter a new name for the actor.",
+    "duplicatePrompt": "Enter a name for the new actor.",
+    "deleteConfirm": "Are you sure you want to delete the selected actors?",
+    "visible": {
+      "show": "Show",
+      "hide": "Hide"
+    }
+  },
+  "inspector": {
+    "position": "Position",
+    "orientation": "Orientation",
+    "scale": "Scale",
+    "visible": "Visible",
+    "layer": "Layer",
+    "prefab": "Prefab",
+    "newComponent":{
+      "title": "New Component",
+      "select": "Select the type of component to create.",
+      "validate": "Create"
+    },
+    "deleteComponent": {
+      "confirm": "Are you sure you want to delete this component?",
+      "validate": "Delete"
+    }
+  }
+}

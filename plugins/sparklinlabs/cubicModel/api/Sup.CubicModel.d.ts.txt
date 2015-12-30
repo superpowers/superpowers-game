@@ -1,0 +1,5 @@
+declare namespace Sup {
+  class CubicModel extends Asset {
+    getPixelsPerUnit(): number;
+  }
+}

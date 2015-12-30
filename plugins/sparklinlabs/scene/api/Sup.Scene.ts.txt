@@ -1,0 +1,87 @@
+namespace Sup {
+
+  let tmpVector3 = new SupEngine.THREE.Vector3();
+  let tmpQuaternion = new SupEngine.THREE.Quaternion();
+
+  export class Scene extends Asset {}
+
+  export function loadScene(pathOrAsset) {
+    player.gameInstance.destroyAllActors();
+    appendScene(pathOrAsset);
+  }
+
+  export function appendScene(pathOrAsset: string|Scene, sceneParentActor=null, setupActors=true): any {
+    let sceneAsset = (typeof pathOrAsset === "string") ? get(pathOrAsset, Scene) : <Scene>pathOrAsset;
+
+    let actors: Actor[] = [];
+    let allComponents = [];
+
+    let walk = (node, parentActor) => {
+      let actor: Actor;
+      if (node.prefab != null) {
+        let prefabAsset = player.getOuterAsset(node.prefab.sceneAssetId);
+        if (prefabAsset != null) {
+          let result: any = appendScene(prefabAsset, parentActor, false);
+          actor = result.actors[0];
+          actor.__inner.name = node.name;
+          actor.__inner.threeObject.visible = node.visible;
+
+          actor.__inner.getLocalPosition(tmpVector3);
+          tmpVector3.x += node.position.x;
+          tmpVector3.y += node.position.y;
+          tmpVector3.z += node.position.z;
+          actor.__inner.setLocalPosition(tmpVector3);
+
+          let localOrientation = actor.__inner.getLocalOrientation(new SupEngine.THREE.Quaternion());
+          tmpQuaternion.set(node.orientation.x, node.orientation.y, node.orientation.z, node.orientation.w);
+          actor.__inner.setLocalOrientation(tmpQuaternion.multiply(localOrientation));
+
+          actor.__inner.getLocalScale(tmpVector3);
+          tmpVector3.x *= node.scale.x;
+          tmpVector3.y *= node.scale.y;
+          tmpVector3.z *= node.scale.z;
+          actor.__inner.setLocalScale(tmpVector3);
+
+          allComponents = allComponents.concat(result.allComponents);
+
+        } else throw new Error(`The prefab "${node.name}" in scene "${sceneAsset.name} has no scene defined.`);
+
+      } else {
+        actor = player.createActor(node.name, parentActor, { visible: node.visible, layer: node.layer });
+
+        actor.__inner.setLocalPosition( tmpVector3.set(node.position.x, node.position.y, node.position.z) )
+        actor.__inner.setLocalOrientation( tmpQuaternion.set(node.orientation.x, node.orientation.y, node.orientation.z, node.orientation.w) )
+        actor.__inner.setLocalScale( tmpVector3.set(node.scale.x, node.scale.y, node.scale.z) )
+
+        node.components.forEach( (sceneComponent) => {
+          allComponents.push({
+            sceneComponent: sceneComponent,
+            actorComponent: player.createComponent(sceneComponent.type, actor, sceneComponent.config)
+          });
+        });
+
+        actor.__inner.awoken = false;
+        node.children.forEach( (child) => { walk(child, actor); } );
+      }
+
+      return actor;
+    }
+    sceneAsset.__inner.nodes.forEach( (node) => { actors.push( walk(node, sceneParentActor) ); } );
+
+    if (!setupActors) return { actors, allComponents };
+
+    allComponents.forEach((x) => {
+      SupRuntime.plugins[x.sceneComponent.type].setupComponent(player, x.actorComponent.__inner, x.sceneComponent.config);
+    });
+
+    let awakeActor = (actor) => {
+      if (actor.__inner.awoken) return;
+
+      actor.__inner.awoken = true;
+      actor.__inner.awake();
+      actor.getChildren().forEach( (child) => { awakeActor(child); } )
+    }
+    actors.forEach( (actor) => { awakeActor(actor); });
+    return actors;
+  }
+}

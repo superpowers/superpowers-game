@@ -1,0 +1,186 @@
+body
+  display flex
+
+.main
+  flex 1
+  display flex
+  flex-flow column
+
+  .model-container
+    flex 1
+    flex-basis 0
+    display flex
+    flex-flow column
+    min-height 100px
+    canvas { background: #000; flex: 1; flex-basis: 0; }
+
+  .texture-container
+    display flex
+    flex-flow column
+    height 300px
+    min-height 100px
+    canvas { background: #bbb; flex: 1; flex-basis: 0; }
+
+    .mode-selection
+      flex initial
+      width 15em
+
+.controls
+  display flex
+  align-items center
+  flex-wrap wrap
+  white-space nowrap
+  overflow hidden
+
+  > div
+    border-bottom 1px solid rgba(0,0,0,0.3)
+    border-left 1px solid rgba(0,0,0,0.3)
+    display flex
+    align-items center
+    height 31px
+    flex auto 1 0
+
+  > div > div
+    display flex
+    align-items center
+    height 30px
+    padding-right 0.5em
+    flex auto 0 0
+
+  > div > .title
+    text-transform uppercase
+    color #666
+    padding-left 0.5em
+    margin-right 0.5em
+    background #ddd
+
+  > div > div > label
+    padding-right 0.5em
+
+  input[type=number]
+    width 50px
+
+  input[type=color]
+    margin-right 0.5em
+
+.sidebar
+  width 250px
+  min-width 200px
+  max-width 500px
+  border-right 1px solid #aaa
+
+  display flex
+  flex-flow column
+
+  .header
+    background-color #444
+    color #fff
+    text-align center
+    padding 2px
+
+.nodes-buttons
+  display flex
+
+  button
+    flex 1
+    font-size smaller
+    white-space nowrap
+
+.nodes-buttons
+  .new-node { background-image: url(images/nodes/new-node.svg); }
+  .rename-node { background-image: url(/images/actions/rename.svg); }
+  .duplicate-node { background-image: url(/images/actions/duplicate.svg); }
+  .delete-node { background-image: url(/images/actions/delete.svg); }
+
+.nodes-tree-view
+  min-height 100px
+  height 300px
+  position relative
+  background #fff
+  overflow-y auto
+
+  .tree
+    position absolute
+
+  .name
+    white-space pre
+    flex 1
+    text-overflow ellipsis
+    overflow-x hidden
+
+    &.prefab
+      color #44d
+
+  button
+    font-size smaller
+    border none
+    box-shadow none
+    margin-right 0.25em
+
+  li:not(:hover)
+    button.show { display: none; }
+
+.inspector
+  min-height 100px
+  overflow-y auto
+  flex 1
+
+.inspector table
+  width 100%
+  border-collapse collapse
+  font-size 12px
+
+  th, td
+    border 1px solid #ccc
+
+  th
+    text-align left
+    white-space nowrap
+    overflow-x hidden
+    text-overflow ellipsis
+    font-weight normal
+    background #eee
+    padding 0 0.5em
+
+    > div
+      display flex
+      align-items center
+    > div > div
+      flex 1
+      white-space nowrap
+      overflow-x hidden
+      text-overflow ellipsis
+      max-width 100px
+
+    &:only-child
+      background #777
+      color #eee
+      padding 0.5em
+
+  td input, td select, td textarea
+    width 100%
+    margin 0
+    padding 0.5em 0.25em
+    border none
+
+  td select
+    padding 0.25em 0
+
+  td input[type=checkbox]
+    width auto
+    margin 0.5em
+    cursor pointer
+
+  td
+    .inputs
+      display flex
+      align-items center
+
+      input:not(:last-of-type)
+        border-right 1px solid #ccc
+
+    .list input:not(:last-of-type)
+      border-bottom 1px solid #ccc
+
+  td input.color
+    font-family "Consolas", monospace

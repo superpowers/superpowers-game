@@ -1,0 +1,80 @@
+namespace Sup {
+  let materialTypes = ["basic", "phong", "shader"];
+
+  export class ModelRenderer extends Sup.ActorComponent {
+    constructor(actor: Actor, pathOrAsset?: string|Model, materialIndex?: number, shaderPathOrAsset?: string|Shader) {
+      super(actor);
+      this.__inner = new SupEngine.componentClasses.ModelRenderer(this.actor.__inner);
+      if (pathOrAsset != null) this.setModel(pathOrAsset, materialIndex, shaderPathOrAsset);
+      this.__inner.__outer = this;
+      this.actor.modelRenderer = this;
+    }
+    destroy() {
+      this.actor.modelRenderer = null;
+      super.destroy();
+    }
+
+    getModel() { return this.__inner.asset.__outer }
+    setModel(pathOrAsset: string|Model, materialIndex?: number, shaderPathOrAsset?: string|Shader) {
+      let material: string;
+      if (materialIndex != null) material = materialTypes[materialIndex];
+
+      if (material === "shader" && shaderPathOrAsset == null) {
+        throw new Error(`Shader asset is missing when setting model on actor named "${this.actor.getName()}"`);
+      }
+
+      let modelAsset: Model;
+      if (pathOrAsset != null) {
+        modelAsset = (typeof pathOrAsset === "string") ? get(pathOrAsset, Model) : <Model>pathOrAsset;
+        this.__inner.opacity = modelAsset.__inner.opacity;
+      }
+      let shaderAsset: Shader;
+      if (shaderPathOrAsset != null)
+        shaderAsset = (typeof shaderPathOrAsset === "string") ? get(shaderPathOrAsset, Shader) : <Shader>shaderPathOrAsset;
+
+      this.__inner.setModel((modelAsset != null) ? modelAsset.__inner : null, material, (shaderAsset != null) ? shaderAsset.__inner : null);
+      return this;
+    }
+    getMaterialType() { return materialTypes.indexOf(this.__inner.materialType); }
+    getShader() { return this.__inner.materialType === "shader" ? this.__inner.shaderAsset.__outer : null; }
+    getOpacity() { return this.__inner.opacity; }
+    setOpacity(opacity) { this.__inner.setOpacity(opacity); return this; }
+    getColor() { return new Color(this.__inner.color.r, this.__inner.color.g, this.__inner.color.b); }
+    setColor(r, g, b) {
+      if (g == null && b == null) {
+        let color = r;
+        this.__inner.setColor(color.r, color.g, color.b);
+      } else this.__inner.setColor(r, g, b);
+      return this;
+    }
+    getBoneTransform(name) {
+      var data = this.__inner.getBoneTransform(name);
+      if (data != null) {
+        var position = new Math.Vector3(data.position.x, data.position.y, data.position.z);
+        var orientation = new Math.Quaternion(data.orientation.x, data.orientation.y, data.orientation.z, data.orientation.w);
+        var scale = new Math.Vector3(data.scale.x, data.scale.y, data.scale.z);
+
+        return { position, orientation, scale }
+      } else {
+        return null
+      }
+    }
+
+    setAnimation(animationName, looping) { this.__inner.setAnimation(animationName, looping); return this }
+    getAnimation() { return this.__inner.getAnimation() }
+    setAnimationTime(time) { this.__inner.setAnimationTime(time); return this }
+    getAnimationTime() { return this.__inner.getAnimationTime() }
+    getAnimationDuration() { return this.__inner.getAnimationDuration() }
+
+    isAnimationPlaying() { return this.__inner.isAnimationPlaying }
+    playAnimation(looping) { this.__inner.playAnimation(looping); return this }
+    pauseAnimation() { this.__inner.pauseAnimation(); return this }
+    stopAnimation() { this.__inner.stopAnimation(); return this }
+
+    getUniforms() { return this.__inner.material.uniforms; }
+  }
+
+  export namespace ModelRenderer {
+    export enum MaterialType { Basic, Phong, Shader };
+  }
+}

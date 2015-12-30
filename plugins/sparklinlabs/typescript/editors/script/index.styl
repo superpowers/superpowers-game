@@ -1,0 +1,90 @@
+body
+  display flex
+  flex-direction column
+  flex 1
+
+.text-editor-container
+  min-height 100px
+
+.CodeMirror .CodeMirror-overwrite .CodeMirror-cursor
+  border-left 8px solid rgba(86, 86, 232, 0.5)
+
+.draft .label
+  margin-left 0.5em
+
+.popup-info
+  position absolute
+  z-index 10
+  background-color rgba(86, 232, 86, 1)
+  padding 0.2em
+
+.popup-parameter
+  position absolute
+  z-index 10
+  background-color rgba(100, 232, 220, 1)
+  padding 5px
+  font-size 13px
+
+  .item
+    margin-right 10px
+
+  .parameter
+    font-weight bold
+    font-size 15px
+
+.line-error
+  background-color rgba(232, 86, 86, 0.5)
+
+.line-error-gutter
+  color #ec5050
+  font-size 16px
+  padding-left 5px
+  margin-top -2px
+
+.error-pane
+  min-height 100px
+  height 200px
+
+  .header
+    &.has-draft .draft { display: block; }
+  
+    .draft
+      display none
+      padding-left 0.25em
+      color rgba(255,255,255,0.5)
+
+    .info
+      flex 1
+      padding 0.5em
+
+  .content
+    flex 1
+    overflow-y scroll
+
+    table
+      width 100%
+      border-collapse collapse
+
+    tbody tr
+      cursor pointer
+
+      &:hover { background: #eee; }
+      &:active { background-color: #444; color: #ccc; }
+
+    th
+      font-weight normal
+      color #666
+
+    td, th
+      text-align left
+      border 1px solid #ccc
+      padding 0.4em
+
+    td:first-child, th:first-child
+      text-align right
+
+    td:nth-child(2), th:nth-child(2)
+      width 100%
+
+    td:last-child
+      white-space nowrap

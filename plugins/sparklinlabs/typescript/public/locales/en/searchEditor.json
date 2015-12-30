@@ -1,0 +1,13 @@
+{
+  "searchPlaceholder": "Find in project",
+  "matchCase": "Match case",
+
+  "noResults": "No results found",
+  "resultInfo": "${results} in ${files}",
+  "fileInfo": "${results} in \"${fileName}\"",
+
+  "oneResult": "1 result",
+  "severalResults": "${results} results",
+  "oneFile": "1 file",
+  "severalFiles": "${files} files"
+}

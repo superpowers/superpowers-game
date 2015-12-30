@@ -1,0 +1,89 @@
+doctype html
+html
+  head
+    link(rel="stylesheet",href="/styles/reset.css")
+    link(rel="stylesheet",href="/styles/perfectResize.css")
+    link(rel="stylesheet",href="/styles/treeView.css")
+    link(rel="stylesheet",href="/styles/dialogs.css")
+    link(rel="stylesheet",href="/styles/properties.css")
+    link(rel="stylesheet",href="index.css")
+
+  body
+    .main
+      canvas(tabindex="0").map
+      .status-bar
+        label X:
+        label.position-x 0
+        label Y:
+        label.position-y 0
+
+    .sidebar
+      table.properties
+        tr
+          th(colspan="2")= t("tileMapEditor:tileMap")
+        tr
+          th= t("tileMapEditor:tileSet")
+          td
+            input.property-tileSetId
+
+        tr
+          th= t("tileMapEditor:pixelsPerUnit")
+          td
+            input(type="number").property-pixelsPerUnit
+
+        tr
+          th= t("tileMapEditor:depthOffset")
+          td
+            input(type="number").property-layerDepthOffset
+
+        tr
+          th= t("tileMapEditor:size")
+          td
+            .inputs
+              input(readonly).property-size
+              button.resize= t("tileMapEditor:resize")
+              button.move= t("tileMapEditor:move")
+
+        tr
+          th(colspan="2")= t("tileMapEditor:tools")
+        tr
+          th(title="G")= t("tileMapEditor:grid")
+          td
+            input(type="checkbox",checked).grid-checkbox
+
+        tr
+          th(title="I")= t("tileMapEditor:highlight")
+          td
+            .inputs
+              input(type="checkbox").highlight-checkbox
+              input(type="range",value="40",min="0",max="100").highlight-slider
+
+      .buttons
+        input(type="radio",name="Tool",id="Brush",checked)
+        label(title="B",for="Brush")= t("tileMapEditor:brush")
+        input(type="radio",name="Tool",id="Fill")
+        label(title="F",for="Fill")= t("tileMapEditor:fill")
+        input(type="radio",name="Tool",id="Selection")
+        label(title="S",for="Selection")= t("tileMapEditor:selection")
+        input(type="radio",name="Tool",id="Eraser")
+        label(title="E",for="Eraser")= t("tileMapEditor:eraser")
+
+      canvas(tabindex="0").tileSet
+
+      .header
+        span= t("tileMapEditor:layers")
+
+      .layers
+        .layers-buttons
+          button.new-layer= t("common:actions.new")
+          button.rename-layer= t("common:actions.rename")
+          button.delete-layer= t("common:actions.delete")
+
+        .layers-tree-view
+
+    script(src="/SupCore.js")
+    script(src="../../../../../SupEngine.js")
+    script(src="/SupClient.js")
+    script(src="../../data.js")
+    script(src="../../components.js")
+    script(src="index.js")

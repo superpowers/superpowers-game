@@ -1,0 +1,35 @@
+namespace Sup {
+  let materialTypes = ["basic", "phong"];
+
+  export class CubicModelRenderer extends Sup.ActorComponent {
+    constructor(actor: Actor, pathOrAsset: string|CubicModel, materialIndex: number) {
+      super(actor);
+      this.__inner = new SupEngine.componentClasses.CubicModelRenderer(this.actor.__inner);
+      if (pathOrAsset != null) {
+        let cubicModelAsset = (typeof pathOrAsset === "string") ? get(pathOrAsset, CubicModel) : <CubicModel>pathOrAsset;
+        this.__inner.opacity = cubicModelAsset.__inner.opacity;
+        this.setCubicModel(cubicModelAsset, materialIndex);
+      }
+      this.__inner.__outer = this;
+      this.actor.cubicModelRenderer = this;
+    }
+    destroy() {
+      this.actor.cubicModelRenderer = null;
+      super.destroy();
+    }
+
+    getCubicModel() { return (this.__inner.asset != null) ? this.__inner.asset.__outer : null; }
+    setCubicModel(pathOrAsset: string|CubicModel, materialIndex: number) {
+      let material: string;
+      if (materialIndex != null) material = materialTypes[materialIndex];
+
+      let cubicModelAsset = (typeof pathOrAsset === "string") ? get(pathOrAsset, CubicModel) : <CubicModel>pathOrAsset;
+      this.__inner.setCubicModel((cubicModelAsset != null) ? cubicModelAsset.__inner : null, material);
+      return this;
+    }
+  }
+
+  export namespace CubicModelRenderer {
+    export enum MaterialType { Basic, Phong };
+  }
+}

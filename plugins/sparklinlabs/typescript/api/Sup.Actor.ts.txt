@@ -1,0 +1,487 @@
+namespace Sup {
+  export function getActor(name) {
+    let foundActor = null;
+    player.gameInstance.tree.walkTopDown((actor) => {
+      if (actor.name === name && !actor.pendingForDestruction) {
+        foundActor = actor.__outer;
+        return false;
+      }
+      return true;
+    });
+    return foundActor;
+  }
+
+  export function destroyAllActors() {
+    player.gameInstance.destroyAllActors();
+    player.gameInstance.tree.walkTopDown((actor) => { actor.__outer.__inner = null; actor.__outer = null; return true; });
+  }
+
+  let tmpVector3 = new SupEngine.THREE.Vector3();
+  let tmpQuaternion = new SupEngine.THREE.Quaternion();
+  let tmpEuler = new SupEngine.THREE.Euler();
+
+  export class Actor {
+    __inner: any;
+    __behaviors: { [key: string]: Behavior[]; };
+
+    // INSERT_COMPONENT_ACCESSORS
+
+    constructor(name, parent, options) {
+      if (parent != null && (parent.__inner == null || parent.__inner.pendingForDestruction)) {
+        throw new Error("The parent actor passed to new Sup.Actor() has been destroyed and cannot be used as a parent.");
+      }
+      let innerParent = parent != null ? parent.__inner : null;
+      let actor = new SupEngine.Actor(player.gameInstance, name, innerParent, options);
+      this.__inner = actor;
+
+      // By default, we assume the actor has no component yet and as such, has been awoken
+      // (This value is overwritten when instantiating a scene with preset actors)
+      this.__inner.awoken = true;
+
+      this.__behaviors = {};
+      actor.__outer = this;
+    }
+
+    destroy() { player.gameInstance.destroyActor(this.__inner); }
+    isDestroyed() { return this.__inner == null || this.__inner.pendingForDestruction; }
+
+    getName() { return this.__inner.name; }
+    setName(name) { this.__inner.name = name; return this; }
+    getVisible() { return this.__inner.threeObject.visible; }
+    setVisible(visible: boolean) { this.__inner.threeObject.visible = visible; return this; }
+    getParent() { return (this.__inner.parent) ? this. __inner.parent.__outer : null; }
+    setParent(parent, options={ keepLocalTransform: false }) {
+      let innerParent = (parent) ? parent.__inner : null;
+      this.__inner.setParent(innerParent, options.keepLocalTransform == true);
+      return this;
+    }
+
+    getChild(name) {
+      let foundActor = this;
+      name.split("/").every((namePart) => {
+        let currentFoundActor = null;
+        player.gameInstance.tree.walkDown(foundActor.__inner, (actor) => {
+          if (actor.name === namePart && !actor.pendingForDestruction && currentFoundActor == null) currentFoundActor = actor.__outer;
+        });
+        if (currentFoundActor == null) {
+          foundActor = null;
+          return false;
+        } else {
+          foundActor = currentFoundActor;
+          return true;
+        }
+      });
+      return foundActor != this ? foundActor : null;
+    }
+
+    getChildren() {
+      let children = [];
+      this.__inner.children.forEach( (child) => { if (!child.pendingForDestruction) children.push(child.__outer); } );
+      return children;
+    }
+
+    getPosition() {
+      this.__inner.getGlobalPosition(tmpVector3);
+      return new Math.Vector3(tmpVector3.x, tmpVector3.y, tmpVector3.z);
+    }
+
+    setPosition(x, y, z) {
+      let currentZ = this.__inner.getGlobalPosition(tmpVector3).z;
+
+      if (typeof x === "number") tmpVector3.set(x, y, z != null ? z : currentZ);
+      else {
+        let position = x;
+        tmpVector3.set(position.x, position.y, position.z != null ? position.z : currentZ);
+      }
+      this.__inner.setGlobalPosition(tmpVector3);
+      return this;
+    }
+
+    getX() { return this.__inner.getGlobalPosition(tmpVector3).x; }
+    setX(x) {
+      this.__inner.getGlobalPosition(tmpVector3);
+      tmpVector3.x = x;
+      this.__inner.setGlobalPosition(tmpVector3);
+      return this;
+    }
+    getY() { return this.__inner.getGlobalPosition(tmpVector3).y; }
+    setY(y) {
+      this.__inner.getGlobalPosition(tmpVector3);
+      tmpVector3.y = y;
+      this.__inner.setGlobalPosition(tmpVector3);
+      return this;
+    }
+    getZ() { return this.__inner.getGlobalPosition(tmpVector3).z; }
+    setZ(z) {
+      this.__inner.getGlobalPosition(tmpVector3);
+      tmpVector3.z = z;
+      this.__inner.setGlobalPosition(tmpVector3);
+      return this;
+    }
+
+    getLocalPosition() {
+      this.__inner.getLocalPosition(tmpVector3);
+      return new Math.Vector3(tmpVector3.x, tmpVector3.y, tmpVector3.z)
+    }
+
+    setLocalPosition(x, y, z) {
+      let currentZ = this.__inner.getLocalPosition(tmpVector3).z;
+
+      if (typeof x === "number") tmpVector3.set(x, y, z != null ? z : currentZ);
+      else {
+        let position = x;
+        tmpVector3.set(position.x, position.y, position.z != null ? position.z : currentZ);
+      }
+      this.__inner.setLocalPosition(tmpVector3);
+      return this;
+    }
+
+    getLocalX() { return this.__inner.getLocalPosition(tmpVector3).x; }
+    setLocalX(x) {
+      this.__inner.getLocalPosition(tmpVector3);
+      tmpVector3.x = x;
+      this.__inner.setLocalPosition(tmpVector3);
+      return this;
+    }
+    getLocalY() { return this.__inner.getLocalPosition(tmpVector3).y; }
+    setLocalY(y) {
+      this.__inner.getLocalPosition(tmpVector3);
+      tmpVector3.y = y;
+      this.__inner.setLocalPosition(tmpVector3);
+      return this;
+    }
+    getLocalZ() { return this.__inner.getLocalPosition(tmpVector3).z; }
+    setLocalZ(z) {
+      this.__inner.getLocalPosition(tmpVector3);
+      tmpVector3.z = z;
+      this.__inner.setLocalPosition(tmpVector3);
+      return this;
+    }
+
+    move(x, y, z) {
+      if (typeof x === "number") tmpVector3.set(x, y, z != null ? z : 0);
+      else {
+        let offset = x;
+        tmpVector3.set(offset.x, offset.y, offset.z != null ? offset.z : 0);
+      }
+      this.__inner.moveGlobal(tmpVector3);
+      return this;
+    }
+    moveX(x) {
+      this.__inner.moveGlobal(tmpVector3.set(x, 0, 0));
+      return this;
+    }
+    moveY(y) {
+      this.__inner.moveGlobal(tmpVector3.set(0, y, 0));
+      return this;
+    }
+    moveZ(z) {
+      this.__inner.moveGlobal(tmpVector3.set(0, 0, z));
+      return this;
+    }
+
+    moveLocal(x, y, z) {
+      if (typeof x === "number") tmpVector3.set(x, y, z != null ? z : 0);
+      else {
+        let offset = x;
+        tmpVector3.set(offset.x, offset.y, offset.z != null ? offset.z : 0);
+      }
+      this.__inner.moveLocal(tmpVector3);
+      return this;
+    }
+    moveLocalX(x) {
+      this.__inner.moveLocal(tmpVector3.set(x, 0, 0));
+      return this;
+    }
+    moveLocalY(y) {
+      this.__inner.moveLocal(tmpVector3.set(0, y, 0));
+      return this;
+    }
+    moveLocalZ(z) {
+      this.__inner.moveLocal(tmpVector3.set(0, 0, z));
+      return this;
+    }
+
+    moveOriented(x, y, z) {
+      if (typeof x === "number") tmpVector3.set(x, y, z != null ? z : 0);
+      else {
+        let offset = x;
+        tmpVector3.set(offset.x, offset.y, offset.z != null ? offset.z : 0);
+      }
+      this.__inner.moveOriented(tmpVector3);
+      return this;
+    }
+    moveOrientedX(x) {
+      this.__inner.moveOriented(tmpVector3.set(x, 0, 0));
+      return this;
+    }
+    moveOrientedY(y) {
+      this.__inner.moveOriented(tmpVector3.set(0, y, 0));
+      return this;
+    }
+    moveOrientedZ(z) {
+      this.__inner.moveOriented(tmpVector3.set(0, 0, z));
+      return this;
+    }
+
+    getOrientation() {
+      this.__inner.getGlobalOrientation(tmpQuaternion);
+      return new Math.Quaternion(tmpQuaternion.x, tmpQuaternion.y, tmpQuaternion.z, tmpQuaternion.w);
+    }
+
+    setOrientation(quaternion) {
+      this.__inner.setGlobalOrientation(tmpQuaternion.set(quaternion.x, quaternion.y, quaternion.z, quaternion.w));
+      return this;
+    }
+
+    getLocalOrientation() {
+      this.__inner.getLocalOrientation(tmpQuaternion);
+      return new Math.Quaternion(tmpQuaternion.x, tmpQuaternion.y, tmpQuaternion.z, tmpQuaternion.w);
+    }
+
+    setLocalOrientation(quaternion) {
+      this.__inner.setLocalOrientation( tmpQuaternion.set(quaternion.x, quaternion.y, quaternion.z, quaternion.w) )
+      return this;
+    }
+
+    rotate(offset) {
+      this.__inner.rotateGlobal( tmpQuaternion.set(offset.x, offset.y, offset.z, offset.w) );
+      return this;
+    }
+
+    rotateLocal(offset) {
+      this.__inner.rotateLocal( tmpQuaternion.set(offset.x, offset.y, offset.z, offset.w) );
+      return this;
+    }
+
+    getEulerAngles() {
+      this.__inner.getGlobalEulerAngles(tmpEuler);
+      return new Math.Vector3(tmpEuler.x, tmpEuler.y, tmpEuler.z);
+    }
+    setEulerAngles(x, y, z) {
+      if (y == null && z == null) {
+        let eulerAngles = x;
+        tmpEuler.set(eulerAngles.x, eulerAngles.y, eulerAngles.z);
+      } else tmpEuler.set(x, y, z);
+      this.__inner.setGlobalEulerAngles(tmpEuler);
+      return this;
+    }
+
+    getEulerX() { return this.__inner.getGlobalEulerAngles(tmpEuler).x; }
+    setEulerX(x) {
+      this.__inner.getGlobalEulerAngles(tmpEuler);
+      tmpEuler.x = x;
+      this.__inner.setGlobalEulerAngles(tmpEuler);
+      return this;
+    }
+    getEulerY() { return this.__inner.getGlobalEulerAngles(tmpEuler).y; }
+    setEulerY(y) {
+      this.__inner.getGlobalEulerAngles(tmpEuler);
+      tmpEuler.y = y;
+      this.__inner.setGlobalEulerAngles(tmpEuler);
+      return this;
+    }
+    getEulerZ() { return this.__inner.getGlobalEulerAngles(tmpEuler).z; }
+    setEulerZ(z) {
+      this.__inner.getGlobalEulerAngles(tmpEuler);
+      tmpEuler.z = z;
+      this.__inner.setGlobalEulerAngles(tmpEuler);
+      return this;
+    }
+
+    getLocalEulerAngles() {
+      this.__inner.getLocalEulerAngles(tmpEuler);
+      return new Math.Vector3(tmpEuler.x, tmpEuler.y, tmpEuler.z);
+    }
+    setLocalEulerAngles(x, y, z) {
+      if (y == null && z == null) {
+        let eulerAngles = x;
+        tmpEuler.set(eulerAngles.x, eulerAngles.y, eulerAngles.z);
+      } else tmpEuler.set(x, y, z);
+      this.__inner.setLocalEulerAngles(tmpEuler);
+      return this;
+    }
+
+    getLocalEulerX() { return this.__inner.getLocalEulerAngles(tmpEuler).x; }
+    setLocalEulerX(x) {
+      this.__inner.getLocalEulerAngles(tmpEuler);
+      tmpEuler.x = x;
+      this.__inner.setLocalEulerAngles(tmpEuler);
+      return this;
+    }
+    getLocalEulerY() { return this.__inner.getLocalEulerAngles(tmpEuler).y; }
+    setLocalEulerY(y) {
+      this.__inner.getLocalEulerAngles(tmpEuler);
+      tmpEuler.y = y;
+      this.__inner.setLocalEulerAngles(tmpEuler);
+      return this;
+    }
+    getLocalEulerZ() { return this.__inner.getLocalEulerAngles(tmpEuler).z; }
+    setLocalEulerZ(z) {
+      this.__inner.getLocalEulerAngles(tmpEuler);
+      tmpEuler.z = z;
+      this.__inner.setLocalEulerAngles(tmpEuler);
+      return this;
+    }
+
+    rotateEulerAngles(x, y, z) {
+      if (y == null && z == null) {
+        let eulerAngles = x;
+        tmpEuler.set(eulerAngles.x, eulerAngles.y, eulerAngles.z);
+      } else tmpEuler.set(x, y, z);
+      this.__inner.rotateGlobalEulerAngles(tmpEuler);
+      return this;
+    }
+    rotateEulerX(x) {
+      this.__inner.rotateGlobalEulerAngles(tmpEuler.set(x, 0, 0));
+      return this;
+    }
+    rotateEulerY(y) {
+      this.__inner.rotateGlobalEulerAngles(tmpEuler.set(0, y, 0));
+      return this;
+    }
+    rotateEulerZ(z) {
+      this.__inner.rotateGlobalEulerAngles(tmpEuler.set(0, 0, z));
+      return this;
+    }
+
+    rotateLocalEulerAngles(x, y, z) {
+      if (y == null && z == null) {
+        let eulerAngles = x;
+        tmpEuler.set(eulerAngles.x, eulerAngles.y, eulerAngles.z);
+      } else tmpEuler.set(x, y, z);
+      this.__inner.rotateLocalEulerAngles(tmpEuler);
+      return this;
+    }
+    rotateLocalEulerX(x) {
+      this.__inner.rotateLocalEulerAngles(tmpEuler.set(x, 0, 0));
+      return this;
+    }
+    rotateLocalEulerY(y) {
+      this.__inner.rotateLocalEulerAngles(tmpEuler.set(0, y, 0));
+      return this;
+    }
+    rotateLocalEulerZ(z) {
+      this.__inner.rotateLocalEulerAngles(tmpEuler.set(0, 0, z));
+      return this;
+    }
+
+    lookAt(target, upVector) {
+      this.__inner.lookAt(tmpVector3.set(target.x, target.y, target.z), upVector);
+      return this;
+    }
+
+    lookTowards(direction, upVector) {
+      this.__inner.lookTowards(tmpVector3.set(direction.x, direction.y, direction.z), upVector);
+      return this;
+    }
+
+    getLocalScale() {
+      this.__inner.getLocalScale(tmpVector3);
+      return new Math.Vector3(tmpVector3.x, tmpVector3.y, tmpVector3.z);
+    }
+    getLocalScaleX() { return this.__inner.getLocalScale(tmpVector3).x; }
+    getLocalScaleY() { return this.__inner.getLocalScale(tmpVector3).y; }
+    getLocalScaleZ() { return this.__inner.getLocalScale(tmpVector3).z; }
+
+    setLocalScale(x, y, z) {
+      if (y == null && z == null) {
+        if (typeof x === "number") tmpVector3.set(x, x, x);
+        else {
+          let scale = x;
+          tmpVector3.set(scale.x, scale.y, scale.z);
+        }
+      } else tmpVector3.set(x, y, z);
+      this.__inner.setLocalScale(tmpVector3);
+      return this;
+    }
+    setLocalScaleX(x: number) {
+      this.__inner.getLocalScale(tmpVector3);
+      tmpVector3.x = x;
+      this.__inner.setLocalScale(tmpVector3);
+      return this;
+    }
+    setLocalScaleY(y: number) {
+      this.__inner.getLocalScale(tmpVector3);
+      tmpVector3.y = y;
+      this.__inner.setLocalScale(tmpVector3);
+      return this;
+    }
+    setLocalScaleZ(z: number) {
+      this.__inner.getLocalScale(tmpVector3);
+      tmpVector3.z = z;
+      this.__inner.setLocalScale(tmpVector3);
+      return this;
+    }
+
+    addBehavior(behaviorClass, properties) {
+      if (behaviorClass == null) {
+        throw new Error("The behavior class passed to Actor.addBehavior was null. Make sure the class is declared before Actor.addBehavior is called.");
+      }
+
+      let behavior = new behaviorClass(this.__inner);
+
+      if (properties != null) {
+        for (let propertyName in properties) {
+          // TODO: Validate property existence and type like in Behavior.setupComponent
+          behavior[propertyName] = properties[propertyName];
+        }
+      }
+
+      if (this.__inner.awoken) behavior.__inner.awake();
+      return behavior;
+    }
+
+    getBehavior(behaviorClass) {
+      let behaviorList = this.__behaviors[behaviorClass["name"]];
+      if (behaviorList != null) {
+        for (let behavior of behaviorList) {
+          if (!behavior.isDestroyed()) return behavior;
+        }
+      }
+
+      // Check for behaviors inheriting from the specified class
+      for (let behaviorName in this.__behaviors) {
+        let behaviorList = this.__behaviors[behaviorName];
+        for (let behavior of behaviorList) {
+          if (Object.getPrototypeOf(behavior) instanceof behaviorClass && !behavior.isDestroyed()) {
+            return behavior;
+          }
+        }
+      }
+
+      return null;
+    }
+
+    getBehaviors(behaviorClass) {
+      let foundBehaviors = [];
+
+      for (let behaviorName in this.__behaviors) {
+        let behaviorList = this.__behaviors[behaviorName];
+        for (let behavior of behaviorList) {
+          if (behavior instanceof behaviorClass && !behavior.isDestroyed()) {
+            foundBehaviors.push(behavior);
+          }
+        }
+      }
+
+      return foundBehaviors;
+    }
+  }
+
+  export class ActorComponent {
+    actor: Actor;
+    __inner: any;
+
+    constructor(actor) {
+      this.actor = actor;
+    }
+
+    destroy() { player.gameInstance.destroyComponent(this.__inner); }
+    isDestroyed() {
+      return this.__inner == null ||
+        this.__inner.actor.pendingForDestruction ||
+        this.__inner.actor.gameInstance.componentsToBeDestroyed.indexOf(this.__inner) !== -1;
+    }
+  }
+}

@@ -1,0 +1,34 @@
+namespace Sup {
+  export class TileMapRenderer extends Sup.ActorComponent {
+    constructor(actor: Actor, pathOrAsset: string|TileMap) {
+      super(actor);
+      this.__inner = new SupEngine.componentClasses.TileMapRenderer(this.actor.__inner);
+      if (pathOrAsset != null) { this.setTileMap(pathOrAsset, true); }
+      this.__inner.__outer = this;
+      this.actor.tileMapRenderer = this;
+    }
+    destroy() {
+      this.actor.tileMapRenderer = null;
+      super.destroy();
+    }
+
+    getTileMap() { return this.__inner.tileMap.__outer; }
+    setTileMap(pathOrAsset: string|TileMap, replaceTileSet) {
+      let tileMap = (typeof pathOrAsset === "string") ? get(pathOrAsset, TileMap) : <TileMap>pathOrAsset;
+      this.__inner.setTileMap(tileMap.__inner);
+      replaceTileSet = (replaceTileSet) ? replaceTileSet : true;
+      if (replaceTileSet) { this.__inner.setTileSet( player.getOuterAsset(tileMap.__inner.data.tileSetId).__inner ); }
+      return this;
+    }
+
+    getTileSet() { return this.__inner.tileSet.__outer; }
+    setTileSet(pathOrAsset: string|TileSet) {
+      let tileSet = (typeof pathOrAsset === "string") ? get(pathOrAsset, TileSet) : <TileSet>pathOrAsset;
+      this.__inner.setTileSet(tileSet.__inner);
+      return this;
+    }
+
+    getLayerOpacity(layer) { return this.__inner.layerMeshes[layer].material.opacity; }
+    setLayerOpacity(layer, opacity) { this.__inner.layerMeshes[layer].material.opacity = opacity; return this; }
+  }
+}

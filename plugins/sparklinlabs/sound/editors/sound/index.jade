@@ -1,0 +1,38 @@
+doctype html
+html
+  head
+    link(rel="stylesheet",href="/styles/reset.css")
+    link(rel="stylesheet",href="/styles/perfectResize.css")
+    link(rel="stylesheet",href="/styles/dialogs.css")
+    link(rel="stylesheet",href="/styles/properties.css")
+    link(rel="stylesheet",href="index.css")
+
+  body
+    .main
+      audio(controls)
+
+    .sidebar
+      table.properties
+        tr
+          th(colspan="2")= t("soundEditor:sidebar.settings.sound.title")
+        tr
+          th= t("soundEditor:sidebar.settings.sound.file.title")
+          td
+            button.upload= t("common:actions.upload")
+            form(style="display: none")
+              input.file-select(type="file",accept="audio/*")
+
+            button.download= t("common:actions.download")
+
+        tr
+          th= t("soundEditor:sidebar.settings.sound.streaming")
+          td
+            select.property-streaming
+              option(value="false")= t("common:states.disabled")
+              option(value="true")= t("common:states.enabled")
+
+    script(src="/SupCore.js")
+    script(src="../../../../../SupEngine.js")
+    script(src="/SupClient.js")
+    script(src="../../data.js")
+    script(src="index.js")

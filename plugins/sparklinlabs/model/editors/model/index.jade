@@ -1,0 +1,133 @@
+doctype html
+html
+  head
+    link(rel="stylesheet",href="/styles/reset.css")
+    link(rel="stylesheet",href="/styles/perfectResize.css")
+    link(rel="stylesheet",href="/styles/treeView.css")
+    link(rel="stylesheet",href="/styles/dialogs.css")
+    link(rel="stylesheet",href="/styles/properties.css")
+    link(rel="stylesheet",href="index.css")
+
+  body
+    .main
+      canvas(tabindex="0")
+
+      .error-pane.collapsable.collapsed
+        .header
+          .info= t("modelEditor:status.noErrors")
+
+        .content(disabled, hidden)
+          table
+            thead
+              tr
+                th= t("modelEditor:status.line")
+                th= t("modelEditor:status.type")
+                th= t("modelEditor:status.message")
+                th= t("modelEditor:status.file")
+            tbody
+
+    .sidebar
+      table.properties
+        tr.model
+          th= t("modelEditor:sidebar.settings.model")
+          td
+            button.upload= t("common:actions.upload")
+            form(style="display: none")
+              input.file-select(type="file",multiple)
+
+        tr.map
+          th= t("modelEditor:sidebar.settings.texture")
+          td
+            button.upload= t("common:actions.upload")
+            form(style="display: none")
+              input.file-select(type="file",accept="image/*")
+            button.download= t("common:actions.download")
+
+        tr
+          th= t("modelEditor:sidebar.settings.filtering.title")
+          td
+            select.filtering
+              option(value="pixelated")= t("modelEditor:sidebar.settings.filtering.pixelated")
+              option(value="smooth")= t("modelEditor:sidebar.settings.filtering.smooth")
+
+        tr
+          th= t("modelEditor:sidebar.settings.wrapping.title")
+          td
+            select.wrapping
+              option(value="clampToEdge")= t("modelEditor:sidebar.settings.wrapping.clampToEdge")
+              option(value="repeat")= t("modelEditor:sidebar.settings.wrapping.repeat")
+              option(value="mirroredRepeat")= t("modelEditor:sidebar.settings.wrapping.mirroredRepeat")
+
+        tr
+          th= t("modelEditor:sidebar.settings.showSkeleton")
+          td
+            input.show-skeleton(type="checkbox")
+
+        tr
+          th
+            span= t("modelEditor:sidebar.settings.unitRatio")
+          td
+            input(type="number" min="0").property-unitRatio
+
+        tr
+          th
+            div
+              div= t("modelEditor:sidebar.settings.opacity")
+              input(type="checkbox").opacity-checkbox
+          td
+            input(type="number" min="0" max="1" step="0.1").property-opacity
+
+      .header
+        span= t("modelEditor:sidebar.animations.title")
+      .animations-buttons.button-strip
+        button.new-animation= t("common:actions.new")
+        form(style="display: none")
+          input.file-select.upload-animation(type="file",multiple)
+        button(disabled).upload-animation= t("common:actions.upload")
+        button(disabled).rename-animation= t("common:actions.rename")
+        button(disabled).delete-animation= t("common:actions.delete")
+
+      .animations-tree-view
+
+      .advanced-textures.collapsable.collapsed
+        .header
+          .label= t("modelEditor:sidebar.advancedTextures.title")
+        .content(hidden)
+          table.properties
+            tr
+              th= t("modelEditor:sidebar.advancedTextures.map")
+              td
+                input.map-map
+            tr
+              th= t("modelEditor:sidebar.advancedTextures.lightMap")
+              td
+                input.map-light
+            tr
+              th= t("modelEditor:sidebar.advancedTextures.specularMap")
+              td
+                input.map-specular
+            tr
+              th= t("modelEditor:sidebar.advancedTextures.alphaMap")
+              td
+                input.map-alpha
+            tr
+              th= t("modelEditor:sidebar.advancedTextures.normalMap")
+              td
+                input.map-normal
+
+          .textures-buttons.button-strip
+            button.new-map= t("common:actions.new")
+            form(style="display: none")
+              input.file-select.upload-map(type="file",multiple)
+            button(disabled).upload-map= t("common:actions.upload")
+            button(disabled).download-map= t("common:actions.download")
+            button(disabled).rename-map= t("common:actions.rename")
+            button(disabled).delete-map= t("common:actions.delete")
+          .textures-tree-view
+
+    script(src="/SupCore.js")
+    script(src="../../../../../SupEngine.js")
+    script(src="/SupClient.js")
+    script(src="../../data.js")
+    script(src="../../components.js")
+    script(src="index.js")

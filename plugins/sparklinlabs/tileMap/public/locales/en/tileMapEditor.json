@@ -1,0 +1,30 @@
+{
+  "tileMap": "Tile Map",
+  "tileSet": "Tile Set",
+  "pixelsPerUnit": "Pixels / Unit",
+  "depthOffset": "Depth offset",
+
+  "size": "Size",
+  "resize": "Resize",
+  "newWidthPrompt": "Enter a new width for the map.",
+  "newHeightPrompt": "Enter a new height for the map.",
+  "move": "Move",
+  "applyOffset": "Apply offset",
+  "horizontalOffsetPrompt": "Enter the horizontal offset.",
+  "verticalOffsetPrompt": "Enter the vertical offset.",
+  
+  "tools": "Tools",
+  "grid": "Grid",
+  "highlight": "Highlight",
+  
+  "brush": "Brush",
+  "fill": "Fill",
+  "selection": "Selection",
+  "eraser": "Eraser",
+  
+  "layers": "Layers",
+  "newLayerPrompt": "Enter a name for the layer.",
+  "newLayerInitialValue": "Layer",
+  "renameLayerPrompt": "Enter a new name for the layer.",
+  "deleteLayerConfirm": "Are you sure you want to delete the selected layer?"
+}

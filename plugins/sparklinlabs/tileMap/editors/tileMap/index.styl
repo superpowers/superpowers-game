@@ -1,0 +1,85 @@
+body
+  display flex
+
+.main
+  flex 1
+  display flex
+  flex-direction column
+  min-width 100px
+
+  canvas
+    flex 1
+
+  .status-bar
+    height 30px
+    margin-left 10px
+    display flex
+    align-items center
+
+    .position-x, .position-y
+      margin 0 10px 0 10px
+
+.sidebar
+  flex-direction column
+  display flex
+  width 350px
+  min-width 300px
+
+  table.properties th
+    width 120px
+
+  .header
+    background-color #444
+    color #fff
+    text-align center
+    padding 2px
+
+  .buttons
+    display flex
+
+    input
+      display none
+
+      &:checked + label
+        background-color #666
+
+    label
+      flex 1
+      text-align center
+      cursor pointer
+      padding 3px
+
+      &:hover
+        background-color #ddd
+
+  .tileSet
+    flex 1
+    border-top 1px solid #aaa
+    min-height 100px
+
+  .layers
+    height 200px
+    min-height 100px
+    display flex
+    flex-flow column
+
+  .layers-buttons
+    display flex
+
+    button
+      flex 1
+      font-size smaller
+      white-space nowrap
+
+  .layers-tree-view
+    flex 1
+    position relative
+    background #fff
+    overflow-y auto
+
+    .tree
+      position absolute
+
+    .name
+      white-space pre
+      width 150px

@@ -1,0 +1,4 @@
+namespace Sup {
+  export class Shader extends Asset {
+  }
+}

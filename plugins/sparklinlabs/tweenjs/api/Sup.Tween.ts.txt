@@ -1,0 +1,71 @@
+declare let TWEEN;
+
+namespace Sup {
+  export class Tween extends ActorComponent {
+    __inner: any;
+    tween: any;
+    timer: number;
+
+    constructor(actor, object) {
+      super(actor);
+      this.tween = new TWEEN.Tween(object);
+
+      this.tween.onComplete(() => { this.destroy(); });
+      this.timer = -1;
+
+      let funcs = {};
+      funcs["update"] = this.update.bind(this)
+      this.__inner = new SupEngine.componentClasses.Behavior(actor.__inner, funcs);
+    }
+    update() {
+      if (this.timer == -1) return;
+
+      this.timer += 1 / Game.getFPS();
+      this.tween.update(this.timer * 1000);
+    }
+
+    to(object, duration) {
+      this.tween.to(object, duration);
+      return this;
+    }
+    delay(amount) {
+      this.tween.delay(amount);
+      return this;
+    }
+    easing(easing) {
+      this.tween.easing(easing);
+      return this;
+    }
+    yoyo(yoyo) {
+      this.tween.yoyo(yoyo);
+      return this;
+    }
+    repeat(times) {
+      this.tween.repeat(times);
+      return this;
+    }
+    onUpdate(update) {
+      this.tween.onUpdate(function() {
+        update(this);
+      });
+      return this;
+    }
+    onComplete(complete) {
+      let self = this;
+      this.tween.onComplete(function() {
+        complete(this);
+        self.destroy();
+      });
+      return this;
+    }
+    start() {
+      this.timer = 0;
+      this.tween.start(this.timer);
+      return this;
+    }
+    stop() {
+      this.tween.stop();
+      this.timer = -1;
+    }
+  }
+}

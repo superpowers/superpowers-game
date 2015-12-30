@@ -1,0 +1,21 @@
+doctype html
+html
+  head
+    title= t("plugin:editors.search.title")
+    link(rel="stylesheet",href="/styles/reset.css")
+    link(rel="stylesheet",href="index.css")
+
+  body
+    .search
+      input(type="text",placeholder= t("searchEditor:searchPlaceholder"))
+      input#match-case-checkbox(type="checkbox")
+      label(for="match-case-checkbox")= t("searchEditor:matchCase")
+      button= t("common:actions.search")
+      span= t("searchEditor:noResults")
+
+    .results
+
+    script(src="/SupCore.js")
+    script(src="/SupClient.js")
+    script(src="../../data.js")
+    script(src="index.js")

@@ -1,0 +1,35 @@
+declare namespace Sup {
+  class ModelRenderer extends ActorComponent {
+    constructor(actor: Actor, pathOrAsset?: string|Model);
+    constructor(actor: Actor, pathOrAsset: string|Model, materialType?: ModelRenderer.MaterialType, shaderPathOrAsset?: string|Shader);
+
+    getModel(): Model;
+    setModel(pathOrAsset: string|Model): ModelRenderer;
+    setModel(pathOrAsset: string|Model, materialType?: ModelRenderer.MaterialType, shaderPathOrAsset?: string|Shader): ModelRenderer;
+    getMaterialType(): ModelRenderer.MaterialType;
+    getShader(): Shader;
+    getOpacity(): number;
+    setOpacity(opacity: number): ModelRenderer;
+    getColor(): Color;
+    setColor(color: Color): ModelRenderer;
+    setColor(r: number, g: number, b: number): ModelRenderer;
+    getBoneTransform(name: string): {position: Sup.Math.Vector3; orientation: Sup.Math.Quaternion; scale: Sup.Math.Vector3};
+
+    getAnimation(): string;
+    setAnimation(animationName: string, looping?: boolean): ModelRenderer;
+    setAnimationTime(time: number): ModelRenderer;
+    getAnimationTime(): number;
+    getAnimationDuration(): number;
+
+    isAnimationPlaying(): boolean;
+    playAnimation(looping?: boolean): ModelRenderer;
+    pauseAnimation(): ModelRenderer;
+    stopAnimation(): ModelRenderer;
+
+    getUniforms(): { [name: string]: { type: string; value: any; } };
+  }
+
+  namespace ModelRenderer {
+    enum MaterialType { Basic, Phong, Shader }
+  }
+}

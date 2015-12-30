@@ -1,0 +1,100 @@
+body
+  display flex
+  flex-flow column
+
+  .header
+    background #444
+    color #fff
+    display flex
+    align-items center
+
+    &.has-draft { background-color: #37d; padding-left: 0.25em; }
+    &.has-errors { background-color: #a44; }
+
+    .info
+      padding 0.5em
+      flex 1
+    .settings
+      padding 0.5em
+      display flex
+      align-items center
+
+  .top
+    flex 1
+    display flex
+    flex-flow row
+    min-height 200px
+
+  .left
+    flex 1
+    display flex
+    flex-flow column
+    min-width 300px
+
+  .uniforms, .attributes
+    flex 1
+    display flex
+    flex-flow column
+
+    .list
+      overflow-y auto
+
+    table
+      width 100%
+      border-collapse collapse
+
+    tr
+      height 2em
+
+      &.immutable td { color: #666; padding: 0.5em; }
+      th { background: #eee; padding: 0.5em; }
+
+    td, th
+      text-align left
+      border 1px solid #ccc
+      width 45%
+
+      &:nth-child(2)
+        width 10%
+
+      .value
+        display flex
+
+        input:not(:last-child)
+          border-right 1px solid #ccc
+
+      input, select
+        width 100%
+        border none
+      input
+        padding 0.5em
+
+  .preview
+    display flex
+    flex-flow column
+    width 50%
+    min-width 300px
+
+    .preview-asset-path
+      margin-left 0.5em
+
+    canvas
+      flex 1
+      flex-basis 0
+      background-color black
+
+  .shaders
+    display flex
+    min-height 200px
+    height 50%
+
+    .vertex, .fragment
+      display flex
+      flex-flow column
+      min-width 300px
+
+    .vertex
+      flex 1
+
+    .fragment
+      width 50%

@@ -1,0 +1,61 @@
+namespace Sup {
+  export function log(message, ...optionalParams) { console.log.apply(console, [ message ].concat(optionalParams)); }
+  
+  export function setTimeout(delayMs, callback) { return window.setTimeout(callback, delayMs); }
+  export function clearTimeout(id) { return window.clearTimeout(id); }
+  export function setInterval(intervalMs, callback) { return window.setInterval(callback, intervalMs); }
+  export function clearInterval(id) { return window.clearInterval(id); }
+
+  export function exit() {
+    if (player.gameInstance.input.exited) return;
+
+    // Close window only if running release mode in NW.js
+    if (!player.gameInstance.debug && window.navigator.userAgent.indexOf("Electron") !== -1) {
+      require("remote").getCurrentWindow().close();
+    } else {
+      player.gameInstance.input.emit("exit");
+      player.gameInstance.input.exited = true;
+      player.gameInstance.destroyAllActors();
+    }
+  }
+
+  export class Asset {
+    name: string;
+    path: string;
+    type: string;
+    __inner: any;
+    constructor(inner) {
+      this.__inner = inner;
+      this.__inner.__outer = this;
+    }
+  }
+
+  export class Folder extends Asset {
+    children: string[];
+  }
+
+  export function get(path: string, arg1, arg2?) {
+    let type = arg1;
+    let options = (arg2 !== undefined) ? arg2 : { ignoreMissing: false };
+
+    if (arg1 != null && Object.getPrototypeOf(arg1) === Object.prototype) {
+      type = null;
+      options = arg1;
+    }
+
+    let entry = player.entriesByPath[path];
+    let outerAsset: any = null;
+
+    if (entry) outerAsset = player.getOuterAsset(entry.id);
+    else if(!options.ignoreMissing) throw new Error(`Invalid asset path: ${path}`);
+
+    if (type != null && outerAsset != null) {
+      let typeName = type.name.charAt(0).toLowerCase() + type.name.slice(1);
+      if (typeName !== outerAsset.type) throw new Error(`Invalid asset type: got ${outerAsset.type} but asked for ${typeName}`);
+    }
+
+    return outerAsset;
+  }
+}
+
+window.Sup = Sup;

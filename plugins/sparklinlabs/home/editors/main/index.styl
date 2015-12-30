@@ -1,0 +1,110 @@
+body
+  display flex
+
+.main
+  flex 1
+  display flex
+  flex-flow column
+
+  .project-info
+    .project-name
+      font-size 2em
+
+  .chat
+    flex 1
+    flex-basis 0
+    overflow-y scroll
+    padding 0.5em
+    word-wrap break-word
+
+    ol
+      list-style none
+      margin 0
+      padding 0
+      white-space pre-wrap
+      -webkit-user-select text
+      -moz-user-select text
+      user-select text
+      cursor initial
+
+      li
+        margin-bottom 0.25em
+        padding 0.125em
+
+        &.day-separator
+          padding 0
+          text-align center
+          text-transform uppercase
+          position relative
+          color #666
+
+          > hr
+            height 1px
+            margin 0.5em 0
+            border none
+            background #ccc
+
+          > div
+            position absolute
+            top -0.5em
+            left 0
+            right 0
+
+          > div > div
+            display inline-block
+            padding 0 1em
+            background #fff
+
+    .timestamp
+      color #888
+      font-size smaller
+      padding-right 0.5em
+
+    .author
+      font-weight bold
+
+  .chat-input
+    border-top 1px solid #ccc
+    padding 0.5em
+    background #eee
+    line-height 0
+
+  .chat-input textarea
+    width 100%
+    resize none
+    line-height 1.25
+    border 1px solid #ccc
+    padding 0.5em
+    font-size 14px
+
+.sidebar
+  width 250px
+  border-left 1px solid #aaa
+  display flex
+  flex-flow column
+
+  > div
+    display flex
+    flex-flow column
+
+  .header
+    background #ccc
+    text-transform uppercase
+    padding 0.5em
+    font-weight bold
+
+  .content
+    padding 0.5em
+    flex 1
+    overflow-y auto
+
+    ul
+      list-style none
+      margin 0
+      padding 0
+
+    li
+      margin 0.5em 0
+
+.members
+  flex 1

@@ -1,0 +1,18 @@
+{
+  "uniforms": "Uniforms",
+  "newUniform": "New uniform",
+  "attributes": "Attributes",
+  "newAttribute": "New attribute",
+  "name": "Name",
+  "type": "Type",
+  "value": "Value",
+  "useLights": "Use lights",
+  "preview": "Preview",
+  "plane": "Plane",
+  "box" : "Box",
+  "sphere": "Sphere",
+  "asset": "Asset",
+  "assetPath": "Asset path",
+  "vertexShader": "Vertex Shader",
+  "fragmentShader": "Fragment Shader"
+}

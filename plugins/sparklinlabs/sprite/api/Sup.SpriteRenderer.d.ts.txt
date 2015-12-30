@@ -1,0 +1,42 @@
+declare namespace Sup {
+  class SpriteRenderer extends ActorComponent {
+    constructor(actor: Actor, pathOrAsset?: string|Sprite);
+    constructor(actor: Actor, pathOrAsset: string|Sprite, materialType?: SpriteRenderer.MaterialType, shaderPathOrAsset?: string|Shader);
+
+    getSprite(): Sprite;
+    setSprite(pathOrAsset: string|Sprite): SpriteRenderer;
+    setSprite(pathOrAsset: string|Sprite, materialType?: SpriteRenderer.MaterialType, shaderPathOrAsset?: string|Shader): SpriteRenderer;
+    getMaterialType(): SpriteRenderer.MaterialType;
+    getShader(): Shader;
+    setHorizontalFlip(horizontalFlip: boolean): SpriteRenderer;
+    getHorizontalFlip(): boolean;
+    setVerticalFlip(verticalFlip: boolean): SpriteRenderer;
+    getVerticalFlip(): boolean;
+    getOpacity(): number;
+    setOpacity(opacity: number): SpriteRenderer;
+    getColor(): Sup.Color;
+    setColor(color: Sup.Color): SpriteRenderer;
+    setColor(r: number, g: number, b: number): SpriteRenderer;
+
+    getAnimation(): string;
+    setAnimation(animationName: string, looping?: boolean): SpriteRenderer;
+    setAnimationFrameTime(frameTime: number): SpriteRenderer;
+    getAnimationFrameTime(): number;
+    getAnimationFrameIndex(): number;
+    getAnimationFrameCount(): number;
+    getAnimationSpeed(): number;
+
+    isAnimationPlaying(): boolean;
+    playAnimation(looping?: boolean): SpriteRenderer;
+    pauseAnimation(): SpriteRenderer;
+    stopAnimation(): SpriteRenderer;
+    setPlaybackSpeed(playbackSpeed: number): SpriteRenderer;
+    getPlaybackSpeed();
+
+    getUniforms(): { [name: string]: { type: string; value: any; } };
+  }
+
+  namespace SpriteRenderer {
+    enum MaterialType { Basic, Phong, Shader }
+  }
+}

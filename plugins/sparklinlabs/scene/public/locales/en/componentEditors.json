@@ -1,0 +1,23 @@
+{
+  "Camera": {
+    "label": "Camera",
+    "mode": "Mode",
+    "modeOptions": {
+      "perspective": "Perspective",
+      "orthographic": "Orthographic"
+    },
+    "fieldOfView": "Field of View",
+    "orthographicScale": "Orthographic Scale",
+    "depth": "Depth",
+    "depthTitle": "Used to determine in which order to render multiple cameras",
+    "layers": "Layers",
+    "layersTitle": "Which layers to be render and in which order",
+    "nearPlane": "Near Plane",
+    "farPlane": "Far Plane",
+    "viewport": {
+      "title": "Viewport",
+      "position": "Top / Left",
+      "size": "Width / Height"
+    }
+  }
+}

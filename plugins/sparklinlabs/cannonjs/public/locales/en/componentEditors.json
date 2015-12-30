@@ -1,0 +1,18 @@
+{
+  "CannonBody": {
+    "label": "Cannon Body",
+    "mass": "Mass",
+    "fixedRotation": "Fixed rotation",
+    "offset": "Offset",
+    "shape": "Shape",
+    "shapeType": "Type",
+    "shapeOptions": {
+      "box": "Box",
+      "sphere": "Sphere",
+      "cylinder": "Cylinder"
+    },
+    "halfSize": "Half size",
+    "radius": "Radius",
+    "height": "Height"
+  }
+}

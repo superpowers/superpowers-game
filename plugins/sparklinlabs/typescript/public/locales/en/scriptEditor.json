@@ -1,0 +1,24 @@
+{
+  "applyChanges": "Apply changes",
+  "applyChangesWithErrors": "Apply changes with errors",
+  "draft": "Draft",
+  
+  "errors": {
+    "noErrors": "No errors",
+    "oneError": "1 error",
+    "severalErrors": "${errors} errors",
+
+    "selfErrorsInfo": "${errors} in this script",
+    "otherErrorsInfo": "${errors} in other scripts",
+    "bothErrorsInfo": "${selfErrors}, ${otherErrors}",
+
+    "line": "Line",
+    "message": "Message",
+    "script": "Script"
+  },
+
+  "globalSearch": {
+    "prompt": "Search in all TypeScript scripts.",
+    "placeholder": "Find in project"
+  }
+}

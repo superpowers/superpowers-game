@@ -1,0 +1,57 @@
+doctype html
+html
+  head
+    link(rel="stylesheet",href="/styles/reset.css")
+    link(rel="stylesheet",href="/styles/perfectResize.css")
+    link(rel="stylesheet",href="/styles/treeView.css")
+    link(rel="stylesheet",href="/styles/dialogs.css")
+    link(rel="stylesheet",href="/styles/properties.css")
+    link(rel="stylesheet",href="index.css")
+
+  body
+    .main
+      canvas(tabindex="0")
+
+    .sidebar
+      table.properties
+        tr
+          th(colspan="2")= t("tileSetEditor:tileSet")
+        tr
+          th= t("tileSetEditor:texture.title")
+          td
+            button.upload= t("common:actions.upload")
+            form(style="display: none")
+              input.file-select(type="file",accept="image/*")
+
+            button.download= t("common:actions.download")
+
+        tr
+          th= t("tileSetEditor:grid")
+          td
+            .inputs
+              input(type='number' min="1").grid-width
+              input(type='number' min="1").grid-height
+
+        tr
+          th(colspan="2")= t("tileSetEditor:data")
+        tr
+          th= t("tileSetEditor:tileID")
+          td
+            input(readonly).selected-tile-number
+
+      .header
+        span= t("tileSetEditor:properties")
+
+      .properties-buttons
+        button.new-property= t("common:actions.new")
+        button(disabled).rename-property= t("common:actions.rename")
+        button(disabled).delete-property= t("common:actions.delete")
+
+      .properties-tree-view
+
+    script(src="/SupCore.js")
+    script(src="../../../../../SupEngine.js")
+    script(src="/SupClient.js")
+    script(src="../../data.js")
+    script(src="../../components.js")
+    script(src="index.js")

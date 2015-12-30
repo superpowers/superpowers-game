@@ -1,0 +1,77 @@
+namespace Sup {
+  let materialTypes = ["basic", "phong", "shader"];
+
+  export class SpriteRenderer extends Sup.ActorComponent {
+    constructor(actor: Actor, pathOrAsset?: string|Sprite, materialIndex?: number, shaderPathOrAsset?: string|Shader) {
+      super(actor);
+      this.__inner = new SupEngine.componentClasses.SpriteRenderer(this.actor.__inner);
+      if (pathOrAsset != null) this.setSprite(pathOrAsset, materialIndex, shaderPathOrAsset);
+      this.__inner.__outer = this;
+      this.actor.spriteRenderer = this;
+    }
+    destroy() {
+      this.actor.spriteRenderer = null;
+      super.destroy();
+    }
+
+    getSprite() { return (this.__inner.asset != null) ? this.__inner.asset.__outer : null; }
+    setSprite(pathOrAsset: string|Sprite, materialIndex?: number, shaderPathOrAsset?: string|Shader) {
+      let material: string;
+      if (materialIndex != null) material = materialTypes[materialIndex];
+
+      if (material === "shader" && shaderPathOrAsset == null) {
+        throw new Error(`Shader asset is missing when setting sprite on actor named "${this.actor.getName()}"`);
+      }
+
+      let spriteAsset: Sprite;
+      if (pathOrAsset != null) {
+        spriteAsset = (typeof pathOrAsset === "string") ? get(pathOrAsset, Sprite) : <Sprite>pathOrAsset;
+        this.__inner.opacity = spriteAsset.__inner.opacity;
+      }
+      let shaderAsset: Shader;
+      if (shaderPathOrAsset != null)
+        shaderAsset = (typeof shaderPathOrAsset === "string") ? get(shaderPathOrAsset, Shader) : <Shader>shaderPathOrAsset;
+
+      this.__inner.setSprite((spriteAsset != null) ? spriteAsset.__inner : null, material, (shaderAsset != null) ? shaderAsset.__inner : null);
+      return this;
+    }
+    getMaterialType() { return materialTypes.indexOf(this.__inner.materialType); }
+    getShader() { return this.__inner.materialType === "shader" ? this.__inner.shaderAsset.__outer : null; }
+    setHorizontalFlip(horizontalFlip) { this.__inner.setHorizontalFlip(horizontalFlip); return this; }
+    getHorizontalFlip() { return this.__inner.horizontalFlip; }
+    setVerticalFlip(verticalFlip) { this.__inner.setVerticalFlip(verticalFlip); return this; }
+    getVerticalFlip() { return this.__inner.verticalFlip; }
+    getOpacity() { return this.__inner.opacity; }
+    setOpacity(opacity) { this.__inner.setOpacity(opacity); return this; }
+    getColor() { return new Color(this.__inner.color.r, this.__inner.color.g, this.__inner.color.b); }
+    setColor(r, g, b) {
+      if (g == null && b == null) {
+        let color = r;
+        this.__inner.setColor(color.r, color.g, color.b);
+      } else this.__inner.setColor(r, g, b);
+      this.__inner.threeMesh.material.color.setRGB(this.__inner.color.r, this.__inner.color.g, this.__inner.color.b);
+      return this;
+    }
+
+    setAnimation(animationName, looping) { this.__inner.setAnimation(animationName, looping); return this; }
+    getAnimation() { return this.__inner.getAnimation(); }
+    setAnimationFrameTime(frametime) { this.__inner.setAnimationFrameTime(frametime); return this; }
+    getAnimationFrameTime() { return this.__inner.getAnimationFrameTime(); }
+    getAnimationFrameIndex() { return this.__inner.getAnimationFrameIndex(); }
+    getAnimationFrameCount() { return this.__inner.getAnimationFrameCount(); }
+    getAnimationSpeed() { return this.__inner.animation != null ? this.__inner.animation.speed : null; }
+
+    isAnimationPlaying() { return this.__inner.isAnimationPlaying; }
+    playAnimation(looping) { this.__inner.playAnimation(looping); return this; }
+    pauseAnimation() { this.__inner.pauseAnimation(); return this; }
+    stopAnimation() { this.__inner.stopAnimation(); return this; }
+    setPlaybackSpeed(playbackSpeed) { this.__inner.playbackSpeed = playbackSpeed; return this; }
+    getPlaybackSpeed() { return this.__inner.playbackSpeed; }
+
+    getUniforms() { return this.__inner.material.uniforms; }
+  }
+
+  export namespace SpriteRenderer {
+    export enum MaterialType { Basic, Phong, Shader };
+  }
+}

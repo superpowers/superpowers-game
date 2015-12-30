@@ -1,0 +1,119 @@
+body
+  display flex
+
+.main
+  flex 1
+  display flex
+  flex-flow column
+
+  canvas
+    background #000
+    flex 1
+    min-height 100px
+
+.sidebar
+  width 250px
+  min-width 200px
+  max-width 500px
+
+  display flex
+  flex-flow column
+
+  .header
+    background-color #444
+    color #fff
+    text-align center
+    padding 5px
+
+  // Animations tab
+  .animations-buttons
+    display flex
+
+    button
+      flex 1
+      font-size smaller
+      white-space nowrap
+
+  .animations-tree-view
+    border-top 1px solid #aaa
+    flex 1
+    min-height 100px
+    position relative
+    background #fff
+    overflow-y auto
+
+    .tree
+      position absolute
+
+    .name
+      white-space pre
+      width 150px
+
+    input
+      width 50px
+      margin-right 5px
+
+  .advanced-textures
+    &.collapsable { min-height: 250px; }
+
+    .header .label { flex: 1; }
+
+    .content
+      flex 1
+      display flex
+      flex-flow column
+
+    .textures-buttons
+      display flex
+
+      button
+        flex 1
+        font-size smaller
+        white-space nowrap
+
+    .textures-tree-view
+      border-top 1px solid #aaa
+      flex 1
+      position relative
+      background #fff
+      overflow-y auto
+
+.error-pane
+  &.collapsable { min-height: 200px; }
+
+  .header
+    .info
+      flex 1
+      padding 0.5em
+
+  .content
+    flex 1
+    overflow-y scroll
+
+    table
+      width 100%
+      border-collapse collapse
+
+    tbody tr
+      // cursor pointer
+
+      &:hover { background: #eee; }
+      // &:active { background-color: #444; color: #ccc; }
+
+    th
+      font-weight normal
+      color #666
+
+    td, th
+      text-align left
+      border 1px solid #ccc
+      padding 0.4em
+
+    td:first-child, th:first-child
+      text-align right
+
+    td:nth-child(3), th:nth-child(3)
+      width 100%
+
+    td:last-child
+      white-space nowrap

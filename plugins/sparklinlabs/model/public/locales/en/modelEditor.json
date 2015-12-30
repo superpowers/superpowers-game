@@ -1,0 +1,55 @@
+{
+  "status": {
+    "noErrors": "No errors",
+    "oneError": "1 error",
+    "severalErrors": "${errors} errors",
+
+    "line": "Line",
+    "type": "Type",
+    "message": "Message",
+    "file": "File"
+  },
+  
+  "sidebar": {
+    "settings": {
+      "model": "Model",
+      "texture": "Texture",
+      "filtering": {
+        "title": "Filtering",
+        "pixelated": "Pixelated",
+        "smooth": "Smooth"
+      },
+      "wrapping": {
+        "title": "Wrapping",
+        "clampToEdge": "Clamp to edge",
+        "repeat": "Repeat",
+        "mirroredRepeat": "Mirrored repeat"
+      },
+      "showSkeleton": "Show skeleton",
+      "unitRatio": "Unit ratio",
+      "opacity": "Opacity"
+    },
+    "animations": {
+      "title": "Animations",
+      "new": {
+        "prompt": "Enter a name for the animation.",
+        "initialValue": "Animation"
+      },
+      "renamePrompt": "Enter a new name for the animation.",
+      "deleteConfirm": "Are you sure you want to delete the selected animations?"
+    },
+    "advancedTextures": {
+      "title": "Advanced Textures",
+      "map": "Map",
+      "lightMap": "Light map",
+      "specularMap": "Specular map",
+      "alphaMap": "Alpha map",
+      "normalMap": "Normal map (Phong)",
+      "newMapPrompt": "Enter a new name for the map.",
+      "renameMapPrompt": "Enter a new name for the texture.",
+      "deleteMapConfirm": "Are you sure you want to delete the selected textures?",
+      "downloadPrompt": "Enter a name for the image.",
+      "downloadInitialValue": "Image"
+    }
+  }
+}

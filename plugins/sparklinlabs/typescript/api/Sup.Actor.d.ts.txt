@@ -1,0 +1,134 @@
+declare namespace Sup {
+  function getActor(name: string): Actor;
+  function destroyAllActors(): void;
+
+  class Actor {
+    // INSERT_COMPONENT_ACCESSORS
+
+    constructor(name: string, parent?: Actor, options?: { visible?: boolean; layer?: number });
+    destroy(): void;
+    isDestroyed(): boolean;
+
+    getName(): string;
+    setName(name: string): Actor;
+    getVisible(): boolean;
+    setVisible(visible: boolean): Actor;
+    getParent(): Actor;
+    setParent(parent: Actor, options?: { keepLocalTransform: boolean }): Actor;
+    getChild(name: string): Actor;
+    getChildren(): Array<Actor>;
+
+    getPosition(): Math.Vector3;
+    setPosition(position: Math.XYZ): Actor;
+    setPosition(x: number, y: number, z: number): Actor;
+    setPosition(position: Math.XY): Actor;
+    setPosition(x: number, y: number): Actor;
+    getX(): number;
+    setX(x: number): Actor;
+    getY(): number;
+    setY(y: number): Actor;
+    getZ(): number;
+    setZ(z: number): Actor;
+
+    getLocalPosition(): Math.Vector3;
+    setLocalPosition(position: Math.XYZ): Actor;
+    setLocalPosition(x: number, y: number, z: number): Actor;
+    setLocalPosition(position: Math.XY): Actor;
+    setLocalPosition(x: number, y: number): Actor;
+    getLocalX(): number;
+    setLocalX(x: number): Actor;
+    getLocalY(): number;
+    setLocalY(y: number): Actor;
+    getLocalZ(): number;
+    setLocalZ(z: number): Actor;
+
+    move(offset: Math.XYZ): Actor;
+    move(x: number, y: number, z: number): Actor;
+    move(offset: Math.XY): Actor;
+    move(x: number, y: number): Actor;
+    moveX(x: number): Actor;
+    moveY(y: number): Actor;
+    moveZ(z: number): Actor;
+
+    moveLocal(offset: Math.XYZ): Actor;
+    moveLocal(x: number, y: number, z: number): Actor;
+    moveLocal(offset: Math.XY): Actor;
+    moveLocal(x: number, y: number): Actor;
+    moveLocalX(x: number): Actor;
+    moveLocalY(y: number): Actor;
+    moveLocalZ(z: number): Actor;
+
+    moveOriented(offset: Math.XYZ): Actor;
+    moveOriented(x: number, y: number, z: number): Actor;
+    moveOriented(offset: Math.XY): Actor;
+    moveOriented(x: number, y: number): Actor;
+    moveOrientedX(x: number): Actor;
+    moveOrientedY(y: number): Actor;
+    moveOrientedZ(z: number): Actor;
+
+    getOrientation(): Math.Quaternion;
+    setOrientation(orientation: Math.Quaternion): Actor;
+    getLocalOrientation(): Math.Quaternion;
+    setLocalOrientation(orientation: Math.Quaternion): Actor;
+    rotate(offset: Math.Quaternion): Actor;
+    rotateLocal(offset: Math.Quaternion): Actor;
+
+    // Values are in radians
+    getEulerAngles(): Math.Vector3;
+    setEulerAngles(angles: Math.XYZ): Actor;
+    setEulerAngles(x: number, y: number, z: number): Actor;
+    getEulerX(): number;
+    setEulerX(x: number): Actor;
+    getEulerY(): number;
+    setEulerY(y: number): Actor;
+    getEulerZ(): number;
+    setEulerZ(z: number): Actor;
+
+    getLocalEulerAngles(): Math.Vector3;
+    setLocalEulerAngles(angles: Math.XYZ): Actor;
+    setLocalEulerAngles(x: number, y: number, z: number): Actor;
+    getLocalEulerX(): number;
+    setLocalEulerX(x: number): Actor;
+    getLocalEulerY(): number;
+    setLocalEulerY(y: number): Actor;
+    getLocalEulerZ(): number;
+    setLocalEulerZ(z: number): Actor;
+
+    rotateEulerAngles(offset: Math.XYZ): Actor;
+    rotateEulerAngles(x: number, y: number, z: number): Actor;
+    rotateEulerX(x: number): Actor;
+    rotateEulerY(y: number): Actor;
+    rotateEulerZ(z: number): Actor;
+
+    rotateLocalEulerAngles(offset: Math.XYZ): Actor;
+    rotateLocalEulerAngles(x: number, y: number, z: number): Actor;
+    rotateLocalEulerX(x: number): Actor;
+    rotateLocalEulerY(y: number): Actor;
+    rotateLocalEulerZ(z: number): Actor;
+
+    lookAt(target: Math.XYZ, upVector?: Math.XYZ): Actor;
+    lookTowards(direction: Math.XYZ, upVector?: Math.XYZ): Actor;
+
+    getLocalScale(): Math.Vector3;
+    getLocalScaleX(): number;
+    getLocalScaleY(): number;
+    getLocalScaleZ(): number;
+    setLocalScale(scale: Math.XYZ): Actor;
+    setLocalScale(x: number, y: number, z: number): Actor;
+    setLocalScale(xyz: number): Actor;
+    setLocalScaleX(x: number): Actor;
+    setLocalScaleY(y: number): Actor;
+    setLocalScaleZ(z: number): Actor;
+
+    addBehavior<T extends Behavior>(behaviorClass: new(actor: Actor, properties?: { [key: string]: any; }) => T, properties?: { [key: string]: any; }): T;
+    getBehavior<T extends Behavior>(behaviorClass: { prototype: T }): T;
+    getBehaviors<T extends Behavior>(behaviorClass: { prototype: T }): T[];
+  }
+
+  class ActorComponent {
+    actor: Actor;
+    constructor(actor: Actor);
+    destroy(): void;
+    isDestroyed(): boolean;
+  }
+}

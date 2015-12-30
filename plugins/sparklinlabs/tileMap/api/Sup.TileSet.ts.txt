@@ -1,0 +1,30 @@
+namespace Sup {
+  export class TileSet extends Asset {
+    getWidth() { return this.__inner.data.texture.image.width; }
+    getHeight() { return this.__inner.data.texture.image.height; }
+    getGridSize() { return { width: this.__inner.data.grid.width, height: this.__inner.data.grid.height }; }
+
+    getTileProperties(tile) {
+      let tilesPerRow = this.__inner.data.texture.image.width / this.__inner.data.grid.width;
+
+      let x = tile % tilesPerRow;
+      let y = window.Math.floor(tile / tilesPerRow);
+      let properties = this.__inner.data.tileProperties[x + "_" + y];
+      properties = (properties) ? properties : {};
+      return properties;
+    }
+    setTileProperty(tile, propertyName, propertyValue) {
+      let tilesPerRow = this.__inner.data.texture.image.width / this.__inner.data.grid.width;
+
+      let x = tile % tilesPerRow;
+      let y = window.Math.floor(tile / tilesPerRow);
+      let properties = this.__inner.data.tileProperties[x + "_" + y];
+      properties = (properties) ? properties : {};
+      if (propertyValue != null) {
+        this.__inner.data.tileProperties[x + "_" + y][propertyName] = propertyValue;
+      } else if (this.__inner.data.tileProperties[x + "_" + y][propertyName] != null) {
+        delete this.__inner.data.tileProperties[x + "_" + y][propertyName];
+      }
+    }
+  }
+}

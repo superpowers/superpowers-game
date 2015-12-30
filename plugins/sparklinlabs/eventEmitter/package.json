@@ -1,0 +1,13 @@
+{
+  "name": "superpowers-sparklinlabs-cubic-model-plugin",
+  "description": "Event emitter plugin for Superpowers, the HTML5 collaborative creative platform",
+  "version": "1.0.0",
+  "license": "ISC",
+  "repository": {
+    "type": "hg",
+    "url": "https://bitbucket.org/superpowers/sup-game-sparklinlabs-plugins"
+  },
+  "scripts": {
+    "build": "gulp --gulpfile=../../../../../scripts/pluginGulpfile.js --cwd=."
+  }
+}

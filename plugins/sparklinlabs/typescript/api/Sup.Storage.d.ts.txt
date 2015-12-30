@@ -1,0 +1,11 @@
+declare namespace Sup {
+  namespace Storage {
+    function set(key: string, value: string): void;
+    function get(key: string, defaultValue?: string): string;
+    function setJSON(key: string, value: any): void;
+    function getJSON(key: string): any;
+    function getJSON<T>(key: string, defaultValue: T): T;
+    function remove(key: string): void;
+    function clear(): void;
+  }
+}

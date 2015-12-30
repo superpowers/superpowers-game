@@ -1,0 +1,66 @@
+declare namespace Sup {
+  namespace Input {
+    function on(eventName: string, callback: Function);
+    function off(eventName: string, callback: Function);
+
+    function on(eventName: "exit", callback: () => void);
+
+    function getScreenSize(): Math.Vector2;
+
+    function getMouseVisible(): boolean;
+    function setMouseVisible(visible: boolean);
+
+    function lockMouse();
+    function unlockMouse();
+    // The "state" callback parameter can be "active" or "suspended"
+    function on(eventName: "mouseLockStateChange", callback: (state: string) => void);
+
+    function goFullscreen();
+    function exitFullscreen();
+    // The "state" callback parameter can be "active" or "suspended"
+    function on(eventName: "fullscreenStateChange", callback: (state: string) => void);
+
+    function getMousePosition(): Math.Vector2;
+    function getMouseDelta(): Math.Vector2;
+    function isMouseButtonDown(button: number): boolean;
+    function wasMouseButtonJustPressed(button: number): boolean;
+    function wasMouseButtonJustReleased(button: number): boolean;
+
+    function getTouchPosition(index: number): Math.Vector2;
+    function isTouchDown(index: number): boolean;
+    function wasTouchStarted(index: number): boolean;
+    function wasTouchEnded(index: number): boolean;
+    function vibrate(pattern: number|number[]): void;
+
+    // Valid key names (based on window.KeyEvent.DOM_VK_*):
+    // CANCEL, HELP, BACK_SPACE, TAB, CLEAR, RETURN, SHIFT, CONTROL, ALT,
+    // PAUSE, CAPS_LOCK, ESCAPE, SPACE, PAGE_UP, PAGE_DOWN, END, HOME,
+    // LEFT, UP, RIGHT, DOWN, PRINTSCREEN, INSERT, DELETE,
+    // 0 to 9, SEMICOLON, EQUALS, A to Z,
+    // CONTEXT_MENU, NUMPAD0 to NUMPAD9,
+    // MULTIPLY, ADD, SEPARATOR, SUBTRACT, DECIMAL, DIVIDE,
+    // F1 to F24, NUM_LOCK, SCROLL_LOCK, COMMA, PERIOD, SLASH, BACK_QUOTE,
+    // OPEN_BRACKET, BACK_SLASH, CLOSE_BRACKET, QUOTE, META
+    //
+    // Additionnally, ANY will return true for any key
+    // and NONE will return true for no keys
+    function isKeyDown(keyName: string): boolean;
+    function wasKeyJustPressed(keyName: string, options?: { autoRepeat?: boolean; }): boolean;
+    function wasKeyJustReleased(keyName: string): boolean;
+
+    function getTextEntered(): string;
+
+    function isGamepadButtonDown(gamepad: number, button: number): boolean;
+    function wasGamepadButtonJustPressed(gamepad: number, button: number): boolean;
+    function wasGamepadButtonJustReleased(gamepad: number, button: number): boolean;
+    function getGamepadButtonValue(gamepad: number, button: number): number;
+    
+    // Default dead zone is 0.25
+    function setGamepadAxisDeadZone(deadZone: number);
+    function getGamepadAxisDeadZone(): number;
+
+    function wasGamepadAxisJustPressed(gamepad: number, axis: number, positive: boolean, options?: { autoRepeat?: boolean; }): boolean;
+    function wasGamepadAxisJustReleased(gamepad: number, axis: number, positive: boolean): boolean;
+    function getGamepadAxisValue(gamepad: number, axis: number): number;
+  }
+}

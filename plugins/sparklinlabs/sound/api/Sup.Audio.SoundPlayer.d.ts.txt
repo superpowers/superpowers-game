@@ -1,0 +1,27 @@
+declare namespace Sup {
+  namespace Audio {
+    function playSound(pathOrAsset: string|Sound, volume?: number /* 1.0 */, options?: { loop?: boolean; pitch?: number; pan?: number; }): SoundPlayer;
+  
+    class SoundPlayer {
+      constructor(pathOrAsset: string|Sound, volume?: number /* 1.0 */, options?: { loop?: boolean; pitch?: number; pan?: number; });
+      play(): SoundPlayer;
+      stop(): SoundPlayer;
+      pause(): SoundPlayer;
+      isPlaying(): boolean;
+      getState(): SoundPlayer.State;
+
+      getLoop(): boolean;
+      setLoop(looping: boolean): SoundPlayer;
+      getVolume(): number;
+      setVolume(volume: number): SoundPlayer;
+      getPan(): number;
+      setPan(pan: number): SoundPlayer;
+      getPitch(): number;
+      setPitch(pitch: number): SoundPlayer;
+    }
+
+    namespace SoundPlayer {
+      enum State { Playing, Paused, Stopped }
+    }
+  }
+}

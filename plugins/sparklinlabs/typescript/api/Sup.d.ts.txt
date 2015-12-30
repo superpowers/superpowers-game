@@ -1,0 +1,25 @@
+declare namespace Sup {
+  function log(message?: any, ...optionalParams: any[]): void;
+
+  // Re-export window.setTimeout & co. with more useful argument orders
+  function setTimeout(delayMs: number, callback: Function): number;
+  function clearTimeout(id: number): void;
+  function setInterval(intervalMs: number, callback: Function): number;
+  function clearInterval(id: number): void;
+  
+  function exit();
+
+  class Asset {
+    name: string;
+    path: string;
+    type: string;
+    constructor(inner: { [key:string]: any; });
+  }
+
+  class Folder extends Asset {
+    children: string[];
+  }
+
+  function get(path: string, options?: { "ignoreMissing": boolean; }): Asset;
+  function get<T extends Asset>(path: string, type: new(inner: { [key:string]: any; }) => T, options?: { "ignoreMissing": boolean; }): T;
+}

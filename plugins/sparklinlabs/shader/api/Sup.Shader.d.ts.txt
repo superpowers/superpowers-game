@@ -1,0 +1,5 @@
+declare namespace Sup {
+  class Shader extends Asset {
+    dummyShaderMember;
+  }
+}

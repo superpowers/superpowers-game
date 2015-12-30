@@ -1,0 +1,72 @@
+{
+  "preview": {
+    "loop": "Loop"
+  },
+  "sidebar": {
+    "settings": {
+      "sprite": {
+        "title": "Sprite",
+        "texture": {
+          "title": "Texture",
+          "size": "Texture size (px)",
+          "download": {
+            "prompt": "Enter a name for the image.",
+            "defaultName": "Image"
+          }
+        },
+        "grid": {
+          "size": "Grid size",
+          "setup": "Setup",
+          "widthPrompt": "How many frames per row?",
+          "setWidth": "Set grid width",
+          "heightPrompt": "How many frames per column?",
+          "setHeight": "Set grid height"
+        },
+        "origin": "Origin (%)"
+      },
+      "rendering": {
+        "title": "Rendering",
+        "pixelsPerUnit": "Pixels / unit",
+        "filtering": {
+          "title": "Filtering",
+          "pixelated": "Pixelated",
+          "smooth": "Smooth"
+        },
+        "wrapping": {
+          "title": "Wrapping",
+          "clampToEdge": "Clamp to edge",
+          "repeat": "Repeat",
+          "mirroredRepeat": "Mirrored repeat"
+        },
+        "opacity": "Opacity",
+        "alphaTest": "Alpha test"
+      },
+      "animation": {
+         "title": "Animation",
+         "framesPerSecond": "Frames / second",
+         "frameOrder": {
+           "title": "Frame order",
+           "rows": "Rows",
+           "columns": "Columns"
+         }
+      }
+    },
+    "animations": {
+      "title": "Animations",
+      "newAnimationPrompt": "Enter a name for the animation.",
+      "renameAnimationPrompt": "Enter a new name for the animation.",
+      "deleteAnimationPrompt": "Are you sure you want to delete the selected animations?"
+    },
+    "advancedTextures": {
+      "title": "Advanced Textures",
+      "map": "Map",
+      "lightMap": "Light map",
+      "specularMap": "Specular map",
+      "alphaMap": "Alpha map",
+      "normalMap": "Normal map (Phong)",
+      "newMapPrompt": "Enter a new name for the map.",
+      "renameMapPrompt": "Enter a new name for the texture.",
+      "deleteMapPrompt": "Are you sure you want to delete the selected textures?"
+    }
+  }
+}

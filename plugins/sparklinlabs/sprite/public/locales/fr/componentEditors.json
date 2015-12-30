@@ -1,0 +1,19 @@
+{
+  "spriteRenderer": {
+    "sprite": "Sprite",
+    "animation": "Animation",
+    "animationNone": "(Aucune)",
+    "flip": "Retourner",
+    "shadow": {
+      "title": "Ombre",
+      "cast": "Emet",
+      "receive": "Recoit"
+    },
+    "color": "Couleur",
+    "opacity": "Opacité",
+    "transparent": "Transparent",
+    "opaque": "Opaque",
+    "material": "Matériau",
+    "shader": "Shader"
+  }
+}

@@ -1,0 +1,49 @@
+body
+  height auto
+
+  display flex
+  flex-flow column
+
+  .search, .results
+    padding 0.5em
+
+  .search
+    display flex
+    align-items center
+    #match-case-checkbox { margin-left: 0.5em; }
+    button { margin: 0 0.5em; }
+    span { color: #666; }
+
+  .results
+    padding-top 0
+    display flex
+    flex-flow column
+
+    > span
+      cursor pointer
+      padding 0.5em
+      margin-top 0.25em
+      background-color #444
+      color #fff
+
+  table
+    width 100%
+    border-collapse collapse
+
+    &.collapsed
+      display none
+
+    tr
+      cursor pointer
+      &:hover { background: #ddd; }
+
+    td
+      border 1px solid #ccc
+      padding 5px
+
+      &:nth-child(2)
+        width 100%
+        text-align left
+
+      span:nth-child(2)
+        background-color rgba(86, 232, 86, 1)

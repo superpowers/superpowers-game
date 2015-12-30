@@ -1,0 +1,20 @@
+{
+  "SpriteRenderer": {
+    "label": "Sprite Renderer",
+    "sprite": "Sprite",
+    "animation": "Animation",
+    "animationNone": "(None)",
+    "flip": "Flip",
+    "shadow": {
+      "title": "Shadow",
+      "cast": "Cast",
+      "receive": "Receive"
+    },
+    "color": "Color",
+    "opacity": "Opacity",
+    "transparent": "Transparent",
+    "opaque": "Opaque",
+    "material": "Material",
+    "shader": "Shader"
+  }
+}

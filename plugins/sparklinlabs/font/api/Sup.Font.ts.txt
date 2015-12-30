@@ -1,0 +1,16 @@
+namespace Sup {
+  let canvas = window.document.createElement("canvas");
+  canvas.width = 1; canvas.height = 1;
+
+  export class Font extends Asset {
+    getTextWidth(text) {
+      if (this.__inner.isBitmap) {
+        return text.length * this.__inner.gridWidth / this.__inner.pixelsPerUnit;
+      } else {
+        let ctx = canvas.getContext("2d");
+        ctx.font = `${this.__inner.size}px ${this.__inner.name}`;
+        return ctx.measureText(text).width / this.__inner.pixelsPerUnit;
+      }
+    }
+  }
+}

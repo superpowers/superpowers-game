@@ -1,0 +1,11 @@
+declare namespace Sup {
+  class TileMapRenderer extends ActorComponent {
+    constructor(actor: Actor, pathOrAsset?: string|TileMap);
+    getTileMap(): TileMap;
+    setTileMap(pathOrAsset?: string|TileMap, replaceTileSet?: boolean); TileMapRenderer;
+    getTileSet(): TileSet;
+    setTileSet(pathOrAsset?: string|TileSet): TileMapRenderer;
+    getLayerOpacity(layer: number): number;
+    setLayerOpacity(layer: number, opacity: number): TileMapRenderer;
+  }
+}

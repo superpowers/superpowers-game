@@ -1,0 +1,71 @@
+namespace Sup {
+  export class TextRenderer extends Sup.ActorComponent {
+    constructor(actor: Actor, text: string|number, pathOrAsset: string|Font, options: any={}) {
+      super(actor);
+      this.__inner = new SupEngine.componentClasses.TextRenderer(this.actor.__inner);
+
+      if (options.color != null) options.color = options.color.getHexString();
+      this.__inner.setOptions(options);
+      if (text != null) this.__inner.setText(`${text}`);
+      if (pathOrAsset != null) this.setFont(pathOrAsset);
+
+      this.__inner.__outer = this;
+      this.actor.textRenderer = this;
+    }
+    destroy() {
+      this.actor.textRenderer = null;
+      super.destroy();
+    }
+
+    getFont() { return this.__inner.font.__outer; }
+    setFont(pathOrAsset: string|Font) {
+      let fontAsset = (typeof pathOrAsset === "string") ? get(pathOrAsset, Font) : <Font>pathOrAsset;
+      this.__inner.setFont(fontAsset.__inner);
+      return this;
+    }
+    getText() { return this.__inner.text; }
+    setText(text: string|number) {
+      this.__inner.setText(`${text}`);
+      return this;
+    }
+    getColor() {
+      var color = (this.__inner.options.color != null) ? this.__inner.options.color : this.__inner.font.color;
+      return new Sup.Color(1, 1, 1).setHex(parseInt(color, 16));
+    }
+    setColor(color) {
+      var options = this.__inner.options;
+      options.color = color.getHexString();
+      this.__inner.setOptions(options);
+      return this;
+    }
+    getAlignment() { return this.__inner.options.alignment; }
+    setAlignment(alignment) {
+      var options = this.__inner.options;
+      options.alignment = alignment;
+      this.__inner.setOptions(options);
+      return this;
+    }
+    getVerticalAlignment() { return this.__inner.options.verticalAlignment; }
+    setVerticalAlignment(verticalAlignment) {
+      var options = this.__inner.options;
+      options.verticalAlignment = verticalAlignment;
+      this.__inner.setOptions(options);
+      return this;
+    }
+    getSize() {
+      var size = (this.__inner.options.size != null) ? this.__inner.options.size : this.__inner.font.size;
+      return size;
+    }
+    setSize(size) {
+      var options = this.__inner.options;
+      options.size = size;
+      this.__inner.setOptions(options);
+      return this;
+    }
+    getOpacity() { return this.__inner.opacity; }
+    setOpacity(opacity) {
+      this.__inner.setOpacity(opacity);
+      return this;
+    }
+  }
+}

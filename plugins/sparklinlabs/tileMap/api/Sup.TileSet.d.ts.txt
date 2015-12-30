@@ -1,0 +1,9 @@
+declare namespace Sup {
+  class TileSet extends Asset {
+    getWidth(): number;
+    getHeight(): number;
+    getGridSize(): { width: number; height; number };
+    getTileProperties(tile: number): { [key:string]: string; };
+    setTileProperty(tile: number, propertyName: string, propertyValue: string);
+  }
+}

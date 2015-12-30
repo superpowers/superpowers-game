@@ -1,0 +1,22 @@
+declare namespace Sup {
+  class Tween {
+    constructor(actor: Sup.Actor, object: Object);
+
+    to(object: Object, duration: number): Tween;
+    delay(amount: number): Tween;
+    
+    // Use TWEEN.Easing.*
+    // See http://sole.github.io/tween.js/examples/03_graphs.html
+    // for visual representations of each easing mode
+    easing(easing: (k: number) => number): Tween;
+
+    yoyo(yoyo: boolean): Tween;
+    repeat(times: number): Tween;
+
+    onUpdate(onUpdate: Function): Tween;
+    onComplete(onComplete: Function): Tween;
+
+    start(): Tween;
+    stop(): Tween;
+  }
+}

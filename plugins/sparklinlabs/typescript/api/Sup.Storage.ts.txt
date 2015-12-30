@@ -1,0 +1,16 @@
+namespace Sup {
+  export namespace Storage {
+    export function set(key, value) { localStorage.setItem(key, value); }
+    export function get(key, defaultValue) {
+      let value = localStorage.getItem(key);
+      return (value != null) ? value : defaultValue;
+    }
+    export function setJSON(key, value) { localStorage.setItem(key, JSON.stringify(value)); }
+    export function getJSON(key, defaultValue) {
+      let value = JSON.parse(localStorage.getItem(key));
+      return (value != null) ? value : defaultValue;
+    }
+    export function remove(key) { localStorage.removeItem(key); }
+    export function clear() { localStorage.clear(); }
+  }
+}

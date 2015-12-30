@@ -1,0 +1,115 @@
+doctype html
+html
+  head
+    link(rel="stylesheet",href="/styles/reset.css")
+    link(rel="stylesheet",href="/styles/perfectResize.css")
+    link(rel="stylesheet",href="/styles/treeView.css")
+    link(rel="stylesheet",href="/styles/dialogs.css")
+    link(rel="stylesheet",href="/styles/properties.css")
+    link(rel="stylesheet",href="index.css")
+
+    template#component-cartridge-template
+      .header
+        .type
+        button.shrink-component –
+        button.delete-component ×
+      table.settings.properties
+        tbody
+
+  body
+    .main
+      .controls
+        .camera
+          .title= t("sceneEditor:controls.camera.title")
+          .camera-mode
+            label(for="toggle-camera-button")= t("sceneEditor:controls.camera.mode")
+            button#toggle-camera-button 3D
+          .camera-vertical-axis
+            label(for="toggle-camera-vertical-axis")= t("sceneEditor:controls.camera.verticalAxis")
+            button#toggle-camera-vertical-axis Y
+          .camera-speed
+            label(for="camera-speed-slider")= t("sceneEditor:controls.camera.speed")
+            input#camera-speed-slider(type="range",min="0.05",max="2.0",step="0.05")
+          .camera-2d-z(hidden)
+            label(for="camera-2d-z") Z
+            input#camera-2d-z(type="number",value="5")
+        .transform-mode
+          .title= t("sceneEditor:controls.transform.title")
+          div
+            input#transform-mode-translate(type="radio",name="transformMode",value="translate",checked)
+            label(for="transform-mode-translate",title="E")= t("sceneEditor:controls.transform.move")
+            input#transform-mode-rotate(type="radio",name="transformMode",value="rotate")
+            label(for="transform-mode-rotate",title="R")= t("sceneEditor:controls.transform.rotate")
+            input#transform-mode-scale(type="radio",name="transformMode",value="scale")
+            label(for="transform-mode-scale",title="T")= t("sceneEditor:controls.transform.scale")
+            input#transform-space(type="checkbox")
+            label(for="transform-space",title="L")= t("sceneEditor:controls.transform.local")
+        .grid
+          .title= t("sceneEditor:controls.grid.title")
+          div
+            label(for="grid-step")= t("sceneEditor:controls.grid.size")
+            input#grid-step(type="number",value="1",min="0")
+            input#grid-visible(type="checkbox")
+            label(for="grid-visible")= t("sceneEditor:controls.grid.visible")
+        .light
+          .title= t("sceneEditor:controls.light.title")
+          div
+            input#show-light(type="checkbox")
+      canvas(tabindex="0")
+
+    .sidebar
+      .nodes-buttons.flat-button-strip
+        button(title= t("sceneEditor:treeView.newActor.title"), data-hotkey="control+N").new-actor
+        button(title= t("sceneEditor:treeView.newPrefab.title"), data-hotkey="control+P").new-prefab
+        button(title= t("common:actions.rename"),disabled, data-hotkey="F2").rename-node
+        button(title= t("common:actions.duplicate"),disabled, data-hotkey="control+D").duplicate-node
+        button(title= t("common:actions.delete"),disabled, data-hotkey="delete").delete-node
+
+      .nodes-tree-view
+
+      .inspector(hidden)
+        table.transform.properties
+          tr.position
+            th.label= t("sceneEditor:inspector.position")
+            td
+              .inputs
+                input(type="number").x
+                input(type="number").y
+                input(type="number").z
+          tr.orientation
+            th.label= t("sceneEditor:inspector.orientation")
+            td
+              .inputs
+                input(type="number").x
+                input(type="number").y
+                input(type="number").z
+          tr.scale
+            th.label= t("sceneEditor:inspector.scale")
+            td
+              .inputs
+                input(type="number").x
+                input(type="number").y
+                input(type="number").z
+          tr.visible
+            th.label= t("sceneEditor:inspector.visible")
+            td
+              input(type="checkbox")
+          tr.layer
+            th.label= t("sceneEditor:inspector.layer")
+            td
+              select
+                option(value="0") Default
+          tr.prefab
+            th.label= t("sceneEditor:inspector.prefab")
+            td
+              div
+                input
+                button Open
+        .components-buttons
+          button.new-component= t("sceneEditor:inspector.newComponent.title")
+        .components
+
+    script(src="/SupCore.js")
+    script(src="../../../../../SupEngine.js")
+    script(src="/SupClient.js")
+    script(src="index.js")

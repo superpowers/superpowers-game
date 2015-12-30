@@ -1,0 +1,87 @@
+body
+  display flex
+
+nav
+  width 250px
+  background #ddd
+  border-right 1px solid #ccc
+  
+  display flex
+  flex-flow column
+  
+  input[type=search]
+    border none
+    padding 0.5em
+    width 100%
+    border-bottom 1px solid #ccc
+
+  .defs
+    flex 1
+    flex-basis 0
+    position relative
+    overflow-y auto
+
+  .defs ul
+    list-style none
+    margin 0
+    padding 0.5em
+
+  .defs li
+    padding 0
+    margin 0
+
+  .defs a
+    display flex
+    align-items center
+    color #444
+    padding 0.25em
+    text-decoration none
+
+    &:hover
+      background #ccc
+
+    &:active
+      color #fff
+
+    .name { flex: 1; padding: 0 0.25em; pointer-events: none; }
+    .results { pointer-events: none; }
+    .results:not(:empty)
+      font-size smaller
+      border-radius 1em
+      padding 0 0.5em
+      background rgba(0,0,0,0.3)
+      color rgba(255,255,255,0.8)
+
+    &.active
+      background #444
+      color #eee
+      
+      .results:not(:empty)
+        background rgba(255,255,255,0.3)
+        color rgba(0,0,0,0.8)
+
+main
+  flex 1
+  display flex
+  flex-flow column
+
+article
+  flex 1
+  display none
+  &.active { display: block; }
+  header { font-size: 24pt; }
+  overflow-y auto
+
+  &:not(.no-results) { background: #474747; }
+  &.no-results { padding: 1em; }
+
+article pre
+  white-space pre-wrap
+  font-family "Consolas", monospace
+  font-size 16px
+  color #dadada
+  -webkit-user-select text
+  -moz-user-select text
+  user-select text
+  margin 0
+  padding 1em

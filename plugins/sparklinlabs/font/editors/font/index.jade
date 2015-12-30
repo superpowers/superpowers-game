@@ -1,0 +1,78 @@
+doctype html
+html
+  head
+    link(rel="stylesheet",href="/styles/reset.css")
+    link(rel="stylesheet",href="/styles/dialogs.css")
+    link(rel="stylesheet",href="/styles/properties.css")
+    link(rel="stylesheet",href="index.css")
+
+  body
+    canvas
+
+    .sidebar
+      table.properties
+        tbody.main
+          tr
+            th(colspan="2")= t("fontEditor:font.title")
+          tr
+            th= t("fontEditor:type")
+            td
+              select.property-isBitmap
+                option(value="bitmap")= t("fontEditor:typeOptions.bitmap")
+                option(value="vector")= t("fontEditor:typeOptions.vector")
+          tr.font-or-image
+            th= t("fontEditor:font.title")
+            td
+              button.upload= t("common:actions.upload")
+              form(style="display: none")
+                input.file-select(type="file")
+              button.download= t("common:actions.download")
+          tr
+            th(colspan="2")= t("fontEditor:rendering")
+          tr
+            th= t("fontEditor:filtering")
+            td
+              select.property-filtering
+                option(value='pixelated')= t("fontEditor:pixelated")
+                option(value='smooth')= t("fontEditor:smooth")
+          tr
+            th= t("fontEditor:pixelsPerUnit")
+            td
+              input(type="number").property-pixelsPerUnit
+          tr
+            th= t("fontEditor:color")
+            td
+              .inputs
+                input.color.property-color
+                input(type="color").color-picker
+          tr
+            th(colspan="2")= t("fontEditor:settings")
+
+        tbody.vector-font
+          tr
+            th= t("fontEditor:size")
+            td
+              input(type="number").property-size
+
+        tbody.bitmap-font
+          tr
+            th= t("fontEditor:gridSize")
+            td
+              .inputs
+                input(type="number").property-gridWidth
+                input(type="number").property-gridHeight
+          tr
+            th= t("fontEditor:charset")
+            td
+              input.property-charset
+          tr
+            th= t("fontEditor:charsetOffset")
+            td
+              input(type="number").property-charsetOffset
+
+    script(src="/SupCore.js")
+    script(src="../../../../../SupEngine.js")
+    script(src="/SupClient.js")
+    script(src="../../data.js")
+    script(src="../../components.js")
+    script(src="index.js")
