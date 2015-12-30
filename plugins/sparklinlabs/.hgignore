@@ -1,5 +1,0 @@
-syntax: glob
-*/*/**.js
-public/**.css
-public/**.html
-node_modules/

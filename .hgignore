@@ -1,9 +1,0 @@
-syntax: glob
-node_modules/
-player/**.js
-SupEngine/**.js
-SupRuntime/**.js
-plugins/
-public/templates.json
-syntax: regexp
-^public/(?!(locales|templates))

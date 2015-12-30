@@ -1,8 +1,5 @@
 var gulp = require("gulp");
 
-// Copy
-gulp.task("copy", function () { return gulp.src("./src/images/*").pipe(gulp.dest("../public/images")); });
-
 // Jade
 var jade = require("gulp-jade");
 gulp.task("jade", function() { return gulp.src("./src/index.jade").pipe(jade()).pipe(gulp.dest("../public")); });
@@ -30,4 +27,4 @@ gulp.task("browserify", [ "typescript" ],function() {
 });
 
 // All
-gulp.task("default", [ "copy", "jade", "stylus", "typescript", "browserify" ]);
+gulp.task("default", [ "jade", "stylus", "typescript", "browserify" ]);

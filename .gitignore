@@ -1,0 +1,11 @@
+**/node_modules
+player/**/*.js
+SupEngine/**/*.js
+SupRuntime/**/*.js
+public/templates.json
+public/*.html
+public/*.css
+public/*.js
+plugins/**/*.html
+plugins/**/*.css
+plugins/**/*.js
