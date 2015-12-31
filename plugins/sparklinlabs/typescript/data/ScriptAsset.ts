@@ -1,5 +1,6 @@
 /// <reference path="../../textEditorWidget/operational-transform.d.ts" />
 /// <reference path="../../../../../../node_modules/typescript/lib/typescriptServices.d.ts" />
+/// <reference path="../../typescript/api/TypeScriptAPIPlugin.d.ts" />
 
 import * as OT from "operational-transform";
 import * as fs from "fs";
@@ -38,8 +39,9 @@ if ((<any>global).window == null) {
   compileTypeScript = serverRequire("../runtime/compileTypeScript").default;
 
   let actorComponentAccessors: string[] = [];
-  for (let pluginName in SupCore.system.api.contexts["typescript"].plugins) {
-    let plugin = SupCore.system.api.contexts["typescript"].plugins[pluginName];
+  let plugins = SupCore.system.api.getPlugins<SupCore.TypeScriptAPIPlugin>("typescript");
+  for (let pluginName in plugins) {
+    let plugin = plugins[pluginName];
     if (plugin.defs != null) globalDefs += plugin.defs;
     if (plugin.exposeActorComponent != null) actorComponentAccessors.push(`${plugin.exposeActorComponent.propertyName}: ${plugin.exposeActorComponent.className};`);
   }

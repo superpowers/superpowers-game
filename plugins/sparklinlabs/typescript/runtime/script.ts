@@ -1,9 +1,9 @@
-import * as async from "async";
+/// <reference path="../../typescript/api/TypeScriptAPIPlugin.d.ts" />
+
 import * as convert from "convert-source-map";
 // No definition file for combine-source-map module
 let combine: any = require("combine-source-map");
 import compileTypeScript from "./compileTypeScript";
-import * as fs from "fs";
 
 let globalNames: string[] = [];
 let globals: {[name: string]: string} = {};
@@ -22,6 +22,8 @@ export function init(player: any, callback: Function) {
     return new (<any>window).Sup.Actor(name, parentActor, options);
   };
 
+  let plugins = SupCore.system.api.getPlugins<SupCore.TypeScriptAPIPlugin>("typescript");
+
   player.createComponent = (type: string, actor: any, config: any) => {
     if (type === "Behavior") {
       let behaviorClass = player.behaviorClasses[config.behaviorName];
@@ -34,15 +36,15 @@ export function init(player: any, callback: Function) {
     } else {
       if (actorComponentTypesByName[type] == null) {
         actorComponentTypesByName[type] = window;
-        let parts = SupCore.system.api.contexts["typescript"].plugins[type].exposeActorComponent.className.split(".");
+        let parts = plugins[type].exposeActorComponent.className.split(".");
         for (let part of parts) actorComponentTypesByName[type] = actorComponentTypesByName[type][part];
       }
       return new actorComponentTypesByName[type](actor);
     }
   };
 
-  for (let pluginName in SupCore.system.api.contexts["typescript"].plugins) {
-    let plugin = SupCore.system.api.contexts["typescript"].plugins[pluginName];
+  for (let pluginName in plugins) {
+    let plugin = plugins[pluginName];
     if (plugin.code != null) {
       globalNames.push(`${pluginName}.ts`);
       globals[`${pluginName}.ts`] = plugin.code;

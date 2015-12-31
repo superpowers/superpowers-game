@@ -1,3 +1,5 @@
+/// <reference path="../../api/TypeScriptAPIPlugin.d.ts" />
+
 import * as async from "async";
 let hljs = require("highlight.js"); // import * as highlight from "highlight.js";
 
@@ -58,8 +60,9 @@ function onAPILoaded() {
   let allDefs: { [pluginName: string]: string } = {};
 
   let actorComponentAccessors: string[] = [];
-  for (let pluginName in SupCore.system.api.contexts["typescript"].plugins) {
-    let plugin = SupCore.system.api.contexts["typescript"].plugins[pluginName];
+  let plugins = SupCore.system.api.getPlugins<SupCore.TypeScriptAPIPlugin>("typescript");
+  for (let pluginName in plugins) {
+    let plugin = plugins[pluginName];
     name = pluginName;
     if (name === "lib") name = "Built-ins";
 

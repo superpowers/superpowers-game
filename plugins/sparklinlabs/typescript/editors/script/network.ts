@@ -1,3 +1,5 @@
+/// <reference path="../../api/TypeScriptAPIPlugin.d.ts" />
+
 import ui, { setupEditor, refreshErrors, showParameterPopup, clearParameterPopup } from "./ui";
 
 import * as async from "async";
@@ -327,8 +329,9 @@ function loadPlugins() {
       let globalDefs = "";
 
       let actorComponentAccessors: string[] = [];
-      for (let pluginName in SupCore.system.api.contexts["typescript"].plugins) {
-        let plugin = SupCore.system.api.contexts["typescript"].plugins[pluginName];
+      let plugins = SupCore.system.api.getPlugins<SupCore.TypeScriptAPIPlugin>("typescript");
+      for (let pluginName in plugins) {
+        let plugin = plugins[pluginName];
         if (plugin.defs != null) globalDefs += plugin.defs;
         if (plugin.exposeActorComponent != null) actorComponentAccessors.push(`${plugin.exposeActorComponent.propertyName}: ${plugin.exposeActorComponent.className};`);
       }
