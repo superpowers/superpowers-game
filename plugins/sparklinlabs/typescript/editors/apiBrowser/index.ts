@@ -60,7 +60,7 @@ function onAPILoaded() {
   let allDefs: { [pluginName: string]: string } = {};
 
   let actorComponentAccessors: string[] = [];
-  let plugins = SupCore.system.api.getPlugins<SupCore.TypeScriptAPIPlugin>("typescript");
+  let plugins = SupCore.system.getPlugins<SupCore.TypeScriptAPIPlugin>("typescriptAPI");
   for (let pluginName in plugins) {
     let plugin = plugins[pluginName];
     name = pluginName;

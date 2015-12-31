@@ -39,7 +39,7 @@ if ((<any>global).window == null) {
   compileTypeScript = serverRequire("../runtime/compileTypeScript").default;
 
   let actorComponentAccessors: string[] = [];
-  let plugins = SupCore.system.api.getPlugins<SupCore.TypeScriptAPIPlugin>("typescript");
+  let plugins = SupCore.system.getPlugins<SupCore.TypeScriptAPIPlugin>("typescriptAPI");
   for (let pluginName in plugins) {
     let plugin = plugins[pluginName];
     if (plugin.defs != null) globalDefs += plugin.defs;

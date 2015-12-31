@@ -22,7 +22,7 @@ export function init(player: any, callback: Function) {
     return new (<any>window).Sup.Actor(name, parentActor, options);
   };
 
-  let plugins = SupCore.system.api.getPlugins<SupCore.TypeScriptAPIPlugin>("typescript");
+  let plugins = SupCore.system.getPlugins<SupCore.TypeScriptAPIPlugin>("typescriptAPI");
 
   player.createComponent = (type: string, actor: any, config: any) => {
     if (type === "Behavior") {
