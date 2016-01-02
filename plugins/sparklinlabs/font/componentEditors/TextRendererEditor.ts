@@ -94,7 +94,7 @@ export default class TextRendererEditor {
       this.editConfig("setProperty", "size", size);
     });
 
-    this.fields["size"] = SupClient.table.appendNumberField(sizeRow.valueCell, config.size, { min: 0 });
+    this.fields["size"] = SupClient.table.appendNumberField(sizeRow.valueCell, "", { min: 0 });
     this.fields["size"].addEventListener("input", (event: any) => {
       if (event.target.value === "") return;
       this.editConfig("setProperty", "size", parseInt(event.target.value, 10));
@@ -155,9 +155,9 @@ export default class TextRendererEditor {
 
   private updateSizeField() {
     if (this.fontAsset != null && this.fontAsset.pub.isBitmap) {
-      if (this.sizeRow.parentElement != null) this.tbody.removeChild(this.sizeRow);
+      this.sizeRow.hidden = true;
       return;
-    } else if (this.sizeRow.parentElement == null) this.tbody.appendChild(this.sizeRow);
+    } else this.sizeRow.hidden = false;
 
     let size = this.size != null ? this.size : (this.fontAsset != null ? this.fontAsset.pub.size : "");
     this.fields["size"].value = size;

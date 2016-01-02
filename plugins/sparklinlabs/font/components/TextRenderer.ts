@@ -57,8 +57,8 @@ export default class TextRenderer extends SupEngine.ActorComponent {
     this.clearMesh();
     if (this.text == null || this.font == null) return;
 
-    if (this.font.isBitmap) this._createBitmapMesh();
-    else this._createFontMesh();
+    if (!this.font.isBitmap) this._createFontMesh();
+    else if (this.font.texture != null) this._createBitmapMesh();
 
     for (let threeMesh of this.threeMeshes) {
       this.actor.threeObject.add(threeMesh);
