@@ -38,7 +38,11 @@
           "repeat": "Repeat",
           "mirroredRepeat": "Mirrored repeat"
         },
-        "opacity": "Opacity",
+        "opacity": {
+          "title": "Opacity",
+          "opaque": "Opaque",
+          "transparent": "Transparent"
+        },
         "alphaTest": "Alpha test"
       },
       "animation": {

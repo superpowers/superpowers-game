@@ -12,7 +12,8 @@ let TreeView = require("dnd-tree-view");
 let ui: {
   allSettings?: string[];
   settings?: { [name: string]: any; };
-  opacityCheckbox?: HTMLInputElement;
+  opacitySelect?: HTMLSelectElement;
+  opacitySlider?: HTMLInputElement;
 
   imageSize?: HTMLInputElement;
 
@@ -85,8 +86,10 @@ ui.allSettings.forEach((setting: string) => {
       break;
   }
 });
-ui.opacityCheckbox = <HTMLInputElement>document.querySelector("input.opacity-checkbox");
-ui.opacityCheckbox.addEventListener("click", onCheckOpacity);
+ui.opacitySelect = <HTMLSelectElement>document.querySelector(".opacity-select");
+ui.opacitySelect.addEventListener("change", (event: any) => { editAsset("setProperty", "opacity", event.target.value === "transparent" ? 1 : null); });
+ui.opacitySlider = <HTMLInputElement>document.querySelector(".opacity-slider");
+ui.opacitySlider.addEventListener("input", (event: any) => { editAsset("setProperty", "opacity", parseFloat(event.target.value)); });
 document.querySelector("button.set-grid-size").addEventListener("click", onSetGridSize);
 
 ui.imageSize = <HTMLInputElement>document.querySelector("td.image-size input");
@@ -112,13 +115,6 @@ document.querySelector("input.animation-loop").addEventListener("change", (event
 // Advanced textures
 ui.texturesPane = <HTMLDivElement>document.querySelector(".advanced-textures");
 SupClient.setupCollapsablePane(ui.texturesPane);
-// let texturePaneResizeHandle = new PerfectResize(ui.texturesPane, "bottom");
-
-// ui.texturesToogleButton = <HTMLInputElement>document.querySelector(".advanced-textures button.plus");
-// ui.texturesToogleButton.addEventListener("click", () => {
-//   let advancedTextures = !data.spriteUpdater.spriteAsset.pub.advancedTextures;
-//   editAsset("setProperty", "advancedTextures", advancedTextures);
-// });
 
 ui.texturesTreeView = new TreeView(document.querySelector(".textures-tree-view"));
 ui.texturesTreeView.on("selectionChange", updateSelectedMap);
@@ -364,9 +360,16 @@ export function setupProperty(path: string, value: any) {
   }
 
   if (path === "opacity") {
-    obj[parts[parts.length - 1]].disabled = value == null;
-    ui.opacityCheckbox.checked = value != null;
-    spritesheetArea.spriteRenderer.setOpacity(value != null ? 1 : null);
+    if (value == null) {
+      ui.opacitySelect.value = "opaque";
+      ui.opacitySlider.parentElement.hidden = true;
+      spritesheetArea.spriteRenderer.setOpacity(null);
+    } else {
+      ui.opacitySelect.value = "transparent";
+      ui.opacitySlider.parentElement.hidden = false;
+      ui.opacitySlider.value = value;
+      spritesheetArea.spriteRenderer.setOpacity(1);
+    }
   }
 
   if (path === "alphaTest" && spritesheetArea.spriteRenderer.material != null) {
