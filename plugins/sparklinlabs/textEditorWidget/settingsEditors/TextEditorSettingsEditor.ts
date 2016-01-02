@@ -11,7 +11,7 @@ export default class SpriteSettingsEditor {
     let { tbody } = SupClient.table.createTable(container);
 
     let tabSizeRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("settingsEditors:TextEditor.tabSize"));
-    this.tabSizeField = SupClient.table.appendNumberField(tabSizeRow.valueCell, "", 1);
+    this.tabSizeField = SupClient.table.appendNumberField(tabSizeRow.valueCell, "", { min: 1 });
     this.tabSizeField.addEventListener("change", (event: any) => {
       projectClient.socket.emit("edit:resources", "textEditorSettings", "setProperty", "tabSize", parseInt(event.target.value, 10), (err: string) => { if (err != null) alert(err); });
     });

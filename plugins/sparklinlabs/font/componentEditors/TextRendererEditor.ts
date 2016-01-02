@@ -94,7 +94,7 @@ export default class TextRendererEditor {
       this.editConfig("setProperty", "size", size);
     });
 
-    this.fields["size"] = SupClient.table.appendNumberField(sizeRow.valueCell, config.size, 0);
+    this.fields["size"] = SupClient.table.appendNumberField(sizeRow.valueCell, config.size, { min: 0 });
     this.fields["size"].addEventListener("input", (event: any) => {
       if (event.target.value === "") return;
       this.editConfig("setProperty", "size", parseInt(event.target.value, 10));

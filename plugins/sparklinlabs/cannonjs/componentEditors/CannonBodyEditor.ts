@@ -16,7 +16,7 @@ export default class CannonBodyEditor {
     this.shapeRows = [];
     this.fields = {};
     let massRow = SupClient.table.appendRow(this.tbody, SupClient.i18n.t("componentEditors:CannonBody.mass"));
-    this.fields["mass"] = SupClient.table.appendNumberField(massRow.valueCell, config.mass, 0);
+    this.fields["mass"] = SupClient.table.appendNumberField(massRow.valueCell, config.mass, { min: 0 });
     this.fields["mass"].addEventListener(
       "change", (event) => {
         this.editConfig("setProperty", "mass", parseFloat((<HTMLInputElement>event.target).value));
@@ -62,7 +62,7 @@ export default class CannonBodyEditor {
     // Box
     this.halfSizeRow = SupClient.table.appendRow(this.tbody, SupClient.i18n.t("componentEditors:CannonBody.halfSize"));
     this.shapeRows.push(this.halfSizeRow.row);
-    let halfSizeFields = SupClient.table.appendNumberFields(this.halfSizeRow.valueCell, [ config.halfSize.x, config.halfSize.y, config.halfSize.z ], 0);
+    let halfSizeFields = SupClient.table.appendNumberFields(this.halfSizeRow.valueCell, [ config.halfSize.x, config.halfSize.y, config.halfSize.z ], { min: 0 });
     this.fields["halfSize.x"] = halfSizeFields[0];
     this.fields["halfSize.y"] = halfSizeFields[1];
     this.fields["halfSize.z"] = halfSizeFields[2];
@@ -83,14 +83,14 @@ export default class CannonBodyEditor {
     // Sphere / Cylinder
     this.radiusRow = SupClient.table.appendRow(this.tbody, SupClient.i18n.t("componentEditors:CannonBody.radius"));
     this.shapeRows.push(this.radiusRow.row);
-    this.fields["radius"] = SupClient.table.appendNumberField(this.radiusRow.valueCell, config.radius, 0);
+    this.fields["radius"] = SupClient.table.appendNumberField(this.radiusRow.valueCell, config.radius, { min: 0 });
     this.fields["radius"].addEventListener("change", (event) => {
       this.editConfig("setProperty", "radius", parseFloat((<HTMLInputElement>event.target).value));
     });
 
     this.heightRow = SupClient.table.appendRow(this.tbody, SupClient.i18n.t("componentEditors:CannonBody.height"));
     this.shapeRows.push(this.heightRow.row);
-    this.fields["height"] = SupClient.table.appendNumberField(this.heightRow.valueCell, config.height, 0);
+    this.fields["height"] = SupClient.table.appendNumberField(this.heightRow.valueCell, config.height, { min: 0 });
     this.fields["height"].addEventListener("change", (event) => {
       this.editConfig("setProperty", "height", parseFloat((<HTMLInputElement>event.target).value));
     });

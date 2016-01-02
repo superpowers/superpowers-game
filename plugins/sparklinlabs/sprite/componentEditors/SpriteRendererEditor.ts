@@ -21,7 +21,7 @@ export default class SpriteRendererEditor {
   colorPicker: HTMLInputElement;
   overrideOpacityField: HTMLInputElement;
   transparentField: HTMLSelectElement;
-  opacityField: HTMLInputElement;
+  opacityFields: { sliderField: HTMLInputElement; numberField: HTMLInputElement; };
   materialSelectBox: HTMLSelectElement;
   shaderRow: HTMLTableRowElement;
   shaderTextField: HTMLInputElement;
@@ -143,12 +143,10 @@ export default class SpriteRendererEditor {
       this.editConfig("setProperty", "opacity", opacity);
     });
 
-    this.opacityField = SupClient.table.appendNumberField(<any>opacityParent, config.opacity, 0, 1);
-    this.opacityField.addEventListener("input", (event: any) => {
+    this.opacityFields = SupClient.table.appendSliderField(opacityParent, "", { min: 0, max: 1, step: 0.1, sliderStep: 0.01 });
+    this.opacityFields.numberField.parentElement.addEventListener("input", (event: any) => {
       this.editConfig("setProperty", "opacity", parseFloat(event.target.value));
     });
-    this.opacityField.style.marginTop = "0.2em";
-    this.opacityField.step = "0.1";
     this.updateOpacityField();
 
     let materialRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:SpriteRenderer.material"));
@@ -344,15 +342,23 @@ export default class SpriteRendererEditor {
   private updateOpacityField() {
     this.overrideOpacityField.checked = this.overrideOpacity;
     this.transparentField.disabled = !this.overrideOpacity;
-    this.opacityField.hidden = !this.overrideOpacity || this.opacity == null;
+    this.opacityFields.sliderField.disabled = !this.overrideOpacity;
+    this.opacityFields.numberField.disabled = !this.overrideOpacity;
 
     if (!this.overrideOpacity && this.asset == null) {
       this.transparentField.value = "empty";
-      this.opacityField.value = "";
+      this.opacityFields.numberField.parentElement.hidden = true;
     } else {
       let opacity = this.overrideOpacity ? this.opacity : this.asset.pub.opacity;
-      this.transparentField.value = opacity != null ? "transparent" : "opaque";
-      this.opacityField.value = opacity != null ? opacity.toString() : "";
+      if (opacity != null) {
+        this.transparentField.value = "transparent";
+        this.opacityFields.numberField.parentElement.hidden = false;
+        this.opacityFields.sliderField.value = opacity.toString();
+        this.opacityFields.numberField.value = opacity.toString();
+      } else {
+        this.transparentField.value = "opaque";
+        this.opacityFields.numberField.parentElement.hidden = true;
+      }
     }
   }
 

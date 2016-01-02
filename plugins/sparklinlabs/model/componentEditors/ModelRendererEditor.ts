@@ -106,7 +106,7 @@ export default class ModelRendererEditor {
     opacityParent.style.alignItems = "center";
     opacityRow.valueCell.appendChild(opacityParent);
 
-    this.transparentField = SupClient.table.appendBooleanField(<any>opacityParent, config.opacity != null);
+    this.transparentField = SupClient.table.appendBooleanField(opacityParent, config.opacity != null);
     this.transparentField.style.width = "50%";
     this.transparentField.style.borderRight = "1px solid #ccc";
     this.transparentField.addEventListener("change", (event: any) => {
@@ -115,7 +115,7 @@ export default class ModelRendererEditor {
     });
     this.transparentField.disabled = !config.overrideOpacity;
 
-    this.opacityField = SupClient.table.appendNumberField(<any>opacityParent, config.opacity, 0, 1);
+    this.opacityField = SupClient.table.appendNumberField(opacityParent, config.opacity, { min: 0, max: 1 });
     this.opacityField.addEventListener("input", (event: any) => {
       this.editConfig("setProperty", "opacity", parseFloat(event.target.value));
     });

@@ -15,7 +15,7 @@ export default class P2BodyEditor {
     this.editConfig = editConfig;
 
     let massRow = SupClient.table.appendRow(this.tbody, SupClient.i18n.t("componentEditors:P2Body.mass"));
-    this.fields["mass"] = SupClient.table.appendNumberField(massRow.valueCell, config.mass, 0);
+    this.fields["mass"] = SupClient.table.appendNumberField(massRow.valueCell, config.mass, { min: 0 });
     this.fields["mass"].addEventListener("change", (event: any) => {
       this.editConfig("setProperty", "mass", parseFloat(event.target.value));
     });
@@ -66,7 +66,7 @@ export default class P2BodyEditor {
     // Circle
     this.radiusRow = SupClient.table.appendRow(this.tbody, SupClient.i18n.t("componentEditors:P2Body.radius"));
     this.shapeRows.push(this.radiusRow.row);
-    this.fields["radius"] = SupClient.table.appendNumberField(this.radiusRow.valueCell, config.radius, 0);
+    this.fields["radius"] = SupClient.table.appendNumberField(this.radiusRow.valueCell, config.radius, { min: 0 });
     this.fields["radius"].addEventListener("change", (event: any) => {
       this.editConfig("setProperty", "radius", parseFloat(event.target.value));
     });

@@ -137,7 +137,7 @@ export default class CubicModelRendererEditor {
     });
     this.transparentField.disabled = !config.overrideOpacity;
 
-    this.opacityField = SupClient.table.appendNumberField(<any>opacityParent, config.opacity, 0, 1);
+    this.opacityField = SupClient.table.appendNumberField(<any>opacityParent, config.opacity, { min: 0, max: 1 });
     this.opacityField.addEventListener("input", (event: any) => {
       this.editConfig("setProperty", "opacity", parseFloat(event.target.value));
     });

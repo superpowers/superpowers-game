@@ -24,10 +24,10 @@ export default class CameraEditor {
     this.modeSelectBox = SupClient.table.appendSelectBox(modeRow.valueCell, modeOptions, config.mode);
 
     this.fovRowParts = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:Camera.fieldOfView"));
-    this.fovField = SupClient.table.appendNumberField(this.fovRowParts.valueCell, config.fov, 0.1, 179.9, 0.1);
+    this.fovField = SupClient.table.appendNumberField(this.fovRowParts.valueCell, config.fov, { min: 0.1, max: 179.9, step: 0.1 });
 
     this.orthographicScaleRowParts = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:Camera.orthographicScale"));
-    this.orthographicScaleField = SupClient.table.appendNumberField(this.orthographicScaleRowParts.valueCell, config.orthographicScale, 0.1, null, 0.1);
+    this.orthographicScaleField = SupClient.table.appendNumberField(this.orthographicScaleRowParts.valueCell, config.orthographicScale, { min: 0.1, step: 0.1 });
 
     if (config.mode === "perspective") this.orthographicScaleRowParts.row.style.display = "none";
     else this.fovRowParts.row.style.display = "none";
@@ -43,17 +43,19 @@ export default class CameraEditor {
     layersField.placeholder = "(not yet customizable)";
 
     let nearClippingPlaneRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:Camera.nearPlane"));
-    this.nearClippingPlaneField = SupClient.table.appendNumberField(nearClippingPlaneRow.valueCell, config.nearClippingPlane, 0.1);
+    this.nearClippingPlaneField = SupClient.table.appendNumberField(nearClippingPlaneRow.valueCell, config.nearClippingPlane, { min: 0.1 });
 
     let farClippingPlaneRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:Camera.farPlane"));
-    this.farClippingPlaneField = SupClient.table.appendNumberField(farClippingPlaneRow.valueCell, config.farClippingPlane, 0.1);
+    this.farClippingPlaneField = SupClient.table.appendNumberField(farClippingPlaneRow.valueCell, config.farClippingPlane, { min: 0.1 });
 
     SupClient.table.appendHeader(tbody, SupClient.i18n.t("componentEditors:Camera.viewport.title"));
     let viewportXRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:Camera.viewport.position"));
-    [ this.viewportFields.x, this.viewportFields.y ] = SupClient.table.appendNumberFields(viewportXRow.valueCell, [ config.viewport.x, config.viewport.y ], 0, 1, 0.1);
+    [ this.viewportFields.x, this.viewportFields.y ] = SupClient.table.appendNumberFields(viewportXRow.valueCell, [ config.viewport.x, config.viewport.y ]
+    , { min: 0, max: 1, step: 0.1 });
 
     let widthRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:Camera.viewport.size"));
-    [ this.viewportFields.width, this.viewportFields.height ] = SupClient.table.appendNumberFields(widthRow.valueCell, [ config.viewport.width, config.viewport.height ], 0, 1, 0.1);
+    [ this.viewportFields.width, this.viewportFields.height ] = SupClient.table.appendNumberFields(widthRow.valueCell, [ config.viewport.width, config.viewport.height ]
+    , { min: 0, max: 1, step: 0.1 });
 
     this.modeSelectBox.addEventListener("change", this.onChangeMode);
     this.fovField.addEventListener("input", this.onChangeFOV);
