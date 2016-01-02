@@ -77,8 +77,8 @@ html
             select.opacity-select
               option(value="opaque")= t("spriteEditor:sidebar.settings.rendering.opacity.opaque")
               option(value="transparent")= t("spriteEditor:sidebar.settings.rendering.opacity.transparent")
-            .inputs
-              input(type="range",min="0",max="1",step="0.01").opacity-slider
+            .inputs(hidden)
+              input(type="range",min="0",max="1",step="0.01",style="flex: 2;").opacity-slider
               input(type="number",min="0",max="1",step="0.1").property-opacity
         tr
           th= t("spriteEditor:sidebar.settings.rendering.alphaTest")
