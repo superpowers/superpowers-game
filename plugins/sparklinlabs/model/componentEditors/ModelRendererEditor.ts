@@ -1,4 +1,4 @@
-import { ModelRendererConfigPub } from "../data/ModelRendererConfig";
+import { ModelRendererConfigPub } from "../componentConfigs/ModelRendererConfig";
 import ModelAsset from "../data/ModelAsset";
 
 export default class ModelRendererEditor {

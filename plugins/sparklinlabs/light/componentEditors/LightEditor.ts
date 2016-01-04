@@ -1,4 +1,4 @@
-import { LightConfigPub } from "../data/LightConfig";
+import { LightConfigPub } from "../componentConfigs/LightConfig";
 
 export default class LightEditor {
   tbody: HTMLTableSectionElement;

@@ -1,5 +1,5 @@
 import Light from "./Light";
-import { LightConfigPub } from "../data/LightConfig";
+import { LightConfigPub } from "../componentConfigs/LightConfig";
 import LightSettingsResource from "../data/LightSettingsResource";
 let THREE = SupEngine.THREE;
 

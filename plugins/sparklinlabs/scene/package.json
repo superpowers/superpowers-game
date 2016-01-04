@@ -8,6 +8,6 @@
     "url": "https://github.com/superpowers/superpowers-game.git"
   },
   "scripts": {
-    "build": "gulp --gulpfile=../../../../../scripts/pluginGulpfile.js --cwd=."
+    "build": "gulp --gulpfile=../../../../../scripts/pluginGulpfile.js --cwd=. && gulp --gulpfile=sceneGulpfile.js"
   }
 }

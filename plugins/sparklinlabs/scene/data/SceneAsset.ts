@@ -3,8 +3,12 @@ let THREE: typeof SupEngine.THREE;
 // NOTE: It is important that we require THREE through SupEngine
 // so that we inherit any settings, like the global Euler order
 // (or, alternatively, we could duplicate those settings...)
-if ((<any>global).window == null) THREE = serverRequire("../../../../SupEngine").THREE;
-else if ((<any>window).SupEngine != null) THREE = SupEngine.THREE;
+if ((<any>global).window == null) {
+  THREE = serverRequire("../../../../SupEngine").THREE;
+
+  serverRequire("../componentConfigs/BaseComponentConfig.js");
+  SupCore.system.requireForAllPlugins("componentConfigs/index.js");
+} else if ((<any>window).SupEngine != null) THREE = SupEngine.THREE;
 
 import * as path from "path";
 import * as fs from "fs";
@@ -377,7 +381,7 @@ export default class SceneAsset extends SupCore.Data.Base.Asset {
   server_addComponent(client: any, nodeId: string, componentType: string, index: number,
   callback: (err: string, nodeId: string, component: Component, index: number) => any) {
 
-    let componentConfigClass = this.server.system.data.componentConfigClasses[componentType];
+    let componentConfigClass = this.server.system.getPlugins<SupCore.Data.ComponentConfigClass>("componentConfigs")[componentType];
     if (componentConfigClass == null) { callback("Invalid component type", null, null, null); return; }
 
     let node = this.nodes.byId[nodeId];

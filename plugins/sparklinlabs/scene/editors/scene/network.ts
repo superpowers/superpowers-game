@@ -65,6 +65,14 @@ function loadPlugins(callback: (err: Error, locales: SupClient.i18n.File[]) => v
         },
 
         (cb) => {
+          let componentConfigsScript = document.createElement("script");
+          componentConfigsScript.src = `/systems/${SupCore.system.name}/plugins/${pluginName}/componentConfigs.js`;
+          componentConfigsScript.addEventListener("load", () => { cb(null, null); } );
+          componentConfigsScript.addEventListener("error", () => { cb(null, null); } );
+          document.body.appendChild(componentConfigsScript);
+        },
+
+        (cb) => {
           SupClient.activePluginPath = `/systems/${SupCore.system.name}/plugins/${pluginName}`;
           let componentEditorsScript = document.createElement("script");
           componentEditorsScript.src = `${SupClient.activePluginPath}/componentEditors.js`;

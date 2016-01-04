@@ -1,4 +1,4 @@
-import { CubicModelRendererConfigPub } from "../data/CubicModelRendererConfig";
+import { CubicModelRendererConfigPub } from "../componentConfigs/CubicModelRendererConfig";
 import CubicModelAsset from "../data/CubicModelAsset";
 
 export default class CubicModelRendererEditor {

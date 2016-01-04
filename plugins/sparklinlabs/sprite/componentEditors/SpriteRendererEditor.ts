@@ -1,4 +1,4 @@
-import { SpriteRendererConfigPub } from "../data/SpriteRendererConfig";
+import { SpriteRendererConfigPub } from "../componentConfigs/SpriteRendererConfig";
 import SpriteAsset from "../data/SpriteAsset";
 
 export default class SpriteRendererEditor {

@@ -23,7 +23,7 @@ export default class SceneComponents extends SupCore.Data.Base.ListById {
     let system = (this.sceneAsset.server != null) ? this.sceneAsset.server.system : SupCore.system;
 
     for (let item of this.pub) {
-      let componentConfigClass = system.data.componentConfigClasses[item.type];
+      let componentConfigClass = system.getPlugins<SupCore.Data.ComponentConfigClass>("componentConfigs")[item.type];
 
       if (componentConfigClass == null) {
         if (sceneAsset != null) {
@@ -43,7 +43,7 @@ export default class SceneComponents extends SupCore.Data.Base.ListById {
     super.add(component, index, (err, actualIndex) => {
       if (err != null) { callback(err, null); return; }
 
-      let componentConfigClass = this.sceneAsset.server.system.data.componentConfigClasses[component.type];
+      let componentConfigClass = this.sceneAsset.server.system.getPlugins<SupCore.Data.ComponentConfigClass>("componentConfigs")[component.type];
       this.configsById[component.id] = new componentConfigClass(component.config, this.sceneAsset);
 
       callback(null, actualIndex);
@@ -53,7 +53,7 @@ export default class SceneComponents extends SupCore.Data.Base.ListById {
   client_add(component: any, index: number) {
     super.client_add(component, index);
 
-    let componentConfigClass = SupCore.system.data.componentConfigClasses[component.type];
+    let componentConfigClass = SupCore.system.getPlugins<SupCore.Data.ComponentConfigClass>("componentConfigs")[component.type];
     this.configsById[component.id] = new componentConfigClass(component.config);
   }
 
