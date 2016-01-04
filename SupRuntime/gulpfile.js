@@ -1,5 +1,13 @@
 var gulp = require("gulp");
 
+// Jade
+var jade = require("gulp-jade");
+gulp.task("jade", function() { return gulp.src("./src/index.jade").pipe(jade()).pipe(gulp.dest("../public")); });
+
+// Stylus
+var stylus = require("gulp-stylus");
+gulp.task("stylus", function() { return gulp.src("./src/index.styl").pipe(stylus({ errors: true, compress: true })).pipe(gulp.dest("../public")); });
+
 // TypeScript
 var ts = require("gulp-typescript");
 var tsProject = ts.createProject("src/tsconfig.json");
@@ -19,4 +27,4 @@ gulp.task("browserify", [ "typescript" ], function() {
 });
 
 // All
-gulp.task("default", [ "typescript", "browserify" ]);
+gulp.task("default", [ "jade", "stylus", "typescript", "browserify" ]);

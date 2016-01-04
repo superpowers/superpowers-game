@@ -10,17 +10,17 @@ declare namespace SupRuntime {
     start?(player: Player, callback: Function): void;
     lateStart?(player: Player, callback: Function): void;
   }
-  let plugins: { [name: string]: RuntimePlugin };
-  function registerPlugin(name: string, plugin: RuntimePlugin): void;
 
   interface RuntimeResourcePlugin {
     loadResource(player: Player, resourceName: string, callback: (err: Error, resource?: any) => any): void;
   }
-  let resourcePlugins: { [name: string]: RuntimeResourcePlugin };
-  function registerResource(name: string, plugin: RuntimeResourcePlugin): void;
+
+  export let plugins: { [name: string]: RuntimePlugin };
+  export let resourcePlugins: { [name: string]: RuntimeResourcePlugin };
+  export function registerPlugin(name: string, plugin: RuntimePlugin): void;
+  export function registerResource(name: string, plugin: RuntimeResourcePlugin): void;
 
   class Player {
-
     static updateInterval: number;
     static maxAccumulatedTime: number;
 
