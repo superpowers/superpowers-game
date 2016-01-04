@@ -35,11 +35,11 @@ let globalDefs = "";
 if ((<any>global).window == null) {
   let serverRequire = require;
   ts = serverRequire("typescript");
-
   compileTypeScript = serverRequire("../runtime/compileTypeScript").default;
 
-  let actorComponentAccessors: string[] = [];
+  SupCore.system.requireForAllPlugins("api/index.js");
   let plugins = SupCore.system.getPlugins<SupCore.TypeScriptAPIPlugin>("typescriptAPI");
+  let actorComponentAccessors: string[] = [];
   for (let pluginName in plugins) {
     let plugin = plugins[pluginName];
     if (plugin.defs != null) globalDefs += plugin.defs;
