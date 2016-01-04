@@ -4,8 +4,8 @@
   "version": "1.0.0",
   "license": "ISC",
   "repository": {
-    "type": "hg",
-    "url": "https://bitbucket.org/superpowers/sup-game-sparklinlabs-plugins"
+    "type": "git",
+    "url": "https://github.com/superpowers/superpowers-game.git"
   },
   "scripts": {
     "build": "gulp --gulpfile=../../../../../scripts/pluginGulpfile.js --cwd=."

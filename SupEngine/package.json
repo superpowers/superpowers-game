@@ -5,8 +5,8 @@
   "license": "ISC",
   "main": "src/index.js",
   "repository": {
-    "type": "hg",
-    "url": "https://bitbucket.org/superpowers/sup-game-system"
+    "type": "git",
+    "url": "https://github.com/superpowers/superpowers-game.git"
   },
   "dependencies": {
     "three": "0.73.0"
