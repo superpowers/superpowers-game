@@ -13,15 +13,20 @@ export default class SpriteRendererEditor {
   spriteTextField: HTMLInputElement;
   spriteButtonElt: HTMLButtonElement;
   animationSelectBox: HTMLSelectElement;
+
   horizontalFlipField: HTMLInputElement;
   verticalFlipField: HTMLInputElement;
+
   castShadowField: HTMLInputElement;
   receiveShadowField: HTMLInputElement;
+
   colorField: HTMLInputElement;
   colorPicker: HTMLInputElement;
+
   overrideOpacityField: HTMLInputElement;
   transparentField: HTMLSelectElement;
   opacityFields: { sliderField: HTMLInputElement; numberField: HTMLInputElement; };
+
   materialSelectBox: HTMLSelectElement;
   shaderRow: HTMLTableRowElement;
   shaderTextField: HTMLInputElement;
