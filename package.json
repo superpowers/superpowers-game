@@ -1,0 +1,13 @@
+{
+  "name": "superpowers-game",
+  "description": "Game system for Superpowers, the HTML5 2D+3D game maker",
+  "version": "1.0.0",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/superpowers/superpowers-game.git"
+  },
+  "superpowers": {
+    "publishedPluginBundles": ["components", "runtime"]
+  }
+}

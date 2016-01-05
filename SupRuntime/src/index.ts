@@ -108,33 +108,13 @@ supFetch("plugins.json", "json", (err: Error, pluginsInfo: SupCore.PluginsInfo) 
   }
 
   async.each(pluginsInfo.list, (pluginName, pluginCallback) => {
-    async.series([
-
-      (cb) => {
-        let apiScript = document.createElement("script");
-        apiScript.src = `plugins/${pluginName}/api.js`;
-        apiScript.addEventListener("load", () => cb(null, null));
-        apiScript.addEventListener("error", (err) => cb(null, null));
-        document.body.appendChild(apiScript);
-      },
-
-      (cb) => {
-        let componentsScript = document.createElement("script");
-        componentsScript.src = `plugins/${pluginName}/components.js`;
-        componentsScript.addEventListener("load", () => cb(null, null));
-        componentsScript.addEventListener("error", () => cb(null, null));
-        document.body.appendChild(componentsScript);
-      },
-
-      (cb) => {
-        let runtimeScript = document.createElement("script");
-        runtimeScript.src = `plugins/${pluginName}/runtime.js`;
-        runtimeScript.addEventListener("load", () => cb(null, null));
-        runtimeScript.addEventListener("error", () => cb(null, null));
-        document.body.appendChild(runtimeScript);
-      }
-
-    ], pluginCallback);
+    async.each(pluginsInfo.publishedBundles, (bundle, cb) => {
+      let script = document.createElement("script");
+      script.src = `plugins/${pluginName}/bundles/${bundle}.js`;
+      script.addEventListener("load", () => cb(null));
+      script.addEventListener("error", (err) => cb(null));
+      document.body.appendChild(script);
+    }, pluginCallback);
   }, (err) => {
     if (err != null) console.log(err);
     // Load game

@@ -5,7 +5,7 @@ var tasks = [ "stylus", "copy-cm-modes" ];
 var stylus = require("gulp-stylus");
 var cssimport = require("gulp-cssimport");
 gulp.task("stylus", function() {
-  return gulp.src("./widget/**/index.styl").pipe(stylus({ errors: true, compress: true })).pipe(cssimport()).pipe(gulp.dest("./public/widget"));
+  return gulp.src("./widget/widget.styl").pipe(stylus({ errors: true, compress: true })).pipe(cssimport()).pipe(gulp.dest("./public/"));
 });
 
 // Browserify
@@ -21,7 +21,8 @@ function makeBrowserify(source, destination, output) {
   tasks.push(output + "-browserify");
 }
 
-makeBrowserify("./widget/index.js", "./public/widget", "index");
+makeBrowserify("./widget/widget.js", "./public/", "widget");
+
 
 // Copy CodeMirror modes
 gulp.task("copy-cm-modes", function() {

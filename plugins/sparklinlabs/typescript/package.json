@@ -15,5 +15,8 @@
     "convert-source-map": "^1.1.1",
     "highlight.js": "^9.0.0",
     "operational-transform": "^0.2.3"
+  },
+  "superpowers": {
+    "publishedPluginBundles": ["api"]
   }
 }

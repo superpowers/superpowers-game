@@ -320,7 +320,7 @@ function loadPlugins() {
       if (pluginName === "sparklinlabs/typescript") { pluginCallback(); return; }
 
       let apiScript = document.createElement("script");
-      apiScript.src = `/systems/${SupCore.system.name}/plugins/${pluginName}/api.js`;
+      apiScript.src = `/systems/${SupCore.system.name}/plugins/${pluginName}/bundles/api.js`;
       apiScript.addEventListener("load", () => { pluginCallback(); } );
       apiScript.addEventListener("error", () => { pluginCallback(); } );
       document.body.appendChild(apiScript);

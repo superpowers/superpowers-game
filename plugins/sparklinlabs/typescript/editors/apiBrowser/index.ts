@@ -46,7 +46,7 @@ function onWelcome(clientId: number, config: { buildPort: number; systemName: st
       async.series([
         (cb) => {
           let apiScript = document.createElement("script");
-          apiScript.src = `/systems/${config.systemName}/plugins/${pluginName}/api.js`;
+          apiScript.src = `/systems/${config.systemName}/plugins/${pluginName}/bundles/api.js`;
           apiScript.addEventListener("load", (event: any) => { cb(null, null); } );
           apiScript.addEventListener("error", (event: any) => { cb(null, null); } );
           document.body.appendChild(apiScript);
