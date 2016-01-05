@@ -9,7 +9,7 @@
     "message": "Message",
     "file": "File"
   },
-  
+
   "sidebar": {
     "settings": {
       "model": "Model",
@@ -27,7 +27,11 @@
       },
       "showSkeleton": "Show skeleton",
       "unitRatio": "Unit ratio",
-      "opacity": "Opacity"
+      "opacity": {
+        "title": "Opacity",
+        "opaque": "Opaque",
+        "transparent": "Transparent"
+        }
     },
     "animations": {
       "title": "Animations",

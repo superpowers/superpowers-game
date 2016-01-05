@@ -12,8 +12,8 @@ let ui: {
   filteringSelect?: HTMLSelectElement;
   wrappingSelect?: HTMLSelectElement;
   unitRatioInput?: HTMLInputElement;
-  opacityCheckbox?: HTMLInputElement;
-  opacityInput?: HTMLInputElement;
+  opacitySelect?: HTMLSelectElement;
+  opacitySlider?: HTMLInputElement;
 
   animationsTreeView?: any;
   selectedAnimationId?: string;
@@ -73,11 +73,11 @@ ui.unitRatioInput = <HTMLInputElement>document.querySelector("input.property-uni
 ui.unitRatioInput.addEventListener("change", onChangeUnitRatio);
 
 // Opacity
-ui.opacityCheckbox = <HTMLInputElement>document.querySelector("input.opacity-checkbox");
-ui.opacityCheckbox.addEventListener("click", onCheckOpacity);
+ui.opacitySelect = <HTMLSelectElement>document.querySelector(".opacity-select");
+ui.opacitySelect.addEventListener("change", onChangeOpacityType);
 
-ui.opacityInput = <HTMLInputElement>document.querySelector("input.property-opacity");
-ui.opacityInput.addEventListener("input", onChangeOpacity);
+ui.opacitySlider = <HTMLInputElement>document.querySelector(".opacity-slider");
+ui.opacitySlider.addEventListener("input", onChangeOpacity);
 
 // Animations
 ui.animationsTreeView = new TreeView(document.querySelector(".animations-tree-view"), { dropCallback: onAnimationDrop });
@@ -252,7 +252,7 @@ function onChangeFiltering(event: any) { editAsset("setProperty", "filtering", e
 function onChangeWrapping(event: any) { editAsset("setProperty", "wrapping", event.target.value); }
 function onShowSkeletonChange(event: Event) { data.modelUpdater.modelRenderer.setShowSkeleton((<HTMLInputElement>event.target).checked); }
 function onChangeUnitRatio(event: any) { editAsset("setProperty", "unitRatio", parseFloat(event.target.value)); }
-function onCheckOpacity(event: any) { editAsset("setProperty", "opacity", (event.target.checked) ? 1 : null); }
+function onChangeOpacityType(event: any) { editAsset("setProperty", "opacity", event.target.value === "transparent" ? 1 : null); }
 function onChangeOpacity(event: any) { editAsset("setProperty", "opacity", parseFloat(event.target.value)); }
 
 function onNewAnimationClick() {
@@ -460,7 +460,14 @@ export function setupMap(mapName: string) {
 }
 
 export function setupOpacity(opacity: number) {
-  ui.opacityInput.value = opacity != null ? opacity.toString() : "";
-  ui.opacityInput.disabled = opacity == null;
-  ui.opacityCheckbox.checked = opacity != null;
+  if (opacity == null) {
+      ui.opacitySelect.value = "opaque";
+      ui.opacitySlider.parentElement.hidden = true;
+      data.modelUpdater.modelRenderer.setOpacity(1);
+  } else {
+      ui.opacitySelect.value = "transparent";
+      ui.opacitySlider.parentElement.hidden = false;
+      ui.opacitySlider.value = opacity.toString();
+      data.modelUpdater.modelRenderer.setOpacity(opacity);
+  }
 }
