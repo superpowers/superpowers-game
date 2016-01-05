@@ -1,4 +1,4 @@
-/// <reference path="../../typescript/api/TypeScriptAPIPlugin.d.ts" />
+/// <reference path="../../typescript/typescriptAPI/TypeScriptAPIPlugin.d.ts" />
 
 import * as convert from "convert-source-map";
 // No definition file for combine-source-map module

@@ -1,0 +1,37 @@
+interface LightOptions {
+  type: Sup.Light.Type;
+  color: Sup.Color;
+  intensity?: number;
+  distance?: number;
+  angle?: number;
+  target?: {
+    x: number;
+    y: number;
+    z: number;
+  };
+  castShadow?: boolean;
+}
+
+declare namespace Sup {
+  class Light extends Sup.ActorComponent {
+    constructor(actor: Actor, options: LightOptions);
+
+    getType(): Sup.Light.Type;
+    setColor(color: Color): Light;
+    getColor(): Color;
+    setIntensity(intensity: number): Light;
+    getIntensity(): number;
+    setDistance(distance: number): Light;
+    getDistance(): number;
+    setAngle(angle: number): Light;
+    getAngle(): number;
+    setTarget(target: Sup.Math.XYZ): Light;
+    getTarget(): Math.Vector3;
+    setCastShadow(castShadow: boolean): Light;
+    getCastShadow(): boolean;
+  }
+
+  namespace Light {
+    enum Type { Ambient, Point, Spot, Directional }
+  }
+}

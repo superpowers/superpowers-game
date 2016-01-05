@@ -1,0 +1,798 @@
+namespace Sup {
+
+  let degToRad = window.Math.PI / 180;
+  let radToDeg = 180 / window.Math.PI;
+
+  let tmpVector3 = new SupEngine.THREE.Vector3();
+
+  export namespace Math {
+
+    export function clamp(v: number, min: number, max: number) { return window.Math.max(min, window.Math.min(max, v)); }
+
+    export function lerp(a: number, b: number, v: number) { return a + (b - a) * v; }
+
+    export function lerpAngle(a: number, b: number, v: number) {
+      a = wrapAngle(a);
+      b = wrapAngle(b);
+      return a + wrapAngle(b - a) * v;
+    }
+
+    export function wrapAngle(a: number) {
+      a %= (window.Math.PI * 2);
+      if (a < -window.Math.PI) a += window.Math.PI * 2;
+      else if (a > window.Math.PI) a -= window.Math.PI * 2;
+      return a;
+    }
+
+    export namespace Random {
+      export function integer(min: number, max: number) { return window.Math.floor(window.Math.random() * (max + 1 - min)) + min; }
+      export function float(min: number, max: number) { return window.Math.random() * (max - min) + min; }
+      export function sample<T>(collection: T[]) { return collection[integer(0, collection.length - 1)]; }
+    }
+
+    export function toRadians(degrees: number) { return degrees * degToRad; }
+    export function toDegrees(radians: number) { return radians * radToDeg; }
+
+    export interface XY { x: number; y: number; }
+
+    export class Vector2 {
+      static right() { return new Vector2(1, 0); }
+      static left()  { return new Vector2(-1, 0); }
+      static up()    { return new Vector2(0, 1); }
+      static down()  { return new Vector2(0, -1); }
+
+      x: number;
+      y: number;
+
+      constructor(x?: number, y?: number) {
+        if (x == null) x = 0;
+        this.set(x, y);
+      }
+
+      toString() { return `{ x: ${this.x}, y: ${this.y} }`; }
+
+      set(x: number, y?: number) {
+        this.x = x;
+        this.y = (y != null) ? y : x;
+        return this;
+      }
+      copy(v: XY) { this.x = v.x; this.y = v.y; return this; }
+      clone() { return new Vector2(this.x, this.y); }
+
+      add(x: number|XY, y?: number) {
+        if (y == null) {
+          let v = <XY>x;
+          this.x += v.x; this.y += v.y;
+        } else {
+          this.x += <number>x; this.y += y;
+        }
+        return this;
+      }
+      subtract(x: number|XY, y?: number) {
+        if (y == null) {
+          let v = <XY>x;
+          this.x -= v.x; this.y -= v.y;
+        } else {
+          this.x -= <number>x; this.y -= y;
+        }
+        return this;
+      }
+      multiplyScalar(m: number) { this.x *= m; this.y *= m; return this; }
+
+      dot(v: XY) { return this.x * v.x + this.y * v.y; }
+
+      normalize() {
+        let length = this.length();
+        this.x /= length; this.y /= length;
+        return this;
+      }
+      negate() {
+        this.x *= -1; this.y *= -1;
+        return this;
+      }
+
+      lerp(v: XY, t: number) {
+        this.x = this.x * (1 - t) + v.x * t;
+        this.y = this.y * (1 - t) + v.y * t;
+        return this;
+      }
+      rotate(angle: number) {
+        let length = this.length();
+        this.setFromAngle(this.angle() + angle).multiplyScalar(length);
+        return this;
+      }
+      length() { return window.Math.sqrt(this.x * this.x + this.y * this.y); }
+      distanceTo(v: XY) {
+        let x = this.x - v.x;
+        let y = this.y - v.y;
+        return window.Math.sqrt(x*x + y*y);
+      }
+      angleTo(v: XY) { return window.Math.atan2(v.y - this.y, v.x - this.x); }
+      unproject(camera: Sup.Camera) {
+        tmpVector3.set(this.x, this.y, 0);
+        tmpVector3.unproject(camera.__inner.threeCamera);
+        this.set(tmpVector3.x, tmpVector3.y);
+        return this;
+      }
+
+      setFromAngle(angle: number) {
+        this.x = window.Math.cos(angle);
+        this.y = window.Math.sin(angle);
+        return this;
+      }
+      angle() { return window.Math.atan2(this.y, this.x); }
+
+      toVector3() { return new Vector3(this.x, this.y, 0); }
+    }
+
+    export interface XYZ { x: number; y: number; z: number; }
+
+    export class Vector3 {
+      static forward() { return new Vector3( 0,  0,  1); }
+      static back()    { return new Vector3( 0,  0, -1); }
+      static right()   { return new Vector3( 1,  0,  0); }
+      static left()    { return new Vector3(-1,  0,  0); }
+      static up()      { return new Vector3( 0,  1,  0); }
+      static down()    { return new Vector3( 0, -1,  0); }
+
+      x: number;
+      y: number;
+      z: number;
+
+      constructor(x?: number, y?: number, z?: number) {
+        if (x == null) x = 0;
+        this.set(x, y, z);
+      }
+
+      toString() { return `{ x: ${this.x}, y: ${this.y}, z: ${this.z} }`; }
+
+      set(x: number, y?: number, z?: number) {
+        this.x = x;
+        this.y = (y != null) ? y : x;
+        this.z = (z != null) ? z : x;
+        return this;
+      }
+      copy(v: XYZ) { this.x = v.x; this.y = v.y; this.z = v.z; return this; }
+      clone() { return new Vector3(this.x, this.y, this.z); }
+
+      add(x: number|XYZ, y?: number, z?: number) {
+        if (y == null && z == null) {
+          let v = <XYZ>x;
+          this.x += v.x; this.y += v.y; this.z += v.z;
+        } else {
+          this.x += <number>x; this.y += y; this.z += z;
+        }
+        return this;
+      }
+      subtract(x: number|XYZ, y?: number, z?: number) {
+        if (y == null && z == null) {
+          let v = <XYZ>x;
+          this.x -= v.x; this.y -= v.y; this.z -= v.z;
+        } else {
+          this.x -= <number>x; this.y -= y; this.z -= z;
+        }
+        return this;
+      }
+      multiplyScalar(m: number) { this.x *= m; this.y *= m; this.z *= m; return this; }
+
+      cross(v: XYZ) {
+        let x = this.x;
+        let y = this.y;
+        let z = this.z;
+
+        this.x = y * v.z - z * v.y;
+        this.y = z * v.x - x * v.z;
+        this.z = x * v.y - y * v.x;
+        return this;
+      }
+
+      dot(v: XYZ) { return this.x * v.x + this.y * v.y + this.z * v.z; }
+
+      normalize() {
+        let length = this.length();
+        this.x /= length; this.y /= length; this.z /= length;
+        return this;
+      }
+      negate() {
+        this.x *= -1; this.y *= -1; this.z *= -1;
+        return this;
+      }
+
+      lerp(v: XYZ, t: number) {
+        this.x = this.x * (1 - t) + v.x * t;
+        this.y = this.y * (1 - t) + v.y * t;
+        this.z = this.z * (1 - t) + v.z * t;
+        return this;
+      }
+
+      rotate(q: Quaternion) {
+        let qx = q.x;
+        let qy = q.y;
+        let qz = q.z;
+        let qw = q.w;
+
+        let ix =  qw * this.x + qy * this.z - qz * this.y;
+        let iy =  qw * this.y + qz * this.x - qx * this.z;
+        let iz =  qw * this.z + qx * this.y - qy * this.x;
+        let iw = - qx * this.x - qy * this.y - qz * this.z;
+
+        this.x = ix * qw + iw * - qx + iy * - qz - iz * - qy;
+        this.y = iy * qw + iw * - qy + iz * - qx - ix * - qz;
+        this.z = iz * qw + iw * - qz + ix * - qy - iy * - qx;
+        return this;
+      }
+
+      length() { return window.Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z); }
+      distanceTo(v: XYZ) {
+        let x = this.x - v.x;
+        let y = this.y - v.y;
+        let z = this.z - v.z;
+        return window.Math.sqrt(x*x + y*y + z*z);
+      }
+      angleTo(v: XYZ) {
+        let vLength = window.Math.sqrt(v.x*v.x + v.y*v.y + v.z*v.z);
+        let theta = this.dot(v) / (this.length() * vLength);
+		    return window.Math.acos(Math.clamp(theta, - 1, 1));
+      }
+
+      unproject(camera: Sup.Camera) {
+        tmpVector3.set(this.x, this.y, this.z);
+        tmpVector3.unproject(camera.__inner.threeCamera);
+        this.set(tmpVector3.x, tmpVector3.y, tmpVector3.z);
+        return this;
+      }
+
+      toVector2() { return new Vector2(this.x, this.y); }
+    }
+
+    export class Quaternion {
+      x: number;
+      y: number;
+      z: number;
+      w: number;
+
+      constructor(x: number, y: number, z: number, w: number) {
+        this.x = (x) ? x : 0;
+        this.y = (y) ? y : 0;
+        this.z = (z) ? z : 0;
+        this.w = (w) ? w : 1;
+      }
+
+      toString() { return `{ x: ${this.x}, y: ${this.y}, z: ${this.z}, w: ${this.w} }`; }
+
+      set(x: number, y: number, z: number, w: number) { this.x = x; this.y = y; this.z = z; this.w = w; return this; }
+      copy(q: Quaternion) { this.x = q.x; this.y = q.y; this.z = q.z; this.w = q.w; return this; }
+      clone() { return new Quaternion(this.x, this.y, this.z, this.w); }
+
+      setFromAxisAngle(axis: XYZ, angle: number) {
+        let s = window.Math.sin(angle / 2);
+
+    		this.x = axis.x * s;
+    		this.y = axis.y * s;
+    		this.z = axis.z * s;
+    		this.w = window.Math.cos(angle / 2);
+        return this;
+      }
+
+      setFromYawPitchRoll(yaw: number, pitch: number, roll: number) {
+        let c1 = window.Math.cos(pitch / 2);
+        let c2 = window.Math.cos(yaw / 2);
+        let c3 = window.Math.cos(roll / 2);
+        let s1 = window.Math.sin(pitch / 2);
+        let s2 = window.Math.sin(yaw / 2);
+        let s3 = window.Math.sin(roll / 2);
+
+        this.x = s1 * c2 * c3 + c1 * s2 * s3;
+        this.y = c1 * s2 * c3 - s1 * c2 * s3;
+        this.z = c1 * c2 * s3 - s1 * s2 * c3;
+        this.w = c1 * c2 * c3 + s1 * s2 * s3;
+        return this;
+      }
+
+      multiplyQuaternions(a: Quaternion, b: Quaternion) {
+        let qax = a.x;
+        let qay = a.y;
+        let qaz = a.z;
+        let qaw = a.w;
+
+        let qbx = b.x;
+        let qby = b.y;
+        let qbz = b.z;
+        let qbw = b.w;
+
+        this.x = qax * qbw + qaw * qbx + qay * qbz - qaz * qby;
+        this.y = qay * qbw + qaw * qby + qaz * qbx - qax * qbz;
+        this.z = qaz * qbw + qaw * qbz + qax * qby - qay * qbx;
+        this.w = qaw * qbw - qax * qbx - qay * qby - qaz * qbz;
+
+        return this;
+      }
+
+      multiply(q: Quaternion) { return this.multiplyQuaternions(this, q); }
+
+      slerp(q: Quaternion, t: number) {
+        // Adapted from Three.js
+        if (t === 0) return this;
+        if (t === 1) return this.copy(q);
+
+        let x = this.x;
+        let y = this.y;
+        let z = this.z;
+        let w = this.w;
+
+        let cosHalfTheta = w * q.w + x * q.x + y * q.y + z * q.z;
+
+        if (cosHalfTheta < 0) {
+          this.w = -q.w;
+          this.x = -q.x;
+          this.y = -q.y;
+          this.z = -q.z;
+          cosHalfTheta = -cosHalfTheta;
+        } else {
+          this.copy(q);
+        }
+
+        if (cosHalfTheta >= 1.0) {
+          this.w = w;
+          this.x = x;
+          this.y = y;
+          this.z = z;
+          return this;
+        }
+
+        let halfTheta = window.Math.acos(cosHalfTheta);
+        let sinHalfTheta = window.Math.sqrt(1.0 - cosHalfTheta * cosHalfTheta);
+
+        if (window.Math.abs(sinHalfTheta) < 0.001) {
+          this.w = 0.5 * (w + this.w);
+          this.x = 0.5 * (x + this.x);
+          this.y = 0.5 * (y + this.y);
+          this.z = 0.5 * (z + this.z);
+          return this;
+        }
+
+        let ratioA = window.Math.sin((1 - t) * halfTheta) / sinHalfTheta,
+        ratioB = window.Math.sin(t * halfTheta) / sinHalfTheta;
+
+        this.w = (w * ratioA + this.w * ratioB);
+        this.x = (x * ratioA + this.x * ratioB);
+        this.y = (y * ratioA + this.y * ratioB);
+        this.z = (z * ratioA + this.z * ratioB);
+        return this;
+      }
+    }
+
+    export class Plane {
+      _normal = new Vector3();
+      _distance: number;
+
+      constructor(normal?: XYZ, distance?: number) {
+        this.setFromDistance(normal, distance);
+      }
+      setFromDistance(normal: XYZ, distance: number) {
+        if (normal != null) this._normal.copy(normal).normalize();
+        if (distance != null) this._distance = distance;
+        return this;
+      }
+      setFromPoint(normal: XYZ, point: XYZ) {
+        this._normal.copy(normal).normalize();
+        this._distance = this._normal.dot(point);
+        return this;
+      }
+      getNormal() { return this._normal.clone(); }
+      getDistance() { return this._distance; }
+      distanceToPoint(point: XYZ) { return this._normal.dot(point) + this._distance; }
+      projectPoint(point: XYZ) {
+        return this._normal.clone()
+          .multiplyScalar(this.distanceToPoint(point))
+          .subtract(point)
+          .negate();
+      }
+    }
+
+    interface ActorRaycastHit {
+      actor: Sup.Actor;
+      distance: number;
+      point: Vector3;
+      normal: Vector3;
+    }
+
+    export class Ray {
+      _raycaster = new SupEngine.THREE.Raycaster();
+
+      constructor(origin?: XYZ, direction?: XYZ) {
+        if (origin != null) this._raycaster.ray.origin.copy(origin);
+        if (direction != null) this._raycaster.ray.direction.copy(direction).normalize();
+      }
+
+      setOrigin(x: number|XYZ, y?: number, z?: number) {
+        if (y == null && z == null) this._raycaster.ray.origin.copy(x);
+        else this._raycaster.ray.origin.set(x, y, z);
+        return this;
+      }
+      getOrigin() { return new Vector3(this._raycaster.ray.origin.x, this._raycaster.ray.origin.y, this._raycaster.ray.origin.z); }
+
+      setDirection(x: number|XYZ, y?: number, z?: number) {
+        if (y == null && z == null) this._raycaster.ray.direction.copy(x).normalize();
+        else this._raycaster.ray.direction.set(x, y, z).normalize();
+        return this;
+      }
+      getDirection() { return new Vector3(this._raycaster.ray.direction.x, this._raycaster.ray.direction.y, this._raycaster.ray.direction.z); }
+
+      setFromCamera(camera: Sup.Camera, screenPosition: XY) {
+        let threeCamera = camera.__inner.threeCamera;
+        let viewport = camera.__inner.viewport;
+        let position = { x: screenPosition.x, y: screenPosition.y };
+        position.x -= viewport.width - 1 + viewport.x / viewport.width;
+        position.x /= viewport.width;
+        position.y += viewport.height - 1 + viewport.y / viewport.height;
+        position.y /= viewport.height;
+
+        if (camera.getOrthographicMode()) {
+          this._raycaster.ray.origin.set(position.x, position.y, - 1).unproject(threeCamera);
+          this._raycaster.ray.direction.set(0, 0, - 1).transformDirection(threeCamera.matrixWorld);
+        } else {
+          this._raycaster.ray.origin.copy(threeCamera.position);
+          this._raycaster.ray.direction.set(position.x, position.y, 0.5).unproject(threeCamera).sub(threeCamera.position).normalize();
+        }
+        return this;
+      }
+
+      _raycast(actor: Sup.Actor, results: ActorRaycastHit[]) {
+        let result: any;
+
+        let walk = (object: any) => {
+          let intersect = this._raycaster.intersectObject(object);
+          if (intersect.length != 0) {
+            result = intersect[0];
+            return true;
+          }
+          for (let child of object.children) {
+            if (child.userData.isActor == true) continue;
+            if (walk(child)) return true;
+          }
+          return false;
+        }
+        walk(actor.__inner.threeObject);
+
+        if (result != null) {
+          results.push({
+            actor,
+            distance: result.distance,
+            point: new Vector3(result.point.x, result.point.y, result.point.z),
+            normal: new Vector3(result.face.normal.x, result.face.normal.y, result.face.normal.z)
+          });
+        }
+      }
+
+      intersectActor(actor: Sup.Actor, recursive=false) {
+        let results = <ActorRaycastHit[]>[];
+
+        let walk = (childActor: Sup.Actor) => {
+          this._raycast(childActor, results);
+          if (recursive)
+            for (let child of childActor.__inner.children) walk(child.__outer);
+        }
+        walk(actor);
+
+        results.sort((a, b) => { return a.distance - b.distance; });
+        return results;
+      }
+
+      intersectActors(actors: Sup.Actor[]) {
+        let results = <ActorRaycastHit[]>[];
+
+        for (let actor of actors) this._raycast(actor, results);
+
+        results.sort((a, b) => { return a.distance - b.distance; });
+        return results;
+      }
+
+      intersectPlane(plane: Plane) {
+        let distance: number;
+        let point = new Vector3(this._raycaster.ray.origin.x, this._raycaster.ray.origin.y, this._raycaster.ray.origin.z);
+
+        let denominator = plane.getNormal().dot(this._raycaster.ray.direction);
+        if (denominator === 0) { // normal and direction are perpendicular
+          if (plane.distanceToPoint(this._raycaster.ray.origin) === 0) return { distance: 0, point };
+          else return null;
+        }
+
+        distance = -(this._raycaster.ray.origin.dot(plane.getNormal()) + plane.getDistance()) / denominator;
+        if (distance < 0) return null;
+
+        point.add(this.getDirection().multiplyScalar(distance));
+        return { distance, point };
+      }
+    }
+
+    export class Ray2D {
+      _origin = new Vector2();
+      _direction = new Vector2();
+
+      constructor(origin?: XY, direction?: XY) {
+        if (origin != null) this.setOrigin(origin);
+        if (direction != null) this.setDirection(direction);
+      }
+
+      setOrigin(x: number|XY, y?: number) {
+        if (typeof x === "number") this._origin.set(x, y);
+        else this._origin.copy(x);
+        return this;
+      }
+      getOrigin() { return this._origin.clone(); }
+
+      setDirection(x: number|XY, y?: number) {
+        if (typeof x === "number") this._direction.set(x, y);
+        else this._direction.copy(x);
+        this._direction.normalize();
+        return this;
+      }
+      getDirection() { return this._direction.clone(); }
+
+      intersectCircle(position: XY, radius: number) {
+        let x0 = this._origin.x - position.x;
+        let y0 = this._origin.y - position.y;
+
+        if (this._direction.x >= 0 && x0 >  radius) return null;
+        if (this._direction.x <= 0 && x0 < -radius) return null;
+        if (this._direction.y >= 0 && y0 >  radius) return null;
+        if (this._direction.y <= 0 && y0 < -radius) return null;
+
+        let tanAngle = window.Math.tan(this._direction.angle());
+        let a = 1 + tanAngle*tanAngle;
+        let b = 2 * tanAngle * y0 - 2 * tanAngle * tanAngle * x0;
+        let c = y0*y0 - radius*radius + tanAngle*tanAngle*x0*x0 - 2*tanAngle*x0*y0;
+
+        let delta = b*b - 4*a*c;
+        if (delta < 0) return null;
+
+        let x1 = (-b + window.Math.sqrt(delta)) / (2*a);
+        let y1 = tanAngle * (x1 - x0) + y0;
+        let point1 = new Vector2(x1 + position.x, y1 + position.y);
+        let distance1 = point1.distanceTo(this._origin);
+
+        let x2 = (-b - window.Math.sqrt(delta)) / (2*a);
+        let y2 = tanAngle * (x2 - x0) + y0;
+        let point2 = new Vector2(x2 + position.x, y2 + position.y);
+        let distance2 = point2.distanceTo(this._origin);
+
+        if (distance1 < distance2) return { point: point1, distance: distance1 };
+        else return { point: point2, distance: distance2 };
+      }
+
+      intersectRectangle(position: XY, size: { width: number; height: number; }, angle: number) {
+        let rayAngle = wrapAngle(this._direction.angle() - angle);
+
+        let rayPosition = new Vector2(this._origin.x - position.x, this._origin.y - position.y);
+        rayPosition.rotate(-angle);
+
+        let getResult = (x: number, y: number) => {
+          let point = new Vector2(position.x, position.y);
+          point.x += x * window.Math.cos(angle) - y * window.Math.sin(angle);
+          point.y += y * window.Math.cos(angle) + x * window.Math.sin(angle);
+          let distance = this._origin.distanceTo(point);
+          return { point, distance };
+        }
+
+        // Left
+        if (rayAngle > -window.Math.PI / 2 && rayAngle < window.Math.PI / 2) {
+          let x = -size.width / 2;
+          if (x > rayPosition.x) {
+            let y = window.Math.tan(rayAngle) * (x - rayPosition.x) + rayPosition.y;
+            if (y >= -size.height / 2 && y <= size.height / 2) return getResult(x, y);
+          }
+        }
+        // Bottom
+        if (rayAngle > 0) {
+          let y = -size.height / 2;
+          if (y > rayPosition.y) {
+            let x = (y - rayPosition.y) / window.Math.tan(rayAngle) + rayPosition.x;
+            if (x >= -size.width / 2 && x <= size.width / 2) return getResult(x, y);
+          }
+        }
+        // Right
+        if (rayAngle > window.Math.PI / 2 || rayAngle < -window.Math.PI / 2) {
+          let x = size.width / 2;
+          if (x < rayPosition.x) {
+            let y = window.Math.tan(rayAngle) * (x - rayPosition.x) + rayPosition.y;
+            if (y >= -size.height / 2 && y <= size.height / 2) return getResult(x, y);
+          }
+        }
+        // Top
+        if (rayAngle < 0) {
+          let y = size.height / 2;
+          if (y < rayPosition.y) {
+            let x = (y - rayPosition.y) / window.Math.tan(rayAngle) + rayPosition.x;
+            if (x >= -size.width / 2 && x <= size.width / 2) return getResult(x, y);
+          }
+        }
+        return null;
+      }
+
+      intersectSpriteRenderer(spriteRenderer: Sup.SpriteRenderer) {
+        let sprite = spriteRenderer.getSprite();
+        let position = spriteRenderer.actor.getPosition().toVector2();
+        let scale = spriteRenderer.actor.getLocalScale();
+
+        let pixelsPerUnit = sprite.getPixelsPerUnit();
+        let gridSize = sprite.getGridSize();
+        gridSize.width *= scale.x / pixelsPerUnit;
+        gridSize.height *= scale.y / pixelsPerUnit;
+
+        let origin = sprite.getOrigin();
+        let xOffset = (50 - origin.x) / 100 * gridSize.width;
+        if (spriteRenderer.getHorizontalFlip()) xOffset *= -1;
+        let yOffset = (50 - origin.y) / 100 * gridSize.height;
+        if (spriteRenderer.getVerticalFlip()) yOffset *= -1;
+
+        let angle = spriteRenderer.actor.getEulerZ();
+        position.x += xOffset * window.Math.cos(angle) - yOffset * window.Math.sin(angle);
+        position.y += yOffset * window.Math.cos(angle) + xOffset * window.Math.sin(angle);
+
+        return this.intersectRectangle(position, gridSize, angle);
+      }
+
+      intersectTileMapRenderer(tileMapRenderer: Sup.TileMapRenderer, options?: { layers?: number[]; tileSetPropertyName?: string }) {
+        let mapPosition = tileMapRenderer.actor.getPosition().toVector2();
+        let mapScale = tileMapRenderer.actor.getLocalScale();
+        let map = tileMapRenderer.getTileMap();
+        let tileSet = tileMapRenderer.getTileSet();
+        let pixelsPerUnit = map.getPixelsPerUnit();
+
+        let mapToSceneFactor = {
+          x: tileSet.getGridSize().width * mapScale.x / pixelsPerUnit,
+          y: tileSet.getGridSize().height * mapScale.y / pixelsPerUnit
+        }
+        let mapWidth = map.getWidth() * mapToSceneFactor.x;
+        let mapHeight = map.getHeight() * mapToSceneFactor.y;
+
+        let x1: number;
+        let y1: number;
+
+        if (this._origin.x < mapPosition.x || this._origin.y < mapPosition.y ||
+            this._origin.x > mapPosition.x + mapWidth || this._origin.y > mapPosition.y + mapHeight) {
+          let edgePosition = { x: mapPosition.x + mapWidth / 2, y: mapPosition.y + mapHeight / 2 };
+          let edgeSize = { width: mapWidth, height: mapHeight };
+
+          let mapEdgeResult = this.intersectRectangle(edgePosition, edgeSize, 0);
+          if (mapEdgeResult == null) return null;
+
+          x1 = mapEdgeResult.point.x - this._direction.x * 0.1;
+          y1 = mapEdgeResult.point.y - this._direction.y * 0.1;
+
+        } else {
+          x1 = this._origin.x;
+          y1 = this._origin.y;
+        }
+
+        x1 -= mapPosition.x;
+        y1 -= mapPosition.y;
+
+        let maxLength = mapWidth + mapHeight;
+
+        let x2 = x1 + this._direction.x * maxLength;
+        let y2 = y1 + this._direction.y * maxLength;
+
+        let precision = 15;
+        x1 *= precision / mapToSceneFactor.x; x2 *= precision / mapToSceneFactor.x;
+        y1 *= precision / mapToSceneFactor.y; y2 *= precision / mapToSceneFactor.y;
+
+        let points: Vector2[] = [];
+        let addPoint = (x, y) => {
+          x = window.Math.floor(x / precision);
+          y = window.Math.floor(y / precision);
+          let lastPoint = points[points.length - 1];
+          if (lastPoint == null || x !== lastPoint.x || y !== lastPoint.y) points.push(new Vector2(x, y));
+        }
+
+        // Bresenhan supercover algorithm recover from
+        // http://eugen.dedu.free.fr/projects/bresenham/
+        let i;               // loop counter
+        let ystep, xstep;    // the step on y and x axis
+        let error;           // the error accumulated during the increment
+        let errorprev;       // *vision the previous value of the error variable
+        let y = y1, x = x1;  // the line points
+        let ddy, ddx;        // compulsory variables: the double values of dy and dx
+        let dx = x2 - x1;
+        let dy = y2 - y1;
+
+        addPoint(x1, y1);
+
+        // NB the last point can't be here, because of its previous point (which has to be verified)
+        if (dy < 0){
+          ystep = -1;
+          dy = -dy;
+        } else ystep = 1;
+
+        if (dx < 0){
+          xstep = -1;
+          dx = -dx;
+        } else xstep = 1;
+
+        ddy = 2 * dy;  // work with double values for full precision
+        ddx = 2 * dx;
+
+        if (ddx >= ddy){  // first octant (0 <= slope <= 1)
+          // compulsory initialization (even for errorprev, needed when dx==dy)
+          errorprev = error = dx;  // start in the middle of the square
+          for (i=0 ; i < dx ; i++) {  // do not use the first point (already done)
+            x += xstep;
+            error += ddy;
+            if (error > ddx) {  // increment y if AFTER the middle ( > )
+              y += ystep;
+              error -= ddx;
+              // three cases (octant == right->right-top for directions below):
+              // bottom square also
+              if (error + errorprev < ddx) addPoint(x, y-ystep);
+              // left square also
+              else if (error + errorprev > ddx) addPoint(x-xstep, y);
+              // corner: bottom and left squares also
+              else {
+                addPoint(x, y-ystep);
+                addPoint(x-xstep, y);
+              }
+            }
+            addPoint(x, y);
+            errorprev = error;
+          }
+        } else {  // the same as above
+          errorprev = error = dy;
+          for (i=0 ; i < dy ; i++) {
+            y += ystep;
+            error += ddx;
+            if (error > ddy) {
+              x += xstep;
+              error -= ddy;
+              if (error + errorprev < ddy) addPoint(x-xstep, y);
+              else if (error + errorprev > ddy) addPoint(x, y-ystep);
+              else {
+                addPoint(x-xstep, y);
+                addPoint(x, y-ystep);
+              }
+            }
+            addPoint(x, y);
+            errorprev = error;
+          }
+        }
+
+        // Remove first point
+        points.splice(0, 1);
+
+        // Check hit tile
+        for (let point of points) {
+          let layers: number[];
+          if (options != null && options.layers != null) layers = options.layers;
+          else {
+            layers = [];
+            for (let layer = 0; layer < map.getLayerCount(); layer++) layers.push(layer);
+          }
+
+          for (let layer of layers) {
+            let tile = map.getTileAt(layer, point.x, point.y);
+            if (tile === -1) continue;
+
+            if (options != null && options.tileSetPropertyName != null && tileSet.getTileProperties(tile)[options.tileSetPropertyName] == null)
+              continue;
+
+            let block = point.clone();
+
+            let tilePosition = mapPosition.clone()
+            tilePosition.x += (point.x + 0.5) * mapToSceneFactor.x;
+            tilePosition.y += (point.y + 0.5) * mapToSceneFactor.y;
+            let size = { width: mapToSceneFactor.x * 1.01, height: mapToSceneFactor.y * 1.01 };
+            let angle = 0;
+
+            let result = this.intersectRectangle(tilePosition, size, angle);
+            if (result == null) continue;
+
+            let tilePoint = result.point;
+            let distance = this._origin.distanceTo(tilePoint);
+            return { distance, point: tilePoint, block };
+          }
+        }
+        return null;
+      }
+    }
+  }
+}

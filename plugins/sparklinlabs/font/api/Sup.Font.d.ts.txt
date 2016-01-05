@@ -1,5 +1,0 @@
-declare namespace Sup {
-  class Font extends Asset {
-    getTextWidth(text: string): number;
-  }
-}

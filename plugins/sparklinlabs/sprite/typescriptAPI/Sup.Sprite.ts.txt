@@ -1,0 +1,15 @@
+namespace Sup {
+  export class Sprite extends Asset {
+    getPixelsPerUnit() { return this.__inner.pixelsPerUnit; }
+    getRendering() { return this.__inner.filtering; }
+    getFramesPerSecond() { return this.__inner.framesPerSecond; }
+    getAlphaTest() { return this.__inner.alphaTest; }
+    getGridSize() { return { width: this.__inner.grid.width, height: this.__inner.grid.height }; }
+    getOrigin() { return new Sup.Math.Vector2(this.__inner.origin.x * 100, this.__inner.origin.y * 100); }
+    getAnimationList() {
+      let animations = [];
+      for (let animation of this.__inner.animations) animations.push(animation.name);
+      return animations;
+    }
+  }
+}

@@ -17,6 +17,6 @@
     "operational-transform": "^0.2.3"
   },
   "superpowers": {
-    "publishedPluginBundles": ["api"]
+    "publishedPluginBundles": ["typescriptAPI"]
   }
 }

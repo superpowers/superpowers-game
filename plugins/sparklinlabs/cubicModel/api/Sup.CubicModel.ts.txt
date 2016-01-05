@@ -1,5 +1,0 @@
-namespace Sup {
-  export class CubicModel extends Asset {
-    getPixelsPerUnit() { return this.__inner.pixelsPerUnit; }
-  }
-}

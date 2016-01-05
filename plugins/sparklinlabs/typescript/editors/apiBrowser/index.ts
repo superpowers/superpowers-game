@@ -1,4 +1,4 @@
-/// <reference path="../../api/TypeScriptAPIPlugin.d.ts" />
+/// <reference path="../../typescriptAPI/TypeScriptAPIPlugin.d.ts" />
 
 import * as async from "async";
 let hljs = require("highlight.js"); // import * as highlight from "highlight.js";
@@ -46,7 +46,7 @@ function onWelcome(clientId: number, config: { buildPort: number; systemName: st
       async.series([
         (cb) => {
           let apiScript = document.createElement("script");
-          apiScript.src = `/systems/${config.systemName}/plugins/${pluginName}/bundles/api.js`;
+          apiScript.src = `/systems/${config.systemName}/plugins/${pluginName}/bundles/typescriptAPI.js`;
           apiScript.addEventListener("load", (event: any) => { cb(null, null); } );
           apiScript.addEventListener("error", (event: any) => { cb(null, null); } );
           document.body.appendChild(apiScript);

@@ -1,4 +1,4 @@
-/// <reference path="../../api/TypeScriptAPIPlugin.d.ts" />
+/// <reference path="../../typescriptAPI/TypeScriptAPIPlugin.d.ts" />
 
 import ui, { setupEditor, refreshErrors, showParameterPopup, clearParameterPopup } from "./ui";
 
@@ -317,10 +317,8 @@ function onWelcome(clientId: number) {
 function loadPlugins() {
   SupClient.fetch(`/systems/${SupCore.system.name}/plugins.json`, "json", (err: Error, pluginsInfo: SupCore.PluginsInfo) => {
     async.each(pluginsInfo.list, (pluginName, pluginCallback) => {
-      if (pluginName === "sparklinlabs/typescript") { pluginCallback(); return; }
-
       let apiScript = document.createElement("script");
-      apiScript.src = `/systems/${SupCore.system.name}/plugins/${pluginName}/bundles/api.js`;
+      apiScript.src = `/systems/${SupCore.system.name}/plugins/${pluginName}/bundles/typescriptAPI.js`;
       apiScript.addEventListener("load", () => { pluginCallback(); } );
       apiScript.addEventListener("error", () => { pluginCallback(); } );
       document.body.appendChild(apiScript);
