@@ -20,8 +20,8 @@ export default class ModelRendererEditor {
   colorPicker: HTMLInputElement;
 
   overrideOpacityField: HTMLInputElement;
-  transparentField: HTMLInputElement;
-  opacityField: HTMLInputElement;
+  transparentField: HTMLSelectElement;
+  opacityFields: { sliderField: HTMLInputElement; numberField: HTMLInputElement; };
 
   materialSelectBox: HTMLSelectElement;
   shaderRow: HTMLTableRowElement;
@@ -29,6 +29,8 @@ export default class ModelRendererEditor {
   shaderButtonElt: HTMLButtonElement;
 
   asset: ModelAsset;
+  overrideOpacity: boolean;
+  opacity: number;
 
   constructor(tbody: HTMLTableSectionElement, config: ModelRendererConfigPub, projectClient: SupClient.ProjectClient, editConfig: any) {
     this.tbody = tbody;
@@ -37,6 +39,9 @@ export default class ModelRendererEditor {
     this.modelAssetId = config.modelAssetId;
     this.animationId = config.animationId;
     this.shaderAssetId = config.shaderAssetId;
+
+    this.overrideOpacity = config.overrideOpacity;
+    this.opacity = config.opacity;
 
     let modelRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:ModelRenderer.model"));
     let modelFields = SupClient.table.appendAssetField(modelRow.valueCell, "");
@@ -94,33 +99,33 @@ export default class ModelRendererEditor {
     });
     this.colorPicker.disabled = true;
 
-    let opacityRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:ModelRenderer.opacity"), { checkbox: true } );
+    let opacityRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:SpriteRenderer.opacity"), { checkbox: true } );
     this.overrideOpacityField = opacityRow.checkbox;
-    this.overrideOpacityField.checked = config.overrideOpacity;
     this.overrideOpacityField.addEventListener("change", (event: any) => {
+      this.editConfig("setProperty", "opacity", this.asset != null ? this.asset.pub.opacity : null);
       this.editConfig("setProperty", "overrideOpacity", event.target.checked);
     });
 
     let opacityParent = document.createElement("div");
-    opacityParent.style.display = "flex";
-    opacityParent.style.alignItems = "center";
     opacityRow.valueCell.appendChild(opacityParent);
 
-    this.transparentField = SupClient.table.appendBooleanField(opacityParent, config.opacity != null);
-    this.transparentField.style.width = "50%";
-    this.transparentField.style.borderRight = "1px solid #ccc";
-    this.transparentField.addEventListener("change", (event: any) => {
-      let opacity = (event.target.checked) ? 1 : null;
+    let transparentOptions: {[key: string]: string} = {
+      empty: "",
+      opaque: SupClient.i18n.t("componentEditors:SpriteRenderer.opaque"),
+      transparent: SupClient.i18n.t("componentEditors:SpriteRenderer.transparent"),
+    };
+    this.transparentField = SupClient.table.appendSelectBox(opacityParent, transparentOptions);
+    (this.transparentField.children[0] as HTMLOptionElement).hidden = true;
+    this.transparentField.addEventListener("change", (event) => {
+      let opacity = this.transparentField.value === "transparent" ? 1 : null;
       this.editConfig("setProperty", "opacity", opacity);
     });
-    this.transparentField.disabled = !config.overrideOpacity;
 
-    this.opacityField = SupClient.table.appendNumberField(opacityParent, config.opacity, { min: 0, max: 1 });
-    this.opacityField.addEventListener("input", (event: any) => {
+    this.opacityFields = SupClient.table.appendSliderField(opacityParent, "", { min: 0, max: 1, step: 0.1, sliderStep: 0.01 });
+    this.opacityFields.numberField.parentElement.addEventListener("input", (event: any) => {
       this.editConfig("setProperty", "opacity", parseFloat(event.target.value));
     });
-    this.opacityField.step = "0.1";
-    this.opacityField.disabled = !config.overrideOpacity;
+    this.updateOpacityField();
 
     let materialRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:ModelRenderer.material"));
     this.materialSelectBox = SupClient.table.appendSelectBox(materialRow.valueCell, { "basic": "Basic", "phong": "Phong", "shader": "Shader" }, config.materialType);
@@ -140,7 +145,7 @@ export default class ModelRendererEditor {
       window.parent.postMessage({ type: "openEntry", id: this.shaderAssetId }, (<any>window.location).origin);
     });
     this.shaderButtonElt.disabled = this.shaderAssetId == null;
-    this._updateShaderField(config.materialType);
+    this.updateShaderField(config.materialType);
 
     this.projectClient.subEntries(this);
   }
@@ -192,22 +197,18 @@ export default class ModelRendererEditor {
         break;
 
       case "overrideOpacity":
-        this.overrideOpacityField.checked = value;
-        this.transparentField.disabled = !value;
-        this.transparentField.checked = false;
-        this.opacityField.value = null;
-        this.opacityField.disabled = true;
+        this.overrideOpacity = value;
+        this.updateOpacityField();
         break;
 
       case "opacity":
-        this.transparentField.checked = value != null;
-        this.opacityField.disabled = value == null;
-        this.opacityField.value = value;
+        this.opacity = value;
+        this.updateOpacityField();
         break;
 
       case "materialType":
         this.materialSelectBox.value = value;
-        this._updateShaderField(value);
+        this.updateShaderField(value);
         break;
 
       case "shaderAssetId":
@@ -270,12 +271,16 @@ export default class ModelRendererEditor {
 
     this.animationSelectBox.value = (this.animationId != null) ? this.animationId : "";
     this.animationSelectBox.disabled = false;
+
+    this.updateOpacityField();
   }
 
   onAssetEdited(assetId: string, command: string, ...args: any[]) {
     if (assetId !== this.modelAssetId) return;
-    if (command.indexOf("Animation") === -1) return;
 
+    if (command === "setProperty" && args[0] === "opacity") this.updateOpacityField();
+
+    if (command.indexOf("Animation") !== -1) return;
     let animationId = this.animationSelectBox.value;
 
     this._clearAnimations();
@@ -289,6 +294,7 @@ export default class ModelRendererEditor {
   }
 
   onAssetTrashed() {
+    this.asset = null;
     this._clearAnimations();
 
     this.modelTextField.value = "";
@@ -305,7 +311,30 @@ export default class ModelRendererEditor {
     }
   }
 
-  _updateShaderField(materialType: string) {
+  private updateOpacityField() {
+    this.overrideOpacityField.checked = this.overrideOpacity;
+    this.transparentField.disabled = !this.overrideOpacity;
+    this.opacityFields.sliderField.disabled = !this.overrideOpacity;
+    this.opacityFields.numberField.disabled = !this.overrideOpacity;
+
+    if (!this.overrideOpacity && this.asset == null) {
+      this.transparentField.value = "empty";
+      this.opacityFields.numberField.parentElement.hidden = true;
+    } else {
+      let opacity = this.overrideOpacity ? this.opacity : this.asset.pub.opacity;
+      if (opacity != null) {
+        this.transparentField.value = "transparent";
+        this.opacityFields.numberField.parentElement.hidden = false;
+        this.opacityFields.sliderField.value = opacity.toString();
+        this.opacityFields.numberField.value = opacity.toString();
+      } else {
+        this.transparentField.value = "opaque";
+        this.opacityFields.numberField.parentElement.hidden = true;
+      }
+    }
+  }
+
+  private updateShaderField(materialType: string) {
     if (materialType === "shader") {
       if (this.shaderRow.parentElement == null) this.tbody.appendChild(this.shaderRow);
     } else if (this.shaderRow.parentElement != null) this.shaderRow.parentElement.removeChild(this.shaderRow);
