@@ -10,3 +10,4 @@ public/*.js
 plugins/**/*.html
 plugins/**/*.css
 plugins/**/*.js
+!plugins/**/*Gulpfile.js
