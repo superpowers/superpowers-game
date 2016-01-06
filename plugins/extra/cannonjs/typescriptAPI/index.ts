@@ -1,4 +1,4 @@
-/// <reference path="../../typescript/typescriptAPI/TypeScriptAPIPlugin.d.ts" />
+/// <reference path="../../../default/typescript/typescriptAPI/TypeScriptAPIPlugin.d.ts" />
 
 import * as fs from "fs";
 
