@@ -163,7 +163,7 @@ function onEditText(text: string, origin: string) {
 
 function onSendOperation(operation: OperationData) {
   socket.emit("edit:assets", SupClient.query.asset, "editText", operation, data.asset.document.getRevisionId(), (err: string) => {
-    if (err != null) { alert(err); SupClient.onDisconnected(); }
+    if (err != null) { new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); SupClient.onDisconnected(); }
   });
 }
 
@@ -314,7 +314,7 @@ function applyDraftChanges(options: { ignoreErrors: boolean }) {
 
   socket.emit("edit:assets", SupClient.query.asset, "applyDraftChanges", options, (err: string) => {
     if (err != null && err !== "foundSelfErrors") {
-      alert(err);
+      new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close"));
       SupClient.onDisconnected();
       return;
     }

@@ -345,7 +345,7 @@ export default class BehaviorEditor {
     }
 
     this.editConfig("setBehaviorPropertyValue", propertyName, propertyType, propertyValue, (err: string) => {
-      if (err != null) { alert(err); return; }
+      if (err != null) { new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); return; }
     });
   };
 }

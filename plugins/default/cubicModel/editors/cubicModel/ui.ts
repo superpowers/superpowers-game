@@ -502,7 +502,7 @@ function onDuplicateNodeClick() {
     let options = SupClient.getTreeViewInsertionPoint(ui.nodesTreeView);
 
     editAsset("duplicateNode", newName, node.id, options.index, (err: string, nodeId: string) => {
-      if (err != null) { alert(err); return; }
+      if (err != null) { new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); return; }
 
       ui.nodesTreeView.clearSelection();
       ui.nodesTreeView.addToSelection(ui.nodesTreeView.treeRoot.querySelector(`li[data-id='${nodeId}']`));

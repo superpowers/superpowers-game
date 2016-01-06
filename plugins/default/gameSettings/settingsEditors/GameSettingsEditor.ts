@@ -53,11 +53,11 @@ export default class GameSettingsEditor {
     }
 
     this.fields["startupSceneId"].addEventListener("input", (event: any) => {
-      if (event.target.value === "") this.projectClient.socket.emit("edit:resources", "gameSettings", "setProperty", "startupSceneId", null, (err: string) => { if (err != null) alert(err); });
+      if (event.target.value === "") this.projectClient.socket.emit("edit:resources", "gameSettings", "setProperty", "startupSceneId", null, (err: string) => { if (err != null) new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); });
       else {
         let entry = SupClient.findEntryByPath(this.projectClient.entries.pub, event.target.value);
         if (entry != null && entry.type === "scene")
-          this.projectClient.socket.emit("edit:resources", "gameSettings", "setProperty", "startupSceneId", entry.id, (err: string) => { if (err != null) alert(err); });
+          this.projectClient.socket.emit("edit:resources", "gameSettings", "setProperty", "startupSceneId", entry.id, (err: string) => { if (err != null) new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); });
       }
     });
     this.startupSceneButton.addEventListener("click", (event) => {
@@ -65,15 +65,15 @@ export default class GameSettingsEditor {
     });
 
     this.fields["framesPerSecond"].addEventListener("change", (event: any) => {
-      this.projectClient.socket.emit("edit:resources", "gameSettings", "setProperty", "framesPerSecond", parseInt(event.target.value, 10), (err: string) => { if (err != null) alert(err); });
+      this.projectClient.socket.emit("edit:resources", "gameSettings", "setProperty", "framesPerSecond", parseInt(event.target.value, 10), (err: string) => { if (err != null) new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); });
     });
 
     this.fields["ratioNumerator"].addEventListener("change", (event: any) => {
-      this.projectClient.socket.emit("edit:resources", "gameSettings", "setProperty", "ratioNumerator", parseInt(event.target.value, 10), (err: string) => { if (err != null) alert(err); });
+      this.projectClient.socket.emit("edit:resources", "gameSettings", "setProperty", "ratioNumerator", parseInt(event.target.value, 10), (err: string) => { if (err != null) new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); });
     });
 
     this.fields["ratioDenominator"].addEventListener("change", (event: any) => {
-      this.projectClient.socket.emit("edit:resources", "gameSettings", "setProperty", "ratioDenominator", parseInt(event.target.value, 10), (err: string) => { if (err != null) alert(err); });
+      this.projectClient.socket.emit("edit:resources", "gameSettings", "setProperty", "ratioDenominator", parseInt(event.target.value, 10), (err: string) => { if (err != null) new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); });
     });
 
     this.projectClient.subEntries(this);
@@ -165,7 +165,7 @@ export default class GameSettingsEditor {
         if (index === this.customLayers.length - 1) {
           this.customLayers.pop();
         } else {
-          alert("Layer name cannot be empty");
+          new SupClient.dialogs.InfoDialog("Layer name cannot be empty", SupClient.i18n.t("common:actions.close"));
           event.target.value = this.customLayers[index];
           return;
         }
@@ -174,6 +174,6 @@ export default class GameSettingsEditor {
       }
     }
 
-    this.projectClient.socket.emit("edit:resources", "gameSettings", "setProperty", "customLayers", this.customLayers, (err: string) => { if (err != null) alert(err); });
+    this.projectClient.socket.emit("edit:resources", "gameSettings", "setProperty", "customLayers", this.customLayers, (err: string) => { if (err != null) new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); });
   };
 }

@@ -49,7 +49,7 @@ export function editAsset(...args: any[]) {
   if (typeof args[args.length - 1] === "function") callback = args.pop();
 
   args.push((err: string, id: string) => {
-    if (err != null) { alert(err); return; }
+    if (err != null) { new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); return; }
     if (callback != null) callback(id);
   });
   socket.emit("edit:assets", SupClient.query.asset, ...args);

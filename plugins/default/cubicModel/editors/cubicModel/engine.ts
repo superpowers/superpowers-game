@@ -247,8 +247,8 @@ function onTransformChange() {
   }
 
   if (transformType !== "pivotPosition") {
-    socket.emit("edit:assets", SupClient.query.asset, "setNodeProperty", nodeId, transformType, value, (err: string) => { if (err != null) alert(err); });
+    socket.emit("edit:assets", SupClient.query.asset, "setNodeProperty", nodeId, transformType, value, (err: string) => { if (err != null) new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); });
   } else {
-    socket.emit("edit:assets", SupClient.query.asset, "moveNodePivot", nodeId, value, (err: string) => { if (err != null) alert(err); });
+    socket.emit("edit:assets", SupClient.query.asset, "moveNodePivot", nodeId, value, (err: string) => { if (err != null) new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); });
   }
 }

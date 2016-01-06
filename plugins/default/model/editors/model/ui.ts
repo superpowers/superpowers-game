@@ -285,7 +285,7 @@ function onAnimationFileSelectChange(event: any) {
     setImportLog(log);
 
     if (data != null) {
-      if (data.animation == null) { alert("No animation found in imported files"); return; }
+      if (data.animation == null) { new SupClient.dialogs.InfoDialog("No animation found in imported files", SupClient.i18n.t("common:actions.close")); return; }
       // TODO: Check if bones are compatible
       editAsset("setAnimation", animationId, data.animation.duration, data.animation.keyFrames);
     }

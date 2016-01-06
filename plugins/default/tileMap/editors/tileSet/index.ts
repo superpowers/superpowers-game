@@ -42,14 +42,14 @@ function start() {
   ui.gridWidthInput = document.querySelector("input.grid-width");
   ui.gridWidthInput.addEventListener("change", () => {
     socket.emit("edit:assets", SupClient.query.asset, "setProperty", "grid.width", parseInt(ui.gridWidthInput.value, 10), (err: string) => {
-      if (err != null) { alert(err); return; }
+      if (err != null) { new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); return; }
     });
   });
 
   ui.gridHeightInput = document.querySelector("input.grid-height");
   ui.gridHeightInput.addEventListener("change", () => {
     socket.emit("edit:assets", SupClient.query.asset, "setProperty", "grid.height", parseInt(ui.gridHeightInput.value, 10), (err: string) => {
-      if (err != null) { alert(err); return; }
+      if (err != null) { new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); return; }
     });
   });
 
@@ -177,7 +177,7 @@ function addTileProperty(name: string, value = "") {
   valueInput.value = value;
   valueInput.addEventListener("input", () => {
     socket.emit("edit:assets", SupClient.query.asset, "editTileProperty", data.selectedTile, ui.selectedProperty, valueInput.value, (err: string) => {
-      if (err != null) { alert(err); return; }
+      if (err != null) { new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); return; }
     });
   });
 
@@ -193,7 +193,7 @@ function onFileSelectChange(event: Event) {
   let reader = new FileReader;
   reader.onload = (event) => {
     socket.emit("edit:assets", SupClient.query.asset, "upload", reader.result, (err: string) => {
-      if (err != null) { alert(err); return; }
+      if (err != null) { new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); return; }
     });
   };
 
@@ -255,7 +255,7 @@ function onNewPropertyClick() {
     if (name == null) return;
 
     socket.emit("edit:assets", SupClient.query.asset, "addTileProperty", data.selectedTile, name, (err: string, id: string) => {
-      if (err != null) { alert(err); return; }
+      if (err != null) { new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); return; }
 
       ui.selectedProperty = name;
       ui.propertiesTreeView.clearSelection();
@@ -281,7 +281,7 @@ function onRenamePropertyClick() {
     /* tslint:enable:no-unused-expression */
     if (newName == null) return;
 
-    socket.emit("edit:assets", SupClient.query.asset, "renameTileProperty", data.selectedTile, ui.selectedProperty, newName, (err: string) => { if (err != null) { alert(err); return; } });
+    socket.emit("edit:assets", SupClient.query.asset, "renameTileProperty", data.selectedTile, ui.selectedProperty, newName, (err: string) => { if (err != null) { new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); return; } });
   });
 }
 
@@ -295,7 +295,7 @@ function onDeletePropertyClick() {
     /* tslint:enable:no-unused-expression */
     if (!confirm) return;
 
-    socket.emit("edit:assets", SupClient.query.asset, "deleteTileProperty", data.selectedTile, ui.selectedProperty, (err: string) => { if (err != null) { alert(err); return; } });
+    socket.emit("edit:assets", SupClient.query.asset, "deleteTileProperty", data.selectedTile, ui.selectedProperty, (err: string) => { if (err != null) { new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); return; } });
   });
 }
 

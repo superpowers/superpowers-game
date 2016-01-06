@@ -246,7 +246,7 @@ function editMap(edits: Edits[]) {
 
   if (actualEdits.length === 0) return;
   socket.emit("edit:assets", SupClient.query.asset, "editMap", layer.id, actualEdits, (err: string) => {
-    if (err != null) { alert(err); return; }
+    if (err != null) { new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); return; }
   });
 }
 

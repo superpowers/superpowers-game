@@ -16,7 +16,7 @@ export default class LightSettingsEditor {
     this.fields["shadowMapType"] = SupClient.table.appendSelectBox(shadowMapTypeRow.valueCell, { "basic": "Basic", "pcf": "PCF", "pcfSoft": "PCF Soft" });
 
     this.fields["shadowMapType"].addEventListener("change", (event: any) => {
-      this.projectClient.socket.emit("edit:resources", "lightSettings", "setProperty", "shadowMapType", event.target.value, (err: string) => { if (err != null) alert(err); });
+      this.projectClient.socket.emit("edit:resources", "lightSettings", "setProperty", "shadowMapType", event.target.value, (err: string) => { if (err != null) new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); });
     });
 
     this.projectClient.subResource("lightSettings", this);
