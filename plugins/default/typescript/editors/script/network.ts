@@ -267,7 +267,7 @@ data.typescriptWorker.onmessage = (event: MessageEvent) => {
     case "definition":
       if (window.parent != null) {
         let entry = SupClient.findEntryByPath(data.projectClient.entries.pub, event.data.fileName);
-        window.parent.postMessage({ type: "openEntry", id: entry.id, options: { line: event.data.line, ch: event.data.ch } }, (<any>window.location).origin);
+        window.parent.postMessage({ type: "openEntry", id: entry.id, options: { line: event.data.line, ch: event.data.ch } }, window.location.origin);
       }
       break;
   }

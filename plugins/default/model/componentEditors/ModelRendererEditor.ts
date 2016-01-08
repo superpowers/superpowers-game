@@ -50,7 +50,7 @@ export default class ModelRendererEditor {
     this.modelTextField.disabled = true;
     this.modelButtonElt = modelFields.buttonElt;
     this.modelButtonElt.addEventListener("click", (event) => {
-      window.parent.postMessage({ type: "openEntry", id: this.modelAssetId }, (<any>window.location).origin);
+      window.parent.postMessage({ type: "openEntry", id: this.modelAssetId }, window.location.origin);
     });
     this.modelButtonElt.disabled = this.modelAssetId == null;
 
@@ -60,7 +60,7 @@ export default class ModelRendererEditor {
     this.animationSelectBox.disabled = true;
 
     let shadowRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:ModelRenderer.shadow.title"));
-    let shadowDiv = <any>document.createElement("div");
+    let shadowDiv = document.createElement("div") as HTMLDivElement;
     shadowDiv.classList.add("inputs");
     shadowRow.valueCell.appendChild(shadowDiv);
 
@@ -142,7 +142,7 @@ export default class ModelRendererEditor {
     this.shaderTextField.disabled = true;
     this.shaderButtonElt = shaderFields.buttonElt;
     this.shaderButtonElt.addEventListener("click", (event) => {
-      window.parent.postMessage({ type: "openEntry", id: this.shaderAssetId }, (<any>window.location).origin);
+      window.parent.postMessage({ type: "openEntry", id: this.shaderAssetId }, window.location.origin);
     });
     this.shaderButtonElt.disabled = this.shaderAssetId == null;
     this.shaderRow.hidden = config.materialType !== "shader";

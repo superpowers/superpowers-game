@@ -32,7 +32,7 @@ export default class TileMapRendererEditor {
     this.tileMapTextField.disabled = true;
     this.tileMapButtonElt = tileMapFields.buttonElt;
     this.tileMapButtonElt.addEventListener("click", (event) => {
-      window.parent.postMessage({ type: "openEntry", id: this.tileMapAssetId }, (<any>window.location).origin);
+      window.parent.postMessage({ type: "openEntry", id: this.tileMapAssetId }, window.location.origin);
     });
     this.tileMapButtonElt.disabled = this.tileMapAssetId == null;
 
@@ -41,7 +41,7 @@ export default class TileMapRendererEditor {
     this.tileSetTextField.disabled = true;
 
     let shadowRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:TileMapRenderer.shadow.title"));
-    let shadowDiv = <any>document.createElement("div");
+    let shadowDiv = document.createElement("div") as HTMLDivElement;
     shadowDiv.classList.add("inputs");
     shadowRow.valueCell.appendChild(shadowDiv);
 
@@ -80,7 +80,7 @@ export default class TileMapRendererEditor {
     this.shaderTextField.disabled = true;
     this.shaderButtonElt = shaderFields.buttonElt;
     this.shaderButtonElt.addEventListener("click", (event) => {
-      window.parent.postMessage({ type: "openEntry", id: this.shaderAssetId }, (<any>window.location).origin);
+      window.parent.postMessage({ type: "openEntry", id: this.shaderAssetId }, window.location.origin);
     });
     this.shaderButtonElt.disabled = this.shaderAssetId == null;
     this.shaderRow.hidden = config.materialType !== "shader";

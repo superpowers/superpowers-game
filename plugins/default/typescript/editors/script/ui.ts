@@ -285,8 +285,7 @@ function onErrorTBodyClick(event: MouseEvent) {
     ui.editor.codeMirrorInstance.getDoc().setCursor({ line: parseInt(line, 10), ch: parseInt(character, 10) });
     ui.editor.codeMirrorInstance.focus();
   } else {
-    let origin: string = (<any>window.location).origin;
-    if (window.parent != null) window.parent.postMessage({ type: "openEntry", id: assetId, options: { line, ch: character } }, origin);
+    if (window.parent != null) window.parent.postMessage({ type: "openEntry", id: assetId, options: { line, ch: character } }, window.location.origin);
   }
 }
 
@@ -496,6 +495,6 @@ function onGlobalSearch() {
       ui.editor.codeMirrorInstance.focus();
       return;
     }
-    window.parent.postMessage({ type: "openTool", name: "search", options: { text } }, (<any>window.location).origin);
+    window.parent.postMessage({ type: "openTool", name: "search", options: { text } }, window.location.origin);
   });
 }

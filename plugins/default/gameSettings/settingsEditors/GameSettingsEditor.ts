@@ -61,7 +61,7 @@ export default class GameSettingsEditor {
       }
     });
     this.startupSceneButton.addEventListener("click", (event) => {
-      window.parent.postMessage({ type: "openEntry", id: this.sceneAssetId }, (<any>window.location).origin);
+      window.parent.postMessage({ type: "openEntry", id: this.sceneAssetId }, window.location.origin);
     });
 
     this.fields["framesPerSecond"].addEventListener("change", (event: any) => {

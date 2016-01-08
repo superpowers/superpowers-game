@@ -34,7 +34,7 @@ export default class TextRendererEditor {
     this.fields["fontAssetId"].addEventListener("input", this.onChangeFontAsset);
     this.fontButtonElt = fontFields.buttonElt;
     this.fontButtonElt.addEventListener("click", (event) => {
-      window.parent.postMessage({ type: "openEntry", id: this.fontAssetId }, (<any>window.location).origin);
+      window.parent.postMessage({ type: "openEntry", id: this.fontAssetId }, window.location.origin);
     });
     this.fontButtonElt.disabled = this.fontAssetId == null;
 

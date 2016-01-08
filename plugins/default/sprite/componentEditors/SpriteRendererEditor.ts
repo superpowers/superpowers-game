@@ -54,7 +54,7 @@ export default class SpriteRendererEditor {
     this.spriteTextField.disabled = true;
     this.spriteButtonElt = spriteFields.buttonElt;
     this.spriteButtonElt.addEventListener("click", (event) => {
-      window.parent.postMessage({ type: "openEntry", id: this.spriteAssetId }, (<any>window.location).origin);
+      window.parent.postMessage({ type: "openEntry", id: this.spriteAssetId }, window.location.origin);
     });
     this.spriteButtonElt.disabled = this.spriteAssetId == null;
 
@@ -64,7 +64,7 @@ export default class SpriteRendererEditor {
     this.animationSelectBox.disabled = true;
 
     let flipRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:SpriteRenderer.flip"));
-    let flipDiv = <any>document.createElement("div");
+    let flipDiv = document.createElement("div") as HTMLDivElement;
     flipDiv.classList.add("inputs");
     flipRow.valueCell.appendChild(flipDiv);
 
@@ -87,7 +87,7 @@ export default class SpriteRendererEditor {
     });
 
     let shadowRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:SpriteRenderer.shadow.title"));
-    let shadowDiv = <any>document.createElement("div");
+    let shadowDiv = document.createElement("div") as HTMLDivElement;
     shadowDiv.classList.add("inputs");
     shadowRow.valueCell.appendChild(shadowDiv);
 
@@ -169,7 +169,7 @@ export default class SpriteRendererEditor {
     this.shaderTextField.disabled = true;
     this.shaderButtonElt = shaderFields.buttonElt;
     this.shaderButtonElt.addEventListener("click", (event) => {
-      window.parent.postMessage({ type: "openEntry", id: this.shaderAssetId }, (<any>window.location).origin);
+      window.parent.postMessage({ type: "openEntry", id: this.shaderAssetId }, window.location.origin);
     });
     this.shaderButtonElt.disabled = this.shaderAssetId == null;
     this.shaderRow.hidden = config.materialType !== "shader";

@@ -43,7 +43,7 @@ export default class CubicModelRendererEditor {
     this.cubicModelTextField.disabled = true;
     this.cubicModelButtonElt = cubicModelFields.buttonElt;
     this.cubicModelButtonElt.addEventListener("click", (event) => {
-      window.parent.postMessage({ type: "openEntry", id: this.cubicModelAssetId }, (<any>window.location).origin);
+      window.parent.postMessage({ type: "openEntry", id: this.cubicModelAssetId }, window.location.origin);
     });
     this.cubicModelButtonElt.disabled = this.cubicModelAssetId == null;
 
@@ -54,7 +54,7 @@ export default class CubicModelRendererEditor {
     this.animationSelectBox.disabled = true;
 
     let flipRow = SupClient.table.appendRow(tbody, "Flip");
-    let flipDiv = <any>document.createElement("div");
+    let flipDiv = document.createElement("div") as HTMLDivElement;
     flipDiv.classList.add("inputs");
     flipRow.valueCell.appendChild(flipDiv);
 
@@ -77,7 +77,7 @@ export default class CubicModelRendererEditor {
     });
 
     let shadowRow = SupClient.table.appendRow(tbody, "Shadow");
-    let shadowDiv = <any>document.createElement("div");
+    let shadowDiv = document.createElement("div") as HTMLDivElement;
     shadowDiv.classList.add("inputs");
     shadowRow.valueCell.appendChild(shadowDiv);
 
@@ -158,7 +158,7 @@ export default class CubicModelRendererEditor {
     this.shaderTextField.disabled = true;
     this.shaderButtonElt = shaderFields.buttonElt;
     this.shaderButtonElt.addEventListener("click", (event) => {
-      window.parent.postMessage({ type: "openEntry", id: this.shaderAssetId }, (<any>window.location).origin);
+      window.parent.postMessage({ type: "openEntry", id: this.shaderAssetId }, window.location.origin);
     });
     this.shaderButtonElt.disabled = this.shaderAssetId == null;
     this._updateShaderField(config.materialType);*/

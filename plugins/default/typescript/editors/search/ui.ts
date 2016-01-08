@@ -107,7 +107,7 @@ export function searchAsset(assetId: string) {
       let ch = target.dataset["ch"];
 
       if (window.parent != null)
-        window.parent.postMessage({ type: "openEntry", id, options: { line, ch } }, (<any>window.location).origin);
+        window.parent.postMessage({ type: "openEntry", id, options: { line, ch } }, window.location.origin);
     });
 
   } else {
