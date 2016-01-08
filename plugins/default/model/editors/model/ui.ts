@@ -257,7 +257,11 @@ function onChangeWrapping(event: any) { editAsset("setProperty", "wrapping", eve
 function onShowSkeletonChange(event: Event) { data.modelUpdater.modelRenderer.setShowSkeleton((<HTMLInputElement>event.target).checked); }
 function onChangeUnitRatio(event: any) { editAsset("setProperty", "unitRatio", parseFloat(event.target.value)); }
 function onChangeOpacityType(event: any) { editAsset("setProperty", "opacity", event.target.value === "transparent" ? 1 : null); }
-function onChangeOpacity(event: any) { editAsset("setProperty", "opacity", parseFloat(event.target.value)); }
+function onChangeOpacity(event: any) {
+  let opacity = parseFloat(event.target.value);
+  if (isNaN(opacity)) return;
+  editAsset("setProperty", "opacity", opacity);
+}
 
 function onNewAnimationClick() {
   let options = {

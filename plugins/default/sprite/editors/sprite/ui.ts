@@ -75,7 +75,11 @@ ui.allSettings.forEach((setting: string) => {
 
     case "opacity":
     case "alphaTest":
-      settingObj.addEventListener("change", (event: any) => { editAsset("setProperty", setting, parseFloat(event.target.value)); });
+      settingObj.addEventListener("input", (event: any) => {
+        let value = parseFloat(event.target.value);
+        if (isNaN(value)) return;
+        editAsset("setProperty", setting, value);
+      });
       break;
 
     default:
