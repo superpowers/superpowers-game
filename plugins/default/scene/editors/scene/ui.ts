@@ -556,6 +556,7 @@ function onDuplicateNodeClick() {
     /* tslint:enable:no-unused-expression */
     if (newName == null) return;
     let options = SupClient.getTreeViewInsertionPoint(ui.nodesTreeView);
+    console.log(options);
 
     socket.emit("edit:assets", SupClient.query.asset, "duplicateNode", newName, node.id, options.index, (err: string, nodeId: string) => {
       if (err != null) new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close"));

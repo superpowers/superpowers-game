@@ -172,7 +172,7 @@ export default class SpriteRendererEditor {
       window.parent.postMessage({ type: "openEntry", id: this.shaderAssetId }, (<any>window.location).origin);
     });
     this.shaderButtonElt.disabled = this.shaderAssetId == null;
-    this.updateShaderField(config.materialType);
+    this.shaderRow.hidden = config.materialType !== "shader";
 
     this.projectClient.subEntries(this);
   }
@@ -241,7 +241,7 @@ export default class SpriteRendererEditor {
 
       case "materialType":
         this.materialSelectBox.value = value;
-        this.updateShaderField(value);
+        this.shaderRow.hidden = value !== "shader";
         break;
 
       case "shaderAssetId":
@@ -365,12 +365,6 @@ export default class SpriteRendererEditor {
         this.opacityFields.numberField.parentElement.hidden = true;
       }
     }
-  }
-
-  private updateShaderField(materialType: string) {
-    if (materialType === "shader") {
-      if (this.shaderRow.parentElement == null) this.tbody.appendChild(this.shaderRow);
-    } else if (this.shaderRow.parentElement != null) this.shaderRow.parentElement.removeChild(this.shaderRow);
   }
 
   private onChangeSpriteAsset = (event: any) => {

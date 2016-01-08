@@ -13,6 +13,7 @@ export default class TileMapRendererEditor {
   castShadowField: HTMLInputElement;
   receiveShadowField: HTMLInputElement;
   materialSelectBox: HTMLSelectElement;
+  shaderRow: HTMLTableRowElement;
   shaderTextField: HTMLInputElement;
   shaderButtonElt: HTMLButtonElement;
 
@@ -68,23 +69,24 @@ export default class TileMapRendererEditor {
     this.materialSelectBox = SupClient.table.appendSelectBox(materialRow.valueCell, { "basic": "Basic", "phong": "Phong", "shader": "Shader" }, config.materialType);
     this.materialSelectBox.addEventListener("change", (event: any) => {
       this.editConfig("setProperty", "materialType", event.target.value);
-    })
+    });
     this.materialSelectBox.disabled = true;
 
     let shaderRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:TileMapRenderer.shader"));
+    this.shaderRow = shaderRow.row;
     let shaderFields = SupClient.table.appendAssetField(shaderRow.valueCell, "");
     this.shaderTextField = shaderFields.textField;
-    this.shaderTextField.addEventListener("input", this._onChangeShaderAsset);
+    this.shaderTextField.addEventListener("input", this.onChangeShaderAsset);
     this.shaderTextField.disabled = true;
     this.shaderButtonElt = shaderFields.buttonElt;
     this.shaderButtonElt.addEventListener("click", (event) => {
       window.parent.postMessage({ type: "openEntry", id: this.shaderAssetId }, (<any>window.location).origin);
     });
     this.shaderButtonElt.disabled = this.shaderAssetId == null;
-    this._updateShaderField(config.materialType);
+    this.shaderRow.hidden = config.materialType !== "shader";
 
-    this.tileMapTextField.addEventListener("input", this._onChangeTileMapAsset);
-    this.tileSetTextField.addEventListener("input", this._onChangeTileSetAsset);
+    this.tileMapTextField.addEventListener("input", this.onChangeTileMapAsset);
+    this.tileSetTextField.addEventListener("input", this.onChangeTileSetAsset);
 
     this.projectClient.subEntries(this);
   }
@@ -117,7 +119,7 @@ export default class TileMapRendererEditor {
 
       case "materialType":
         this.materialSelectBox.value = value;
-        this._updateShaderField(value);
+        this.shaderRow.hidden = value !== "shader";
         break;
 
       case "shaderAssetId":
@@ -145,7 +147,7 @@ export default class TileMapRendererEditor {
     }
   }
 
-  onEntryAdded(entry: any, parentId: string, index: number) {}
+  onEntryAdded(entry: any, parentId: string, index: number) { /* Nothing to do here */ }
   onEntryMoved(id: string, parentId: string, index: number) {
     if (id === this.tileMapAssetId) this.tileMapTextField.value = this.projectClient.entries.getPathFromId(this.tileMapAssetId);
     if (id === this.tileSetAssetId) this.tileSetTextField.value = this.projectClient.entries.getPathFromId(this.tileSetAssetId);
@@ -154,38 +156,31 @@ export default class TileMapRendererEditor {
     if (id === this.tileMapAssetId) this.tileMapTextField.value = this.projectClient.entries.getPathFromId(this.tileMapAssetId);
     if (id === this.tileSetAssetId) this.tileSetTextField.value = this.projectClient.entries.getPathFromId(this.tileSetAssetId);
   }
-  onEntryTrashed(id: string) {}
+  onEntryTrashed(id: string) { /* Nothing to do here */ }
 
-  _updateShaderField(materialType: string) {
-    let shaderRow = this.shaderTextField.parentElement.parentElement.parentElement;
-    if (materialType === "shader") {
-      if (shaderRow.parentElement == null) this.tbody.appendChild(shaderRow);
-    } else if (shaderRow.parentElement != null) shaderRow.parentElement.removeChild(shaderRow);
-  }
-
-  _onChangeTileMapAsset = (event: any) => {
+  private onChangeTileMapAsset = (event: any) => {
     if (event.target.value === "") this.editConfig("setProperty", "tileMapAssetId", null);
 
     else {
       let entry = SupClient.findEntryByPath(this.projectClient.entries.pub, event.target.value);
-      if (entry != null && entry.type == "tileMap") this.editConfig("setProperty", "tileMapAssetId", entry.id);
+      if (entry != null && entry.type === "tileMap") this.editConfig("setProperty", "tileMapAssetId", entry.id);
     }
-  }
+  };
 
-  _onChangeTileSetAsset = (event: any) => {
+  private onChangeTileSetAsset = (event: any) => {
     if (event.target.value === "") this.editConfig("setProperty", "tileSetAssetId", null);
 
     else {
       let entry = SupClient.findEntryByPath(this.projectClient.entries.pub, event.target.value);
-      if (entry != null && entry.type == "tileSet") this.editConfig("setProperty", "tileSetAssetId", entry.id);
+      if (entry != null && entry.type === "tileSet") this.editConfig("setProperty", "tileSetAssetId", entry.id);
     }
-  }
+  };
 
-  _onChangeShaderAsset = (event: any) => {
+  private onChangeShaderAsset = (event: any) => {
     if (event.target.value === "") this.editConfig("setProperty", "shaderAssetId", null);
     else {
       let entry = SupClient.findEntryByPath(this.projectClient.entries.pub, event.target.value);
       if (entry != null && entry.type === "shader") this.editConfig("setProperty", "shaderAssetId", entry.id);
     }
-  }
+  };
 }

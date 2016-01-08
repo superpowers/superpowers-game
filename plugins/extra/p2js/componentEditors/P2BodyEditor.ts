@@ -4,7 +4,6 @@ export default class P2BodyEditor {
   editConfig: any;
 
   fields: { [name: string]: HTMLInputElement|HTMLSelectElement } = {};
-  shapeRows: HTMLTableRowElement[] = [];
 
   sizeRow: SupClient.table.RowParts;
   radiusRow: SupClient.table.RowParts;
@@ -50,7 +49,6 @@ export default class P2BodyEditor {
 
     // Box
     this.sizeRow = SupClient.table.appendRow(this.tbody, SupClient.i18n.t("componentEditors:P2Body.size"));
-    this.shapeRows.push(this.sizeRow.row);
 
     let sizeFields = SupClient.table.appendNumberFields(this.sizeRow.valueCell, [config.width, config.height], 0);
     this.fields["width"] = sizeFields[0];
@@ -65,7 +63,6 @@ export default class P2BodyEditor {
 
     // Circle
     this.radiusRow = SupClient.table.appendRow(this.tbody, SupClient.i18n.t("componentEditors:P2Body.radius"));
-    this.shapeRows.push(this.radiusRow.row);
     this.fields["radius"] = SupClient.table.appendNumberField(this.radiusRow.valueCell, config.radius, { min: 0 });
     this.fields["radius"].addEventListener("change", (event: any) => {
       this.editConfig("setProperty", "radius", parseFloat(event.target.value));
@@ -75,18 +72,15 @@ export default class P2BodyEditor {
   }
 
   updateShapeInput(shape: string) {
-    for (let row of this.shapeRows) this.tbody.removeChild(row);
-    this.shapeRows.length = 0;
-
     switch (shape) {
       case "box": {
-        this.tbody.appendChild(this.sizeRow.row);
-        this.shapeRows.push(this.sizeRow.row);
+        this.sizeRow.row.hidden = false;
+        this.radiusRow.row.hidden = true;
       } break;
 
       case "circle": {
-        this.tbody.appendChild(this.radiusRow.row);
-        this.shapeRows.push(this.radiusRow.row);
+        this.sizeRow.row.hidden = true;
+        this.radiusRow.row.hidden = false;
       } break;
     }
   }

@@ -145,7 +145,7 @@ export default class ModelRendererEditor {
       window.parent.postMessage({ type: "openEntry", id: this.shaderAssetId }, (<any>window.location).origin);
     });
     this.shaderButtonElt.disabled = this.shaderAssetId == null;
-    this.updateShaderField(config.materialType);
+    this.shaderRow.hidden = config.materialType !== "shader";
 
     this.projectClient.subEntries(this);
   }
@@ -208,7 +208,7 @@ export default class ModelRendererEditor {
 
       case "materialType":
         this.materialSelectBox.value = value;
-        this.updateShaderField(value);
+        this.shaderRow.hidden = value !== "shader";
         break;
 
       case "shaderAssetId":
@@ -332,12 +332,6 @@ export default class ModelRendererEditor {
         this.opacityFields.numberField.parentElement.hidden = true;
       }
     }
-  }
-
-  private updateShaderField(materialType: string) {
-    if (materialType === "shader") {
-      if (this.shaderRow.parentElement == null) this.tbody.appendChild(this.shaderRow);
-    } else if (this.shaderRow.parentElement != null) this.shaderRow.parentElement.removeChild(this.shaderRow);
   }
 
   private onChangeModelAsset = (event: any) => {

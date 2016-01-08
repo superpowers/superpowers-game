@@ -167,66 +167,47 @@ export default class LightEditor {
   }
 
   updateFields() {
-    if (this.fields["type"].value === "ambient") {
-      let intensityRow = this.fields["intensity"].parentElement.parentElement;
-      if (intensityRow.parentElement != null) intensityRow.parentElement.removeChild(intensityRow);
+    let type = this.fields["type"].value;
 
-      let distanceRow = this.fields["distance"].parentElement.parentElement;
-      if (distanceRow.parentElement != null) distanceRow.parentElement.removeChild(distanceRow);
+    let intensityRow = this.fields["intensity"].parentElement.parentElement;
+    let distanceRow = this.fields["distance"].parentElement.parentElement;
+    let angleRow = this.fields["angle"].parentElement.parentElement;
+    let targetRow = this.fields["target.x"].parentElement.parentElement.parentElement;
+    let castShadowRow = this.fields["castShadow"].parentElement.parentElement;
 
-      let angleRow = this.fields["angle"].parentElement.parentElement;
-      if (angleRow.parentElement != null) angleRow.parentElement.removeChild(angleRow);
-
-      let targetRow = this.fields["target.x"].parentElement.parentElement.parentElement;
-      if (targetRow.parentElement != null) targetRow.parentElement.removeChild(targetRow);
-
-      let castShadowRow = this.fields["castShadow"].parentElement.parentElement;
-      if (castShadowRow.parentElement != null) castShadowRow.parentElement.removeChild(castShadowRow);
-      for (let shadowRow of this.shadowRows)
-        if (shadowRow.parentElement != null) shadowRow.parentElement.removeChild(shadowRow);
+    if (type === "ambient") {
+      intensityRow.hidden = true;
+      distanceRow.hidden = true;
+      angleRow.hidden = true;
+      targetRow.hidden = true;
+      castShadowRow.hidden = true;
+      for (let shadowRow of this.shadowRows) shadowRow.hidden = true;
     }
     else {
-      let intensityRow = this.fields["intensity"].parentElement.parentElement;
-      if (intensityRow.parentElement == null) this.tbody.appendChild(intensityRow);
+      intensityRow.hidden = false;
+      distanceRow.hidden = type === "directional";
+      angleRow.hidden = type !== "spot";
 
-      let castShadowRow = this.fields["castShadow"].parentElement.parentElement;
-      if (castShadowRow.parentElement != null) castShadowRow.parentElement.removeChild(castShadowRow);
-      for (let shadowRow of this.shadowRows)
-        if (shadowRow.parentElement != null) shadowRow.parentElement.removeChild(shadowRow);
-
-      let distanceRow = this.fields["distance"].parentElement.parentElement;
-      if (this.fields["type"].value === "directional") {
-        if (distanceRow.parentElement != null) distanceRow.parentElement.removeChild(distanceRow);
-      } else if (distanceRow.parentElement == null) this.tbody.appendChild(distanceRow);
-
-      let angleRow = this.fields["angle"].parentElement.parentElement;
-      if (this.fields["type"].value === "spot") {
-        if (angleRow.parentElement == null) this.tbody.appendChild(angleRow);
-      } else if (angleRow.parentElement != null) angleRow.parentElement.removeChild(angleRow);
-
-      let targetRow = this.fields["target.x"].parentElement.parentElement.parentElement;
-
-      if (this.fields["type"].value === "spot" || this.fields["type"].value === "directional") {
-        if (targetRow.parentElement == null) this.tbody.appendChild(targetRow);
-
-        if (castShadowRow.parentElement == null) this.tbody.appendChild(castShadowRow);
+      if (type === "spot" || type === "directional") {
+        targetRow.hidden = false;
+        castShadowRow.hidden = false;
 
         if (this.castShadow) {
-          for (let shadowRow of this.shadowRows)
-            if (shadowRow.parentElement == null) this.tbody.appendChild(shadowRow);
-          if (this.fields["type"].value === "spot") {
-            let topBottomRow = this.fields["shadowCameraSize.top"].parentElement.parentElement.parentElement;
-            topBottomRow.parentElement.removeChild(topBottomRow);
-            let leftRightRow = this.fields["shadowCameraSize.left"].parentElement.parentElement.parentElement;
-            leftRightRow.parentElement.removeChild(leftRightRow);
+          for (let shadowRow of this.shadowRows) shadowRow.hidden = false;
+          if (type === "spot") {
+            this.fields["shadowCameraSize.top"].parentElement.parentElement.parentElement.hidden = true;
+            this.fields["shadowCameraSize.left"].parentElement.parentElement.parentElement.hidden = true;
           } else {
-            let fovRow = this.fields["shadowCameraFov"].parentElement.parentElement;
-            fovRow.parentElement.removeChild(fovRow);
+            this.fields["shadowCameraFov"].parentElement.parentElement.hidden = true;
           }
+        } else {
+          for (let shadowRow of this.shadowRows) shadowRow.hidden = true;
         }
 
       } else {
-        if (targetRow.parentElement != null) targetRow.parentElement.removeChild(targetRow);
+        targetRow.hidden = true;
+        castShadowRow.hidden = true;
+        for (let shadowRow of this.shadowRows) shadowRow.hidden = true;
       }
     }
   }

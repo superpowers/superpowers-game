@@ -2,7 +2,6 @@ export default class CannonBodyEditor {
 
   tbody: HTMLTableSectionElement;
   fields: { [name: string]: HTMLInputElement|HTMLSelectElement };
-  shapeRows: HTMLTableRowElement[];
   projectClient: SupClient.ProjectClient;
   editConfig: any;
   halfSizeRow: SupClient.table.RowParts;
@@ -13,7 +12,6 @@ export default class CannonBodyEditor {
     this.projectClient = projectClient;
     this.editConfig = editConfig;
     this.tbody = tbody;
-    this.shapeRows = [];
     this.fields = {};
     let massRow = SupClient.table.appendRow(this.tbody, SupClient.i18n.t("componentEditors:CannonBody.mass"));
     this.fields["mass"] = SupClient.table.appendNumberField(massRow.valueCell, config.mass, { min: 0 });
@@ -61,7 +59,6 @@ export default class CannonBodyEditor {
 
     // Box
     this.halfSizeRow = SupClient.table.appendRow(this.tbody, SupClient.i18n.t("componentEditors:CannonBody.halfSize"));
-    this.shapeRows.push(this.halfSizeRow.row);
     let halfSizeFields = SupClient.table.appendNumberFields(this.halfSizeRow.valueCell, [ config.halfSize.x, config.halfSize.y, config.halfSize.z ], { min: 0 });
     this.fields["halfSize.x"] = halfSizeFields[0];
     this.fields["halfSize.y"] = halfSizeFields[1];
@@ -82,14 +79,12 @@ export default class CannonBodyEditor {
 
     // Sphere / Cylinder
     this.radiusRow = SupClient.table.appendRow(this.tbody, SupClient.i18n.t("componentEditors:CannonBody.radius"));
-    this.shapeRows.push(this.radiusRow.row);
     this.fields["radius"] = SupClient.table.appendNumberField(this.radiusRow.valueCell, config.radius, { min: 0 });
     this.fields["radius"].addEventListener("change", (event) => {
       this.editConfig("setProperty", "radius", parseFloat((<HTMLInputElement>event.target).value));
     });
 
     this.heightRow = SupClient.table.appendRow(this.tbody, SupClient.i18n.t("componentEditors:CannonBody.height"));
-    this.shapeRows.push(this.heightRow.row);
     this.fields["height"] = SupClient.table.appendNumberField(this.heightRow.valueCell, config.height, { min: 0 });
     this.fields["height"].addEventListener("change", (event) => {
       this.editConfig("setProperty", "height", parseFloat((<HTMLInputElement>event.target).value));
@@ -99,25 +94,21 @@ export default class CannonBodyEditor {
   }
 
   updateShapeInput(shape: string) {
-
-    for (let row of this.shapeRows) this.tbody.removeChild(row);
-    this.shapeRows.length = 0;
-
     switch (shape) {
       case "box":
-        this.tbody.appendChild(this.halfSizeRow.row);
-        this.shapeRows.push(this.halfSizeRow.row);
+        this.halfSizeRow.row.hidden = false;
+        this.radiusRow.row.hidden = true;
+        this.heightRow.row.hidden = true;
         break;
       case "sphere":
-        this.tbody.appendChild(this.radiusRow.row);
-        this.shapeRows.push(this.radiusRow.row);
+        this.halfSizeRow.row.hidden = true;
+        this.radiusRow.row.hidden = false;
+        this.heightRow.row.hidden = true;
         break;
-
       case "cylinder":
-        this.tbody.appendChild(this.radiusRow.row);
-        this.shapeRows.push(this.radiusRow.row);
-        this.tbody.appendChild(this.heightRow.row);
-        this.shapeRows.push(this.heightRow.row);
+        this.halfSizeRow.row.hidden = true;
+        this.radiusRow.row.hidden = false;
+        this.heightRow.row.hidden = false;
         break;
     }
   }
