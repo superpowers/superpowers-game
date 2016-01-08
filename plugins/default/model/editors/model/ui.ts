@@ -14,6 +14,7 @@ let ui: {
   unitRatioInput?: HTMLInputElement;
   opacitySelect?: HTMLSelectElement;
   opacitySlider?: HTMLInputElement;
+  opacityNumber?: HTMLInputElement;
 
   animationsTreeView?: any;
   selectedAnimationId?: string;
@@ -78,6 +79,9 @@ ui.opacitySelect.addEventListener("change", onChangeOpacityType);
 
 ui.opacitySlider = <HTMLInputElement>document.querySelector(".opacity-slider");
 ui.opacitySlider.addEventListener("input", onChangeOpacity);
+
+ui.opacityNumber = <HTMLInputElement>document.querySelector(".property-opacity");
+ui.opacityNumber.addEventListener("input", onChangeOpacity);
 
 // Animations
 ui.animationsTreeView = new TreeView(document.querySelector(".animations-tree-view"), { dropCallback: onAnimationDrop });
@@ -468,6 +472,7 @@ export function setupOpacity(opacity: number) {
       ui.opacitySelect.value = "transparent";
       ui.opacitySlider.parentElement.hidden = false;
       ui.opacitySlider.value = opacity.toString();
+      ui.opacityNumber.value = opacity.toString();
       data.modelUpdater.modelRenderer.setOpacity(opacity);
   }
 }
