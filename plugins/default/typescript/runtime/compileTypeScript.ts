@@ -49,17 +49,28 @@ export default function compileTypeScript(sourceFileNames: string[], sourceFiles
   let program = ts.createProgram(sourceFileNames, compilerOptions, compilerHost);
   // Query for earyly errors
   let errors = ts.getPreEmitDiagnostics(program);
-  let typeChecker: ts.TypeChecker;
-  // Do not generate code in the presence of early errors
-  if (errors.length === 0) {
-    // Type check and get semantic errors
-    typeChecker = program.getTypeChecker();
-    // Generate output
-    errors = program.emit().diagnostics;
+  if (errors.length > 0) {
+    return {
+      errors: errors.map((e) => {
+        return {
+          file: "",
+          position: { line: 0, character: 0 },
+          length: 0,
+          message: ts.flattenDiagnosticMessageText(e.messageText, "\n")
+        };
+      }),
+      program, typeChecker: null, script, sourceMaps, files
+    };
   }
 
+  // Type check and get semantic errors
+  let typeChecker: ts.TypeChecker;
+  typeChecker = program.getTypeChecker();
+  // Generate output
+  errors = program.emit().diagnostics;
+
   return {
-    errors: errors.map((e: any) => {
+    errors: errors.map((e) => {
       return {
         file: e.file.fileName,
         position: e.file.getLineAndCharacterOfPosition(e.start),

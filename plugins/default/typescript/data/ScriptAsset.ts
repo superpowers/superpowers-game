@@ -248,7 +248,7 @@ Sup.registerBehavior(${behaviorName});
     let finish = (errors: CompilationError[]) => {
       let foundSelfErrors = (errors != null) && errors.some((x) => x.file === ownScriptName);
 
-      if (foundSelfErrors && ! options.ignoreErrors) {
+      if (foundSelfErrors && !options.ignoreErrors) {
         callback("foundSelfErrors");
         return;
       }
