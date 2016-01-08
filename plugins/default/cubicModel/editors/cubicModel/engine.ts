@@ -241,7 +241,7 @@ function onTransformChange() {
       break;
 
     case "scale":
-      transformType = "scale";
+      transformType = "shape.settings.stretch";
       value = { x: object.scale.x, y: object.scale.y, z: object.scale.z };
       break;
   }
