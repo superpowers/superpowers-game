@@ -21,7 +21,7 @@ function loadPlugins() {
     async.eachSeries(pluginsInfo.list, (pluginName, pluginCallback) => {
       SupClient.activePluginPath = `/systems/${SupCore.system.name}/plugins/${pluginName}`;
       let documentationScript = document.createElement("script");
-      documentationScript.src = `${SupClient.activePluginPath}/documentation.js`;
+      documentationScript.src = `${SupClient.activePluginPath}/bundles/documentation.js`;
       documentationScript.addEventListener("load", () => { pluginCallback(); } );
       documentationScript.addEventListener("error", () => { pluginCallback(); } );
       document.body.appendChild(documentationScript);
