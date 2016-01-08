@@ -24,15 +24,10 @@ ui.matchCaseCheckbox = <HTMLInputElement>document.getElementById("match-case-che
 document.querySelector(".search button").addEventListener("click", (event: any) => { search(); });
 ui.statusSpan = <HTMLSpanElement>document.querySelector(".search span");
 
-// Handle request from another tab
-ui.searchInput.value = SupClient.query["text"] != null ? SupClient.query["text"] : "";
-search();
-
 window.addEventListener("message", (event: any) => {
   if (event.data.type === "activate") ui.searchInput.focus();
-
-  if (event.data.text != null) {
-    ui.searchInput.value = event.data.text;
+  if (event.data.type === "setState") {
+    ui.searchInput.value = event.data.state.text;
     search();
   }
 });
@@ -107,7 +102,7 @@ export function searchAsset(assetId: string) {
       let ch = target.dataset["ch"];
 
       if (window.parent != null)
-        window.parent.postMessage({ type: "openEntry", id, options: { line, ch } }, window.location.origin);
+        window.parent.postMessage({ type: "openEntry", id, state: { line, ch } }, window.location.origin);
     });
 
   } else {

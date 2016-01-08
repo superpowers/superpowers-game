@@ -27,11 +27,15 @@ let ui: {
 } = {} as any;
 export default ui;
 
+let defaultPosition: CodeMirror.Position;
 window.addEventListener("message", (event) => {
   if (event.data.type === "activate") ui.editor.codeMirrorInstance.focus();
-
-  if (event.data.line != null && event.data.ch != null)
-    ui.editor.codeMirrorInstance.getDoc().setCursor({ line: parseInt(event.data.line, 10), ch: parseInt(event.data.ch, 10) });
+  if (event.data.type === "setState") {
+    let line = parseInt(event.data.state.line, 10);
+    let ch = parseInt(event.data.state.ch, 10);
+    if (ui.editor != null) ui.editor.codeMirrorInstance.getDoc().setCursor({ line , ch });
+    else defaultPosition = { line, ch };
+  }
 });
 
 // Parameter hint popup
@@ -72,7 +76,7 @@ let parameterPopupKeyMap = {
 };
 
 // Setup editor
-export function setupEditor(clientId: number) {
+export function setupEditor(clientId: number, script: string) {
   SupClient.setupHotkeys();
 
   let textArea = <HTMLTextAreaElement>document.querySelector(".text-editor");
@@ -144,6 +148,9 @@ export function setupEditor(clientId: number) {
     ui.completionOpened = false;
     if (ui.parameterElement.parentElement != null) ui.editor.codeMirrorInstance.addKeyMap(parameterPopupKeyMap);
   });
+
+  ui.editor.setText(script);
+  if (defaultPosition != null) ui.editor.codeMirrorInstance.getDoc().setCursor(defaultPosition);
 }
 
 let localVersionNumber = 0;
@@ -285,7 +292,7 @@ function onErrorTBodyClick(event: MouseEvent) {
     ui.editor.codeMirrorInstance.getDoc().setCursor({ line: parseInt(line, 10), ch: parseInt(character, 10) });
     ui.editor.codeMirrorInstance.focus();
   } else {
-    if (window.parent != null) window.parent.postMessage({ type: "openEntry", id: assetId, options: { line, ch: character } }, window.location.origin);
+    if (window.parent != null) window.parent.postMessage({ type: "openEntry", id: assetId, state: { line, ch: character } }, window.location.origin);
   }
 }
 
@@ -495,6 +502,6 @@ function onGlobalSearch() {
       ui.editor.codeMirrorInstance.focus();
       return;
     }
-    window.parent.postMessage({ type: "openTool", name: "search", options: { text } }, window.location.origin);
+    window.parent.postMessage({ type: "openTool", name: "search", state: { text } }, window.location.origin);
   });
 }

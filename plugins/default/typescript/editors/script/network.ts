@@ -47,9 +47,7 @@ let scriptSubscriber: SupClient.AssetSubscriber = {
       data.asset = asset;
 
       (<any>ui.errorPaneStatus.classList.toggle)("has-draft", data.asset.hasDraft);
-      ui.editor.setText(data.asset.pub.draft);
-      if (SupClient.query["line"] != null && SupClient.query["ch"] != null)
-        ui.editor.codeMirrorInstance.getDoc().setCursor({ line: parseInt(SupClient.query["line"], 10), ch: parseInt(SupClient.query["ch"], 10) });
+      setupEditor(data.clientId, data.asset.pub.draft);
     }
 
     if (!allScriptsReceived) {
@@ -267,7 +265,7 @@ data.typescriptWorker.onmessage = (event: MessageEvent) => {
     case "definition":
       if (window.parent != null) {
         let entry = SupClient.findEntryByPath(data.projectClient.entries.pub, event.data.fileName);
-        window.parent.postMessage({ type: "openEntry", id: entry.id, options: { line: event.data.line, ch: event.data.ch } }, window.location.origin);
+        window.parent.postMessage({ type: "openEntry", id: entry.id, state: { line: event.data.line, ch: event.data.ch } }, window.location.origin);
       }
       break;
   }
@@ -340,8 +338,6 @@ function loadPlugins() {
 
       data.projectClient = new SupClient.ProjectClient(socket);
       data.projectClient.subEntries(entriesSubscriber);
-
-      setupEditor(data.clientId);
     });
   });
 }
