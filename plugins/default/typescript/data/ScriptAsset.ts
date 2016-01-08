@@ -37,7 +37,7 @@ if ((<any>global).window == null) {
   ts = serverRequire("typescript");
   compileTypeScript = serverRequire("../runtime/compileTypeScript").default;
 
-  SupCore.system.requireForAllPlugins("api/index.js");
+  SupCore.system.requireForAllPlugins("typescriptAPI/index.js");
   let plugins = SupCore.system.getPlugins<SupCore.TypeScriptAPIPlugin>("typescriptAPI");
   let actorComponentAccessors: string[] = [];
   for (let pluginName in plugins) {
