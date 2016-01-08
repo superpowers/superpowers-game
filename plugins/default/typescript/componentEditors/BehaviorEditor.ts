@@ -28,17 +28,18 @@ export default class BehaviorEditor {
     // Using a <select> rather than <input> + <datalist> because of bugs in Chrome and Electron
     // See https://trello.com/c/jNNRLgdb/651 and https://github.com/atom/electron/issues/360
     let behaviorNameRow = SupClient.table.appendRow(this.tbody, SupClient.i18n.t("componentEditors:Behavior.class"));
-    this.behaviorNameField = SupClient.table.appendSelectBox(behaviorNameRow.valueCell, { "": SupClient.i18n.t("common:none") });
+    let behaviorDiv = document.createElement("div") as HTMLDivElement;
+    behaviorDiv.classList.add("inputs");
+    behaviorNameRow.valueCell.appendChild(behaviorDiv);
+
+    this.behaviorNameField = SupClient.table.appendSelectBox(behaviorDiv, { "": SupClient.i18n.t("common:none") });
     this.behaviorNameField.addEventListener("change", this.onChangeBehaviorName);
 
     this.openBehaviorButton = document.createElement("button");
     this.openBehaviorButton.disabled = true;
     this.openBehaviorButton.textContent = SupClient.i18n.t("common:actions.open");
-    behaviorNameRow.valueCell.appendChild(this.openBehaviorButton);
+    behaviorDiv.appendChild(this.openBehaviorButton);
     this.openBehaviorButton.addEventListener("click", this.onOpenBehavior);
-
-    behaviorNameRow.valueCell.style.display = "flex";
-    this.behaviorNameField.style.flex = "1";
 
     SupClient.table.appendHeader(this.tbody, SupClient.i18n.t("componentEditors:Behavior.customizableProperties"));
 
