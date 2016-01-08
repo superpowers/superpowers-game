@@ -11,6 +11,6 @@
     "build": "gulp --gulpfile=../../../../../scripts/pluginGulpfile.js --cwd=."
   },
   "dependencies": {
-    "socket.io-client": "^1.3.7"
+    "socket.io-client": "~1.3.7"
   }
 }
