@@ -102,6 +102,9 @@ document.addEventListener("keyup", (event) => {
     case (<any>window).KeyEvent.DOM_VK_R: rotateTiles(); break;
   }
 });
+SupClient.setupHelpCallback(() => {
+    window.parent.postMessage({ type: "openTool", name: "documentation", state: { section: "tileMap" } }, window.location.origin);
+});
 
 function onTileSetChange(event: Event) {
   let value = (<HTMLInputElement>event.target).value;

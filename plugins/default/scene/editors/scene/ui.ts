@@ -220,6 +220,9 @@ document.querySelector(".main .controls .transform-mode").addEventListener("clic
 ui.availableComponents = {};
 export function start() {
   SupClient.setupHotkeys();
+  SupClient.setupHelpCallback(() => {
+      window.parent.postMessage({ type: "openTool", name: "documentation", state: { section: "scene" } }, window.location.origin);
+  });
 
   let componentTypes = Object.keys(SupClient.plugins["componentEditors"]);
   componentTypes.sort((a, b) => {

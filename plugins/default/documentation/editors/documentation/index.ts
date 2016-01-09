@@ -9,6 +9,14 @@ let socket = SupClient.connect(SupClient.query.project);
 socket.on("welcome", onWelcome);
 socket.on("disconnect", SupClient.onDisconnected);
 SupClient.setupHotkeys();
+let loaded = false;
+let initialSection: string;
+window.addEventListener("message", (event: any) => {
+  if (event.data.type === "setState") {
+    if (!loaded) initialSection = event.data.state.section;
+    else openDocumentation(event.data.state.section);
+  }
+});
 
 function onWelcome() {
   data = { projectClient: new SupClient.ProjectClient(socket), };
@@ -29,9 +37,17 @@ function loadPlugins() {
   });
 }
 
+let navListElt = document.querySelector("nav ul");
+let mainElt =  document.querySelector("main");
+
+function openDocumentation(name: string) {
+  (navListElt.querySelector("li a.active") as HTMLAnchorElement).classList.remove("active");
+  (mainElt.querySelector("article.active") as HTMLElement).classList.remove("active");
+  navListElt.querySelector(`[data-name=${name}]`).classList.add("active");
+  document.getElementById(`documentation-${name}`).classList.add("active");
+}
+
 function setupDocs() {
-  let navListElt = document.querySelector("nav ul");
-  let mainElt = document.querySelector("main");
 
   let sortedNames = Object.keys(SupClient.plugins["documentation"]);
   sortedNames.sort((a, b) => { return (a.toLowerCase() < b.toLowerCase()) ? -1 : 1; });
@@ -81,13 +97,11 @@ function setupDocs() {
 
   navListElt.addEventListener("click", (event: any) => {
     if (event.target.tagName !== "A") return;
-
-    (<HTMLAnchorElement>navListElt.querySelector("li a.active")).classList.remove("active");
-    (<HTMLElement>mainElt.querySelector("article.active")).classList.remove("active");
-    event.target.classList.add("active");
-    document.getElementById(`documentation-${event.target.dataset["name"]}`).classList.add("active");
+    openDocumentation(event.target.dataset["name"]);
   });
 
   (<HTMLAnchorElement>navListElt.querySelector("li a")).classList.add("active");
   (<HTMLElement>mainElt.querySelector("article")).classList.add("active");
+  loaded = true;
+  if (initialSection != null) openDocumentation(initialSection);
 }
