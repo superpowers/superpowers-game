@@ -6,8 +6,11 @@ declare namespace Sup {
     getModel(): Model;
     setModel(pathOrAsset: string|Model): ModelRenderer;
     setModel(pathOrAsset: string|Model, materialType?: ModelRenderer.MaterialType, shaderPathOrAsset?: string|Shader): ModelRenderer;
+
     getMaterialType(): ModelRenderer.MaterialType;
     getShader(): Shader;
+    uniforms: Sup.ShaderUniforms;
+
     getOpacity(): number;
     setOpacity(opacity: number): ModelRenderer;
     getColor(): Color;
@@ -25,8 +28,6 @@ declare namespace Sup {
     playAnimation(looping?: boolean): ModelRenderer;
     pauseAnimation(): ModelRenderer;
     stopAnimation(): ModelRenderer;
-
-    getUniforms(): { [name: string]: { type: string; value: any; } };
   }
 
   namespace ModelRenderer {

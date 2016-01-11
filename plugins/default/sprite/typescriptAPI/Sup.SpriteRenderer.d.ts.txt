@@ -6,8 +6,11 @@ declare namespace Sup {
     getSprite(): Sprite;
     setSprite(pathOrAsset: string|Sprite): SpriteRenderer;
     setSprite(pathOrAsset: string|Sprite, materialType?: SpriteRenderer.MaterialType, shaderPathOrAsset?: string|Shader): SpriteRenderer;
+    
     getMaterialType(): SpriteRenderer.MaterialType;
     getShader(): Shader;
+    uniforms: Sup.ShaderUniforms;
+
     setHorizontalFlip(horizontalFlip: boolean): SpriteRenderer;
     getHorizontalFlip(): boolean;
     setVerticalFlip(verticalFlip: boolean): SpriteRenderer;
@@ -32,8 +35,6 @@ declare namespace Sup {
     stopAnimation(): SpriteRenderer;
     setPlaybackSpeed(playbackSpeed: number): SpriteRenderer;
     getPlaybackSpeed();
-
-    getUniforms(): { [name: string]: { type: string; value: any; } };
   }
 
   namespace SpriteRenderer {

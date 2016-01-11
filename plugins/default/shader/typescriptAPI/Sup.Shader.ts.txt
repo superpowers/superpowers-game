@@ -1,4 +1,80 @@
 namespace Sup {
-  export class Shader extends Asset {
+  export class Shader extends Asset {}
+  export class ShaderUniforms {
+    renderer: any;
+
+    constructor(renderer: any) {
+      if (renderer == null) throw new Error("ShaderUniforms can't be created at runtime. You can access them from a SpriteRenderer or a ModelRenderer");
+      this.renderer = renderer;
+    }
+
+    checkUniform(name: string) {
+      if (this.renderer.__inner.material.uniforms == null) throw new Error("Material type must be Shader to access uniforms");
+      if (this.renderer.__inner.material.uniforms[name] == null) throw new Error(`Uniform ${name} isn't defined`);
+    }
+
+    getFloat(name: string) {
+      this.checkUniform(name);
+      return this.renderer.__inner.material.uniforms[name];
+    }
+    setFloat(name: string, value: number) {
+      this.checkUniform(name);
+      this.renderer.__inner.material.uniforms[name].value = value;
+      return this;
+    }
+
+    getColor(name: string) {
+      this.checkUniform(name);
+      let uniform = this.renderer.__inner.material.uniforms[name].value;
+      return new Sup.Color(uniform.r, uniform.g, uniform.b);
+    }
+    setColor(name: string, value: Sup.Color) {
+      this.checkUniform(name);
+      let uniform = this.renderer.__inner.material.uniforms[name].value;
+      uniform.r = value.r;
+      uniform.g = value.g;
+      uniform.b = value.b;
+      return this;
+    }
+
+    getVector2(name: string) {
+      this.checkUniform(name);
+      let uniform = this.renderer.__inner.material.uniforms[name].value;
+      return new Sup.Math.Vector2(uniform.x, uniform.y);
+    }
+    setVector2(name: string, value: Sup.Math.Vector2) {
+      this.checkUniform(name);
+      let uniform = this.renderer.__inner.material.uniforms[name].value;
+      uniform.x = value.x;
+      uniform.y = value.y;
+      return this;
+    }
+    getVector3(name: string) {
+      this.checkUniform(name);
+      let uniform = this.renderer.__inner.material.uniforms[name].value;
+      return new Sup.Math.Vector3(uniform.x, uniform.y, uniform.z);
+    }
+    setVector3(name: string, value: Sup.Math.Vector3) {
+      this.checkUniform(name);
+      let uniform = this.renderer.__inner.material.uniforms[name].value;
+      uniform.x = value.x;
+      uniform.y = value.y;
+      uniform.z = value.z;
+      return this;
+    }
+    getVector4(name: string) {
+      this.checkUniform(name);
+      let uniform = this.renderer.__inner.material.uniforms[name].value;
+      return { x: uniform.x, y: uniform.y, z: uniform.z, w: uniform.w };
+    }
+    setVector4(name: string, value: { x: number; y: number; z: number; w: number; }) {
+      this.checkUniform(name);
+      let uniform = this.renderer.__inner.material.uniforms[name].value;
+      uniform.x = value.x;
+      uniform.y = value.y;
+      uniform.z = value.z;
+      uniform.w = value.w;
+      return this;
+    }
   }
 }

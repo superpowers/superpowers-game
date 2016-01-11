@@ -2,4 +2,18 @@ declare namespace Sup {
   class Shader extends Asset {
     dummyShaderMember;
   }
+  class ShaderUniforms {
+    getFloat(name: string): number;
+    setFloat(name: string, value: number): ShaderUniforms;
+
+    getColor(name: string): Sup.Color;
+    setColor(name: string, value: Sup.Color): ShaderUniforms;
+
+    getVector2(name: string): Sup.Math.Vector2;
+    setVector2(name: string, value: Sup.Math.Vector2): ShaderUniforms;
+    getVector3(name: string): Sup.Math.Vector3;
+    setVector3(name: string, value: Sup.Math.Vector3): ShaderUniforms;
+    getVector4(name: string): { x: number; y: number; z: number; w: number; };
+    setVector4(name: string, value: { x: number; y: number; z: number; w: number; }): ShaderUniforms;
+  }
 }

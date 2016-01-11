@@ -35,8 +35,11 @@ namespace Sup {
       this.__inner.setModel((modelAsset != null) ? modelAsset.__inner : null, material, (shaderAsset != null) ? shaderAsset.__inner : null);
       return this;
     }
+    
     getMaterialType() { return materialTypes.indexOf(this.__inner.materialType); }
     getShader() { return this.__inner.materialType === "shader" ? this.__inner.shaderAsset.__outer : null; }
+    uniforms = new Sup.ShaderUniforms(this);
+
     getOpacity() { return this.__inner.opacity; }
     setOpacity(opacity) { this.__inner.setOpacity(opacity); return this; }
     getColor() { return new Color(this.__inner.color.r, this.__inner.color.g, this.__inner.color.b); }
@@ -70,8 +73,6 @@ namespace Sup {
     playAnimation(looping) { this.__inner.playAnimation(looping); return this }
     pauseAnimation() { this.__inner.pauseAnimation(); return this }
     stopAnimation() { this.__inner.stopAnimation(); return this }
-
-    getUniforms() { return this.__inner.material.uniforms; }
   }
 
   export namespace ModelRenderer {

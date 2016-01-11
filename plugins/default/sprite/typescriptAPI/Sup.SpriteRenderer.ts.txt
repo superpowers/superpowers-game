@@ -35,8 +35,11 @@ namespace Sup {
       this.__inner.setSprite((spriteAsset != null) ? spriteAsset.__inner : null, material, (shaderAsset != null) ? shaderAsset.__inner : null);
       return this;
     }
+    
     getMaterialType() { return materialTypes.indexOf(this.__inner.materialType); }
     getShader() { return this.__inner.materialType === "shader" ? this.__inner.shaderAsset.__outer : null; }
+    uniforms = new Sup.ShaderUniforms(this);
+
     setHorizontalFlip(horizontalFlip) { this.__inner.setHorizontalFlip(horizontalFlip); return this; }
     getHorizontalFlip() { return this.__inner.horizontalFlip; }
     setVerticalFlip(verticalFlip) { this.__inner.setVerticalFlip(verticalFlip); return this; }
@@ -67,8 +70,6 @@ namespace Sup {
     stopAnimation() { this.__inner.stopAnimation(); return this; }
     setPlaybackSpeed(playbackSpeed) { this.__inner.playbackSpeed = playbackSpeed; return this; }
     getPlaybackSpeed() { return this.__inner.playbackSpeed; }
-
-    getUniforms() { return this.__inner.material.uniforms; }
   }
 
   export namespace SpriteRenderer {
