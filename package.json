@@ -8,6 +8,7 @@
     "url": "https://github.com/superpowers/superpowers-game.git"
   },
   "superpowers": {
+    "systemId": "game",
     "publishedPluginBundles": ["components", "runtime"]
   }
 }

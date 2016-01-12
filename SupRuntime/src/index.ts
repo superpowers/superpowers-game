@@ -33,7 +33,7 @@ export function registerResource(name: string, plugin: SupRuntime.RuntimeResourc
 }
 
 
-SupCore.system = new SupCore.System("");
+SupCore.system = new SupCore.System("", "");
 
 // In app, open links in a browser window
 let playerWindow: GitHubElectron.BrowserWindow;

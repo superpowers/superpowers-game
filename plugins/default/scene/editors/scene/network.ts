@@ -44,13 +44,14 @@ function loadPlugins(callback: (err: Error, locales: SupClient.i18n.File[]) => v
   let locales: SupClient.i18n.File[] = [];
   locales.push({ root: `${window.location.pathname}/../..`, name: "sceneEditor" });
 
-  SupClient.fetch(`/systems/${SupCore.system.name}/plugins.json`, "json", (err: Error, pluginsInfo: SupCore.PluginsInfo) => {
+  SupClient.fetch(`/systems/${SupCore.system.id}/plugins.json`, "json", (err: Error, pluginsInfo: SupCore.PluginsInfo) => {
     async.eachSeries(pluginsInfo.list, (pluginName, pluginCallback) => {
+      let pluginPath = `/systems/${SupCore.system.id}/plugins/${pluginName}`;
       async.series([
 
         (cb) => {
           let dataScript = document.createElement("script");
-          dataScript.src = `/systems/${SupCore.system.name}/plugins/${pluginName}/bundles/data.js`;
+          dataScript.src = `${pluginPath}/bundles/data.js`;
           dataScript.addEventListener("load", () => { cb(null, null); } );
           dataScript.addEventListener("error", () => { cb(null, null); } );
           document.body.appendChild(dataScript);
@@ -58,7 +59,7 @@ function loadPlugins(callback: (err: Error, locales: SupClient.i18n.File[]) => v
 
         (cb) => {
           let componentsScript = document.createElement("script");
-          componentsScript.src = `/systems/${SupCore.system.name}/plugins/${pluginName}/bundles/components.js`;
+          componentsScript.src = `${pluginPath}/bundles/components.js`;
           componentsScript.addEventListener("load", () => { cb(null, null); } );
           componentsScript.addEventListener("error", () => { cb(null, null); } );
           document.body.appendChild(componentsScript);
@@ -66,16 +67,16 @@ function loadPlugins(callback: (err: Error, locales: SupClient.i18n.File[]) => v
 
         (cb) => {
           let componentConfigsScript = document.createElement("script");
-          componentConfigsScript.src = `/systems/${SupCore.system.name}/plugins/${pluginName}/bundles/componentConfigs.js`;
+          componentConfigsScript.src = `${pluginPath}/bundles/componentConfigs.js`;
           componentConfigsScript.addEventListener("load", () => { cb(null, null); } );
           componentConfigsScript.addEventListener("error", () => { cb(null, null); } );
           document.body.appendChild(componentConfigsScript);
         },
 
         (cb) => {
-          SupClient.activePluginPath = `/systems/${SupCore.system.name}/plugins/${pluginName}`;
+          SupClient.activePluginPath = pluginPath;
           let componentEditorsScript = document.createElement("script");
-          componentEditorsScript.src = `${SupClient.activePluginPath}/bundles/componentEditors.js`;
+          componentEditorsScript.src = `${pluginPath}/bundles/componentEditors.js`;
           componentEditorsScript.addEventListener("load", () => {
 
             locales.push({ root: SupClient.activePluginPath, name: "componentEditors" });

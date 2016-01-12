@@ -25,9 +25,9 @@ function onWelcome() {
 }
 
 function loadPlugins() {
-  SupClient.fetch(`/systems/${SupCore.system.name}/plugins.json`, "json", (err: Error, pluginsInfo: SupCore.PluginsInfo) => {
+  SupClient.fetch(`/systems/${SupCore.system.id}/plugins.json`, "json", (err: Error, pluginsInfo: SupCore.PluginsInfo) => {
     async.eachSeries(pluginsInfo.list, (pluginName, pluginCallback) => {
-      SupClient.activePluginPath = `/systems/${SupCore.system.name}/plugins/${pluginName}`;
+      SupClient.activePluginPath = `/systems/${SupCore.system.id}/plugins/${pluginName}`;
       let documentationScript = document.createElement("script");
       documentationScript.src = `${SupClient.activePluginPath}/bundles/documentation.js`;
       documentationScript.addEventListener("load", () => { pluginCallback(); } );
