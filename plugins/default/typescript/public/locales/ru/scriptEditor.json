@@ -1,0 +1,25 @@
+
+{
+  "applyChanges": "Применить изменения",
+  "applyChangesWithErrors": "Применить изминения с ошибками",
+  "draft": "Черновик",
+  
+  "errors": {
+    "noErrors": "Нет ошибок",
+    "oneError": "1 ошибка",
+    "severalErrors": "${errors} ошибок",
+
+    "selfErrorsInfo": "${errors} в этом скрипте",
+    "otherErrorsInfo": "${errors} в других скриптах",
+    "bothErrorsInfo": "${selfErrors}, ${otherErrors}",
+
+    "line": "Строка",
+    "message": "Сообщение",
+    "script": "Скрипт"
+  },
+
+  "globalSearch": {
+    "prompt": "Поиск во всех TypeScript скриптах.",
+    "placeholder": "Найти в проекте"
+  }
+}

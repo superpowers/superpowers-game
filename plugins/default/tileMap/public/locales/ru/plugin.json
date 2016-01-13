@@ -1,0 +1,10 @@
+{
+  "editors": {
+    "tileMap": {
+      "title": "Тайл Мап"
+    },
+    "tileSet": {
+      "title": "Тайл Сет"
+    }
+  }
+}

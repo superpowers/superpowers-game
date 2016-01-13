@@ -1,0 +1,30 @@
+{
+  "tileMap": "Тайл Мап",
+  "tileSet": "Тайл Сет",
+  "pixelsPerUnit": "Пиксели / Единица",
+  "depthOffset": "Глубина отступа",
+
+  "size": "Размер",
+  "resize": "Изменить размер",
+  "newWidthPrompt": "Введите новую ширину для карты.",
+  "newHeightPrompt": "Введите новую высоту для карты.",
+  "move": "Переместить",
+  "applyOffset": "Применить отступ",
+  "horizontalOffsetPrompt": "Введите горизонтальный отступ.",
+  "verticalOffsetPrompt": "Введите мертикальный отступ.",
+  
+  "tools": "Инструменты",
+  "grid": "Сетка",
+  "highlight": "Подсветка",
+  
+  "brush": "Кисть",
+  "fill": "Заливка",
+  "selection": "Выделение",
+  "eraser": "Ластик",
+  
+  "layers": "Слои",
+  "newLayerPrompt": "Введите имя для слоя.",
+  "newLayerInitialValue": "Слой",
+  "renameLayerPrompt": "Введите новое имя для слоя.",
+  "deleteLayerConfirm": "Вы уверены, что хотите удалить выбранные слои?"
+}

@@ -1,0 +1,26 @@
+{
+  "type": "Тип Шрифта",
+  "typeOptions": {
+    "bitmap": "Битмап",
+    "vector": "Векторный Шрифт"
+  },
+  "font": {
+    "title": "Шрифт",
+    "download": {
+      "prompt": "Введите имя для шрифта",
+      "defaultName": "Шрифт"
+    }
+  },
+  "texture": "Текстура",
+  "rendering": "Рендеринг",
+  "filtering": "Фильтрация",
+  "pixelated": "Пикселизация",
+  "smooth": "Сглаживание",
+  "pixelsPerUnit": "Пиксели / Единица",
+  "color": "Цвет",
+  "settings": "Настройки",
+  "size": "Размер (пиксели)",
+  "gridSize": "Размер Сетки",
+  "charset": "Набор Символов",
+  "charsetOffset": "Смещение Символов"
+}

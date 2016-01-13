@@ -1,0 +1,21 @@
+
+{
+  "SpriteRenderer": {
+    "label": "Рендер Спрайта",
+    "sprite": "Спрайт",
+    "animation": "Анимация",
+    "animationNone": "(Пусто)",
+    "flip": "Отразить",
+    "shadow": {
+      "title": "Тень",
+      "cast": "Отбрасывание",
+      "receive": "Получать"
+    },
+    "color": "Цвет",
+    "opacity": "Прозрачность",
+    "transparent": "Прозрачный",
+    "opaque": "Непрозрачный",
+    "material": "Материал",
+    "shader": "Шейдер"
+  }
+}

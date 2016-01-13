@@ -1,0 +1,17 @@
+{
+  "sidebar": {
+    "settings": {
+      "sound": {
+        "title": "Звук",
+        "file": {
+          "title": "Файл",
+          "download": {
+            "defaultName": "Sound.wav",
+            "prompt": "Введите имя для звука"
+          }
+        },
+        "streaming": "Потоковое"
+      }
+    }
+  }
+}

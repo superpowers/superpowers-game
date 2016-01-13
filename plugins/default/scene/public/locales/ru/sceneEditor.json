@@ -1,0 +1,62 @@
+
+{
+  "controls": {
+    "camera": {
+      "title": "Камера",
+      "mode": "Режим",
+      "verticalAxis": "Вертикальная Ось",
+      "speed": "Скорость"
+    },
+    "transform": {
+      "title": "Трансформация",
+      "move": "Перемещение",
+      "rotate": "Вращение",
+      "scale": "Масштаб",
+      "local": "Позиция"
+    },
+    "grid": {
+      "title": "Сетка",
+      "size": "Размер",
+      "visible": "Видимость"
+    },
+    "light": {
+      "title": "Свет"
+    }
+  },
+  "treeView": {
+    "newActor": {
+      "title": "Создать Актера",
+      "prompt": "Введите имя для актера.",
+      "initialValue": "Актер"
+    },
+    "newPrefab": {
+      "title": "Создать префаб",
+      "prompt": "Введите имя для префаба",
+      "initialValue": "Префаб"
+    },
+    "renamePrompt": "Введите новое имя для актера.",
+    "duplicatePrompt": "Введите имя для нового актера.",
+    "deleteConfirm": "Вы уверены, что хотите удалить выбранных актеров?",
+    "visible": {
+      "show": "Показать",
+      "hide": "Скрыть"
+    }
+  },
+  "inspector": {
+    "position": "Позиция",
+    "orientation": "Ориентация",
+    "scale": "Масштаб",
+    "visible": "Видимый",
+    "layer": "Слой",
+    "prefab": "префаб",
+    "newComponent":{
+      "title": "Создать Компонент",
+      "select": "Выберите тип создаваемого компонента.",
+      "validate": "Создать"
+    },
+    "deleteComponent": {
+      "confirm": "Вы увены, что хотите удалить этот компонент?",
+      "validate": "Удалить"
+    }
+  }
+}

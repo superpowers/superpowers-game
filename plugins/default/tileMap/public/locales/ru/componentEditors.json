@@ -1,0 +1,15 @@
+
+{
+  "TileMapRenderer": {
+    "label": "Рендеринг Тайл Мапа",
+    "tileMap": "Тайл Мап",
+    "tileSet": "Тайл Сет",
+    "shadow": {
+      "title": "Тень",
+      "cast": "Отбрасывание",
+      "receive": "Получение"
+    },
+    "material": "Материал",
+    "shader": "Шейдер"
+  }
+}

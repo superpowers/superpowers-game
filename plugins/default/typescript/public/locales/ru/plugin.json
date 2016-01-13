@@ -1,0 +1,13 @@
+{
+  "editors": {
+    "script": {
+      "title": "Скрипт"
+    },
+    "apiBrowser": {
+      "title": "Обзор TypeScript API"
+    },
+    "search": {
+      "title": "Глобальный поиск TypeScript"
+    }
+  }
+}

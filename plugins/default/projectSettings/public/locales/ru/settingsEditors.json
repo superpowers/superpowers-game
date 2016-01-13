@@ -1,0 +1,9 @@
+{
+  "Project": {
+    "label": "Проект",
+    "deleteTrashedAssetsFromDisk": "Удалить поврежденные ассеты с диска",
+    "noFoldersRemoved": "Папки небыли удалены",
+    "oneFolderRemoved": "Была удалена 1 папка",
+    "severalFoldersRemoved": "Было удалено ${folders} папок"
+  }
+}

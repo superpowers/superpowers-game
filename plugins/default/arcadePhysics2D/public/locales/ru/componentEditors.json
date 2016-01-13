@@ -1,0 +1,18 @@
+{
+  "ArcadeBody2D": {
+    "label": "Arcade Body 2D",
+    "type": "Тип",
+    "typeOptions": {
+      "box": "Коробка",
+      "tileMap": "ТайлМап"
+    },
+
+    "movable": "Движение",
+    "size": "Размер",
+    "offset": "Смещение",
+
+    "tileMap": "Тайл Мап",
+    "tileSetProperty": "Свойства Тайл Сета",
+    "layers": "Слои"
+  }
+}

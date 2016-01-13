@@ -1,0 +1,31 @@
+{
+  "Light": {
+    "label": "Свет",
+    "type": "Тип",
+    "typeOptions": {
+      "ambient": "Окружение",
+      "point": "Точечный",
+      "spot": "Пятно",
+      "directional": "Направленный"
+    },
+
+    "color": "Цвет",
+    "intensity": "Интенсивность",
+    "distance": "Дистанция",
+    "angle": "Угол",
+    "target": "Цель",
+    "castShadow": "Отбрасываемая Тень",
+    
+    "shadowSettings": {
+      "title": "Настройка Тени",
+      "mapSize": "Размер Карты",
+      "bias": "Смещение",
+      "darkness": "Темнение",
+      "near-far": "Рядом / Далеко",
+      "fov": "Поле Обзора",
+      "top-bottom": "Вверх / Вниз",
+      "left-right": "Влево / Вправо"
+    }
+  }
+}
+Status API Training Shop Blog About Pricing

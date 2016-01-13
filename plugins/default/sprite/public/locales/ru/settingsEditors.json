@@ -1,0 +1,11 @@
+{
+  "Sprite": {
+    "label": "Спрайт",
+    "filtering": "Фильтрация",
+    "pixelated": "Пикселизация",
+    "smooth": "Сглаживание",
+    "framesPerSecond": "Кадров в секунду",
+    "pixelsPerUnit": "Пикселей на единицу",
+    "alphaTesting": "Тестирование Альфы"
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "preview": {
+    "loop": "Повторять"
+  },
+  "sidebar": {
+    "settings": {
+      "sprite": {
+        "title": "Спрайт",
+        "texture": {
+          "title": "Текстура",
+          "size": "Размер текстуры (px)",
+          "download": {
+            "prompt": "Введите имя для изображения.",
+            "defaultName": "Изображение"
+          }
+        },
+        "grid": {
+          "size": "Размер Сетки",
+          "setup": "Установить",
+          "widthPrompt": "Сколько кадров в строке?",
+          "setWidth": "Установить ширину сетки",
+          "heightPrompt": "Сколько кадров в столбце?",
+          "setHeight": "Установить высоту сетки"
+        },
+        "origin": "Начало (%)"
+      },
+      "rendering": {
+        "title": "Рендеринг",
+        "pixelsPerUnit": "Пиксели / единица",
+        "filtering": {
+          "title": "Фильтрация",
+          "pixelated": "Пикселизация",
+          "smooth": "Сглаживание"
+        },
+        "wrapping": {
+          "title": "Обертка",
+          "clampToEdge": "Прицепить к краю",
+          "repeat": "Повторять",
+          "mirroredRepeat": "Зеркально повторять"
+        },
+        "opacity": {
+          "title": "Прозрачность",
+          "opaque": "Непрозрачный",
+          "transparent": "Прозрачный"
+        },
+        "alphaTest": "Тест Альфы"
+      },
+      "animation": {
+         "title": "Анимация",
+         "framesPerSecond": "Кадры / секунда",
+         "frameOrder": {
+           "title": "Порядок кадров",
+           "rows": "Строки",
+           "columns": "Столбцы"
+         }
+      }
+    },
+    "animations": {
+      "title": "Анимации",
+      "newAnimationPrompt": "Введите имя для анимации.",
+      "renameAnimationPrompt": "Введите новое имя для анимации.",
+      "deleteAnimationPrompt": "Вы уверены, что хотите удалить выбранные анимации?"
+    },
+    "advancedTextures": {
+      "title": "Настройки Текстур",
+      "map": "Карта",
+      "lightMap": "Карта Света",
+      "specularMap": "Карта Отражений",
+      "alphaMap": "Карта Альфы",
+      "normalMap": "Карта Нормалей (по Фонгу)",
+      "newMapPrompt": "Введите новое имя для карты.",
+      "renameMapPrompt": "Введите новое имя для текстуры.",
+      "deleteMapPrompt": "Вы уверены, что хотите удалить выбранные текстуры?"
+    }
+  }
+}

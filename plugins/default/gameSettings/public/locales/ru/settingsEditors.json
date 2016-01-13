@@ -1,0 +1,12 @@
+{
+  "Game": {
+    "label": "Игра",
+    "startupScene": "Стартовая Сцена",
+    "framesPerSecond": "Кадров в секунду",
+    "screenRatio": "Формат экрана",
+    "width": "Ширина",
+    "height": "Высота",
+    "layers": "Слои",
+    "newLayer": "Создать слой..."
+  }
+}

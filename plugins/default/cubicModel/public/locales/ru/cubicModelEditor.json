@@ -1,0 +1,77 @@
+{
+  "3dView": {
+    "settings": {
+      "title": "Настройки",
+      "linkShapeToPivot": "Привязывать форму к центру"
+    },
+    "transform": {
+      "title": "Изменение",
+      "movePivot": "Центр",
+      "moveShape": "Форма",
+      "rotate": "Поворот",
+      "stretch": "Растягивание",
+      "local": "Положение"
+    },
+    "grid": {
+      "title": "Сетка",
+      "size": "Размер",
+      "visible": "Показывать"
+    }
+  },
+  "textureView": {
+    "mode": {
+      "title": "Режим",
+      "layout": "Макет",
+      "paint": "Рисование"
+    },
+    "layoutMode": {
+      "title": "Настройки",
+      "linkTextureToUV": "Привязать текстуру к UV"
+    },
+    "paintMode": {
+      "tool": "Инструмент",
+      "brush": "Кисть",
+      "eraser": "Ластик",
+      "fill": "Залить",
+      "color": "Цвет"
+    }
+  },
+  "sidebar": {
+    "settings": {
+      "cubicModel": {
+        "title": "Кубическая Модель",
+        "pixelsPerUnit": "Пикселей на единицу",
+        "texture": "Текстура",
+        "download": {
+          "defaultName": "Текстура",
+          "prompt": "Введите имя для текстуры."
+        },
+        "textureSize": "Размер текстуры (px)"
+      }
+    },
+    "nodes": {
+      "title": "Ноды",
+      "newNode": {
+        "title": "Создать нод",
+        "prompt": "Введите имя для нода."
+      },
+      "renamePrompt": "Введите новое имя для нода.",
+      "duplicatePrompt": "Введите имя для нового нода.",
+      "deleteConfirm": "Вы уверены, что хотите удалить выбранные ноды?",
+      "hide": "Скрыть",
+      "show": "Показать"
+    },
+    "inspector": {
+      "position": "Позиция",
+      "orientation": "Ориентация",
+      "shape": "Форма",
+      "shapeType": "Тип",
+      "shapeOptions": {
+        "box": "Коробка"
+      },
+      "offset": "Смещение",
+      "size": "Размер",
+      "stretch": "Растягивание"
+    }
+  }
+}

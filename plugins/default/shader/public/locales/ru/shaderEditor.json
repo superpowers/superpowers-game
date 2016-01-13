@@ -1,0 +1,18 @@
+{
+  "uniforms": "Униформа",
+  "newUniform": "Создать униформу",
+  "attributes": "Атрибуты",
+  "newAttribute": "Создать атрибут",
+  "name": "Имя",
+  "type": "Тип",
+  "value": "Значение",
+  "useLights": "Использовать свет",
+  "preview": "Пред-Просмотр",
+  "plane": "План",
+  "box" : "Ящик",
+  "sphere": "Сфера",
+  "asset": "Ассет",
+  "assetPath": "Путь ассета",
+  "vertexShader": "Вершинный Шейдер",
+  "fragmentShader": "Фрагментный Шейдер"
+}

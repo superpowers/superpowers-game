@@ -1,0 +1,13 @@
+{
+  "searchPlaceholder": "Найти в проекте",
+  "matchCase": "Учитывать регистр",
+
+  "noResults": "Ни чего не найдено",
+  "resultInfo": "${results} в ${files}",
+  "fileInfo": "${results} в \"${fileName}\"",
+
+  "oneResult": "1 результат",
+  "severalResults": "${results} результатов",
+  "oneFile": "1 файл",
+  "severalFiles": "${files} файлов"
+}

@@ -1,0 +1,18 @@
+{
+  "tileSet": "Тайл Сет",
+  "texture": {
+    "title": "Текстура",
+    "downloadPrompt": "Введите имя для текстуры",
+    "downloadInitialValue": "Тайл Сет"
+  },
+  "grid": "Сетка (px)",
+  
+  "data": "Данные",
+  "tileID": "ID Тайла",
+  
+  "properties": "Свойства",
+  "newPropertyPrompt": "Введите имя для свойства.",
+  "newPropertyInitialValue": "свойство",
+  "renamePropertyPrompt": "Введите новое имя для свойства.",
+  "deletePropertyConfirm": "Вы уверены, что хотите удалить выбранные свойства?"
+}
