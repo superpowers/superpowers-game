@@ -1,5 +1,5 @@
 {
-  "formatVersion": 1,
+  "formatVersion": 3,
   "maps": [
     "map"
   ],
@@ -75,12 +75,12 @@
       "speed": 1
     }
   ],
-  "advancedTextures": false,
   "mapSlots": {
     "map": "map",
     "light": null,
     "specular": null,
     "alpha": null,
     "normal": null
-  }
+  },
+  "wrapping": "clampToEdge"
 }

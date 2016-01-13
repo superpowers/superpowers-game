@@ -1,4 +1,4 @@
 {
-  "system": "supGame",
-  "formatVersion": 2
+  "systemId": "game",
+  "formatVersion": 5
 }
