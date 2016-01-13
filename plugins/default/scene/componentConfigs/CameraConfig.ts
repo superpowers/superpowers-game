@@ -1,6 +1,6 @@
 export default class CameraConfig extends SupCore.Data.Base.ComponentConfig {
 
-  static schema = {
+  static schema: SupCore.Data.Schema = {
     mode: { type: "enum", items: [ "perspective", "orthographic" ], mutable: true },
     fov: { type: "number", min: 0.1, max: 179.9, mutable: true },
     orthographicScale: { type: "number", min: 0.1, mutable: true },

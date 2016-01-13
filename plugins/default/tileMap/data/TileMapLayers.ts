@@ -6,7 +6,7 @@ export interface TileMapLayerPub {
 
 export default class TileMapLayers extends SupCore.Data.Base.ListById {
 
-  static schema = {
+  static schema: SupCore.Data.Schema = {
     name: { type: "string", minLength: 1, maxLength: 80, mutable: true },
     data: { type: "array" }
   };

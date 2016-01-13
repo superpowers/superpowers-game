@@ -9,7 +9,7 @@ interface SceneSettingsResourcePub {
 export default class SceneSettingsResource extends SupCore.Data.Base.Resource {
   static currentFormatVersion = 1;
 
-  static schema: SupCore.Data.Base.Schema = {
+  static schema: SupCore.Data.Schema = {
     formatVersion: { type: "integer" },
 
     defaultCameraMode: { type: "enum", items: [ "3D", "2D" ], mutable: true },

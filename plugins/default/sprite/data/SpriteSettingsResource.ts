@@ -1,6 +1,6 @@
 export default class SpriteSettingsResource extends SupCore.Data.Base.Resource {
 
-  static schema: SupCore.Data.Base.Schema = {
+  static schema: SupCore.Data.Schema = {
     filtering: { type: "enum", items: [ "pixelated", "smooth" ], mutable: true },
     pixelsPerUnit: { type: "number", minExcluded: 0, mutable: true },
     framesPerSecond: { type: "number", minExcluded: 0, mutable: true },

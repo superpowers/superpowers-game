@@ -16,7 +16,7 @@ export interface BehaviorPropertiesResourcePub {
 
 export default class BehaviorPropertiesResource extends SupCore.Data.Base.Resource {
 
-  static schema: SupCore.Data.Base.Schema = {
+  static schema: SupCore.Data.Schema = {
     behaviors: {
       type: "hash",
       keys: { minLength: 1 },

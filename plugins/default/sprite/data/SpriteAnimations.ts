@@ -8,7 +8,7 @@ export interface SpriteAnimationPub {
 
 export default class SpriteAnimations extends SupCore.Data.Base.ListById {
 
-  static schema = {
+  static schema: SupCore.Data.Schema = {
     name: { type: "string", minLength: 1, maxLength: 80, mutable: true },
     startFrameIndex: { type: "number", min: 0, mutable: true },
     endFrameIndex: { type: "number", min: 0, mutable: true },

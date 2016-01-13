@@ -9,7 +9,7 @@ export interface SpriteRendererConfigPub {
 
 export default class SpriteRendererConfig extends SupCore.Data.Base.ComponentConfig {
 
-  static schema = {
+  static schema: SupCore.Data.Schema = {
     spriteAssetId: { type: "string?", min: 0, mutable: true },
     animationId: { type: "string?", min: 0, mutable: true },
     horizontalFlip: { type: "boolean", mutable: true },

@@ -6,7 +6,7 @@ interface TileMapRendererConfigPub {
 
 export default class TileMapRendererConfig extends SupCore.Data.Base.ComponentConfig {
 
-  static schema = {
+  static schema: SupCore.Data.Schema = {
     tileMapAssetId: { type: "string?", min: 0, mutable: true },
     tileSetAssetId: { type: "string?", min: 0, mutable: true },
     castShadow: { type: "boolean", mutable: true },

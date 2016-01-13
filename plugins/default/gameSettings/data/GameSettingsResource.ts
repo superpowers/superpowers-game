@@ -12,7 +12,7 @@ export interface GameSettingsResourcePub {
 export default class GameSettingsResource extends SupCore.Data.Base.Resource {
   static currentFormatVersion = 1;
 
-  static schema: SupCore.Data.Base.Schema = {
+  static schema: SupCore.Data.Schema = {
     formatVersion: { type: "integer" },
 
     startupSceneId: { type: "string?", mutable: true },

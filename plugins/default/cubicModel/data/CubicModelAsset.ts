@@ -37,7 +37,7 @@ export interface TextureEdit {
 
 export default class CubicModelAsset extends SupCore.Data.Base.Asset {
 
-  static schema: SupCore.Data.Base.Schema = {
+  static schema: SupCore.Data.Schema = {
     pixelsPerUnit: { type: "integer", min: 1, mutable: true },
     nodes: { type: "array" },
 

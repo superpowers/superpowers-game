@@ -4,7 +4,7 @@ declare namespace SupCore {
 
     namespace Base {
       class ComponentConfig extends Hash {
-        constructor(pub: any, schema: any);
+        constructor(pub: any, schema: SupCore.Data.Schema);
 
         // OVERRIDE: Called when loading a scene
         // Check for any error/warning/info and this.emit("setBadge", ...) as required

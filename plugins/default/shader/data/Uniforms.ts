@@ -6,15 +6,14 @@ export interface UniformPub {
 }
 
 export default class Uniforms extends SupCore.Data.Base.ListById {
-
-  static schema = {
+  static schema: SupCore.Data.Schema = {
     name: { type: "string", minLength: 1, maxLength: 80, mutable: true },
     type: { type: "enum", items: ["f", "c", "v2", "v3", "v4", "t"], mutable: true },
     value: { type: "any", mutable: true }
   };
 
   pub: UniformPub[];
-  byId: { [id: string]: UniformPub};
+  byId: { [id: string]: UniformPub };
 
   constructor(pub: any) {
     super(pub, Uniforms.schema);

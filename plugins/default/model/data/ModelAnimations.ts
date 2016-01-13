@@ -1,6 +1,6 @@
 export default class ModelAnimations extends SupCore.Data.Base.ListById {
 
-  static schema = {
+  static schema: SupCore.Data.Schema = {
     name: { type: "string", minLength: 1, maxLength: 80, mutable: true },
     duration: { type: "number" }, // seconds
     keyFrames: {

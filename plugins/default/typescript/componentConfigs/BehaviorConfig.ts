@@ -5,7 +5,7 @@ interface Pub {
 
 export default class BehaviorConfig extends SupCore.Data.Base.ComponentConfig {
 
-  static schema = {
+  static schema: SupCore.Data.Schema = {
     behaviorName: { type: "string", mutable: true },
     propertyValues: {
       type: "hash",

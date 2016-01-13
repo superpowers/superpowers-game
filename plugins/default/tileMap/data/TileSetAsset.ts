@@ -18,7 +18,7 @@ export interface TileSetAssetPub {
 export default class TileSetAsset extends SupCore.Data.Base.Asset {
   static currentFormatVersion = 1;
 
-  static schema: SupCore.Data.Base.Schema = {
+  static schema: SupCore.Data.Schema = {
     formatVersion: { type: "integer" },
 
     image: { type: "buffer" },

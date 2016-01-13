@@ -9,7 +9,7 @@ export interface CubicModelRendererConfigPub {
 
 export default class CubicModelRendererConfig extends SupCore.Data.Base.ComponentConfig {
 
-  static schema = {
+  static schema: SupCore.Data.Schema = {
     cubicModelAssetId: { type: "string?", min: 0, mutable: true },
     // animationId: { type: "string?", min: 0, mutable: true },
     // horizontalFlip: { type: "boolean", mutable: true },

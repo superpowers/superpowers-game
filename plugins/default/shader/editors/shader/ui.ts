@@ -45,7 +45,7 @@ export function setupUniform(uniform: UniformPub) {
 
   let typeElt = document.createElement("td");
   let selectTypeElt = document.createElement("select");
-  for (let type of Uniforms.schema.type.items) {
+  for (let type of Uniforms.schema["type"].items as string[]) {
     let optionElt = document.createElement("option");
     optionElt.textContent = type;
     selectTypeElt.appendChild(optionElt);
@@ -151,7 +151,7 @@ export function setupAttribute(attribute: AttributePub) {
 
   let typeElt = document.createElement("td");
   let selectTypeElt = document.createElement("select");
-  for (let type of Attributes.schema.type.items) {
+  for (let type of Attributes.schema["type"].items as string[]) {
     let optionElt = document.createElement("option");
     optionElt.textContent = type;
     selectTypeElt.appendChild(optionElt);

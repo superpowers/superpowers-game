@@ -10,7 +10,7 @@ interface SoundAssetPub {
 export default class SoundAsset extends SupCore.Data.Base.Asset {
   static currentFormatVersion = 1;
 
-  static schema: SupCore.Data.Base.Schema = {
+  static schema: SupCore.Data.Schema = {
     formatVersion: { type: "integer" },
 
     sound: { type: "buffer" },

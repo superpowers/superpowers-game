@@ -27,7 +27,7 @@ export interface ShaderAssetPub {
 export default class ShaderAsset extends SupCore.Data.Base.Asset {
   static currentFormatVersion = 1;
 
-  static schema: SupCore.Data.Base.Schema = {
+  static schema: SupCore.Data.Schema = {
     formatVersion: { type: "integer" },
 
     uniforms: { type: "array" },

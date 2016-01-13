@@ -8,7 +8,7 @@ export interface ModelRendererConfigPub {
 
 export default class ModelRendererConfig extends SupCore.Data.Base.ComponentConfig {
 
-  static schema = {
+  static schema: SupCore.Data.Schema = {
     modelAssetId: { type: "string?", min: 0, mutable: true },
     animationId: { type: "string?", min: 0, mutable: true },
     castShadow: { type: "boolean", mutable: true },

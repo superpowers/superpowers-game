@@ -1,6 +1,6 @@
 export default class TextRendererConfig extends SupCore.Data.Base.ComponentConfig {
 
-  static schema = {
+  static schema: SupCore.Data.Schema = {
     fontAssetId: { type: "string?", min: 0, mutable: true },
     text: { type: "string", min: 0, mutable: true },
     alignment: { type: "enum", items: [ "left", "center", "right" ], mutable: true },

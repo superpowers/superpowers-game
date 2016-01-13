@@ -13,7 +13,7 @@ export interface ConfigPub {
 
 export default class ArcadeBody2DConfig extends SupCore.Data.Base.ComponentConfig {
 
-  static schema = {
+  static schema: SupCore.Data.Schema = {
     type: { type: "enum", items: ["box", "tileMap"], mutable: true },
 
     // Box

@@ -17,7 +17,7 @@ export interface Node extends SupCore.Data.Base.TreeNode {
 
 export default class SceneNodes extends SupCore.Data.Base.TreeById {
 
-  static schema = {
+  static schema: SupCore.Data.Schema = {
     name: { type: "string", minLength: 1, maxLength: 80, mutable: true },
     children: { type: "array" },
 

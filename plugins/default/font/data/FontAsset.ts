@@ -18,7 +18,7 @@ export interface FontPub {
 export default class FontAsset extends SupCore.Data.Base.Asset {
   static currentFormatVersion = 1;
 
-  static schema: SupCore.Data.Base.Schema = {
+  static schema: SupCore.Data.Schema = {
     formatVersion: { type: "integer" },
 
     isBitmap: { type: "boolean", mutable: true},

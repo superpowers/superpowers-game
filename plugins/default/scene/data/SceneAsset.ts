@@ -31,7 +31,7 @@ interface ScenePub {
 export default class SceneAsset extends SupCore.Data.Base.Asset {
   static currentFormatVersion = 1;
 
-  static schema: SupCore.Data.Base.Schema = {
+  static schema: SupCore.Data.Schema = {
     nodes: { type: "array" },
   };
 

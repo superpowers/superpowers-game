@@ -68,7 +68,7 @@ export function getShapeTextureFaceSize(shape: Shape, faceName: string) {
 
 export default class CubicModelNodes extends SupCore.Data.Base.TreeById {
 
-  static schema = {
+  static schema: SupCore.Data.Schema = {
     name: { type: "string", minLength: 1, maxLength: 80, mutable: true },
     children: { type: "array" },
 

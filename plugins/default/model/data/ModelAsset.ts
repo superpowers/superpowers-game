@@ -39,7 +39,7 @@ export interface ModelAssetPub {
 export default class ModelAsset extends SupCore.Data.Base.Asset {
   static currentFormatVersion = 2;
 
-  static schema: SupCore.Data.Base.Schema = {
+  static schema: SupCore.Data.Schema = {
     formatVersion: { type: "integer" },
 
     unitRatio: { type: "number", minExcluded: 0, mutable: true },
@@ -583,10 +583,10 @@ export default class ModelAsset extends SupCore.Data.Base.Asset {
   }
 
   server_setAnimation(client: any, id: string, duration: number, keyFrames: any, callback: (err: string, id?: string, duration?: number, keyFrames?: any) => any) {
-    let violation = SupCore.Data.Base.getRuleViolation(duration, ModelAnimations.schema.duration, true);
+    let violation = SupCore.Data.Base.getRuleViolation(duration, ModelAnimations.schema["duration"], true);
     if (violation != null) { callback(`Invalid duration: ${SupCore.Data.Base.formatRuleViolation(violation)}`); return; }
 
-    violation = SupCore.Data.Base.getRuleViolation(keyFrames, ModelAnimations.schema.keyFrames, true);
+    violation = SupCore.Data.Base.getRuleViolation(keyFrames, ModelAnimations.schema["keyFrames"], true);
     if (violation != null) { callback(`Invalid duration: ${SupCore.Data.Base.formatRuleViolation(violation)}`); return; }
 
     let animation = this.animations.byId[id];

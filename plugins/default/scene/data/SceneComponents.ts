@@ -8,7 +8,7 @@ export interface Component {
 
 export default class SceneComponents extends SupCore.Data.Base.ListById {
 
-  static schema = {
+  static schema: SupCore.Data.Schema = {
     type: { type: "string" },
     config: { type: "any" },
   };

@@ -1,5 +1,5 @@
 class ComponentConfig extends SupCore.Data.Base.Hash {
-  constructor(pub: any, schema: any) {
+  constructor(pub: any, schema: SupCore.Data.Schema) {
     super(pub, schema);
   }
 

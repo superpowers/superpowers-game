@@ -1,5 +1,5 @@
 export default class CannonBodyConfig extends SupCore.Data.Base.ComponentConfig {
-  static schema = {
+  static schema: SupCore.Data.Schema = {
     mass: { type: "number", min: 0, mutable: true },
     fixedRotation: { type: "boolean", mutable: true },
     offset: {

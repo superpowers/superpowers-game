@@ -15,7 +15,7 @@ interface TileMapSettingsResourcePub {
 export default class TileMapSettingsResource extends SupCore.Data.Base.Resource {
   static currentFormatVersion = 1;
 
-  static schema: SupCore.Data.Base.Schema = {
+  static schema: SupCore.Data.Schema = {
     formatVersion: { type: "integer" },
 
     pixelsPerUnit: { type: "integer", minExcluded: 0, mutable: true },

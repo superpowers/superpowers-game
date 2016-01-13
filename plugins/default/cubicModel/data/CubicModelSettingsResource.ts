@@ -1,6 +1,6 @@
 export default class CubicModelSettingsResource extends SupCore.Data.Base.Resource {
 
-  static schema: SupCore.Data.Base.Schema = {
+  static schema: SupCore.Data.Schema = {
     pixelsPerUnit: { type: "integer", min: 1, mutable: true }
   };
 
