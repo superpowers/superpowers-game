@@ -1,6 +1,6 @@
 {
-  "name": "superpowers-game-sparklinlabs-sound-plugin",
-  "description": "Sound plugin for Superpowers, the HTML5 2D+3D game maker",
+  "name": "superpowers-game-default-sound-plugin",
+  "description": "Sound plugin for Superpowers Game, the HTML5 2D+3D game maker",
   "version": "1.0.0",
   "license": "ISC",
   "repository": {

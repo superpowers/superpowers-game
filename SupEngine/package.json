@@ -1,6 +1,6 @@
 {
   "name": "superpowers-engine",
-  "description": "Three.js-based game engine for Superpowers, the HTML5 2D+3D game maker",
+  "description": "Three.js-based game engine for Superpowers Game, the HTML5 2D+3D game maker",
   "version": "1.0.0",
   "license": "ISC",
   "main": "src/index.js",

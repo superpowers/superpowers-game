@@ -1,6 +1,6 @@
 {
-  "name": "superpowers-game-sparklinlabs-cannonjs-plugin",
-  "description": "Cannon.js plugin for Superpowers, the HTML5 2D+3D game maker",
+  "name": "superpowers-game-extra-cannonjs-plugin",
+  "description": "Cannon.js plugin for Superpowers Game, the HTML5 2D+3D game maker",
   "version": "1.0.0",
   "license": "ISC",
   "repository": {
