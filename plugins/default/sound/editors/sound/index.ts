@@ -30,7 +30,7 @@ function start() {
   // Sidebar
   ui.streamingSelect = <HTMLSelectElement>document.querySelector(".property-streaming");
   ui.streamingSelect.addEventListener("change", (event) => {
-    socket.emit("edit:assets", SupClient.query.asset, "setProperty", "streaming", ui.streamingSelect.value === "true", (err: string) => {
+    data.projectClient.editAsset(SupClient.query.asset, "setProperty", "streaming", ui.streamingSelect.value === "true", (err: string) => {
       if (err != null) { new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); return; }
     });
   });
@@ -70,7 +70,7 @@ function onFileSelectChange(event: any) {
 
   let reader = new FileReader();
   reader.onload = (event) => {
-    socket.emit("edit:assets", SupClient.query.asset, "upload", reader.result, (err: string) => {
+    data.projectClient.editAsset(SupClient.query.asset, "upload", reader.result, (err: string) => {
       if (err != null) { new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); return; }
     });
   };
