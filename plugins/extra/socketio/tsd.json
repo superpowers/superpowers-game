@@ -6,7 +6,7 @@
   "bundle": "typings/tsd.d.ts",
   "installed": {
     "socket.io-client/socket.io-client.d.ts": {
-      "commit": "2520bce9a8a71b66e67487cbd5b33fec880b0c55"
+      "commit": "c33ab89a9b672415c68b37b4f4333f9654012497"
     }
   }
 }
