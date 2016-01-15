@@ -31,6 +31,8 @@ let mapArea: {
   cursorPoint?: { x: number; y : number };
   selectionStartPoint?: { x: number; y : number };
   selectionEndPoint?: { x: number; y : number };
+
+  lastTile?: { x: number; y: number; tile: (number|boolean)[]; };
 } = {};
 export default mapArea;
 
@@ -64,18 +66,22 @@ mapArea.patternBackgroundRenderer = new SupEngine.editorComponentClasses["FlatCo
 mapArea.duplicatingSelection = false;
 mapArea.cursorPoint = { x: -1, y: -1 };
 
-export function setupPattern(layerData: ((number|boolean)[]|number)[], width = 1) {
+type TileData = ((number|boolean)[]|number);
+export function setupPattern(layerData: TileData[], width = 1, startX?: number, startY?: number) {
   mapArea.patternData = layerData;
   mapArea.patternDataWidth = width;
 
   let pub = data.tileMapUpdater.tileMapAsset.pub;
   let height = layerData.length / width;
 
+  if (startX == null) startX = mapArea.cursorPoint.x;
+  if (startY == null) startY = mapArea.cursorPoint.y;
+
   let patternLayerData: ((number|boolean)[]|number)[] = [];
   for (let y = 0; y < pub.height; y++) {
     for (let x = 0; x < pub.width; x++) {
-      let localX = x - mapArea.cursorPoint.x;
-      let localY = y - mapArea.cursorPoint.y;
+      let localX = x - startX;
+      let localY = y - startY;
 
       if (localX < 0 || localX >= width || localY < 0 || localY >= height) patternLayerData.push(0);
       else patternLayerData.push(layerData[localY * width + localX]);
@@ -83,7 +89,7 @@ export function setupPattern(layerData: ((number|boolean)[]|number)[], width = 1
   }
 
   let patternData = {
-    tileSetId: <string>null,
+    tileSetId: null as string,
     width: pub.width, height: pub.height,
     pixelsPerUnit: pub.pixelsPerUnit,
     layerDepthOffset: pub.layerDepthOffset,
@@ -93,7 +99,7 @@ export function setupPattern(layerData: ((number|boolean)[]|number)[], width = 1
   mapArea.patternRenderer.setTileMap(new TileMap(patternData));
 }
 
-export function setupFillPattern(newTileData: (number|boolean)[]) {
+export function setupFillPattern(newTileData: TileData) {
   let pub = data.tileMapUpdater.tileMapAsset.pub;
   let layerData = data.tileMapUpdater.tileMapAsset.layers.byId[tileSetArea.selectedLayerId].data;
 
@@ -171,7 +177,7 @@ export function flipTilesVertically() {
 
   let width = mapArea.patternDataWidth;
   let height = mapArea.patternData.length / mapArea.patternDataWidth;
-  let layerData: ((number|boolean)[]|number)[] = [];
+  let layerData: TileData[] = [];
   for (let y = height - 1; y >= 0; y--) {
     for (let x = 0; x < width; x++) {
       let tileValue = mapArea.patternData[y * width + x];
@@ -193,7 +199,7 @@ export function rotateTiles() {
 
   let width = mapArea.patternDataWidth;
   let height = mapArea.patternData.length / mapArea.patternDataWidth;
-  let layerData: ((number|boolean)[]|number)[] = [];
+  let layerData: TileData[] = [];
   for (let x = 0; x < width; x++) {
     for (let y = height - 1; y >= 0; y--) {
       let tileValue = mapArea.patternData[y * width + x];
@@ -218,12 +224,12 @@ interface Edits {
   tileValue: ((number|boolean)[]|number);
 }
 
-function getEditsFromPattern() {
+function getEditsFromPattern(point: { x: number; y: number }) {
   let edits: Edits[] = [];
   for (let tileIndex = 0; tileIndex < mapArea.patternData.length; tileIndex++) {
     let tileValue = mapArea.patternData[tileIndex];
-    let x = mapArea.cursorPoint.x + tileIndex % mapArea.patternDataWidth;
-    let y = mapArea.cursorPoint.y + Math.floor(tileIndex / mapArea.patternDataWidth);
+    let x = point.x + tileIndex % mapArea.patternDataWidth;
+    let y = point.y + Math.floor(tileIndex / mapArea.patternDataWidth);
 
     edits.push({ x, y, tileValue });
   }
@@ -243,9 +249,9 @@ function editMap(edits: Edits[]) {
       if (edit.tileValue === 0) {
         if (layer.data[index] !== 0) sameTile = false;
       } else {
-        let tileValue = <(number|boolean)[]>edit.tileValue;
+        let tileValue = edit.tileValue as (number|boolean)[];
         for (let i = 0; i < tileValue.length; i++) {
-          if ((<(number|boolean)[]>layer.data[index])[i] !== tileValue[i]) {
+          if ((layer.data[index] as (number|boolean)[])[i] !== tileValue[i]) {
             sameTile = false;
             break;
           }
@@ -335,11 +341,53 @@ export function handleMapArea() {
 }
 
 function handleBrushMode(cursorHasMoved: boolean) {
-  if (cursorHasMoved) setupPattern(mapArea.patternData, mapArea.patternDataWidth);
+  let pub = data.tileMapUpdater.tileMapAsset.pub;
+  let input = mapArea.gameInstance.input;
 
-  if (mapArea.gameInstance.input.mouseButtons[0].isDown) {
-    editMap(getEditsFromPattern());
-  }
+  let shiftKey = input.keyboardButtons[(<any>window).KeyEvent.DOM_VK_SHIFT];
+
+  if (input.mouseButtons[0].isDown) {
+    if (mapArea.lastTile != null && shiftKey.isDown) {
+      let xMin = Math.min(mapArea.cursorPoint.x, mapArea.lastTile.x);
+      let xOffset = Math.abs(mapArea.cursorPoint.x - mapArea.lastTile.x) + 1;
+      let yMin = Math.min(mapArea.cursorPoint.y, mapArea.lastTile.y);
+      let yOffset = Math.abs(mapArea.cursorPoint.y - mapArea.lastTile.y) + 1;
+
+      let point = { x: 0, y: 0 };
+      if (xOffset > yOffset) {
+        point.x = xMin;
+        point.y = mapArea.lastTile.y;
+      } else {
+        point.x = mapArea.lastTile.x;
+        point.y = yMin;
+      }
+      editMap(getEditsFromPattern(point));
+      setupPattern([mapArea.patternData[0]], 1);
+    } else editMap(getEditsFromPattern(mapArea.cursorPoint));
+
+    let x = mapArea.cursorPoint.x;
+    let y = mapArea.cursorPoint.y;
+    if (mapArea.patternData.length === 1 && x >= 0 && x < pub.width && y >= 0 && y < pub.height)
+      mapArea.lastTile = { x, y, tile: (mapArea.patternData[0] as (number|boolean)[]).slice() };
+
+  } else if (mapArea.lastTile != null && shiftKey.wasJustReleased) {
+    setupPattern([mapArea.lastTile.tile]);
+
+  } else if (mapArea.lastTile != null && shiftKey.isDown) {
+    let xMin = Math.min(mapArea.cursorPoint.x, mapArea.lastTile.x);
+    let xOffset = Math.abs(mapArea.cursorPoint.x - mapArea.lastTile.x) + 1;
+    let yMin = Math.min(mapArea.cursorPoint.y, mapArea.lastTile.y);
+    let yOffset = Math.abs(mapArea.cursorPoint.y - mapArea.lastTile.y) + 1;
+
+    let patternData: TileData[] = [];
+    if (xOffset > yOffset) {
+      for (let x = 0; x < xOffset; x++) patternData.push(mapArea.lastTile.tile);
+      setupPattern(patternData, xOffset, xMin, mapArea.lastTile.y);
+    } else {
+      for (let y = 0; y < yOffset; y++) patternData.push(mapArea.lastTile.tile);
+      setupPattern(patternData, 1, mapArea.lastTile.x, yMin);
+    }
+  } else if (cursorHasMoved) setupPattern(mapArea.patternData, mapArea.patternDataWidth);
 }
 
 function handleFillMode(cursorHasMoved: boolean) {
@@ -372,7 +420,7 @@ function handleSelectionMode(cursorHasMoved: boolean) {
   if (mapArea.patternActor.threeObject.visible) {
     if (cursorHasMoved) setupPattern(mapArea.patternData, mapArea.patternDataWidth);
     if (input.mouseButtons[0].wasJustPressed) {
-      editMap(getEditsFromPattern());
+      editMap(getEditsFromPattern(mapArea.cursorPoint));
       if (!mapArea.duplicatingSelection) clearSelection();
     } else if (cancelAction) {
       clearSelection();

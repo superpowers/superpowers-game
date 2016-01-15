@@ -294,6 +294,7 @@ export function selectBrushTool(x?: number, y?: number, width = 1, height = 1) {
   }
   setupPattern(layerData, tmpScale.x);
 
+  mapArea.lastTile = null;
   mapArea.patternActor.threeObject.visible = true;
   data.tileSetUpdater.tileSetRenderer.selectedTileActor.threeObject.visible = true;
   mapArea.patternBackgroundActor.threeObject.visible = true;
