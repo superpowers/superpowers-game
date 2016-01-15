@@ -1,5 +1,5 @@
 import { editAsset, data } from "./network";
-import mapArea, { setupPattern, setupFillPattern, flipTilesVertically, flipTilesHorizontally, rotateTiles } from "./mapArea";
+import mapArea, { setupPattern, setupFillPattern, flipTilesVertically, flipTilesHorizontally, rotateTiles, selectEntireLayer } from "./mapArea";
 import tileSetArea from "./tileSetArea";
 
 /* tslint:disable */
@@ -65,13 +65,13 @@ ui.highlightSlider = <HTMLInputElement>document.querySelector("input.highlight-s
 ui.highlightSlider.addEventListener("input", onChangeHighlight);
 
 ui.brushToolButton = <HTMLInputElement>document.querySelector("input#Brush");
-ui.brushToolButton.addEventListener("change", () => { selectBrush(); });
+ui.brushToolButton.addEventListener("change", () => { selectBrushTool(); });
 ui.fillToolButton = <HTMLInputElement>document.querySelector("input#Fill");
-ui.fillToolButton.addEventListener("change", () => { selectFill(); });
+ui.fillToolButton.addEventListener("change", () => { selectFillTool(); });
 ui.selectionToolButton = <HTMLInputElement>document.querySelector("input#Selection");
-ui.selectionToolButton.addEventListener("change", () => { selectSelection(); });
+ui.selectionToolButton.addEventListener("change", () => { selectSelectionTool(); });
 ui.eraserToolButton = <HTMLInputElement>document.querySelector("input#Eraser");
-ui.eraserToolButton.addEventListener("change", () => { selectEraser(); });
+ui.eraserToolButton.addEventListener("change", () => { selectEraserTool(); });
 
 ui.layersTreeView = new TreeView(document.querySelector(".layers-tree-view"), { dropCallback: onLayerDrop, multipleSelection: false });
 ui.layersTreeView.on("selectionChange", onLayerSelect);
@@ -90,16 +90,23 @@ SupClient.setupHotkeys();
 document.addEventListener("keyup", (event) => {
   if ((<HTMLInputElement>event.target).tagName === "INPUT") return;
 
+  let keyEvent = (<any>window).KeyEvent;
   switch (event.keyCode) {
-    case (<any>window).KeyEvent.DOM_VK_B: selectBrush(); break;
-    case (<any>window).KeyEvent.DOM_VK_F: selectFill(); break;
-    case (<any>window).KeyEvent.DOM_VK_S: selectSelection(); break;
-    case (<any>window).KeyEvent.DOM_VK_E: selectEraser(); break;
-    case (<any>window).KeyEvent.DOM_VK_G: ui.gridCheckbox.checked = !ui.gridCheckbox.checked; onChangeGridDisplay(); break;
-    case (<any>window).KeyEvent.DOM_VK_I: ui.highlightCheckbox.checked = !ui.highlightCheckbox.checked; onChangeHighlight(); break;
-    case (<any>window).KeyEvent.DOM_VK_H: flipTilesHorizontally(); break;
-    case (<any>window).KeyEvent.DOM_VK_V: flipTilesVertically(); break;
-    case (<any>window).KeyEvent.DOM_VK_R: rotateTiles(); break;
+    case keyEvent.DOM_VK_B: selectBrushTool(); break;
+    case keyEvent.DOM_VK_F: selectFillTool(); break;
+    case keyEvent.DOM_VK_S: selectSelectionTool(); break;
+    case keyEvent.DOM_VK_E: selectEraserTool(); break;
+    case keyEvent.DOM_VK_G: ui.gridCheckbox.checked = !ui.gridCheckbox.checked; onChangeGridDisplay(); break;
+    case keyEvent.DOM_VK_I: ui.highlightCheckbox.checked = !ui.highlightCheckbox.checked; onChangeHighlight(); break;
+    case keyEvent.DOM_VK_H: flipTilesHorizontally(); break;
+    case keyEvent.DOM_VK_V: flipTilesVertically(); break;
+    case keyEvent.DOM_VK_R: rotateTiles(); break;
+    case keyEvent.DOM_VK_A:
+      if (event.ctrlKey) {
+        selectSelectionTool();
+        selectEntireLayer();
+      }
+      break;
   }
 });
 SupClient.setupHelpCallback(() => {
@@ -268,7 +275,7 @@ function onChangeHighlight() {
   }
 }
 
-export function selectBrush(x?: number, y?: number, width = 1, height = 1) {
+export function selectBrushTool(x?: number, y?: number, width = 1, height = 1) {
   ui.brushToolButton.checked = true;
 
   if (data.tileMapUpdater.tileSetAsset == null || data.tileMapUpdater.tileSetAsset.pub == null) return;
@@ -293,7 +300,7 @@ export function selectBrush(x?: number, y?: number, width = 1, height = 1) {
   mapArea.patternBackgroundActor.setLocalScale(new SupEngine.THREE.Vector3(width, height / ratio, 1));
 }
 
-export function selectFill(x?: number, y?: number) {
+export function selectFillTool(x?: number, y?: number) {
   ui.fillToolButton.checked = true;
 
   if (data.tileMapUpdater.tileSetAsset == null || data.tileMapUpdater.tileSetAsset.pub == null) return;
@@ -307,7 +314,7 @@ export function selectFill(x?: number, y?: number) {
   mapArea.patternBackgroundActor.threeObject.visible = false;
 }
 
-export function selectSelection() {
+export function selectSelectionTool() {
   ui.selectionToolButton.checked = true;
 
   if (data.tileMapUpdater.tileSetAsset == null || data.tileMapUpdater.tileSetAsset.pub == null) return;
@@ -319,7 +326,7 @@ export function selectSelection() {
   mapArea.selectionStartPoint = null;
 }
 
-export function selectEraser() {
+export function selectEraserTool() {
   ui.eraserToolButton.checked = true;
 
   if (data.tileMapUpdater.tileSetAsset == null || data.tileMapUpdater.tileSetAsset.pub == null) return;

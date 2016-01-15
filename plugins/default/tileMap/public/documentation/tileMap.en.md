@@ -21,5 +21,6 @@ With the brush tool, activated with **B**:
 With the selection tool, activated with **S**:
  * Use **M** to move your selection
  * Use **D** to duplicate your selection
+ * Use **CTRL+A** to select the whole layer
 
 Use **E** to switch to the eraser tool and **F** to activate the flood fill tool.

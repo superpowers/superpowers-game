@@ -3,7 +3,7 @@ import tileSetArea, { handleTileSetArea } from "./tileSetArea";
 
 let lastTimestamp = 0;
 let accumulatedTime = 0;
-function tick(timestamp=0) {
+function tick(timestamp = 0) {
   accumulatedTime += timestamp - lastTimestamp;
   lastTimestamp = timestamp;
   let { updates, timeLeft } = mapArea.gameInstance.tick(accumulatedTime, handleMapArea);

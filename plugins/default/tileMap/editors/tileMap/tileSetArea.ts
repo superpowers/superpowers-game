@@ -1,4 +1,4 @@
-import ui, { selectBrush, selectFill } from "./ui";
+import ui, { selectBrushTool, selectFillTool } from "./ui";
 import { setupPattern } from "./mapArea";
 import { data } from "./network";
 
@@ -67,10 +67,10 @@ export function handleTileSetArea() {
 
     if (mouseX >= 0 && mouseX < tilesPerRow && mouseY >= 0 && mouseY < tilesPerColumn) {
       if (ui.fillToolButton.checked) {
-        selectFill(mouseX, mouseY);
+        selectFillTool(mouseX, mouseY);
       } else {
         tileSetArea.selectionStartPoint = { x: mouseX, y: mouseY };
-        selectBrush(mouseX, mouseY);
+        selectBrushTool(mouseX, mouseY);
       }
     }
 
@@ -91,7 +91,7 @@ export function handleTileSetArea() {
     }
 
     setupPattern(layerData, width);
-    selectBrush(startX, startY, width, height + 1);
+    selectBrushTool(startX, startY, width, height + 1);
     tileSetArea.selectionStartPoint = null;
   }
 

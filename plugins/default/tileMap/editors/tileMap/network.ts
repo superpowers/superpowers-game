@@ -1,4 +1,4 @@
-import ui, { setupLayer, selectBrush, refreshLayersId } from "./ui";
+import ui, { setupLayer, selectBrushTool, refreshLayersId } from "./ui";
 import mapArea from "./mapArea";
 import tileSetArea from "./tileSetArea";
 
@@ -158,14 +158,14 @@ function onTileSetAssetReceived() {
 
   if (tileSetPub.texture != null) {
     mapArea.patternRenderer.setTileSet(new TileSet(tileSetPub));
-    if (ui.brushToolButton.checked) selectBrush(0, 0);
+    if (ui.brushToolButton.checked) selectBrushTool(0, 0);
   }
   mapArea.patternBackgroundRenderer.setup(0x900090, 1 / tileMapPub.pixelsPerUnit, tileSetPub.grid.width);
 };
 
 onTileSetEditCommands.upload = () => {
   mapArea.patternRenderer.setTileSet(new TileSet(data.tileMapUpdater.tileSetAsset.pub));
-  if (ui.brushToolButton.checked) selectBrush(0, 0);
+  if (ui.brushToolButton.checked) selectBrushTool(0, 0);
 };
 
 onTileSetEditCommands.setProperty = () => {
@@ -177,5 +177,5 @@ onTileSetEditCommands.setProperty = () => {
   if (tileSetPub.texture != null) mapArea.patternRenderer.setTileSet(new TileSet(tileSetPub));
   mapArea.patternBackgroundRenderer.setup(0x900090, 1 / tileMapPub.pixelsPerUnit, tileSetPub.grid.width);
 
-  if (ui.brushToolButton.checked) selectBrush(0, 0);
+  if (ui.brushToolButton.checked) selectBrushTool(0, 0);
 };

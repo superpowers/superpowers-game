@@ -1,4 +1,4 @@
-import ui, { selectBrush, selectEraser, selectSelection } from "./ui";
+import ui, { selectBrushTool, selectEraserTool } from "./ui";
 import tileSetArea from "./tileSetArea";
 import { editAsset, data } from "./network";
 
@@ -218,6 +218,18 @@ interface Edits {
   tileValue: ((number|boolean)[]|number);
 }
 
+function getEditsFromPattern() {
+  let edits: Edits[] = [];
+  for (let tileIndex = 0; tileIndex < mapArea.patternData.length; tileIndex++) {
+    let tileValue = mapArea.patternData[tileIndex];
+    let x = mapArea.cursorPoint.x + tileIndex % mapArea.patternDataWidth;
+    let y = mapArea.cursorPoint.y + Math.floor(tileIndex / mapArea.patternDataWidth);
+
+    edits.push({ x, y, tileValue });
+  }
+  return edits;
+}
+
 function editMap(edits: Edits[]) {
   let actualEdits: Edits[] = [];
   let layer = data.tileMapUpdater.tileMapAsset.layers.byId[tileSetArea.selectedLayerId];
@@ -278,76 +290,40 @@ export function handleMapArea() {
   }
 
   let pub = data.tileMapUpdater.tileMapAsset.pub;
+  let input = mapArea.gameInstance.input;
+
   let [ mouseX, mouseY ] = getMapGridPosition(mapArea.gameInstance, mapArea.cameraComponent);
+  let cursorHasMoved = false;
   if (mouseX !== mapArea.cursorPoint.x || mouseY !== mapArea.cursorPoint.y) {
+    cursorHasMoved = true;
+
     mapArea.cursorPoint.x = mouseX;
     mapArea.cursorPoint.y = mouseY;
 
     ui.mousePositionLabel.x.textContent = mouseX.toString();
     ui.mousePositionLabel.y.textContent = mouseY.toString();
-
-    if (ui.fillToolButton.checked) {
-      data.tileSetUpdater.tileSetRenderer.selectedTileActor.getLocalPosition(tmpVector3);
-      setupFillPattern([ tmpVector3.x, -tmpVector3.y, false, false, 0 ]);
-    }
-    else if (mapArea.patternActor.threeObject.visible) setupPattern(mapArea.patternData, mapArea.patternDataWidth);
   }
 
-  // Edit tiles
-  if (mapArea.gameInstance.input.mouseButtons[0].isDown) {
-    if (ui.eraserToolButton.checked) {
-      editMap([{ x: mouseX, y: mouseY, tileValue: 0 }]);
-
-    } else if (ui.fillToolButton.checked) {
-      let edits: Edits[] = [];
-
-      for (let y = 0; y < pub.height; y++) {
-        for (let x = 0; x < pub.width; x++) {
-          let tileValue = mapArea.patternRenderer.tileMap.getTileAt(0, x, y);
-          if (tileValue !== 0) edits.push({ x, y, tileValue });
-        }
-      }
-      editMap(edits);
-
-    } else if (mapArea.patternActor.threeObject.visible) {
-
-      let edits: Edits[] = [];
-      for (let tileIndex = 0; tileIndex < mapArea.patternData.length; tileIndex++) {
-        let tileValue = mapArea.patternData[tileIndex];
-        let x = mouseX + tileIndex % mapArea.patternDataWidth;
-        let y = mouseY + Math.floor(tileIndex / mapArea.patternDataWidth);
-
-        edits.push({ x, y, tileValue });
-      }
-      editMap(edits);
-
-      if (ui.selectionToolButton.checked && !mapArea.duplicatingSelection) {
-        mapArea.patternActor.threeObject.visible = false;
-        mapArea.patternBackgroundActor.threeObject.visible = false;
-      }
-    }
-  }
+  if (ui.brushToolButton.checked) handleBrushMode(cursorHasMoved);
+  else if (ui.fillToolButton.checked) handleFillMode(cursorHasMoved);
+  else if (ui.selectionToolButton.checked) handleSelectionMode(cursorHasMoved);
+  else if (ui.eraserToolButton.checked) handleEraserMode(cursorHasMoved);
 
   // Quick switch to Brush or Eraser
-  if (mapArea.gameInstance.input.mouseButtons[2].wasJustReleased && !ui.fillToolButton.checked)  {
-    if (!ui.selectionToolButton.checked || !mapArea.patternBackgroundActor.threeObject.visible) {
-      if (mouseX >= 0 && mouseX < pub.width && mouseY >= 0 && mouseY < pub.height) {
-        let layer = data.tileMapUpdater.tileMapAsset.layers.byId[tileSetArea.selectedLayerId];
-        let tile = layer.data[mouseY * pub.width + mouseX];
-        if (typeof tile === "number") selectEraser();
-        else {
-          selectBrush(<number>tile[0], <number>tile[1]);
-          setupPattern([ tile ]);
-        }
+  if (input.mouseButtons[2].wasJustReleased && (ui.brushToolButton.checked || ui.eraserToolButton.checked))  {
+    if (mouseX >= 0 && mouseX < pub.width && mouseY >= 0 && mouseY < pub.height) {
+      let layer = data.tileMapUpdater.tileMapAsset.layers.byId[tileSetArea.selectedLayerId];
+      let tile = layer.data[mouseY * pub.width + mouseX];
+      if (typeof tile === "number") {
+        selectEraserTool();
+      } else {
+        selectBrushTool(tile[0] as number, tile[1] as number);
+        setupPattern([ tile ]);
       }
-    } else {
-      mapArea.selectionStartPoint = null;
-      mapArea.patternBackgroundActor.threeObject.visible = false;
-      mapArea.patternActor.threeObject.visible = false;
-      mapArea.duplicatingSelection = false;
     }
   }
 
+  // Update pattern background
   if (mapArea.patternActor.threeObject.visible || ui.eraserToolButton.checked) {
     let layer = data.tileMapUpdater.tileMapAsset.layers.byId[tileSetArea.selectedLayerId];
     let z = (pub.layers.indexOf(layer) + 0.5) * pub.layerDepthOffset;
@@ -356,97 +332,153 @@ export function handleMapArea() {
     let patternPosition = new SupEngine.THREE.Vector3(mouseX / ratioX, mouseY / ratioY, z);
     mapArea.patternBackgroundActor.setLocalPosition(patternPosition);
   }
+}
 
-  // Select all
-  if (mapArea.gameInstance.input.keyboardButtons[(<any>window).KeyEvent.DOM_VK_CONTROL].isDown &&
-  mapArea.gameInstance.input.keyboardButtons[(<any>window).KeyEvent.DOM_VK_A].wasJustPressed) {
-    selectSelection();
-    mapArea.patternBackgroundActor.threeObject.visible = true;
-    mapArea.selectionStartPoint = { x: 0, y: 0 };
-    mapArea.selectionEndPoint = {
-      x: pub.width - 1,
-      y: pub.height - 1
-    };
+function handleBrushMode(cursorHasMoved: boolean) {
+  if (cursorHasMoved) setupPattern(mapArea.patternData, mapArea.patternDataWidth);
+
+  if (mapArea.gameInstance.input.mouseButtons[0].isDown) {
+    editMap(getEditsFromPattern());
+  }
+}
+
+function handleFillMode(cursorHasMoved: boolean) {
+  if (cursorHasMoved) {
+    data.tileSetUpdater.tileSetRenderer.selectedTileActor.getLocalPosition(tmpVector3);
+    setupFillPattern([ tmpVector3.x, -tmpVector3.y, false, false, 0 ]);
   }
 
-  // Selection
-  if (ui.selectionToolButton.checked) {
+  if (!mapArea.gameInstance.input.mouseButtons[0].wasJustPressed) return;
 
-    if (mapArea.gameInstance.input.mouseButtons[0].wasJustPressed) {
-      // A pattern is already in the buffer
-      if (!mapArea.patternActor.threeObject.visible) {
-        if (mouseX >= 0 && mouseX < pub.width && mouseY >= 0 && mouseY < pub.height) {
-          mapArea.patternBackgroundActor.threeObject.visible = true;
-          mapArea.selectionStartPoint = { x: mouseX, y: mouseY };
-
-        } else {
-          mapArea.selectionStartPoint = null;
-          mapArea.patternActor.threeObject.visible = false;
-          mapArea.patternBackgroundActor.threeObject.visible = false;
-        }
-      }
+  let pub = data.tileMapUpdater.tileMapAsset.pub;
+  let edits: Edits[] = [];
+  for (let y = 0; y < pub.height; y++) {
+    for (let x = 0; x < pub.width; x++) {
+      let tileValue = mapArea.patternRenderer.tileMap.getTileAt(0, x, y);
+      if (tileValue !== 0) edits.push({ x, y, tileValue });
     }
+  }
+  editMap(edits);
+}
 
-    if (mapArea.selectionStartPoint != null) {
-      if (mapArea.gameInstance.input.mouseButtons[0].isDown) {
-        // Clamp mouse values
-        let x = Math.max(0, Math.min(pub.width - 1, mouseX));
-        let y = Math.max(0, Math.min(pub.height - 1, mouseY));
+function handleSelectionMode(cursorHasMoved: boolean) {
+  let pub = data.tileMapUpdater.tileMapAsset.pub;
+  let input = mapArea.gameInstance.input;
+  let keyEvent = (<any>window).KeyEvent;
 
-        mapArea.selectionEndPoint = { x, y };
-      }
+  let cancelAction = input.mouseButtons[2].wasJustPressed || input.keyboardButtons[keyEvent.DOM_VK_ESCAPE].wasJustPressed;
 
-      let startX = Math.min(mapArea.selectionStartPoint.x, mapArea.selectionEndPoint.x);
-      let startY = Math.min(mapArea.selectionStartPoint.y, mapArea.selectionEndPoint.y);
-      let width = Math.abs(mapArea.selectionEndPoint.x - mapArea.selectionStartPoint.x) + 1;
-      let height = Math.abs(mapArea.selectionEndPoint.y - mapArea.selectionStartPoint.y) + 1;
+  // Moving/duplicating a pattern
+  if (mapArea.patternActor.threeObject.visible) {
+    if (cursorHasMoved) setupPattern(mapArea.patternData, mapArea.patternDataWidth);
+    if (input.mouseButtons[0].wasJustPressed) {
+      editMap(getEditsFromPattern());
+      if (!mapArea.duplicatingSelection) clearSelection();
+    } else if (cancelAction) {
+      clearSelection();
+    }
+    return;
+  }
 
-      let ratioX = pub.pixelsPerUnit / data.tileMapUpdater.tileSetAsset.pub.grid.width;
-      let ratioY = pub.pixelsPerUnit / data.tileMapUpdater.tileSetAsset.pub.grid.height;
-      let z = data.tileMapUpdater.tileMapAsset.layers.pub.length * pub.layerDepthOffset;
-      let patternPosition = new SupEngine.THREE.Vector3(startX / ratioX, startY / ratioY, z);
-      mapArea.patternBackgroundActor.setLocalPosition(patternPosition);
-      let ratio = data.tileSetUpdater.tileSetAsset.pub.grid.width / data.tileSetUpdater.tileSetAsset.pub.grid.height;
-      mapArea.patternBackgroundActor.setLocalScale(new SupEngine.THREE.Vector3(width, height / ratio, 1));
+  // Selection with mouse
+  if (cancelAction) clearSelection();
 
-      // Delete selection
-      if (mapArea.gameInstance.input.keyboardButtons[(<any>window).KeyEvent.DOM_VK_DELETE].wasJustReleased) {
-        let edits: Edits[] = [];
-        for (let y = 0; y < height; y++) {
-          for (let x = 0; x < width; x++) {
-            edits.push({ x: startX + x, y: startY + y, tileValue: 0 });
-          }
-        }
-        editMap(edits);
-
-        mapArea.patternBackgroundActor.threeObject.visible = false;
-        mapArea.selectionStartPoint = null;
-      }
-
-      // Move/duplicate the selection
-      else if (mapArea.gameInstance.input.keyboardButtons[(<any>window).KeyEvent.DOM_VK_M].wasJustReleased ||
-      mapArea.gameInstance.input.keyboardButtons[(<any>window).KeyEvent.DOM_VK_D].wasJustReleased) {
-        let layerData: ((number|boolean)[]|number)[] = [];
-        let layer = data.tileMapUpdater.tileMapAsset.layers.byId[tileSetArea.selectedLayerId];
-
-        let edits: Edits[] = [];
-        for (let y = 0; y < height; y++) {
-          for (let x = 0; x < width; x++) {
-            let tile = layer.data[(startY + y) * pub.width + startX + x];
-            layerData.push(tile);
-
-            if (!mapArea.gameInstance.input.keyboardButtons[(<any>window).KeyEvent.DOM_VK_D].wasJustReleased)
-              edits.push({ x: startX + x, y: startY + y, tileValue: 0 });
-          }
-        }
-        editMap(edits);
-
-        setupPattern(layerData, width);
-        mapArea.patternActor.threeObject.visible = true;
-        mapArea.selectionStartPoint = null;
-
-        mapArea.duplicatingSelection = mapArea.gameInstance.input.keyboardButtons[(<any>window).KeyEvent.DOM_VK_D].wasJustReleased;
+  if (input.mouseButtons[0].wasJustPressed) {
+    // A pattern is already in the buffer
+    if (!mapArea.patternActor.threeObject.visible) {
+      if (mapArea.cursorPoint.x >= 0 && mapArea.cursorPoint.x < pub.width && mapArea.cursorPoint.y >= 0 && mapArea.cursorPoint.y < pub.height) {
+        mapArea.patternBackgroundActor.threeObject.visible = true;
+        mapArea.selectionStartPoint = { x: mapArea.cursorPoint.x, y: mapArea.cursorPoint.y };
+      } else {
+        clearSelection();
       }
     }
   }
+
+  if (mapArea.selectionStartPoint == null) return;
+
+  if (input.mouseButtons[0].isDown) {
+    // Clamp mouse values
+    let x = Math.max(0, Math.min(pub.width - 1, mapArea.cursorPoint.x));
+    let y = Math.max(0, Math.min(pub.height - 1, mapArea.cursorPoint.y));
+
+    mapArea.selectionEndPoint = { x, y };
+  }
+
+  let startX = Math.min(mapArea.selectionStartPoint.x, mapArea.selectionEndPoint.x);
+  let startY = Math.min(mapArea.selectionStartPoint.y, mapArea.selectionEndPoint.y);
+  let width = Math.abs(mapArea.selectionEndPoint.x - mapArea.selectionStartPoint.x) + 1;
+  let height = Math.abs(mapArea.selectionEndPoint.y - mapArea.selectionStartPoint.y) + 1;
+
+  let ratioX = pub.pixelsPerUnit / data.tileMapUpdater.tileSetAsset.pub.grid.width;
+  let ratioY = pub.pixelsPerUnit / data.tileMapUpdater.tileSetAsset.pub.grid.height;
+  let z = data.tileMapUpdater.tileMapAsset.layers.pub.length * pub.layerDepthOffset;
+  let patternPosition = new SupEngine.THREE.Vector3(startX / ratioX, startY / ratioY, z);
+  mapArea.patternBackgroundActor.setLocalPosition(patternPosition);
+  let ratio = data.tileSetUpdater.tileSetAsset.pub.grid.width / data.tileSetUpdater.tileSetAsset.pub.grid.height;
+  mapArea.patternBackgroundActor.setLocalScale(new SupEngine.THREE.Vector3(width, height / ratio, 1));
+
+  // Delete selection
+  if (input.keyboardButtons[keyEvent.DOM_VK_DELETE].wasJustReleased) {
+    let edits: Edits[] = [];
+    walkSelection((x, y) => { edits.push({ x: startX + x, y: startY + y, tileValue: 0 }); });
+    editMap(edits);
+
+    mapArea.patternBackgroundActor.threeObject.visible = false;
+    mapArea.selectionStartPoint = null;
+  }
+
+  // Move/duplicate the selection
+  else if (input.keyboardButtons[keyEvent.DOM_VK_M].wasJustReleased || input.keyboardButtons[keyEvent.DOM_VK_D].wasJustReleased) {
+    let layer = data.tileMapUpdater.tileMapAsset.layers.byId[tileSetArea.selectedLayerId];
+
+    mapArea.duplicatingSelection = input.keyboardButtons[keyEvent.DOM_VK_D].wasJustReleased;
+    if (!mapArea.duplicatingSelection) {
+      let edits: Edits[] = [];
+      walkSelection((x, y) => { edits.push({ x: startX + x, y: startY + y, tileValue: 0 }); });
+      editMap(edits);
+    }
+
+    let layerData: ((number|boolean)[]|number)[] = [];
+    walkSelection((x, y) => {
+      let tile = layer.data[(startY + y) * pub.width + startX + x];
+      layerData.push(tile);
+    });
+
+    setupPattern(layerData, width);
+    mapArea.patternActor.threeObject.visible = true;
+    mapArea.selectionStartPoint = null;
+  }
+}
+
+function walkSelection(callback: (x: number, y: number) => void) {
+  let width = Math.abs(mapArea.selectionEndPoint.x - mapArea.selectionStartPoint.x) + 1;
+  let height = Math.abs(mapArea.selectionEndPoint.y - mapArea.selectionStartPoint.y) + 1;
+
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      callback(x, y);
+    }
+  }
+}
+
+function clearSelection() {
+  mapArea.selectionStartPoint = null;
+  mapArea.patternBackgroundActor.threeObject.visible = false;
+  mapArea.patternActor.threeObject.visible = false;
+  mapArea.duplicatingSelection = false;
+}
+
+export function selectEntireLayer() {
+  mapArea.patternBackgroundActor.threeObject.visible = true;
+  mapArea.selectionStartPoint = { x: 0, y: 0 };
+  mapArea.selectionEndPoint = {
+    x: data.tileMapUpdater.tileMapAsset.pub.width - 1,
+    y: data.tileMapUpdater.tileMapAsset.pub.height - 1
+  };
+}
+
+function handleEraserMode(cursorHasMoved: boolean) {
+  if (mapArea.gameInstance.input.mouseButtons[0].isDown)
+    editMap([{ x: mapArea.cursorPoint.x, y: mapArea.cursorPoint.y, tileValue: 0 }]);
 }
