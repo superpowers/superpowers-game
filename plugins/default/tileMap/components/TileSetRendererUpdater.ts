@@ -13,11 +13,7 @@ export default class TileSetRendererUpdater {
 
   tileSetAssetId: string;
 
-  tileSetSubscriber: {
-    onAssetReceived: (assetId: string, asset: TileSetAsset) => any;
-    onAssetEdited: (id: string, command: string, ...args: any[]) => any;
-    onAssetTrashed: (assetId: string) => any;
-  };
+  tileSetSubscriber: SupClient.AssetSubscriber;
 
   tileSetAsset: TileSetAsset;
 
@@ -29,11 +25,10 @@ export default class TileSetRendererUpdater {
     this.tileSetAssetId = config.tileSetAssetId;
 
     this.tileSetSubscriber = {
-      onAssetReceived: this._onTileSetAssetReceived,
-      onAssetEdited: this._onTileSetAssetEdited,
-      onAssetTrashed: this._onTileSetAssetTrashed
+      onAssetReceived: this.onTileSetAssetReceived,
+      onAssetEdited: this.onTileSetAssetEdited,
+      onAssetTrashed: this.onTileSetAssetTrashed
     };
-
     if (this.tileSetAssetId != null) this.client.subAsset(this.tileSetAssetId, "tileSet", this.tileSetSubscriber);
   }
 
@@ -52,8 +47,8 @@ export default class TileSetRendererUpdater {
     if (this.tileSetAssetId != null) this.client.subAsset(this.tileSetAssetId, "tileSet", this.tileSetSubscriber);
   }
 
-  _onTileSetAssetReceived = (assetId: string, asset: TileSetAsset) => {
-    this._prepareTexture(asset.pub.texture, () => {
+  private onTileSetAssetReceived = (assetId: string, asset: TileSetAsset) => {
+    this.prepareTexture(asset.pub.texture, () => {
       this.tileSetAsset = asset;
 
       if (asset.pub.texture != null) {
@@ -71,7 +66,7 @@ export default class TileSetRendererUpdater {
     });
   };
 
-  _prepareTexture(texture: THREE.Texture, callback: Function) {
+  private prepareTexture(texture: THREE.Texture, callback: Function) {
     if (texture == null) {
       callback();
       return;
@@ -81,9 +76,9 @@ export default class TileSetRendererUpdater {
     else texture.image.addEventListener("load", callback);
   }
 
-  _onTileSetAssetEdited = (id: string, command: string, ...args: any[]) => {
+  private onTileSetAssetEdited = (id: string, command: string, ...args: any[]) => {
     let callEditCallback = true;
-    let commandFunction = (<any>this)[`_onEditCommand_${command}`];
+    let commandFunction = (<any>this)[`onEditCommand_${command}`];
     if (commandFunction != null) {
       if (commandFunction.apply(this, args) === false) callEditCallback = false;
     }
@@ -94,9 +89,10 @@ export default class TileSetRendererUpdater {
     }
   };
 
-  _onEditCommand_upload() {
+  /* tslint:disable:no-unused-variable */
+  private onEditCommand_upload() {
     let texture = this.tileSetAsset.pub.texture;
-    this._prepareTexture(texture, () => {
+    this.prepareTexture(texture, () => {
       this.tileSetRenderer.setTileSet(new TileSet(this.tileSetAsset.pub));
 
       let width = texture.image.width / this.tileSetAsset.pub.grid.width;
@@ -109,7 +105,7 @@ export default class TileSetRendererUpdater {
     });
   }
 
-  _onEditCommand_setProperty(key: string, value: any) {
+  private onEditCommand_setProperty(key: string, value: any) {
     switch (key) {
       case "grid.width":
       case "grid.height":
@@ -122,8 +118,9 @@ export default class TileSetRendererUpdater {
         break;
     }
   }
+  /* tslint:enable:no-unused-variable */
 
-  _onTileSetAssetTrashed = (assetId: string) => {
+  private onTileSetAssetTrashed = (assetId: string) => {
     this.tileSetRenderer.setTileSet(null);
     if (this.editAssetCallbacks != null) {
       // FIXME: We should probably have a this.trashAssetCallback instead

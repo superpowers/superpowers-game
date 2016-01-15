@@ -1,10 +1,9 @@
 import ui, { selectBrush, selectEraser, selectSelection } from "./ui";
 import tileSetArea from "./tileSetArea";
-import { socket, data } from "./network";
+import { editAsset, data } from "./network";
 
 import * as _ from "lodash";
 
-import TileMapAsset from "../../data/TileMapAsset";
 import TileMap from "../../components/TileMap";
 import TileMapRenderer from "../../components/TileMapRenderer";
 
@@ -65,7 +64,7 @@ mapArea.patternBackgroundRenderer = new SupEngine.editorComponentClasses["FlatCo
 mapArea.duplicatingSelection = false;
 mapArea.cursorPoint = { x: -1, y: -1 };
 
-export function setupPattern(layerData: ((number|boolean)[]|number)[], width=1) {
+export function setupPattern(layerData: ((number|boolean)[]|number)[], width = 1) {
   mapArea.patternData = layerData;
   mapArea.patternDataWidth = width;
 
@@ -96,7 +95,7 @@ export function setupPattern(layerData: ((number|boolean)[]|number)[], width=1) 
 
 export function setupFillPattern(newTileData: (number|boolean)[]) {
   let pub = data.tileMapUpdater.tileMapAsset.pub;
-  let layerData = data.tileMapUpdater.tileMapAsset.layers.byId[tileSetArea.selectedLayerId].data
+  let layerData = data.tileMapUpdater.tileMapAsset.layers.byId[tileSetArea.selectedLayerId].data;
 
   let patternLayerData: ((number|boolean)[]|number)[] = [];
   for (let y = 0; y < pub.height; y++) {
@@ -125,14 +124,14 @@ export function setupFillPattern(newTileData: (number|boolean)[]) {
 
     patternLayerData[index] = _.cloneDeep(newTileData);
 
-    checkTile(x-1, y);
-    checkTile(x+1, y);
-    checkTile(x, y-1);
-    checkTile(x, y+1);
+    checkTile(x - 1, y);
+    checkTile(x + 1, y);
+    checkTile(x    , y - 1);
+    checkTile(x    , y + 1);
   }
 
   if (mapArea.cursorPoint.x >= 0 && mapArea.cursorPoint.x < pub.width && mapArea.cursorPoint.y >= 0 && mapArea.cursorPoint.y < pub.height)
-    checkTile(mapArea.cursorPoint.x, mapArea.cursorPoint.y)
+    checkTile(mapArea.cursorPoint.x, mapArea.cursorPoint.y);
 
   let patternData = {
     tileSetId: <string>null,
@@ -245,9 +244,7 @@ function editMap(edits: Edits[]) {
   }
 
   if (actualEdits.length === 0) return;
-  socket.emit("edit:assets", SupClient.query.asset, "editMap", layer.id, actualEdits, (err: string) => {
-    if (err != null) { new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); return; }
-  });
+  editAsset("editMap", layer.id, actualEdits);
 }
 
 function getMapGridPosition(gameInstance: SupEngine.GameInstance, cameraComponent: any) {
@@ -282,7 +279,7 @@ export function handleMapArea() {
 
   let pub = data.tileMapUpdater.tileMapAsset.pub;
   let [ mouseX, mouseY ] = getMapGridPosition(mapArea.gameInstance, mapArea.cameraComponent);
-  if (mouseX != mapArea.cursorPoint.x || mouseY != mapArea.cursorPoint.y) {
+  if (mouseX !== mapArea.cursorPoint.x || mouseY !== mapArea.cursorPoint.y) {
     mapArea.cursorPoint.x = mouseX;
     mapArea.cursorPoint.y = mouseY;
 
@@ -295,7 +292,7 @@ export function handleMapArea() {
     }
     else if (mapArea.patternActor.threeObject.visible) setupPattern(mapArea.patternData, mapArea.patternDataWidth);
   }
-  
+
   // Edit tiles
   if (mapArea.gameInstance.input.mouseButtons[0].isDown) {
     if (ui.eraserToolButton.checked) {
@@ -353,10 +350,10 @@ export function handleMapArea() {
 
   if (mapArea.patternActor.threeObject.visible || ui.eraserToolButton.checked) {
     let layer = data.tileMapUpdater.tileMapAsset.layers.byId[tileSetArea.selectedLayerId];
-    let z = (pub.layers.indexOf(layer) + 0.5) * pub.layerDepthOffset
+    let z = (pub.layers.indexOf(layer) + 0.5) * pub.layerDepthOffset;
     let ratioX = pub.pixelsPerUnit / data.tileMapUpdater.tileSetAsset.pub.grid.width;
     let ratioY = pub.pixelsPerUnit / data.tileMapUpdater.tileSetAsset.pub.grid.height;
-    let patternPosition = new SupEngine.THREE.Vector3(mouseX/ratioX, mouseY/ratioY, z);
+    let patternPosition = new SupEngine.THREE.Vector3(mouseX / ratioX, mouseY / ratioY, z);
     mapArea.patternBackgroundActor.setLocalPosition(patternPosition);
   }
 
@@ -407,7 +404,7 @@ export function handleMapArea() {
       let ratioX = pub.pixelsPerUnit / data.tileMapUpdater.tileSetAsset.pub.grid.width;
       let ratioY = pub.pixelsPerUnit / data.tileMapUpdater.tileSetAsset.pub.grid.height;
       let z = data.tileMapUpdater.tileMapAsset.layers.pub.length * pub.layerDepthOffset;
-      let patternPosition = new SupEngine.THREE.Vector3(startX/ratioX, startY/ratioY, z);
+      let patternPosition = new SupEngine.THREE.Vector3(startX / ratioX, startY / ratioY, z);
       mapArea.patternBackgroundActor.setLocalPosition(patternPosition);
       let ratio = data.tileSetUpdater.tileSetAsset.pub.grid.width / data.tileSetUpdater.tileSetAsset.pub.grid.height;
       mapArea.patternBackgroundActor.setLocalScale(new SupEngine.THREE.Vector3(width, height / ratio, 1));

@@ -40,18 +40,10 @@ function start() {
   document.querySelector("button.download").addEventListener("click", onDownloadTileset);
 
   ui.gridWidthInput = document.querySelector("input.grid-width");
-  ui.gridWidthInput.addEventListener("change", () => {
-    socket.emit("edit:assets", SupClient.query.asset, "setProperty", "grid.width", parseInt(ui.gridWidthInput.value, 10), (err: string) => {
-      if (err != null) { new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); return; }
-    });
-  });
+  ui.gridWidthInput.addEventListener("change", () => { editAsset("setProperty", "grid.width", parseInt(ui.gridWidthInput.value, 10)); });
 
   ui.gridHeightInput = document.querySelector("input.grid-height");
-  ui.gridHeightInput.addEventListener("change", () => {
-    socket.emit("edit:assets", SupClient.query.asset, "setProperty", "grid.height", parseInt(ui.gridHeightInput.value, 10), (err: string) => {
-      if (err != null) { new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); return; }
-    });
-  });
+  ui.gridHeightInput.addEventListener("change", () => { editAsset("setProperty", "grid.height", parseInt(ui.gridHeightInput.value, 10)); });
 
   ui.selectedTileInput = document.querySelector("input.selected-tile-number");
 
@@ -84,6 +76,17 @@ function onAssetReceived(err: string, asset: any) {
   setupProperty("grid-width", data.tileSetUpdater.tileSetAsset.pub.grid.width);
   setupProperty("grid-height", data.tileSetUpdater.tileSetAsset.pub.grid.height);
   selectTile({ x: 0, y: 0 });
+}
+
+function editAsset(...args: any[]) {
+  let callback: Function;
+  if (typeof args[args.length - 1] === "function") callback = args.pop();
+
+  args.push((err: string, id: string) => {
+    if (err != null) { new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); return; }
+    if (callback != null) callback(id);
+  });
+  socket.emit("edit:assets", SupClient.query.asset, ...args);
 }
 
 onEditCommands.upload = () => {
@@ -175,11 +178,7 @@ function addTileProperty(name: string, value = "") {
   valueInput.type = "string";
   valueInput.className = "value";
   valueInput.value = value;
-  valueInput.addEventListener("input", () => {
-    socket.emit("edit:assets", SupClient.query.asset, "editTileProperty", data.selectedTile, ui.selectedProperty, valueInput.value, (err: string) => {
-      if (err != null) { new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); return; }
-    });
-  });
+  valueInput.addEventListener("input", () => { editAsset("editTileProperty", data.selectedTile, ui.selectedProperty, valueInput.value); });
 
   liElt.appendChild(valueInput);
 
@@ -191,11 +190,7 @@ function onFileSelectChange(event: Event) {
   if ((<HTMLInputElement>event.target).files.length === 0) return;
 
   let reader = new FileReader;
-  reader.onload = (event) => {
-    socket.emit("edit:assets", SupClient.query.asset, "upload", reader.result, (err: string) => {
-      if (err != null) { new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); return; }
-    });
-  };
+  reader.onload = (event) => { editAsset("upload", reader.result); };
 
   reader.readAsArrayBuffer((<HTMLInputElement>event.target).files[0]);
   (<HTMLFormElement>(<HTMLInputElement>event.target).parentElement).reset();
@@ -254,9 +249,7 @@ function onNewPropertyClick() {
     /* tslint:enable:no-unused-expression */
     if (name == null) return;
 
-    socket.emit("edit:assets", SupClient.query.asset, "addTileProperty", data.selectedTile, name, (err: string, id: string) => {
-      if (err != null) { new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); return; }
-
+    editAsset("addTileProperty", data.selectedTile, name, (id: string) => {
       ui.selectedProperty = name;
       ui.propertiesTreeView.clearSelection();
       let liElt = ui.propertiesTreeView.treeRoot.querySelector(`li[data-name="${ui.selectedProperty}"]`);
@@ -280,8 +273,7 @@ function onRenamePropertyClick() {
   new SupClient.dialogs.PromptDialog(SupClient.i18n.t("tileSetEditor:renamePropertyPrompt"), options, (newName) => {
     /* tslint:enable:no-unused-expression */
     if (newName == null) return;
-
-    socket.emit("edit:assets", SupClient.query.asset, "renameTileProperty", data.selectedTile, ui.selectedProperty, newName, (err: string) => { if (err != null) { new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); return; } });
+    editAsset("renameTileProperty", data.selectedTile, ui.selectedProperty, newName);
   });
 }
 
@@ -294,8 +286,7 @@ function onDeletePropertyClick() {
   new SupClient.dialogs.ConfirmDialog(confirmString, validateString, (confirm) => {
     /* tslint:enable:no-unused-expression */
     if (!confirm) return;
-
-    socket.emit("edit:assets", SupClient.query.asset, "deleteTileProperty", data.selectedTile, ui.selectedProperty, (err: string) => { if (err != null) { new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); return; } });
+    editAsset("deleteTileProperty", data.selectedTile, ui.selectedProperty);
   });
 }
 

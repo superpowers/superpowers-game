@@ -20,7 +20,7 @@ export default class TileMapRendererConfig extends SupCore.Data.Base.ComponentCo
       tileMapAssetId: null, tileSetAssetId: null,
       castShadow: false, receiveShadow: false,
       materialType: "basic", shaderAssetId: null
-    }
+    };
     return newConfig;
   };
 

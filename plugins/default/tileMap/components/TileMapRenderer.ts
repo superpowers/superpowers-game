@@ -3,11 +3,11 @@ import TileMap from "./TileMap";
 import TileSet from "./TileSet";
 import TileLayerGeometry from "./TileLayerGeometry";
 import TileMapRendererUpdater from "./TileMapRendererUpdater";
-import { TileMapLayerPub } from "../data/TileMapLayers";
 
 export default class TileMapRenderer extends SupEngine.ActorComponent {
-
+  /* tslint:disable:variable-name */
   static Updater = TileMapRendererUpdater;
+  /* tslint:enable:variable-name */
 
   tileMap: TileMap;
   tileSet: TileSet;
@@ -61,7 +61,7 @@ export default class TileMapRenderer extends SupEngine.ActorComponent {
     }
     this.setCastShadow(this.castShadow);
 
-    this.tileMap.on("setTileAt", this._onSetTileAt);
+    this.tileMap.on("setTileAt", this.onSetTileAt);
   }
 
   _clearLayerMeshes() {
@@ -75,7 +75,7 @@ export default class TileMapRenderer extends SupEngine.ActorComponent {
     this.layerMeshesById = null;
     this.layerVisibleById = null;
 
-    this.tileMap.removeListener("setTileAt", this._onSetTileAt);
+    this.tileMap.removeListener("setTileAt", this.onSetTileAt);
   }
 
   _destroy() {
@@ -155,7 +155,7 @@ export default class TileMapRenderer extends SupEngine.ActorComponent {
     this.actor.gameInstance.threeScene.traverse((object: any) => {
       let material: THREE.Material = object.material;
       if (material != null) material.needsUpdate = true;
-    })
+    });
   }
 
   setReceiveShadow(receiveShadow: boolean) {
@@ -194,7 +194,7 @@ export default class TileMapRenderer extends SupEngine.ActorComponent {
     this.refreshLayersDepth();
   }
 
-  _onSetTileAt = (layerIndex: number, x: number, y: number) => { this.refreshTileAt(layerIndex, x, y); }
+  private onSetTileAt = (layerIndex: number, x: number, y: number) => { this.refreshTileAt(layerIndex, x, y); };
 
   refreshTileAt(layerIndex: number, x: number, y: number) {
     let tileX = -1; let tileY = -1;
@@ -210,29 +210,20 @@ export default class TileMapRenderer extends SupEngine.ActorComponent {
       angle = <number>tileInfo[4];
     }
 
-    if (tileX == -1 || tileY == -1 || tileX >= this.tilesPerRow || tileY >= this.tilesPerColumn ||
+    if (tileX === -1 || tileY === -1 || tileX >= this.tilesPerRow || tileY >= this.tilesPerColumn ||
     (tileX === this.tilesPerRow - 1 && tileY === this.tilesPerColumn - 1)) {
       tileX = this.tilesPerRow - 1;
       tileY = this.tilesPerColumn - 1;
     }
 
     let image = this.tileSet.data.texture.image;
-    let left   = (tileX     * this.tileSet.data.grid.width + 0.2) / image.width;
-    let right  = ((tileX+1) * this.tileSet.data.grid.width - 0.2) / image.width;
-    let bottom = 1 - ((tileY+1) * this.tileSet.data.grid.height - 0.2) / image.height;
-    let top    = 1 - (tileY     * this.tileSet.data.grid.height + 0.2) / image.height;
+    let left   = (tileX           * this.tileSet.data.grid.width + 0.2) / image.width;
+    let right  = ((tileX + 1)     * this.tileSet.data.grid.width - 0.2) / image.width;
+    let bottom = 1 - ((tileY + 1) * this.tileSet.data.grid.height - 0.2) / image.height;
+    let top    = 1 - (tileY       * this.tileSet.data.grid.height + 0.2) / image.height;
 
-    if (flipX) {
-      let temp = right;
-      right = left;
-      left = temp;
-    }
-
-    if (flipY) {
-      let temp = bottom;
-      bottom = top;
-      top = temp;
-    }
+    if (flipX) [right, left] = [left, right];
+    if (flipY) [top, bottom] = [bottom, top];
 
     let quadIndex = (x + y * this.tileMap.getWidth());
     let layerMesh = this.layerMeshes[layerIndex];

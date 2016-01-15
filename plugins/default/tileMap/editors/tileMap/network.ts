@@ -1,5 +1,5 @@
 import ui, { setupLayer, selectBrush, refreshLayersId } from "./ui";
-import mapArea, { setupPattern } from "./mapArea";
+import mapArea from "./mapArea";
 import tileSetArea from "./tileSetArea";
 
 import { TileMapLayerPub } from "../../data/TileMapLayers";
@@ -12,7 +12,7 @@ import TileSetRendererUpdater from "../../components/TileSetRendererUpdater";
 
 export let data: { projectClient?: SupClient.ProjectClient; tileMapUpdater?: TileMapRendererUpdater, tileSetUpdater?: TileSetRendererUpdater } = {};
 
-export let socket: SocketIOClient.Socket;
+let socket: SocketIOClient.Socket;
 SupClient.i18n.load([{ root: `${window.location.pathname}/../..`, name: "tileMapEditor" }], () => {
   socket = SupClient.connect(SupClient.query.project);
   socket.on("connect", onConnected);
@@ -40,7 +40,7 @@ function onTileMapAssetReceived() {
   let tileSetActor = new SupEngine.Actor(tileSetArea.gameInstance, "Tile Set");
   let tileSetRenderer = new TileSetRenderer(tileSetActor);
   let config = { tileSetAssetId: pub.tileSetId };
-  
+
   let receiveCallbacks = { tileSet: onTileSetAssetReceived };
   let editCallbacks = { tileSet: onTileSetEditCommands };
   data.tileSetUpdater = new TileSetRenderer.Updater(data.projectClient, tileSetRenderer, config, receiveCallbacks, editCallbacks);
@@ -54,6 +54,17 @@ function onTileMapAssetReceived() {
   tileSetArea.selectedLayerId = pub.layers[0].id.toString();
   ui.layersTreeView.addToSelection(ui.layersTreeView.treeRoot.querySelector(`li[data-id="${pub.layers[0].id}"]`));
   mapArea.patternActor.setLocalPosition(new SupEngine.THREE.Vector3(0, 0, pub.layerDepthOffset / 2));
+}
+
+export function editAsset(...args: any[]) {
+  let callback: Function;
+  if (typeof args[args.length - 1] === "function") callback = args.pop();
+
+  args.push((err: string, id: string) => {
+    if (err != null) { new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); return; }
+    if (callback != null) callback(id);
+  });
+  socket.emit("edit:assets", SupClient.query.asset, ...args);
 }
 
 function updateTileSetInput() {
@@ -94,7 +105,7 @@ onEditCommands.newLayer = (layerPub: TileMapLayerPub, index: number) => {
 
   let pub = data.tileMapUpdater.tileMapAsset.pub;
   let layer = data.tileMapUpdater.tileMapAsset.layers.byId[tileSetArea.selectedLayerId];
-  let z = (pub.layers.indexOf(layer) + 0.5) * pub.layerDepthOffset
+  let z = (pub.layers.indexOf(layer) + 0.5) * pub.layerDepthOffset;
   mapArea.patternActor.setLocalPosition(new SupEngine.THREE.Vector3(0, 0, z));
 
   refreshLayersId();
@@ -118,7 +129,7 @@ onEditCommands.deleteLayer = (id: string, index: number) => {
 
   let pub = data.tileMapUpdater.tileMapAsset.pub;
   let layer = data.tileMapUpdater.tileMapAsset.layers.byId[tileSetArea.selectedLayerId];
-  let z = (pub.layers.indexOf(layer) + 0.5) * pub.layerDepthOffset
+  let z = (pub.layers.indexOf(layer) + 0.5) * pub.layerDepthOffset;
   mapArea.patternActor.setLocalPosition(new SupEngine.THREE.Vector3(0, 0, z));
 
   refreshLayersId();
@@ -131,7 +142,7 @@ onEditCommands.moveLayer = (id: string, newIndex: number) => {
   ui.layersTreeView.insertAt(layerElt, "item", pub.layers.length - newIndex);
 
   let layer = data.tileMapUpdater.tileMapAsset.layers.byId[tileSetArea.selectedLayerId];
-  let z = (pub.layers.indexOf(layer) + 0.5) * pub.layerDepthOffset
+  let z = (pub.layers.indexOf(layer) + 0.5) * pub.layerDepthOffset;
   mapArea.patternActor.setLocalPosition(new SupEngine.THREE.Vector3(0, 0, z));
 
   refreshLayersId();
@@ -144,7 +155,7 @@ function onTileSetAssetReceived() {
 
   mapArea.cameraControls.setMultiplier(tileMapPub.pixelsPerUnit / tileSetPub.grid.width / 1);
   mapArea.gridRenderer.setRatio({ x: tileMapPub.pixelsPerUnit / tileSetPub.grid.width, y: tileMapPub.pixelsPerUnit / tileSetPub.grid.height });
-  
+
   if (tileSetPub.texture != null) {
     mapArea.patternRenderer.setTileSet(new TileSet(tileSetPub));
     if (ui.brushToolButton.checked) selectBrush(0, 0);

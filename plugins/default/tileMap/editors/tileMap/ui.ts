@@ -1,4 +1,4 @@
-import { socket, data } from "./network";
+import { editAsset, data } from "./network";
 import mapArea, { setupPattern, setupFillPattern, flipTilesVertically, flipTilesHorizontally, rotateTiles } from "./mapArea";
 import tileSetArea from "./tileSetArea";
 
@@ -53,7 +53,7 @@ ui.settings = {};
 
   settingObj.addEventListener("change", (event) => {
     let value = (setting === "layerDepthOffset") ? parseFloat(settingObj.value) : parseInt(settingObj.value, 10);
-    socket.emit("edit:assets", SupClient.query.asset, "setProperty", setting, value, (err: string) => { if (err != null) { new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); return; } });
+    editAsset("setProperty", setting, value);
   });
 });
 
@@ -108,13 +108,10 @@ SupClient.setupHelpCallback(() => {
 
 function onTileSetChange(event: Event) {
   let value = (<HTMLInputElement>event.target).value;
-  if (value === "")
-    socket.emit("edit:assets", SupClient.query.asset, "changeTileSet", null, (err: string) => { if (err != null) { new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); return; } });
+  if (value === "") { editAsset("changeTileSet", null); return; }
 
   let entry = SupClient.findEntryByPath(data.projectClient.entries.pub, value);
-  if (entry != null && entry.type === "tileSet") {
-    socket.emit("edit:assets", SupClient.query.asset, "changeTileSet", entry.id, (err: string) => { if (err != null) { new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); return; } });
-  }
+  if (entry != null && entry.type === "tileSet") editAsset("changeTileSet", entry.id);
 }
 
 function onResizeMapClick() {
@@ -145,10 +142,7 @@ function onResizeMapClick() {
         newHeight = parseInt(newHeightString, 10);
 
       if (newWidth === data.tileMapUpdater.tileMapAsset.pub.width && newHeight === data.tileMapUpdater.tileMapAsset.pub.height) return;
-
-      socket.emit("edit:assets", SupClient.query.asset, "resizeMap", newWidth, newHeight, (err: string) => {
-        if (err != null) { new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); }
-      });
+      editAsset("resizeMap", newWidth, newHeight);
     });
   });
 }
@@ -175,9 +169,7 @@ function onMoveMapClick() {
         verticalOffset = parseInt(verticalOffsetString, 10);
 
       if (horizontalOffset === 0 && verticalOffset === 0) return;
-      socket.emit("edit:assets", SupClient.query.asset, "moveMap", horizontalOffset, verticalOffset, (err: string) => {
-        if (err != null) { new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); }
-      });
+      editAsset("moveMap", horizontalOffset, verticalOffset);
     });
   });
 }
@@ -195,9 +187,7 @@ function onNewLayerClick() {
 
     let index = SupClient.getTreeViewInsertionPoint(ui.layersTreeView).index;
     index = data.tileMapUpdater.tileMapAsset.pub.layers.length - index + 1;
-    socket.emit("edit:assets", SupClient.query.asset, "newLayer", name, index, (err: string, layerId: string) => {
-      if (err != null) { new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); return; }
-
+    editAsset("newLayer", name, index, (layerId: string) => {
       ui.layersTreeView.clearSelection();
       ui.layersTreeView.addToSelection(ui.layersTreeView.treeRoot.querySelector(`li[data-id="${layerId}"]`));
       tileSetArea.selectedLayerId = layerId;
@@ -220,10 +210,7 @@ function onRenameLayerClick() {
   new SupClient.dialogs.PromptDialog(SupClient.i18n.t("tileMapEditor:renameLayerPrompt"), options, (newName) => {
     /* tslint:enable:no-unused-expression */
     if (newName == null) return;
-
-    socket.emit("edit:assets", SupClient.query.asset, "renameLayer", layer.id, newName, (err: string) => {
-      if (err != null) { new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); return; }
-    });
+    editAsset("renameLayer", layer.id, newName);
   });
 }
 
@@ -238,9 +225,7 @@ function onDeleteLayerClick() {
     if (!confirm) return;
 
     let selectedNode = ui.layersTreeView.selectedNodes[0];
-    socket.emit("edit:assets", SupClient.query.asset, "deleteLayer", selectedNode.dataset.id, (err: string) => {
-      if (err != null) { new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); return; }
-    });
+    editAsset("deleteLayer", selectedNode.dataset.id);
   });
 }
 
@@ -248,10 +233,7 @@ function onLayerDrop(dropInfo: any, orderedNodes: any[]) {
   let id = orderedNodes[0].dataset.id;
   let newIndex = SupClient.getListViewDropIndex(dropInfo, data.tileMapUpdater.tileMapAsset.layers, true);
 
-  socket.emit("edit:assets", SupClient.query.asset, "moveLayer", id, newIndex, (err: string) => {
-    if (err != null) { new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); return; }
-  });
-
+  editAsset("moveLayer", id, newIndex);
   return false;
 }
 

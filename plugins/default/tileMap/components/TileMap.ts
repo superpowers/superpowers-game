@@ -1,6 +1,4 @@
 import { EventEmitter } from "events";
-import * as _ from "lodash";
-
 import { TileMapAssetPub } from "../data/TileMapAsset";
 
 export default class TileMap extends EventEmitter {

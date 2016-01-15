@@ -65,7 +65,7 @@ export default class TileSetAsset extends SupCore.Data.Base.Asset {
     let pub: TileSetAssetPub;
     fs.readFile(path.join(assetPath, "tileset.json"), { encoding: "utf8" }, (err, json) => {
       if (err != null && err.code === "ENOENT") {
-        fs.readFile(path.join(assetPath, "asset.json"), { encoding: "utf8" },(err, json) => {
+        fs.readFile(path.join(assetPath, "asset.json"), { encoding: "utf8" }, (err, json) => {
           fs.rename(path.join(assetPath, "asset.json"), path.join(assetPath, "tileset.json"), (err) => {
             pub = JSON.parse(json);
             fs.readFile(path.join(assetPath, "image.dat"), (err, buffer) => {
@@ -99,8 +99,8 @@ export default class TileSetAsset extends SupCore.Data.Base.Asset {
     callback(true);
   }
 
-  client_load() { this._loadTexture(); }
-  client_unload() { this._unloadTexture(); }
+  client_load() { this.loadTexture(); }
+  client_unload() { this.unloadTexture(); }
 
   save(assetPath: string, callback: (err: NodeJS.ErrnoException) => any) {
     let buffer = this.pub.image;
@@ -112,8 +112,8 @@ export default class TileSetAsset extends SupCore.Data.Base.Asset {
     });
   }
 
-  _loadTexture() {
-    this._unloadTexture();
+  private loadTexture() {
+    this.unloadTexture();
 
     let buffer = this.pub.image as ArrayBuffer;
     if (buffer.byteLength === 0) return;
@@ -131,7 +131,7 @@ export default class TileSetAsset extends SupCore.Data.Base.Asset {
     if (!image.complete) image.addEventListener("load", () => { texture.needsUpdate = true; });
   }
 
-  _unloadTexture() {
+  private unloadTexture() {
     if (this.url != null) URL.revokeObjectURL(this.url);
     if (this.pub.texture != null) this.pub.texture.dispose();
 
@@ -150,7 +150,7 @@ export default class TileSetAsset extends SupCore.Data.Base.Asset {
 
   client_upload(image: Buffer) {
     this.pub.image = image;
-    this._loadTexture();
+    this.loadTexture();
   }
 
   server_addTileProperty(client: any, tile: {x: number; y: number}, name: string,

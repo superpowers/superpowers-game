@@ -35,30 +35,15 @@ export default class TileMapSettingsEditor {
     this.fields["grid.width"] = gridFields[0];
     this.fields["grid.height"] = gridFields[1];
 
-    this.fields["pixelsPerUnit"].addEventListener("change", (event: any) => {
-      this.projectClient.socket.emit("edit:resources", "tileMapSettings", "setProperty", "pixelsPerUnit", parseInt(event.target.value, 10), (err: string) => { if (err != null) new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); });
+    let fieldNames = Object.keys(this.fields);
+    fieldNames.forEach((fieldName) => {
+      let field = this.fields[fieldName];
+      field.addEventListener("change", (event: any) => {
+        this.projectClient.socket.emit("edit:resources", "tileMapSettings", "setProperty", fieldName, parseInt(event.target.value, 10), (err: string) => {
+          if (err != null) new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close"));
+        });
+      });
     });
-
-    this.fields["width"].addEventListener("change", (event: any) => {
-      this.projectClient.socket.emit("edit:resources", "tileMapSettings", "setProperty", "width", parseInt(event.target.value, 10), (err: string) => { if (err != null) new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); });
-    });
-
-    this.fields["height"].addEventListener("change", (event: any) => {
-      this.projectClient.socket.emit("edit:resources", "tileMapSettings", "setProperty", "height", parseInt(event.target.value, 10), (err: string) => { if (err != null) new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); });
-    });
-
-    this.fields["layerDepthOffset"].addEventListener("change", (event: any) => {
-      this.projectClient.socket.emit("edit:resources", "tileMapSettings", "setProperty", "layerDepthOffset", parseInt(event.target.value, 10), (err: string) => { if (err != null) new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); });
-    });
-
-    this.fields["grid.width"].addEventListener("change", (event: any) => {
-      this.projectClient.socket.emit("edit:resources", "tileMapSettings", "setProperty", "grid.width", parseInt(event.target.value, 10), (err: string) => { if (err != null) new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); });
-    });
-
-    this.fields["grid.height"].addEventListener("change", (event: any) => {
-      this.projectClient.socket.emit("edit:resources", "tileMapSettings", "setProperty", "grid.height", parseInt(event.target.value, 10), (err: string) => { if (err != null) new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); });
-    });
-
     this.projectClient.subResource("tileMapSettings", this);
   }
 
