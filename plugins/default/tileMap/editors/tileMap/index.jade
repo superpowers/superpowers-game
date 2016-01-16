@@ -24,7 +24,9 @@ html
         tr
           th= t("tileMapEditor:tileSet")
           td
-            input.property-tileSetId
+            .inputs
+              input.property-tileSetId
+              button(disabled).open-tileSet= t("common:actions.open")
 
         tr
           th= t("tileMapEditor:pixelsPerUnit")

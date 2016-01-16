@@ -72,6 +72,7 @@ function updateTileSetInput() {
     (data.tileMapUpdater.tileMapAsset.pub.tileSetId != null) ?
       data.projectClient.entries.getPathFromId(data.tileMapUpdater.tileMapAsset.pub.tileSetId) : "";
   ui.tileSetInput.value = tileSetName;
+  ui.openTileSetButton.disabled = data.tileMapUpdater.tileMapAsset.pub.tileSetId == null;
 }
 
 onEditCommands.changeTileSet = () => {

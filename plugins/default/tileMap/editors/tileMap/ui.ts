@@ -14,6 +14,7 @@ import { TileMapLayerPub } from "../../data/TileMapLayers";
 
 let ui: {
   tileSetInput?: HTMLInputElement;
+  openTileSetButton?: HTMLButtonElement;
 
   sizeInput?: HTMLInputElement;
 
@@ -38,18 +39,23 @@ export default ui;
 new PerfectResize(document.querySelector(".sidebar"), "right");
 new PerfectResize(document.querySelector(".layers"), "bottom");
 
-ui.tileSetInput = <HTMLInputElement>document.querySelector(".property-tileSetId");
+ui.tileSetInput = document.querySelector(".property-tileSetId") as HTMLInputElement;
 ui.tileSetInput.addEventListener("input", onTileSetChange);
 ui.tileSetInput.addEventListener("keyup", (event: Event) => { event.stopPropagation(); });
 
-ui.sizeInput = <HTMLInputElement>document.querySelector(".property-size");
-(<HTMLButtonElement>document.querySelector("button.resize")).addEventListener("click", onResizeMapClick);
-(<HTMLButtonElement>document.querySelector("button.move")).addEventListener("click", onMoveMapClick);
+ui.openTileSetButton = document.querySelector("button.open-tileSet") as HTMLButtonElement;
+ui.openTileSetButton.addEventListener("click", (event) => {
+  window.parent.postMessage({ type: "openEntry", id: data.tileMapUpdater.tileMapAsset.pub.tileSetId }, window.location.origin);
+});
+
+ui.sizeInput = document.querySelector(".property-size") as HTMLInputElement;
+(document.querySelector("button.resize") as HTMLInputElement).addEventListener("click", onResizeMapClick);
+(document.querySelector("button.move") as HTMLInputElement).addEventListener("click", onMoveMapClick);
 
 ui.settings = {};
 [ "pixelsPerUnit", "layerDepthOffset" ].forEach((setting: string) => {
   let queryName = `.property-${setting}`;
-  let settingObj = ui.settings[setting] = <HTMLInputElement>document.querySelector(queryName);
+  let settingObj = ui.settings[setting] = document.querySelector(queryName) as HTMLInputElement;
 
   settingObj.addEventListener("change", (event) => {
     let value = (setting === "layerDepthOffset") ? parseFloat(settingObj.value) : parseInt(settingObj.value, 10);
@@ -57,20 +63,20 @@ ui.settings = {};
   });
 });
 
-ui.gridCheckbox = <HTMLInputElement>document.querySelector("input.grid-checkbox");
+ui.gridCheckbox = document.querySelector("input.grid-checkbox") as HTMLInputElement;
 ui.gridCheckbox.addEventListener("change", onChangeGridDisplay);
-ui.highlightCheckbox = <HTMLInputElement>document.querySelector("input.highlight-checkbox");
+ui.highlightCheckbox = document.querySelector("input.highlight-checkbox") as HTMLInputElement;
 ui.highlightCheckbox.addEventListener("change", onChangeHighlight);
-ui.highlightSlider = <HTMLInputElement>document.querySelector("input.highlight-slider");
+ui.highlightSlider = document.querySelector("input.highlight-slider") as HTMLInputElement;
 ui.highlightSlider.addEventListener("input", onChangeHighlight);
 
-ui.brushToolButton = <HTMLInputElement>document.querySelector("input#Brush");
+ui.brushToolButton = document.querySelector("input#Brush") as HTMLInputElement;
 ui.brushToolButton.addEventListener("change", () => { selectBrushTool(); });
-ui.fillToolButton = <HTMLInputElement>document.querySelector("input#Fill");
+ui.fillToolButton = document.querySelector("input#Fill") as HTMLInputElement;
 ui.fillToolButton.addEventListener("change", () => { selectFillTool(); });
-ui.selectionToolButton = <HTMLInputElement>document.querySelector("input#Selection");
+ui.selectionToolButton = document.querySelector("input#Selection") as HTMLInputElement;
 ui.selectionToolButton.addEventListener("change", () => { selectSelectionTool(); });
-ui.eraserToolButton = <HTMLInputElement>document.querySelector("input#Eraser");
+ui.eraserToolButton = document.querySelector("input#Eraser") as HTMLInputElement;
 ui.eraserToolButton.addEventListener("change", () => { selectEraserTool(); });
 
 ui.layersTreeView = new TreeView(document.querySelector(".layers-tree-view"), { dropCallback: onLayerDrop, multipleSelection: false });
@@ -81,16 +87,16 @@ document.querySelector("button.rename-layer").addEventListener("click", onRename
 document.querySelector("button.delete-layer").addEventListener("click", onDeleteLayerClick);
 
 ui.mousePositionLabel = {
-  x: <HTMLLabelElement>document.querySelector("label.position-x"),
-  y: <HTMLLabelElement>document.querySelector("label.position-y")
+  x: document.querySelector("label.position-x") as HTMLLabelElement,
+  y: document.querySelector("label.position-y") as HTMLLabelElement
 };
 
 // Keybindings
 SupClient.setupHotkeys();
 document.addEventListener("keyup", (event) => {
-  if ((<HTMLInputElement>event.target).tagName === "INPUT") return;
+  if ((event.target as HTMLInputElement).tagName === "INPUT") return;
 
-  let keyEvent = (<any>window).KeyEvent;
+  let keyEvent = (window as any).KeyEvent;
   switch (event.keyCode) {
     case keyEvent.DOM_VK_B: selectBrushTool(); break;
     case keyEvent.DOM_VK_F: selectFillTool(); break;
@@ -114,7 +120,7 @@ SupClient.setupHelpCallback(() => {
 });
 
 function onTileSetChange(event: Event) {
-  let value = (<HTMLInputElement>event.target).value;
+  let value = (event.target as HTMLInputElement).value;
   if (value === "") { editAsset("changeTileSet", null); return; }
 
   let entry = SupClient.findEntryByPath(data.projectClient.entries.pub, value);
@@ -340,7 +346,7 @@ export function selectEraserTool() {
 }
 
 export function setupLayer(layer: TileMapLayerPub, index: number) {
-  let liElt = <HTMLLIElement>document.createElement("li");
+  let liElt = document.createElement("li") as HTMLLIElement;
   liElt.dataset["id"] = layer.id;
 
   let displayCheckbox = document.createElement("input");
@@ -369,7 +375,7 @@ export function setupLayer(layer: TileMapLayerPub, index: number) {
 export function refreshLayersId() {
   for (let layerIndex = 0; layerIndex < data.tileMapUpdater.tileMapAsset.pub.layers.length; layerIndex++) {
     let layerId = data.tileMapUpdater.tileMapAsset.pub.layers[layerIndex].id;
-    let indexSpanElt = <HTMLSpanElement>ui.layersTreeView.treeRoot.querySelector(`[data-id="${layerId}"] .index`);
+    let indexSpanElt = ui.layersTreeView.treeRoot.querySelector(`[data-id="${layerId}"] .index`) as HTMLSpanElement;
     indexSpanElt.textContent = `${layerIndex} -`;
   }
 }
