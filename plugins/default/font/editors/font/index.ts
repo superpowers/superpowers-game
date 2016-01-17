@@ -89,7 +89,7 @@ function start() {
   ui.vectorFontTBody = document.querySelector("tbody.vector-font") as HTMLTableSectionElement;
   ui.bitmapFontTBody = document.querySelector("tbody.bitmap-font") as HTMLTableSectionElement;
 
-  requestAnimationFrame(draw);
+  requestAnimationFrame(tick);
 }
 
 // Network callbacks
@@ -200,11 +200,16 @@ document.querySelector("button.download").addEventListener("click", (event) => {
 });
 
 
-function draw() {
-  requestAnimationFrame(draw);
+let lastTimestamp = 0;
+let accumulatedTime = 0;
+function tick(timestamp = 0) {
+  accumulatedTime += timestamp - lastTimestamp;
+  lastTimestamp = timestamp;
+  let { updates, timeLeft } = ui.gameInstance.tick(accumulatedTime);
+  accumulatedTime = timeLeft;
 
-  ui.gameInstance.update();
-  ui.gameInstance.draw();
+  if (updates > 0) ui.gameInstance.draw();
+  requestAnimationFrame(tick);
 }
 
 SupClient.i18n.load([{ root: `${window.location.pathname}/../..`, name: "fontEditor" }], start);
