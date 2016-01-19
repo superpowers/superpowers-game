@@ -58,7 +58,7 @@ document.body.addEventListener("keydown", (event) => {
 
 // Prevent keypress events from leaking out to a parent window
 // They might trigger scrolling for instance
-document.body.addEventListener("keypress", (event) => { event.preventDefault(); });
+document.body.addEventListener("keypress", (event) => { event.stopPropagation(); });
 
 let progressBar = <HTMLProgressElement>document.querySelector("progress");
 let loadingElt = document.getElementById("loading");
