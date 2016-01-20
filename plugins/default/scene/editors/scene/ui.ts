@@ -218,13 +218,15 @@ ui.camera2DZ.addEventListener("input", onChangeCamera2DZ);
 document.querySelector(".main .controls .transform-mode").addEventListener("click", onTransformModeClick);
 
 ui.availableComponents = {};
+
+const componentEditorPlugins = SupClient.getPlugins<SupClient.ComponentEditorPlugin>("componentEditors");
 export function start() {
   SupClient.setupHotkeys();
   SupClient.setupHelpCallback(() => {
       window.parent.postMessage({ type: "openTool", name: "documentation", state: { section: "scene" } }, window.location.origin);
   });
 
-  let componentTypes = Object.keys(SupClient.plugins["componentEditors"]);
+  let componentTypes = Object.keys(componentEditorPlugins);
   componentTypes.sort((a, b) => {
     let componentLabelA = SupClient.i18n.t(`componentEditors:${a}.label`);
     let componentLabelB = SupClient.i18n.t(`componentEditors:${b}.label`);
@@ -661,7 +663,7 @@ export function createComponentElement(nodeId: string, component: Component) {
 
     socket.emit("edit:assets", SupClient.query.asset, "editComponent", nodeId, component.id, command, ...args, callback);
   };
-  let componentEditorPlugin = SupClient.plugins["componentEditors"][component.type].content;
+  let componentEditorPlugin = componentEditorPlugins[component.type].content;
   ui.componentEditors[component.id] = new componentEditorPlugin(table.querySelector("tbody"), component.config, data.projectClient, editConfig);
 
   let shrinkButton = clone.querySelector(".shrink-component");

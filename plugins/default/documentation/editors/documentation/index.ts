@@ -5,7 +5,7 @@ let data: {
   projectClient: SupClient.ProjectClient;
 };
 
-let socket = SupClient.connect(SupClient.query.project);
+const socket = SupClient.connect(SupClient.query.project);
 socket.on("welcome", onWelcome);
 socket.on("disconnect", SupClient.onDisconnected);
 SupClient.setupHotkeys();
@@ -28,7 +28,7 @@ function loadPlugins() {
   SupClient.fetch(`/systems/${SupCore.system.id}/plugins.json`, "json", (err: Error, pluginsInfo: SupCore.PluginsInfo) => {
     async.eachSeries(pluginsInfo.list, (pluginName, pluginCallback) => {
       SupClient.activePluginPath = `/systems/${SupCore.system.id}/plugins/${pluginName}`;
-      let documentationScript = document.createElement("script");
+      const documentationScript = document.createElement("script");
       documentationScript.src = `${SupClient.activePluginPath}/bundles/documentation.js`;
       documentationScript.addEventListener("load", () => { pluginCallback(); } );
       documentationScript.addEventListener("error", () => { pluginCallback(); } );
@@ -37,8 +37,8 @@ function loadPlugins() {
   });
 }
 
-let navListElt = document.querySelector("nav ul");
-let mainElt =  document.querySelector("main");
+const navListElt = document.querySelector("nav ul");
+const mainElt =  document.querySelector("main");
 
 function openDocumentation(name: string) {
   (navListElt.querySelector("li a.active") as HTMLAnchorElement).classList.remove("active");
@@ -49,20 +49,20 @@ function openDocumentation(name: string) {
 
 function setupDocs() {
 
-  let sortedNames = Object.keys(SupClient.plugins["documentation"]);
+  const sortedNames = Object.keys(SupClient.getPlugins<SupClient.DocumentationPlugin>("documentation"));
   sortedNames.sort((a, b) => { return (a.toLowerCase() < b.toLowerCase()) ? -1 : 1; });
 
-  let language = SupClient.cookies.get("supLanguage");
+  const language = SupClient.cookies.get("supLanguage");
 
   sortedNames.forEach((name) => {
-    let liElt = document.createElement("li");
-    let anchorElt = document.createElement("a");
+    const liElt = document.createElement("li");
+    const anchorElt = document.createElement("a");
     anchorElt.dataset["name"] = name;
     anchorElt.href = `#${name}`;
     liElt.appendChild(anchorElt);
     navListElt.appendChild(liElt);
 
-    let articleElt = document.createElement("article");
+    const articleElt = document.createElement("article");
     articleElt.id = `documentation-${name}`;
     mainElt.appendChild(articleElt);
 
@@ -70,9 +70,9 @@ function setupDocs() {
       articleElt.innerHTML = marked(content);
       anchorElt.textContent = articleElt.firstElementChild.textContent;
 
-      let linkElts = articleElt.querySelectorAll("a") as NodeListOf<HTMLAnchorElement>;
+      const linkElts = articleElt.querySelectorAll("a") as NodeListOf<HTMLAnchorElement>;
       if (SupClient.isApp) {
-        let electron: GitHubElectron.Electron = (top as any).global.require("electron");
+        const electron: GitHubElectron.Electron = (top as any).global.require("electron");
         for (let i = 0; i < linkElts.length; i++) {
           linkElts[i].addEventListener("click", (event: any) => {
             event.preventDefault();
@@ -84,9 +84,10 @@ function setupDocs() {
       }
     }
 
-    SupClient.fetch(`${SupClient.plugins["documentation"][name].path}/documentation/${name}.${language}.md`, "text", (err, data) => {
+    const pluginPath = SupClient.getPlugins<SupClient.DocumentationPlugin>("documentation")[name].path;
+    SupClient.fetch(`${pluginPath}/documentation/${name}.${language}.md`, "text", (err, data) => {
       if (err != null) {
-        SupClient.fetch(`${SupClient.plugins["documentation"][name].path}/documentation/${name}.en.md`, "text", (err, data) => {
+        SupClient.fetch(`${pluginPath}/documentation/${name}.en.md`, "text", (err, data) => {
           onDocumentationLoaded(data);
         });
         return;

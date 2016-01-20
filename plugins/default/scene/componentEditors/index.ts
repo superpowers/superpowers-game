@@ -1,3 +1,5 @@
+/// <reference path="../../scene/componentEditors/ComponentEditorPlugin.d.ts" />
+
 import CameraEditor from "./CameraEditor";
 
-SupClient.registerPlugin("componentEditors", "Camera", CameraEditor);
+SupClient.registerPlugin<SupClient.ComponentEditorPlugin>("componentEditors", "Camera", CameraEditor);

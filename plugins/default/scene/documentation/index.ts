@@ -1,1 +1,3 @@
-SupClient.registerPlugin("documentation", "scene", true);
+/// <reference path="../../documentation/documentation/DocumentationPlugin.d.ts" />
+
+SupClient.registerPlugin<SupClient.DocumentationPlugin>("documentation", "scene", true);

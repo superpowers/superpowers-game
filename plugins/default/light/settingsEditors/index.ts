@@ -1,3 +1,8 @@
+/// <reference path="../../../common/settings/settingsEditors/SettingsEditorPlugin.d.ts" />
+
 import LightSettingsEditor from "./LightSettingsEditor";
 
-SupClient.registerPlugin("settingsEditors", "Light", { namespace: "editors", editor: LightSettingsEditor });
+SupClient.registerPlugin<SupClient.SettingsEditorPlugin>("settingsEditors", "Light", {
+  namespace: "editors",
+  editor: LightSettingsEditor
+});

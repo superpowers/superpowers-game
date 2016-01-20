@@ -1,3 +1,5 @@
+/// <reference path="../../scene/componentEditors/ComponentEditorPlugin.d.ts" />
+
 import SpriteRendererEditor from "./SpriteRendererEditor";
 
-SupClient.registerPlugin("componentEditors", "SpriteRenderer", SpriteRendererEditor);
+SupClient.registerPlugin<SupClient.ComponentEditorPlugin>("componentEditors", "SpriteRenderer", SpriteRendererEditor);
