@@ -4,16 +4,16 @@
 declare let __tmpTHREE: typeof THREE;
 
 declare namespace SupEngine {
-  let THREE: typeof __tmpTHREE;
+  export let THREE: typeof __tmpTHREE;
 
-  let editorComponentClasses: { [name: string]: any };
-  function registerEditorComponentClass(name: string, component: any): void;
+  export let editorComponentClasses: { [name: string]: any };
+  export function registerEditorComponentClass(name: string, component: any): void;
 
-  let componentClasses: { [name: string]: any };
-  function registerComponentClass(name: string, plugin: any): void;
+  export let componentClasses: { [name: string]: any };
+  export function registerComponentClass(name: string, plugin: any): void;
 
-  let earlyUpdateFunctions: { [name: string]: (gameInstance: GameInstance) => void };
-  function registerEarlyUpdateFunction(name: string, callback: (gameInstance: GameInstance) => void): void;
+  export let earlyUpdateFunctions: { [name: string]: (gameInstance: GameInstance) => void };
+  export function registerEarlyUpdateFunction(name: string, callback: (gameInstance: GameInstance) => void): void;
 
   class GameInstance extends EventEmitter {
     framesPerSecond: number;
@@ -240,15 +240,15 @@ declare namespace SupEngine {
   }
 
   class EventEmitter implements NodeJS.EventEmitter {
-    static listenerCount(emitter: EventEmitter, event: string): number;
-
     addListener(event: string, listener: Function): EventEmitter;
     on(event: string, listener: Function): EventEmitter;
     once(event: string, listener: Function): EventEmitter;
     removeListener(event: string, listener: Function): EventEmitter;
     removeAllListeners(event?: string): EventEmitter;
-    setMaxListeners(n: number): void;
+    setMaxListeners(n: number): EventEmitter;
+    getMaxListeners(): number;
     listeners(event: string): Function[];
     emit(event: string, ...args: any[]): boolean;
+    listenerCount(type: string): number;
   }
 }
