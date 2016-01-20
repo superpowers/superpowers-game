@@ -1,0 +1,20 @@
+sudo: false
+language: node_js
+node_js:
+- "4.2.4"
+before_install:
+- npm install -g npm
+- npm --version
+before_script:
+- cd ..
+- git clone https://github.com/superpowers/superpowers.git
+- cd superpowers
+- mkdir systems
+- mv ../superpowers-game systems/game
+- cd systems
+- ls -l
+cache:
+  directories:
+  - node_modules
+script:
+- npm run build
