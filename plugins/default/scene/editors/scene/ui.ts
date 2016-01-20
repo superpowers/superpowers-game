@@ -219,20 +219,22 @@ document.querySelector(".main .controls .transform-mode").addEventListener("clic
 
 ui.availableComponents = {};
 
-const componentEditorPlugins = SupClient.getPlugins<SupClient.ComponentEditorPlugin>("componentEditors");
+let componentEditorPlugins: { [pluginName: string]: { path: string; content: SupClient.ComponentEditorPlugin; } };
+
 export function start() {
+  componentEditorPlugins = SupClient.getPlugins<SupClient.ComponentEditorPlugin>("componentEditors");
   SupClient.setupHotkeys();
   SupClient.setupHelpCallback(() => {
       window.parent.postMessage({ type: "openTool", name: "documentation", state: { section: "scene" } }, window.location.origin);
   });
 
-  let componentTypes = Object.keys(componentEditorPlugins);
+  const componentTypes = Object.keys(componentEditorPlugins);
   componentTypes.sort((a, b) => {
-    let componentLabelA = SupClient.i18n.t(`componentEditors:${a}.label`);
-    let componentLabelB = SupClient.i18n.t(`componentEditors:${b}.label`);
+    const componentLabelA = SupClient.i18n.t(`componentEditors:${a}.label`);
+    const componentLabelB = SupClient.i18n.t(`componentEditors:${b}.label`);
     return componentLabelA.localeCompare(componentLabelB);
   });
-  for (let componentType of componentTypes) ui.availableComponents[componentType] = SupClient.i18n.t(`componentEditors:${componentType}.label`);
+  for (const componentType of componentTypes) ui.availableComponents[componentType] = SupClient.i18n.t(`componentEditors:${componentType}.label`);
 }
 
 // Transform
@@ -663,7 +665,7 @@ export function createComponentElement(nodeId: string, component: Component) {
 
     socket.emit("edit:assets", SupClient.query.asset, "editComponent", nodeId, component.id, command, ...args, callback);
   };
-  let componentEditorPlugin = componentEditorPlugins[component.type].content;
+  const componentEditorPlugin = componentEditorPlugins[component.type].content;
   ui.componentEditors[component.id] = new componentEditorPlugin(table.querySelector("tbody"), component.config, data.projectClient, editConfig);
 
   let shrinkButton = clone.querySelector(".shrink-component");

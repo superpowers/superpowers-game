@@ -48,7 +48,6 @@ function openDocumentation(name: string) {
 }
 
 function setupDocs() {
-
   const sortedNames = Object.keys(SupClient.getPlugins<SupClient.DocumentationPlugin>("documentation"));
   sortedNames.sort((a, b) => { return (a.toLowerCase() < b.toLowerCase()) ? -1 : 1; });
 

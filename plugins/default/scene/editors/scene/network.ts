@@ -78,7 +78,6 @@ function loadPlugins(callback: (err: Error, locales: SupClient.i18n.File[]) => v
           let componentEditorsScript = document.createElement("script");
           componentEditorsScript.src = `${pluginPath}/bundles/componentEditors.js`;
           componentEditorsScript.addEventListener("load", () => {
-
             locales.push({ root: SupClient.activePluginPath, name: "componentEditors" });
             cb(null, null);
           } );
