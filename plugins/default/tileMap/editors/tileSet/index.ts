@@ -1,12 +1,10 @@
 import TileSetRenderer from "../../components/TileSetRenderer";
 import TileSetRendererUpdater from "../../components/TileSetRendererUpdater";
 
-/* tslint:disable */
-let TreeView = require("dnd-tree-view");
-let PerfectResize = require("perfect-resize");
-/* tslint:enable */
+import * as TreeView from "dnd-tree-view";
+import * as PerfectResize from "perfect-resize";
 
-let data: { projectClient?: SupClient.ProjectClient; tileSetUpdater?: TileSetRendererUpdater; selectedTile?: { x: number; y: number; } };
+let data: { projectClient: SupClient.ProjectClient; tileSetUpdater: TileSetRendererUpdater; selectedTile: { x: number; y: number; } };
 let ui: any = {};
 let socket: SocketIOClient.Socket;
 
@@ -31,7 +29,7 @@ function start() {
   );
 
   // Sidebar
-  new PerfectResize(document.querySelector(".sidebar"), "right");
+  new PerfectResize(document.querySelector(".sidebar") as HTMLElement, "right");
 
   let fileSelect = <HTMLInputElement>document.querySelector("input.file-select");
   fileSelect.addEventListener("change", onFileSelectChange);
@@ -48,7 +46,7 @@ function start() {
   ui.selectedTileInput = document.querySelector("input.selected-tile-number");
 
   // Tile properties
-  ui.propertiesTreeView = new TreeView(document.querySelector(".properties-tree-view"), { multipleSelection: false });
+  ui.propertiesTreeView = new TreeView(document.querySelector(".properties-tree-view") as HTMLElement, { multipleSelection: false });
   ui.propertiesTreeView.on("selectionChange", onPropertySelect);
   document.querySelector("button.new-property").addEventListener("click", onNewPropertyClick);
   document.querySelector("button.rename-property").addEventListener("click", onRenamePropertyClick);
@@ -60,7 +58,7 @@ function start() {
 // Network callbacks
 let onEditCommands: any = {};
 function onConnected() {
-  data = {};
+  data = {} as any;
   data.projectClient = new SupClient.ProjectClient(socket, { subEntries: false });
 
   let tileSetActor = new SupEngine.Actor(ui.gameInstance, "Tile Set");
@@ -109,7 +107,7 @@ onEditCommands.renameTileProperty = (tile: { x: number; y: number; }, name: stri
 
   let liElt = ui.propertiesTreeView.treeRoot.querySelector(`li[data-name="${name}"]`);
   liElt.querySelector(".name").textContent = newName;
-  liElt.dataset.name = newName;
+  liElt.dataset["name"] = newName;
 
   let properties = Object.keys(data.tileSetUpdater.tileSetAsset.pub.tileProperties[`${tile.x}_${tile.y}`]);
   properties.sort();
@@ -228,7 +226,7 @@ function onDownloadTileset(event: Event) {
 
 function onPropertySelect() {
   if (ui.propertiesTreeView.selectedNodes.length === 1) {
-    ui.selectedProperty = ui.propertiesTreeView.selectedNodes[0].dataset.name;
+    ui.selectedProperty = ui.propertiesTreeView.selectedNodes[0].dataset["name"];
     (<HTMLButtonElement>document.querySelector("button.rename-property")).disabled = false;
     (<HTMLButtonElement>document.querySelector("button.delete-property")).disabled = false;
   } else {

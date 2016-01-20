@@ -52,7 +52,7 @@ function onTileMapAssetReceived() {
   for (let index = pub.layers.length - 1; index >= 0; index--) setupLayer(pub.layers[index], index);
 
   tileSetArea.selectedLayerId = pub.layers[0].id.toString();
-  ui.layersTreeView.addToSelection(ui.layersTreeView.treeRoot.querySelector(`li[data-id="${pub.layers[0].id}"]`));
+  ui.layersTreeView.addToSelection(ui.layersTreeView.treeRoot.querySelector(`li[data-id="${pub.layers[0].id}"]`) as HTMLLIElement);
   mapArea.patternActor.setLocalPosition(new SupEngine.THREE.Vector3(0, 0, pub.layerDepthOffset / 2));
 }
 
@@ -118,14 +118,14 @@ onEditCommands.renameLayer = (id: string, newName: string) => {
 };
 
 onEditCommands.deleteLayer = (id: string, index: number) => {
-  let layerElt = ui.layersTreeView.treeRoot.querySelector(`[data-id="${id}"]`);
+  let layerElt = ui.layersTreeView.treeRoot.querySelector(`li[data-id="${id}"]`) as HTMLLIElement;
   ui.layersTreeView.remove(layerElt);
 
   if (id === tileSetArea.selectedLayerId) {
     index = Math.max(0, index - 1);
     tileSetArea.selectedLayerId = data.tileMapUpdater.tileMapAsset.pub.layers[index].id;
     ui.layersTreeView.clearSelection();
-    ui.layersTreeView.addToSelection(ui.layersTreeView.treeRoot.querySelector(`li[data-id="${tileSetArea.selectedLayerId}"]`));
+    ui.layersTreeView.addToSelection(ui.layersTreeView.treeRoot.querySelector(`li[data-id="${tileSetArea.selectedLayerId}"]`) as HTMLLIElement);
   }
 
   let pub = data.tileMapUpdater.tileMapAsset.pub;
@@ -139,7 +139,7 @@ onEditCommands.deleteLayer = (id: string, index: number) => {
 onEditCommands.moveLayer = (id: string, newIndex: number) => {
   let pub = data.tileMapUpdater.tileMapAsset.pub;
 
-  let layerElt = ui.layersTreeView.treeRoot.querySelector(`[data-id="${id}"]`);
+  let layerElt = ui.layersTreeView.treeRoot.querySelector(`li[data-id="${id}"]`) as HTMLLIElement;
   ui.layersTreeView.insertAt(layerElt, "item", pub.layers.length - newIndex);
 
   let layer = data.tileMapUpdater.tileMapAsset.layers.byId[tileSetArea.selectedLayerId];

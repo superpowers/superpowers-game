@@ -2,42 +2,40 @@ import { editAsset, data } from "./network";
 import mapArea, { setupPattern, setupFillPattern, flipTilesVertically, flipTilesHorizontally, rotateTiles, selectEntireLayer } from "./mapArea";
 import tileSetArea from "./tileSetArea";
 
-/* tslint:disable */
-let TreeView = require("dnd-tree-view");
-let PerfectResize = require("perfect-resize");
-/* tslint:enable */
+import * as TreeView from "dnd-tree-view";
+import * as PerfectResize from "perfect-resize";
 
-let tmpPosition = new SupEngine.THREE.Vector3();
-let tmpScale = new SupEngine.THREE.Vector3();
+const tmpPosition = new SupEngine.THREE.Vector3();
+const tmpScale = new SupEngine.THREE.Vector3();
 
 import { TileMapLayerPub } from "../../data/TileMapLayers";
 
-let ui: {
-  tileSetInput?: HTMLInputElement;
-  openTileSetButton?: HTMLButtonElement;
+const ui: {
+  tileSetInput: HTMLInputElement;
+  openTileSetButton: HTMLButtonElement;
 
-  sizeInput?: HTMLInputElement;
+  sizeInput: HTMLInputElement;
 
-  settings?: { [name: string]: HTMLInputElement };
+  settings: { [name: string]: HTMLInputElement };
 
-  gridCheckbox?: HTMLInputElement;
-  highlightCheckbox?: HTMLInputElement;
-  highlightSlider?: HTMLInputElement;
+  gridCheckbox: HTMLInputElement;
+  highlightCheckbox: HTMLInputElement;
+  highlightSlider: HTMLInputElement;
 
-  brushToolButton?: HTMLInputElement;
-  fillToolButton?: HTMLInputElement;
-  selectionToolButton?: HTMLInputElement;
-  eraserToolButton?: HTMLInputElement;
+  brushToolButton: HTMLInputElement;
+  fillToolButton: HTMLInputElement;
+  selectionToolButton: HTMLInputElement;
+  eraserToolButton: HTMLInputElement;
 
-  layersTreeView?: any;
+  layersTreeView: TreeView;
 
   mousePositionLabel?: { x: HTMLLabelElement; y: HTMLLabelElement; };
-} = {};
+} = {} as any;
 export default ui;
 
 // Setup resize handles
-new PerfectResize(document.querySelector(".sidebar"), "right");
-new PerfectResize(document.querySelector(".layers"), "bottom");
+new PerfectResize(document.querySelector(".sidebar") as HTMLElement, "right");
+new PerfectResize(document.querySelector(".layers") as HTMLElement, "bottom");
 
 ui.tileSetInput = document.querySelector(".property-tileSetId") as HTMLInputElement;
 ui.tileSetInput.addEventListener("input", onTileSetChange);
@@ -79,7 +77,7 @@ ui.selectionToolButton.addEventListener("change", () => { selectSelectionTool();
 ui.eraserToolButton = document.querySelector("input#Eraser") as HTMLInputElement;
 ui.eraserToolButton.addEventListener("change", () => { selectEraserTool(); });
 
-ui.layersTreeView = new TreeView(document.querySelector(".layers-tree-view"), { dropCallback: onLayerDrop, multipleSelection: false });
+ui.layersTreeView = new TreeView(document.querySelector(".layers-tree-view") as HTMLElement, { dragStartCallback: () => true, dropCallback: onLayersTreeViewDrop, multipleSelection: false });
 ui.layersTreeView.on("selectionChange", onLayerSelect);
 
 document.querySelector("button.new-layer").addEventListener("click", onNewLayerClick);
@@ -202,7 +200,7 @@ function onNewLayerClick() {
     index = data.tileMapUpdater.tileMapAsset.pub.layers.length - index + 1;
     editAsset("newLayer", name, index, (layerId: string) => {
       ui.layersTreeView.clearSelection();
-      ui.layersTreeView.addToSelection(ui.layersTreeView.treeRoot.querySelector(`li[data-id="${layerId}"]`));
+      ui.layersTreeView.addToSelection(ui.layersTreeView.treeRoot.querySelector(`li[data-id="${layerId}"]`) as HTMLLIElement);
       tileSetArea.selectedLayerId = layerId;
     });
   });
@@ -238,13 +236,13 @@ function onDeleteLayerClick() {
     if (!confirm) return;
 
     let selectedNode = ui.layersTreeView.selectedNodes[0];
-    editAsset("deleteLayer", selectedNode.dataset.id);
+    editAsset("deleteLayer", selectedNode.dataset["id"]);
   });
 }
 
-function onLayerDrop(dropInfo: any, orderedNodes: any[]) {
-  let id = orderedNodes[0].dataset.id;
-  let newIndex = SupClient.getListViewDropIndex(dropInfo, data.tileMapUpdater.tileMapAsset.layers, true);
+function onLayersTreeViewDrop(event: DragEvent, dropLocation: TreeView.DropLocation, orderedNodes: HTMLLIElement[]) {
+  let id = orderedNodes[0].dataset["id"];
+  let newIndex = SupClient.getListViewDropIndex(dropLocation, data.tileMapUpdater.tileMapAsset.layers, true);
 
   editAsset("moveLayer", id, newIndex);
   return false;
@@ -252,7 +250,7 @@ function onLayerDrop(dropInfo: any, orderedNodes: any[]) {
 
 function onLayerSelect() {
   if (ui.layersTreeView.selectedNodes.length === 0) {
-    ui.layersTreeView.addToSelection(ui.layersTreeView.treeRoot.querySelector(`li[data-id="${tileSetArea.selectedLayerId}"]`));
+    ui.layersTreeView.addToSelection(ui.layersTreeView.treeRoot.querySelector(`li[data-id="${tileSetArea.selectedLayerId}"]`) as HTMLLIElement);
   } else {
     tileSetArea.selectedLayerId = ui.layersTreeView.selectedNodes[0].dataset["id"];
   }

@@ -4,38 +4,36 @@ import spritesheetArea, { updateSelection } from "./spritesheetArea";
 
 import SpriteAsset from "../../data/SpriteAsset";
 
-/* tslint:disable */
-let PerfectResize = require("perfect-resize");
-let TreeView = require("dnd-tree-view");
-/* tslint:enable */
+import * as PerfectResize from "perfect-resize";
+import * as TreeView from "dnd-tree-view";
 
-let ui: {
-  allSettings?: string[];
-  settings?: { [name: string]: any; };
-  opacitySelect?: HTMLSelectElement;
-  opacitySlider?: HTMLInputElement;
+const ui: {
+  allSettings: string[];
+  settings: { [name: string]: any; };
+  opacitySelect: HTMLSelectElement;
+  opacitySlider: HTMLInputElement;
 
-  imageSize?: HTMLInputElement;
+  imageSize: HTMLInputElement;
 
-  animationsTreeView?: any;
-  selectedAnimationId?: string;
-  animationPlay?: HTMLButtonElement;
-  animationSlider?: HTMLInputElement;
+  animationsTreeView: TreeView;
+  selectedAnimationId: string;
+  animationPlay: HTMLButtonElement;
+  animationSlider: HTMLInputElement;
 
-  texturesPane?: HTMLDivElement;
-  texturesToogleButton?: HTMLInputElement;
-  texturesTreeView?: any;
-  selectedTextureName?: string;
+  texturesPane: HTMLDivElement;
+  texturesToogleButton: HTMLInputElement;
+  texturesTreeView: TreeView;
+  selectedTextureName: string;
 
-  mapSlotsInput?: { [name: string]: HTMLInputElement };
-} = {};
+  mapSlotsInput: { [name: string]: HTMLInputElement };
+} = {} as any;
 export default ui;
 
 // Setup hotkeys
 SupClient.setupHotkeys();
 
 // Setup resizable panes
-new PerfectResize(document.querySelector(".sidebar"), "right");
+new PerfectResize(document.querySelector(".sidebar") as HTMLElement, "right");
 
 // Setup properties
 let fileSelect = <HTMLInputElement>document.querySelector("input.file-select");
@@ -99,7 +97,7 @@ document.querySelector("button.set-grid-size").addEventListener("click", onSetGr
 ui.imageSize = <HTMLInputElement>document.querySelector("td.image-size input");
 
 // Animations
-ui.animationsTreeView = new TreeView(document.querySelector(".animations-tree-view"), { dropCallback: onAnimationDrop });
+ui.animationsTreeView = new TreeView(document.querySelector(".animations-tree-view") as HTMLElement, { dragStartCallback: () => true, dropCallback: onAnimationsTreeViewDrop });
 ui.animationsTreeView.on("selectionChange", updateSelectedAnimation);
 
 document.querySelector("button.new-animation").addEventListener("click", onNewAnimationClick);
@@ -120,7 +118,7 @@ document.querySelector("input.animation-loop").addEventListener("change", (event
 ui.texturesPane = <HTMLDivElement>document.querySelector(".advanced-textures");
 SupClient.setupCollapsablePane(ui.texturesPane);
 
-ui.texturesTreeView = new TreeView(document.querySelector(".textures-tree-view"));
+ui.texturesTreeView = new TreeView(document.querySelector(".textures-tree-view") as HTMLElement);
 ui.texturesTreeView.on("selectionChange", updateSelectedMap);
 
 ui.mapSlotsInput = {};
@@ -138,7 +136,7 @@ document.querySelector("button.download-map").addEventListener("click", () => {
   if (ui.texturesTreeView.selectedNodes.length !== 1) return;
 
   let selectedNode = ui.texturesTreeView.selectedNodes[0];
-  let textureName = selectedNode.dataset.name;
+  let textureName = selectedNode.dataset["name"];
 
   downloadTexture(textureName);
 });
@@ -239,7 +237,7 @@ function onNewAnimationClick() {
 
     editAsset("newAnimation", name, (animationId: string) => {
       ui.animationsTreeView.clearSelection();
-      ui.animationsTreeView.addToSelection(ui.animationsTreeView.treeRoot.querySelector(`li[data-id='${animationId}']`));
+      ui.animationsTreeView.addToSelection(ui.animationsTreeView.treeRoot.querySelector(`li[data-id='${animationId}']`) as HTMLLIElement);
       updateSelectedAnimation();
     });
   });
@@ -249,7 +247,7 @@ function onRenameAnimationClick() {
   if (ui.animationsTreeView.selectedNodes.length !== 1) return;
 
   let selectedNode = ui.animationsTreeView.selectedNodes[0];
-  let animation = data.spriteUpdater.spriteAsset.animations.byId[selectedNode.dataset.id];
+  let animation = data.spriteUpdater.spriteAsset.animations.byId[selectedNode.dataset["id"]];
 
   let options = {
     initialValue: animation.name,
@@ -272,15 +270,15 @@ function onDeleteAnimationClick() {
     /* tslint:enable:no-unused-expression */
     if (!confirm) return;
 
-    ui.animationsTreeView.selectedNodes.forEach((selectedNode: any) => { editAsset("deleteAnimation", selectedNode.dataset.id); });
+    ui.animationsTreeView.selectedNodes.forEach((selectedNode: any) => { editAsset("deleteAnimation", selectedNode.dataset["id"]); });
   });
 }
 
-function onAnimationDrop(dropInfo: any, orderedNodes: any[]) {
+function onAnimationsTreeViewDrop(event: DragEvent, dropLocation: TreeView.DropLocation, orderedNodes: HTMLLIElement[]) {
   let animationIds: number[] = [];
-  orderedNodes.forEach((animation: any) => { animationIds.push(animation.dataset.id); });
+  orderedNodes.forEach((animation: any) => { animationIds.push(animation.dataset["id"]); });
 
-  let index = SupClient.getListViewDropIndex(dropInfo, data.spriteUpdater.spriteAsset.animations);
+  let index = SupClient.getListViewDropIndex(dropLocation, data.spriteUpdater.spriteAsset.animations);
 
   animationIds.forEach((id, i) => { editAsset("moveAnimation", id, index + i); });
   return false;
@@ -289,7 +287,7 @@ function onAnimationDrop(dropInfo: any, orderedNodes: any[]) {
 export function updateSelectedAnimation() {
   let selectedAnimElt = ui.animationsTreeView.selectedNodes[0];
   if (selectedAnimElt != null) {
-    ui.selectedAnimationId = selectedAnimElt.dataset.id;
+    ui.selectedAnimationId = selectedAnimElt.dataset["id"];
     data.spriteUpdater.config_setProperty("animationId", ui.selectedAnimationId);
     ui.animationPlay.disabled = false;
     ui.animationSlider.disabled = false;
@@ -460,7 +458,7 @@ export function setupAnimation(animation: any, index: number) {
 function onEditMapSlot(event: any) {
   if (event.target.value !== "" && data.spriteUpdater.spriteAsset.pub.maps[event.target.value] == null) return;
   let slot = event.target.value !== "" ? event.target.value : null;
-  editAsset("setMapSlot", event.target.dataset.name, slot);
+  editAsset("setMapSlot", event.target.dataset["name"], slot);
 }
 
 function onNewMapClick() {
@@ -496,7 +494,7 @@ function onRenameMapClick() {
   if (ui.texturesTreeView.selectedNodes.length !== 1) return;
 
   let selectedNode = ui.texturesTreeView.selectedNodes[0];
-  let textureName = selectedNode.dataset.name;
+  let textureName = selectedNode.dataset["name"];
 
   let options = {
     initialValue: textureName,
@@ -520,13 +518,13 @@ function onDeleteMapClick() {
     /* tslint:enable:no-unused-expression */
     if (!confirm) return;
 
-    for (let selectedNode of ui.texturesTreeView.selectedNodes) editAsset("deleteMap", selectedNode.dataset.name);
+    for (let selectedNode of ui.texturesTreeView.selectedNodes) editAsset("deleteMap", selectedNode.dataset["name"]);
   });
 }
 
 export function updateSelectedMap() {
   let selectedMapElt = ui.texturesTreeView.selectedNodes[0];
-  if (selectedMapElt != null) ui.selectedTextureName = selectedMapElt.dataset.name;
+  if (selectedMapElt != null) ui.selectedTextureName = selectedMapElt.dataset["name"];
   else ui.selectedTextureName = null;
 
   let buttons = document.querySelectorAll(".textures-buttons button");

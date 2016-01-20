@@ -3,57 +3,54 @@ import { data, editAsset } from "./network";
 import importModel, { ImportLogEntry } from "./importers/index";
 import ModelAsset from "../../data/ModelAsset";
 
-/* tslint:disable */
-let PerfectResize = require("perfect-resize");
-let TreeView = require("dnd-tree-view");
-/* tslint:enable */
+import * as PerfectResize from "perfect-resize";
+import * as TreeView from "dnd-tree-view";
 
-let ui: {
-  filteringSelect?: HTMLSelectElement;
-  wrappingSelect?: HTMLSelectElement;
-  unitRatioInput?: HTMLInputElement;
-  opacitySelect?: HTMLSelectElement;
-  opacitySlider?: HTMLInputElement;
-  opacityNumber?: HTMLInputElement;
+const ui: {
+  filteringSelect: HTMLSelectElement;
+  wrappingSelect: HTMLSelectElement;
+  unitRatioInput: HTMLInputElement;
+  opacitySelect: HTMLSelectElement;
+  opacitySlider: HTMLInputElement;
+  opacityNumber: HTMLInputElement;
 
-  animationsTreeView?: any;
-  selectedAnimationId?: string;
+  animationsTreeView: TreeView;
+  selectedAnimationId: string;
 
-  errorPane?: HTMLDivElement;
-  errorPaneStatus?: HTMLDivElement;
-  errorPaneInfo?: HTMLDivElement;
-  errorsTBody?: HTMLTableSectionElement;
+  errorPane: HTMLDivElement;
+  errorPaneStatus: HTMLDivElement;
+  errorPaneInfo: HTMLDivElement;
+  errorsTBody: HTMLTableSectionElement;
 
-  mapUploadButton?: HTMLInputElement;
-  mapDownloadButton?: HTMLInputElement;
-  texturesToogleButton?: HTMLInputElement;
-  texturesTreeView?: any;
-  selectedTextureName?: string;
+  mapUploadButton: HTMLInputElement;
+  mapDownloadButton: HTMLInputElement;
+  texturesToogleButton: HTMLInputElement;
+  texturesTreeView: TreeView;
+  selectedTextureName: string;
 
-  mapSlotsInput?: { [name: string]: HTMLInputElement };
-
-} = {};
+  mapSlotsInput: { [name: string]: HTMLInputElement };
+} = {} as any;
 export default ui;
 
 // Setup hotkeys
 SupClient.setupHotkeys();
 
 // Setup resizable panes
-new PerfectResize(document.querySelector(".sidebar"), "right");
+new PerfectResize(document.querySelector(".sidebar") as HTMLElement, "right");
 
 // Model upload
-let modelFileSelect = <HTMLInputElement> document.querySelector(".model input.file-select");
+const modelFileSelect = <HTMLInputElement> document.querySelector(".model input.file-select");
 modelFileSelect.addEventListener("change", onModelFileSelectChange);
 document.querySelector(".model button.upload").addEventListener("click", () => { modelFileSelect.click(); });
 
 // Primary map upload
-let primaryMapFileSelect = <HTMLInputElement>document.querySelector(".map input.file-select");
+const primaryMapFileSelect = <HTMLInputElement>document.querySelector(".map input.file-select");
 primaryMapFileSelect.addEventListener("change", onPrimaryMapFileSelectChange);
 ui.mapUploadButton = <HTMLInputElement>document.querySelector(".map button.upload");
 ui.mapUploadButton.addEventListener("click", () => { primaryMapFileSelect.click(); });
 ui.mapDownloadButton = <HTMLInputElement>document.querySelector(".map button.download");
 ui.mapDownloadButton.addEventListener("click", () => {
-  let textureName = data.modelUpdater.modelAsset.pub.mapSlots["map"];
+  const textureName = data.modelUpdater.modelAsset.pub.mapSlots["map"];
   downloadTexture(textureName);
 });
 
@@ -66,7 +63,7 @@ ui.wrappingSelect = <HTMLSelectElement>document.querySelector(".wrapping");
 ui.wrappingSelect.addEventListener("change", onChangeWrapping);
 
 // Show skeleton
-let showSkeletonCheckbox = <HTMLInputElement>document.querySelector(".show-skeleton");
+const showSkeletonCheckbox = <HTMLInputElement>document.querySelector(".show-skeleton");
 showSkeletonCheckbox.addEventListener("change", onShowSkeletonChange);
 
 // Unit Ratio
@@ -84,13 +81,13 @@ ui.opacityNumber = <HTMLInputElement>document.querySelector(".property-opacity")
 ui.opacityNumber.addEventListener("input", onChangeOpacity);
 
 // Animations
-ui.animationsTreeView = new TreeView(document.querySelector(".animations-tree-view"), { dropCallback: onAnimationDrop });
+ui.animationsTreeView = new TreeView(document.querySelector(".animations-tree-view") as HTMLElement, { dragStartCallback: () => true, dropCallback: onAnimationsTreeViewDrop });
 ui.animationsTreeView.on("selectionChange", updateSelectedAnimation);
 
 document.querySelector("button.new-animation").addEventListener("click", onNewAnimationClick);
 
 // Animation upload
-let animationFileSelect = <HTMLInputElement>document.querySelector(".upload-animation.file-select");
+const animationFileSelect = <HTMLInputElement>document.querySelector(".upload-animation.file-select");
 animationFileSelect.addEventListener("change", onAnimationFileSelectChange);
 document.querySelector("button.upload-animation").addEventListener("click", () => { animationFileSelect.click(); });
 document.querySelector("button.rename-animation").addEventListener("click", onRenameAnimationClick);
@@ -99,25 +96,25 @@ document.querySelector("button.delete-animation").addEventListener("click", onDe
 // Advanced textures
 SupClient.setupCollapsablePane(document.querySelector(".advanced-textures") as HTMLDivElement);
 
-ui.texturesTreeView = new TreeView(document.querySelector(".textures-tree-view"));
+ui.texturesTreeView = new TreeView(document.querySelector(".textures-tree-view") as HTMLElement);
 ui.texturesTreeView.on("selectionChange", updateSelectedMap);
 
 ui.mapSlotsInput = {};
-for (let slotName in ModelAsset.schema["mapSlots"].properties) {
+for (const slotName in ModelAsset.schema["mapSlots"].properties) {
   ui.mapSlotsInput[slotName] = <HTMLInputElement>document.querySelector(`.map-${slotName}`);
   ui.mapSlotsInput[slotName].dataset["name"] = slotName;
   ui.mapSlotsInput[slotName].addEventListener("input", onEditMapSlot);
 }
 
 document.querySelector("button.new-map").addEventListener("click", onNewMapClick);
-let mapFileSelect = <HTMLInputElement>document.querySelector(".upload-map.file-select");
+const mapFileSelect = <HTMLInputElement>document.querySelector(".upload-map.file-select");
 mapFileSelect.addEventListener("change", onMapFileSelectChange);
 document.querySelector("button.upload-map").addEventListener("click", () => { mapFileSelect.click(); });
 document.querySelector("button.download-map").addEventListener("click", () => {
   if (ui.texturesTreeView.selectedNodes.length !== 1) return;
 
-  let selectedNode = ui.texturesTreeView.selectedNodes[0];
-  let textureName = selectedNode.dataset.name;
+  const selectedNode = ui.texturesTreeView.selectedNodes[0];
+  const textureName = selectedNode.dataset["name"];
 
   downloadTexture(textureName);
 });
@@ -139,24 +136,24 @@ function setImportLog(log: ImportLogEntry[]) {
 
   if (log == null) log = [];
 
-  for (let entry of log) {
+  for (const entry of log) {
     // console.log(entry.file, entry.line, entry.type, entry.message);
 
-    let logRow = document.createElement("tr");
+    const logRow = document.createElement("tr");
 
-    let positionCell = document.createElement("td");
+    const positionCell = document.createElement("td");
     positionCell.textContent = (entry.line != null) ? (entry.line + 1).toString() : "";
     logRow.appendChild(positionCell);
 
-    let typeCell = document.createElement("td");
+    const typeCell = document.createElement("td");
     typeCell.textContent = entry.type;
     logRow.appendChild(typeCell);
 
-    let messageCell = document.createElement("td");
+    const messageCell = document.createElement("td");
     messageCell.textContent = entry.message;
     logRow.appendChild(messageCell);
 
-    let fileCell = document.createElement("td");
+    const fileCell = document.createElement("td");
     fileCell.textContent = entry.file;
     logRow.appendChild(fileCell);
 
@@ -172,7 +169,7 @@ function setImportLog(log: ImportLogEntry[]) {
     errorsCount++;
   }
 
-  let errorsAndWarningsInfo: string[] = [];
+  const errorsAndWarningsInfo: string[] = [];
   if (errorsCount > 1) errorsAndWarningsInfo.push(`${errorsCount} errors`);
   else if (errorsCount > 0) errorsAndWarningsInfo.push(`1 error`);
   else errorsAndWarningsInfo.push("No errors");
@@ -181,7 +178,7 @@ function setImportLog(log: ImportLogEntry[]) {
   else if (warningsCount > 0) errorsAndWarningsInfo.push(`${warningsCount} warnings`);
 
   if (data == null || errorsCount > 0) {
-    let info = (data == null) ? `Import failed — ` : "";
+    const info = (data == null) ? `Import failed — ` : "";
     ui.errorPaneInfo.textContent = info + errorsAndWarningsInfo.join(", ");
     ui.errorPaneStatus.classList.add("has-errors");
     return;
@@ -213,10 +210,10 @@ function onPrimaryMapFileSelectChange(event: Event) {
   ui.errorPaneInfo.textContent = "No errors";
   ui.errorPaneStatus.classList.remove("has-errors");
 
-  let reader = new FileReader;
+  const reader = new FileReader;
   reader.onload = (event) => { editAsset("setMaps", { map: reader.result }); };
 
-  let element = <HTMLInputElement>event.target;
+  const element = <HTMLInputElement>event.target;
   reader.readAsArrayBuffer(element.files[0]);
   (<HTMLFormElement>element.parentElement).reset();
   return;
@@ -224,7 +221,7 @@ function onPrimaryMapFileSelectChange(event: Event) {
 
 function downloadTexture(textureName: string) {
   function triggerDownload(name: string) {
-    let anchor = document.createElement("a");
+    const anchor = document.createElement("a");
     document.body.appendChild(anchor);
     anchor.style.display = "none";
     anchor.href = data.modelUpdater.modelAsset.mapObjectURLs[textureName];
@@ -235,7 +232,7 @@ function downloadTexture(textureName: string) {
     document.body.removeChild(anchor);
   }
 
-  let options = {
+  const options = {
     initialValue: SupClient.i18n.t("modelEditor:sidebar.advancedTextures.downloadInitialValue"),
     validationLabel: SupClient.i18n.t("common:actions.download")
   };
@@ -258,13 +255,13 @@ function onShowSkeletonChange(event: Event) { data.modelUpdater.modelRenderer.se
 function onChangeUnitRatio(event: any) { editAsset("setProperty", "unitRatio", parseFloat(event.target.value)); }
 function onChangeOpacityType(event: any) { editAsset("setProperty", "opacity", event.target.value === "transparent" ? 1 : null); }
 function onChangeOpacity(event: any) {
-  let opacity = parseFloat(event.target.value);
+  const opacity = parseFloat(event.target.value);
   if (isNaN(opacity)) return;
   editAsset("setProperty", "opacity", opacity);
 }
 
 function onNewAnimationClick() {
-  let options = {
+  const options = {
     initialValue: SupClient.i18n.t("modelEditor:sidebar.animations.new.initialValue"),
     validationLabel: SupClient.i18n.t("common:actions.create")
   };
@@ -276,7 +273,7 @@ function onNewAnimationClick() {
 
     editAsset("newAnimation", name, null, null, (animationId: string) => {
       ui.animationsTreeView.clearSelection();
-      ui.animationsTreeView.addToSelection(ui.animationsTreeView.treeRoot.querySelector(`li[data-id="${animationId}"]`));
+      ui.animationsTreeView.addToSelection(ui.animationsTreeView.treeRoot.querySelector(`li[data-id="${animationId}"]`) as HTMLLIElement);
       updateSelectedAnimation();
     });
   });
@@ -285,7 +282,7 @@ function onNewAnimationClick() {
 function onAnimationFileSelectChange(event: any) {
   if(event.target.files.length === 0) return;
 
-  let animationId: string = ui.selectedAnimationId;
+  const animationId: string = ui.selectedAnimationId;
 
   importModel(event.target.files, (log, data) => {
     event.target.parentElement.reset();
@@ -303,10 +300,10 @@ function onAnimationFileSelectChange(event: any) {
 function onRenameAnimationClick() {
   if (ui.animationsTreeView.selectedNodes.length !== 1) return;
 
-  let selectedNode = ui.animationsTreeView.selectedNodes[0];
-  let animation = data.modelUpdater.modelAsset.animations.byId[selectedNode.dataset.id];
+  const selectedNode = ui.animationsTreeView.selectedNodes[0];
+  const animation = data.modelUpdater.modelAsset.animations.byId[selectedNode.dataset["id"]];
 
-  let options = {
+  const options = {
     initialValue: animation.name,
     validationLabel: SupClient.i18n.t("common:actions.rename")
   };
@@ -323,35 +320,35 @@ function onRenameAnimationClick() {
 function onDeleteAnimationClick() {
   if (ui.animationsTreeView.selectedNodes.length === 0) return;
 
-  let confirmString = SupClient.i18n.t("modelEditor:sidebar.animations.deleteConfirm");
-  let validateString = SupClient.i18n.t("common:actions.delete");
+  const confirmString = SupClient.i18n.t("modelEditor:sidebar.animations.deleteConfirm");
+  const validateString = SupClient.i18n.t("common:actions.delete");
   /* tslint:disable:no-unused-expression */
   new SupClient.dialogs.ConfirmDialog(confirmString, validateString, (confirm) => {
     /* tslint:enable:no-unused-expression */
     if (!confirm) return;
 
-    for (let selectedNode of ui.animationsTreeView.selectedNodes) editAsset("deleteAnimation", selectedNode.dataset.id);
+    for (const selectedNode of ui.animationsTreeView.selectedNodes) editAsset("deleteAnimation", selectedNode.dataset["id"]);
   });
 }
 
-function onAnimationDrop(dropInfo: any, orderedNodes: HTMLLIElement[]) {
-  let animationIds: string[] = [];
-  for (let animation of orderedNodes) animationIds.push(animation.dataset["id"]);
+function onAnimationsTreeViewDrop(event: DragEvent, dropLocation: TreeView.DropLocation, orderedNodes: HTMLLIElement[]) {
+  const animationIds: string[] = [];
+  for (const animation of orderedNodes) animationIds.push(animation.dataset["id"]);
 
-  let index = SupClient.getListViewDropIndex(dropInfo, data.modelUpdater.modelAsset.animations);
+  const index = SupClient.getListViewDropIndex(dropLocation, data.modelUpdater.modelAsset.animations);
   for (let i = 0; i < animationIds.length; i++) editAsset("moveAnimation", animationIds[i], index + i);
 
   return false;
 }
 
 export function updateSelectedAnimation() {
-  let selectedAnimElt = ui.animationsTreeView.selectedNodes[0];
-  if (selectedAnimElt != null) ui.selectedAnimationId = selectedAnimElt.dataset.id;
+  const selectedAnimElt = ui.animationsTreeView.selectedNodes[0];
+  if (selectedAnimElt != null) ui.selectedAnimationId = selectedAnimElt.dataset["id"];
   else ui.selectedAnimationId = null;
 
-  let buttons = document.querySelectorAll(".animations-buttons button");
+  const buttons = document.querySelectorAll(".animations-buttons button");
   for (let i = 0; i < buttons.length; i++) {
-    let button = <HTMLButtonElement>buttons[i];
+    const button = <HTMLButtonElement>buttons[i];
     button.disabled = ui.selectedAnimationId == null && button.className !== "new-animation";
   }
 
@@ -359,10 +356,10 @@ export function updateSelectedAnimation() {
 }
 
 export function setupAnimation(animation: any, index: number) {
-  let liElt = document.createElement("li");
+  const liElt = document.createElement("li");
   liElt.dataset["id"] = animation.id;
 
-  let nameSpan = document.createElement("span");
+  const nameSpan = document.createElement("span");
   nameSpan.className = "name";
   nameSpan.textContent = animation.name;
   liElt.appendChild(nameSpan);
@@ -372,12 +369,12 @@ export function setupAnimation(animation: any, index: number) {
 
 function onEditMapSlot(event: any) {
   if (event.target.value !== "" && data.modelUpdater.modelAsset.pub.maps[event.target.value] == null) return;
-  let slot = event.target.value !== "" ? event.target.value : null;
-  editAsset("setMapSlot", event.target.dataset.name, slot);
+  const slot = event.target.value !== "" ? event.target.value : null;
+  editAsset("setMapSlot", event.target.dataset["name"], slot);
 }
 
 function onNewMapClick() {
-  let options = {
+  const options = {
     initialValue: "map",
     validationLabel: SupClient.i18n.t("common:actions.create")
   };
@@ -396,14 +393,14 @@ function onMapFileSelectChange(event: any) {
   ui.errorPaneInfo.textContent = "No errors";
   ui.errorPaneStatus.classList.remove("has-errors");
 
-  let reader = new FileReader;
-  let maps: any = {};
+  const reader = new FileReader;
+  const maps: any = {};
   reader.onload = (event) => {
     maps[ui.selectedTextureName] = reader.result;
     editAsset("setMaps", maps);
   };
 
-  let element = <HTMLInputElement>event.target;
+  const element = <HTMLInputElement>event.target;
   reader.readAsArrayBuffer(element.files[0]);
   (<HTMLFormElement>element.parentElement).reset();
   return;
@@ -412,10 +409,10 @@ function onMapFileSelectChange(event: any) {
 function onRenameMapClick() {
   if (ui.texturesTreeView.selectedNodes.length !== 1) return;
 
-  let selectedNode = ui.texturesTreeView.selectedNodes[0];
-  let textureName = selectedNode.dataset.name;
+  const selectedNode = ui.texturesTreeView.selectedNodes[0];
+  const textureName = selectedNode.dataset["name"];
 
-  let options = {
+  const options = {
     initialValue: textureName,
     validationLabel: SupClient.i18n.t("common:actions.rename")
   };
@@ -432,34 +429,34 @@ function onRenameMapClick() {
 function onDeleteMapClick() {
   if (ui.texturesTreeView.selectedNodes.length === 0) return;
 
-  let confirmString = SupClient.i18n.t("modelEditor:sidebar.advancedTextures.deleteMapConfirm");
-  let validateString = SupClient.i18n.t("common:actions.delete");
+  const confirmString = SupClient.i18n.t("modelEditor:sidebar.advancedTextures.deleteMapConfirm");
+  const validateString = SupClient.i18n.t("common:actions.delete");
   /* tslint:disable:no-unused-expression */
   new SupClient.dialogs.ConfirmDialog(confirmString, validateString, (confirmed) => {
     /* tslint:enable:no-unused-expression */
     if (!confirmed) return;
 
-    for (let selectedNode of ui.texturesTreeView.selectedNodes) editAsset("deleteMap", selectedNode.dataset.name);
+    for (const selectedNode of ui.texturesTreeView.selectedNodes) editAsset("deleteMap", selectedNode.dataset["name"]);
   });
 }
 
 export function updateSelectedMap() {
-  let selectedMapElt = ui.texturesTreeView.selectedNodes[0];
-  if (selectedMapElt != null) ui.selectedTextureName = selectedMapElt.dataset.name;
+  const selectedMapElt = ui.texturesTreeView.selectedNodes[0];
+  if (selectedMapElt != null) ui.selectedTextureName = selectedMapElt.dataset["name"];
   else ui.selectedTextureName = null;
 
-  let buttons = document.querySelectorAll(".textures-buttons button");
+  const buttons = document.querySelectorAll(".textures-buttons button");
   for (let i = 0; i < buttons.length; i++) {
-    let button = <HTMLButtonElement>buttons[i];
+    const button = <HTMLButtonElement>buttons[i];
     button.disabled = ui.selectedTextureName == null && button.className !== "new-map";
   }
 }
 
 export function setupMap(mapName: string) {
-  let liElt = document.createElement("li");
+  const liElt = document.createElement("li");
   liElt.dataset["name"] = mapName;
 
-  let nameSpan = document.createElement("span");
+  const nameSpan = document.createElement("span");
   nameSpan.className = "name";
   nameSpan.textContent = mapName;
   liElt.appendChild(nameSpan);
@@ -469,14 +466,14 @@ export function setupMap(mapName: string) {
 
 export function setupOpacity(opacity: number) {
   if (opacity == null) {
-      ui.opacitySelect.value = "opaque";
-      ui.opacitySlider.parentElement.hidden = true;
-      data.modelUpdater.modelRenderer.setOpacity(1);
+    ui.opacitySelect.value = "opaque";
+    ui.opacitySlider.parentElement.hidden = true;
+    data.modelUpdater.modelRenderer.setOpacity(1);
   } else {
-      ui.opacitySelect.value = "transparent";
-      ui.opacitySlider.parentElement.hidden = false;
-      ui.opacitySlider.value = opacity.toString();
-      ui.opacityNumber.value = opacity.toString();
-      data.modelUpdater.modelRenderer.setOpacity(opacity);
+    ui.opacitySelect.value = "transparent";
+    ui.opacitySlider.parentElement.hidden = false;
+    ui.opacitySlider.value = opacity.toString();
+    ui.opacityNumber.value = opacity.toString();
+    data.modelUpdater.modelRenderer.setOpacity(opacity);
   }
 }

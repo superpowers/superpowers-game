@@ -20,10 +20,10 @@ let textureArea: {
 
   pasteActor: SupEngine.Actor;
   pasteMesh: THREE.Mesh;
-} = <any>{ shapeLineMeshesByNodeId: {} };
+} = { shapeLineMeshesByNodeId: {} } as any;
 export default textureArea;
 
-let canvas = <HTMLCanvasElement>document.querySelector(".texture-container canvas");
+let canvas = document.querySelector(".texture-container canvas") as HTMLCanvasElement;
 if (SupClient.isApp) {
   let electron: GitHubElectron.Electron = (top as any).global.require("electron");
 
@@ -44,7 +44,7 @@ document.addEventListener("paste", (event: ClipboardEvent) => {
 
   if (textureArea.pasteMesh != null) clearPasteSelection();
 
-  let imageBlob = (<any>event.clipboardData.items[0]).getAsFile();
+  let imageBlob = (event.clipboardData.items[0] as any).getAsFile();
   let image = new Image();
   image.src = URL.createObjectURL(imageBlob);
   image.onload = () => {
@@ -116,7 +116,7 @@ export function setupTexture() {
 textureArea.mode = "layout";
 updateMode();
 document.querySelector(".texture-container .controls .mode-selection").addEventListener("click", (event) => {
-  let target = <HTMLInputElement>event.target;
+  const target = event.target as HTMLInputElement;
   if (target.tagName !== "INPUT") return;
 
   textureArea.mode = target.value;
@@ -126,20 +126,20 @@ document.querySelector(".texture-container .controls .mode-selection").addEventL
 
 textureArea.paintTool = "brush";
 document.querySelector(".texture-container .controls .paint-mode-container .tool").addEventListener("click", (event) => {
-  let target = <HTMLInputElement>event.target;
+  const target = event.target as HTMLInputElement;
   if (target.tagName !== "INPUT") return;
 
   textureArea.paintTool = target.value;
 });
 
 function updateMode() {
-  for (let mode of ["layout", "paint"]) {
-    let container = <HTMLDivElement>document.querySelector(`.${mode}-mode-container`);
+  for (const mode of [ "layout", "paint" ]) {
+    const container = document.querySelector(`.${mode}-mode-container`) as HTMLDivElement;
     container.hidden = mode !== textureArea.mode;
   }
 }
 
-textureArea.colorInput = <HTMLInputElement>document.querySelector("input.color");
+textureArea.colorInput = document.querySelector("input.color") as HTMLInputElement;
 const lineMaterial = new THREE.LineBasicMaterial({ color: 0xff00ff, opacity: 0.4, depthTest: false, depthWrite: false, transparent: true });
 const selectedLineMaterial = new THREE.LineBasicMaterial({ color: 0xff00ff, opacity: 1, depthTest: false, depthWrite: false, transparent: true });
 const verticesByShapeType: { [type: string]: number } = {
@@ -161,7 +161,7 @@ export function updateNode(node: Node) {
   let line = textureArea.shapeLineMeshesByNodeId[node.id];
 
   let verticesCount = verticesByShapeType[node.shape.type];
-  let vertices = (<THREE.Geometry>line.geometry).vertices;
+  let vertices = (line.geometry as THREE.Geometry).vertices;
 
   if (vertices.length < verticesCount) {
     for (let i = vertices.length; i < verticesCount; i++) vertices.push(new THREE.Vector3(0, 0, 0));
@@ -222,7 +222,7 @@ export function updateNode(node: Node) {
       break;
   }
 
-  (<THREE.Geometry>line.geometry).verticesNeedUpdate = true;
+  (line.geometry as THREE.Geometry).verticesNeedUpdate = true;
 }
 
 export function updateRemovedNode() {
@@ -259,7 +259,7 @@ let previousMousePosition = new THREE.Vector3();
 
 export function handleTextureArea() {
   let inputs = textureArea.gameInstance.input;
-  let keys = (<any>window).KeyEvent;
+  let keys = (window as any).KeyEvent;
 
   mousePosition.set(inputs.mousePosition.x, inputs.mousePosition.y, 0);
   cameraComponent.actor.getLocalPosition(cameraPosition);
@@ -288,19 +288,19 @@ export function handleTextureArea() {
         if (!isShiftDown) ui.nodesTreeView.clearSelection();
         if (hoveredNodeIds.length > 0) {
           if (!isShiftDown) {
-            let nodeElt = ui.nodesTreeView.treeRoot.querySelector(`li[data-id='${hoveredNodeIds[0]}']`);
+            let nodeElt = ui.nodesTreeView.treeRoot.querySelector(`li[data-id='${hoveredNodeIds[0]}']`) as HTMLLIElement;
             ui.nodesTreeView.addToSelection(nodeElt);
           } else {
             for (let nodeId of hoveredNodeIds) {
               let isAlreadyAdded = false;
               for (let nodeElt of ui.nodesTreeView.selectedNodes) {
-                if (nodeId === nodeElt.dataset.id) {
+                if (nodeId === nodeElt.dataset["id"]) {
                   isAlreadyAdded = true;
                   break;
                 }
               }
               if (!isAlreadyAdded) {
-                let nodeElt = ui.nodesTreeView.treeRoot.querySelector(`li[data-id='${nodeId}']`);
+                let nodeElt = ui.nodesTreeView.treeRoot.querySelector(`li[data-id='${nodeId}']`) as HTMLLIElement;
                 ui.nodesTreeView.addToSelection(nodeElt);
                 break;
               }
@@ -319,7 +319,7 @@ export function handleTextureArea() {
         hasMouseMoved = true;
 
         let nodeIds = [] as string[];
-        for (let selectedNode of ui.nodesTreeView.selectedNodes) nodeIds.push(selectedNode.dataset.id);
+        for (let selectedNode of ui.nodesTreeView.selectedNodes) nodeIds.push(selectedNode.dataset["id"]);
         editAsset("moveNodeTextureOffset", nodeIds, { x, y });
       }
 
@@ -329,7 +329,7 @@ export function handleTextureArea() {
 
       let hoveredNodeIds = getHoveredNodeIds();
       for (let selectedNode of ui.nodesTreeView.selectedNodes) {
-        if (hoveredNodeIds.indexOf(selectedNode.dataset.id) !== -1) {
+        if (hoveredNodeIds.indexOf(selectedNode.dataset["id"]) !== -1) {
           isDragging = true;
           break;
         }

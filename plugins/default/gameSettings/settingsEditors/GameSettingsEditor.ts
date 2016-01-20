@@ -153,7 +153,7 @@ export default class GameSettingsEditor {
   };
 
   onCustomLayerFieldChange = (event: any) => {
-    let index = parseInt(<string>event.target.dataset.customLayerIndex, 10);
+    let index = parseInt(event.target.dataset["customLayerIndex"], 10);
     if (index > this.customLayers.length) return;
 
     if (index === this.customLayers.length) {

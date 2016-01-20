@@ -324,8 +324,8 @@ export default class BehaviorEditor {
   // private onChangePropertySet = (event: any) => {}
 
   private onChangePropertyValue = (event: any) => {
-    let propertyName = event.target.dataset.behaviorPropertyName;
-    let propertyType = event.target.dataset.behaviorPropertyType;
+    let propertyName = event.target.dataset["behaviorPropertyName"];
+    let propertyType = event.target.dataset["behaviorPropertyType"];
     let propertyValue: any;
 
     switch (propertyType) {

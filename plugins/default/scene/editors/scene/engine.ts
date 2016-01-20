@@ -19,7 +19,7 @@ let engine: {
 } = <any>{};
 export default engine;
 
-let canvasElt = <HTMLCanvasElement>document.querySelector("canvas");
+let canvasElt = document.querySelector("canvas") as HTMLCanvasElement;
 
 engine.gameInstance = new SupEngine.GameInstance(canvasElt);
 engine.cameraRoot = new SupEngine.Actor(engine.gameInstance, "Camera Root");
@@ -153,7 +153,7 @@ function mouseUp() {
       if (threeObject != null) {
         selectedNodeId = threeObject.userData.nodeId;
 
-        let treeViewNode: HTMLLIElement = ui.nodesTreeView.treeRoot.querySelector(`li[data-id='${selectedNodeId}']`);
+        const treeViewNode = ui.nodesTreeView.treeRoot.querySelector(`li[data-id='${selectedNodeId}']`) as HTMLLIElement;
         ui.nodesTreeView.addToSelection(treeViewNode);
 
         let treeViewParent = treeViewNode.parentElement;
@@ -175,8 +175,8 @@ function mouseUp() {
 export function setupHelpers() {
   let nodeElt = ui.nodesTreeView.selectedNodes[0];
   if (nodeElt != null && ui.nodesTreeView.selectedNodes.length === 1) {
-    engine.selectionBoxComponent.setTarget(data.sceneUpdater.bySceneNodeId[nodeElt.dataset.id].actor.threeObject);
-    engine.transformHandleComponent.setTarget(data.sceneUpdater.bySceneNodeId[nodeElt.dataset.id].actor.threeObject);
+    engine.selectionBoxComponent.setTarget(data.sceneUpdater.bySceneNodeId[nodeElt.dataset["id"]].actor.threeObject);
+    engine.transformHandleComponent.setTarget(data.sceneUpdater.bySceneNodeId[nodeElt.dataset["id"]].actor.threeObject);
   } else {
     engine.selectionBoxComponent.setTarget(null);
     engine.transformHandleComponent.setTarget(null);
@@ -185,7 +185,7 @@ export function setupHelpers() {
 
 function onTransformChange() {
   let nodeElt = ui.nodesTreeView.selectedNodes[0];
-  let nodeId = nodeElt.dataset.id;
+  let nodeId = nodeElt.dataset["id"];
   let target = data.sceneUpdater.bySceneNodeId[nodeId].actor;
 
   let object = <THREE.Object3D>engine.transformHandleComponent.control.object;

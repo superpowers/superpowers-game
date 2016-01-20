@@ -78,7 +78,7 @@ export function searchAsset(assetId: string) {
     ui.resultsPane.appendChild(nameElt);
 
     nameElt.addEventListener("click", (event: any) => {
-      let tableElt = <HTMLTableElement>document.querySelector(`table[data-id='${event.target.dataset.id}']`);
+      let tableElt = <HTMLTableElement>document.querySelector(`table[data-id='${event.target.dataset["id"]}']`);
       tableElt.classList.toggle("collapsed");
     });
   }
@@ -135,9 +135,9 @@ export function searchAsset(assetId: string) {
     let rowElt = document.createElement("tr");
     tableElt.appendChild(rowElt);
     let dataset = <any>rowElt.dataset;
-    dataset.id = assetId;
-    dataset.line = line;
-    dataset.ch = column;
+    dataset["id"] = assetId;
+    dataset["line"] = line;
+    dataset["ch"] = column;
 
     let lineElt = document.createElement("td");
     rowElt.appendChild(lineElt);

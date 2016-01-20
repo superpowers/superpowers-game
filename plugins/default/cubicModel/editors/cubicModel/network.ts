@@ -84,7 +84,7 @@ onEditCommands.setProperty = (path: string, value: any) => {
 onEditCommands.addNode = (node: Node, parentId: string, index: number) => {
   let nodeElt = createNodeElement(node);
   let parentElt: HTMLLIElement;
-  if (parentId != null) parentElt = ui.nodesTreeView.treeRoot.querySelector(`[data-id='${parentId}']`);
+  if (parentId != null) parentElt = ui.nodesTreeView.treeRoot.querySelector(`[data-id='${parentId}']`) as HTMLLIElement;
   ui.nodesTreeView.insertAt(nodeElt, "group", index, parentElt);
 
   textureArea.addNode(node);
@@ -92,11 +92,11 @@ onEditCommands.addNode = (node: Node, parentId: string, index: number) => {
 
 onEditCommands.moveNode = (id: string, parentId: string, index: number) => {
   // Reparent tree node
-  let nodeElt = ui.nodesTreeView.treeRoot.querySelector(`[data-id='${id}']`);
+  let nodeElt = ui.nodesTreeView.treeRoot.querySelector(`[data-id='${id}']`) as HTMLLIElement;
   let isInspected = ui.nodesTreeView.selectedNodes.length === 1 && nodeElt === ui.nodesTreeView.selectedNodes[0];
 
   let parentElt: HTMLLIElement;
-  if (parentId != null) parentElt = ui.nodesTreeView.treeRoot.querySelector(`[data-id='${parentId}']`);
+  if (parentId != null) parentElt = ui.nodesTreeView.treeRoot.querySelector(`[data-id='${parentId}']`) as HTMLLIElement;
   ui.nodesTreeView.insertAt(nodeElt, "group", index, parentElt);
 
   // Refresh inspector
@@ -167,7 +167,7 @@ onEditCommands.duplicateNode = (rootNode: Node, newNodes: DuplicatedNode[]) => {
 };
 
 onEditCommands.removeNode = (id: string) => {
-  let nodeElt = ui.nodesTreeView.treeRoot.querySelector(`[data-id='${id}']`);
+  let nodeElt = ui.nodesTreeView.treeRoot.querySelector(`[data-id='${id}']`) as HTMLLIElement;
   let isInspected = ui.nodesTreeView.selectedNodes.length === 1 && nodeElt === ui.nodesTreeView.selectedNodes[0];
   ui.nodesTreeView.remove(nodeElt);
   textureArea.updateRemovedNode();

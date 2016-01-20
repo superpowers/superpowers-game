@@ -16,7 +16,7 @@ let engine: {
 } = <any>{};
 export default engine;
 
-let canvasElt = <HTMLCanvasElement>document.querySelector("canvas");
+let canvasElt = document.querySelector("canvas") as HTMLCanvasElement;
 
 engine.gameInstance = new SupEngine.GameInstance(canvasElt);
 engine.cameraActor = new SupEngine.Actor(engine.gameInstance, "Camera");
@@ -143,7 +143,7 @@ function mouseUp() {
       if (threeObject != null) {
         selectedNodeId = threeObject.userData.cubicNodeId;
 
-        let treeViewNode: HTMLLIElement = ui.nodesTreeView.treeRoot.querySelector(`li[data-id='${selectedNodeId}']`);
+        let treeViewNode = ui.nodesTreeView.treeRoot.querySelector(`li[data-id='${selectedNodeId}']`) as HTMLLIElement;
         ui.nodesTreeView.addToSelection(treeViewNode);
 
         let treeViewParent = treeViewNode.parentElement;
@@ -165,7 +165,7 @@ function mouseUp() {
 export function setupHelpers() {
   let nodeElt = ui.nodesTreeView.selectedNodes[0];
   if (nodeElt != null && ui.nodesTreeView.selectedNodes.length === 1) {
-    let { pivot, shape } = data.cubicModelUpdater.cubicModelRenderer.byNodeId[nodeElt.dataset.id];
+    let { pivot, shape } = data.cubicModelUpdater.cubicModelRenderer.byNodeId[nodeElt.dataset["id"]];
 
     engine.transformMarkerComponent.move(pivot);
     engine.selectionBoxComponent.setTarget(shape);
@@ -182,8 +182,8 @@ export function setupHelpers() {
 
 function onTransformChange() {
   let nodeElt = ui.nodesTreeView.selectedNodes[0];
-  let nodeId = nodeElt.dataset.id;
-  let { pivot, shape } = data.cubicModelUpdater.cubicModelRenderer.byNodeId[nodeElt.dataset.id];
+  let nodeId = nodeElt.dataset["id"];
+  let { pivot, shape } = data.cubicModelUpdater.cubicModelRenderer.byNodeId[nodeElt.dataset["id"]];
 
   let transformMode = engine.transformHandleComponent.mode;
   let target = (transformMode === "rotate" || (transformMode === "translate" && ui.translateMode !== "shape")) ? pivot : shape;

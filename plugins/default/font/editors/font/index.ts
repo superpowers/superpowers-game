@@ -48,31 +48,31 @@ function start() {
   ui.settings = {};
   ui.allSettings.forEach((setting: string) => {
     let settingObj: any = ui.settings[setting] = document.querySelector(`.property-${setting}`);
-    settingObj.dataset.name = setting;
+    settingObj.dataset["name"] = setting;
 
     if (setting === "filtering" || setting === "color") {
       settingObj.addEventListener("change", (event: any) => {
-        socket.emit("edit:assets", SupClient.query.asset, "setProperty", event.target.dataset.name, event.target.value, (err: string) => {
+        socket.emit("edit:assets", SupClient.query.asset, "setProperty", event.target.dataset["name"], event.target.value, (err: string) => {
           if (err != null) new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close"));
         });
       });
     } else if (setting === "charset") {
       settingObj.addEventListener("input", (event: any) => {
         let charset = (event.target.value !== "") ? event.target.value : null;
-        socket.emit("edit:assets", SupClient.query.asset, "setProperty", event.target.dataset.name, charset, (err: string) => {
+        socket.emit("edit:assets", SupClient.query.asset, "setProperty", event.target.dataset["name"], charset, (err: string) => {
           if (err != null) new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close"));
         });
       });
     } else if (setting === "isBitmap") {
       settingObj.addEventListener("change", (event: any) => {
         let isBitmap = event.target.value === "bitmap";
-        socket.emit("edit:assets", SupClient.query.asset, "setProperty", event.target.dataset.name, isBitmap, (err: string) => {
+        socket.emit("edit:assets", SupClient.query.asset, "setProperty", event.target.dataset["name"], isBitmap, (err: string) => {
           if (err != null) new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close"));
         });
       });
     } else {
       settingObj.addEventListener("change", (event: any) => {
-        socket.emit("edit:assets", SupClient.query.asset, "setProperty", event.target.dataset.name, parseInt(event.target.value, 10), (err: string) => {
+        socket.emit("edit:assets", SupClient.query.asset, "setProperty", event.target.dataset["name"], parseInt(event.target.value, 10), (err: string) => {
           if (err != null) new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close"));
         });
       });

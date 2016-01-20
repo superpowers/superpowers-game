@@ -5,16 +5,15 @@ import { setSelectedNode as setTextureAreaSelectedNode } from "./textureArea";
 import CubicModelAsset from "../../data/CubicModelAsset";
 import { Node } from "../../data/CubicModelNodes";
 
+import * as TreeView from "dnd-tree-view";
+import * as PerfectResize from "perfect-resize";
+
 let THREE = SupEngine.THREE;
-/* tslint:disable */
-let PerfectResize = require("perfect-resize");
-let TreeView = require("dnd-tree-view");
-/* tslint:enable */
 
 let ui: {
   canvasElt: HTMLCanvasElement;
   treeViewElt: HTMLDivElement;
-  nodesTreeView: any;
+  nodesTreeView: TreeView;
 
   translateMode: string;
 
@@ -84,9 +83,9 @@ document.addEventListener("keydown", (event) => {
 ui.canvasElt = <HTMLCanvasElement>document.querySelector("canvas");
 
 // Setup resizable panes
-new PerfectResize(document.querySelector(".texture-container"), "bottom");
-new PerfectResize(document.querySelector(".sidebar"), "right");
-new PerfectResize(document.querySelector(".nodes-tree-view"), "top");
+new PerfectResize(document.querySelector(".texture-container") as HTMLElement, "bottom");
+new PerfectResize(document.querySelector(".sidebar") as HTMLElement, "right");
+new PerfectResize(document.querySelector(".nodes-tree-view") as HTMLElement, "top");
 
 // Grid
 ui.gridSize = 20;
@@ -162,8 +161,8 @@ ui.textureWidthSelect.addEventListener("input", (event: any) => { editAsset("cha
 ui.textureHeightSelect.addEventListener("input", (event: any) => { editAsset("changeTextureHeight", parseInt(event.target.value, 10)); });
 
 // Setup tree view
-ui.treeViewElt = <HTMLDivElement>document.querySelector(".nodes-tree-view");
-ui.nodesTreeView = new TreeView(document.querySelector(".nodes-tree-view"), { dropCallback: onNodeDrop });
+ui.treeViewElt = document.querySelector(".nodes-tree-view") as HTMLDivElement;
+ui.nodesTreeView = new TreeView(ui.treeViewElt, { dragStartCallback: () => true, dropCallback: onNodesTreeViewDrop });
 ui.nodesTreeView.on("activate", onNodeActivate);
 ui.nodesTreeView.on("selectionChange", () => { setupSelectedNode(); });
 
@@ -192,11 +191,11 @@ export function createNodeElement(node: Node) {
   return liElt;
 }
 
-function onNodeDrop(dropInfo: any, orderedNodes: any) {
-  let dropPoint = SupClient.getTreeViewDropPoint(dropInfo, data.cubicModelUpdater.cubicModelAsset.nodes);
+function onNodesTreeViewDrop(event: DragEvent, dropLocation: TreeView.DropLocation, orderedNodes: HTMLLIElement[]) {
+  let dropPoint = SupClient.getTreeViewDropPoint(dropLocation, data.cubicModelUpdater.cubicModelAsset.nodes);
 
   let nodeIds: string[] = [];
-  for (let node of orderedNodes ) nodeIds.push(node.dataset.id);
+  for (let node of orderedNodes ) nodeIds.push(node.dataset["id"]);
 
   let sourceParentNode = data.cubicModelUpdater.cubicModelAsset.nodes.parentNodesById[nodeIds[0]];
   let sourceChildren = (sourceParentNode != null && sourceParentNode.children != null) ? sourceParentNode.children : data.cubicModelUpdater.cubicModelAsset.nodes.pub;
@@ -217,7 +216,7 @@ export function setupSelectedNode() {
 
   // Setup texture area
   let nodeIds: string[] = [];
-  for (let node of ui.nodesTreeView.selectedNodes) nodeIds.push(node.dataset.id);
+  for (let node of ui.nodesTreeView.selectedNodes) nodeIds.push(node.dataset["id"]);
   setTextureAreaSelectedNode(nodeIds);
 
   // Setup transform
@@ -233,7 +232,7 @@ export function setupSelectedNode() {
 
   ui.inspectorElt.hidden = false;
 
-  let node = data.cubicModelUpdater.cubicModelAsset.nodes.byId[nodeElt.dataset.id];
+  let node = data.cubicModelUpdater.cubicModelAsset.nodes.byId[nodeElt.dataset["id"]];
   setInspectorPosition(<THREE.Vector3>node.position);
   setInspectorOrientation(<THREE.Quaternion>node.orientation);
 
@@ -457,7 +456,7 @@ function onNewNodeClick() {
 
     editAsset("addNode", name, options, (nodeId: string) => {
       ui.nodesTreeView.clearSelection();
-      ui.nodesTreeView.addToSelection(ui.nodesTreeView.treeRoot.querySelector(`li[data-id='${nodeId}']`));
+      ui.nodesTreeView.addToSelection(ui.nodesTreeView.treeRoot.querySelector(`li[data-id='${nodeId}']`) as HTMLLIElement);
       setupSelectedNode();
     });
 
@@ -468,7 +467,7 @@ function onRenameNodeClick() {
   if (ui.nodesTreeView.selectedNodes.length !== 1) return;
 
   let selectedNode = ui.nodesTreeView.selectedNodes[0];
-  let node = data.cubicModelUpdater.cubicModelAsset.nodes.byId[selectedNode.dataset.id];
+  let node = data.cubicModelUpdater.cubicModelAsset.nodes.byId[selectedNode.dataset["id"]];
 
   let options = {
     initialValue: node.name,
@@ -488,7 +487,7 @@ function onDuplicateNodeClick() {
   if (ui.nodesTreeView.selectedNodes.length !== 1) return;
 
   let selectedNode = ui.nodesTreeView.selectedNodes[0];
-  let node = data.cubicModelUpdater.cubicModelAsset.nodes.byId[selectedNode.dataset.id];
+  let node = data.cubicModelUpdater.cubicModelAsset.nodes.byId[selectedNode.dataset["id"]];
 
   let options = {
     initialValue: node.name,
@@ -505,7 +504,7 @@ function onDuplicateNodeClick() {
       if (err != null) { new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); return; }
 
       ui.nodesTreeView.clearSelection();
-      ui.nodesTreeView.addToSelection(ui.nodesTreeView.treeRoot.querySelector(`li[data-id='${nodeId}']`));
+      ui.nodesTreeView.addToSelection(ui.nodesTreeView.treeRoot.querySelector(`li[data-id='${nodeId}']`) as HTMLLIElement);
       setupSelectedNode();
     });
   });
@@ -522,14 +521,14 @@ function onDeleteNodeClick() {
     if (!confirm) return;
 
     for (let selectedNode of ui.nodesTreeView.selectedNodes) {
-      editAsset("removeNode", selectedNode.dataset.id);
+      editAsset("removeNode", selectedNode.dataset["id"]);
     }
   });
 }
 
 function onInspectorInputChange(event: any) {
   if (ui.nodesTreeView.selectedNodes.length !== 1) return;
-  let nodeId = ui.nodesTreeView.selectedNodes[0].dataset.id;
+  let nodeId = ui.nodesTreeView.selectedNodes[0].dataset["id"];
 
   // transform, shape or box-shape
   let context = event.target.parentElement.parentElement.parentElement.parentElement.className;

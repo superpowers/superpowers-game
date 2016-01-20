@@ -77,18 +77,18 @@ onEditCommands.newAnimation = (animation: any, index: number) => {
 };
 
 onEditCommands.deleteAnimation = (id: string) => {
-  let animationElt = ui.animationsTreeView.treeRoot.querySelector(`[data-id="${id}"]`);
+  let animationElt = ui.animationsTreeView.treeRoot.querySelector(`li[data-id="${id}"]`) as HTMLLIElement;
   ui.animationsTreeView.remove(animationElt);
   if (ui.selectedAnimationId === id) updateSelectedAnimation();
 };
 
 onEditCommands.moveAnimation = (id: string, index: number) => {
-  let animationElt = ui.animationsTreeView.treeRoot.querySelector(`[data-id="${id}"]`);
+  let animationElt = ui.animationsTreeView.treeRoot.querySelector(`li[data-id="${id}"]`) as HTMLLIElement;
   ui.animationsTreeView.insertAt(animationElt, "item", index);
 };
 
 onEditCommands.setAnimationProperty = (id: string, key: string, value: any) => {
-  let animationElt = ui.animationsTreeView.treeRoot.querySelector(`[data-id="${id}"]`);
+  let animationElt = ui.animationsTreeView.treeRoot.querySelector(`li[data-id="${id}"]`) as HTMLLIElement;
 
   switch (key) {
     case "name": animationElt.querySelector(".name").textContent = value; break;
@@ -111,7 +111,7 @@ onEditCommands.renameMap = (oldName: string, newName: string) => {
 };
 
 onEditCommands.deleteMap = (name: string) => {
-  let textureElt = ui.texturesTreeView.treeRoot.querySelector(`[data-name="${name}"]`);
+  let textureElt = ui.texturesTreeView.treeRoot.querySelector(`li[data-name="${name}"]`) as HTMLLIElement;
   ui.texturesTreeView.remove(textureElt);
 
   let pub = data.modelUpdater.modelAsset.pub;
