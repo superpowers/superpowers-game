@@ -93,7 +93,7 @@ export default class ScriptAsset extends SupCore.Data.Base.Asset {
         behaviorName.slice(index + 2);
     }
 
-    if (!_.endsWith(behaviorName, "Behavior") && !_.endsWith(behaviorName, "Behaviour")) behaviorName += "Behavior";
+    if (behaviorName.indexOf("Behavior") === -1 && behaviorName.indexOf("Behaviour") === -1) behaviorName += "Behavior";
 
     this.server.data.resources.acquire("textEditorSettings", null, (err: Error, textEditorSettings: any) => {
       this.server.data.resources.release("textEditorSettings", null);
