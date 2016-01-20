@@ -8,10 +8,9 @@ public/*.html
 public/*.css
 public/*.js
 plugins/*
-!plugins/default/*
-!plugins/extra/*
+!plugins/default
+!plugins/extra
 plugins/**/*.html
 plugins/**/*.css
 plugins/**/*.js
 !plugins/**/*Gulpfile.js
-
