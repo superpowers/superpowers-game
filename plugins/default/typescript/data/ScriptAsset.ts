@@ -5,7 +5,6 @@
 import * as OT from "operational-transform";
 import * as fs from "fs";
 import * as path from "path";
-import * as _ from "lodash";
 
 import BehaviorPropertiesResource from "./BehaviorPropertiesResource";
 
