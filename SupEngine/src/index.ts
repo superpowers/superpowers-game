@@ -1,5 +1,5 @@
 import * as THREE from "three";
-(<any>THREE.Euler).DefaultOrder = "YXZ";
+THREE.Euler.DefaultOrder = "YXZ";
 
 import GameInstance from "./GameInstance";
 import ActorTree from "./ActorTree";
