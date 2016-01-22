@@ -145,7 +145,7 @@ export default class SceneUpdater {
     delete this.bySceneNodeId[nodeId];
   }
 
-  private onEditCommand_addComponent(nodeId: string, nodeComponent: Component, index: number) {
+  private onEditCommand_addComponent(nodeComponent: Component, nodeId: string, index: number) {
     this._createNodeActorComponent(this.sceneAsset.nodes.byId[nodeId], nodeComponent, this.bySceneNodeId[nodeId].actor);
   }
 

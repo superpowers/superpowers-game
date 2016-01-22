@@ -232,6 +232,11 @@ export function start() {
     return componentLabelA.localeCompare(componentLabelB);
   });
   for (const componentType of componentTypes) ui.availableComponents[componentType] = SupClient.i18n.t(`componentEditors:${componentType}.label`);
+
+  ui.canvasElt.addEventListener("dragover", onCanvasDragOver);
+  ui.canvasElt.addEventListener("dragenter", onCanvasDragEnter);
+  ui.canvasElt.addEventListener("dragleave", onCanvasDragLeave);
+  ui.canvasElt.addEventListener("drop", onCanvasDrop);
 }
 
 // Transform
@@ -513,7 +518,7 @@ function createNewNode(name: string, prefab: boolean) {
   (options as any).transform = { position };
   (options as any).prefab = prefab;
 
-  socket.emit("edit:assets", SupClient.query.asset, "addNode", name, options, (err: string, nodeId: string) => {
+  data.projectClient.editAsset(SupClient.query.asset, "addNode", name, options, (err: string, nodeId: string) => {
     if (err != null) { new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); return; }
 
     ui.nodesTreeView.clearSelection();
@@ -752,4 +757,42 @@ function onChangeCamera2DZ() {
 
   engine.cameraActor.threeObject.position.setZ(z);
   engine.cameraActor.threeObject.updateMatrixWorld(false);
+}
+
+// Drag'n'drop
+function onCanvasDragOver(event: DragEvent) {
+  if (data == null || data.projectClient.entries == null) return;
+
+  let entryId = event.dataTransfer.getData("application/vnd.superpowers.entry");
+  if (typeof entryId !== "string") return;
+
+  event.preventDefault();
+}
+
+function onCanvasDragEnter(event: DragEvent) {
+  // TODO: Set drop class
+}
+
+function onCanvasDragLeave(event: DragEvent) {
+  // TODO: Clear drop class
+}
+
+function onCanvasDrop(event: DragEvent) {
+  if (data == null || data.projectClient.entries == null) return;
+
+  let entryId = event.dataTransfer.getData("application/vnd.superpowers.entry");
+  if (typeof entryId !== "string") return;
+
+  let entry = data.projectClient.entries.byId[entryId];
+
+  let plugin = SupClient.getPlugins<SupClient.ImportIntoScenePlugin>("importIntoScene")[entry.type];
+  if (plugin == null) return;
+
+  event.preventDefault();
+  plugin.content(entry, data.projectClient, (err?: string) => {
+    if (err != null) {
+      new SupClient.dialogs.InfoDialog(SupClient.i18n.t("sceneEditor:failures.importIntoScene", { reason: err }), SupClient.i18n.t("common:actions.close"));
+      return;
+    }
+  });
 }

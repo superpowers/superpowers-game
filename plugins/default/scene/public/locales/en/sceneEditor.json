@@ -57,5 +57,17 @@
       "confirm": "Are you sure you want to delete this component?",
       "validate": "Delete"
     }
+  },
+  "failures": {
+    "newActor": "Could not create new actor: ${reason}",
+    "importIntoScene": "Could not import: ${reason}"
+  },
+  "errors": {
+    "invalidActorId": "Invalid actor id: ${id}.",
+    "prefab": {
+      "mustHaveSingleRootActor": "A scene must have a single root actor to be usable as a prefab.",
+      "cantUseSelf": "A scene cannot use itself as a prefab.",
+      "cyclicalReference": "Using this scene as a prefab would create an infinite loop."
+    }
   }
 }

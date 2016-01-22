@@ -106,7 +106,12 @@ export default class SceneNodes extends SupCore.Data.Base.TreeById {
 
   remove(id: string, callback: (err: string) => any) {
     let node = this.byId[id];
-    if (node == null) { callback(`Invalid node id: ${id}`); return; }
+    if (node == null) {
+      // TODO: callback(new SupCore.LocalizedError("sceneEditor:errors.invalidActorId", { id }));
+      // see https://github.com/superpowers/superpowers/issues/79
+      callback(`Invalid node id: ${id}`);
+      return;
+    }
 
     if (node.prefab != null && node.prefab.sceneAssetId != null) this.emit("removeDependencies", [ node.prefab.sceneAssetId ], `${id}_${node.prefab.sceneAssetId}`);
 
@@ -174,7 +179,8 @@ export default class SceneNodes extends SupCore.Data.Base.TreeById {
     }
 
     if (value === this.sceneAsset.id) {
-      callback("A prefab can't reference itself");
+      // TODO: callback(new SupCore.LocalizedError("sceneEditor:errors.prefab.cantUseSelf"));
+      callback("A scene cannot use itself as a prefab.");
       return;
     }
 
@@ -189,7 +195,8 @@ export default class SceneNodes extends SupCore.Data.Base.TreeById {
 
         // Check the scene has only one root actor
         if (asset.pub.nodes.length !== 1) {
-          callback("A prefab must have only one root actor");
+          // TODO: callback(new SupCore.LocalizedError("sceneEditor:errors.prefab.mustHaveSingleRootActor"));
+          callback("A scene must have a single root actor to be usable as a prefab.");
           return;
         }
 
@@ -208,7 +215,10 @@ export default class SceneNodes extends SupCore.Data.Base.TreeById {
         acquiringScene--;
         if (acquiringScene === 0) {
           if (canUseScene) finish();
-          else callback("Cannot use this scene, it will create an infinite loop");
+          else {
+            // TODO: callback(new SupCore.LocalizedError("sceneEditor:errors.prefab.cyclicalReference"));
+            callback("Using this scene as a prefab would create an infinite loop.");
+          }
         }
       });
     };

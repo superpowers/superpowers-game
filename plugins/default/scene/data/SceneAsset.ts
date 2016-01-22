@@ -144,7 +144,7 @@ export default class SceneAsset extends SupCore.Data.Base.Asset {
     if (this.nodes.pub.length !== 0 && parentNode == null) {
       let entry = this.server.data.entries.byId[this.id];
       if (entry.dependentAssetIds.length > 0) {
-        callback("A prefab can have only one root actor", null, null, null);
+        callback("A prefab can only have one root actor", null, null, null);
         return;
       }
     }
@@ -198,7 +198,7 @@ export default class SceneAsset extends SupCore.Data.Base.Asset {
     if (parentNode == null) {
       let entry = this.server.data.entries.byId[this.id];
       if (entry.dependentAssetIds.length > 0) {
-        callback("A prefab can have only one root actor", null, null, null);
+        callback("A prefab can only have one root actor", null, null, null);
         return;
       }
     }
@@ -260,7 +260,7 @@ export default class SceneAsset extends SupCore.Data.Base.Asset {
     if (parentNode == null) {
       let entry = this.server.data.entries.byId[this.id];
       if (entry.dependentAssetIds.length > 0) {
-        callback("A prefab can have only one root actor", null, null);
+        callback("A prefab can only have one root actor", null, null);
         return;
       }
     }
@@ -379,7 +379,7 @@ export default class SceneAsset extends SupCore.Data.Base.Asset {
   };
 
   server_addComponent(client: any, nodeId: string, componentType: string, index: number,
-  callback: (err: string, nodeId: string, component: Component, index: number) => any) {
+  callback: (err: string, component: Component, nodeId: string, index: number) => any) {
 
     let componentConfigClass = this.server.system.getPlugins<SupCore.Data.ComponentConfigClass>("componentConfigs")[componentType];
     if (componentConfigClass == null) { callback("Invalid component type", null, null, null); return; }
@@ -402,12 +402,12 @@ export default class SceneAsset extends SupCore.Data.Base.Asset {
       config.on("addDependencies", (depIds: string[]) => { this._onAddComponentDependencies(componentPath, depIds); });
       config.on("removeDependencies", (depIds: string[]) => { this._onRemoveComponentDependencies(componentPath, depIds); });
 
-      callback(null, nodeId, component, actualIndex);
+      callback(null, component, nodeId, actualIndex);
       this.emit("change");
     });
   }
 
-  client_addComponent(nodeId: string, component: Component, index: number) {
+  client_addComponent(component: Component, nodeId: string, index: number) {
     this.nodes.client_addComponent(nodeId, component, index);
   }
 
