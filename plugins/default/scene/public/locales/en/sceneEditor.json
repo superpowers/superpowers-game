@@ -64,6 +64,7 @@
   },
   "errors": {
     "invalidActorId": "Invalid actor id: ${id}.",
+    "cantImportAssetTypeIntoScene": "This type of asset can't be imported into a scene.",
     "prefab": {
       "mustHaveSingleRootActor": "A scene must have a single root actor to be usable as a prefab.",
       "cantUseSelf": "A scene cannot use itself as a prefab.",

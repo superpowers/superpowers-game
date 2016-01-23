@@ -762,10 +762,10 @@ function onChangeCamera2DZ() {
 // Drag'n'drop
 function onCanvasDragOver(event: DragEvent) {
   if (data == null || data.projectClient.entries == null) return;
-
-  let entryId = event.dataTransfer.getData("application/vnd.superpowers.entry");
-  if (typeof entryId !== "string") return;
-
+  
+  // NOTE: We can't use event.dataTransfer.getData() to do an early check here
+  // because of browser security restrictions
+  
   event.preventDefault();
 }
 
@@ -784,9 +784,12 @@ function onCanvasDrop(event: DragEvent) {
   if (typeof entryId !== "string") return;
 
   let entry = data.projectClient.entries.byId[entryId];
-
   let plugin = SupClient.getPlugins<SupClient.ImportIntoScenePlugin>("importIntoScene")[entry.type];
-  if (plugin == null) return;
+  if (plugin == null) {
+    const reason = SupClient.i18n.t("sceneEditor:errors.cantImportAssetTypeIntoScene");
+    new SupClient.dialogs.InfoDialog(SupClient.i18n.t("sceneEditor:failures.importIntoScene", { reason }), SupClient.i18n.t("common:actions.close"));
+    return;
+  }
 
   event.preventDefault();
   plugin.content(entry, data.projectClient, (err?: string) => {
