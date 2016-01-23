@@ -241,7 +241,7 @@ onEditCommands.removeNode = (id: string) => {
   else setupHelpers();
 };
 
-onEditCommands.addComponent = (nodeId: string, nodeComponent: Component, index: number) => {
+onEditCommands.addComponent = (nodeComponent: Component, nodeId: string, index: number) => {
   let isInspected = ui.nodesTreeView.selectedNodes.length === 1 && nodeId === ui.nodesTreeView.selectedNodes[0].dataset["id"];
 
   if (isInspected) {
