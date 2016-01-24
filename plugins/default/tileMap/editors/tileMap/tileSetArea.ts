@@ -25,7 +25,7 @@ tileSetArea.cameraComponent.setOrthographicMode(true);
 /* tslint:disable:no-unused-expression */
 new SupEngine.editorComponentClasses["Camera2DControls"](
   cameraActor, tileSetArea.cameraComponent,
-  { zoomSpeed: 1.5, zoomMin: 1, zoomMax: 200 },
+  { zoomSpeed: 1.5, zoomMin: 0.1, zoomMax: 10000 },
   () => { data.tileSetUpdater.tileSetRenderer.gridRenderer.setOrthgraphicScale(tileSetArea.cameraComponent.orthographicScale); }
 );
 /* tslint:enable:no-unused-expression */

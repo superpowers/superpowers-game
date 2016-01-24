@@ -60,8 +60,8 @@ export function updateCameraMode() {
     engine.cameraComponent.setOrthographicMode(true);
     engine.cameraControls = new SupEngine.editorComponentClasses["Camera2DControls"](engine.cameraActor, engine.cameraComponent, {
       zoomSpeed: 1.5,
-      zoomMin: 1,
-      zoomMax: 100,
+      zoomMin: 0.1,
+      zoomMax: 10000,
     });
   }
 

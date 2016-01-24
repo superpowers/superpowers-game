@@ -45,7 +45,7 @@ mapArea.cameraComponent = new SupEngine.componentClasses["Camera"](cameraActor);
 mapArea.cameraComponent.setOrthographicMode(true);
 mapArea.cameraControls = new SupEngine.editorComponentClasses["Camera2DControls"](
   cameraActor, mapArea.cameraComponent,
-  { zoomSpeed: 1.5, zoomMin: 1, zoomMax: 200 },
+  { zoomSpeed: 1.5, zoomMin: 0.1, zoomMax: 10000 },
   () => { mapArea.gridRenderer.setOrthgraphicScale(mapArea.cameraComponent.orthographicScale); }
 );
 

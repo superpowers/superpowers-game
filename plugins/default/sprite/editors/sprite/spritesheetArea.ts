@@ -24,7 +24,7 @@ cameraComponent.setOrthographicMode(true);
 cameraComponent.setOrthographicScale(10);
 
 spritesheetArea.cameraControls = new SupEngine.editorComponentClasses["Camera2DControls"](cameraActor, cameraComponent,
-  { zoomSpeed: 1.5, zoomMin: 1, zoomMax: 200 },
+  { zoomSpeed: 1.5, zoomMin: 0.1, zoomMax: 10000 },
   () => { spritesheetArea.gridRenderer.setOrthgraphicScale(cameraComponent.orthographicScale); }
 );
 

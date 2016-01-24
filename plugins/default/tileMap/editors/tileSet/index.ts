@@ -24,7 +24,7 @@ function start() {
   ui.cameraComponent.setOrthographicMode(true);
   ui.cameraControls = new SupEngine.editorComponentClasses["Camera2DControls"](
     cameraActor, ui.cameraComponent,
-    { zoomSpeed: 1.5, zoomMin: 1, zoomMax: 200 },
+    { zoomSpeed: 1.5, zoomMin: 0.1, zoomMax: 10000 },
     () => { data.tileSetUpdater.tileSetRenderer.gridRenderer.setOrthgraphicScale(ui.cameraComponent.orthographicScale); }
   );
 
