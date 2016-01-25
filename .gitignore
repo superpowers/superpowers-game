@@ -1,4 +1,3 @@
-**/node_modules
 player/**/*.js
 SupEngine/**/*.js
 SupRuntime/**/*.js
@@ -14,3 +13,4 @@ plugins/**/*.html
 plugins/**/*.css
 plugins/**/*.js
 !plugins/**/*Gulpfile.js
+**/node_modules
