@@ -29,64 +29,41 @@ socket.on("disconnect", SupClient.onDisconnected);
 function onWelcome() {
   data = { projectClient: new SupClient.ProjectClient(socket, { subEntries: true }) };
 
-  loadPlugins((err, locales) => {
-    SupClient.i18n.load(locales, () => {
-      engineStart();
-      uiStart();
+  loadPlugins((err) => {
+    engineStart();
+    uiStart();
 
-      data.projectClient.subResource("sceneSettings", sceneSettingSubscriber);
-      data.projectClient.subResource("gameSettings", gameSettingSubscriber);
-    });
+    data.projectClient.subResource("sceneSettings", sceneSettingSubscriber);
+    data.projectClient.subResource("gameSettings", gameSettingSubscriber);
   });
 }
 
-function loadPlugins(callback: (err: Error, locales: SupClient.i18n.File[]) => void) {
-  let locales: SupClient.i18n.File[] = [];
-  locales.push({ root: `${window.location.pathname}/../..`, name: "sceneEditor" });
+function loadPlugins(callback: (err: Error) => void) {
+  let i18nFiles: SupClient.i18n.File[] = [];
+  i18nFiles.push({ root: `${window.location.pathname}/../..`, name: "sceneEditor" });
 
   SupClient.fetch(`/systems/${SupCore.system.id}/plugins.json`, "json", (err: Error, pluginsInfo: SupCore.PluginsInfo) => {
-    async.eachSeries(pluginsInfo.list, (pluginName, pluginCallback) => {
-      let pluginPath = `/systems/${SupCore.system.id}/plugins/${pluginName}`;
-      async.series([
+    for (const pluginName of pluginsInfo.list) {
+      const root = `/systems/${SupCore.system.id}/plugins/${pluginName}`;
+      i18nFiles.push({ root, name: "componentEditors" });
+    }
 
-        (cb) => {
-          let dataScript = document.createElement("script");
-          dataScript.src = `${pluginPath}/bundles/data.js`;
-          dataScript.addEventListener("load", () => { cb(null, null); } );
-          dataScript.addEventListener("error", () => { cb(null, null); } );
-          document.body.appendChild(dataScript);
-        },
-
-        (cb) => {
-          let componentsScript = document.createElement("script");
-          componentsScript.src = `${pluginPath}/bundles/components.js`;
-          componentsScript.addEventListener("load", () => { cb(null, null); } );
-          componentsScript.addEventListener("error", () => { cb(null, null); } );
-          document.body.appendChild(componentsScript);
-        },
-
-        (cb) => {
-          let componentConfigsScript = document.createElement("script");
-          componentConfigsScript.src = `${pluginPath}/bundles/componentConfigs.js`;
-          componentConfigsScript.addEventListener("load", () => { cb(null, null); } );
-          componentConfigsScript.addEventListener("error", () => { cb(null, null); } );
-          document.body.appendChild(componentConfigsScript);
-        },
-
-        (cb) => {
-          SupClient.activePluginPath = pluginPath;
-          let componentEditorsScript = document.createElement("script");
-          componentEditorsScript.src = `${pluginPath}/bundles/componentEditors.js`;
-          componentEditorsScript.addEventListener("load", () => {
-            locales.push({ root: SupClient.activePluginPath, name: "componentEditors" });
-            cb(null, null);
-          } );
-          componentEditorsScript.addEventListener("error", () => { cb(null, null); } );
-          document.body.appendChild(componentEditorsScript);
-        },
-
-      ], pluginCallback);
-    }, (err) => { callback(err, locales); });
+    async.parallel([
+      (cb) => {
+        SupClient.i18n.load(i18nFiles, cb);
+      }, (cb) => {
+        async.each(pluginsInfo.list, (pluginName, pluginCallback) => {
+          const pluginPath = `/systems/${SupCore.system.id}/plugins/${pluginName}`;
+          async.each(["data", "components", "componentConfigs", "componentEditors"], (name, cb) => {
+            const script = document.createElement("script");
+            script.src = `${pluginPath}/bundles/${name}.js`;
+            script.addEventListener("load", () => { cb(null); } );
+            script.addEventListener("error", () => { cb(null); } );
+            document.body.appendChild(script);
+          }, pluginCallback);
+        }, cb);
+      }
+    ], callback);
   });
 }
 

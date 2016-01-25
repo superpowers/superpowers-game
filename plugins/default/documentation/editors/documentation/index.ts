@@ -26,12 +26,12 @@ function onWelcome() {
 
 function loadPlugins() {
   SupClient.fetch(`/systems/${SupCore.system.id}/plugins.json`, "json", (err: Error, pluginsInfo: SupCore.PluginsInfo) => {
-    async.eachSeries(pluginsInfo.list, (pluginName, pluginCallback) => {
-      SupClient.activePluginPath = `/systems/${SupCore.system.id}/plugins/${pluginName}`;
-      const documentationScript = document.createElement("script");
-      documentationScript.src = `${SupClient.activePluginPath}/bundles/documentation.js`;
+    async.each(pluginsInfo.list, (pluginName, pluginCallback) => {
+      const pluginPath = `/systems/${SupCore.system.id}/plugins/${pluginName}`;
+      const documentationScript = document.createElement("script") as HTMLScriptElement;
       documentationScript.addEventListener("load", () => { pluginCallback(); } );
       documentationScript.addEventListener("error", () => { pluginCallback(); } );
+      documentationScript.src = `${pluginPath}/bundles/documentation.js`;
       document.body.appendChild(documentationScript);
     }, (err) => { setupDocs(); });
   });
