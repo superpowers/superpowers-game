@@ -18,7 +18,9 @@ html
 
   body
     .main
-      .controls
+      .loading
+        div= t("common:states.loading")
+      .controls(hidden)
         .camera
           .title= t("sceneEditor:controls.camera.title")
           .camera-mode
@@ -55,15 +57,15 @@ html
           .title= t("sceneEditor:controls.light.title")
           div
             input#show-light(type="checkbox")
-      canvas(tabindex="0")
+      canvas(hidden,tabindex="0")
 
     .sidebar
       .nodes-buttons.flat-button-strip
-        button(title= t("sceneEditor:treeView.newActor.title"), data-hotkey="control+N").new-actor
-        button(title= t("sceneEditor:treeView.newPrefab.title"), data-hotkey="control+P").new-prefab
-        button(title= t("common:actions.rename"),disabled, data-hotkey="F2").rename-node
-        button(title= t("common:actions.duplicate"),disabled, data-hotkey="control+D").duplicate-node
-        button(title= t("common:actions.delete"),disabled, data-hotkey="delete").delete-node
+        button(disabled,title=t("sceneEditor:treeView.newActor.title"),data-hotkey="control+N").new-actor
+        button(disabled,title=t("sceneEditor:treeView.newPrefab.title"),data-hotkey="control+P").new-prefab
+        button(disabled,title=t("common:actions.rename"),data-hotkey="F2").rename-node
+        button(disabled,title=t("common:actions.duplicate"),data-hotkey="control+D").duplicate-node
+        button(disabled,title=t("common:actions.delete"),data-hotkey="delete").delete-node
 
       .nodes-tree-view
 

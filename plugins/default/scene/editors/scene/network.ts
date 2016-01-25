@@ -10,6 +10,7 @@ import * as async from "async";
 let THREE = SupEngine.THREE;
 import { DuplicatedNode } from "../../data/SceneAsset";
 import SceneSettingsResource from "../../data/SceneSettingsResource";
+import GameSettingsResource from "../../../gameSettings/data/GameSettingsResource";
 import { Node } from "../../data/SceneNodes";
 import { Component } from "../../data/SceneComponents";
 import SceneUpdater from "../../components/SceneUpdater";
@@ -17,7 +18,8 @@ import SceneUpdater from "../../components/SceneUpdater";
 export let data: {
   projectClient: SupClient.ProjectClient;
   sceneUpdater?: SceneUpdater;
-  gameSettingsResource?: any;
+  gameSettingsResource?: GameSettingsResource;
+  sceneSettingsResource?: SceneSettingsResource;
 };
 
 export let socket: SocketIOClient.Socket;
@@ -30,11 +32,16 @@ function onWelcome() {
   data = { projectClient: new SupClient.ProjectClient(socket, { subEntries: true }) };
 
   loadPlugins((err) => {
-    engineStart();
-    uiStart();
-
     data.projectClient.subResource("sceneSettings", sceneSettingSubscriber);
     data.projectClient.subResource("gameSettings", gameSettingSubscriber);
+
+    data.sceneUpdater = new SceneUpdater(
+      data.projectClient,
+      { gameInstance: engine.gameInstance, actor: null },
+      { sceneAssetId: SupClient.query.asset, isInPrefab: false },
+      { scene: onSceneAssetReceived },
+      { scene: onEditCommands }
+    );
   });
 }
 
@@ -67,27 +74,30 @@ function loadPlugins(callback: (err: Error) => void) {
   });
 }
 
+function startIfReady() {
+  if (data.sceneUpdater != null && data.sceneSettingsResource != null && data.gameSettingsResource != null) {
+    engineStart();
+    uiStart();
+
+    setCameraMode(data.sceneSettingsResource.pub.defaultCameraMode);
+    setCameraVerticalAxis(data.sceneSettingsResource.pub.defaultVerticalAxis);
+    setupInspectorLayers();
+  }
+}
+
 var sceneSettingSubscriber = {
   onResourceReceived: (resourceId: string, resource: SceneSettingsResource) => {
-    setCameraMode(resource.pub.defaultCameraMode);
-    setCameraVerticalAxis(resource.pub.defaultVerticalAxis);
-
-    data.sceneUpdater = new SceneUpdater(
-      data.projectClient,
-      { gameInstance: engine.gameInstance, actor: null },
-      { sceneAssetId: SupClient.query.asset, isInPrefab: false },
-      { scene: onSceneAssetReceived },
-      { scene: onEditCommands }
-    );
+    data.sceneSettingsResource = resource;
+    startIfReady();
   },
 
-  onResourceEdited: (resourceId: string, command: string, propertyName: string) => {}
+  onResourceEdited: (resourceId: string, command: string, propertyName: string) => { /* Ignore */ }
 };
 
 var gameSettingSubscriber = {
-  onResourceReceived: (resourceId: string, resource: any) => {
+  onResourceReceived: (resourceId: string, resource: GameSettingsResource) => {
     data.gameSettingsResource = resource;
-    setupInspectorLayers();
+    startIfReady();
   },
 
   onResourceEdited: (resourceId: string, command: string, propertyName: string) => {
@@ -137,6 +147,8 @@ function onSceneAssetReceived(/*err: string, asset: SceneAsset*/) {
     engine.cameraActor.setLocalPosition(new THREE.Vector3((box.x.min + box.x.max) / 2, (box.y.min + box.y.max) / 2, z));
     ui.camera2DZ.value = z.toString();
   }
+
+  startIfReady();
 }
 
 var onEditCommands: any = {};

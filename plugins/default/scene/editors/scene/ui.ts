@@ -1,4 +1,4 @@
-import { socket, data } from "./network";
+import { data } from "./network";
 import engine, { setupHelpers, updateCameraMode } from "./engine";
 
 import { Node } from "../../data/SceneNodes";
@@ -237,6 +237,12 @@ export function start() {
   ui.canvasElt.addEventListener("dragenter", onCanvasDragEnter);
   ui.canvasElt.addEventListener("dragleave", onCanvasDragLeave);
   ui.canvasElt.addEventListener("drop", onCanvasDrop);
+
+  (document.querySelector(".main .loading") as HTMLDivElement).hidden = true;
+  (document.querySelector(".main .controls") as HTMLDivElement).hidden = false;
+  ui.canvasElt.hidden = false;
+  ui.newActorButton.disabled = false;
+  ui.newPrefabButton.disabled = false;
 }
 
 // Transform
@@ -320,7 +326,12 @@ function onNodesTreeViewDrop(event: DragEvent, dropLocation: TreeView.DropLocati
 
   let i = 0;
   for (const id of nodeIds) {
-    socket.emit("edit:assets", SupClient.query.asset, "moveNode", id, dropPoint.parentId, dropPoint.index + i, (err: string) => { if (err != null) new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); });
+    data.projectClient.editAsset(SupClient.query.asset, "moveNode", id, dropPoint.parentId, dropPoint.index + i, (err: string) => {
+      if (err != null) {
+        new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close"));
+        return;
+      }
+    });
     if (!sameParent || sourceChildren.indexOf(data.sceneUpdater.sceneAsset.nodes.byId[id]) >= dropPoint.index) i++;
   }
   return false;
@@ -545,7 +556,12 @@ function onRenameNodeClick() {
     /* tslint:enable:no-unused-expression */
     if (newName == null) return;
 
-    socket.emit("edit:assets", SupClient.query.asset, "setNodeProperty", node.id, "name", newName, (err: string) => { if (err != null) new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); });
+    data.projectClient.editAsset(SupClient.query.asset, "setNodeProperty", node.id, "name", newName, (err: string) => {
+      if (err != null) {
+        new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close"));
+        return;
+      }
+    });
   });
 }
 
@@ -569,8 +585,11 @@ function onDuplicateNodeClick() {
     let options = SupClient.getTreeViewInsertionPoint(ui.nodesTreeView);
     console.log(options);
 
-    socket.emit("edit:assets", SupClient.query.asset, "duplicateNode", newName, node.id, options.index, (err: string, nodeId: string) => {
-      if (err != null) new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close"));
+    data.projectClient.editAsset(SupClient.query.asset, "duplicateNode", newName, node.id, options.index, (err: string, nodeId: string) => {
+      if (err != null) {
+        new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close"));
+        return;
+      }
 
       ui.nodesTreeView.clearSelection();
       ui.nodesTreeView.addToSelection(ui.nodesTreeView.treeRoot.querySelector(`li[data-id='${nodeId}']`) as HTMLLIElement);
@@ -590,7 +609,12 @@ function onDeleteNodeClick() {
     if (!confirm) return;
 
     for (let selectedNode of ui.nodesTreeView.selectedNodes) {
-      socket.emit("edit:assets", SupClient.query.asset, "removeNode", selectedNode.dataset["id"], (err: string) => { if (err != null) new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); });
+      data.projectClient.editAsset(SupClient.query.asset, "removeNode", selectedNode.dataset["id"], (err: string) => {
+        if (err != null) {
+          new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close"));
+          return;
+        }
+      });
     }
   });
 }
@@ -614,21 +638,36 @@ function onTransformInputChange(event: any) {
   }
   let nodeId = ui.nodesTreeView.selectedNodes[0].dataset["id"];
 
-  socket.emit("edit:assets", SupClient.query.asset, "setNodeProperty", nodeId, transformType, value, (err: string) => { if (err != null) new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); });
+  data.projectClient.editAsset(SupClient.query.asset, "setNodeProperty", nodeId, transformType, value, (err: string) => {
+    if (err != null) {
+      new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close"));
+      return;
+    }
+  });
 }
 
 function onVisibleChange(event: any) {
   if (ui.nodesTreeView.selectedNodes.length !== 1) return;
 
   let nodeId = ui.nodesTreeView.selectedNodes[0].dataset["id"];
-  socket.emit("edit:assets", SupClient.query.asset, "setNodeProperty", nodeId, "visible", event.target.checked, (err: string) => { if (err != null) new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); });
+  data.projectClient.editAsset(SupClient.query.asset, "setNodeProperty", nodeId, "visible", event.target.checked, (err: string) => {
+    if (err != null) {
+      new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close"));
+      return;
+    }
+  });
 }
 
 function onLayerChange(event: any) {
   if (ui.nodesTreeView.selectedNodes.length !== 1) return;
 
   let nodeId = ui.nodesTreeView.selectedNodes[0].dataset["id"];
-  socket.emit("edit:assets", SupClient.query.asset, "setNodeProperty", nodeId, "layer", parseInt(event.target.value, 10), (err: string) => { if (err != null) new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); });
+  data.projectClient.editAsset(SupClient.query.asset, "setNodeProperty", nodeId, "layer", parseInt(event.target.value, 10), (err: string) => {
+    if (err != null) {
+      new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close"));
+      return;
+    }
+  });
 }
 
 function onPrefabInput(event: any) {
@@ -637,12 +676,22 @@ function onPrefabInput(event: any) {
   let nodeId = ui.nodesTreeView.selectedNodes[0].dataset["id"];
 
   if (event.target.value === "") {
-    socket.emit("edit:assets", SupClient.query.asset, "setNodeProperty", nodeId, "prefab.sceneAssetId", null, (err: string) => { if (err != null) new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); });
+    data.projectClient.editAsset(SupClient.query.asset, "setNodeProperty", nodeId, "prefab.sceneAssetId", null, (err: string) => {
+      if (err != null) {
+        new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close"));
+        return;
+      }
+    });
   }
   else {
     let entry = SupClient.findEntryByPath(data.projectClient.entries.pub, event.target.value);
     if (entry != null && entry.type === "scene") {
-      socket.emit("edit:assets", SupClient.query.asset, "setNodeProperty", nodeId, "prefab.sceneAssetId", entry.id, (err: string) => { if (err != null) new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); });
+      data.projectClient.editAsset(SupClient.query.asset, "setNodeProperty", nodeId, "prefab.sceneAssetId", entry.id, (err: string) => {
+        if (err != null) {
+          new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close"));
+          return;
+        }
+      });
     }
   }
 }
@@ -667,7 +716,7 @@ export function createComponentElement(nodeId: string, component: Component) {
     // Prevent setting a NaN value
     if (command === "setProperty" && typeof args[1] === "number" && isNaN(args[1])) return;
 
-    socket.emit("edit:assets", SupClient.query.asset, "editComponent", nodeId, component.id, command, ...args, callback);
+    data.projectClient.editAsset(SupClient.query.asset, "editComponent", nodeId, component.id, command, ...args, callback);
   };
   const componentEditorPlugin = componentEditorPlugins[component.type].content;
   ui.componentEditors[component.id] = new componentEditorPlugin(table.querySelector("tbody") as HTMLTableSectionElement, component.config, data.projectClient, editConfig);
@@ -699,7 +748,12 @@ function onNewComponentClick() {
 
     let nodeId = ui.nodesTreeView.selectedNodes[0].dataset["id"];
 
-    socket.emit("edit:assets", SupClient.query.asset, "addComponent", nodeId, type, null, (err: string) => { if (err != null) new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); });
+    data.projectClient.editAsset(SupClient.query.asset, "addComponent", nodeId, type, null, (err: string) => {
+      if (err != null) {
+        new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close"));
+        return;
+      }
+    });
   });
 }
 
@@ -714,7 +768,12 @@ function onDeleteComponentClick(event: any) {
     let nodeId = ui.nodesTreeView.selectedNodes[0].dataset["id"];
     let componentId = event.target.parentElement.parentElement.dataset["componentId"];
 
-    socket.emit("edit:assets", SupClient.query.asset, "removeComponent", nodeId, componentId, (err: string) => { if (err != null) new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); });
+    data.projectClient.editAsset(SupClient.query.asset, "removeComponent", nodeId, componentId, (err: string) => {
+      if (err != null) {
+        new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close"));
+        return;
+      }
+    });
   });
 }
 
@@ -762,10 +821,10 @@ function onChangeCamera2DZ() {
 // Drag'n'drop
 function onCanvasDragOver(event: DragEvent) {
   if (data == null || data.projectClient.entries == null) return;
-  
+
   // NOTE: We can't use event.dataTransfer.getData() to do an early check here
   // because of browser security restrictions
-  
+
   event.preventDefault();
 }
 
