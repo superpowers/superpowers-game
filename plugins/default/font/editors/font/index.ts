@@ -52,38 +52,28 @@ function start() {
 
     if (setting === "filtering" || setting === "color") {
       settingObj.addEventListener("change", (event: any) => {
-        socket.emit("edit:assets", SupClient.query.asset, "setProperty", event.target.dataset["name"], event.target.value, (err: string) => {
-          if (err != null) new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close"));
-        });
+        data.projectClient.editAsset(SupClient.query.asset, "setProperty", event.target.dataset["name"], event.target.value);
       });
     } else if (setting === "charset") {
       settingObj.addEventListener("input", (event: any) => {
         let charset = (event.target.value !== "") ? event.target.value : null;
-        socket.emit("edit:assets", SupClient.query.asset, "setProperty", event.target.dataset["name"], charset, (err: string) => {
-          if (err != null) new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close"));
-        });
+        data.projectClient.editAsset(SupClient.query.asset, "setProperty", event.target.dataset["name"], charset);
       });
     } else if (setting === "isBitmap") {
       settingObj.addEventListener("change", (event: any) => {
         let isBitmap = event.target.value === "bitmap";
-        socket.emit("edit:assets", SupClient.query.asset, "setProperty", event.target.dataset["name"], isBitmap, (err: string) => {
-          if (err != null) new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close"));
-        });
+        data.projectClient.editAsset(SupClient.query.asset, "setProperty", event.target.dataset["name"], isBitmap);
       });
     } else {
       settingObj.addEventListener("change", (event: any) => {
-        socket.emit("edit:assets", SupClient.query.asset, "setProperty", event.target.dataset["name"], parseInt(event.target.value, 10), (err: string) => {
-          if (err != null) new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close"));
-        });
+        data.projectClient.editAsset(SupClient.query.asset, "setProperty", event.target.dataset["name"], parseInt(event.target.value, 10));
       });
     }
   });
 
   ui.colorPicker = document.querySelector("input.color-picker") as HTMLInputElement;
   ui.colorPicker.addEventListener("change", (event: any) => {
-    socket.emit("edit:assets", SupClient.query.asset, "setProperty", "color", event.target.value.slice(1), (err: string) => {
-      if (err != null) new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close"));
-    });
+    data.projectClient.editAsset(SupClient.query.asset, "setProperty", "color", event.target.value.slice(1));
   });
 
   ui.vectorFontTBody = document.querySelector("tbody.vector-font") as HTMLTableSectionElement;
@@ -160,9 +150,7 @@ function onFileSelectChange(event: any) {
 
   let reader = new FileReader();
   reader.onload = (event: any) => {
-    socket.emit("edit:assets", SupClient.query.asset, "upload", event.target.result, (err: string) => {
-      if (err != null) { new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); return; }
-    });
+    data.projectClient.editAsset(SupClient.query.asset, "upload", event.target.result);
   };
 
   reader.readAsArrayBuffer(event.target.files[0]);

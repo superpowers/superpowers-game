@@ -1,4 +1,4 @@
-import { data, editAsset } from "./network";
+import { data } from "./network";
 
 import importModel, { ImportLogEntry } from "./importers/index";
 import ModelAsset from "../../data/ModelAsset";
@@ -199,8 +199,8 @@ function onModelFileSelectChange(event: any) {
     setImportLog(log);
 
     if (data != null) {
-      editAsset("setModel", data.upAxisMatrix, data.attributes, data.bones);
-      if (data.maps != null) editAsset("setMaps", data.maps);
+      data.projectClient.editAsset(SupClient.query.asset, "setModel", data.upAxisMatrix, data.attributes, data.bones);
+      if (data.maps != null) data.projectClient.editAsset(SupClient.query.asset, "setMaps", data.maps);
     }
   });
 }
@@ -211,7 +211,7 @@ function onPrimaryMapFileSelectChange(event: Event) {
   ui.errorPaneStatus.classList.remove("has-errors");
 
   const reader = new FileReader;
-  reader.onload = (event) => { editAsset("setMaps", { map: reader.result }); };
+  reader.onload = (event) => { data.projectClient.editAsset(SupClient.query.asset, "setMaps", { map: reader.result }); };
 
   const element = <HTMLInputElement>event.target;
   reader.readAsArrayBuffer(element.files[0]);
@@ -249,15 +249,15 @@ function downloadTexture(textureName: string) {
   }
 }
 
-function onChangeFiltering(event: any) { editAsset("setProperty", "filtering", event.target.value); }
-function onChangeWrapping(event: any) { editAsset("setProperty", "wrapping", event.target.value); }
+function onChangeFiltering(event: any) { data.projectClient.editAsset(SupClient.query.asset, "setProperty", "filtering", event.target.value); }
+function onChangeWrapping(event: any) { data.projectClient.editAsset(SupClient.query.asset, "setProperty", "wrapping", event.target.value); }
 function onShowSkeletonChange(event: Event) { data.modelUpdater.modelRenderer.setShowSkeleton((<HTMLInputElement>event.target).checked); }
-function onChangeUnitRatio(event: any) { editAsset("setProperty", "unitRatio", parseFloat(event.target.value)); }
-function onChangeOpacityType(event: any) { editAsset("setProperty", "opacity", event.target.value === "transparent" ? 1 : null); }
+function onChangeUnitRatio(event: any) { data.projectClient.editAsset(SupClient.query.asset, "setProperty", "unitRatio", parseFloat(event.target.value)); }
+function onChangeOpacityType(event: any) { data.projectClient.editAsset(SupClient.query.asset, "setProperty", "opacity", event.target.value === "transparent" ? 1 : null); }
 function onChangeOpacity(event: any) {
   const opacity = parseFloat(event.target.value);
   if (isNaN(opacity)) return;
-  editAsset("setProperty", "opacity", opacity);
+  data.projectClient.editAsset(SupClient.query.asset, "setProperty", "opacity", opacity);
 }
 
 function onNewAnimationClick() {
@@ -271,7 +271,7 @@ function onNewAnimationClick() {
     /* tslint:enable:no-unused-expression */
     if (name == null) return;
 
-    editAsset("newAnimation", name, null, null, (animationId: string) => {
+    data.projectClient.editAsset(SupClient.query.asset, "newAnimation", name, null, null, (animationId: string) => {
       ui.animationsTreeView.clearSelection();
       ui.animationsTreeView.addToSelection(ui.animationsTreeView.treeRoot.querySelector(`li[data-id="${animationId}"]`) as HTMLLIElement);
       updateSelectedAnimation();
@@ -292,7 +292,7 @@ function onAnimationFileSelectChange(event: any) {
     if (data != null) {
       if (data.animation == null) { new SupClient.dialogs.InfoDialog("No animation found in imported files", SupClient.i18n.t("common:actions.close")); return; }
       // TODO: Check if bones are compatible
-      editAsset("setAnimation", animationId, data.animation.duration, data.animation.keyFrames);
+      data.projectClient.editAsset(SupClient.query.asset, "setAnimation", animationId, data.animation.duration, data.animation.keyFrames);
     }
   });
 }
@@ -313,7 +313,7 @@ function onRenameAnimationClick() {
     /* tslint:enable:no-unused-expression */
     if (newName == null) return;
 
-    editAsset("setAnimationProperty", animation.id, "name", newName);
+    data.projectClient.editAsset(SupClient.query.asset, "setAnimationProperty", animation.id, "name", newName);
   });
 }
 
@@ -327,7 +327,8 @@ function onDeleteAnimationClick() {
     /* tslint:enable:no-unused-expression */
     if (!confirm) return;
 
-    for (const selectedNode of ui.animationsTreeView.selectedNodes) editAsset("deleteAnimation", selectedNode.dataset["id"]);
+    for (const selectedNode of ui.animationsTreeView.selectedNodes)
+      data.projectClient.editAsset(SupClient.query.asset, "deleteAnimation", selectedNode.dataset["id"]);
   });
 }
 
@@ -336,7 +337,8 @@ function onAnimationsTreeViewDrop(event: DragEvent, dropLocation: TreeView.DropL
   for (const animation of orderedNodes) animationIds.push(animation.dataset["id"]);
 
   const index = SupClient.getListViewDropIndex(dropLocation, data.modelUpdater.modelAsset.animations);
-  for (let i = 0; i < animationIds.length; i++) editAsset("moveAnimation", animationIds[i], index + i);
+  for (let i = 0; i < animationIds.length; i++)
+    data.projectClient.editAsset(SupClient.query.asset, "moveAnimation", animationIds[i], index + i);
 
   return false;
 }
@@ -370,7 +372,7 @@ export function setupAnimation(animation: any, index: number) {
 function onEditMapSlot(event: any) {
   if (event.target.value !== "" && data.modelUpdater.modelAsset.pub.maps[event.target.value] == null) return;
   const slot = event.target.value !== "" ? event.target.value : null;
-  editAsset("setMapSlot", event.target.dataset["name"], slot);
+  data.projectClient.editAsset(SupClient.query.asset, "setMapSlot", event.target.dataset["name"], slot);
 }
 
 function onNewMapClick() {
@@ -384,7 +386,7 @@ function onNewMapClick() {
     /* tslint:enable:no-unused-expression */
     if (name == null) return;
 
-    editAsset("newMap", name);
+    data.projectClient.editAsset(SupClient.query.asset, "newMap", name);
   });
 }
 
@@ -397,7 +399,7 @@ function onMapFileSelectChange(event: any) {
   const maps: any = {};
   reader.onload = (event) => {
     maps[ui.selectedTextureName] = reader.result;
-    editAsset("setMaps", maps);
+    data.projectClient.editAsset(SupClient.query.asset, "setMaps", maps);
   };
 
   const element = <HTMLInputElement>event.target;
@@ -422,7 +424,7 @@ function onRenameMapClick() {
     /* tslint:enable:no-unused-expression */
     if (newName == null) return;
 
-    editAsset("renameMap", textureName, newName);
+    data.projectClient.editAsset(SupClient.query.asset, "renameMap", textureName, newName);
   });
 }
 
@@ -436,7 +438,8 @@ function onDeleteMapClick() {
     /* tslint:enable:no-unused-expression */
     if (!confirmed) return;
 
-    for (const selectedNode of ui.texturesTreeView.selectedNodes) editAsset("deleteMap", selectedNode.dataset["name"]);
+    for (const selectedNode of ui.texturesTreeView.selectedNodes)
+      data.projectClient.editAsset(SupClient.query.asset, "deleteMap", selectedNode.dataset["name"]);
   });
 }
 

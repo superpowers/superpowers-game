@@ -1,5 +1,5 @@
 import ui, { setupSelectedNode } from "./ui";
-import { data, editAsset } from "./network";
+import { data } from "./network";
 import { Node, getShapeTextureFaceSize } from "../../data/CubicModelNodes";
 import { TextureEdit } from "../../data/CubicModelAsset";
 
@@ -320,7 +320,7 @@ export function handleTextureArea() {
 
         let nodeIds = [] as string[];
         for (let selectedNode of ui.nodesTreeView.selectedNodes) nodeIds.push(selectedNode.dataset["id"]);
-        editAsset("moveNodeTextureOffset", nodeIds, { x, y });
+        data.projectClient.editAsset(SupClient.query.asset, "moveNodeTextureOffset", nodeIds, { x, y });
       }
 
     } else if (inputs.mouseButtons[0].wasJustPressed) {
@@ -394,7 +394,7 @@ export function handleTextureArea() {
             edits.push({ x, y, value: { r: imageData[index], g: imageData[index + 1], b: imageData[index + 2], a: imageData[index + 3] } });
           }
         }
-        editAsset("editTexture", "map", edits);
+        data.projectClient.editAsset(SupClient.query.asset, "editTexture", "map", edits);
 
         clearPasteSelection();
       }
@@ -450,7 +450,7 @@ export function handleTextureArea() {
       if (textureData[index + 0] !== brush.r || textureData[index + 1] !== brush.g || textureData[index + 2] !== brush.b || textureData[index + 3] !== brush.a) {
         let edits: TextureEdit[] = [];
         edits.push({ x: mousePosition.x, y: mousePosition.y, value: brush });
-        editAsset("editTexture", mapName, edits);
+        data.projectClient.editAsset(SupClient.query.asset, "editTexture", mapName, edits);
       }
     }
   }

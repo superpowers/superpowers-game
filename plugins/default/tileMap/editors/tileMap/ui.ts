@@ -1,4 +1,4 @@
-import { editAsset, data } from "./network";
+import { data } from "./network";
 import mapArea, { setupPattern, setupFillPattern, flipTilesVertically, flipTilesHorizontally, rotateTiles, selectEntireLayer } from "./mapArea";
 import tileSetArea from "./tileSetArea";
 
@@ -57,7 +57,7 @@ ui.settings = {};
 
   settingObj.addEventListener("change", (event) => {
     let value = (setting === "layerDepthOffset") ? parseFloat(settingObj.value) : parseInt(settingObj.value, 10);
-    editAsset("setProperty", setting, value);
+    data.projectClient.editAsset(SupClient.query.asset, "setProperty", setting, value);
   });
 });
 
@@ -119,10 +119,10 @@ SupClient.setupHelpCallback(() => {
 
 function onTileSetChange(event: Event) {
   let value = (event.target as HTMLInputElement).value;
-  if (value === "") { editAsset("changeTileSet", null); return; }
+  if (value === "") { data.projectClient.editAsset(SupClient.query.asset, "changeTileSet", null); return; }
 
   let entry = SupClient.findEntryByPath(data.projectClient.entries.pub, value);
-  if (entry != null && entry.type === "tileSet") editAsset("changeTileSet", entry.id);
+  if (entry != null && entry.type === "tileSet") data.projectClient.editAsset(SupClient.query.asset, "changeTileSet", entry.id);
 }
 
 function onResizeMapClick() {
@@ -153,7 +153,7 @@ function onResizeMapClick() {
         newHeight = parseInt(newHeightString, 10);
 
       if (newWidth === data.tileMapUpdater.tileMapAsset.pub.width && newHeight === data.tileMapUpdater.tileMapAsset.pub.height) return;
-      editAsset("resizeMap", newWidth, newHeight);
+      data.projectClient.editAsset(SupClient.query.asset, "resizeMap", newWidth, newHeight);
     });
   });
 }
@@ -180,7 +180,7 @@ function onMoveMapClick() {
         verticalOffset = parseInt(verticalOffsetString, 10);
 
       if (horizontalOffset === 0 && verticalOffset === 0) return;
-      editAsset("moveMap", horizontalOffset, verticalOffset);
+      data.projectClient.editAsset(SupClient.query.asset, "moveMap", horizontalOffset, verticalOffset);
     });
   });
 }
@@ -198,7 +198,7 @@ function onNewLayerClick() {
 
     let index = SupClient.getTreeViewInsertionPoint(ui.layersTreeView).index;
     index = data.tileMapUpdater.tileMapAsset.pub.layers.length - index + 1;
-    editAsset("newLayer", name, index, (layerId: string) => {
+    data.projectClient.editAsset(SupClient.query.asset, "newLayer", name, index, (layerId: string) => {
       ui.layersTreeView.clearSelection();
       ui.layersTreeView.addToSelection(ui.layersTreeView.treeRoot.querySelector(`li[data-id="${layerId}"]`) as HTMLLIElement);
       tileSetArea.selectedLayerId = layerId;
@@ -221,7 +221,7 @@ function onRenameLayerClick() {
   new SupClient.dialogs.PromptDialog(SupClient.i18n.t("tileMapEditor:renameLayerPrompt"), options, (newName) => {
     /* tslint:enable:no-unused-expression */
     if (newName == null) return;
-    editAsset("renameLayer", layer.id, newName);
+    data.projectClient.editAsset(SupClient.query.asset, "renameLayer", layer.id, newName);
   });
 }
 
@@ -236,7 +236,7 @@ function onDeleteLayerClick() {
     if (!confirm) return;
 
     let selectedNode = ui.layersTreeView.selectedNodes[0];
-    editAsset("deleteLayer", selectedNode.dataset["id"]);
+    data.projectClient.editAsset(SupClient.query.asset, "deleteLayer", selectedNode.dataset["id"]);
   });
 }
 
@@ -244,7 +244,7 @@ function onLayersTreeViewDrop(event: DragEvent, dropLocation: TreeView.DropLocat
   let id = orderedNodes[0].dataset["id"];
   let newIndex = SupClient.getListViewDropIndex(dropLocation, data.tileMapUpdater.tileMapAsset.layers, true);
 
-  editAsset("moveLayer", id, newIndex);
+  data.projectClient.editAsset(SupClient.query.asset, "moveLayer", id, newIndex);
   return false;
 }
 

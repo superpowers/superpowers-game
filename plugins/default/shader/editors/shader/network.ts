@@ -37,17 +37,6 @@ function onAssetReceived(assetId: string, asset: ShaderAsset) {
   setupPreview();
 }
 
-export function editAsset(...args: any[]) {
-  let callback: Function;
-  if (typeof args[args.length - 1] === "function") callback = args.pop();
-
-  args.push((err: string, id: string) => {
-    if (err != null) { new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); return; }
-    if (callback != null) callback(id);
-  });
-  socket.emit("edit:assets", SupClient.query.asset, ...args);
-}
-
 let onEditCommands: any = {};
 function onAssetEdited(id: string, command: string, ...args: any[]) {
   let commandFunction = onEditCommands[`${command}`];

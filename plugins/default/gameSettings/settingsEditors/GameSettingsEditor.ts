@@ -53,11 +53,10 @@ export default class GameSettingsEditor {
     }
 
     this.fields["startupSceneId"].addEventListener("input", (event: any) => {
-      if (event.target.value === "") this.projectClient.socket.emit("edit:resources", "gameSettings", "setProperty", "startupSceneId", null, (err: string) => { if (err != null) new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); });
+      if (event.target.value === "") this.projectClient.editResource("gameSettings", "setProperty", "startupSceneId", null);
       else {
         let entry = SupClient.findEntryByPath(this.projectClient.entries.pub, event.target.value);
-        if (entry != null && entry.type === "scene")
-          this.projectClient.socket.emit("edit:resources", "gameSettings", "setProperty", "startupSceneId", entry.id, (err: string) => { if (err != null) new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); });
+        if (entry != null && entry.type === "scene") this.projectClient.editResource("gameSettings", "setProperty", "startupSceneId", entry.id);
       }
     });
     this.startupSceneButton.addEventListener("click", (event) => {
@@ -65,15 +64,15 @@ export default class GameSettingsEditor {
     });
 
     this.fields["framesPerSecond"].addEventListener("change", (event: any) => {
-      this.projectClient.socket.emit("edit:resources", "gameSettings", "setProperty", "framesPerSecond", parseInt(event.target.value, 10), (err: string) => { if (err != null) new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); });
+      this.projectClient.editResource("gameSettings", "setProperty", "framesPerSecond", parseInt(event.target.value, 10));
     });
 
     this.fields["ratioNumerator"].addEventListener("change", (event: any) => {
-      this.projectClient.socket.emit("edit:resources", "gameSettings", "setProperty", "ratioNumerator", parseInt(event.target.value, 10), (err: string) => { if (err != null) new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); });
+      this.projectClient.editResource("gameSettings", "setProperty", "ratioNumerator", parseInt(event.target.value, 10));
     });
 
     this.fields["ratioDenominator"].addEventListener("change", (event: any) => {
-      this.projectClient.socket.emit("edit:resources", "gameSettings", "setProperty", "ratioDenominator", parseInt(event.target.value, 10), (err: string) => { if (err != null) new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); });
+      this.projectClient.editResource("gameSettings", "setProperty", "ratioDenominator", parseInt(event.target.value, 10));
     });
 
     this.projectClient.subEntries(this);
@@ -174,6 +173,6 @@ export default class GameSettingsEditor {
       }
     }
 
-    this.projectClient.socket.emit("edit:resources", "gameSettings", "setProperty", "customLayers", this.customLayers, (err: string) => { if (err != null) new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); });
+    this.projectClient.editResource("gameSettings", "setProperty", "customLayers", this.customLayers);
   };
 }

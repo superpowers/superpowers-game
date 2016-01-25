@@ -83,17 +83,6 @@ function onAssetReceived() {
   for (let slotName in pub.mapSlots) ui.mapSlotsInput[slotName].value = pub.mapSlots[slotName] != null ? pub.mapSlots[slotName] : "";
 }
 
-export function editAsset(...args: any[]) {
-  let callback: Function;
-  if (typeof args[args.length - 1] === "function") callback = args.pop();
-
-  args.push((err: string, id: string) => {
-    if (err != null) { new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); return; }
-    if (callback != null) callback(id);
-  });
-  socket.emit("edit:assets", SupClient.query.asset, ...args);
-}
-
 onEditCommands.setProperty = (path: string, value: any) => {
   setupProperty(path, value);
 };

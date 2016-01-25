@@ -22,14 +22,14 @@ callback: (err: string, nodeId: string) => any) {
     }
     options.prefab = true;
 
-    projectClient.editAsset(SupClient.query.asset, "addNode", name, options, (err: string, nodeId: string) => {
+    projectClient.editAssetNoErrorHandling(SupClient.query.asset, "addNode", name, options, (err: string, nodeId: string) => {
       if (err != null) {
         projectClient.unsubAsset(entry.id, subscriber);
         callback(err, null);
         return;
       }
 
-      projectClient.editAsset(SupClient.query.asset, "setNodeProperty", nodeId, "prefab.sceneAssetId", entry.id, (err: string) => {
+      projectClient.editAssetNoErrorHandling(SupClient.query.asset, "setNodeProperty", nodeId, "prefab.sceneAssetId", entry.id, (err: string) => {
         projectClient.unsubAsset(entry.id, subscriber);
         if (err != null) { callback(err, null); return; }
         callback(null, nodeId);

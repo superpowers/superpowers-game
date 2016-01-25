@@ -56,17 +56,6 @@ function onTileMapAssetReceived() {
   mapArea.patternActor.setLocalPosition(new SupEngine.THREE.Vector3(0, 0, pub.layerDepthOffset / 2));
 }
 
-export function editAsset(...args: any[]) {
-  let callback: Function;
-  if (typeof args[args.length - 1] === "function") callback = args.pop();
-
-  args.push((err: string, id: string) => {
-    if (err != null) { new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); return; }
-    if (callback != null) callback(id);
-  });
-  socket.emit("edit:assets", SupClient.query.asset, ...args);
-}
-
 function updateTileSetInput() {
   let tileSetName =
     (data.tileMapUpdater.tileMapAsset.pub.tileSetId != null) ?

@@ -1,4 +1,4 @@
-import { data, editAsset } from "./network";
+import { data } from "./network";
 import { setupPreview } from "./engine";
 import Uniforms, { UniformPub } from "../../data/Uniforms";
 import Attributes, { AttributePub } from "../../data/Attributes";
@@ -36,8 +36,8 @@ export function setupUniform(uniform: UniformPub) {
   let nameInputElt = document.createElement("input");
   nameInputElt.classList.add("name");
   nameInputElt.addEventListener("change", (event: any) => {
-    if (event.target.value === "") editAsset("deleteUniform", rowElt.dataset["id"]);
-    else editAsset("setUniformProperty", rowElt.dataset["id"], "name", event.target.value);
+    if (event.target.value === "") data.projectClient.editAsset(SupClient.query.asset, "deleteUniform", rowElt.dataset["id"]);
+    else data.projectClient.editAsset(SupClient.query.asset, "setUniformProperty", rowElt.dataset["id"], "name", event.target.value);
   });
   nameInputElt.value = uniform.name;
   nameElt.appendChild(nameInputElt);
@@ -52,7 +52,7 @@ export function setupUniform(uniform: UniformPub) {
   }
   selectTypeElt.classList.add("type");
   selectTypeElt.addEventListener("change", (event: any) => {
-    editAsset("setUniformProperty", rowElt.dataset["id"], "type", event.target.value);
+    data.projectClient.editAsset(SupClient.query.asset, "setUniformProperty", rowElt.dataset["id"], "type", event.target.value);
   });
   selectTypeElt.value = uniform.type;
   typeElt.appendChild(selectTypeElt);
@@ -77,7 +77,9 @@ export function setUniformValueInputs(id: string) {
       let floatInputElt = document.createElement("input");
       floatInputElt.type = "number";
       floatInputElt.classList.add("float");
-      floatInputElt.addEventListener("change", (event: any) => { editAsset("setUniformProperty", id, "value", parseFloat(event.target.value)); });
+      floatInputElt.addEventListener("change", (event: any) => {
+        data.projectClient.editAsset(SupClient.query.asset, "setUniformProperty", id, "value", parseFloat(event.target.value));
+      });
       floatInputElt.value = uniform.value;
       valueRowElt.appendChild(floatInputElt);
       break;
@@ -92,7 +94,9 @@ export function setUniformValueInputs(id: string) {
     case "t":
       let textInputElt = document.createElement("input");
       textInputElt.classList.add("text");
-      textInputElt.addEventListener("change", (event: any) => { editAsset("setUniformProperty", id, "value", event.target.value); });
+      textInputElt.addEventListener("change", (event: any) => {
+        data.projectClient.editAsset(SupClient.query.asset, "setUniformProperty", id, "value", event.target.value);
+      });
       textInputElt.value = uniform.value;
       valueRowElt.appendChild(textInputElt);
       break;
@@ -112,7 +116,7 @@ function setArrayUniformInputs(id: string, parentElt: HTMLDivElement, name: stri
         let elt = <HTMLInputElement>parentElt.querySelector(`.${name}_${j}`);
         values.push(parseFloat(elt.value));
       }
-      editAsset("setUniformProperty", id, "value", values);
+      data.projectClient.editAsset(SupClient.query.asset, "setUniformProperty", id, "value", values);
     });
     inputElt.value = uniform.value[i];
     parentElt.appendChild(inputElt);
@@ -122,14 +126,14 @@ function setArrayUniformInputs(id: string, parentElt: HTMLDivElement, name: stri
 let newUniformInput = <HTMLInputElement>document.querySelector(".uniforms .new input");
 newUniformInput.addEventListener("keyup", (event: any) => {
   if (event.keyCode === 13) {
-    editAsset("newUniform", event.target.value);
+    data.projectClient.editAsset(SupClient.query.asset, "newUniform", event.target.value);
     event.target.value = "";
   }
 });
 
 ui.useLightUniformsCheckbox = <HTMLInputElement>document.getElementById("use-light-uniforms");
 ui.useLightUniformsCheckbox.addEventListener("change", (event: any) => {
-  editAsset("setProperty", "useLightUniforms", event.target.checked);
+  data.projectClient.editAsset(SupClient.query.asset, "setProperty", "useLightUniforms", event.target.checked);
 });
 
 ui.attributesList = <HTMLTableElement>document.querySelector(".attributes tbody");
@@ -142,8 +146,8 @@ export function setupAttribute(attribute: AttributePub) {
   let nameInputElt = document.createElement("input");
   nameInputElt.classList.add("name");
   nameInputElt.addEventListener("change", (event: any) => {
-    if (event.target.value === "") editAsset("deleteAttribute", rowElt.dataset["id"]);
-    else editAsset("setAttributeProperty", rowElt.dataset["id"], "name", event.target.value);
+    if (event.target.value === "") data.projectClient.editAsset(SupClient.query.asset, "deleteAttribute", rowElt.dataset["id"]);
+    else data.projectClient.editAsset(SupClient.query.asset, "setAttributeProperty", rowElt.dataset["id"], "name", event.target.value);
   });
   nameInputElt.value = attribute.name;
   nameElt.appendChild(nameInputElt);
@@ -157,7 +161,7 @@ export function setupAttribute(attribute: AttributePub) {
     selectTypeElt.appendChild(optionElt);
   }
   selectTypeElt.classList.add("type");
-  selectTypeElt.addEventListener("change", (event: any) => { editAsset("setAttributeProperty", rowElt.dataset["id"], "type", event.target.value); });
+  selectTypeElt.addEventListener("change", (event: any) => { data.projectClient.editAsset(SupClient.query.asset, "setAttributeProperty", rowElt.dataset["id"], "type", event.target.value); });
   selectTypeElt.value = attribute.type;
   typeElt.appendChild(selectTypeElt);
   rowElt.appendChild(typeElt);
@@ -170,7 +174,7 @@ export function setupAttribute(attribute: AttributePub) {
 let newAttributeInput = <HTMLInputElement>document.querySelector(".attributes .new input");
 newAttributeInput.addEventListener("keyup", (event: any) => {
   if (event.keyCode === 13) {
-    editAsset("newAttribute", event.target.value);
+    data.projectClient.editAsset(SupClient.query.asset, "newAttribute", event.target.value);
     event.target.value = "";
   }
 });
@@ -183,12 +187,11 @@ shaderPaneResizeHandle.on("drag", () => {
 });
 
 function onSaveVertex() {
-  // if (!ui.vertexHeader.classList.contains("has-errors")) editAsset("saveVertexShader");
-  editAsset("saveVertexShader");
+  if (!ui.vertexHeader.classList.contains("has-errors")) data.projectClient.editAsset(SupClient.query.asset, "saveVertexShader");
 }
 
 function onSaveFragment() {
-  if (!ui.fragmentHeader.classList.contains("has-errors")) editAsset("saveFragmentShader");
+  if (!ui.fragmentHeader.classList.contains("has-errors")) data.projectClient.editAsset(SupClient.query.asset, "saveFragmentShader");
 }
 
 let fragmentShadersPane = shadersPane.querySelector(".fragment");
@@ -214,7 +217,7 @@ export function setupEditors(clientId: number) {
       "Cmd-S": () => { onSaveVertex(); },
     },
     sendOperationCallback: (operation: OperationData) => {
-      editAsset("editVertexShader", operation, data.shaderAsset.vertexDocument.getRevisionId());
+      data.projectClient.editAsset(SupClient.query.asset, "editVertexShader", operation, data.shaderAsset.vertexDocument.getRevisionId());
     }
   });
 
@@ -226,7 +229,7 @@ export function setupEditors(clientId: number) {
       "Cmd-S": () => { onSaveFragment(); },
     },
     sendOperationCallback: (operation: OperationData) => {
-      editAsset("editFragmentShader", operation, data.shaderAsset.fragmentDocument.getRevisionId());
+      data.projectClient.editAsset(SupClient.query.asset, "editFragmentShader", operation, data.shaderAsset.fragmentDocument.getRevisionId());
     }
   });
 }

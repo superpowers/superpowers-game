@@ -33,19 +33,19 @@ export default class SpriteSettingsEditor {
     this.fields["alphaTest"] = SupClient.table.appendNumberField(this.alphaTestRow.valueCell, "");
 
     this.fields["filtering"].addEventListener("change", (event: any) => {
-      this.projectClient.socket.emit("edit:resources", "spriteSettings", "setProperty", "filtering", event.target.value, (err: string) => { if (err != null) new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); });
+      this.projectClient.editResource("spriteSettings", "setProperty", "filtering", event.target.value);
     });
 
     this.fields["framesPerSecond"].addEventListener("change", (event: any) => {
-      this.projectClient.socket.emit("edit:resources", "spriteSettings", "setProperty", "framesPerSecond", parseInt(event.target.value, 10), (err: string) => { if (err != null) new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); });
+      this.projectClient.editResource("spriteSettings", "setProperty", "framesPerSecond", parseInt(event.target.value, 10));
     });
 
     this.fields["pixelsPerUnit"].addEventListener("change", (event: any) => {
-      this.projectClient.socket.emit("edit:resources", "spriteSettings", "setProperty", "pixelsPerUnit", parseInt(event.target.value, 10), (err: string) => { if (err != null) new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); });
+      this.projectClient.editResource("spriteSettings", "setProperty", "pixelsPerUnit", parseInt(event.target.value, 10));
     });
 
     this.fields["alphaTest"].addEventListener("change", (event: any) => {
-      this.projectClient.socket.emit("edit:resources", "spriteSettings", "setProperty", "alphaTest", parseFloat(event.target.value), (err: string) => { if (err != null) new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); });
+      this.projectClient.editResource("spriteSettings", "setProperty", "alphaTest", parseFloat(event.target.value));
     });
 
     this.projectClient.subResource("spriteSettings", this);

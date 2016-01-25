@@ -1,4 +1,4 @@
-import { data, editAsset } from "./network";
+import { data } from "./network";
 import engine, { setupHelpers } from "./engine";
 import { setSelectedNode as setTextureAreaSelectedNode } from "./textureArea";
 
@@ -111,7 +111,7 @@ function onGridVisibleChange(event: UIEvent) {
 ui.pixelsPerUnitInput = <HTMLInputElement>document.querySelector("input.property-pixelsPerUnit");
 ui.pixelsPerUnitInput.addEventListener("change", onChangePixelsPerUnit);
 
-function onChangePixelsPerUnit(event: any) { editAsset("setProperty", "pixelsPerUnit", parseFloat(event.target.value)); }
+function onChangePixelsPerUnit(event: any) { data.projectClient.editAsset(SupClient.query.asset, "setProperty", "pixelsPerUnit", parseFloat(event.target.value)); }
 
 // Texture download
 document.querySelector("button.download").addEventListener("click", (event) => {
@@ -157,8 +157,8 @@ for (let size of CubicModelAsset.validTextureSizes) {
   addOption(ui.textureWidthSelect, size);
   addOption(ui.textureHeightSelect, size);
 }
-ui.textureWidthSelect.addEventListener("input", (event: any) => { editAsset("changeTextureWidth", parseInt(event.target.value, 10)); });
-ui.textureHeightSelect.addEventListener("input", (event: any) => { editAsset("changeTextureHeight", parseInt(event.target.value, 10)); });
+ui.textureWidthSelect.addEventListener("input", (event: any) => { data.projectClient.editAsset(SupClient.query.asset, "changeTextureWidth", parseInt(event.target.value, 10)); });
+ui.textureHeightSelect.addEventListener("input", (event: any) => { data.projectClient.editAsset(SupClient.query.asset, "changeTextureHeight", parseInt(event.target.value, 10)); });
 
 // Setup tree view
 ui.treeViewElt = document.querySelector(".nodes-tree-view") as HTMLDivElement;
@@ -182,7 +182,7 @@ export function createNodeElement(node: Node) {
     event.stopPropagation();
     let { shape } = data.cubicModelUpdater.cubicModelRenderer.byNodeId[event.target.parentElement.dataset["id"]];
     shape.visible = !shape.visible;
-    visibleButton.textContent = SupClient.i18n.t(`cubicModelEditor:sidebar.nodes.${(shape.visible) ? "hide" : "show"}`)
+    visibleButton.textContent = SupClient.i18n.t(`cubicModelEditor:sidebar.nodes.${(shape.visible) ? "hide" : "show"}`);
     if (shape.visible) visibleButton.classList.add("show");
     else visibleButton.classList.remove("show");
   });
@@ -203,7 +203,7 @@ function onNodesTreeViewDrop(event: DragEvent, dropLocation: TreeView.DropLocati
 
   let i = 0;
   for (let id of nodeIds) {
-    editAsset("moveNode", id, dropPoint.parentId, dropPoint.index + i);
+    data.projectClient.editAsset(SupClient.query.asset, "moveNode", id, dropPoint.parentId, dropPoint.index + i);
     if (!sameParent || sourceChildren.indexOf(data.cubicModelUpdater.cubicModelAsset.nodes.byId[id]) >= dropPoint.index) i++;
   }
   return false;
@@ -454,7 +454,7 @@ function onNewNodeClick() {
       }
     };
 
-    editAsset("addNode", name, options, (nodeId: string) => {
+    data.projectClient.editAsset(SupClient.query.asset, "addNode", name, options, (nodeId: string) => {
       ui.nodesTreeView.clearSelection();
       ui.nodesTreeView.addToSelection(ui.nodesTreeView.treeRoot.querySelector(`li[data-id='${nodeId}']`) as HTMLLIElement);
       setupSelectedNode();
@@ -479,7 +479,7 @@ function onRenameNodeClick() {
     /* tslint:enable:no-unused-expression */
     if (newName == null) return;
 
-    editAsset("setNodeProperty", node.id, "name", newName);
+    data.projectClient.editAsset(SupClient.query.asset, "setNodeProperty", node.id, "name", newName);
   });
 }
 
@@ -500,9 +500,7 @@ function onDuplicateNodeClick() {
     if (newName == null) return;
     let options = SupClient.getTreeViewInsertionPoint(ui.nodesTreeView);
 
-    editAsset("duplicateNode", newName, node.id, options.index, (err: string, nodeId: string) => {
-      if (err != null) { new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); return; }
-
+    data.projectClient.editAsset(SupClient.query.asset, "duplicateNode", newName, node.id, options.index, (err: string, nodeId: string) => {
       ui.nodesTreeView.clearSelection();
       ui.nodesTreeView.addToSelection(ui.nodesTreeView.treeRoot.querySelector(`li[data-id='${nodeId}']`) as HTMLLIElement);
       setupSelectedNode();
@@ -521,7 +519,7 @@ function onDeleteNodeClick() {
     if (!confirm) return;
 
     for (let selectedNode of ui.nodesTreeView.selectedNodes) {
-      editAsset("removeNode", selectedNode.dataset["id"]);
+      data.projectClient.editAsset(SupClient.query.asset, "removeNode", selectedNode.dataset["id"]);
     }
   });
 }
@@ -569,9 +567,8 @@ function onInspectorInputChange(event: any) {
     }
   }
 
-  if (propertyType !== "position" || ui.translateMode !== "pivot") {
-    editAsset("setNodeProperty", nodeId, `${path}${propertyType}`, value);
-  } else {
-    editAsset("moveNodePivot", nodeId, value);
-  }
+  if (propertyType !== "position" || ui.translateMode !== "pivot")
+    data.projectClient.editAsset(SupClient.query.asset, "setNodeProperty", nodeId, `${path}${propertyType}`, value);
+  else
+    data.projectClient.editAsset(SupClient.query.asset, "moveNodePivot", nodeId, value);
 }

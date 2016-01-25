@@ -1,4 +1,4 @@
-import { data, editAsset } from "./network";
+import { data } from "./network";
 import animationArea from "./animationArea";
 import spritesheetArea, { updateSelection } from "./spritesheetArea";
 
@@ -68,7 +68,7 @@ ui.allSettings.forEach((setting: string) => {
     case "filtering":
     case "wrapping":
     case "frameOrder":
-      settingObj.addEventListener("change", (event: any) => { editAsset("setProperty", setting, event.target.value); });
+      settingObj.addEventListener("change", (event: any) => { data.projectClient.editAsset(SupClient.query.asset, "setProperty", setting, event.target.value); });
       break;
 
     case "opacity":
@@ -76,22 +76,22 @@ ui.allSettings.forEach((setting: string) => {
       settingObj.addEventListener("input", (event: any) => {
         let value = parseFloat(event.target.value);
         if (isNaN(value)) return;
-        editAsset("setProperty", setting, value);
+        data.projectClient.editAsset(SupClient.query.asset, "setProperty", setting, value);
       });
       break;
 
     default:
       if (setting.indexOf("origin") !== -1)
-        settingObj.addEventListener("change", (event: any) => { editAsset("setProperty", setting, event.target.value / 100); });
+        settingObj.addEventListener("change", (event: any) => { data.projectClient.editAsset(SupClient.query.asset, "setProperty", setting, event.target.value / 100); });
       else
-        settingObj.addEventListener("change", (event: any) => { editAsset("setProperty", setting, parseInt(event.target.value, 10)); });
+        settingObj.addEventListener("change", (event: any) => { data.projectClient.editAsset(SupClient.query.asset, "setProperty", setting, parseInt(event.target.value, 10)); });
       break;
   }
 });
 ui.opacitySelect = <HTMLSelectElement>document.querySelector(".opacity-select");
-ui.opacitySelect.addEventListener("change", (event: any) => { editAsset("setProperty", "opacity", event.target.value === "transparent" ? 1 : null); });
+ui.opacitySelect.addEventListener("change", (event: any) => { data.projectClient.editAsset(SupClient.query.asset, "setProperty", "opacity", event.target.value === "transparent" ? 1 : null); });
 ui.opacitySlider = <HTMLInputElement>document.querySelector(".opacity-slider");
-ui.opacitySlider.addEventListener("input", (event: any) => { editAsset("setProperty", "opacity", parseFloat(event.target.value)); });
+ui.opacitySlider.addEventListener("input", (event: any) => { data.projectClient.editAsset(SupClient.query.asset, "setProperty", "opacity", parseFloat(event.target.value)); });
 document.querySelector("button.set-grid-size").addEventListener("click", onSetGridSize);
 
 ui.imageSize = <HTMLInputElement>document.querySelector("td.image-size input");
@@ -147,7 +147,7 @@ function onFileSelectChange(event: any) {
   if (event.target.files.length === 0) return;
 
   let reader = new FileReader();
-  reader.onload = (event: any) => { editAsset("setMaps", { map: event.target.result }); };
+  reader.onload = (event: any) => { data.projectClient.editAsset(SupClient.query.asset, "setMaps", { map: event.target.result }); };
 
   reader.readAsArrayBuffer(event.target.files[0]);
   event.target.parentElement.reset();
@@ -183,11 +183,6 @@ function downloadTexture(textureName: string) {
   }
 }
 
-function onCheckOpacity(event: any) {
-  let opacity = (event.target.checked) ? 1 : null;
-  editAsset("setProperty", "opacity", opacity);
-}
-
 function onSetGridSize(event: any) {
   let texture = data.spriteUpdater.spriteAsset.pub.textures["map"];
   if (texture == null) return;
@@ -206,7 +201,7 @@ function onSetGridSize(event: any) {
       let framesPerRowNum = parseInt(framesPerRow, 10);
       if (isNaN(framesPerRowNum)) return;
 
-      editAsset("setProperty", "grid.width", Math.floor(texture.size.width / framesPerRowNum));
+      data.projectClient.editAsset(SupClient.query.asset, "setProperty", "grid.width", Math.floor(texture.size.width / framesPerRowNum));
     }
 
     options.validationLabel = SupClient.i18n.t("spriteEditor:sidebar.settings.sprite.grid.setHeight");
@@ -218,7 +213,7 @@ function onSetGridSize(event: any) {
         let framesPerColumnNum = parseInt(framesPerColumn, 10);
         if (isNaN(framesPerColumnNum)) return;
 
-        editAsset("setProperty", "grid.height", Math.floor(texture.size.height / framesPerColumnNum));
+        data.projectClient.editAsset(SupClient.query.asset, "setProperty", "grid.height", Math.floor(texture.size.height / framesPerColumnNum));
       }
     });
   });
@@ -235,7 +230,7 @@ function onNewAnimationClick() {
     /* tslint:enable:no-unused-expression */
     if (name == null) return;
 
-    editAsset("newAnimation", name, (animationId: string) => {
+    data.projectClient.editAsset(SupClient.query.asset, "newAnimation", name, (animationId: string) => {
       ui.animationsTreeView.clearSelection();
       ui.animationsTreeView.addToSelection(ui.animationsTreeView.treeRoot.querySelector(`li[data-id='${animationId}']`) as HTMLLIElement);
       updateSelectedAnimation();
@@ -259,7 +254,7 @@ function onRenameAnimationClick() {
     /* tslint:enable:no-unused-expression */
     if (newName == null) return;
 
-    editAsset("setAnimationProperty", animation.id, "name", newName);
+    data.projectClient.editAsset(SupClient.query.asset, "setAnimationProperty", animation.id, "name", newName);
   });
 }
 
@@ -270,7 +265,7 @@ function onDeleteAnimationClick() {
     /* tslint:enable:no-unused-expression */
     if (!confirm) return;
 
-    ui.animationsTreeView.selectedNodes.forEach((selectedNode: any) => { editAsset("deleteAnimation", selectedNode.dataset["id"]); });
+    ui.animationsTreeView.selectedNodes.forEach((selectedNode: any) => { data.projectClient.editAsset(SupClient.query.asset, "deleteAnimation", selectedNode.dataset["id"]); });
   });
 }
 
@@ -280,7 +275,7 @@ function onAnimationsTreeViewDrop(event: DragEvent, dropLocation: TreeView.DropL
 
   let index = SupClient.getListViewDropIndex(dropLocation, data.spriteUpdater.spriteAsset.animations);
 
-  animationIds.forEach((id, i) => { editAsset("moveAnimation", id, index + i); });
+  animationIds.forEach((id, i) => { data.projectClient.editAsset(SupClient.query.asset, "moveAnimation", id, index + i); });
   return false;
 }
 
@@ -421,10 +416,10 @@ export function setupAnimation(animation: any, index: number) {
 
   startFrameIndexInput.addEventListener("change", (event: any) => {
     let startFrameIndex = parseInt(event.target.value, 10);
-    editAsset("setAnimationProperty", animation.id, "startFrameIndex", startFrameIndex);
+    data.projectClient.editAsset(SupClient.query.asset, "setAnimationProperty", animation.id, "startFrameIndex", startFrameIndex);
 
     if (startFrameIndex > data.spriteUpdater.spriteAsset.animations.byId[ui.selectedAnimationId].endFrameIndex)
-      editAsset("setAnimationProperty", animation.id, "endFrameIndex", startFrameIndex);
+      data.projectClient.editAsset(SupClient.query.asset, "setAnimationProperty", animation.id, "endFrameIndex", startFrameIndex);
   });
 
   let endFrameIndexInput = document.createElement("input");
@@ -436,10 +431,10 @@ export function setupAnimation(animation: any, index: number) {
 
   endFrameIndexInput.addEventListener("change", (event: any) => {
     let endFrameIndex = parseInt(event.target.value, 10);
-    editAsset("setAnimationProperty", animation.id, "endFrameIndex", endFrameIndex);
+    data.projectClient.editAsset(SupClient.query.asset, "setAnimationProperty", animation.id, "endFrameIndex", endFrameIndex);
 
     if (endFrameIndex < data.spriteUpdater.spriteAsset.animations.byId[ui.selectedAnimationId].startFrameIndex)
-      editAsset("setAnimationProperty", animation.id, "startFrameIndex", endFrameIndex);
+      data.projectClient.editAsset(SupClient.query.asset, "setAnimationProperty", animation.id, "startFrameIndex", endFrameIndex);
   });
 
   let speedInput = document.createElement("input");
@@ -449,7 +444,7 @@ export function setupAnimation(animation: any, index: number) {
   liElt.appendChild(speedInput);
 
   speedInput.addEventListener("change", (event: any) => {
-    editAsset("setAnimationProperty", animation.id, "speed", parseFloat(event.target.value));
+    data.projectClient.editAsset(SupClient.query.asset, "setAnimationProperty", animation.id, "speed", parseFloat(event.target.value));
   });
 
   ui.animationsTreeView.insertAt(liElt, "item", index, null);
@@ -458,7 +453,7 @@ export function setupAnimation(animation: any, index: number) {
 function onEditMapSlot(event: any) {
   if (event.target.value !== "" && data.spriteUpdater.spriteAsset.pub.maps[event.target.value] == null) return;
   let slot = event.target.value !== "" ? event.target.value : null;
-  editAsset("setMapSlot", event.target.dataset["name"], slot);
+  data.projectClient.editAsset(SupClient.query.asset, "setMapSlot", event.target.dataset["name"], slot);
 }
 
 function onNewMapClick() {
@@ -472,7 +467,7 @@ function onNewMapClick() {
     /* tslint:enable:no-unused-expression */
     if (name == null) return;
 
-    editAsset("newMap", name);
+    data.projectClient.editAsset(SupClient.query.asset, "newMap", name);
   });
 }
 
@@ -481,7 +476,7 @@ function onMapFileSelectChange(event: any) {
   let maps: any = {};
   reader.onload = (event) => {
     maps[ui.selectedTextureName] = reader.result;
-    editAsset("setMaps", maps);
+    data.projectClient.editAsset(SupClient.query.asset, "setMaps", maps);
   };
 
   let element = <HTMLInputElement>event.target;
@@ -506,7 +501,7 @@ function onRenameMapClick() {
     /* tslint:enable:no-unused-expression */
     if (newName == null) return;
 
-    editAsset("renameMap", textureName, newName);
+    data.projectClient.editAsset(SupClient.query.asset, "renameMap", textureName, newName);
   });
 }
 
@@ -518,7 +513,7 @@ function onDeleteMapClick() {
     /* tslint:enable:no-unused-expression */
     if (!confirm) return;
 
-    for (let selectedNode of ui.texturesTreeView.selectedNodes) editAsset("deleteMap", selectedNode.dataset["name"]);
+    for (let selectedNode of ui.texturesTreeView.selectedNodes) data.projectClient.editAsset(SupClient.query.asset, "deleteMap", selectedNode.dataset["name"]);
   });
 }
 

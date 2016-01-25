@@ -16,21 +16,21 @@ callback: (err: string, nodeId: string) => any) {
       if (parentNode != null) name = parentNode.name;
     }
 
-    projectClient.editAsset(SupClient.query.asset, "addNode", name, options, (err: string, nodeId: string) => {
+    projectClient.editAssetNoErrorHandling(SupClient.query.asset, "addNode", name, options, (err: string, nodeId: string) => {
       if (err != null) {
         projectClient.unsubAsset(entry.id, subscriber);
         callback(err, null);
         return;
       }
 
-      projectClient.editAsset(SupClient.query.asset, "addComponent", nodeId, "ModelRenderer", null, (err: string, componentId: Component) => {
+      projectClient.editAssetNoErrorHandling(SupClient.query.asset, "addComponent", nodeId, "ModelRenderer", null, (err: string, componentId: Component) => {
         if (err != null) {
           projectClient.unsubAsset(entry.id, subscriber);
           callback(err, null);
           return;
         }
 
-        projectClient.editAsset(SupClient.query.asset, "editComponent", nodeId, componentId, "setProperty", "modelAssetId", entry.id, (err: string) => {
+        projectClient.editAssetNoErrorHandling(SupClient.query.asset, "editComponent", nodeId, componentId, "setProperty", "modelAssetId", entry.id, (err: string) => {
           projectClient.unsubAsset(entry.id, subscriber);
           if (err != null) { callback(err, null); return; }
           callback(null, nodeId);

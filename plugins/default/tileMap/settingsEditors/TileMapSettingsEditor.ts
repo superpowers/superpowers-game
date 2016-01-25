@@ -39,9 +39,7 @@ export default class TileMapSettingsEditor {
     fieldNames.forEach((fieldName) => {
       let field = this.fields[fieldName];
       field.addEventListener("change", (event: any) => {
-        this.projectClient.socket.emit("edit:resources", "tileMapSettings", "setProperty", fieldName, parseInt(event.target.value, 10), (err: string) => {
-          if (err != null) new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close"));
-        });
+        this.projectClient.editResource("tileMapSettings", "setProperty", fieldName, parseInt(event.target.value, 10));
       });
     });
     this.projectClient.subResource("tileMapSettings", this);

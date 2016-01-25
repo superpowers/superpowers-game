@@ -223,5 +223,5 @@ function onTransformChange() {
     } break;
   }
 
-  socket.emit("edit:assets", SupClient.query.asset, "setNodeProperty", nodeId, transformType, value, (err: string) => { if (err != null) new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); });
+  data.projectClient.editAsset(SupClient.query.asset, "setNodeProperty", nodeId, transformType, value);
 }

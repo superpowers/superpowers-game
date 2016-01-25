@@ -114,7 +114,7 @@ export function setupEditor(clientId: number, script: string) {
       }
     },
     editCallback: onEditText,
-    sendOperationCallback: onSendOperation
+    sendOperationCallback: (operation: OperationData) => { data.projectClient.editAsset(SupClient.query.asset, "editText", operation, data.asset.document.getRevisionId()); }
   });
   ui.previousLine = -1;
 
@@ -168,11 +168,7 @@ function onEditText(text: string, origin: string) {
   }
 }
 
-function onSendOperation(operation: OperationData) {
-  socket.emit("edit:assets", SupClient.query.asset, "editText", operation, data.asset.document.getRevisionId(), (err: string) => {
-    if (err != null) { new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); SupClient.onDisconnected(); }
-  });
-}
+
 
 // Error pane
 ui.errorPane = <HTMLDivElement>document.querySelector(".error-pane");
@@ -318,7 +314,7 @@ function applyDraftChanges(options: { ignoreErrors: boolean }) {
   ui.saveButton.textContent = SupClient.i18n.t("common:states.saving");
   if (options.ignoreErrors) ui.saveWithErrorsButton.textContent = SupClient.i18n.t("common:states.saving");
 
-  socket.emit("edit:assets", SupClient.query.asset, "applyDraftChanges", options, (err: string) => {
+  data.projectClient.editAssetNoErrorHandling(SupClient.query.asset, "applyDraftChanges", options, (err: string) => {
     if (err != null && err !== "foundSelfErrors") {
       new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close"));
       SupClient.onDisconnected();

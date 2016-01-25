@@ -1,6 +1,6 @@
 import ui, { selectBrushTool, selectEraserTool } from "./ui";
 import tileSetArea from "./tileSetArea";
-import { editAsset, data } from "./network";
+import { data } from "./network";
 
 import * as _ from "lodash";
 
@@ -262,7 +262,7 @@ function editMap(edits: Edits[]) {
   }
 
   if (actualEdits.length === 0) return;
-  editAsset("editMap", layer.id, actualEdits);
+  data.projectClient.editAsset(SupClient.query.asset, "editMap", layer.id, actualEdits);
 }
 
 function getMapGridPosition(gameInstance: SupEngine.GameInstance, cameraComponent: any) {

@@ -16,14 +16,14 @@ export default class SceneSettingsEditor {
     this.fields["defaultCameraMode"] = SupClient.table.appendSelectBox(defaultCameraModeRow.valueCell, { "3D": "3D", "2D": "2D" });
 
     this.fields["defaultCameraMode"].addEventListener("change", (event: any) => {
-      this.projectClient.socket.emit("edit:resources", "sceneSettings", "setProperty", "defaultCameraMode", event.target.value, (err: string) => { if (err != null) new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); });
+      this.projectClient.editResource("sceneSettings", "setProperty", "defaultCameraMode", event.target.value);
     });
 
     let defaultVerticalAxisRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("settingsEditors:Scene.defaultCameraVerticalAxis"));
     this.fields["defaultVerticalAxis"] = SupClient.table.appendSelectBox(defaultVerticalAxisRow.valueCell, { "Y": "Y", "Z": "Z" });
 
     this.fields["defaultVerticalAxis"].addEventListener("change", (event: any) => {
-      this.projectClient.socket.emit("edit:resources", "sceneSettings", "setProperty", "defaultVerticalAxis", event.target.value, (err: string) => { if (err != null) new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); });
+      this.projectClient.editResource("sceneSettings", "setProperty", "defaultVerticalAxis", event.target.value);
     });
 
     this.projectClient.subResource("sceneSettings", this);
