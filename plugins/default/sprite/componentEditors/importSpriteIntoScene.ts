@@ -1,7 +1,8 @@
 import SpriteAsset from "../data/SpriteAsset";
 import { Component } from "../../scene/data/SceneComponents";
 
-export default function importSpriteIntoScene(entry: SupCore.Data.EntryNode, projectClient: SupClient.ProjectClient, callback: (err?: string) => any) {
+export default function importSpriteIntoScene(entry: SupCore.Data.EntryNode, projectClient: SupClient.ProjectClient, options: SupClient.ImportIntoScenePluginOptions,
+callback: (err: string, nodeId: string) => any) {
   const subscriber: SupClient.AssetSubscriber = {
     onAssetReceived,
     onAssetEdited: null,
@@ -9,29 +10,30 @@ export default function importSpriteIntoScene(entry: SupCore.Data.EntryNode, pro
   };
 
   function onAssetReceived(assetId: string, asset: SpriteAsset) {
-    const options = {
-      // TODO: Place it where the mouse dropped it
-      transform: { position: { x: 0, y: 0, z: 0 } },
-    };
+    let name = entry.name;
+    if (name === "Sprite") {
+      let parentNode = projectClient.entries.parentNodesById[entry.id];
+      if (parentNode != null) name = parentNode.name;
+    }
 
-    projectClient.editAsset(SupClient.query.asset, "addNode", entry.name, options, (err: string, nodeId: string) => {
+    projectClient.editAsset(SupClient.query.asset, "addNode", name, options, (err: string, nodeId: string) => {
       if (err != null) {
         projectClient.unsubAsset(entry.id, subscriber);
-        callback(err);
+        callback(err, null);
         return;
       }
 
       projectClient.editAsset(SupClient.query.asset, "addComponent", nodeId, "SpriteRenderer", null, (err: string, componentId: Component) => {
         if (err != null) {
           projectClient.unsubAsset(entry.id, subscriber);
-          callback(err);
+          callback(err, null);
           return;
         }
 
         projectClient.editAsset(SupClient.query.asset, "editComponent", nodeId, componentId, "setProperty", "spriteAssetId", entry.id, (err: string) => {
           projectClient.unsubAsset(entry.id, subscriber);
-          if (err != null) { callback(err); return; }
-          callback();
+          if (err != null) { callback(err, null); return; }
+          callback(null, nodeId);
         });
       });
     });

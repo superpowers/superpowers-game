@@ -1,6 +1,7 @@
 import SceneAsset from "../data/SceneAsset";
 
-export default function importPrefabIntoScene(entry: SupCore.Data.EntryNode, projectClient: SupClient.ProjectClient, callback: (err?: string) => any) {
+export default function importPrefabIntoScene(entry: SupCore.Data.EntryNode, projectClient: SupClient.ProjectClient, options: SupClient.ImportIntoScenePluginOptions,
+callback: (err: string, nodeId: string) => any) {
   const subscriber: SupClient.AssetSubscriber = {
     onAssetReceived,
     onAssetEdited: null,
@@ -10,27 +11,28 @@ export default function importPrefabIntoScene(entry: SupCore.Data.EntryNode, pro
   function onAssetReceived(assetId: string, asset: SceneAsset) {
     if (asset.nodes.pub.length !== 1) {
       projectClient.unsubAsset(entry.id, subscriber);
-      callback(SupClient.i18n.t("sceneEditor:errors.prefab.mustHaveSingleRootActor"));
+      callback(SupClient.i18n.t("sceneEditor:errors.prefab.mustHaveSingleRootActor"), null);
       return;
     }
 
-    const options = {
-      // TODO: Place it where the mouse dropped it
-      transform: { position: { x: 0, y: 0, z: 0 } },
-      prefab: true
-    };
+    let name = entry.name;
+    if (name === "Prefab") {
+      let parentNode = projectClient.entries.parentNodesById[entry.id];
+      if (parentNode != null) name = parentNode.name;
+    }
+    options.prefab = true;
 
-    projectClient.editAsset(SupClient.query.asset, "addNode", entry.name, options, (err: string, nodeId: string) => {
+    projectClient.editAsset(SupClient.query.asset, "addNode", name, options, (err: string, nodeId: string) => {
       if (err != null) {
         projectClient.unsubAsset(entry.id, subscriber);
-        callback(err);
+        callback(err, null);
         return;
       }
 
       projectClient.editAsset(SupClient.query.asset, "setNodeProperty", nodeId, "prefab.sceneAssetId", entry.id, (err: string) => {
         projectClient.unsubAsset(entry.id, subscriber);
-        if (err != null) { callback(err); return; }
-        callback();
+        if (err != null) { callback(err, null); return; }
+        callback(null, nodeId);
       });
     });
   }

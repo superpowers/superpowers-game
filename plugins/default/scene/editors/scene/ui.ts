@@ -851,10 +851,31 @@ function onCanvasDrop(event: DragEvent) {
   }
 
   event.preventDefault();
-  plugin.content(entry, data.projectClient, (err?: string) => {
+
+  const raycaster = new THREE.Raycaster();
+  const mousePosition = { x: (event.clientX / ui.canvasElt.clientWidth) * 2 - 1, y: -(event.clientY / ui.canvasElt.clientHeight) * 2 + 1 };
+  raycaster.setFromCamera(mousePosition, engine.cameraComponent.threeCamera);
+
+  const plane = new THREE.Plane();
+  const offset = new THREE.Vector3(0, 0, -10).applyQuaternion(engine.cameraActor.getGlobalOrientation(new THREE.Quaternion()));
+  const planePosition = engine.cameraActor.getGlobalPosition(new THREE.Vector3()).add(offset);
+  plane.setFromNormalAndCoplanarPoint(offset.normalize(), planePosition);
+
+  const position = raycaster.ray.intersectPlane(plane);
+
+  const options = { transform: { position }, prefab: false };
+  plugin.content(entry, data.projectClient, options, (err: string, nodeId: string) => {
     if (err != null) {
       new SupClient.dialogs.InfoDialog(SupClient.i18n.t("sceneEditor:failures.importIntoScene", { reason: err }), SupClient.i18n.t("common:actions.close"));
       return;
     }
+
+    ui.nodesTreeView.clearSelection();
+    const entryElt = ui.nodesTreeView.treeRoot.querySelector(`li[data-id='${nodeId}']`) as HTMLLIElement;
+    ui.nodesTreeView.addToSelection(entryElt);
+    ui.nodesTreeView.scrollIntoView(entryElt);
+    setupSelectedNode();
+
+    ui.canvasElt.focus();
   });
 }
