@@ -1,151 +1,211 @@
-body
-  display flex
+body { display: flex; }
 
-.main
-  flex 1
-  display flex
-  flex-flow column
+.main {
+  flex: 1;
+  display: flex;
+  flex-flow: column;
 
-  canvas, .loading
-    background #000
-    flex 1
+  canvas, .loading {
+    background: #000;
+    flex: 1;
+  }
 
-  .loading
-    display flex
-    align-items center
-    justify-content center
-    text-transform uppercase
-    color #888
+  .loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-transform: uppercase;
+    color: #888;
+  }
+}
 
-.controls
-  display flex
-  align-items center
-  flex-wrap wrap
-  white-space nowrap
-  overflow hidden
+.controls {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  white-space: nowrap;
+  overflow: hidden;
 
-  > div
-    border-bottom 1px solid rgba(0,0,0,0.3)
-    border-left 1px solid rgba(0,0,0,0.3)
-    display flex
-    align-items center
-    height 31px
-    flex auto 1 0
+  > div {
+    border-bottom: 1px solid rgba(0,0,0,0.3);
+    border-left: 1px solid rgba(0,0,0,0.3);
+    display: flex;
+    align-items: center;
+    height: 31px;
+    flex: auto 1 0;
+  }
 
-  > div > div
-    display flex
-    align-items center
-    height 30px
-    padding-right 0.5em
-    flex auto 0 0
+  > div > div {
+    display: flex;
+    align-items: center;
+    height: 30px;
+    padding-right: 0.5em;
+    flex: auto 0 0;
+  }
 
-  > div > .title
-    text-transform uppercase
-    color #666
-    padding-left 0.5em
-    margin-right 0.5em
-    background #ddd
-  
-  > div > div > label
-    padding-right 0.5em
+  > div > .title {
+    text-transform: uppercase;
+    color: #666;
+    padding-left: 0.5em;
+    margin-right: 0.5em;
+    background: #ddd;
+  }
 
-  input[type=number]
-    width 50px
-  
-  input[type=range]
-    width 80px
+  > div > div > label { padding-right: 0.5em; }
 
-.sidebar
-  width 250px
-  min-width 200px
-  max-width 500px
+  input[type=number] { width: 50px; }
 
-  display flex
-  flex-flow column
-  background #f0f0f0
+  input[type=range] { width: 80px; }
+}
 
-.nodes-buttons
+.sidebar {
+  width: 250px;
+  min-width: 200px;
+  max-width: 500px;
+
+  display: flex;
+  flex-flow: column;
+  background: #f0f0f0;
+}
+
+.nodes-buttons {
   .new-actor { background-image: url(images/nodes/new-actor.svg); }
   .new-prefab { background-image: url(images/nodes/new-prefab.svg); }
   .rename-node { background-image: url(/images/actions/rename.svg); }
   .duplicate-node { background-image: url(/images/actions/duplicate.svg); }
   .delete-node { background-image: url(/images/actions/delete.svg); }
+}
 
-.nodes-tree-view
-  min-height 100px
-  height 300px
-  position relative
-  background #fff
-  overflow-y auto
+.nodes-tree-view {
+  min-height: 100px;
+  height: 300px;
+  position: relative;
+  background: #fff;
+  overflow-y: auto;
 
-  .tree
-    position absolute
+  .tree { position: absolute; }
 
-  .name
-    white-space pre
-    flex 1
-    text-overflow ellipsis
-    overflow-x hidden
+  .name {
+    white-space: pre;
+    flex: 1;
+    text-overflow: ellipsis;
+    overflow-x: hidden;
 
-    &.prefab
-      color #44d
+    &.prefab { color: #44d; }
+  }
 
-  button
-    font-size smaller
-    border none
-    box-shadow none
-    margin-right 0.25em
+  button {
+    font-size: smaller;
+    border: none;
+    box-shadow: none;
+    margin-right: 0.25em;
+  }
 
-  li:not(:hover)
+  li:not(:hover) {
     button.show { display: none; }
+  }
+}
 
-.inspector
-  min-height 100px
-  overflow-y auto
-  flex 1
-  flex-basis 0
+.inspector {
+  min-height: 100px;
+  overflow-y: auto;
+  flex: 1;
+  flex-basis: 0;
+}
 
-.components-buttons
-  display flex
+.drop-asset-text {
+  pointer-events: none;
+  flex: 1;
+  padding: 2.5em;
+  border: rgba(204, 204, 204, 0.5) 0.3em dashed;
+  border-radius: 2em;
+  margin: 1em;
+  text-align: center;
 
-  button
-    flex 1
-    padding 0.5em
+  &.can-drop { border: rgba(175, 175, 175, 1) 0.3em dashed; }
+}
 
-.components
-  .header
-    display flex
-    background #444
-    color #fff
+.drop-asset-container {
+  display: flex;
+  position: absolute;
+  top: 0em;
+  left: 0em;
+  right: 0em;
+  bottom: 0em;
+}
 
-    .type
-      flex 1
-      padding 0.5em
+.render-area {
+  position: relative;
+  display: flex;
+  flex: 1;
 
-    button
-      width 30px
-      background transparent
-      border none
-      box-shadow none
-      padding 0
-      opacity 0.5
-      font-size 20px
-      font-weight bold
-      cursor pointer
-      color #fff
+  .drop-asset-text {
+    color: white;
+    font-size: 1.5em;
 
-      &:hover
-        opacity 1
-        background-color rgba(0,0,0,0.1)
+    &.can-drop { border: rgba(250, 250, 250, 1) 0.3em dashed; }
+  }
+}
 
-      &:active
-        background-color #fff
-        color #444
+.transform-area {
+  position: relative;
+  display: flex;
+  flex: 1;
 
-      &:disabled
-        opacity 0.2
-        cursor default
+  .drop-asset-container { background: rgba(240, 240, 240, 0.8); }
+}
 
-.inspector tr.prefab div
-  display flex
+.components-buttons {
+  display: flex;
+
+  button {
+    flex: 1;
+    padding: 0.5em;
+  }
+}
+
+.components {
+  .header {
+    display: flex;
+    background: #444;
+    color: #fff;
+
+    .type {
+      flex: 1;
+      padding: 0.5em;
+    }
+
+    button {
+      width: 30px;
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      padding: 0;
+      opacity: 0.5;
+      font-size: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      color: #fff;
+
+      &:hover {
+        opacity: 1;
+        background-color: rgba(0,0,0,0.1);
+      }
+
+      &:active {
+        background-color: #fff;
+        color: #444;
+      }
+
+      &:disabled {
+        opacity: 0.2;
+        cursor: default;
+      }
+    }
+  }
+}
+
+.inspector tr.prefab div {
+  display: flex;
   > input { flex: 1; }
+}

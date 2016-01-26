@@ -2,7 +2,7 @@
 /// <reference path="../../scene/componentEditors/ImportIntoScenePlugin.d.ts" />
 
 import CubicModelRendererEditor from "./CubicModelRendererEditor";
-import importCubicModelIntoScene from "./importCubicModelIntoScene";
+import * as importCubicModelIntoScene from "./importCubicModelIntoScene";
 
 SupClient.registerPlugin<SupClient.ComponentEditorPlugin>("componentEditors", "CubicModelRenderer", CubicModelRendererEditor);
 SupClient.registerPlugin<SupClient.ImportIntoScenePlugin>("importIntoScene", "cubicModel", importCubicModelIntoScene);

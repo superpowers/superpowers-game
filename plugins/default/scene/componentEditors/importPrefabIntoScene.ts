@@ -1,6 +1,6 @@
 import SceneAsset from "../data/SceneAsset";
 
-export default function importPrefabIntoScene(entry: SupCore.Data.EntryNode, projectClient: SupClient.ProjectClient, options: SupClient.ImportIntoScenePluginOptions,
+export function importActor(entry: SupCore.Data.EntryNode, projectClient: SupClient.ProjectClient, options: SupClient.ImportIntoScenePluginOptions,
 callback: (err: string, nodeId: string) => any) {
   const subscriber: SupClient.AssetSubscriber = {
     onAssetReceived,
@@ -9,8 +9,8 @@ callback: (err: string, nodeId: string) => any) {
   };
 
   function onAssetReceived(assetId: string, asset: SceneAsset) {
+    projectClient.unsubAsset(entry.id, subscriber);
     if (asset.nodes.pub.length !== 1) {
-      projectClient.unsubAsset(entry.id, subscriber);
       callback(SupClient.i18n.t("sceneEditor:errors.prefab.mustHaveSingleRootActor"), null);
       return;
     }
@@ -22,16 +22,8 @@ callback: (err: string, nodeId: string) => any) {
     }
     options.prefab = true;
 
-    projectClient.editAssetNoErrorHandling(SupClient.query.asset, "addNode", name, options, (err: string, nodeId: string) => {
-      if (err != null) {
-        projectClient.unsubAsset(entry.id, subscriber);
-        callback(err, null);
-        return;
-      }
-
-      projectClient.editAssetNoErrorHandling(SupClient.query.asset, "setNodeProperty", nodeId, "prefab.sceneAssetId", entry.id, (err: string) => {
-        projectClient.unsubAsset(entry.id, subscriber);
-        if (err != null) { callback(err, null); return; }
+    projectClient.editAsset(SupClient.query.asset, "addNode", name, options, (nodeId: string) => {
+      projectClient.editAsset(SupClient.query.asset, "setNodeProperty", nodeId, "prefab.sceneAssetId", entry.id, () => {
         callback(null, nodeId);
       });
     });
@@ -39,3 +31,5 @@ callback: (err: string, nodeId: string) => any) {
 
   projectClient.subAsset(entry.id, "scene", subscriber);
 }
+
+export let importComponent = null as any;

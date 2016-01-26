@@ -58,6 +58,8 @@
       "validate": "Delete"
     }
   },
+  "dropActor": "Drop asset here to create an actor",
+  "dropComponent": "Drop asset here to create a component",
   "failures": {
     "newActor": "Could not create new actor: ${reason}",
     "importIntoScene": "Could not import: ${reason}"
@@ -69,6 +71,9 @@
       "mustHaveSingleRootActor": "A scene must have a single root actor to be usable as a prefab.",
       "cantUseSelf": "A scene cannot use itself as a prefab.",
       "cyclicalReference": "Using this scene as a prefab would create an infinite loop."
+    },
+    "script": {
+      "noBehaviorsFound": "No behaviors was found in this script."
     }
   }
 }

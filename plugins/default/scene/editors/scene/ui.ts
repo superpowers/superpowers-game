@@ -52,6 +52,10 @@ const ui: {
   gridCheckbox: HTMLInputElement;
   gridSize: number;
   gridStep: number;
+
+  dropTimeout: NodeJS.Timer;
+  actorDropElt: HTMLDivElement;
+  componentDropElt: HTMLDivElement;
 } = {} as any;
 export default ui;
 
@@ -138,6 +142,8 @@ document.addEventListener("keydown", (event) => {
 });
 
 ui.canvasElt = document.querySelector("canvas") as HTMLCanvasElement;
+ui.actorDropElt = document.querySelector(".render-area .drop-asset-container") as HTMLDivElement;
+ui.componentDropElt = document.querySelector(".transform-area .drop-asset-container") as HTMLDivElement;
 
 // Setup resizable panes
 new PerfectResize(document.querySelector(".sidebar") as HTMLElement, "right");
@@ -233,14 +239,18 @@ export function start() {
   });
   for (const componentType of componentTypes) ui.availableComponents[componentType] = SupClient.i18n.t(`componentEditors:${componentType}.label`);
 
-  ui.canvasElt.addEventListener("dragover", onCanvasDragOver);
-  ui.canvasElt.addEventListener("dragenter", onCanvasDragEnter);
-  ui.canvasElt.addEventListener("dragleave", onCanvasDragLeave);
-  ui.canvasElt.addEventListener("drop", onCanvasDrop);
+  document.addEventListener("dragover", onDragOver);
+  document.addEventListener("drop", onStopDrag);
+  ui.actorDropElt.addEventListener("dragenter", onActorDragEnter);
+  ui.actorDropElt.addEventListener("dragleave", onActorDragLeave);
+  ui.actorDropElt.addEventListener("drop", onActorDrop);
+  ui.componentDropElt.addEventListener("dragenter", onComponentDragEnter);
+  ui.componentDropElt.addEventListener("dragleave", onComponentDragLeave);
+  ui.componentDropElt.addEventListener("drop", onComponentDrop);
 
   (document.querySelector(".main .loading") as HTMLDivElement).hidden = true;
   (document.querySelector(".main .controls") as HTMLDivElement).hidden = false;
-  ui.canvasElt.hidden = false;
+  (document.querySelector(".render-area") as HTMLDivElement).hidden = false;
   ui.newActorButton.disabled = false;
   ui.newPrefabButton.disabled = false;
 }
@@ -326,12 +336,7 @@ function onNodesTreeViewDrop(event: DragEvent, dropLocation: TreeView.DropLocati
 
   let i = 0;
   for (const id of nodeIds) {
-    data.projectClient.editAsset(SupClient.query.asset, "moveNode", id, dropPoint.parentId, dropPoint.index + i, (err: string) => {
-      if (err != null) {
-        new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close"));
-        return;
-      }
-    });
+    data.projectClient.editAsset(SupClient.query.asset, "moveNode", id, dropPoint.parentId, dropPoint.index + i);
     if (!sameParent || sourceChildren.indexOf(data.sceneUpdater.sceneAsset.nodes.byId[id]) >= dropPoint.index) i++;
   }
   return false;
@@ -529,9 +534,7 @@ function createNewNode(name: string, prefab: boolean) {
   (options as any).transform = { position };
   (options as any).prefab = prefab;
 
-  data.projectClient.editAsset(SupClient.query.asset, "addNode", name, options, (err: string, nodeId: string) => {
-    if (err != null) { new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); return; }
-
+  data.projectClient.editAsset(SupClient.query.asset, "addNode", name, options, (nodeId: string) => {
     ui.nodesTreeView.clearSelection();
     ui.nodesTreeView.addToSelection(ui.nodesTreeView.treeRoot.querySelector(`li[data-id='${nodeId}']`) as HTMLLIElement);
     setupSelectedNode();
@@ -556,12 +559,7 @@ function onRenameNodeClick() {
     /* tslint:enable:no-unused-expression */
     if (newName == null) return;
 
-    data.projectClient.editAsset(SupClient.query.asset, "setNodeProperty", node.id, "name", newName, (err: string) => {
-      if (err != null) {
-        new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close"));
-        return;
-      }
-    });
+    data.projectClient.editAsset(SupClient.query.asset, "setNodeProperty", node.id, "name", newName);
   });
 }
 
@@ -585,12 +583,7 @@ function onDuplicateNodeClick() {
     let options = SupClient.getTreeViewInsertionPoint(ui.nodesTreeView);
     console.log(options);
 
-    data.projectClient.editAsset(SupClient.query.asset, "duplicateNode", newName, node.id, options.index, (err: string, nodeId: string) => {
-      if (err != null) {
-        new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close"));
-        return;
-      }
-
+    data.projectClient.editAsset(SupClient.query.asset, "duplicateNode", newName, node.id, options.index, (nodeId: string) => {
       ui.nodesTreeView.clearSelection();
       ui.nodesTreeView.addToSelection(ui.nodesTreeView.treeRoot.querySelector(`li[data-id='${nodeId}']`) as HTMLLIElement);
       setupSelectedNode();
@@ -609,12 +602,7 @@ function onDeleteNodeClick() {
     if (!confirm) return;
 
     for (let selectedNode of ui.nodesTreeView.selectedNodes) {
-      data.projectClient.editAsset(SupClient.query.asset, "removeNode", selectedNode.dataset["id"], (err: string) => {
-        if (err != null) {
-          new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close"));
-          return;
-        }
-      });
+      data.projectClient.editAsset(SupClient.query.asset, "removeNode", selectedNode.dataset["id"]);
     }
   });
 }
@@ -638,36 +626,21 @@ function onTransformInputChange(event: any) {
   }
   let nodeId = ui.nodesTreeView.selectedNodes[0].dataset["id"];
 
-  data.projectClient.editAsset(SupClient.query.asset, "setNodeProperty", nodeId, transformType, value, (err: string) => {
-    if (err != null) {
-      new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close"));
-      return;
-    }
-  });
+  data.projectClient.editAsset(SupClient.query.asset, "setNodeProperty", nodeId, transformType, value);
 }
 
 function onVisibleChange(event: any) {
   if (ui.nodesTreeView.selectedNodes.length !== 1) return;
 
   let nodeId = ui.nodesTreeView.selectedNodes[0].dataset["id"];
-  data.projectClient.editAsset(SupClient.query.asset, "setNodeProperty", nodeId, "visible", event.target.checked, (err: string) => {
-    if (err != null) {
-      new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close"));
-      return;
-    }
-  });
+  data.projectClient.editAsset(SupClient.query.asset, "setNodeProperty", nodeId, "visible", event.target.checked);
 }
 
 function onLayerChange(event: any) {
   if (ui.nodesTreeView.selectedNodes.length !== 1) return;
 
   let nodeId = ui.nodesTreeView.selectedNodes[0].dataset["id"];
-  data.projectClient.editAsset(SupClient.query.asset, "setNodeProperty", nodeId, "layer", parseInt(event.target.value, 10), (err: string) => {
-    if (err != null) {
-      new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close"));
-      return;
-    }
-  });
+  data.projectClient.editAsset(SupClient.query.asset, "setNodeProperty", nodeId, "layer", parseInt(event.target.value, 10));
 }
 
 function onPrefabInput(event: any) {
@@ -676,22 +649,12 @@ function onPrefabInput(event: any) {
   let nodeId = ui.nodesTreeView.selectedNodes[0].dataset["id"];
 
   if (event.target.value === "") {
-    data.projectClient.editAsset(SupClient.query.asset, "setNodeProperty", nodeId, "prefab.sceneAssetId", null, (err: string) => {
-      if (err != null) {
-        new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close"));
-        return;
-      }
-    });
+    data.projectClient.editAsset(SupClient.query.asset, "setNodeProperty", nodeId, "prefab.sceneAssetId", null);
   }
   else {
     let entry = SupClient.findEntryByPath(data.projectClient.entries.pub, event.target.value);
     if (entry != null && entry.type === "scene") {
-      data.projectClient.editAsset(SupClient.query.asset, "setNodeProperty", nodeId, "prefab.sceneAssetId", entry.id, (err: string) => {
-        if (err != null) {
-          new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close"));
-          return;
-        }
-      });
+      data.projectClient.editAsset(SupClient.query.asset, "setNodeProperty", nodeId, "prefab.sceneAssetId", entry.id);
     }
   }
 }
@@ -748,12 +711,7 @@ function onNewComponentClick() {
 
     let nodeId = ui.nodesTreeView.selectedNodes[0].dataset["id"];
 
-    data.projectClient.editAsset(SupClient.query.asset, "addComponent", nodeId, type, null, (err: string) => {
-      if (err != null) {
-        new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close"));
-        return;
-      }
-    });
+    data.projectClient.editAsset(SupClient.query.asset, "addComponent", nodeId, type, null);
   });
 }
 
@@ -768,12 +726,7 @@ function onDeleteComponentClick(event: any) {
     let nodeId = ui.nodesTreeView.selectedNodes[0].dataset["id"];
     let componentId = event.target.parentElement.parentElement.dataset["componentId"];
 
-    data.projectClient.editAsset(SupClient.query.asset, "removeComponent", nodeId, componentId, (err: string) => {
-      if (err != null) {
-        new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close"));
-        return;
-      }
-    });
+    data.projectClient.editAsset(SupClient.query.asset, "removeComponent", nodeId, componentId);
   });
 }
 
@@ -819,24 +772,33 @@ function onChangeCamera2DZ() {
 }
 
 // Drag'n'drop
-function onCanvasDragOver(event: DragEvent) {
+function onDragOver(event: DragEvent) {
   if (data == null || data.projectClient.entries == null) return;
 
   // NOTE: We can't use event.dataTransfer.getData() to do an early check here
   // because of browser security restrictions
-
   event.preventDefault();
+
+  ui.actorDropElt.hidden = false;
+  ui.componentDropElt.hidden = false;
+  if (ui.dropTimeout != null) clearTimeout(ui.dropTimeout);
+  ui.dropTimeout = setTimeout(() => { onStopDrag(); }, 300);
 }
 
-function onCanvasDragEnter(event: DragEvent) {
-  // TODO: Set drop class
+function onStopDrag() {
+  if (ui.dropTimeout != null) {
+    clearTimeout(ui.dropTimeout);
+    ui.dropTimeout = null;
+  }
+  ui.actorDropElt.hidden = true;
+  ui.actorDropElt.querySelector(".drop-asset-text").classList.toggle("can-drop", false);
+  ui.componentDropElt.hidden = true;
+  ui.componentDropElt.querySelector(".drop-asset-text").classList.toggle("can-drop", false);
 }
 
-function onCanvasDragLeave(event: DragEvent) {
-  // TODO: Clear drop class
-}
-
-function onCanvasDrop(event: DragEvent) {
+function onActorDragEnter(event: DragEvent) { ui.actorDropElt.querySelector(".drop-asset-text").classList.toggle("can-drop", true); }
+function onActorDragLeave(event: DragEvent) { ui.actorDropElt.querySelector(".drop-asset-text").classList.toggle("can-drop", false); }
+function onActorDrop(event: DragEvent) {
   if (data == null || data.projectClient.entries == null) return;
 
   let entryId = event.dataTransfer.getData("application/vnd.superpowers.entry");
@@ -844,12 +806,11 @@ function onCanvasDrop(event: DragEvent) {
 
   let entry = data.projectClient.entries.byId[entryId];
   let plugin = SupClient.getPlugins<SupClient.ImportIntoScenePlugin>("importIntoScene")[entry.type];
-  if (plugin == null) {
+  if (plugin == null || plugin.content.importActor == null) {
     const reason = SupClient.i18n.t("sceneEditor:errors.cantImportAssetTypeIntoScene");
     new SupClient.dialogs.InfoDialog(SupClient.i18n.t("sceneEditor:failures.importIntoScene", { reason }), SupClient.i18n.t("common:actions.close"));
     return;
   }
-
   event.preventDefault();
 
   const raycaster = new THREE.Raycaster();
@@ -864,7 +825,7 @@ function onCanvasDrop(event: DragEvent) {
   const position = raycaster.ray.intersectPlane(plane);
 
   const options = { transform: { position }, prefab: false };
-  plugin.content(entry, data.projectClient, options, (err: string, nodeId: string) => {
+  plugin.content.importActor(entry, data.projectClient, options, (err: string, nodeId: string) => {
     if (err != null) {
       new SupClient.dialogs.InfoDialog(SupClient.i18n.t("sceneEditor:failures.importIntoScene", { reason: err }), SupClient.i18n.t("common:actions.close"));
       return;
@@ -878,4 +839,25 @@ function onCanvasDrop(event: DragEvent) {
 
     ui.canvasElt.focus();
   });
+}
+
+function onComponentDragEnter(event: DragEvent) { ui.componentDropElt.querySelector(".drop-asset-text").classList.toggle("can-drop", true); }
+function onComponentDragLeave(event: DragEvent) { ui.componentDropElt.querySelector(".drop-asset-text").classList.toggle("can-drop", false); }
+function onComponentDrop(event: DragEvent) {
+  if (data == null || data.projectClient.entries == null) return;
+
+  let entryId = event.dataTransfer.getData("application/vnd.superpowers.entry");
+  if (typeof entryId !== "string") return;
+
+  let entry = data.projectClient.entries.byId[entryId];
+  let plugin = SupClient.getPlugins<SupClient.ImportIntoScenePlugin>("importIntoScene")[entry.type];
+  if (plugin == null || plugin.content.importComponent == null) {
+    const reason = SupClient.i18n.t("sceneEditor:errors.cantImportAssetTypeIntoScene");
+    new SupClient.dialogs.InfoDialog(SupClient.i18n.t("sceneEditor:failures.importIntoScene", { reason }), SupClient.i18n.t("common:actions.close"));
+    return;
+  }
+  event.preventDefault();
+
+  let nodeId = ui.nodesTreeView.selectedNodes[0].dataset["id"];
+  plugin.content.importComponent(entry, data.projectClient, nodeId, (err: string, nodeId: string) => { /* Ignore */ });
 }

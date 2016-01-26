@@ -57,7 +57,10 @@ html
           .title= t("sceneEditor:controls.light.title")
           div
             input#show-light(type="checkbox")
-      canvas(hidden,tabindex="0")
+      .render-area(hidden)
+        canvas(tabindex="0")
+        .drop-asset-container(hidden)
+          .drop-asset-text= t("sceneEditor:dropActor")
 
     .resize-handle.right
     .sidebar
@@ -72,43 +75,47 @@ html
 
       .resize-handle.top
       .inspector(hidden)
-        table.transform.properties
-          tr.position
-            th.label= t("sceneEditor:inspector.position")
-            td
-              .inputs
-                input(type="number").x
-                input(type="number").y
-                input(type="number").z
-          tr.orientation
-            th.label= t("sceneEditor:inspector.orientation")
-            td
-              .inputs
-                input(type="number").x
-                input(type="number").y
-                input(type="number").z
-          tr.scale
-            th.label= t("sceneEditor:inspector.scale")
-            td
-              .inputs
-                input(type="number").x
-                input(type="number").y
-                input(type="number").z
-          tr.visible
-            th.label= t("sceneEditor:inspector.visible")
-            td
-              input(type="checkbox")
-          tr.layer
-            th.label= t("sceneEditor:inspector.layer")
-            td
-              select
-                option(value="0") Default
-          tr.prefab
-            th.label= t("sceneEditor:inspector.prefab")
-            td
-              div
-                input
-                button Open
+        .transform-area
+          table.transform.properties
+            tr.position
+              th.label= t("sceneEditor:inspector.position")
+              td
+                .inputs
+                  input(type="number").x
+                  input(type="number").y
+                  input(type="number").z
+            tr.orientation
+              th.label= t("sceneEditor:inspector.orientation")
+              td
+                .inputs
+                  input(type="number").x
+                  input(type="number").y
+                  input(type="number").z
+            tr.scale
+              th.label= t("sceneEditor:inspector.scale")
+              td
+                .inputs
+                  input(type="number").x
+                  input(type="number").y
+                  input(type="number").z
+            tr.visible
+              th.label= t("sceneEditor:inspector.visible")
+              td
+                input(type="checkbox")
+            tr.layer
+              th.label= t("sceneEditor:inspector.layer")
+              td
+                select
+                  option(value="0") Default
+            tr.prefab
+              th.label= t("sceneEditor:inspector.prefab")
+              td
+                div
+                  input
+                  button Open
+          .drop-asset-container(hidden)
+            .drop-asset-text= t("sceneEditor:dropComponent")
+
         .components-buttons
           button.new-component= t("sceneEditor:inspector.newComponent.title")
         .components

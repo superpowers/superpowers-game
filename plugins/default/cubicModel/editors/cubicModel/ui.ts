@@ -500,7 +500,7 @@ function onDuplicateNodeClick() {
     if (newName == null) return;
     let options = SupClient.getTreeViewInsertionPoint(ui.nodesTreeView);
 
-    data.projectClient.editAsset(SupClient.query.asset, "duplicateNode", newName, node.id, options.index, (err: string, nodeId: string) => {
+    data.projectClient.editAsset(SupClient.query.asset, "duplicateNode", newName, node.id, options.index, (nodeId: string) => {
       ui.nodesTreeView.clearSelection();
       ui.nodesTreeView.addToSelection(ui.nodesTreeView.treeRoot.querySelector(`li[data-id='${nodeId}']`) as HTMLLIElement);
       setupSelectedNode();
