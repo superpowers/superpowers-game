@@ -59,6 +59,7 @@ html
             input#show-light(type="checkbox")
       canvas(hidden,tabindex="0")
 
+    .resize-handle.right
     .sidebar
       .nodes-buttons.flat-button-strip
         button(disabled,title=t("sceneEditor:treeView.newActor.title"),data-hotkey="control+N").new-actor
@@ -69,6 +70,7 @@ html
 
       .nodes-tree-view
 
+      .resize-handle.top
       .inspector(hidden)
         table.transform.properties
           tr.position
