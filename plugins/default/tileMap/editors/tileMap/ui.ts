@@ -228,10 +228,10 @@ function onRenameLayerClick() {
 function onDeleteLayerClick() {
   if (ui.layersTreeView.selectedNodes.length !== 1) return;
 
-  let confirmString = SupClient.i18n.t("tileMapEditor:deleteLayerConfirm");
-  let validateString = SupClient.i18n.t("common:actions.delete");
+  let confirmLabel = SupClient.i18n.t("tileMapEditor:deleteLayerConfirm");
+  let validationLabel = SupClient.i18n.t("common:actions.delete");
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.ConfirmDialog(confirmString, validateString, (confirm) => {
+  new SupClient.dialogs.ConfirmDialog(confirmLabel, { validationLabel }, (confirm) => {
     /* tslint:enable:no-unused-expression */
     if (!confirm) return;
 

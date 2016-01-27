@@ -316,7 +316,9 @@ function applyDraftChanges(options: { ignoreErrors: boolean }) {
 
   data.projectClient.editAssetNoErrorHandling(SupClient.query.asset, "applyDraftChanges", options, (err: string) => {
     if (err != null && err !== "foundSelfErrors") {
-      new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close"));
+      /* tslint:disable:no-unused-expression */
+      new SupClient.dialogs.InfoDialog(err);
+      /* tslint:enable:no-unused-expression */
       SupClient.onDisconnected();
       return;
     }

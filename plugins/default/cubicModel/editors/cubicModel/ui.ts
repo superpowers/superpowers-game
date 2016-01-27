@@ -511,10 +511,10 @@ function onDuplicateNodeClick() {
 function onDeleteNodeClick() {
   if (ui.nodesTreeView.selectedNodes.length === 0) return;
 
-  let confirmString = SupClient.i18n.t("cubicModelEditor:sidebar.nodes.deleteConfirm");
-  let validateString = SupClient.i18n.t("common:actions.delete");
+  let confirmLabel = SupClient.i18n.t("cubicModelEditor:sidebar.nodes.deleteConfirm");
+  let validationLabel = SupClient.i18n.t("common:actions.delete");
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.ConfirmDialog(confirmString, validateString, (confirm) => {
+  new SupClient.dialogs.ConfirmDialog(confirmLabel, { validationLabel }, (confirm) => {
     /* tslint:enable:no-unused-expression */
     if (!confirm) return;
 

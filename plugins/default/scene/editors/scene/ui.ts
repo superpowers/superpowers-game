@@ -594,10 +594,10 @@ function onDuplicateNodeClick() {
 function onDeleteNodeClick() {
   if (ui.nodesTreeView.selectedNodes.length === 0) return;
 
-  let confirmString = SupClient.i18n.t("sceneEditor:treeView.deleteConfirm");
-  let validateString = SupClient.i18n.t("common:actions.delete");
+  let confirmLabel = SupClient.i18n.t("sceneEditor:treeView.deleteConfirm");
+  let validationLabel = SupClient.i18n.t("common:actions.delete");
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.ConfirmDialog(confirmString, validateString, (confirm) => {
+  new SupClient.dialogs.ConfirmDialog(confirmLabel, { validationLabel }, (confirm) => {
     /* tslint:enable:no-unused-expression */
     if (!confirm) return;
 
@@ -670,7 +670,11 @@ export function createComponentElement(nodeId: string, component: Component) {
   let table = clone.querySelector(".settings") as HTMLElement;
 
   let editConfig = (command: string, ...args: any[]) => {
-    let callback = (err: string) => { if (err != null) new SupClient.dialogs.InfoDialog(err, SupClient.i18n.t("common:actions.close")); };
+    let callback = (err: string) => {
+      /* tslint:disable:no-unused-expression */
+      if (err != null) new SupClient.dialogs.InfoDialog(err);
+      /* tslint:enable:no-unused-expression */
+    };
 
     // Override callback if one is given
     let lastArg = args[args.length - 1];
@@ -702,10 +706,10 @@ export function createComponentElement(nodeId: string, component: Component) {
 }
 
 function onNewComponentClick() {
-  let selectString = SupClient.i18n.t("sceneEditor:inspector.newComponent.select");
-  let validateString = SupClient.i18n.t("sceneEditor:inspector.newComponent.validate");
+  let selectLabel = SupClient.i18n.t("sceneEditor:inspector.newComponent.select");
+  let validationLabel = SupClient.i18n.t("sceneEditor:inspector.newComponent.validate");
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.SelectDialog(selectString, ui.availableComponents, validateString, { size: 12 }, (type) => {
+  new SupClient.dialogs.SelectDialog(selectLabel, ui.availableComponents, { validationLabel, size: 12 }, (type) => {
     /* tslint:enable:no-unused-expression */
     if (type == null) return;
 
@@ -716,10 +720,10 @@ function onNewComponentClick() {
 }
 
 function onDeleteComponentClick(event: any) {
-  let confirmString = SupClient.i18n.t("sceneEditor:inspector.deleteComponent.confirm");
-  let validateString = SupClient.i18n.t("sceneEditor:inspector.deleteComponent.validate");
+  let confirmLabel = SupClient.i18n.t("sceneEditor:inspector.deleteComponent.confirm");
+  let validationLabel = SupClient.i18n.t("sceneEditor:inspector.deleteComponent.validate");
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.ConfirmDialog(confirmString, validateString, (confirm) => {
+  new SupClient.dialogs.ConfirmDialog(confirmLabel, { validationLabel }, (confirm) => {
     /* tslint:enable:no-unused-expression */
     if (!confirm) return;
 
@@ -808,7 +812,7 @@ function onActorDrop(event: DragEvent) {
   let plugin = SupClient.getPlugins<SupClient.ImportIntoScenePlugin>("importIntoScene")[entry.type];
   if (plugin == null || plugin.content.importActor == null) {
     const reason = SupClient.i18n.t("sceneEditor:errors.cantImportAssetTypeIntoScene");
-    new SupClient.dialogs.InfoDialog(SupClient.i18n.t("sceneEditor:failures.importIntoScene", { reason }), SupClient.i18n.t("common:actions.close"));
+    new SupClient.dialogs.InfoDialog(SupClient.i18n.t("sceneEditor:failures.importIntoScene", { reason }));
     return;
   }
   event.preventDefault();
@@ -827,7 +831,7 @@ function onActorDrop(event: DragEvent) {
   const options = { transform: { position }, prefab: false };
   plugin.content.importActor(entry, data.projectClient, options, (err: string, nodeId: string) => {
     if (err != null) {
-      new SupClient.dialogs.InfoDialog(SupClient.i18n.t("sceneEditor:failures.importIntoScene", { reason: err }), SupClient.i18n.t("common:actions.close"));
+      new SupClient.dialogs.InfoDialog(SupClient.i18n.t("sceneEditor:failures.importIntoScene", { reason: err }));
       return;
     }
 
@@ -853,7 +857,7 @@ function onComponentDrop(event: DragEvent) {
   let plugin = SupClient.getPlugins<SupClient.ImportIntoScenePlugin>("importIntoScene")[entry.type];
   if (plugin == null || plugin.content.importComponent == null) {
     const reason = SupClient.i18n.t("sceneEditor:errors.cantImportAssetTypeIntoScene");
-    new SupClient.dialogs.InfoDialog(SupClient.i18n.t("sceneEditor:failures.importIntoScene", { reason }), SupClient.i18n.t("common:actions.close"));
+    new SupClient.dialogs.InfoDialog(SupClient.i18n.t("sceneEditor:failures.importIntoScene", { reason }));
     return;
   }
   event.preventDefault();

@@ -267,10 +267,10 @@ function onRenamePropertyClick() {
 function onDeletePropertyClick() {
   if (ui.selectedProperty == null) return;
 
-  let confirmString = SupClient.i18n.t("tileSetEditor:deletePropertyConfirm");
-  let validateString = SupClient.i18n.t("common:actions.delete");
+  let confirmLabel = SupClient.i18n.t("tileSetEditor:deletePropertyConfirm");
+  let validationLabel = SupClient.i18n.t("common:actions.delete");
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.ConfirmDialog(confirmString, validateString, (confirm) => {
+  new SupClient.dialogs.ConfirmDialog(confirmLabel, { validationLabel }, (confirm) => {
     /* tslint:enable:no-unused-expression */
     if (!confirm) return;
     data.projectClient.editAsset(SupClient.query.asset, "deleteTileProperty", data.selectedTile, ui.selectedProperty);

@@ -290,7 +290,12 @@ function onAnimationFileSelectChange(event: any) {
     setImportLog(log);
 
     if (data != null) {
-      if (data.animation == null) { new SupClient.dialogs.InfoDialog("No animation found in imported files", SupClient.i18n.t("common:actions.close")); return; }
+      if (data.animation == null) {
+        /* tslint:disable:no-unused-expression */
+        new SupClient.dialogs.InfoDialog("No animation found in imported files");
+        /* tslint:enable:no-unused-expression */
+        return;
+      }
       // TODO: Check if bones are compatible
       data.projectClient.editAsset(SupClient.query.asset, "setAnimation", animationId, data.animation.duration, data.animation.keyFrames);
     }
@@ -320,10 +325,10 @@ function onRenameAnimationClick() {
 function onDeleteAnimationClick() {
   if (ui.animationsTreeView.selectedNodes.length === 0) return;
 
-  const confirmString = SupClient.i18n.t("modelEditor:sidebar.animations.deleteConfirm");
-  const validateString = SupClient.i18n.t("common:actions.delete");
+  const confirmLabel = SupClient.i18n.t("modelEditor:sidebar.animations.deleteConfirm");
+  const validationLabel = SupClient.i18n.t("common:actions.delete");
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.ConfirmDialog(confirmString, validateString, (confirm) => {
+  new SupClient.dialogs.ConfirmDialog(confirmLabel, { validationLabel }, (confirm) => {
     /* tslint:enable:no-unused-expression */
     if (!confirm) return;
 
@@ -431,10 +436,10 @@ function onRenameMapClick() {
 function onDeleteMapClick() {
   if (ui.texturesTreeView.selectedNodes.length === 0) return;
 
-  const confirmString = SupClient.i18n.t("modelEditor:sidebar.advancedTextures.deleteMapConfirm");
-  const validateString = SupClient.i18n.t("common:actions.delete");
+  const confirmLabel = SupClient.i18n.t("modelEditor:sidebar.advancedTextures.deleteMapConfirm");
+  const validationLabel = SupClient.i18n.t("common:actions.delete");
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.ConfirmDialog(confirmString, validateString, (confirmed) => {
+  new SupClient.dialogs.ConfirmDialog(confirmLabel, { validationLabel }, (confirmed) => {
     /* tslint:enable:no-unused-expression */
     if (!confirmed) return;
 
