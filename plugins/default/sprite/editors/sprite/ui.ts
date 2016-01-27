@@ -4,7 +4,7 @@ import spritesheetArea, { updateSelection } from "./spritesheetArea";
 
 import SpriteAsset from "../../data/SpriteAsset";
 
-import * as PerfectResize from "perfect-resize";
+import * as ResizeHandle from "resize-handle";
 import * as TreeView from "dnd-tree-view";
 
 const ui: {
@@ -33,7 +33,7 @@ export default ui;
 SupClient.setupHotkeys();
 
 // Setup resizable panes
-new PerfectResize(document.querySelector(".sidebar") as HTMLElement, "right");
+new ResizeHandle(document.querySelector(".sidebar") as HTMLElement, "right");
 
 // Setup properties
 let fileSelect = <HTMLInputElement>document.querySelector("input.file-select");

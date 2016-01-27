@@ -4,7 +4,7 @@ import ui from "./ui";
 import SpriteOriginMarker from "./SpriteOriginMarker";
 
 /* tslint:disable */
-let PerfectResize = require("perfect-resize");
+let ResizeHandle = require("resize-handle");
 /* tslint:enable */
 
 let animationArea: {
@@ -14,7 +14,7 @@ let animationArea: {
 } = {};
 export default animationArea;
 
-new PerfectResize(document.querySelector(".animation-container"), "bottom");
+new ResizeHandle(document.querySelector(".animation-container"), "bottom");
 
 animationArea.gameInstance = new SupEngine.GameInstance(<HTMLCanvasElement>document.querySelector(".animation-container canvas"));
 animationArea.gameInstance.threeRenderer.setClearColor(0xbbbbbb);

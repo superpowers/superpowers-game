@@ -4,7 +4,7 @@ import Uniforms, { UniformPub } from "../../data/Uniforms";
 import Attributes, { AttributePub } from "../../data/Attributes";
 
 /* tslint:disable */
-let PerfectResize = require("perfect-resize");
+let ResizeHandle = require("resize-handle");
 /* tslint:enable */
 
 let ui: {
@@ -180,7 +180,7 @@ newAttributeInput.addEventListener("keyup", (event: any) => {
 });
 
 let shadersPane = document.querySelector(".shaders");
-let shaderPaneResizeHandle = new PerfectResize(shadersPane, "bottom");
+let shaderPaneResizeHandle = new ResizeHandle(shadersPane, "bottom");
 shaderPaneResizeHandle.on("drag", () => {
   ui.vertexEditor.codeMirrorInstance.refresh();
   ui.fragmentEditor.codeMirrorInstance.refresh();
@@ -195,7 +195,7 @@ function onSaveFragment() {
 }
 
 let fragmentShadersPane = shadersPane.querySelector(".fragment");
-let fragmentShaderPaneResizeHandle = new PerfectResize(fragmentShadersPane, "right");
+let fragmentShaderPaneResizeHandle = new ResizeHandle(fragmentShadersPane, "right");
 fragmentShaderPaneResizeHandle.on("drag", () => {
   ui.vertexEditor.codeMirrorInstance.refresh();
   ui.fragmentEditor.codeMirrorInstance.refresh();
@@ -236,7 +236,7 @@ export function setupEditors(clientId: number) {
 
 let previewPane = document.querySelector(".preview");
 /* tslint:disable:no-unused-expression */
-new PerfectResize(previewPane, "right");
+new ResizeHandle(previewPane, "right");
 /* tslint:enable:no-unused-expression */
 ui.previewTypeSelect = <HTMLSelectElement>previewPane.querySelector("select");
 ui.previewTypeSelect.addEventListener("change", () => {

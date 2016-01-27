@@ -3,7 +3,7 @@ import { data } from "./network";
 import importModel, { ImportLogEntry } from "./importers/index";
 import ModelAsset from "../../data/ModelAsset";
 
-import * as PerfectResize from "perfect-resize";
+import * as ResizeHandle from "resize-handle";
 import * as TreeView from "dnd-tree-view";
 
 const ui: {
@@ -36,7 +36,7 @@ export default ui;
 SupClient.setupHotkeys();
 
 // Setup resizable panes
-new PerfectResize(document.querySelector(".sidebar") as HTMLElement, "right");
+new ResizeHandle(document.querySelector(".sidebar") as HTMLElement, "right");
 
 // Model upload
 const modelFileSelect = <HTMLInputElement> document.querySelector(".model input.file-select");

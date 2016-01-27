@@ -1,7 +1,7 @@
 import SoundAsset from "../../data/SoundAsset";
 
 /* tslint:disable */
-let PerfectResize = require("perfect-resize");
+let ResizeHandle = require("resize-handle");
 /* tslint:enable */
 
 let data: {

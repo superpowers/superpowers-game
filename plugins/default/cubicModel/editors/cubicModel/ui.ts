@@ -6,7 +6,7 @@ import CubicModelAsset from "../../data/CubicModelAsset";
 import { Node } from "../../data/CubicModelNodes";
 
 import * as TreeView from "dnd-tree-view";
-import * as PerfectResize from "perfect-resize";
+import * as ResizeHandle from "resize-handle";
 
 let THREE = SupEngine.THREE;
 
@@ -83,9 +83,9 @@ document.addEventListener("keydown", (event) => {
 ui.canvasElt = <HTMLCanvasElement>document.querySelector("canvas");
 
 // Setup resizable panes
-new PerfectResize(document.querySelector(".texture-container") as HTMLElement, "bottom");
-new PerfectResize(document.querySelector(".sidebar") as HTMLElement, "right");
-new PerfectResize(document.querySelector(".nodes-tree-view") as HTMLElement, "top");
+new ResizeHandle(document.querySelector(".texture-container") as HTMLElement, "bottom");
+new ResizeHandle(document.querySelector(".sidebar") as HTMLElement, "right");
+new ResizeHandle(document.querySelector(".nodes-tree-view") as HTMLElement, "top");
 
 // Grid
 ui.gridSize = 20;

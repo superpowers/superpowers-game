@@ -3,7 +3,7 @@ import mapArea, { setupPattern, setupFillPattern, flipTilesVertically, flipTiles
 import tileSetArea from "./tileSetArea";
 
 import * as TreeView from "dnd-tree-view";
-import * as PerfectResize from "perfect-resize";
+import * as ResizeHandle from "resize-handle";
 
 const tmpPosition = new SupEngine.THREE.Vector3();
 const tmpScale = new SupEngine.THREE.Vector3();
@@ -34,8 +34,8 @@ const ui: {
 export default ui;
 
 // Setup resize handles
-new PerfectResize(document.querySelector(".sidebar") as HTMLElement, "right");
-new PerfectResize(document.querySelector(".layers") as HTMLElement, "bottom");
+new ResizeHandle(document.querySelector(".sidebar") as HTMLElement, "right");
+new ResizeHandle(document.querySelector(".layers") as HTMLElement, "bottom");
 
 ui.tileSetInput = document.querySelector(".property-tileSetId") as HTMLInputElement;
 ui.tileSetInput.addEventListener("input", onTileSetChange);

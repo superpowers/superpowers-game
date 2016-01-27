@@ -2,7 +2,7 @@ import TileSetRenderer from "../../components/TileSetRenderer";
 import TileSetRendererUpdater from "../../components/TileSetRendererUpdater";
 
 import * as TreeView from "dnd-tree-view";
-import * as PerfectResize from "perfect-resize";
+import * as ResizeHandle from "resize-handle";
 
 let data: { projectClient: SupClient.ProjectClient; tileSetUpdater: TileSetRendererUpdater; selectedTile: { x: number; y: number; } };
 let ui: any = {};
@@ -29,7 +29,7 @@ function start() {
   );
 
   // Sidebar
-  new PerfectResize(document.querySelector(".sidebar") as HTMLElement, "right");
+  new ResizeHandle(document.querySelector(".sidebar") as HTMLElement, "right");
 
   let fileSelect = <HTMLInputElement>document.querySelector("input.file-select");
   fileSelect.addEventListener("change", onFileSelectChange);

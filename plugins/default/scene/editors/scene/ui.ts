@@ -5,7 +5,7 @@ import { Node } from "../../data/SceneNodes";
 import { Component } from "../../data/SceneComponents";
 
 import * as TreeView from "dnd-tree-view";
-import * as PerfectResize from "perfect-resize";
+import * as ResizeHandle from "resize-handle";
 
 const THREE = SupEngine.THREE;
 
@@ -146,8 +146,8 @@ ui.actorDropElt = document.querySelector(".render-area .drop-asset-container") a
 ui.componentDropElt = document.querySelector(".transform-area .drop-asset-container") as HTMLDivElement;
 
 // Setup resizable panes
-new PerfectResize(document.querySelector(".sidebar") as HTMLElement, "right");
-new PerfectResize(document.querySelector(".nodes-tree-view") as HTMLElement, "top");
+new ResizeHandle(document.querySelector(".sidebar") as HTMLElement, "right");
+new ResizeHandle(document.querySelector(".nodes-tree-view") as HTMLElement, "top");
 
 // Setup tree view
 ui.treeViewElt = document.querySelector(".nodes-tree-view") as HTMLDivElement;
