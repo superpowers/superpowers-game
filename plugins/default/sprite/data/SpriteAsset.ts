@@ -64,7 +64,8 @@ export default class SpriteAsset extends SupCore.Data.Base.Asset {
       properties: {
         width: { type: "integer", min: 1, mutable: true },
         height: { type: "integer", min: 1, mutable: true }
-      }
+      },
+      mutable: true
     },
 
     origin: {

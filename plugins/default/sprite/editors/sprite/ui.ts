@@ -143,14 +143,38 @@ document.querySelector("button.download-map").addEventListener("click", () => {
 document.querySelector("button.rename-map").addEventListener("click", onRenameMapClick);
 document.querySelector("button.delete-map").addEventListener("click", onDeleteMapClick);
 
-function onFileSelectChange(event: any) {
-  if (event.target.files.length === 0) return;
+function onFileSelectChange(event: Event) {
+  const target = event.target as HTMLInputElement;
+  if (target.files.length === 0) return;
 
-  let reader = new FileReader();
-  reader.onload = (event: any) => { data.projectClient.editAsset(SupClient.query.asset, "setMaps", { map: event.target.result }); };
+  const reader = new FileReader();
+  reader.onload = (event) => {
+    const buffer: ArrayBuffer = (event.target as any).result;
 
-  reader.readAsArrayBuffer(event.target.files[0]);
-  event.target.parentElement.reset();
+    const willSetupGridSize = (data.spriteUpdater.spriteAsset.pub.maps["map"] as any as ArrayBuffer).byteLength === 0;
+    data.projectClient.editAsset(SupClient.query.asset, "setMaps", { map: buffer }, () => {
+      if (!willSetupGridSize) return;
+
+      const image = new Image();
+      const typedArray = new Uint8Array(buffer);
+      const blob = new Blob([ typedArray ], { type: "image/*" });
+      const blobURL = URL.createObjectURL(blob);
+      image.src = blobURL;
+
+      image.addEventListener("load", (event) => {
+        const gridSize = { width: image.width, height: image.height };
+        data.projectClient.editAsset(SupClient.query.asset, "setProperty", "grid", gridSize);
+        URL.revokeObjectURL(blobURL);
+      });
+
+      image.addEventListener("error", (event) => {
+        URL.revokeObjectURL(blobURL);
+      });
+    });
+  };
+
+  reader.readAsArrayBuffer(target.files[0]);
+  (target.parentElement as HTMLFormElement).reset();
 }
 
 function downloadTexture(textureName: string) {
@@ -327,13 +351,18 @@ function onChangeAnimationTime() {
 }
 
 export function setupProperty(path: string, value: any) {
-  let parts = path.split(".");
-  let obj = ui.settings;
-  parts.slice(0, parts.length - 1).forEach((part) => { obj = obj[part]; });
-  if (path.indexOf("origin") !== -1) value *= 100;
-  obj[parts[parts.length - 1]].value = value;
+  if (path === "grid") {
+    ui.settings["grid"]["width"].value = value.width;
+    ui.settings["grid"]["height"].value = value.height;
+  } else {
+    let parts = path.split(".");
+    let obj = ui.settings;
+    parts.slice(0, parts.length - 1).forEach((part) => { obj = obj[part]; });
+    if (path.indexOf("origin") !== -1) value *= 100;
+    obj[parts[parts.length - 1]].value = value;
+  }
 
-  let pub = data.spriteUpdater.spriteAsset.pub;
+  const pub = data.spriteUpdater.spriteAsset.pub;
 
   if (path === "filtering" && spritesheetArea.spriteRenderer.asset != null) {
     if (value === "pixelated") {
@@ -389,7 +418,8 @@ export function setupProperty(path: string, value: any) {
     updateSelection();
   }
 
-  if (path === "grid.width" || path === "grid.height") {
+  const gridPaths = [ "grid", "grid.width", "grid.height" ];
+  if (gridPaths.indexOf(path) !== -1) {
     spritesheetArea.gridRenderer.setRatio({ x: pub.pixelsPerUnit / pub.grid.width, y: pub.pixelsPerUnit / pub.grid.height });
     let texture = pub.textures[pub.mapSlots["map"]];
     if (texture != null) {
