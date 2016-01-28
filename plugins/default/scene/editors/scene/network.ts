@@ -75,7 +75,8 @@ function loadPlugins(callback: (err: Error) => void) {
 }
 
 function startIfReady() {
-  if (data.sceneUpdater != null && data.sceneSettingsResource != null && data.gameSettingsResource != null) {
+  if (data.sceneUpdater != null && data.sceneUpdater.sceneAsset != null &&
+  data.sceneSettingsResource != null && data.gameSettingsResource != null) {
     engineStart();
     uiStart();
 
