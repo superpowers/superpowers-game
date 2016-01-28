@@ -8,7 +8,7 @@
     "url": "https://github.com/superpowers/superpowers-game.git"
   },
   "scripts": {
-    "build": "gulp --gulpfile=../../../../../scripts/pluginGulpfile.js --cwd=. && gulp --gulpfile=workerGulpfile.js"
+    "build": "gulp --gulpfile=../../../../../scripts/pluginGulpfile.js --cwd=. --silent && gulp --gulpfile=workerGulpfile.js"
   },
   "dependencies": {
     "combine-source-map": "^0.7.1",
