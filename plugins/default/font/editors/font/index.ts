@@ -180,7 +180,7 @@ document.querySelector("button.download").addEventListener("click", (event) => {
     triggerDownload(options.initialValue);
   } else {
     /* tslint:disable:no-unused-expression */
-    new SupClient.dialogs.PromptDialog(SupClient.i18n.t("fontEditor:font.download.prompt"), options, (name) => {
+    new SupClient.Dialogs.PromptDialog(SupClient.i18n.t("fontEditor:font.download.prompt"), options, (name) => {
       /* tslint:enable:no-unused-expression */
       if (name == null) return;
     });

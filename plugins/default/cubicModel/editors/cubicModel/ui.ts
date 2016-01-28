@@ -136,7 +136,7 @@ document.querySelector("button.download").addEventListener("click", (event) => {
     triggerDownload(options.initialValue);
   } else {
     /* tslint:disable:no-unused-expression */
-    new SupClient.dialogs.PromptDialog(SupClient.i18n.t("cubicModelEditor:sidebar.settings.cubicModel.download.prompt"), options, (name) => {
+    new SupClient.Dialogs.PromptDialog(SupClient.i18n.t("cubicModelEditor:sidebar.settings.cubicModel.download.prompt"), options, (name) => {
       /* tslint:enable:no-unused-expression */
       if (name == null) return;
       triggerDownload(name);
@@ -422,7 +422,7 @@ function onNewNodeClick() {
   };
 
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.PromptDialog(SupClient.i18n.t("cubicModelEditor:sidebar.nodes.newNode.prompt"), options, (name) => {
+  new SupClient.Dialogs.PromptDialog(SupClient.i18n.t("cubicModelEditor:sidebar.nodes.newNode.prompt"), options, (name) => {
     /* tslint:enable:no-unused-expression */
     if (name == null) return;
 
@@ -475,7 +475,7 @@ function onRenameNodeClick() {
   };
 
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.PromptDialog(SupClient.i18n.t("cubicModelEditor:sidebar.nodes.renamePrompt"), options, (newName) => {
+  new SupClient.Dialogs.PromptDialog(SupClient.i18n.t("cubicModelEditor:sidebar.nodes.renamePrompt"), options, (newName) => {
     /* tslint:enable:no-unused-expression */
     if (newName == null) return;
 
@@ -495,7 +495,7 @@ function onDuplicateNodeClick() {
   };
 
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.PromptDialog(SupClient.i18n.t("cubicModelEditor:sidebar.nodes.duplicatePrompt"), options, (newName) => {
+  new SupClient.Dialogs.PromptDialog(SupClient.i18n.t("cubicModelEditor:sidebar.nodes.duplicatePrompt"), options, (newName) => {
     /* tslint:enable:no-unused-expression */
     if (newName == null) return;
     let options = SupClient.getTreeViewInsertionPoint(ui.nodesTreeView);
@@ -514,7 +514,7 @@ function onDeleteNodeClick() {
   let confirmLabel = SupClient.i18n.t("cubicModelEditor:sidebar.nodes.deleteConfirm");
   let validationLabel = SupClient.i18n.t("common:actions.delete");
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.ConfirmDialog(confirmLabel, { validationLabel }, (confirm) => {
+  new SupClient.Dialogs.ConfirmDialog(confirmLabel, { validationLabel }, (confirm) => {
     /* tslint:enable:no-unused-expression */
     if (!confirm) return;
 

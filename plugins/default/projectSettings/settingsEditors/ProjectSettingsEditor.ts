@@ -26,7 +26,7 @@ export default class ProjectSettingsEditor {
           button.disabled = false;
           if (err != null) {
             /* tslint:disable:no-unused-expression */
-            new SupClient.dialogs.InfoDialog(err);
+            new SupClient.Dialogs.InfoDialog(err);
             /* tslint:enable:no-unused-expression */
             return;
           }

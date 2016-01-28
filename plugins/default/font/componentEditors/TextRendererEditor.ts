@@ -46,7 +46,7 @@ export default class TextRendererEditor {
         this.pendingModification -= 1;
         if (err != null) {
           /* tslint:disable:no-unused-expression */
-          new SupClient.dialogs.InfoDialog(err);
+          new SupClient.Dialogs.InfoDialog(err);
           /* tslint:enable:no-unused-expression */
           return;
         }

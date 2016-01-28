@@ -317,7 +317,7 @@ function applyDraftChanges(options: { ignoreErrors: boolean }) {
   data.projectClient.editAssetNoErrorHandling(SupClient.query.asset, "applyDraftChanges", options, (err: string) => {
     if (err != null && err !== "foundSelfErrors") {
       /* tslint:disable:no-unused-expression */
-      new SupClient.dialogs.InfoDialog(err);
+      new SupClient.Dialogs.InfoDialog(err);
       /* tslint:enable:no-unused-expression */
       SupClient.onDisconnected();
       return;
@@ -494,7 +494,7 @@ function onGlobalSearch() {
   };
 
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.PromptDialog(SupClient.i18n.t("scriptEditor:globalSearch.prompt"), options, (text) => {
+  new SupClient.Dialogs.PromptDialog(SupClient.i18n.t("scriptEditor:globalSearch.prompt"), options, (text) => {
     /* tslint:enable:no-unused-expression */
     if (text == null) {
       ui.editor.codeMirrorInstance.focus();

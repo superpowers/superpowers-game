@@ -175,7 +175,7 @@ function downloadTexture(textureName: string) {
     triggerDownload(options.initialValue);
   } else {
     /* tslint:disable:no-unused-expression */
-    new SupClient.dialogs.PromptDialog(SupClient.i18n.t("spriteEditor:sidebar.settings.sprite.texture.download.prompt"), options, (name) => {
+    new SupClient.Dialogs.PromptDialog(SupClient.i18n.t("spriteEditor:sidebar.settings.sprite.texture.download.prompt"), options, (name) => {
       /* tslint:enable:no-unused-expression */
       if (name == null) return;
       triggerDownload(name);
@@ -195,7 +195,7 @@ function onSetGridSize(event: any) {
   };
 
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.PromptDialog(SupClient.i18n.t("spriteEditor:sidebar.settings.sprite.grid.widthPrompt"), options, (framesPerRow) => {
+  new SupClient.Dialogs.PromptDialog(SupClient.i18n.t("spriteEditor:sidebar.settings.sprite.grid.widthPrompt"), options, (framesPerRow) => {
     /* tslint:enable:no-unused-expression */
     if (framesPerRow != null) {
       let framesPerRowNum = parseInt(framesPerRow, 10);
@@ -207,7 +207,7 @@ function onSetGridSize(event: any) {
     options.validationLabel = SupClient.i18n.t("spriteEditor:sidebar.settings.sprite.grid.setHeight");
 
     /* tslint:disable:no-unused-expression */
-    new SupClient.dialogs.PromptDialog(SupClient.i18n.t("spriteEditor:sidebar.settings.sprite.grid.heightPrompt"), options, (framesPerColumn) => {
+    new SupClient.Dialogs.PromptDialog(SupClient.i18n.t("spriteEditor:sidebar.settings.sprite.grid.heightPrompt"), options, (framesPerColumn) => {
       /* tslint:enable:no-unused-expression */
       if (framesPerColumn != null) {
         let framesPerColumnNum = parseInt(framesPerColumn, 10);
@@ -226,7 +226,7 @@ function onNewAnimationClick() {
   };
 
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.PromptDialog(SupClient.i18n.t("spriteEditor:sidebar.animations.newAnimationPrompt"), options, (name) => {
+  new SupClient.Dialogs.PromptDialog(SupClient.i18n.t("spriteEditor:sidebar.animations.newAnimationPrompt"), options, (name) => {
     /* tslint:enable:no-unused-expression */
     if (name == null) return;
 
@@ -250,7 +250,7 @@ function onRenameAnimationClick() {
   };
 
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.PromptDialog(SupClient.i18n.t("spriteEditor:sidebar.animations.renameAnimationPrompt"), options, (newName) => {
+  new SupClient.Dialogs.PromptDialog(SupClient.i18n.t("spriteEditor:sidebar.animations.renameAnimationPrompt"), options, (newName) => {
     /* tslint:enable:no-unused-expression */
     if (newName == null) return;
 
@@ -264,7 +264,7 @@ function onDeleteAnimationClick() {
   let confirmLabel = SupClient.i18n.t("spriteEditor:sidebar.animations.deleteAnimationPrompt");
   let validationLabel = SupClient.i18n.t("common:actions.delete");
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.ConfirmDialog(confirmLabel, { validationLabel }, (confirm) => {
+  new SupClient.Dialogs.ConfirmDialog(confirmLabel, { validationLabel }, (confirm) => {
     /* tslint:enable:no-unused-expression */
     if (!confirm) return;
 
@@ -466,7 +466,7 @@ function onNewMapClick() {
   };
 
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.PromptDialog(SupClient.i18n.t("spriteEditor:sidebar.advancedTextures.newMapPrompt"), options, (name) => {
+  new SupClient.Dialogs.PromptDialog(SupClient.i18n.t("spriteEditor:sidebar.advancedTextures.newMapPrompt"), options, (name) => {
     /* tslint:enable:no-unused-expression */
     if (name == null) return;
 
@@ -500,7 +500,7 @@ function onRenameMapClick() {
   };
 
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.PromptDialog(SupClient.i18n.t("spriteEditor:sidebar.advancedTextures.renameMapPrompt"), options, (newName) => {
+  new SupClient.Dialogs.PromptDialog(SupClient.i18n.t("spriteEditor:sidebar.advancedTextures.renameMapPrompt"), options, (newName) => {
     /* tslint:enable:no-unused-expression */
     if (newName == null) return;
 
@@ -514,7 +514,7 @@ function onDeleteMapClick() {
   let confirmLabel = SupClient.i18n.t("spriteEditor:sidebar.advancedTextures.deleteMapPrompt");
   let validationLabel = SupClient.i18n.t("common:actions.delete");
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.ConfirmDialog(confirmLabel, { validationLabel }, (confirm) => {
+  new SupClient.Dialogs.ConfirmDialog(confirmLabel, { validationLabel }, (confirm) => {
     /* tslint:enable:no-unused-expression */
     if (!confirm) return;
 

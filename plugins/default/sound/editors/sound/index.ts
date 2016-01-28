@@ -96,7 +96,7 @@ function onDownloadSound() {
     triggerDownload(options.initialValue);
   } else {
     /* tslint:disable:no-unused-expression */
-    new SupClient.dialogs.PromptDialog(SupClient.i18n.t("soundEditor:sidebar.settings.sound.file.download.prompt"), options, (name) => {
+    new SupClient.Dialogs.PromptDialog(SupClient.i18n.t("soundEditor:sidebar.settings.sound.file.download.prompt"), options, (name) => {
       /* tslint:enable:no-unused-expression */
       if (name == null) return;
       triggerDownload(name);

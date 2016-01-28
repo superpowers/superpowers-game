@@ -133,7 +133,7 @@ function onResizeMapClick() {
   };
 
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.PromptDialog(SupClient.i18n.t("tileMapEditor:newWidthPrompt"), options, (newWidthString) => {
+  new SupClient.Dialogs.PromptDialog(SupClient.i18n.t("tileMapEditor:newWidthPrompt"), options, (newWidthString) => {
     /* tslint:enable:no-unused-expression */
     let newWidth = data.tileMapUpdater.tileMapAsset.pub.width;
     if (newWidthString != null && !isNaN(parseInt(newWidthString, 10)))
@@ -146,7 +146,7 @@ function onResizeMapClick() {
     };
 
     /* tslint:disable:no-unused-expression */
-    new SupClient.dialogs.PromptDialog(SupClient.i18n.t("tileMapEditor:newHeightPrompt"), options, (newHeightString) => {
+    new SupClient.Dialogs.PromptDialog(SupClient.i18n.t("tileMapEditor:newHeightPrompt"), options, (newHeightString) => {
       /* tslint:enable:no-unused-expression */
       let newHeight = data.tileMapUpdater.tileMapAsset.pub.height;
       if (newHeightString != null && !isNaN(parseInt(newHeightString, 10)))
@@ -166,14 +166,14 @@ function onMoveMapClick() {
   };
 
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.PromptDialog(SupClient.i18n.t("tileMapEditor:horizontalOffsetPrompt"), options, (horizontalOffsetString) => {
+  new SupClient.Dialogs.PromptDialog(SupClient.i18n.t("tileMapEditor:horizontalOffsetPrompt"), options, (horizontalOffsetString) => {
     /* tslint:enable:no-unused-expression */
     let horizontalOffset = 0;
     if (horizontalOffsetString != null && !isNaN(parseInt(horizontalOffsetString, 10)))
       horizontalOffset = parseInt(horizontalOffsetString, 10);
 
     /* tslint:disable:no-unused-expression */
-    new SupClient.dialogs.PromptDialog(SupClient.i18n.t("tileMapEditor:verticalOffsetPrompt"), options, (verticalOffsetString) => {
+    new SupClient.Dialogs.PromptDialog(SupClient.i18n.t("tileMapEditor:verticalOffsetPrompt"), options, (verticalOffsetString) => {
       /* tslint:enable:no-unused-expression */
       let verticalOffset = 0;
       if (verticalOffsetString != null && !isNaN(parseInt(verticalOffsetString, 10)))
@@ -192,7 +192,7 @@ function onNewLayerClick() {
   };
 
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.PromptDialog(SupClient.i18n.t("tileMapEditor:newLayerPrompt"), options, (name) => {
+  new SupClient.Dialogs.PromptDialog(SupClient.i18n.t("tileMapEditor:newLayerPrompt"), options, (name) => {
     /* tslint:enable:no-unused-expression */
     if (name == null) return;
 
@@ -218,7 +218,7 @@ function onRenameLayerClick() {
   };
 
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.PromptDialog(SupClient.i18n.t("tileMapEditor:renameLayerPrompt"), options, (newName) => {
+  new SupClient.Dialogs.PromptDialog(SupClient.i18n.t("tileMapEditor:renameLayerPrompt"), options, (newName) => {
     /* tslint:enable:no-unused-expression */
     if (newName == null) return;
     data.projectClient.editAsset(SupClient.query.asset, "renameLayer", layer.id, newName);
@@ -231,7 +231,7 @@ function onDeleteLayerClick() {
   let confirmLabel = SupClient.i18n.t("tileMapEditor:deleteLayerConfirm");
   let validationLabel = SupClient.i18n.t("common:actions.delete");
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.ConfirmDialog(confirmLabel, { validationLabel }, (confirm) => {
+  new SupClient.Dialogs.ConfirmDialog(confirmLabel, { validationLabel }, (confirm) => {
     /* tslint:enable:no-unused-expression */
     if (!confirm) return;
 

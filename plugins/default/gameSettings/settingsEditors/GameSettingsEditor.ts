@@ -165,7 +165,7 @@ export default class GameSettingsEditor {
           this.customLayers.pop();
         } else {
           /* tslint:disable:no-unused-expression */
-          new SupClient.dialogs.InfoDialog("Layer name cannot be empty");
+          new SupClient.Dialogs.InfoDialog("Layer name cannot be empty");
           /* tslint:enable:no-unused-expression */
           event.target.value = this.customLayers[index];
           return;

@@ -497,7 +497,7 @@ function onNewNodeClick() {
   };
 
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.PromptDialog(SupClient.i18n.t("sceneEditor:treeView.newActor.prompt"), options, (name) => {
+  new SupClient.Dialogs.PromptDialog(SupClient.i18n.t("sceneEditor:treeView.newActor.prompt"), options, (name) => {
     /* tslint:enable:no-unused-expression */
     if (name == null) return;
     createNewNode(name, false);
@@ -513,7 +513,7 @@ function onNewPrefabClick() {
   };
 
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.PromptDialog(SupClient.i18n.t("sceneEditor:treeView.newPrefab.prompt"), options, (name) => {
+  new SupClient.Dialogs.PromptDialog(SupClient.i18n.t("sceneEditor:treeView.newPrefab.prompt"), options, (name) => {
     /* tslint:enable:no-unused-expression */
     if (name == null) return;
     createNewNode(name, true);
@@ -555,7 +555,7 @@ function onRenameNodeClick() {
   };
 
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.PromptDialog(SupClient.i18n.t("sceneEditor:treeView.renamePrompt"), options, (newName) => {
+  new SupClient.Dialogs.PromptDialog(SupClient.i18n.t("sceneEditor:treeView.renamePrompt"), options, (newName) => {
     /* tslint:enable:no-unused-expression */
     if (newName == null) return;
 
@@ -577,7 +577,7 @@ function onDuplicateNodeClick() {
   };
 
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.PromptDialog(SupClient.i18n.t("sceneEditor:treeView.duplicatePrompt"), options, (newName) => {
+  new SupClient.Dialogs.PromptDialog(SupClient.i18n.t("sceneEditor:treeView.duplicatePrompt"), options, (newName) => {
     /* tslint:enable:no-unused-expression */
     if (newName == null) return;
     let options = SupClient.getTreeViewInsertionPoint(ui.nodesTreeView);
@@ -597,7 +597,7 @@ function onDeleteNodeClick() {
   let confirmLabel = SupClient.i18n.t("sceneEditor:treeView.deleteConfirm");
   let validationLabel = SupClient.i18n.t("common:actions.delete");
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.ConfirmDialog(confirmLabel, { validationLabel }, (confirm) => {
+  new SupClient.Dialogs.ConfirmDialog(confirmLabel, { validationLabel }, (confirm) => {
     /* tslint:enable:no-unused-expression */
     if (!confirm) return;
 
@@ -672,7 +672,7 @@ export function createComponentElement(nodeId: string, component: Component) {
   let editConfig = (command: string, ...args: any[]) => {
     let callback = (err: string) => {
       /* tslint:disable:no-unused-expression */
-      if (err != null) new SupClient.dialogs.InfoDialog(err);
+      if (err != null) new SupClient.Dialogs.InfoDialog(err);
       /* tslint:enable:no-unused-expression */
     };
 
@@ -709,7 +709,7 @@ function onNewComponentClick() {
   let selectLabel = SupClient.i18n.t("sceneEditor:inspector.newComponent.select");
   let validationLabel = SupClient.i18n.t("sceneEditor:inspector.newComponent.validate");
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.SelectDialog(selectLabel, ui.availableComponents, { validationLabel, size: 12 }, (type) => {
+  new SupClient.Dialogs.SelectDialog(selectLabel, ui.availableComponents, { validationLabel, size: 12 }, (type) => {
     /* tslint:enable:no-unused-expression */
     if (type == null) return;
 
@@ -723,7 +723,7 @@ function onDeleteComponentClick(event: any) {
   let confirmLabel = SupClient.i18n.t("sceneEditor:inspector.deleteComponent.confirm");
   let validationLabel = SupClient.i18n.t("sceneEditor:inspector.deleteComponent.validate");
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.ConfirmDialog(confirmLabel, { validationLabel }, (confirm) => {
+  new SupClient.Dialogs.ConfirmDialog(confirmLabel, { validationLabel }, (confirm) => {
     /* tslint:enable:no-unused-expression */
     if (!confirm) return;
 
@@ -812,7 +812,7 @@ function onActorDrop(event: DragEvent) {
   let plugin = SupClient.getPlugins<SupClient.ImportIntoScenePlugin>("importIntoScene")[entry.type];
   if (plugin == null || plugin.content.importActor == null) {
     const reason = SupClient.i18n.t("sceneEditor:errors.cantImportAssetTypeIntoScene");
-    new SupClient.dialogs.InfoDialog(SupClient.i18n.t("sceneEditor:failures.importIntoScene", { reason }));
+    new SupClient.Dialogs.InfoDialog(SupClient.i18n.t("sceneEditor:failures.importIntoScene", { reason }));
     return;
   }
   event.preventDefault();
@@ -831,7 +831,7 @@ function onActorDrop(event: DragEvent) {
   const options = { transform: { position }, prefab: false };
   plugin.content.importActor(entry, data.projectClient, options, (err: string, nodeId: string) => {
     if (err != null) {
-      new SupClient.dialogs.InfoDialog(SupClient.i18n.t("sceneEditor:failures.importIntoScene", { reason: err }));
+      new SupClient.Dialogs.InfoDialog(SupClient.i18n.t("sceneEditor:failures.importIntoScene", { reason: err }));
       return;
     }
 
@@ -857,7 +857,7 @@ function onComponentDrop(event: DragEvent) {
   let plugin = SupClient.getPlugins<SupClient.ImportIntoScenePlugin>("importIntoScene")[entry.type];
   if (plugin == null || plugin.content.importComponent == null) {
     const reason = SupClient.i18n.t("sceneEditor:errors.cantImportAssetTypeIntoScene");
-    new SupClient.dialogs.InfoDialog(SupClient.i18n.t("sceneEditor:failures.importIntoScene", { reason }));
+    new SupClient.Dialogs.InfoDialog(SupClient.i18n.t("sceneEditor:failures.importIntoScene", { reason }));
     return;
   }
   event.preventDefault();

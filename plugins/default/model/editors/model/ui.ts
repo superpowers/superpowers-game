@@ -241,7 +241,7 @@ function downloadTexture(textureName: string) {
     triggerDownload(options.initialValue);
   } else {
     /* tslint:disable:no-unused-expression */
-    new SupClient.dialogs.PromptDialog(SupClient.i18n.t("modelEditor:sidebar.advancedTextures.downloadPrompt"), options, (name) => {
+    new SupClient.Dialogs.PromptDialog(SupClient.i18n.t("modelEditor:sidebar.advancedTextures.downloadPrompt"), options, (name) => {
       /* tslint:enable:no-unused-expression */
       if (name == null) return;
       triggerDownload(name);
@@ -267,7 +267,7 @@ function onNewAnimationClick() {
   };
 
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.PromptDialog(SupClient.i18n.t("modelEditor:sidebar.animations.new.prompt"), options, (name) => {
+  new SupClient.Dialogs.PromptDialog(SupClient.i18n.t("modelEditor:sidebar.animations.new.prompt"), options, (name) => {
     /* tslint:enable:no-unused-expression */
     if (name == null) return;
 
@@ -292,7 +292,7 @@ function onAnimationFileSelectChange(event: any) {
     if (data != null) {
       if (data.animation == null) {
         /* tslint:disable:no-unused-expression */
-        new SupClient.dialogs.InfoDialog("No animation found in imported files");
+        new SupClient.Dialogs.InfoDialog("No animation found in imported files");
         /* tslint:enable:no-unused-expression */
         return;
       }
@@ -314,7 +314,7 @@ function onRenameAnimationClick() {
   };
 
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.PromptDialog(SupClient.i18n.t("modelEditor:sidebar.animations.renamePrompt"), options, (newName) => {
+  new SupClient.Dialogs.PromptDialog(SupClient.i18n.t("modelEditor:sidebar.animations.renamePrompt"), options, (newName) => {
     /* tslint:enable:no-unused-expression */
     if (newName == null) return;
 
@@ -328,7 +328,7 @@ function onDeleteAnimationClick() {
   const confirmLabel = SupClient.i18n.t("modelEditor:sidebar.animations.deleteConfirm");
   const validationLabel = SupClient.i18n.t("common:actions.delete");
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.ConfirmDialog(confirmLabel, { validationLabel }, (confirm) => {
+  new SupClient.Dialogs.ConfirmDialog(confirmLabel, { validationLabel }, (confirm) => {
     /* tslint:enable:no-unused-expression */
     if (!confirm) return;
 
@@ -387,7 +387,7 @@ function onNewMapClick() {
   };
 
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.PromptDialog(SupClient.i18n.t("modelEditor:sidebar.advancedTextures.newMapPrompt"), options, (name) => {
+  new SupClient.Dialogs.PromptDialog(SupClient.i18n.t("modelEditor:sidebar.advancedTextures.newMapPrompt"), options, (name) => {
     /* tslint:enable:no-unused-expression */
     if (name == null) return;
 
@@ -425,7 +425,7 @@ function onRenameMapClick() {
   };
 
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.PromptDialog(SupClient.i18n.t("modelEditor:sidebar.advancedTextures.renameMapPrompt"), options, (newName) => {
+  new SupClient.Dialogs.PromptDialog(SupClient.i18n.t("modelEditor:sidebar.advancedTextures.renameMapPrompt"), options, (newName) => {
     /* tslint:enable:no-unused-expression */
     if (newName == null) return;
 
@@ -439,7 +439,7 @@ function onDeleteMapClick() {
   const confirmLabel = SupClient.i18n.t("modelEditor:sidebar.advancedTextures.deleteMapConfirm");
   const validationLabel = SupClient.i18n.t("common:actions.delete");
   /* tslint:disable:no-unused-expression */
-  new SupClient.dialogs.ConfirmDialog(confirmLabel, { validationLabel }, (confirmed) => {
+  new SupClient.Dialogs.ConfirmDialog(confirmLabel, { validationLabel }, (confirmed) => {
     /* tslint:enable:no-unused-expression */
     if (!confirmed) return;
 
