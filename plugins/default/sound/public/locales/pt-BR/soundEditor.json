@@ -1,0 +1,17 @@
+{
+  "sidebar": {
+    "settings": {
+      "sound": {
+        "title": "Som",
+        "file": {
+          "title": "Arquivo",
+          "download": {
+            "defaultName": "Som.wav",
+            "prompt": "Digite o nome do som"
+          }
+        },
+        "streaming": "Streaming"
+      }
+    }
+  }
+}

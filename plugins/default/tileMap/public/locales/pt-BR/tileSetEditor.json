@@ -1,0 +1,18 @@
+{
+  "tileSet": "Tile Set",
+  "texture": {
+    "title": "Textura",
+    "downloadPrompt": "Digite um nome para a textura",
+    "downloadInitialValue": "Tile Set"
+  },
+  "grid": "Grade (px)",
+
+  "data": "Dados",
+  "tileID": "Tile ID",
+
+  "properties": "Propriedades",
+  "newPropertyPrompt": "Digite um nome para a propriedade.",
+  "newPropertyInitialValue": "propriedade",
+  "renamePropertyPrompt": "Digite um novo nome para a propriedade.",
+  "deletePropertyConfirm": "Tem certeza que deseja deletar a propriedade selecionada?"
+}

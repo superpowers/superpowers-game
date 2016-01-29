@@ -1,0 +1,21 @@
+{
+  "TextRenderer": {
+    "label": "Renderizador de Texto",
+    "font": "Fonte",
+    "text": "Texto",
+    "align": {
+      "title": "Alinhamento",
+      "left": "Esqueda",
+      "center": "Centro",
+      "right": "Direita"
+    },
+    "verticalAlign": {
+      "title": "Alinhamento Vertical",
+      "top": "Superior",
+      "center": "Centro",
+      "bottom": "Inferior"
+    },
+    "size": "Tamanho",
+    "color": "Cor"
+  }
+}

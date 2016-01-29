@@ -1,0 +1,23 @@
+{
+  "Camera": {
+    "label": "Câmera",
+    "mode": "Modo",
+    "modeOptions": {
+      "perspective": "Perspectiva",
+      "orthographic": "Ortogonal"
+    },
+    "fieldOfView": "Campo de Visão",
+    "orthographicScale": "Escala Ortográfica",
+    "depth": "Profundidade",
+    "depthTitle": "Usado para determinar em que ordem renderizar múltiplas câmeras",
+    "layers": "Camadas",
+    "layersTitle": "Quais camadas a serem renderizadas e em que ordem",
+    "nearPlane": "Plano Próximo",
+    "farPlane": "Plano Distante",
+    "viewport": {
+      "title": "Janela de Exibição",
+      "position": "Superior / Esquerda",
+      "size": "Largura / Altura"
+    }
+  }
+}

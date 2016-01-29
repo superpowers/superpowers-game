@@ -1,0 +1,9 @@
+{
+  "Project": {
+    "label": "Projeto",
+    "deleteTrashedAssetsFromDisk": "Apagar do disco todos os assets que estão na lixeira",
+    "noFoldersRemoved": "Nenhuma pasta foi removida.",
+    "oneFolderRemoved": "1 pasta foi removida",
+    "severalFoldersRemoved": "${folders} pastas foram removidas"
+  }
+}

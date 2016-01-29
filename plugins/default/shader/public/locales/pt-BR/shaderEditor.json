@@ -1,0 +1,18 @@
+{
+  "uniforms": "Uniformes",
+  "newUniform": "Novo uniforme",
+  "attributes": "Atributos",
+  "newAttribute": "Novo atributo",
+  "name": "Nome",
+  "type": "Tipo",
+  "value": "Valor",
+  "useLights": "Usar luzes",
+  "preview": "Prever",
+  "plane": "Plano",
+  "box" : "Caixa",
+  "sphere": "Esfera",
+  "asset": "Asset",
+  "assetPath": "Caminho do Asset",
+  "vertexShader": "Vertex Shader",
+  "fragmentShader": "Fragment Shader"
+}

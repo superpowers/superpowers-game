@@ -1,0 +1,26 @@
+{
+  "type": "Tipo de Fonte",
+  "typeOptions": {
+    "bitmap": "Bitmap",
+    "vector": "Vetorial"
+  },
+  "font": {
+    "title": "Fonte",
+    "download": {
+      "prompt": "Digite um nome para a fonte",
+      "defaultName": "Fonte"
+    }
+  },
+  "texture": "Textura",
+  "rendering": "Renderização",
+  "filtering": "Filtragem",
+  "pixelated": "Pixelizada",
+  "smooth": "Suave",
+  "pixelsPerUnit": "Pixels / Unidade",
+  "color": "Cor",
+  "settings": "Configurações",
+  "size": "Dimensão (pixels)",
+  "gridSize": "Dimensão da Grade",
+  "charset": "Charset",
+  "charsetOffset": "Deslocamento do Charset"
+}

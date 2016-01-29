@@ -1,0 +1,14 @@
+{
+  "TileMapRenderer": {
+    "label": "Renderizador de Tile Map",
+    "tileMap": "Tile Map",
+    "tileSet": "Tile Set",
+    "shadow": {
+      "title": "Sombra",
+      "cast": "Produz",
+      "receive": "Recebe"
+    },
+    "material": "Material",
+    "shader": "Shader"
+  }
+}

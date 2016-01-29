@@ -1,0 +1,77 @@
+{
+  "3dView": {
+    "settings": {
+      "title": "Configurações",
+      "linkShapeToPivot": "Vincular forma ao pivô"
+    },
+    "transform": {
+      "title": "Transformar",
+      "movePivot": "Mover pivô",
+      "moveShape": "Mover forma",
+      "rotate": "Rotacionar",
+      "stretch": "Esticar",
+      "local": "Local"
+    },
+    "grid": {
+      "title": "Grade",
+      "size": "Dimensão",
+      "visible": "Visível"
+    }
+  },
+  "textureView": {
+    "mode": {
+      "title": "Modo",
+      "layout": "Layout",
+      "paint": "Pintura"
+    },
+    "layoutMode": {
+      "title": "Configurações",
+      "linkTextureToUV": "Vincular textura ao UV"
+    },
+    "paintMode": {
+      "tool": "Ferramenta",
+      "brush": "Pincel",
+      "eraser": "Borracha",
+      "fill": "Preenchimento",
+      "color": "Cor"
+    }
+  },
+  "sidebar": {
+    "settings": {
+      "cubicModel": {
+        "title": "Modelo Cúbico",
+        "pixelsPerUnit": "Pixels por unidade",
+        "texture": "Textura",
+        "download": {
+          "defaultName": "Textura",
+          "prompt": "Digite um nome para a textura."
+        },
+        "textureSize": "Dimensão da textura (px)"
+      }
+    },
+    "nodes": {
+      "title": "Nós",
+      "newNode": {
+        "title": "Novo nó",
+        "prompt": "Digite um nome para o nó."
+      },
+      "renamePrompt": "Digite um novo nome para o nó.",
+      "duplicatePrompt": "Digite um nome para o novo nó.",
+      "deleteConfirm": "Tem certeza que deseja excluir o nó selecionado?",
+      "hide": "Esconder",
+      "show": "Mostrar"
+    },
+    "inspector": {
+      "position": "Posição",
+      "orientation": "Orientação",
+      "shape": "Forma",
+      "shapeType": "Tipo",
+      "shapeOptions": {
+        "box": "Caixa"
+      },
+      "offset": "Deslocamento",
+      "size": "Dimensão",
+      "stretch": "Esticamento"
+    }
+  }
+}

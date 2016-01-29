@@ -1,0 +1,59 @@
+{
+  "status": {
+    "noErrors": "Sem erros",
+    "oneError": "1 erro",
+    "severalErrors": "${errors} erros",
+
+    "line": "Linha",
+    "type": "Tipo",
+    "message": "Mensagem",
+    "file": "Arquivo"
+  },
+
+  "sidebar": {
+    "settings": {
+      "model": "Modelo",
+      "texture": "Textura",
+      "filtering": {
+        "title": "Filtragem",
+        "pixelated": "Pixelizado",
+        "smooth": "Suave"
+      },
+      "wrapping": {
+        "title": "Wrapping",
+        "clampToEdge": "Prender a borda",
+        "repeat": "Repetir",
+        "mirroredRepeat": "Repetir espelhado"
+      },
+      "showSkeleton": "Mostrar esqueleto",
+      "unitRatio": "Proporção de unidade",
+      "opacity": {
+        "title": "Opacidade",
+        "opaque": "Opaco",
+        "transparent": "Transparente"
+        }
+    },
+    "animations": {
+      "title": "Animações",
+      "new": {
+        "prompt": "Digite um nome para a animação.",
+        "initialValue": "Animação"
+      },
+      "renamePrompt": "Digite um novo nome para a animação.",
+      "deleteConfirm": "Tem certeza de que deseja excluir as animações selecionadas?"
+    },
+    "advancedTextures": {
+      "title": "Texturas Avançadas",
+      "map": "Mapa",
+      "lightMap": "Mapa de Luz",
+      "specularMap": "Mapa Especular",
+      "alphaMap": "Mapa Alfa",
+      "normalMap": "Mapa Normal (Phong)",
+      "newMapPrompt": "Digite um novo nome para o mapa.",
+      "renameMapPrompt": "Digite um novo nome para a textura.",
+      "deleteMapConfirm": "Tem certeza de que deseja excluir as texturas selecionadas?",
+      "downloadPrompt": "Digite um nome para a imagem.",
+      "downloadInitialValue": "Imagem"
+    }
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "Scene": {
+    "label": "Cena",
+    "defaultCameraMode": "Modo padrão da câmera",
+    "defaultCameraVerticalAxis": "Eixo vertical padrão da câmera"
+  }
+}

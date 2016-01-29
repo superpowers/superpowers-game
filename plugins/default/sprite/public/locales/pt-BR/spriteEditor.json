@@ -1,0 +1,76 @@
+{
+  "preview": {
+    "loop": "Loop"
+  },
+  "sidebar": {
+    "settings": {
+      "sprite": {
+        "title": "Sprite",
+        "texture": {
+          "title": "Textura",
+          "size": "Dimensão da Textura (px)",
+          "download": {
+            "prompt": "Digite um nome para a imagem.",
+            "defaultName": "Imagem"
+          }
+        },
+        "grid": {
+          "size": "Dimensão da Grade",
+          "setup": "Setup",
+          "widthPrompt": "Quantos quadros por linha?",
+          "setWidth": "Definir largura da grade",
+          "heightPrompt": "Quantos quadros por coluna?",
+          "setHeight": "Definir altura da grade"
+        },
+        "origin": "Origem (%)"
+      },
+      "rendering": {
+        "title": "Renderização",
+        "pixelsPerUnit": "Pixels / Unidade",
+        "filtering": {
+          "title": "Filtragem",
+          "pixelated": "Pixelizado",
+          "smooth": "Suave"
+        },
+        "wrapping": {
+          "title": "Wrapping",
+          "clampToEdge": "Prender a borda",
+          "repeat": "Repetir",
+          "mirroredRepeat": "Repetir espelhado"
+        },
+        "opacity": {
+          "title": "Opacidade",
+          "opaque": "Opaco",
+          "transparent": "Transparente"
+        },
+        "alphaTest": "Teste alfa"
+      },
+      "animation": {
+         "title": "Animação",
+         "framesPerSecond": "Quadros / Segundo",
+         "frameOrder": {
+           "title": "Ordem dos quadros",
+           "rows": "Linhas",
+           "columns": "Colunas"
+         }
+      }
+    },
+    "animations": {
+      "title": "Animações",
+      "newAnimationPrompt": "Digite um nome para a animação.",
+      "renameAnimationPrompt": "Digite um novo nome para a animação.",
+      "deleteAnimationPrompt": "Tem certeza de que deseja excluir as animações selecionadas?"
+    },
+    "advancedTextures": {
+      "title": "Texturas Avançadas",
+      "map": "Mapa",
+      "lightMap": "Mapa de Luz",
+      "specularMap": "Mapa Especular",
+      "alphaMap": "Mapa Alfa",
+      "normalMap": "Mapa Normal (Phong)",
+      "newMapPrompt": "Digite um novo nome para o mapa.",
+      "renameMapPrompt": "Digite um novo nome para a textura.",
+      "deleteMapPrompt": "Tem certeza de que deseja excluir as texturas selecionadas?"
+    }
+  }
+}

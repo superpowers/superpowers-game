@@ -1,0 +1,30 @@
+{
+  "tileMap": "Tile Map",
+  "tileSet": "Tile Set",
+  "pixelsPerUnit": "Pixels / Unidade",
+  "depthOffset": "Deslocamento de profundidade",
+
+  "size": "Dimensão",
+  "resize": "Redimensionar",
+  "newWidthPrompt": "Insira uma nova largura para o mapa.",
+  "newHeightPrompt": "Insira uma nova altura para o mapa.",
+  "move": "Mover",
+  "applyOffset": "Aplicar deslocamento",
+  "horizontalOffsetPrompt": "Insira o deslocamento horizontal.",
+  "verticalOffsetPrompt": "Insira o deslocamento vertical.",
+
+  "tools": "Ferramentas",
+  "grid": "Grade",
+  "highlight": "Realçar",
+
+  "brush": "Pincel",
+  "fill": "Preenchimento",
+  "selection": "Seleção",
+  "eraser": "Borracha",
+
+  "layers": "Camadas",
+  "newLayerPrompt": "Digite um nome para a camada.",
+  "newLayerInitialValue": "Camada",
+  "renameLayerPrompt": "Digite um novo nome para a camada.",
+  "deleteLayerConfirm": "Tem certeza de que deseja excluir a camada selecionada?"
+}

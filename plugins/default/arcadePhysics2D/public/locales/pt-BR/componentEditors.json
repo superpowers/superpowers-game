@@ -1,0 +1,18 @@
+{
+  "ArcadeBody2D": {
+    "label": "Arcade Body 2D",
+    "type": "Tipo",
+    "typeOptions": {
+      "box": "Caixa",
+      "tileMap": "Tile Map"
+    },
+
+    "movable": "Móvel",
+    "size": "Dimensão",
+    "offset": "Deslocamento",
+
+    "tileMap": "Tile Map",
+    "tileSetProperty": "Propriedade do Tile Set",
+    "layers": "Camadas"
+  }
+}

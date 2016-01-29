@@ -1,0 +1,24 @@
+{
+  "applyChanges": "Aplicar alterações",
+  "applyChangesWithErrors": "Aplicar alterações com erros",
+  "draft": "Rascunho",
+
+  "errors": {
+    "noErrors": "Nenhum erro",
+    "oneError": "1 erro",
+    "severalErrors": "${errors} erros",
+
+    "selfErrorsInfo": "${errors} neste script",
+    "otherErrorsInfo": "${errors} em outros scripts",
+    "bothErrorsInfo": "${selfErrors}, ${otherErrors}",
+
+    "line": "Linha",
+    "message": "Mensagem",
+    "script": "Script"
+  },
+
+  "globalSearch": {
+    "prompt": "Pesquisar em todos scripts.",
+    "placeholder": "Encontrar no projeto"
+  }
+}

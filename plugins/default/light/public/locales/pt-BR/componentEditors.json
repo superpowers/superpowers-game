@@ -1,0 +1,30 @@
+{
+  "Light": {
+    "label": "Luz",
+    "type": "Tipo",
+    "typeOptions": {
+      "ambient": "Ambiente",
+      "point": "Pontual",
+      "spot": "Holofote",
+      "directional": "Direcional"
+    },
+
+    "color": "Cor",
+    "intensity": "Intensidade",
+    "distance": "Distância",
+    "angle": "Ângulo",
+    "target": "Alvo",
+    "castShadow": "Produz sombras",
+
+    "shadowSettings": {
+      "title": "Definições de sombra",
+      "mapSize": "Dimensão do mapa",
+      "bias": "Inclinação",
+      "darkness": "Escuridão",
+      "near-far": "Próxima / Distante",
+      "fov": "Campo de Visão",
+      "top-bottom": "Superior / Inferior",
+      "left-right": "Esquerda / Direita"
+    }
+  }
+}

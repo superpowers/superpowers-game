@@ -1,0 +1,13 @@
+{
+  "searchPlaceholder": "Encontrar no projeto",
+  "matchCase": "Diferenciar maiúsculas de minúsculas",
+
+  "noResults": "Nenhum resultado encontrado",
+  "resultInfo": "${results} em ${files}",
+  "fileInfo": "${results} em \"${fileName}\"",
+
+  "oneResult": "1 resultado",
+  "severalResults": "${results} resultados",
+  "oneFile": "1 arquivo",
+  "severalFiles": "${files} arquivos"
+}

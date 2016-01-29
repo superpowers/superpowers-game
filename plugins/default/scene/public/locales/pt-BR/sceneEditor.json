@@ -1,0 +1,79 @@
+{
+  "controls": {
+    "camera": {
+      "title": "Câmera",
+      "mode": "Modo",
+      "verticalAxis": "Eixo para cima",
+      "speed": "Velocidade"
+    },
+    "transform": {
+      "title": "Transformar",
+      "move": "Mover",
+      "rotate": "Rotacionar",
+      "scale": "Escalar",
+      "local": "Local"
+    },
+    "grid": {
+      "title": "Grade",
+      "size": "Dimensão",
+      "visible": "Visível"
+    },
+    "light": {
+      "title": "Luz"
+    }
+  },
+  "treeView": {
+    "newActor": {
+      "title": "Novo ator",
+      "prompt": "Digite um nome para o ator.",
+      "initialValue": "Ator"
+    },
+    "newPrefab": {
+      "title": "Novo prefab",
+      "prompt": "Digite um nome para o prefab",
+      "initialValue": "Prefab"
+    },
+    "renamePrompt": "Digite um novo nome para o ator.",
+    "duplicatePrompt": "Digite um nome para o novo ator.",
+    "deleteConfirm": "Tem certeza de que deseja excluir os atores selecionados?",
+    "visible": {
+      "show": "Mostrar",
+      "hide": "Esconder"
+    }
+  },
+  "inspector": {
+    "position": "Posição",
+    "orientation": "Orientação",
+    "scale": "Escala",
+    "visible": "Visível",
+    "layer": "Camada",
+    "prefab": "Prefab",
+    "newComponent":{
+      "title": "Novo Componente",
+      "select": "Selecione o tipo de componente a ser criado.",
+      "validate": "Criar"
+    },
+    "deleteComponent": {
+      "confirm": "Tem certeza de que deseja excluir este componente?",
+      "validate": "Excluir"
+    }
+  },
+  "dropActor": "Solte um asset aqui para criar um ator",
+  "dropComponent": "Solte um asset aqui para criar um componente",
+  "failures": {
+    "newActor": "Não foi possível criar o novo ator: ${reason}",
+    "importIntoScene": "Não foi possível importar: ${reason}"
+  },
+  "errors": {
+    "invalidActorId": "ID de ator inválido: ${id}.",
+    "cantImportAssetTypeIntoScene": "Este tipo de asset não pode ser importado na cena.",
+    "prefab": {
+      "mustHaveSingleRootActor": "A cena deve ter um único ator raiz para ser usada como um prefab.",
+      "cantUseSelf": "Uma cena não pode usar a si mesma como um prefab.",
+      "cyclicalReference": "Usando essa cena como um prefab criaria um loop infinito."
+    },
+    "script": {
+      "noBehaviorsFound": "Nenhum behavior foi encontrado neste script."
+    }
+  }
+}
