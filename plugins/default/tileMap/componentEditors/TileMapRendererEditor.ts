@@ -102,11 +102,13 @@ export default class TileMapRendererEditor {
       case "tileMapAssetId":
         this.tileMapAssetId = value;
         this.tileMapButtonElt.disabled = this.tileMapAssetId == null;
-        this.tileMapTextField.value = this.projectClient.entries.getPathFromId(this.tileMapAssetId);
+        if (this.tileMapAssetId != null) this.tileMapTextField.value = this.projectClient.entries.getPathFromId(this.tileMapAssetId);
+        else this.tileMapTextField.value = "";
         break;
       case "tileSetAssetId":
         this.tileSetAssetId = value;
-        this.tileSetTextField.value = this.projectClient.entries.getPathFromId(this.tileSetAssetId);
+        if (this.tileSetAssetId != null) this.tileSetTextField.value = this.projectClient.entries.getPathFromId(this.tileSetAssetId);
+        else this.tileSetTextField.value = "";
         break;
 
       case "castShadow":
