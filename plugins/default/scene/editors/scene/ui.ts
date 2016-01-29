@@ -781,7 +781,17 @@ function onDragOver(event: DragEvent) {
 
   // NOTE: We can't use event.dataTransfer.getData() to do an early check here
   // because of browser security restrictions
-  event.preventDefault();
+  let parentElt = (event.target as HTMLElement).parentElement;
+  let inComponentArea = false;
+  while (parentElt != null) {
+    if (parentElt.classList.contains("components")) {
+      inComponentArea = true;
+      break;
+    }
+    parentElt = parentElt.parentElement;
+  }
+
+  if (!inComponentArea) event.preventDefault();
 
   ui.actorDropElt.hidden = false;
   ui.componentDropElt.hidden = false;
