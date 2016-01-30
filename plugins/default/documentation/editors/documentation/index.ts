@@ -51,7 +51,7 @@ function setupDocs() {
   const sortedNames = Object.keys(SupClient.getPlugins<SupClient.DocumentationPlugin>("documentation"));
   sortedNames.sort((a, b) => { return (a.toLowerCase() < b.toLowerCase()) ? -1 : 1; });
 
-  const language = SupClient.cookies.get("supLanguage");
+  const languageCode = SupClient.cookies.get("supLanguage");
 
   sortedNames.forEach((name) => {
     const liElt = document.createElement("li");
@@ -84,7 +84,7 @@ function setupDocs() {
     }
 
     const pluginPath = SupClient.getPlugins<SupClient.DocumentationPlugin>("documentation")[name].path;
-    SupClient.fetch(`${pluginPath}/documentation/${name}.${language}.md`, "text", (err, data) => {
+    SupClient.fetch(`${pluginPath}/documentation/${name}.${languageCode}.md`, "text", (err, data) => {
       if (err != null) {
         SupClient.fetch(`${pluginPath}/documentation/${name}.en.md`, "text", (err, data) => {
           onDocumentationLoaded(data);
