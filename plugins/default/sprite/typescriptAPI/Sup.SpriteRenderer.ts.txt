@@ -52,7 +52,6 @@ namespace Sup {
         let color = r;
         this.__inner.setColor(color.r, color.g, color.b);
       } else this.__inner.setColor(r, g, b);
-      this.__inner.threeMesh.material.color.setRGB(this.__inner.color.r, this.__inner.color.g, this.__inner.color.b);
       return this;
     }
 
