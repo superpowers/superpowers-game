@@ -53,9 +53,9 @@ export default function compileTypeScript(sourceFileNames: string[], sourceFiles
     return {
       errors: errors.map((e) => {
         return {
-          file: "",
-          position: { line: 0, character: 0 },
-          length: 0,
+          file: e.file != null ? e.file.fileName : "internal",
+          position: e.file != null ? e.file.getLineAndCharacterOfPosition(e.start) : { line: 0, character: 0 },
+          length: e.length,
           message: ts.flattenDiagnosticMessageText(e.messageText, "\n")
         };
       }),
