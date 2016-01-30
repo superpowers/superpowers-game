@@ -137,37 +137,43 @@ function mouseUp() {
 
   raycaster.setFromCamera(mousePosition, engine.cameraComponent.threeCamera);
 
-  let selectedNodeId: string = null;
+  let selectedNodeId: string = ui.nodesTreeView.selectedNodes.length > 0 ? ui.nodesTreeView.selectedNodes[0].dataset["id"] : null;
   ui.nodesTreeView.clearSelection();
 
   let intersects = raycaster.intersectObject(engine.gameInstance.threeScene, true);
   if (intersects.length > 0) {
+    let hoveredNodeIds: string[] = [];
+
     for (let intersect of intersects) {
       let threeObject = intersect.object;
-
       while (threeObject != null) {
-        if (threeObject.userData.nodeId != null) break;
+        if (threeObject.userData.nodeId != null) {
+          if (hoveredNodeIds.indexOf(threeObject.userData.nodeId) === -1) hoveredNodeIds.push(threeObject.userData.nodeId);
+          break;
+        }
         threeObject = threeObject.parent;
       }
+    }
 
-      if (threeObject != null) {
-        selectedNodeId = threeObject.userData.nodeId;
+    if (hoveredNodeIds.length > 0) {
+      const hoveredNodeIdIndex = hoveredNodeIds.indexOf(selectedNodeId);
+      if (selectedNodeId != null && hoveredNodeIdIndex !== -1 && hoveredNodeIdIndex !== hoveredNodeIds.length - 1)
+        selectedNodeId = hoveredNodeIds[hoveredNodeIdIndex + 1];
+      else
+        selectedNodeId = hoveredNodeIds[0];
 
-        const treeViewNode = ui.nodesTreeView.treeRoot.querySelector(`li[data-id='${selectedNodeId}']`) as HTMLLIElement;
-        ui.nodesTreeView.addToSelection(treeViewNode);
+      const treeViewNode = ui.nodesTreeView.treeRoot.querySelector(`li[data-id='${selectedNodeId}']`) as HTMLLIElement;
+      ui.nodesTreeView.addToSelection(treeViewNode);
 
-        let treeViewParent = treeViewNode.parentElement;
-        while (treeViewParent !== ui.nodesTreeView.treeRoot) {
-          if (treeViewParent.tagName === "OL") (<HTMLElement>treeViewParent.previousElementSibling).classList.remove("collapsed");
-          treeViewParent = treeViewParent.parentElement;
-        }
-
-        ui.nodesTreeView.scrollIntoView(treeViewNode);
-        break;
+      let treeViewParent = treeViewNode.parentElement;
+      while (treeViewParent !== ui.nodesTreeView.treeRoot) {
+        if (treeViewParent.tagName === "OL") (<HTMLElement>treeViewParent.previousElementSibling).classList.remove("collapsed");
+        treeViewParent = treeViewParent.parentElement;
       }
+
+      ui.nodesTreeView.scrollIntoView(treeViewNode);
     }
   }
-
   setupSelectedNode();
   setupHelpers();
 }
