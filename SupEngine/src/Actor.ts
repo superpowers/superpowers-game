@@ -23,6 +23,7 @@ export default class Actor {
 
     if (parent != null && parent.pendingForDestruction) throw new Error("The parent passed to new SupEngine.Actor() has been destroyed and cannot be used as a parent.");
     this.parent = parent;
+    this.threeObject.name = name;
     this.threeObject.userData.isActor = true;
 
     if (this.parent != null) {
