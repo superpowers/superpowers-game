@@ -183,6 +183,7 @@ document.querySelector("button.download").addEventListener("click", (event) => {
     new SupClient.Dialogs.PromptDialog(SupClient.i18n.t("fontEditor:font.download.prompt"), options, (name) => {
       /* tslint:enable:no-unused-expression */
       if (name == null) return;
+      triggerDownload(name);
     });
   }
 });
