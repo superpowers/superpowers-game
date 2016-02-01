@@ -1,0 +1,4 @@
+{
+  "title": "2D Platform",
+  "description": "En mall för att bygga platformsspel med ArcadePhysics2D, använder kod från 'Basic 2D Collision tutorial'."
+}
