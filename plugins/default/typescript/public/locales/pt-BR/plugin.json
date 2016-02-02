@@ -4,10 +4,10 @@
       "title": "Script"
     },
     "apiBrowser": {
-      "title": "Buscador da API do TypeScript"
+      "title": "Navegador da API do TypeScript"
     },
     "search": {
-      "title": "Busca Global de TypeScript"
+      "title": "Pesquisa Global de TypeScript"
     }
   }
 }
