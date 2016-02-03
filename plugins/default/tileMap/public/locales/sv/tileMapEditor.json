@@ -1,0 +1,30 @@
+{
+  "tileMap": "Tile Map",
+  "tileSet": "Tile Set",
+  "pixelsPerUnit": "Pixlar / Enhet",
+  "depthOffset": "Djupoffset",
+
+  "size": "Storlek",
+  "resize": "Ändra storlek",
+  "newWidthPrompt": "Skriv ny bredd.",
+  "newHeightPrompt": "Skriv ny höjd.",
+  "move": "Flytta",
+  "applyOffset": "Applicera offset",
+  "horizontalOffsetPrompt": "Skriv horisontell offset.",
+  "verticalOffsetPrompt": "Skriv vertikal offset.",
+  
+  "tools": "Verktyg",
+  "grid": "Rutnät",
+  "highlight": "Markering",
+  
+  "brush": "Pensel",
+  "fill": "Fyll",
+  "selection": "Välj",
+  "eraser": "Radera",
+  
+  "layers": "Lager",
+  "newLayerPrompt": "Skriv namn för lagret.",
+  "newLayerInitialValue": "Lager",
+  "renameLayerPrompt": "Skriv nytt namn för lagret.",
+  "deleteLayerConfirm": "Vill du radera valda lager?"
+}

@@ -1,0 +1,26 @@
+{
+  "type": "Fonttyp",
+  "typeOptions": {
+    "bitmap": "Bitmap",
+    "vector": "Vektorfont"
+  },
+  "font": {
+    "title": "Font",
+    "download": {
+      "prompt": "Skriv namn för din font.",
+      "defaultName": "Font"
+    }
+  },
+  "texture": "Textur",
+  "rendering": "Rendering",
+  "filtering": "Filtrering",
+  "pixelated": "Pixelerad",
+  "smooth": "Utjämnad",
+  "pixelsPerUnit": "Pixlar / Enhet",
+  "color": "Färg",
+  "settings": "Inställningar",
+  "size": "Storlek (pixlar)",
+  "gridSize": "Rutnätsstorlek",
+  "charset": "Teckenuppsättning",
+  "charsetOffset": "Teckenoffset"
+}

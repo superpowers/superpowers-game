@@ -1,0 +1,12 @@
+{
+  "Game": {
+    "label": "Spel",
+    "startupScene": "Uppstartsscen",
+    "framesPerSecond": "Bilder per sekund",
+    "screenRatio": "Skärmratio",
+    "width": "Bredd",
+    "height": "Höjd",
+    "layers": "Lager",
+    "newLayer": "Nytt lager..."
+  }
+}

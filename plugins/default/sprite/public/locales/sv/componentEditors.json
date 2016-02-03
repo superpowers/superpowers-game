@@ -1,0 +1,20 @@
+{
+  "SpriteRenderer": {
+    "label": "Sprite Rendering",
+    "sprite": "Sprite",
+    "animation": "Animation",
+    "animationNone": "(Inget)",
+    "flip": "Vänd",
+    "shadow": {
+      "title": "Skugga",
+      "cast": "Kastar",
+      "receive": "Tar emot"
+    },
+    "color": "Färg",
+    "opacity": "Genomskinlighet",
+    "transparent": "Genomskinlig",
+    "opaque": "Ogenomskinlig",
+    "material": "Material",
+    "shader": "Shader"
+  }
+}

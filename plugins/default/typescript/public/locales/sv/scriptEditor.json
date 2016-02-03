@@ -1,0 +1,24 @@
+{
+  "applyChanges": "Applicera ändringar",
+  "applyChangesWithErrors": "Applicera ändringar med fel",
+  "draft": "Utkast",
+  
+  "errors": {
+    "noErrors": "Inga fel",
+    "oneError": "1 fel",
+    "severalErrors": "${errors} fel",
+
+    "selfErrorsInfo": "${errors} i detta script",
+    "otherErrorsInfo": "${errors} i andra scripts",
+    "bothErrorsInfo": "${selfErrors}, ${otherErrors}",
+
+    "line": "Rad",
+    "message": "Meddelande",
+    "script": "Script"
+  },
+
+  "globalSearch": {
+    "prompt": "Sök i alla TypeScript script.",
+    "placeholder": "Sök i projekt"
+  }
+}

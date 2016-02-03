@@ -1,0 +1,79 @@
+{
+  "controls": {
+    "camera": {
+      "title": "Kamera",
+      "mode": "Läge",
+      "verticalAxis": "Up Axel",
+      "speed": "Hastighet"
+    },
+    "transform": {
+      "title": "Transformering",
+      "move": "Flytta",
+      "rotate": "Rotera",
+      "scale": "Skala",
+      "local": "Lokal"
+    },
+    "grid": {
+      "title": "Rutnät",
+      "size": "Storlek",
+      "visible": "Visa"
+    },
+    "light": {
+      "title": "Ljus"
+    }
+  },
+  "treeView": {
+    "newActor": {
+      "title": "Ny aktör",
+      "prompt": "Ge namn till ny aktör.",
+      "initialValue": "Actor"
+    },
+    "newPrefab": {
+      "title": "Ny prefab",
+      "prompt": "Ge namn till ny prefab",
+      "initialValue": "Prefab"
+    },
+    "renamePrompt": "Ge nytt namn åt aktören.",
+    "duplicatePrompt": "Ge namn till ny aktör.",
+    "deleteConfirm": "Valda aktörer kommer att raderas, är du säker?",
+    "visible": {
+      "show": "Visa",
+      "hide": "Dölj"
+    }
+  },
+  "inspector": {
+    "position": "Position",
+    "orientation": "Orientering",
+    "scale": "Skala",
+    "visible": "Synlig",
+    "layer": "Lager",
+    "prefab": "Prefab",
+    "newComponent":{
+      "title": "Ny komponent",
+      "select": "Välj typ av komponent.",
+      "validate": "Skapa"
+    },
+    "deleteComponent": {
+      "confirm": "Vill du radera denna komponent?",
+      "validate": "Radera"
+    }
+  },
+  "dropActor": "Släpp resursen här för att skapa en aktör",
+  "dropComponent": "Släp resursen här fär att skapa en komponent",
+  "failures": {
+    "newActor": "Kunde inte skapa ny aktör: ${reason}",
+    "importIntoScene": "Kunde inte importera: ${reason}"
+  },
+  "errors": {
+    "invalidActorId": "Ogiltigt tecken aktörid: ${id}.",
+    "cantImportAssetTypeIntoScene": "Denna resurs kan inte importeras i en scen.",
+    "prefab": {
+      "mustHaveSingleRootActor": "En scen får bara ha en enda rot aktör för att användas som prefab.",
+      "cantUseSelf": "En scen kan inte använda sig själv som prefab.",
+      "cyclicalReference": "Användning av denna scen som prefab skulle leda till en oändlig loop."
+    },
+    "script": {
+      "noBehaviorsFound": "Inga beteenden hittades i detta script."
+    }
+  }
+}

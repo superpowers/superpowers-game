@@ -1,0 +1,18 @@
+{
+  "tileSet": "Tile Set",
+  "texture": {
+    "title": "Textur",
+    "downloadPrompt": "Skriv namn för texturen",
+    "downloadInitialValue": "Tile Set"
+  },
+  "grid": "Rutnät (px)",
+  
+  "data": "Data",
+  "tileID": "Tile ID",
+  
+  "properties": "Egenskaper",
+  "newPropertyPrompt": "Skriv namn för egenskapen.",
+  "newPropertyInitialValue": "property",
+  "renamePropertyPrompt": "Skriv nytt namn för egenskapen.",
+  "deletePropertyConfirm": "Vill du verkligen radera valda egenskaper?"
+}

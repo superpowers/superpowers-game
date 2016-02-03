@@ -1,0 +1,18 @@
+{
+  "ArcadeBody2D": {
+    "label": "Arcade Body 2D",
+    "type": "Typ",
+    "typeOptions": {
+      "box": "Låda",
+      "tileMap": "Tile Map"
+    },
+
+    "movable": "Flyttbar",
+    "size": "Storlek",
+    "offset": "Offset",
+
+    "tileMap": "Tile Map",
+    "tileSetProperty": "Tile Set Egenskap",
+    "layers": "Lager"
+  }
+}

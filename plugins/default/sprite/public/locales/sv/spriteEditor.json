@@ -1,0 +1,76 @@
+{
+  "preview": {
+    "loop": "Loopa"
+  },
+  "sidebar": {
+    "settings": {
+      "sprite": {
+        "title": "Sprite",
+        "texture": {
+          "title": "Textur",
+          "size": "Textur storlek (px)",
+          "download": {
+            "prompt": "Skriv namn för bilden.",
+            "defaultName": "Image"
+          }
+        },
+        "grid": {
+          "size": "Rutnätsstorlek",
+          "setup": "Setup",
+          "widthPrompt": "Hur många bilder per rad?",
+          "setWidth": "Ställ in rutnätsbredd",
+          "heightPrompt": "Hur många bilder per kolumn?",
+          "setHeight": "Ställ in rutnätshöjd"
+        },
+        "origin": "Ursprung (%)"
+      },
+      "rendering": {
+        "title": "Rendering",
+        "pixelsPerUnit": "Pixlar / enhet",
+        "filtering": {
+          "title": "Filtrering",
+          "pixelated": "Pixelerad",
+          "smooth": "Utjämnad"
+        },
+        "wrapping": {
+          "title": "Wrapping",
+          "clampToEdge": "Fäst mot kant",
+          "repeat": "Upprepning",
+          "mirroredRepeat": "Speglad upprepning"
+        },
+        "opacity": {
+          "title": "Genomskinlighet",
+          "opaque": "Ogenomskinlig",
+          "transparent": "Genomskinlig"
+        },
+        "alphaTest": "Alpha test"
+      },
+      "animation": {
+         "title": "Animation",
+         "framesPerSecond": "bilder / sekund",
+         "frameOrder": {
+           "title": "Bildordning",
+           "rows": "Rader",
+           "columns": "Kolumner"
+         }
+      }
+    },
+    "animations": {
+      "title": "Animationer",
+      "newAnimationPrompt": "Skriv namn för animationen.",
+      "renameAnimationPrompt": "Skriv nytt namn för animationen.",
+      "deleteAnimationPrompt": "Vill du radera valda animationer?"
+    },
+    "advancedTextures": {
+      "title": "Avancerade texturer",
+      "map": "Map",
+      "lightMap": "Light map",
+      "specularMap": "Specular map",
+      "alphaMap": "Alpha map",
+      "normalMap": "Normal map (Phong)",
+      "newMapPrompt": "Skriv namn för map.",
+      "renameMapPrompt": "Skriv nytt namn för texturen.",
+      "deleteMapPrompt": "Vill du radera valda texturer?"
+    }
+  }
+}

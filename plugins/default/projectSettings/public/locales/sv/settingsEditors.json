@@ -1,0 +1,9 @@
+{
+  "Project": {
+    "label": "Projekt",
+    "deleteTrashedAssetsFromDisk": "Radera alla resurser i papperskorgen från disk",
+    "noFoldersRemoved": "Inga mappar togs bort",
+    "oneFolderRemoved": "1 mapp togs bort",
+    "severalFoldersRemoved": "${folders} mappar togs bort"
+  }
+}

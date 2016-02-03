@@ -1,0 +1,21 @@
+{
+  "TextRenderer": {
+    "label": "Textrendering",
+    "font": "Typsnitt",
+    "text": "Text",
+    "align": {
+      "title": "Justering",
+      "left": "Vänster",
+      "center": "Centrerad",
+      "right": "Höger"
+    },
+    "verticalAlign": {
+      "title": "Vertikal Justering",
+      "top": "Överst",
+      "center": "Mitten",
+      "bottom": "Nederst"
+    },
+    "size": "Storlek",
+    "color": "Färg"
+  }
+}

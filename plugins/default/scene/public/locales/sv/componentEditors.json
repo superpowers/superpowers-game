@@ -1,0 +1,23 @@
+{
+  "Camera": {
+    "label": "Kamera",
+    "mode": "Läge",
+    "modeOptions": {
+      "perspective": "Perspektiv",
+      "orthographic": "Ortografisk"
+    },
+    "fieldOfView": "Synfält",
+    "orthographicScale": "Ortografisk skala",
+    "depth": "Djup",
+    "depthTitle": "Används för att bestämma i vilken ordning som flera kameror renderas",
+    "layers": "Lager",
+    "layersTitle": "Vilket lager som ska renderas och i vilken ordning",
+    "nearPlane": "Närplan",
+    "farPlane": "Djupplan",
+    "viewport": {
+      "title": "Viewport",
+      "position": "Topp / Vänster",
+      "size": "Bredd / Höjd"
+    }
+  }
+}

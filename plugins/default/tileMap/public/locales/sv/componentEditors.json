@@ -1,0 +1,14 @@
+{
+  "TileMapRenderer": {
+    "label": "Tile Map ReRenderingnderer",
+    "tileMap": "Tile Map",
+    "tileSet": "Tile Set",
+    "shadow": {
+      "title": "Skuggor",
+      "cast": "Kastar",
+      "receive": "Tar emot"
+    },
+    "material": "Material",
+    "shader": "Shader"
+  }
+}

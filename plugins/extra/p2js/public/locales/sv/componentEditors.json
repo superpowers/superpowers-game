@@ -1,0 +1,15 @@
+{
+  "P2Body": {
+    "label": "P2 Body",
+    "mass": "Massa",
+    "fixedRotation": "Fast rotation",
+    "offset": "Offset",
+    "shape": "Form",
+    "shapeOptions": {
+      "box": "Låda",
+      "circle": "Cirkel"
+    },
+    "size": "Storlek",
+    "radius": "Radie"
+  }
+}

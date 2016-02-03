@@ -1,0 +1,17 @@
+{
+  "sidebar": {
+    "settings": {
+      "sound": {
+        "title": "Ljud",
+        "file": {
+          "title": "Fil",
+          "download": {
+            "defaultName": "Sound.wav",
+            "prompt": "Ge namn till ljudet"
+          }
+        },
+        "streaming": "Streama"
+      }
+    }
+  }
+}

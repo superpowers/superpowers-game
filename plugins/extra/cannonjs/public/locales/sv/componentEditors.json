@@ -1,0 +1,18 @@
+{
+  "CannonBody": {
+    "label": "Cannonkropp",
+    "mass": "Massa",
+    "fixedRotation": "Fixerad rotation",
+    "offset": "Offset",
+    "shape": "Form",
+    "shapeType": "Typ",
+    "shapeOptions": {
+      "box": "Låda",
+      "sphere": "Sfär",
+      "cylinder": "Cylinder"
+    },
+    "halfSize": "Halv storlek",
+    "radius": "Radie",
+    "height": "Höjd"
+  }
+}

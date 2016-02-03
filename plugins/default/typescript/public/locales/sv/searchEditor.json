@@ -1,0 +1,13 @@
+{
+  "searchPlaceholder": "Sök i projekt",
+  "matchCase": "Exakt sökning",
+
+  "noResults": "Inga resultat hittades",
+  "resultInfo": "${results} i ${files}",
+  "fileInfo": "${results} i \"${fileName}\"",
+
+  "oneResult": "1 resultat",
+  "severalResults": "${results} resultat",
+  "oneFile": "1 fil",
+  "severalFiles": "${files} filer"
+}

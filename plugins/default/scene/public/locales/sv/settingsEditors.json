@@ -1,0 +1,7 @@
+{
+  "Scene": {
+    "label": "Scen",
+    "defaultCameraMode": "Kameraläge (default)",
+    "defaultCameraVerticalAxis": "Vertikalaxel (default för kamera)"
+  }
+}
