@@ -193,14 +193,14 @@ function onModelFileSelectChange(event: any) {
 
   ui.errorsTBody.innerHTML = "";
 
-  importModel(event.target.files, (log, data) => {
+  importModel(event.target.files, (log, result) => {
     event.target.parentElement.reset();
 
     setImportLog(log);
 
-    if (data != null) {
-      data.projectClient.editAsset(SupClient.query.asset, "setModel", data.upAxisMatrix, data.attributes, data.bones);
-      if (data.maps != null) data.projectClient.editAsset(SupClient.query.asset, "setMaps", data.maps);
+    if (result != null) {
+      data.projectClient.editAsset(SupClient.query.asset, "setModel", result.upAxisMatrix, result.attributes, result.bones);
+      if (result.maps != null) data.projectClient.editAsset(SupClient.query.asset, "setMaps", result.maps);
     }
   });
 }
@@ -284,20 +284,20 @@ function onAnimationFileSelectChange(event: any) {
 
   const animationId: string = ui.selectedAnimationId;
 
-  importModel(event.target.files, (log, data) => {
+  importModel(event.target.files, (log, result) => {
     event.target.parentElement.reset();
 
     setImportLog(log);
 
     if (data != null) {
-      if (data.animation == null) {
+      if (result.animation == null) {
         /* tslint:disable:no-unused-expression */
         new SupClient.Dialogs.InfoDialog("No animation found in imported files");
         /* tslint:enable:no-unused-expression */
         return;
       }
       // TODO: Check if bones are compatible
-      data.projectClient.editAsset(SupClient.query.asset, "setAnimation", animationId, data.animation.duration, data.animation.keyFrames);
+      data.projectClient.editAsset(SupClient.query.asset, "setAnimation", animationId, result.animation.duration, result.animation.keyFrames);
     }
   });
 }
