@@ -154,7 +154,9 @@ export function importModel(files: File[], callback: ImportCallback) {
 
   const onGLTFRead = (err: Error, gltf: GLTFFile) => {
     if (err != null) { callback([ createLogError("Could not parse as JSON", gltfFile.name) ]); return; }
-    if(Object.keys(gltf.meshes).length > 1) { callback([ createLogError("Only a single mesh is supported") ], gltfFile.name); return; }
+    
+    const meshNames = Object.keys(gltf.meshes); 
+    if(meshNames.length > 1) { callback([ createLogError("Only a single mesh is supported") ], gltfFile.name); return; }
 
     // Used to be a number before 1.0, now it's a string, so let's normalize it
     gltf.asset.version = gltf.asset.version.toString();
@@ -211,6 +213,15 @@ export function importModel(files: File[], callback: ImportCallback) {
     
     for (const rootNodeName of gltf.scenes[gltf.scene].nodes) walkNode(gltf.nodes[rootNodeName]);
 
+    if (meshName == null && meshNames.length > 0) {
+      // For some reason, sometimes the mesh won't be attached to a node,
+      // So let's just pick it up from gltf.meshes 
+      meshName = meshNames[0];
+
+      // And look for a skin, too
+      const skinNames = Object.keys(gltf.skins);
+      if (skinNames.length === 1) skin = gltf.skins[skinNames[0]];
+    }
     if (meshName == null) { callback([ createLogError("No mesh found", gltfFile.name) ]); return; }
 
     const meshInfo = gltf.meshes[meshName];
