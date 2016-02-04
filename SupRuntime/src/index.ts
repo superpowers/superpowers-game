@@ -11,8 +11,8 @@ import Player from "./Player";
 // (see ../gulpfile.js)
 export { Player };
 
-export let plugins: { [name: string]: SupRuntime.RuntimePlugin } = {};
-export let resourcePlugins: { [name: string]: SupRuntime.RuntimeResourcePlugin } = {};
+export const plugins: { [name: string]: SupRuntime.RuntimePlugin } = {};
+export const resourcePlugins: { [name: string]: SupRuntime.RuntimeResourcePlugin } = {};
 
 export function registerPlugin(name: string, plugin: SupRuntime.RuntimePlugin) {
   if (plugins[name] != null) {
@@ -32,14 +32,13 @@ export function registerResource(name: string, plugin: SupRuntime.RuntimeResourc
   resourcePlugins[name] = plugin;
 }
 
-
 SupCore.system = new SupCore.System("", "");
 
 // In app, open links in a browser window
 let playerWindow: GitHubElectron.BrowserWindow;
 if (window.navigator.userAgent.indexOf("Electron") !== -1) {
-  let nodeRequire = require;
-  let electron = nodeRequire("electron");
+  const nodeRequire = require;
+  const electron = nodeRequire("electron");
   playerWindow = electron.remote.getCurrentWindow();
 
   document.body.addEventListener("click", (event) => {
@@ -48,7 +47,7 @@ if (window.navigator.userAgent.indexOf("Electron") !== -1) {
     electron.shell.openExternal((event.target as HTMLAnchorElement).href);
   });
 }
-let qs = querystring.parse(window.location.search.slice(1));
+const qs = querystring.parse(window.location.search.slice(1));
 
 document.body.addEventListener("keydown", (event) => {
   if (event.keyCode === (<any>window)["KeyEvent"].DOM_VK_F12) {
@@ -56,30 +55,30 @@ document.body.addEventListener("keydown", (event) => {
   }
 });
 
+const progressBar = <HTMLProgressElement>document.querySelector("progress");
+const loadingElt = document.getElementById("loading");
+const canvas = <HTMLCanvasElement>document.querySelector("canvas");
+
 // Prevent keypress events from leaking out to a parent window
 // They might trigger scrolling for instance
-document.body.addEventListener("keypress", (event) => { event.stopPropagation(); });
-
-let progressBar = <HTMLProgressElement>document.querySelector("progress");
-let loadingElt = document.getElementById("loading");
-let canvas = <HTMLCanvasElement>document.querySelector("canvas");
+canvas.addEventListener("keypress", (event) => { event.preventDefault(); });
 
 if (qs.debug != null && playerWindow != null) playerWindow.webContents.openDevTools();
 
 let player: Player;
 
-let onLoadProgress = (value: number, max: number) => {
+const onLoadProgress = (value: number, max: number) => {
   progressBar.value = value;
   progressBar.max = max;
 };
-let onLoaded = (err: Error) => {
+const onLoaded = (err: Error) => {
   if (err != null) {
     console.error(err);
 
-    let aElt = <HTMLAnchorElement>loadingElt.querySelector("a");
+    const aElt = <HTMLAnchorElement>loadingElt.querySelector("a");
     aElt.parentElement.removeChild(aElt);
 
-    let errorElt = document.createElement("div");
+    const errorElt = document.createElement("div");
     errorElt.className = "error";
     errorElt.textContent = err.message;
     loadingElt.appendChild(errorElt);
@@ -109,7 +108,7 @@ supFetch("plugins.json", "json", (err: Error, pluginsInfo: SupCore.PluginsInfo) 
 
   async.each(pluginsInfo.list, (pluginName, pluginCallback) => {
     async.each(pluginsInfo.publishedBundles, (bundle, cb) => {
-      let script = document.createElement("script");
+      const script = document.createElement("script");
       script.src = `plugins/${pluginName}/bundles/${bundle}.js`;
       script.addEventListener("load", () => cb(null));
       script.addEventListener("error", (err) => cb(null));
@@ -118,7 +117,7 @@ supFetch("plugins.json", "json", (err: Error, pluginsInfo: SupCore.PluginsInfo) 
   }, (err) => {
     if (err != null) console.log(err);
     // Load game
-    let buildPath = (qs.project != null) ? `/builds/${qs.project}/${qs.build}/` : "./";
+    const buildPath = (qs.project != null) ? `/builds/${qs.project}/${qs.build}/` : "./";
     player = new Player(canvas, buildPath, { debug: qs.debug != null });
     player.load(onLoadProgress, onLoaded);
   });
