@@ -41,6 +41,7 @@ const ui: {
     config_setProperty(path: string, value: any): void;
   } };
   newComponentButton: HTMLButtonElement;
+  componentsElt: HTMLDivElement;
 
   cameraMode: string;
   cameraModeButton: HTMLButtonElement;
@@ -220,6 +221,7 @@ ui.camera2DZ.addEventListener("input", onChangeCamera2DZ);
 
 document.querySelector(".main .controls .transform-mode").addEventListener("click", onTransformModeClick);
 
+ui.componentsElt = ui.inspectorElt.querySelector(".components") as HTMLDivElement;
 ui.availableComponents = {};
 
 let componentEditorPlugins: { [pluginName: string]: { path: string; content: SupClient.ComponentEditorPlugin; } };
@@ -388,12 +390,11 @@ export function setupSelectedNode() {
   } else if (ui.prefabRow.parentElement != null) ui.inspectorTbodyElt.removeChild(ui.prefabRow);
 
   // Setup component editors
-  let componentsElt = ui.inspectorElt.querySelector(".components") as HTMLDivElement;
-  componentsElt.innerHTML = "";
+  ui.componentsElt.innerHTML = "";
 
   for (let component of node.components) {
     let componentElt = createComponentElement(node.id, component);
-    ui.inspectorElt.querySelector(".components").appendChild(componentElt);
+    ui.componentsElt.appendChild(componentElt);
   }
   ui.newComponentButton.disabled = isPrefab;
 }
@@ -781,17 +782,20 @@ function onDragOver(event: DragEvent) {
 
   // NOTE: We can't use event.dataTransfer.getData() to do an early check here
   // because of browser security restrictions
-  let parentElt = (event.target as HTMLElement).parentElement;
-  let inComponentArea = false;
-  while (parentElt != null) {
-    if (parentElt.classList.contains("components")) {
-      inComponentArea = true;
+
+  // Ensure we're not hovering the nodes tree view or component area
+  let ancestorElt = (event.target as HTMLElement).parentElement;
+  let isHoveringNodesOrComponents = false;
+  while (ancestorElt != null) {
+    ui.componentDropElt
+    if (ancestorElt == ui.componentsElt || ancestorElt == ui.treeViewElt) {
+      isHoveringNodesOrComponents = true;
       break;
     }
-    parentElt = parentElt.parentElement;
+    ancestorElt = ancestorElt.parentElement;
   }
 
-  if (!inComponentArea) event.preventDefault();
+  if (!isHoveringNodesOrComponents) event.preventDefault();
 
   ui.actorDropElt.hidden = false;
   ui.componentDropElt.hidden = false;
