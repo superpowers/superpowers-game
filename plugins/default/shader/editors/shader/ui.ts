@@ -3,9 +3,7 @@ import { setupPreview } from "./engine";
 import Uniforms, { UniformPub } from "../../data/Uniforms";
 import Attributes, { AttributePub } from "../../data/Attributes";
 
-/* tslint:disable */
-let ResizeHandle = require("resize-handle");
-/* tslint:enable */
+import * as ResizeHandle from "resize-handle";
 
 let ui: {
   uniformsList?: HTMLTableElement;
@@ -179,7 +177,7 @@ newAttributeInput.addEventListener("keyup", (event: any) => {
   }
 });
 
-let shadersPane = document.querySelector(".shaders");
+let shadersPane = document.querySelector(".shaders") as HTMLDivElement;
 let shaderPaneResizeHandle = new ResizeHandle(shadersPane, "bottom");
 shaderPaneResizeHandle.on("drag", () => {
   ui.vertexEditor.codeMirrorInstance.refresh();
@@ -194,7 +192,7 @@ function onSaveFragment() {
   if (!ui.fragmentHeader.classList.contains("has-errors")) data.projectClient.editAsset(SupClient.query.asset, "saveFragmentShader");
 }
 
-let fragmentShadersPane = shadersPane.querySelector(".fragment");
+let fragmentShadersPane = shadersPane.querySelector(".fragment") as HTMLDivElement;
 let fragmentShaderPaneResizeHandle = new ResizeHandle(fragmentShadersPane, "right");
 fragmentShaderPaneResizeHandle.on("drag", () => {
   ui.vertexEditor.codeMirrorInstance.refresh();
@@ -234,7 +232,7 @@ export function setupEditors(clientId: number) {
   });
 }
 
-let previewPane = document.querySelector(".preview");
+let previewPane = document.querySelector(".preview") as HTMLDivElement;
 /* tslint:disable:no-unused-expression */
 new ResizeHandle(previewPane, "right");
 /* tslint:enable:no-unused-expression */

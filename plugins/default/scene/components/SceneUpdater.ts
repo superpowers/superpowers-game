@@ -75,6 +75,7 @@ export default class SceneUpdater {
     }
   }
 
+  /* tslint:disable:no-unused-variable */
   private onEditCommand_addNode(node: Node, parentId: string, index: number) {
     this._createNodeActor(node);
   }
@@ -160,6 +161,7 @@ export default class SceneUpdater {
     this.bySceneNodeId[nodeId].bySceneComponentId[componentId].componentUpdater.destroy();
     delete this.bySceneNodeId[nodeId].bySceneComponentId[componentId];
   }
+  /* tslint:enable:no-unused-variable */
 
   _onSceneAssetTrashed() {
     this._clearScene();

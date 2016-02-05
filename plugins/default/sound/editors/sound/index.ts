@@ -1,9 +1,5 @@
 import SoundAsset from "../../data/SoundAsset";
 
-/* tslint:disable */
-let ResizeHandle = require("resize-handle");
-/* tslint:enable */
-
 let data: {
   projectClient: SupClient.ProjectClient;
   asset: SoundAsset;

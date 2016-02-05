@@ -1,12 +1,14 @@
 /// <reference path="../../typescriptAPI/TypeScriptAPIPlugin.d.ts" />
 
 import * as async from "async";
-let hljs = require("highlight.js"); // import * as highlight from "highlight.js";
+/* tslint:disable */
+const hljs = require("highlight.js"); // import * as hljs from "highlight.js";
+/* tslint:enable */
 
 SupClient.setupHotkeys();
 
-let searchElt = <HTMLInputElement>document.querySelector("input[type=search]");
-let noSearchResultsElt = <HTMLElement>document.querySelector("main article");
+let searchElt = document.querySelector("input[type=search]") as HTMLInputElement;
+let noSearchResultsElt = document.querySelector("main article") as HTMLElement;
 let navListElt = document.querySelector("nav ul");
 let mainElt = document.querySelector("main");
 let preElts: HTMLPreElement[];

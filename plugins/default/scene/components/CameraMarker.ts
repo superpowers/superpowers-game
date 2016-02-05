@@ -3,8 +3,9 @@ let THREE = SupEngine.THREE;
 import CameraUpdater from "./CameraUpdater";
 
 export default  class CameraMarker extends SupEngine.ActorComponent {
-
+  /* tslint:disable:variable-name */
   static Updater = CameraUpdater;
+  /* tslint:enable:variable-name */
 
   viewport: { x: number; y: number; width: number; height: number; };
   nearClippingPlane: number;

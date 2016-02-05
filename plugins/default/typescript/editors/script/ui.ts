@@ -1,4 +1,4 @@
-import { socket, data, scheduleErrorCheck, setNextCompletion } from "./network";
+import { data, scheduleErrorCheck, setNextCompletion } from "./network";
 
 let ui: {
   editor: TextEditorWidget;

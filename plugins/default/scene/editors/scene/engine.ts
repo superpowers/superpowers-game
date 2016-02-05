@@ -1,4 +1,4 @@
-import { socket, data } from "./network";
+import { data } from "./network";
 import ui, { setupSelectedNode } from "./ui";
 
 let THREE = SupEngine.THREE;
@@ -35,6 +35,8 @@ engine.ambientLight = new THREE.AmbientLight(0xcfcfcf);
 let gridActor = new SupEngine.Actor(engine.gameInstance, "Grid", null, { layer: 0 });
 let selectionActor = new SupEngine.Actor(engine.gameInstance, "Selection Box", null, { layer: -1 });
 let transformHandlesActor = new SupEngine.Actor(engine.gameInstance, "Transform Handles", null, { layer: -1 });
+
+let draggingControls = false;
 
 export function start() {
   // Those classes are loaded asynchronously
@@ -123,8 +125,6 @@ function update() {
 // Mouse picking
 let mousePosition = new THREE.Vector2;
 let raycaster = new THREE.Raycaster;
-
-var draggingControls = false;
 
 function mouseUp() {
   if (draggingControls) {

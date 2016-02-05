@@ -1,6 +1,6 @@
 // FIXME: import * p2 from "p2";
 /* tslint:disable */
-let p2 = require("p2");
+const p2 = require("p2");
 /* tslint:enable */
 
 (<any>window).p2 = p2;

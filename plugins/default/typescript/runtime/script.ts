@@ -2,7 +2,9 @@
 
 import * as convert from "convert-source-map";
 // No definition file for combine-source-map module
-let combine: any = require("combine-source-map");
+/* tslint:disable */
+const combine: any = require("combine-source-map");
+/* tslint:enable */
 import compileTypeScript from "./compileTypeScript";
 
 let globalNames: string[] = [];

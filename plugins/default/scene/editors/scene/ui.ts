@@ -787,8 +787,7 @@ function onDragOver(event: DragEvent) {
   let ancestorElt = (event.target as HTMLElement).parentElement;
   let isHoveringNodesOrComponents = false;
   while (ancestorElt != null) {
-    ui.componentDropElt
-    if (ancestorElt == ui.componentsElt || ancestorElt == ui.treeViewElt) {
+    if (ancestorElt === ui.componentsElt || ancestorElt === ui.treeViewElt) {
       isHoveringNodesOrComponents = true;
       break;
     }

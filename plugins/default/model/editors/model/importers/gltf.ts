@@ -154,8 +154,8 @@ export function importModel(files: File[], callback: ImportCallback) {
 
   const onGLTFRead = (err: Error, gltf: GLTFFile) => {
     if (err != null) { callback([ createLogError("Could not parse as JSON", gltfFile.name) ]); return; }
-    
-    const meshNames = Object.keys(gltf.meshes); 
+
+    const meshNames = Object.keys(gltf.meshes);
     if(meshNames.length > 1) { callback([ createLogError("Only a single mesh is supported") ], gltfFile.name); return; }
 
     // Used to be a number before 1.0, now it's a string, so let's normalize it
@@ -210,7 +210,7 @@ export function importModel(files: File[], callback: ImportCallback) {
         walkNode(gltf.nodes[childName]);
       }
     };
-    
+
     for (const rootNodeName of gltf.scenes[gltf.scene].nodes) walkNode(gltf.nodes[rootNodeName]);
 
     if (meshName == null && meshNames.length > 0) {

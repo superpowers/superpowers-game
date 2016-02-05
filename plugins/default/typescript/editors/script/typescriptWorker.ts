@@ -1,5 +1,8 @@
 import * as ts from "typescript";
-let fuzzy = require("fuzzy");
+
+/* tslint:disable */
+const fuzzy = require("fuzzy");
+/* tslint:enable */
 
 let scripts: {
   fileNames: string[];
@@ -48,11 +51,13 @@ onmessage = (event: MessageEvent) => {
         return;
       }
 
-      let errors = tsErrors.map((e) => { return {
-        file: e.file.fileName, length: e.length,
-        message: ts.flattenDiagnosticMessageText(e.messageText, "\n"),
-        position: e.file.getLineAndCharacterOfPosition(e.start)
-      } });
+      let errors = tsErrors.map((e) => {
+        return {
+          file: e.file.fileName, length: e.length,
+          message: ts.flattenDiagnosticMessageText(e.messageText, "\n"),
+          position: e.file.getLineAndCharacterOfPosition(e.start)
+        };
+      });
 
       (<any>postMessage)({ type: "errors", errors });
       break;
@@ -128,7 +133,7 @@ onmessage = (event: MessageEvent) => {
 
       let definition = definitions[0];
       if (definition.fileName === "lib.d.ts") {
-        //TODO: open the api browser at the proper page
+        // TODO: open the API browser at the proper page
       } else {
         let file = scripts.files[definition.fileName].text;
         let textParts = file.split("\n");
@@ -147,4 +152,4 @@ onmessage = (event: MessageEvent) => {
     default:
       throw new Error(`Unexpected message type: ${event.data.type}`);
   }
-}
+};

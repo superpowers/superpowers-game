@@ -28,6 +28,10 @@ socket = SupClient.connect(SupClient.query.project);
 socket.on("welcome", onWelcome);
 socket.on("disconnect", SupClient.onDisconnected);
 
+let sceneSettingSubscriber: SupClient.ResourceSubscriber;
+let gameSettingSubscriber: SupClient.ResourceSubscriber;
+let onEditCommands: any = {};
+
 function onWelcome() {
   data = { projectClient: new SupClient.ProjectClient(socket, { subEntries: true }) };
 
@@ -86,7 +90,7 @@ function startIfReady() {
   }
 }
 
-var sceneSettingSubscriber = {
+sceneSettingSubscriber = {
   onResourceReceived: (resourceId: string, resource: SceneSettingsResource) => {
     data.sceneSettingsResource = resource;
     startIfReady();
@@ -95,7 +99,7 @@ var sceneSettingSubscriber = {
   onResourceEdited: (resourceId: string, command: string, propertyName: string) => { /* Ignore */ }
 };
 
-var gameSettingSubscriber = {
+gameSettingSubscriber = {
   onResourceReceived: (resourceId: string, resource: GameSettingsResource) => {
     data.gameSettingsResource = resource;
     startIfReady();
@@ -152,7 +156,6 @@ function onSceneAssetReceived(/*err: string, asset: SceneAsset*/) {
   startIfReady();
 }
 
-var onEditCommands: any = {};
 onEditCommands.addNode = (node: Node, parentId: string, index: number) => {
   let nodeElt = createNodeElement(node);
   let parentElt: HTMLLIElement;

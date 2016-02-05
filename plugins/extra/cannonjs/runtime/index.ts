@@ -1,6 +1,6 @@
 // FIXME: import * cannon from "cannon";
 /* tslint:disable */
-let cannon: any = require("cannon");
+const cannon: any = require("cannon");
 /* tslint:enable */
 
 import * as CannonBody from "./CannonBody";
