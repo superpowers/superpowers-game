@@ -5,8 +5,9 @@ import { SpriteAnimationPub } from "../data/SpriteAnimations";
 import SpriteRendererUpdater from "./SpriteRendererUpdater";
 
 export default class SpriteRenderer extends SupEngine.ActorComponent {
-
+  /* tslint:disable:variable-name */
   static Updater = SpriteRendererUpdater;
+  /* tslint:enable:variable-name */
 
   opacity: number;
   color = { r: 1, g: 1, b: 1 };

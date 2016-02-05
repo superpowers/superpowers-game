@@ -19,7 +19,7 @@ export default class Camera3DControls extends ActorComponent {
     this.rotation = actor.getLocalEulerAngles(new THREE.Euler());
   }
 
-  setIsLayerActive(active: boolean) {}
+  setIsLayerActive(active: boolean) { /* Nothing to render */ }
 
   update() {
     let keyButtons = this.actor.gameInstance.input.keyboardButtons;

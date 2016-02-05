@@ -3,7 +3,7 @@ import Actor from "./Actor";
 export default class ActorTree {
   root: Actor[] = [];
 
-  constructor() {}
+  constructor() { /* Nothing here */ }
 
   _walkRecurseTopDown(node: Actor, parentNode: Actor, callback: (node: Actor, parentNode?: Actor) => boolean) {
     if (callback(node, parentNode) === false) return false;

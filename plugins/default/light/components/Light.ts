@@ -2,8 +2,9 @@ let THREE = SupEngine.THREE;
 import LightUpdater from "./LightUpdater";
 
 export default class Light extends SupEngine.ActorComponent {
-
+  /* tslint:disable:variable-name */
   static Updater = LightUpdater;
+  /* tslint:enable:variable-name */
 
   light: THREE.AmbientLight|THREE.PointLight|THREE.SpotLight|THREE.DirectionalLight;
   type: string;

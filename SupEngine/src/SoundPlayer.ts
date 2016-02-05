@@ -162,6 +162,7 @@ class SoundPlayer {
 }
 
 namespace SoundPlayer {
+  "use strict";
   export enum State { Playing, Paused, Stopped };
 }
 

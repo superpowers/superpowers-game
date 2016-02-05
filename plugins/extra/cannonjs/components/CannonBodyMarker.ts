@@ -4,7 +4,9 @@ import CannonBodyMarkerUpdater from "./CannonBodyMarkerUpdater";
 
 export default
 class CannonBodyMarker extends SupEngine.ActorComponent {
+  /* tslint:disable:variable-name */
   static Updater = CannonBodyMarkerUpdater;
+  /* tslint:enable:variable-name */
 
   mesh: THREE.Mesh;
 

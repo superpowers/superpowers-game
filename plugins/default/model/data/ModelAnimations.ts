@@ -42,7 +42,7 @@ export default class ModelAnimations extends SupCore.Data.Base.ListById {
         }
       }
     }
-  }
+  };
 
   constructor(pub: any) {
     super(pub, ModelAnimations.schema);

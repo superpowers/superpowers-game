@@ -1,6 +1,6 @@
 import readFile from "./readFile";
 import * as async from "async";
-import { ImportCallback, ImportLogEntry, createLogError, createLogWarning, createLogInfo } from "./index";
+import { ImportCallback, createLogError, createLogInfo } from "./index";
 
 const THREE = SupEngine.THREE;
 
@@ -185,31 +185,31 @@ export function importModel(files: File[], callback: ImportCallback) {
     let meshName: string = null;
     // let rootBoneNames: string[] = null;
     let skin: any = null;
-    
+
     const nodesByJointName: { [jointName: string]: GLTFNode } = {};
-    
+
     const walkNode = (rootNode: GLTFNode) => {
       if (rootNode.jointName != null) nodesByJointName[rootNode.jointName] = rootNode;
-            
+
       if (meshName == null) {
         // glTF < 1.0 used to have an instanceSkin property on nodes
-        const instanceSkin: GLTFNode = (gltf.asset.version !== "0.8") ? rootNode : (<any>rootNode).instanceSkin; 
+        const instanceSkin: GLTFNode = (gltf.asset.version !== "0.8") ? rootNode : (<any>rootNode).instanceSkin;
 
         if(instanceSkin != null && instanceSkin.meshes != null && instanceSkin.meshes.length > 0) {
           meshName = instanceSkin.meshes[0];
           // rootBoneNames = instanceSkin.skeletons;
           skin = gltf.skins[instanceSkin.skin];
         }
-        
+
         else if (rootNode.meshes != null && rootNode.meshes.length > 0) {
           meshName = rootNode.meshes[0];
         }
       }
-      
+
       for (const childName of rootNode.children) {
         walkNode(gltf.nodes[childName]);
       }
-    }
+    };
     
     for (const rootNodeName of gltf.scenes[gltf.scene].nodes) walkNode(gltf.nodes[rootNodeName]);
 
@@ -226,7 +226,7 @@ export function importModel(files: File[], callback: ImportCallback) {
 
     const meshInfo = gltf.meshes[meshName];
     if (meshInfo.primitives.length !== 1) { callback([ createLogError("Only a single primitive is supported", gltfFile.name) ]); return; }
-    
+
     const mode = (gltf.asset.version !== "0.8") ? meshInfo.primitives[0].mode : (<any>meshInfo.primitives[0]).primitive;
     if (mode !== GLTFPrimitiveMode.TRIANGLES) { callback([ createLogError("Only triangles are supported", gltfFile.name) ]); return; }
 
@@ -269,17 +269,17 @@ export function importModel(files: File[], callback: ImportCallback) {
       const positionAccessor: GLTFAccessor = gltf.accessors[primitive.attributes["POSITION"]];
       if (positionAccessor.componentType !== GLTFConst.FLOAT) {
         callback([ createLogError(`Unsupported component type for position accessor: ${positionAccessor.componentType}`) ]);
-        return
+        return;
       }
 
       {
         const positionBufferView: GLTFBufferView = gltf.bufferViews[positionAccessor.bufferView];
         const start = positionBufferView.byteOffset + positionAccessor.byteOffset;
-        
+
         if (skin != null) {
           const bindShapeMatrix = new THREE.Matrix4().fromArray(skin.bindShapeMatrix);
           const positionArray = new Float32Array(buffers[positionBufferView.buffer], start, positionAccessor.count * 3);
-          for (let i = 0; i <positionAccessor.count; i++) {
+          for (let i = 0; i < positionAccessor.count; i++) {
             const pos = new THREE.Vector3(positionArray[i * 3 + 0], positionArray[i * 3 + 1], positionArray[i * 3 + 2]);
             pos.applyMatrix4(bindShapeMatrix);
             positionArray[i * 3 + 0] = pos.x;
@@ -421,7 +421,7 @@ export function importModel(files: File[], callback: ImportCallback) {
             const outputBufferView: GLTFBufferView = gltf.bufferViews[outputAccessor.bufferView];
             const outputArray = new Float32Array(buffers[outputBufferView.buffer], outputBufferView.byteOffset + outputAccessor.byteOffset, outputAccessor.count * componentsCount);
 
-            if (outputParameterName == "rotation" && gltf.asset.version === "0.8") convertAxisAngleToQuaternionArray(outputArray, outputAccessor.count);
+            if (outputParameterName === "rotation" && gltf.asset.version === "0.8") convertAxisAngleToQuaternionArray(outputArray, outputAccessor.count);
 
             for (let i = 0; i < timeArray.length; i++) {
               const time = timeArray[i];
@@ -450,7 +450,7 @@ export function importModel(files: File[], callback: ImportCallback) {
         callback(log, { attributes, bones, maps, animation, upAxisMatrix: (upAxisMatrix != null) ? upAxisMatrix.toArray() : null });
       });
     });
-  }
+  };
 
   readFile(gltfFile, "json", onGLTFRead);
 }

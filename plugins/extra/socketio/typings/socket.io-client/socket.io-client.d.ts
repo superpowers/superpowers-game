@@ -3,6 +3,7 @@
 // Definitions by: PROGRE <https://github.com/progre/>, Damian Connolly <https://github.com/divillysausages/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 
+/* tslint:disable */
 declare var io: SocketIOClientStatic;
 
 declare module 'socket.io-client' {

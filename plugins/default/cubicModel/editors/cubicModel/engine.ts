@@ -1,4 +1,4 @@
-import { socket, data } from "./network";
+import { data } from "./network";
 import ui, { setupSelectedNode } from "./ui";
 import textureArea, { handleTextureArea } from "./textureArea";
 

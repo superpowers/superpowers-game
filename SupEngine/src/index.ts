@@ -2,6 +2,8 @@ import * as THREE from "three";
 THREE.Euler.DefaultOrder = "YXZ";
 
 import GameInstance from "./GameInstance";
+
+/* tslint:disable:no-unused-variable */
 import ActorTree from "./ActorTree";
 import Actor from "./Actor";
 import ActorComponent from "./ActorComponent";
@@ -9,6 +11,7 @@ import ActorComponent from "./ActorComponent";
 import Input from "./Input";
 import Audio from "./Audio";
 import SoundPlayer from "./SoundPlayer";
+/* tslint:enable:no-unused-variable */
 
 export {
   THREE,
@@ -16,11 +19,15 @@ export {
   Input, Audio, SoundPlayer
 };
 
+/* tslint:disable:no-unused-variable */
 import Camera2DControls from "./components/Camera2DControls";
 import Camera3DControls from "./components/Camera3DControls";
 import FlatColorRenderer from "./components/FlatColorRenderer";
 import GridRenderer from "./components/GridRenderer";
 import SelectionRenderer from "./components/SelectionRenderer";
+
+import Camera from "./components/Camera";
+/* tslint:enable:no-unused-variable */
 
 export let editorComponentClasses: { [name: string]: new(...args: any[]) => ActorComponent } = {
   Camera2DControls, Camera3DControls, FlatColorRenderer, GridRenderer, SelectionRenderer
@@ -34,8 +41,6 @@ export function registerEditorComponentClass(name: string, componentClass: new(.
 
   editorComponentClasses[name] = componentClass;
 };
-
-import Camera from "./components/Camera";
 
 export let componentClasses: { [name: string]: new(...args: any[]) => ActorComponent } = {
   /* Built-ins */ Camera

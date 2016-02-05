@@ -46,7 +46,7 @@ export default class FlatColorRenderer extends ActorComponent {
   }
 
   _clearMesh() {
-    if (this.mesh == null) return
+    if (this.mesh == null) return;
 
     this.mesh.geometry.dispose();
     this.mesh.material.dispose();

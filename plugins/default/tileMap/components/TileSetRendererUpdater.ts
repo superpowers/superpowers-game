@@ -1,4 +1,3 @@
-let THREE = SupEngine.THREE;
 import TileSetAsset from "../data/TileSetAsset";
 import TileSet from "./TileSet";
 import TileSetRenderer from "./TileSetRenderer";

@@ -5,7 +5,7 @@ import Camera from "./Camera";
 
 let tmpVector3 = new THREE.Vector3();
 
-interface options {
+interface Options {
   zoomMin: number;
   zoomMax: number;
   zoomSpeed: number;
@@ -14,11 +14,11 @@ interface options {
 export default class Camera2DControls extends ActorComponent {
   actor: Actor;
   camera: Camera;
-  options: options;
+  options: Options;
   zoomCallback: Function;
   multiplier = 1;
 
-  constructor(actor: Actor, camera: Camera, options: options, zoomCallback?: Function) {
+  constructor(actor: Actor, camera: Camera, options: Options, zoomCallback?: Function) {
     super(actor, "Camera2DControls");
 
     this.actor = actor;
@@ -27,7 +27,7 @@ export default class Camera2DControls extends ActorComponent {
     this.zoomCallback = zoomCallback;
   }
 
-  setIsLayerActive(active: boolean) {}
+  setIsLayerActive(active: boolean) { /* Nothing to render */ }
 
   setMultiplier(newMultiplier: number) {
     let newOrthographicScale = this.camera.orthographicScale * this.multiplier;
@@ -91,11 +91,11 @@ export default class Camera2DControls extends ActorComponent {
 
   getScreenPosition(x: number, y: number): number[] {
     x /= this.camera.orthographicScale / 2 * this.camera.cachedRatio;
-    x = (1-x) / 2;
+    x = (1 - x) / 2;
     x *= this.actor.gameInstance.threeRenderer.domElement.width;
 
     y /= this.camera.orthographicScale / 2;
-    y = (y+1) / 2;
+    y = (y + 1) / 2;
     y *= this.actor.gameInstance.threeRenderer.domElement.height;
     return [x, y];
   }

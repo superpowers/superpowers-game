@@ -6,12 +6,12 @@ export default class GridHelper extends SupEngine.ActorComponent {
 
   constructor(actor: SupEngine.Actor, size: number, step: number) {
     super(actor, "GridHelper");
-    
+
     this.setup(size, step);
   }
-  
+
   setIsLayerActive(active: boolean) { this.gridHelper.visible = active && this.visible; }
-  
+
   setup(size: number, step: number) {
     if (this.gridHelper != null) {
       this.actor.threeObject.remove(this.gridHelper);
@@ -30,7 +30,7 @@ export default class GridHelper extends SupEngine.ActorComponent {
     this.gridHelper.visible = this.visible;
     this.gridHelper.updateMatrixWorld(false);
   }
-  
+
   setVisible(visible: boolean) {
     this.gridHelper.visible = this.visible = visible;
   }

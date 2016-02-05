@@ -12,8 +12,9 @@ export interface RendererNode {
 }
 
 export default class CubicModelRenderer extends SupEngine.ActorComponent {
-
+  /* tslint:disable:variable-name */
   static Updater = CubicModelRendererUpdater;
+  /* tslint:enable:variable-name */
 
   asset: CubicModelAssetPub;
   threeRoot: THREE.Object3D;

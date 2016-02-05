@@ -20,7 +20,7 @@ export default class TextRendererConfig extends SupCore.Data.Base.ComponentConfi
     verticalAlignment: { type: "enum", items: [ "top", "center", "bottom" ], mutable: true },
     size: { type: "integer?", min: 0, mutable: true },
     color: { type: "string?", length: 6, mutable: true }
-  }
+  };
 
   static create() {
     let emptyConfig: TextRendererConfigPub = {

@@ -11,7 +11,7 @@ interface AnimationKeyFrames {
     translation: number[];
     rotation: number[];
     scale: number[];
-  }
+  };
 }
 
 interface Animation {
@@ -43,8 +43,9 @@ function getInterpolationData(keyFrames: any[], time: number) {
 }
 
 export default class ModelRenderer extends SupEngine.ActorComponent {
-
+  /* tslint:disable:variable-name */
   static Updater = ModelRendererUpdater;
+  /* tslint:enable:variable-name */
 
   opacity: number;
   color = { r: 1, g: 1, b: 1 };
@@ -78,7 +79,7 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
       this.skeletonHelper = null;
     }
     this.actor.threeObject.remove(this.threeMesh);
-    this.threeMesh.traverse((obj: any) => { if (obj.dispose != null) obj.dispose() });
+    this.threeMesh.traverse((obj: any) => { if (obj.dispose != null) obj.dispose(); });
     this.threeMesh = null;
     this.material.dispose();
     this.material = null;
@@ -243,7 +244,7 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
    }
 
   setShowSkeleton(show: boolean) {
-    if (show == (this.skeletonHelper != null)) return;
+    if (show === (this.skeletonHelper != null)) return;
 
     if (show) {
       this.skeletonHelper = new THREE.SkeletonHelper(this.threeMesh);
@@ -269,7 +270,7 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
     }
   }
 
-  setAnimation(newAnimationName: string, newAnimationLooping=true) {
+  setAnimation(newAnimationName: string, newAnimationLooping = true) {
     if (newAnimationName != null) {
       let newAnimation = this.animationsByName[newAnimationName];
       if (newAnimation == null) throw new Error(`Animation ${newAnimationName} doesn't exist`);
@@ -283,7 +284,7 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
       this.animation = null;
       this.clearPose();
     }
-    return
+    return;
   }
 
   getAnimation(): string { return (this.animation != null) ? this.animation.name : null; }
@@ -300,7 +301,7 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
     return this.animation.duration;
   }
 
-  playAnimation(animationLooping=true) {
+  playAnimation(animationLooping = true) {
     this.animationLooping = animationLooping;
     this.isAnimationPlaying = true;
   }

@@ -2,7 +2,7 @@ import * as THREE from "three";
 import ActorComponent from "../ActorComponent";
 import Actor from "../Actor";
 
-interface data {
+interface Data {
   width: number;
   height: number;
   direction?: number;
@@ -19,7 +19,7 @@ export default class GridRenderer extends ActorComponent {
 
   mesh: THREE.LineSegments;
 
-  constructor(actor: Actor, data?: data) {
+  constructor(actor: Actor, data?: Data) {
     super(actor, "GridRenderer");
 
     if (data != null) this.setGrid(data);
@@ -27,7 +27,7 @@ export default class GridRenderer extends ActorComponent {
 
   setIsLayerActive(active: boolean) { if (this.mesh != null) this.mesh.visible = active; }
 
-  setGrid(data: data) {
+  setGrid(data: Data) {
     this._clearMesh();
 
     this.width = data.width;
@@ -81,7 +81,7 @@ export default class GridRenderer extends ActorComponent {
 
     let material = new THREE.LineDashedMaterial({
       color: 0x000000, transparent: true, opacity: 0.4,
-      dashSize: 5/1000, gapSize: 5/1000, scale: 1 / this.orthographicScale
+      dashSize: 5 / 1000, gapSize: 5 / 1000, scale: 1 / this.orthographicScale
     });
 
     this.mesh = new THREE.LineSegments(geometry, material);

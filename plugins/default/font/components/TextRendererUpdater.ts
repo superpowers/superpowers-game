@@ -112,9 +112,9 @@ export default class TextRendererUpdater {
     }
   }
 
-  private onEditCommand_upload() { this._setupFont(); }
+  onEditCommand_upload() { this._setupFont(); }
 
-  private onEditCommand_setProperty(path: string) {
+  onEditCommand_setProperty(path: string) {
     if (path === "isBitmap") this._setupFont();
     else this.textRenderer.setFont(this.fontAsset.pub);
   }

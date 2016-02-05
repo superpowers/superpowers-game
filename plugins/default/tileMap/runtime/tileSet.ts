@@ -11,9 +11,9 @@ export function loadAsset(player: SupRuntime.Player, entry: any, callback: (err:
       data.texture.minFilter = SupEngine.THREE.NearestFilter;
 
       callback(null, new TileSet(data));
-    }
+    };
 
-    img.onerror = () => { callback(null, new TileSet(data)); }
+    img.onerror = () => { callback(null, new TileSet(data)); };
 
     img.src = `${player.dataURL}assets/${entry.storagePath}/image.dat`;
   });

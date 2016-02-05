@@ -34,7 +34,7 @@ export default class FontAsset extends SupCore.Data.Base.Asset {
     gridHeight: { type: "number", min: 1, mutable: true },
     charset: { type: "string?", mutable: true },
     charsetOffset: { type: "number", min: 0, mutable: true },
-  }
+  };
 
   pub: FontPub;
 
@@ -62,7 +62,7 @@ export default class FontAsset extends SupCore.Data.Base.Asset {
       gridHeight: 16,
       charset: null,
       charsetOffset: 32,
-    }
+    };
 
     super.init(options, callback);
   }

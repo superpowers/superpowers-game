@@ -82,12 +82,12 @@ export default class CubicModelRendererUpdater {
     this.cubicModelRenderer._makeNode(node, parentRendererNode, offset);
   }
 
-  _onEditCommand_moveNode = (id: string, parentId: string, index: number) => {
+  _onEditCommand_moveNode(id: string, parentId: string, index: number) {
     let rendererNode = this.cubicModelRenderer.byNodeId[id];
     let pivot = rendererNode.pivot;
     let matrix = pivot.matrixWorld.clone();
 
-      let previousParentId = pivot.parent.userData.cubicNodeId;
+    let previousParentId = pivot.parent.userData.cubicNodeId;
     if (previousParentId != null) {
       let parentNode = this.cubicModelRenderer.byNodeId[previousParentId];
       parentNode.children.splice(parentNode.children.indexOf(rendererNode), 1);
@@ -101,7 +101,7 @@ export default class CubicModelRendererUpdater {
     pivot.updateMatrixWorld(false);
   };
 
-  _onEditCommand_moveNodePivot = (id: string, value: { x: number; y: number; z: number; }) => {
+  _onEditCommand_moveNodePivot(id: string, value: { x: number; y: number; z: number; }) {
     let rendererNode = this.cubicModelRenderer.byNodeId[id];
     let node = this.cubicModelAsset.nodes.byId[id];
 
@@ -122,7 +122,7 @@ export default class CubicModelRendererUpdater {
     rendererNode.pivot.updateMatrixWorld(false);
   };
 
-  _onEditCommand_setNodeProperty = (id: string, path: string, value: any) => {
+  _onEditCommand_setNodeProperty(id: string, path: string, value: any) {
     let rendererNode = this.cubicModelRenderer.byNodeId[id];
     let node = this.cubicModelAsset.nodes.byId[id];
 
@@ -178,11 +178,11 @@ export default class CubicModelRendererUpdater {
     }
   };
 
-  _onEditCommand_duplicateNode = (rootNode: Node, newNodes: DuplicatedNode[]) => {
+  _onEditCommand_duplicateNode(rootNode: Node, newNodes: DuplicatedNode[]) {
     for (let newNode of newNodes) this._createRendererNode(newNode.node);
   };
 
-  _onEditCommand_removeNode = (id: string) => {
+  _onEditCommand_removeNode(id: string) {
     this._recurseClearNode(id);
   };
 
@@ -214,8 +214,8 @@ export default class CubicModelRendererUpdater {
     }
   }
 
-  _onEditCommand_changeTextureWidth = () => { this._onChangeTextureSize(); };
-  _onEditCommand_changeTextureHeight = () => { this._onChangeTextureSize(); };
+  _onEditCommand_changeTextureWidth() { this._onChangeTextureSize(); };
+  _onEditCommand_changeTextureHeight() { this._onChangeTextureSize(); };
 
   _onChangeTextureSize() {
     for (let id in this.cubicModelAsset.nodes.byId) {

@@ -23,10 +23,10 @@ export default class TextRendererGeometry extends THREE.BufferGeometry {
     let offset3 = 0;
 
     for (let iy = 0; iy < heightSegments; iy++) {
-      let y = iy * height / heightSegments
+      let y = iy * height / heightSegments;
 
       for (let ix = 0; ix < widthSegments; ix++) {
-        let x = ix * width / widthSegments
+        let x = ix * width / widthSegments;
 
         // Left bottom
         vertices[offset + 0]  = x;
@@ -39,22 +39,22 @@ export default class TextRendererGeometry extends THREE.BufferGeometry {
         vertices[offset + 3]  = x + width / widthSegments;
         vertices[offset + 4]  = y;
         normals[offset + 5]  = 1;
-        uvs[offset2 + 2] = (ix+1) / widthSegments;
+        uvs[offset2 + 2] = (ix + 1) / widthSegments;
         uvs[offset2 + 3] = iy / heightSegments;
 
         // Right top
         vertices[offset + 6]  = x + width / widthSegments;
         vertices[offset + 7]  = y + height / heightSegments;
         normals[offset + 8]  = 1;
-        uvs[offset2 + 4] = (ix+1) / widthSegments;
-        uvs[offset2 + 5] = (iy+1) / heightSegments;
+        uvs[offset2 + 4] = (ix + 1) / widthSegments;
+        uvs[offset2 + 5] = (iy + 1) / heightSegments;
 
         // Left Top
         vertices[offset + 9]  = x;
         vertices[offset + 10] = y + height / heightSegments;
         normals[offset + 11] = 1;
         uvs[offset2 + 6] = ix / widthSegments;
-        uvs[offset2 + 7] = (iy+1) / heightSegments;
+        uvs[offset2 + 7] = (iy + 1) / heightSegments;
 
         let ref = (ix + iy * widthSegments) * 4;
         // Bottom right corner

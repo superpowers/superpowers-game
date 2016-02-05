@@ -1,5 +1,7 @@
+/* tslint:disable:no-unused-variable */
 import * as obj from "./obj";
 import * as gltf from "./gltf";
+/* tslint:enable:no-unused-variable */
 
 export interface ImportLogEntry {
   file: string;
@@ -35,5 +37,5 @@ export default function(files: File[], callback: ImportCallback) {
   if (modelImporter == null) { callback([ createLogError("No compatible importer found") ]); return; }
 
   modelImporter.importModel(files, callback);
-  return
+  return;
 }

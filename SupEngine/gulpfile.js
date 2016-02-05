@@ -1,12 +1,17 @@
-var gulp = require("gulp");
+"use strict";
+
+const gulp = require("gulp");
 
 // TypeScript
-var ts = require("gulp-typescript");
-var tsProject = ts.createProject("src/tsconfig.json");
+const ts = require("gulp-typescript");
+const tsProject = ts.createProject("src/tsconfig.json");
+const tslint = require("gulp-tslint");
 
 gulp.task("typescript", function() {
-  var failed = false;
-  var tsResult = tsProject.src()
+  let failed = false;
+  const tsResult = tsProject.src()
+    .pipe(tslint({ tslint: require("tslint") }))
+    .pipe(tslint.report("prose", { emitError: false }))
     .pipe(ts(tsProject))
     .on("error", () => { failed = true; })
     .on("end", () => { if (failed) throw new Error("There were TypeScript errors."); });
@@ -14,10 +19,10 @@ gulp.task("typescript", function() {
 });
 
 // Browserify
-var browserify = require("browserify");
-var source = require("vinyl-source-stream");
+const browserify = require("browserify");
+const source = require("vinyl-source-stream");
 gulp.task("browserify", [ "typescript" ], function() {
-  var bundler = browserify("./src/index.js", { standalone: "SupEngine" });
+  const bundler = browserify("./src/index.js", { standalone: "SupEngine" });
   function bundle() { return bundler.bundle().pipe(source("SupEngine.js")).pipe(gulp.dest("../public")); };
   return bundle();
 });

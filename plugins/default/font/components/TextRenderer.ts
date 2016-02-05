@@ -5,7 +5,9 @@ import TextRendererGeometry from "./TextRendererGeometry";
 import { FontPub } from "../data/FontAsset";
 
 export default class TextRenderer extends SupEngine.ActorComponent {
+  /* tslint:disable:variable-name */
   static Updater = TextRendererUpdater;
+  /* tslint:enable:variable-name */
 
   texture: THREE.Texture;
   threeMeshes: THREE.Mesh[] = [];

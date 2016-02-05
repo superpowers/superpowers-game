@@ -1,1 +1,3 @@
-SupRuntime.registerPlugin("sound", require("./sound"));
+import * as sound from "./sound";
+
+SupRuntime.registerPlugin("sound", sound);

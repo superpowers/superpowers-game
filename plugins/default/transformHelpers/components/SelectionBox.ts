@@ -9,7 +9,7 @@ export default class SelectionBox extends SupEngine.ActorComponent {
     super(actor, "SelectionBox");
 
     this.geometry = new THREE.Geometry();
-    for (let i = 0; i < 24; i++) this.geometry.vertices.push(new THREE.Vector3(0,0,0));
+    for (let i = 0; i < 24; i++) this.geometry.vertices.push(new THREE.Vector3(0, 0, 0));
     this.line = new THREE.LineSegments(this.geometry, new THREE.LineBasicMaterial({ color: 0x00ffff, opacity: 1, depthTest: false, depthWrite: false, transparent: true }));
     this.actor.threeObject.add(this.line);
     this.line.updateMatrixWorld(false);
@@ -47,23 +47,23 @@ export default class SelectionBox extends SupEngine.ActorComponent {
       if (geometry != null) {
         node.updateMatrixWorld(false);
 
-				if (geometry instanceof THREE.Geometry) {
-					let vertices = geometry.vertices;
+        if (geometry instanceof THREE.Geometry) {
+          let vertices = geometry.vertices;
 
-					for (let i = 0, il = vertices.length; i < il; i++) {
+          for (let i = 0, il = vertices.length; i < il; i++) {
             vec.copy(vertices[i]).applyMatrix4(node.matrixWorld).applyMatrix4(inverseTargetMatrixWorld);
-						box.expandByPoint(vec);
-					}
+            box.expandByPoint(vec);
+          }
 
         } else if (geometry instanceof THREE.BufferGeometry && (<any>geometry.attributes)["position"] != null) {
-					let positions: Float32Array = (<any>geometry.attributes)["position"].array;
+          let positions: Float32Array = (<any>geometry.attributes)["position"].array;
 
-					for (let i = 0, il = positions.length; i < il; i += 3) {
-						vec.set(positions[i], positions[i + 1], positions[i + 2]);
+          for (let i = 0, il = positions.length; i < il; i += 3) {
+            vec.set(positions[i], positions[i + 1], positions[i + 2]);
             vec.applyMatrix4(node.matrixWorld).applyMatrix4(inverseTargetMatrixWorld);
-						box.expandByPoint(vec);
-					}
-				}
+            box.expandByPoint(vec);
+          }
+        }
       }
     });
 

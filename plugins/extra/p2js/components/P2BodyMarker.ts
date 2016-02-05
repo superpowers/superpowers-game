@@ -2,7 +2,9 @@ let THREE = SupEngine.THREE;
 import P2BodyMarkerUpdater from "./P2BodyMarkerUpdater";
 
 export default class P2BodyMarker extends SupEngine.ActorComponent {
+  /* tslint:disable:variable-name */
   static Updater = P2BodyMarkerUpdater;
+  /* tslint:enable:variable-name */
 
   mesh: THREE.Line|THREE.Mesh;
   offset = new THREE.Vector3(0, 0, 0);

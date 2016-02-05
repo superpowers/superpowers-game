@@ -1,16 +1,16 @@
 export default class Audio {
-  _ctx: AudioContext;
+  private ctx: AudioContext;
   masterGain: GainNode;
 
-  constructor() {}
+  constructor() { /* Nothing here */ }
   getContext(): AudioContext {
-    if (this._ctx != null) return this._ctx;
+    if (this.ctx != null) return this.ctx;
     if ((window as any).AudioContext == null) return null;
 
-    this._ctx = new AudioContext();
-    this.masterGain = this._ctx.createGain();
+    this.ctx = new AudioContext();
+    this.masterGain = this.ctx.createGain();
     this.masterGain.gain.value = 1;
-    this.masterGain.connect(this._ctx.destination);
-    return this._ctx;
+    this.masterGain.connect(this.ctx.destination);
+    return this.ctx;
   }
 }

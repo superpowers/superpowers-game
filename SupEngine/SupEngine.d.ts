@@ -203,7 +203,6 @@ declare namespace SupEngine {
   }
 
   class Audio {
-    _ctx: AudioContext;
     masterGain: GainNode;
 
     constructor();

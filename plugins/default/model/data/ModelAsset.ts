@@ -391,7 +391,8 @@ export default class ModelAsset extends SupCore.Data.Base.Asset {
     }
   }
 
-  server_setModel(client: any, upAxisMatrix: number[], attributes: { [name: string]: any }, bones: any[], callback: (err: string, upAxisMatrix?: number[], attributes?: { [name: string]: any }, bones?: any[]) => any) {
+  server_setModel(client: any, upAxisMatrix: number[], attributes: { [name: string]: any }, bones: any[],
+  callback: (err: string, upAxisMatrix?: number[], attributes?: { [name: string]: any }, bones?: any[]) => any) {
     // Validate up matrix
     if (upAxisMatrix != null) {
       let violation = SupCore.Data.Base.getRuleViolation(upAxisMatrix, ModelAsset.schema["upAxisMatrix"], true);

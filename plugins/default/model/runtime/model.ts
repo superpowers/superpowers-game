@@ -8,7 +8,7 @@ export function loadAsset(player: SupRuntime.Player, entry: any, callback: (err:
     async.each<string>(attributesList, (key, cb) => {
       player.getAssetData(`assets/${entry.storagePath}/attr-${key}.dat`, "arraybuffer", (err: Error, buffer: ArrayBuffer) => {
         data.attributes[key] = buffer;
-        cb(); return
+        cb();
       });
     }, () => {
       let mapsList = data.maps;

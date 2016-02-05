@@ -26,17 +26,17 @@ export default class Camera extends ActorComponent {
       type: "perspective",
       matrixWorld: null,
       projectionMatrix: null,
-      updateMatrixWorld: () => {},
+      updateMatrixWorld: () => { /* Nothing here */ }
     };
 
     this.setOrthographicMode(false);
 
-    this._computeAspectRatio();
-    this.actor.gameInstance.on("resize", this._computeAspectRatio);
+    this.computeAspectRatio();
+    this.actor.gameInstance.on("resize", this.computeAspectRatio);
   }
 
   _destroy() {
-    this.actor.gameInstance.removeListener("resize", this._computeAspectRatio);
+    this.actor.gameInstance.removeListener("resize", this.computeAspectRatio);
 
     let index = this.actor.gameInstance.renderComponents.indexOf(this);
     if (index !== -1) this.actor.gameInstance.renderComponents.splice(index, 1);
@@ -46,13 +46,13 @@ export default class Camera extends ActorComponent {
     super._destroy();
   }
 
-  _computeAspectRatio = () => {
+  private computeAspectRatio = () => {
     let canvas = this.actor.gameInstance.threeRenderer.domElement;
     this.cachedRatio = (canvas.clientWidth * this.viewport.width) / (canvas.clientHeight * this.viewport.height);
     this.projectionNeedsUpdate = true;
-  }
+  };
 
-  setIsLayerActive(active: boolean) {}
+  setIsLayerActive(active: boolean) { /* Nothing to render */ }
 
   setOrthographicMode(isOrthographic: boolean) {
     this.isOrthographic = isOrthographic;
@@ -88,7 +88,7 @@ export default class Camera extends ActorComponent {
     this.viewport.width = width;
     this.viewport.height = height;
     this.projectionNeedsUpdate = true;
-    this._computeAspectRatio();
+    this.computeAspectRatio();
   }
 
   setDepth(depth: number) {

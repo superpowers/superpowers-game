@@ -4,7 +4,9 @@ let THREE = SupEngine.THREE;
 let tmpVector3 = new THREE.Vector3();
 
 export default class ArcadeBody2DMarker extends SupEngine.ActorComponent {
+  /* tslint:disable:variable-name */
   static Updater = ArcadeBody2DUpdater;
+  /* tslint:enable:variable-name */
 
   markerActor: SupEngine.Actor;
   offset = new THREE.Vector3(0, 0, 0);

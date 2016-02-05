@@ -68,7 +68,7 @@ interface MarkedOptions {
      *
      * An object containing functions to render tokens to HTML.
      */
-    renderer?: Object; 
+    renderer?: Object;
 
     /**
      * Enable GitHub flavored markdown.
@@ -121,8 +121,7 @@ interface MarkedOptions {
     smartypants?: boolean;
 }
 
+declare var marked: MarkedStatic;
 declare module "marked" {
     export = marked;
 }
-
-declare var marked: MarkedStatic;

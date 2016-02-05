@@ -4,6 +4,8 @@ import ArcadeBody2D from "./ArcadeBody2D";
 import ArcadeBody2DMarker from "./ArcadeBody2DMarker";
 
 namespace ArcadePhysics2D {
+  "use strict";
+
   export let allBodies: ArcadeBody2D[] = [];
   export let gravity = new THREE.Vector3(0, 0, 0);
 

@@ -1,8 +1,7 @@
-//FIX ME
-//import  cannon from "cannon"
-
-
-let cannon:any = require("cannon");
+// FIXME: import * cannon from "cannon";
+/* tslint:disable */
+let cannon: any = require("cannon");
+/* tslint:enable */
 
 import * as CannonBody from "./CannonBody";
 (<any>window).CANNON = cannon;

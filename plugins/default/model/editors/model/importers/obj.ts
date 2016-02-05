@@ -37,8 +37,8 @@ function parse(filename: string, text: string, callback: ImportCallback) {
         let values: number[] = [];
         for (let valueString of valueStrings) values.push(+valueString);
         positionsByIndex.push(values);
-        break;
       }
+      break;
 
       case "vt": {
         if (valueStrings.length < 2) { callback([ createLogError(`Invalid vt command: found ${valueStrings.length} values, expected 2`, filename, lineIndex) ]); return; }
@@ -46,16 +46,16 @@ function parse(filename: string, text: string, callback: ImportCallback) {
         let values: number[] = [];
         for (let i = 0; i < valueStrings.length; i++) values.push(+valueStrings[i]);
         uvsByIndex.push(values);
-        break;
       }
+      break;
 
       case "vn": {
         if (valueStrings.length !== 3) { callback([ createLogError(`Invalid vn command: found ${valueStrings.length} values, expected 3`, filename, lineIndex) ]); return; }
         let values: number[] = [];
         for (let valueString of valueStrings) values.push(+valueString);
         normalsByIndex.push(values);
-        break;
       }
+      break;
 
       case "f":
         if (valueStrings.length !== 3 && valueStrings.length !== 4) {
