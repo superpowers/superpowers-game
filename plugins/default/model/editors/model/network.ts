@@ -21,7 +21,7 @@ function onConnected() {
 
   let modelActor = new SupEngine.Actor(engine.gameInstance, "Model");
   let modelRenderer = new ModelRenderer(modelActor);
-  let config: any = { modelAssetId: SupClient.query.asset, animationId: null, materialType: "phong" };
+  let config: any = { modelAssetId: SupClient.query.asset, materialType: "phong", color: "ffffff" };
   let receiveCallbacks = { model: onAssetReceived };
   let editCallbacks = { model: onEditCommands };
 

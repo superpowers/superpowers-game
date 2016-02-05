@@ -21,7 +21,7 @@ function onConnected() {
 
   let spriteActor = new SupEngine.Actor(animationArea.gameInstance, "Sprite");
   let spriteRenderer = new SpriteRenderer(spriteActor);
-  let config = { spriteAssetId: SupClient.query.asset, materialType: "basic" };
+  let config = { spriteAssetId: SupClient.query.asset, materialType: "basic", color: "ffffff" };
   let receiveCallbacks = { sprite: onAssetReceived };
   let editCallbacks = { sprite: onEditCommands };
 
