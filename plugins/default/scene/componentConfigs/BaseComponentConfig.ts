@@ -3,6 +3,8 @@ class ComponentConfig extends SupCore.Data.Base.Hash {
     super(pub, schema);
   }
 
+  migrate() { return false; }
+
   restore() { /* Override */ }
 
   destroy() { /* Override */ }

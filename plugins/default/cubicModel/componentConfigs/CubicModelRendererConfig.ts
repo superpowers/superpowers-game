@@ -37,9 +37,7 @@ export default class CubicModelRendererConfig extends SupCore.Data.Base.Componen
 
   pub: CubicModelRendererConfigPub;
 
-  constructor(pub: CubicModelRendererConfigPub) {
-    super(pub, CubicModelRendererConfig.schema);
-  }
+  constructor(pub: CubicModelRendererConfigPub) { super(pub, CubicModelRendererConfig.schema); }
 
   restore() {
     if (this.pub.cubicModelAssetId != null) this.emit("addDependencies", [ this.pub.cubicModelAssetId ]);

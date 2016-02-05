@@ -41,22 +41,20 @@ export default class SpriteRendererUpdater {
     this.animationId = config.animationId;
     this.materialType = config.materialType;
     this.shaderAssetId = config.shaderAssetId;
-    if (config.overrideOpacity != null) this.overrideOpacity = config.overrideOpacity;
-    this.opacity = config.opacity;
-    this.spriteAsset = null;
 
     this.spriteRenderer.horizontalFlip = config.horizontalFlip;
     this.spriteRenderer.verticalFlip = config.verticalFlip;
     this.spriteRenderer.castShadow = config.castShadow;
     this.spriteRenderer.receiveShadow = config.receiveShadow;
-    if (config.overrideOpacity) this.spriteRenderer.setOpacity(config.opacity);
-    if (config.color != null) {
-      let hex = parseInt(config.color, 16);
-      let r = (hex >> 16 & 255) / 255;
-      let g = (hex >> 8 & 255) / 255;
-      let b = (hex & 255) / 255;
-      this.spriteRenderer.setColor(r, g, b);
-    }
+
+    this.overrideOpacity = config.overrideOpacity;
+    this.opacity = config.opacity;
+    if (this.overrideOpacity) this.spriteRenderer.setOpacity(this.opacity);
+    let hex = parseInt(config.color, 16);
+    let r = (hex >> 16 & 255) / 255;
+    let g = (hex >> 8 & 255) / 255;
+    let b = (hex & 255) / 255;
+    this.spriteRenderer.setColor(r, g, b);
 
     if (this.spriteAssetId != null) this.client.subAsset(this.spriteAssetId, "sprite", this.spriteSubscriber);
     if (this.shaderAssetId != null) this.client.subAsset(this.shaderAssetId, "shader", this.shaderSubscriber);

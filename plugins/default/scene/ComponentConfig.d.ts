@@ -1,6 +1,10 @@
 declare namespace SupCore {
   namespace Data {
-    interface ComponentConfigClass { new(pub: any, sceneAsset?: any): Base.ComponentConfig; create(): any; }
+    interface ComponentConfigClass {
+      new(pub: any, sceneAsset?: any): Base.ComponentConfig;
+      create(): any;
+      migrate? (config: any): boolean;
+    }
 
     namespace Base {
       class ComponentConfig extends Hash {

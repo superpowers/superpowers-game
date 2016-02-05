@@ -1,7 +1,5 @@
-import * as async from "async";
 import ModelAsset from "../data/ModelAsset";
 import ModelRenderer from "./ModelRenderer";
-let THREE = SupEngine.THREE;
 
 export default class ModelRendererUpdater {
 
@@ -41,17 +39,16 @@ export default class ModelRendererUpdater {
     this.animationId = config.animationId;
     this.materialType = config.materialType;
     this.shaderAssetId = config.shaderAssetId;
-    if (config.overrideOpacity != null) this.overrideOpacity = config.overrideOpacity;
 
     this.modelRenderer.castShadow = config.castShadow;
     this.modelRenderer.receiveShadow = config.receiveShadow;
-    if (config.overrideOpacity) this.modelRenderer.opacity = config.opacity;
-    if (config.color != null) {
-      let hex = parseInt(config.color, 16);
-      this.modelRenderer.color.r = (hex >> 16 & 255) / 255;
-      this.modelRenderer.color.g = (hex >> 8 & 255) / 255;
-      this.modelRenderer.color.b = (hex & 255) / 255;
-    }
+
+    this.overrideOpacity = config.overrideOpacity;
+    if (this.overrideOpacity) this.modelRenderer.opacity = config.opacity;
+    let hex = parseInt(config.color, 16);
+    this.modelRenderer.color.r = (hex >> 16 & 255) / 255;
+    this.modelRenderer.color.g = (hex >> 8 & 255) / 255;
+    this.modelRenderer.color.b = (hex & 255) / 255;
 
     if (this.modelAssetId != null) this.client.subAsset(this.modelAssetId, "model", this.modelSubscriber);
     if (this.shaderAssetId != null) this.client.subAsset(this.shaderAssetId, "shader", this.shaderSubscriber);

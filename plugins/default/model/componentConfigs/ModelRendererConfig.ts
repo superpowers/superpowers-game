@@ -1,4 +1,6 @@
 export interface ModelRendererConfigPub {
+  formatVersion: number;
+
   modelAssetId: string; animationId: string;
   castShadow: boolean; receiveShadow: boolean;
   color: string;
@@ -9,6 +11,8 @@ export interface ModelRendererConfigPub {
 export default class ModelRendererConfig extends SupCore.Data.Base.ComponentConfig {
 
   static schema: SupCore.Data.Schema = {
+    formatVersion: { type: "integer" },
+
     modelAssetId: { type: "string?", min: 0, mutable: true },
     animationId: { type: "string?", min: 0, mutable: true },
     castShadow: { type: "boolean", mutable: true },
@@ -18,10 +22,12 @@ export default class ModelRendererConfig extends SupCore.Data.Base.ComponentConf
     opacity: { type: "number?", min: 0, max: 1, mutable: true },
     materialType: { type: "enum", items: ["basic", "phong", "shader"], mutable: true },
     shaderAssetId: { type: "string?", min: 0, mutable: true }
-  }
+  };
 
   static create() {
     let emptyConfig: ModelRendererConfigPub = {
+      formatVersion: ModelRendererConfig.currentFormatVersion,
+
       modelAssetId: null,
       animationId: null,
       castShadow: false,
@@ -35,22 +41,31 @@ export default class ModelRendererConfig extends SupCore.Data.Base.ComponentConf
     return emptyConfig;
   }
 
-  constructor(pub: ModelRendererConfigPub) {
-    // NOTE: overrideOpacity was introduced in Superpowers 0.8
-    if (pub.overrideOpacity == null) pub.overrideOpacity = false;
-    if (pub.color == null) pub.color = "ffffff";
+  static currentFormatVersion = 1;
+  static migrate(pub: ModelRendererConfigPub) {
+    if (pub.formatVersion === ModelRendererConfig.currentFormatVersion) return false;
 
-    // NOTE: These settings were introduced in Superpowers 0.7
-    if (pub.castShadow == null) pub.castShadow = false;
-    if (pub.receiveShadow == null) pub.receiveShadow = false;
-    if (pub.materialType == null) pub.materialType = "basic";
+    if (pub.formatVersion == null) {
+      pub.formatVersion = 1;
 
-    // NOTE: Legacy stuff from Superpowers 0.4
-    if (typeof pub.modelAssetId === "number") pub.modelAssetId = pub.modelAssetId.toString();
-    if (typeof pub.animationId === "number") pub.animationId = pub.animationId.toString();
+      // NOTE: overrideOpacity was introduced in Superpowers 0.8
+      if (pub.overrideOpacity == null) pub.overrideOpacity = false;
+      if (pub.color == null) pub.color = "ffffff";
 
-    super(pub, ModelRendererConfig.schema);
+      // NOTE: These settings were introduced in Superpowers 0.7
+      if (pub.castShadow == null) pub.castShadow = false;
+      if (pub.receiveShadow == null) pub.receiveShadow = false;
+      if (pub.materialType == null) pub.materialType = "basic";
+
+      // NOTE: Legacy stuff from Superpowers 0.4
+      if (typeof pub.modelAssetId === "number") pub.modelAssetId = pub.modelAssetId.toString();
+      if (typeof pub.animationId === "number") pub.animationId = pub.animationId.toString();
+    }
+
+    return true;
   }
+
+  constructor(pub: ModelRendererConfigPub) { super(pub, ModelRendererConfig.schema); }
 
   restore() {
     if (this.pub.modelAssetId != null) this.emit("addDependencies", [ this.pub.modelAssetId ]);
@@ -73,7 +88,7 @@ export default class ModelRendererConfig extends SupCore.Data.Base.ComponentConf
         if (oldDepId != null) this.emit("removeDependencies", [ oldDepId ]);
         if (actualValue != null) this.emit("addDependencies", [ actualValue ]);
       }
-      
+
       if (path === "overrideOpacity") this.pub.opacity = null;
 
       callback(null, actualValue);

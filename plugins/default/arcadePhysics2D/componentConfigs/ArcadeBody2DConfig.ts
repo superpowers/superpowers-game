@@ -1,4 +1,6 @@
 export interface ConfigPub {
+  formatVersion: number;
+
   type: string;
 
   movable: boolean;
@@ -14,6 +16,8 @@ export interface ConfigPub {
 export default class ArcadeBody2DConfig extends SupCore.Data.Base.ComponentConfig {
 
   static schema: SupCore.Data.Schema = {
+    formatVersion: { type: "integer" },
+
     type: { type: "enum", items: ["box", "tileMap"], mutable: true },
 
     // Box
@@ -36,6 +40,8 @@ export default class ArcadeBody2DConfig extends SupCore.Data.Base.ComponentConfi
 
   static create() {
     let newConfig: ConfigPub = {
+      formatVersion: ArcadeBody2DConfig.currentFormatVersion,
+
       type: "box",
 
       movable: true,
@@ -50,26 +56,35 @@ export default class ArcadeBody2DConfig extends SupCore.Data.Base.ComponentConfi
     return newConfig;
   }
 
+  static currentFormatVersion = 1;
+  static migrate(pub: ConfigPub) {
+    if (pub.formatVersion === ArcadeBody2DConfig.currentFormatVersion) return false;
+
+    if (pub.formatVersion == null) {
+      pub.formatVersion = 1;
+
+      // Migration v0.12.0
+      if (pub.offset == null) {
+        pub.offset = { x: (<any>pub).offsetX, y: (<any>pub).offsetY };
+        delete (<any>pub).offsetX;
+        delete (<any>pub).offsetY;
+      }
+
+      if (pub.tileMapAssetId === "") pub.tileMapAssetId = null;
+
+      // Migration v0.6.0
+      if (pub.type == null) {
+        pub.type = "box";
+        pub.tileMapAssetId = null;
+        pub.tileSetPropertyName = null;
+        pub.layersIndex = null;
+      }
+    }
+
+    return true;
+  }
+
   pub: ConfigPub;
 
-  constructor(pub: any) {
-    super(pub, ArcadeBody2DConfig.schema);
-
-    // Migration v0.12.0
-    if (this.pub.offset == null) {
-      this.pub.offset = { x: (<any>this.pub).offsetX, y: (<any>this.pub).offsetY };
-      delete (<any>this.pub).offsetX;
-      delete (<any>this.pub).offsetY;
-    }
-
-    if (this.pub.tileMapAssetId === "") this.pub.tileMapAssetId = null;
-
-    // Migration v0.6.0
-    if (this.pub.type == null) {
-      this.pub.type = "box";
-      this.pub.tileMapAssetId = null;
-      this.pub.tileSetPropertyName = null;
-      this.pub.layersIndex = null;
-    }
-  }
+  constructor(pub: ConfigPub) { super(pub, ArcadeBody2DConfig.schema); }
 }

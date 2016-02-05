@@ -66,7 +66,21 @@ export default class SceneAsset extends SupCore.Data.Base.Asset {
   }
 
   migrate(assetPath: string, pub: ScenePub, callback: (hasMigrated: boolean) => void) {
-    if (pub.formatVersion === SceneAsset.currentFormatVersion) { callback(false); return; }
+    // Migrate component configs
+    let hasMigratedComponents = false;
+    let componentClasses = this.server.system.getPlugins<SupCore.Data.ComponentConfigClass>("componentConfigs");
+    let walk = (node: Node) => {
+      for (let component of node.components) {
+        const componentClass = componentClasses[component.type];
+        if (componentClass.migrate != null && componentClass.migrate(component.config))
+          hasMigratedComponents = true;
+      }
+
+      for (let child of node.children) walk(child);
+    };
+    for (let node of pub.nodes) walk(node);
+
+    if (pub.formatVersion === SceneAsset.currentFormatVersion) { callback(hasMigratedComponents); return; }
 
     if (pub.formatVersion == null) {
       // node.prefabId used to be set to the empty string

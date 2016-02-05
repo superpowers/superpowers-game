@@ -1,4 +1,6 @@
 export interface SpriteRendererConfigPub {
+  formatVersion: number;
+
   spriteAssetId: string; animationId: string;
   horizontalFlip: boolean; verticalFlip: boolean;
   castShadow: boolean; receiveShadow: boolean;
@@ -10,6 +12,8 @@ export interface SpriteRendererConfigPub {
 export default class SpriteRendererConfig extends SupCore.Data.Base.ComponentConfig {
 
   static schema: SupCore.Data.Schema = {
+    formatVersion: { type: "integer" },
+
     spriteAssetId: { type: "string?", min: 0, mutable: true },
     animationId: { type: "string?", min: 0, mutable: true },
     horizontalFlip: { type: "boolean", mutable: true },
@@ -25,6 +29,8 @@ export default class SpriteRendererConfig extends SupCore.Data.Base.ComponentCon
 
   static create() {
     let emptyConfig: SpriteRendererConfigPub = {
+      formatVersion: SpriteRendererConfig.currentFormatVersion,
+
       spriteAssetId: null, animationId: null,
       horizontalFlip: false, verticalFlip: false,
       castShadow: false, receiveShadow: false,
@@ -35,26 +41,35 @@ export default class SpriteRendererConfig extends SupCore.Data.Base.ComponentCon
     return emptyConfig;
   }
 
+  static currentFormatVersion = 1;
+  static migrate(pub: SpriteRendererConfigPub) {
+    if (pub.formatVersion === SpriteRendererConfig.currentFormatVersion) return false;
+
+    if (pub.formatVersion == null) {
+      pub.formatVersion = 1;
+
+      // NOTE: Settings introduced in Superpowers 0.8
+      if (pub.overrideOpacity == null) pub.overrideOpacity = false;
+      if (pub.color == null) pub.color = "ffffff";
+      if (pub.horizontalFlip == null) pub.horizontalFlip = false;
+      if (pub.verticalFlip == null) pub.verticalFlip = false;
+
+      // NOTE: Settings introduced in Superpowers 0.7
+      if (pub.castShadow == null) pub.castShadow = false;
+      if (pub.receiveShadow == null) pub.receiveShadow = false;
+      if (pub.materialType == null) pub.materialType = "basic";
+
+      // NOTE: Legacy stuff from Superpowers 0.4
+      if (typeof pub.spriteAssetId === "number") pub.spriteAssetId = pub.spriteAssetId.toString();
+      if (typeof pub.animationId === "number") pub.animationId = pub.animationId.toString();
+    }
+
+    return true;
+  }
+
   pub: SpriteRendererConfigPub;
 
-  constructor(pub: SpriteRendererConfigPub) {
-    // NOTE: Settings introduced in Superpowers 0.8
-    if (pub.overrideOpacity == null) pub.overrideOpacity = false;
-    if (pub.color == null) pub.color = "ffffff";
-    if (pub.horizontalFlip == null) pub.horizontalFlip = false;
-    if (pub.verticalFlip == null) pub.verticalFlip = false;
-
-    // NOTE: Settings introduced in Superpowers 0.7
-    if (pub.castShadow == null) pub.castShadow = false;
-    if (pub.receiveShadow == null) pub.receiveShadow = false;
-    if (pub.materialType == null) pub.materialType = "basic";
-
-    // NOTE: Legacy stuff from Superpowers 0.4
-    if (typeof pub.spriteAssetId === "number") pub.spriteAssetId = pub.spriteAssetId.toString();
-    if (typeof pub.animationId === "number") pub.animationId = pub.animationId.toString();
-
-    super(pub, SpriteRendererConfig.schema);
-  }
+  constructor(pub: SpriteRendererConfigPub) { super(pub, SpriteRendererConfig.schema); }
 
   restore() {
     if (this.pub.spriteAssetId != null) this.emit("addDependencies", [ this.pub.spriteAssetId ]);

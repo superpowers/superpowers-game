@@ -33,22 +33,7 @@ export default class CannonBody extends SupEngine.ActorComponent {
   setup(config: any) {
     this.mass = config.mass != null ? config.mass : 0;
     this.fixedRotation = config.fixedRotation != null ? config.fixedRotation : false;
-
-    // NOTE: config.offset was introduced in Superpowers 0.14
-    // to merge config.offsetX, .offsetY and .offsetZ
-    if (config.offset != null) {
-      this.offset = {
-        x: config.offset.x,
-        y: config.offset.y,
-        z: config.offset.z
-      };
-    } else {
-      this.offset = {
-        x: config.offsetX != null ? config.offsetX : 0,
-        y: config.offsetY != null ? config.offsetY : 0,
-        z: config.offsetZ != null ? config.offsetZ : 0
-      };
-    }
+    this.offset = config.offset != null ? config.offset : { x: 0, y: 0, z: 0 };
 
     this.actor.getGlobalPosition(this.actorPosition);
     this.actor.getGlobalOrientation(this.actorOrientation);
@@ -63,21 +48,7 @@ export default class CannonBody extends SupEngine.ActorComponent {
     this.shape = config.shape;
     switch (this.shape) {
       case "box":
-        // NOTE: config.halfSize was introduced in Superpowers 0.14
-        // to merge config.halfWidth, .halfHeight and .halfDepth
-        if (config.halfSize != null) {
-          this.halfSize = {
-            x: config.halfSize.x,
-            y: config.halfSize.y,
-            z: config.halfSize.z
-          };
-        } else {
-          this.halfSize = {
-            x: config.halfWidth != null ? config.halfWidth : 0.5,
-            y: config.halfHeight != null ? config.halfHeight : 0.5,
-            z: config.halfDepth != null ? config.halfDepth : 0.5
-          };
-        }
+        this.halfSize = config.halfSize != null ? config.halfSize : { x: 0.5, y: 0.5, z: 0.5 };
         this.body.addShape(new (<any>window).CANNON.Box(new (<any>window).CANNON.Vec3().copy(this.halfSize)));
         break;
 
