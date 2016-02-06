@@ -10,6 +10,7 @@
     "movable": "Movable",
     "size": "Size",
     "offset": "Offset",
+    "bounce": "Bounce",
 
     "tileMap": "Tile Map",
     "tileSetProperty": "Tile Set Property",

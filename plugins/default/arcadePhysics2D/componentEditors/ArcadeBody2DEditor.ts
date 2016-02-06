@@ -57,6 +57,18 @@ export default class ArcadeBody2DEditor {
       this.editConfig("setProperty", "offset.y", parseFloat(event.target.value));
     });
 
+    let bounceRow = SupClient.table.appendRow(this.tbody, SupClient.i18n.t("componentEditors:ArcadeBody2D.bounce"));
+    let bounceFields = SupClient.table.appendNumberFields(bounceRow.valueCell, [config.bounce.x, config.bounce.y]);
+    this.boxFields["bounce.x"] = bounceFields[0];
+    this.boxFields["bounce.x"].addEventListener("change", (event: any) => {
+      this.editConfig("setProperty", "bounce.x", parseFloat(event.target.value));
+    });
+
+    this.boxFields["bounce.y"] = bounceFields[1];
+    this.boxFields["bounce.y"].addEventListener("change", (event: any) => {
+      this.editConfig("setProperty", "bounce.y", parseFloat(event.target.value));
+    });
+
     // Tile Map boxFields
     this.tileMapFields = {};
 
@@ -112,6 +124,7 @@ export default class ArcadeBody2DEditor {
       this.boxFields["movable"].parentElement.parentElement.hidden = false;
       this.boxFields["width"].parentElement.parentElement.parentElement.hidden = false;
       this.boxFields["offset.x"].parentElement.parentElement.parentElement.hidden = false;
+      this.boxFields["bounce.x"].parentElement.parentElement.parentElement.hidden = false;
 
     } else {
       for (let fieldName in this.tileMapFields) this.tileMapFields[fieldName].parentElement.parentElement.hidden = false;
@@ -119,6 +132,7 @@ export default class ArcadeBody2DEditor {
       this.boxFields["movable"].parentElement.parentElement.hidden = true;
       this.boxFields["width"].parentElement.parentElement.parentElement.hidden = true;
       this.boxFields["offset.x"].parentElement.parentElement.parentElement.hidden = true;
+      this.boxFields["bounce.x"].parentElement.parentElement.parentElement.hidden = true;
     }
   }
 }

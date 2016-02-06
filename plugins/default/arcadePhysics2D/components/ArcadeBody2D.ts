@@ -49,8 +49,10 @@ export default class ArcadeBody2D extends SupEngine.ActorComponent {
       this.offsetX = config.offset.x;
       this.offsetY = config.offset.y;
     }
-    if (config.bounceX != null) this.bounceX = config.bounceX;
-    if (config.bounceY != null) this.bounceY = config.bounceY;
+    if (config.bounce != null) {
+        this.bounceX = config.bounce.x;
+        this.bounceY = config.bounce.y;
+    }
 
     this.actorPosition = this.actor.getGlobalPosition(new THREE.Vector3());
     this.position = this.actorPosition.clone();

@@ -7,6 +7,7 @@ export interface ConfigPub {
   width: number;
   height: number;
   offset: { x: number; y: number; };
+  bounce: { x: number; y: number; };
 
   tileMapAssetId: string;
   tileSetPropertyName: string;
@@ -31,6 +32,13 @@ export default class ArcadeBody2DConfig extends SupCore.Data.Base.ComponentConfi
         y: { type: "number", mutable: true },
       }
     },
+    bounce: {
+      type: "hash",
+      properties: {
+        x: { type: "number", mutable: true },
+        y: { type: "number", mutable: true },
+      }
+    },
 
     // TileMap
     tileMapAssetId: { type: "string?", mutable: true },
@@ -48,6 +56,7 @@ export default class ArcadeBody2DConfig extends SupCore.Data.Base.ComponentConfi
       width: 1,
       height: 1,
       offset: { x: 0, y: 0 },
+      bounce: { x: 0, y: 0 },
 
       tileMapAssetId: null,
       tileSetPropertyName: null,
