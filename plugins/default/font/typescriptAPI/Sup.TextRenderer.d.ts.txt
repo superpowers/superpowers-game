@@ -8,6 +8,7 @@ declare namespace Sup {
     setText(text: string|number): TextRenderer;
     getColor(): Color;
     setColor(color: Color): TextRenderer;
+    setColor(r: number, g: number, b: number): TextRenderer;
     getAlignment(): string;
     setAlignment(alignment: string): TextRenderer;
     getVerticalAlignment(): string;
