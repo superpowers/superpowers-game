@@ -5,8 +5,8 @@ node_js: "node"
 install: true
 before_script:
 - cd ..
-- git clone https://github.com/superpowers/superpowers.git
-- cd superpowers
+- git clone https://github.com/superpowers/superpowers-core.git
+- cd superpowers-core
 - mkdir systems
 - mv ../superpowers-game systems/game
 - cd systems

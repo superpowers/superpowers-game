@@ -108,7 +108,7 @@ export default class SceneNodes extends SupCore.Data.Base.TreeById {
     let node = this.byId[id];
     if (node == null) {
       // TODO: callback(new SupCore.LocalizedError("sceneEditor:errors.invalidActorId", { id }));
-      // see https://github.com/superpowers/superpowers/issues/79
+      // see https://github.com/superpowers/superpowers-core/issues/79
       callback(`Invalid node id: ${id}`);
       return;
     }
