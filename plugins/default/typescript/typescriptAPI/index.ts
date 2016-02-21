@@ -3,7 +3,7 @@
 import * as fs from "fs";
 
 SupCore.system.registerPlugin<SupCore.TypeScriptAPIPlugin>("typescriptAPI", "lib", {
-  defs: fs.readFileSync(`${__dirname}/../../../../../../node_modules/typescript/lib/lib.core.d.ts`, { encoding: "utf8" }),
+  defs: fs.readFileSync(`${__dirname}/../node_modules/typescript/lib/lib.core.d.ts`, { encoding: "utf8" }),
   code: "",
 });
 

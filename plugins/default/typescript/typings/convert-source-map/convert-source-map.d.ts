@@ -3,7 +3,6 @@
 // Definitions by: Andrew Gaspar <https://github.com/AndrewGaspar/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 
-/* tslint:disable */
 declare module "convert-source-map" {
 	export interface SourceMapConverter {
 		toObject(): any;

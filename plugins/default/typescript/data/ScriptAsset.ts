@@ -1,5 +1,5 @@
 /// <reference path="../../../common/textEditorWidget/operational-transform.d.ts" />
-/// <reference path="../../../../../../node_modules/typescript/lib/typescriptServices.d.ts" />
+/// <reference path="../node_modules/typescript/lib/typescriptServices.d.ts" />
 /// <reference path="../../typescript/typescriptAPI/TypeScriptAPIPlugin.d.ts" />
 
 import * as OT from "operational-transform";
