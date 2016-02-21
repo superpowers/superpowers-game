@@ -3,5 +3,9 @@
     "module": "commonjs",
     "target": "es5",
     "noImplicitAny": true
-  }
+  },
+  "exclude": [
+    "node_modules",
+    "typings"
+  ]
 }
