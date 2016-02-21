@@ -1,7 +1,11 @@
 {
-    "compilerOptions": {
-        "module": "commonjs",
-        "target": "es5",
-        "noImplicitAny": true
-    }
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es5",
+    "noImplicitAny": true
+  },
+  "exclude": [
+    "node_modules",
+    "typings"
+  ]
 }
