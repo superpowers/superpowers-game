@@ -280,21 +280,21 @@ export default class Input extends EventEmitter {
     this.wasFullscreen = false;
     if (!this._isFullscreen()) return;
 
-    if((<any>document).exitFullscreen) (<any>document).exitFullscreen();
-    else if((<any>document).webkitExitFullscreen) (<any>document).webkitExitFullscreen();
-    else if((<any>document).mozCancelFullScreen) (<any>document).mozCancelFullScreen();
+    if ((document as any).exitFullscreen) (document as any).exitFullscreen();
+    else if ((document as any).webkitExitFullscreen) (document as any).webkitExitFullscreen();
+    else if ((document as any).mozCancelFullScreen) (document as any).mozCancelFullScreen();
   }
 
   _isFullscreen() {
-    return (<any>document).fullscreenElement === this.canvas ||
-      (<any>document).webkitFullscreenElement === this.canvas ||
-      (<any>document).mozFullScreenElement === this.canvas;
+    return (document as any).fullscreenElement === this.canvas ||
+      (document as any).webkitFullscreenElement === this.canvas ||
+      (document as any).mozFullScreenElement === this.canvas;
   }
 
   _doGoFullscreen() {
-    if ((<any>this.canvas).requestFullscreen) (<any>this.canvas).requestFullscreen();
-    else if ((<any>this.canvas).webkitRequestFullscreen) (<any>this.canvas).webkitRequestFullscreen();
-    else if ((<any>this.canvas).mozRequestFullScreen) (<any>this.canvas).mozRequestFullScreen();
+    if ((this.canvas as any).requestFullscreen) (this.canvas as any).requestFullscreen();
+    else if ((this.canvas as any).webkitRequestFullscreen) (this.canvas as any).webkitRequestFullscreen();
+    else if ((this.canvas as any).mozRequestFullScreen) (this.canvas as any).mozRequestFullScreen();
   }
 
   private onFullscreenChange = () => {

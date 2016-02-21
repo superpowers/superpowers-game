@@ -156,7 +156,7 @@ export function importModel(files: File[], callback: ImportCallback) {
     if (err != null) { callback([ createLogError("Could not parse as JSON", gltfFile.name) ]); return; }
 
     const meshNames = Object.keys(gltf.meshes);
-    if(meshNames.length > 1) { callback([ createLogError("Only a single mesh is supported") ], gltfFile.name); return; }
+    if (meshNames.length > 1) { callback([ createLogError("Only a single mesh is supported") ], gltfFile.name); return; }
 
     // Used to be a number before 1.0, now it's a string, so let's normalize it
     gltf.asset.version = gltf.asset.version.toString();
@@ -173,7 +173,7 @@ export function importModel(files: File[], callback: ImportCallback) {
     // Check if the model has its up-axis pointing in the wrong direction
     let upAxisMatrix: THREE.Matrix4 = null;
 
-    if(rootNode.name === "Y_UP_Transform") {
+    if (rootNode.name === "Y_UP_Transform") {
       upAxisMatrix = new THREE.Matrix4().fromArray(rootNode.matrix);
       if (gltf.asset.generator === "collada2gltf@abb81d52ce290268fdb67b96f5bc5c620dee5bb5") {
         // The Y_UP_Transform matrix needed to be reversed
@@ -195,7 +195,7 @@ export function importModel(files: File[], callback: ImportCallback) {
         // glTF < 1.0 used to have an instanceSkin property on nodes
         const instanceSkin: GLTFNode = (gltf.asset.version !== "0.8") ? rootNode : (<any>rootNode).instanceSkin;
 
-        if(instanceSkin != null && instanceSkin.meshes != null && instanceSkin.meshes.length > 0) {
+        if (instanceSkin != null && instanceSkin.meshes != null && instanceSkin.meshes.length > 0) {
           meshName = instanceSkin.meshes[0];
           // rootBoneNames = instanceSkin.skeletons;
           skin = gltf.skins[instanceSkin.skin];
@@ -294,7 +294,7 @@ export function importModel(files: File[], callback: ImportCallback) {
       // Normal
       const normalAccessor: GLTFAccessor = gltf.accessors[primitive.attributes["NORMAL"]];
       if (normalAccessor != null) {
-        if(normalAccessor.componentType !== GLTFConst.FLOAT) {
+        if (normalAccessor.componentType !== GLTFConst.FLOAT) {
           callback([ createLogError(`Unsupported component type for normal accessor: ${normalAccessor.componentType}`) ]);
           return;
         }
@@ -440,7 +440,7 @@ export function importModel(files: File[], callback: ImportCallback) {
       // Maps
       const maps: { [name: string]: ArrayBuffer } = {};
 
-      if(Object.keys(imageFiles).length === 0) {
+      if (Object.keys(imageFiles).length === 0) {
         callback(log, { attributes, bones, maps, animation, upAxisMatrix: (upAxisMatrix != null) ? upAxisMatrix.toArray() : null });
         return;
       }

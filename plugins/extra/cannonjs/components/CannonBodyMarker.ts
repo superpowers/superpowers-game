@@ -55,7 +55,7 @@ class CannonBodyMarker extends SupEngine.ActorComponent {
   _clearRenderer() {
     this.actor.threeObject.remove(this.mesh);
     this.mesh.traverse((obj: any) => {
-     if(obj.dispose != null) obj.dispose();
+     if (obj.dispose != null) obj.dispose();
     });
     this.mesh = null;
   }

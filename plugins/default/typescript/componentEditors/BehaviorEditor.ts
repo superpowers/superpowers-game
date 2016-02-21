@@ -134,10 +134,10 @@ export default class BehaviorEditor {
 
     while (behaviorName != null) {
       let behavior = this.behaviorPropertiesResource.pub.behaviors[behaviorName];
-      if(behavior == null) break;
+      if (behavior == null) break;
 
       for (let property of behavior.properties) {
-        if(listedProperties.indexOf(property.name) !== -1) continue;
+        if (listedProperties.indexOf(property.name) !== -1) continue;
 
         listedProperties.push(property.name);
         this._createPropertySetting(property);

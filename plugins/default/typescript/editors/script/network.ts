@@ -304,7 +304,7 @@ function startAutocomplete() {
 
 export function setNextCompletion(completion: CompletionRequest) {
   nextCompletion = completion;
-  if(activeCompletion == null) startAutocomplete();
+  if (activeCompletion == null) startAutocomplete();
 }
 
 function onWelcome(clientId: number) {

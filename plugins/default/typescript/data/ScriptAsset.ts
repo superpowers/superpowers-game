@@ -268,7 +268,7 @@ Sup.registerBehavior(${behaviorName});
       try { results = compileTypeScript(scriptNames, scripts, globalDefs, { sourceMap: false }); }
       catch (e) { finish(null); return; }
 
-      if(results.errors.length > 0) { finish(results.errors); return; }
+      if (results.errors.length > 0) { finish(results.errors); return; }
 
       let libLocals = <ts.SymbolTable>(<any>results.program.getSourceFile("lib.d.ts")).locals;
       let supTypeSymbols: { [fullName: string]: ts.Symbol } = {

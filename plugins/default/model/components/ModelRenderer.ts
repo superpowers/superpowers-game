@@ -159,7 +159,7 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
     this.setColor(this.color.r, this.color.g, this.color.b);
     this.setOpacity(this.opacity);
 
-    if(this.asset.bones != null) {
+    if (this.asset.bones != null) {
       this.threeMesh = new THREE.SkinnedMesh(geometry, this.material);
 
       if (this.asset.upAxisMatrix != null) {

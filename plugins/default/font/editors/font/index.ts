@@ -98,7 +98,7 @@ function onConnected() {
 
 function onAssetReceived() {
   ui.allSettings.forEach((setting: string) => {
-    if(setting === "isBitmap") {
+    if (setting === "isBitmap") {
       ui.settings[setting].value = data.textUpdater.fontAsset.pub.isBitmap ? "bitmap" : "vector";
       refreshFontMode();
     } else {
@@ -113,7 +113,7 @@ function onAssetReceived() {
   ui.settings["charsetOffset"].disabled = data.textUpdater.fontAsset.pub.isBitmap && data.textUpdater.fontAsset.pub.charset != null;
 }
 onEditCommands.setProperty = (path: string, value: any) => {
-  if(path === "isBitmap") {
+  if (path === "isBitmap") {
     ui.settings[path].value = value ? "bitmap" : "vector";
     if (!value) data.textUpdater.config_setProperty("text", noCharsetText);
     else {

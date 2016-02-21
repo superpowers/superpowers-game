@@ -99,7 +99,7 @@ function parse(filename: string, text: string, callback: ImportCallback) {
           arrays.position.push(positions[1][0], positions[1][1], positions[1][2]);
           arrays.position.push(positions[2][0], positions[2][1], positions[2][2]);
 
-          if(uvs.length > 0) {
+          if (uvs.length > 0) {
             arrays.uv.push(uvs[0][0], uvs[0][1]);
             arrays.uv.push(uvs[1][0], uvs[1][1]);
             arrays.uv.push(uvs[2][0], uvs[2][1]);

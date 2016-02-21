@@ -280,7 +280,7 @@ function onNewAnimationClick() {
 }
 
 function onAnimationFileSelectChange(event: any) {
-  if(event.target.files.length === 0) return;
+  if (event.target.files.length === 0) return;
 
   const animationId: string = ui.selectedAnimationId;
 
