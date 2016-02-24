@@ -22,14 +22,14 @@ interface Importer {
   importModel: (files: File[], callback: ImportCallback) => any;
 }
 
-let modelImporters: { [extension: string]: Importer } = { obj, gltf };
+const modelImporters: { [extension: string]: Importer } = { obj, gltf };
 
 export default function(files: File[], callback: ImportCallback) {
   let modelImporter: Importer = null;
 
-  for (let file of files) {
-    let filename = file.name;
-    let extension = filename.substring(filename.lastIndexOf(".") + 1).toLowerCase();
+  for (const file of files) {
+    const filename = file.name;
+    const extension = filename.substring(filename.lastIndexOf(".") + 1).toLowerCase();
     modelImporter = modelImporters[extension];
     if (modelImporter != null) break;
   }

@@ -1,4 +1,3 @@
-import readFile from "./readFile";
 import * as async from "async";
 import { ImportCallback, createLogError, createLogInfo } from "./index";
 
@@ -241,7 +240,7 @@ export function importModel(files: File[], callback: ImportCallback) {
       const bufferFile = bufferFiles[filename];
       if (bufferFile == null) { cb(new Error(`Missing buffer file: ${filename} (${bufferInfo.uri})`)); return; }
 
-      readFile(bufferFile, "arraybuffer", (err: Error, buffer: ArrayBuffer) => {
+      SupClient.readFile(bufferFile, "arraybuffer", (err: Error, buffer: ArrayBuffer) => {
         if (err != null) { cb(new Error(`Could not read buffer file: ${filename} (${bufferInfo.uri})`)); return; }
         buffers[name] = buffer;
         cb(null);
@@ -445,12 +444,12 @@ export function importModel(files: File[], callback: ImportCallback) {
         return;
       }
 
-      readFile(imageFiles[Object.keys(imageFiles)[0]], "arraybuffer", (err, data) => {
+      SupClient.readFile(imageFiles[Object.keys(imageFiles)[0]], "arraybuffer", (err, data) => {
         maps["map"] = data;
         callback(log, { attributes, bones, maps, animation, upAxisMatrix: (upAxisMatrix != null) ? upAxisMatrix.toArray() : null });
       });
     });
   };
 
-  readFile(gltfFile, "json", onGLTFRead);
+  SupClient.readFile(gltfFile, "json", onGLTFRead);
 }

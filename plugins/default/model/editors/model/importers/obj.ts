@@ -1,41 +1,39 @@
 import { ImportCallback, ImportLogEntry, createLogError, createLogWarning, createLogInfo } from "./index";
 
-export let mode = "text";
-
 export function importModel(files: File[], callback: ImportCallback) {
   if (files.length > 1) {
     callback([ createLogError("The OBJ importer only accepts one file at a time") ]);
     return;
   }
 
-  let reader = new FileReader;
-  reader.onload = (event) => { parse(files[0].name, (<FileReader>event.target).result, callback); };
-  reader.readAsText(files[0]);
+  SupClient.readFile(files[0], "text", (err, data) => {
+    parse(files[0].name, data, callback);
+  });
 }
 
 function parse(filename: string, text: string, callback: ImportCallback) {
-  let log: ImportLogEntry[] = [];
+  const log: ImportLogEntry[] = [];
 
-  let arrays: { position: number[]; uv: number[]; normal: number[] } = { position: [], uv: [], normal: [] };
+  const arrays: { position: number[]; uv: number[]; normal: number[] } = { position: [], uv: [], normal: [] };
 
-  let positionsByIndex: number[][] = [];
-  let uvsByIndex: number[][] = [];
-  let normalsByIndex: number[][] = [];
+  const positionsByIndex: number[][] = [];
+  const uvsByIndex: number[][] = [];
+  const normalsByIndex: number[][] = [];
 
-  let lines = text.replace(/\r\n/g, "\n").split("\n");
+  const lines = text.replace(/\r\n/g, "\n").split("\n");
   for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
-    let line = lines[lineIndex].trim();
+    const line = lines[lineIndex].trim();
 
     // Ignore empty lines and comments
     if (line.length === 0 || line[0] === "#") continue;
 
-    let [ command, ...valueStrings ] = line.split(/\s+/);
+    const [ command, ...valueStrings ] = line.split(/\s+/);
 
     switch (command) {
       case "v": {
         if (valueStrings.length !== 3) { callback([ createLogError(`Invalid v command: found ${valueStrings.length} values, expected 3`, filename, lineIndex) ]); return; }
-        let values: number[] = [];
-        for (let valueString of valueStrings) values.push(+valueString);
+        const values: number[] = [];
+        for (const valueString of valueStrings) values.push(+valueString);
         positionsByIndex.push(values);
       }
       break;
@@ -43,7 +41,7 @@ function parse(filename: string, text: string, callback: ImportCallback) {
       case "vt": {
         if (valueStrings.length < 2) { callback([ createLogError(`Invalid vt command: found ${valueStrings.length} values, expected 2`, filename, lineIndex) ]); return; }
         if (valueStrings.length > 2) log.push(createLogWarning(`Ignoring extra texture coordinates (${valueStrings.length} found, using 2), only U and V are supported.`, filename, lineIndex));
-        let values: number[] = [];
+        const values: number[] = [];
         for (let i = 0; i < valueStrings.length; i++) values.push(+valueStrings[i]);
         uvsByIndex.push(values);
       }
@@ -51,8 +49,8 @@ function parse(filename: string, text: string, callback: ImportCallback) {
 
       case "vn": {
         if (valueStrings.length !== 3) { callback([ createLogError(`Invalid vn command: found ${valueStrings.length} values, expected 3`, filename, lineIndex) ]); return; }
-        let values: number[] = [];
-        for (let valueString of valueStrings) values.push(+valueString);
+        const values: number[] = [];
+        for (const valueString of valueStrings) values.push(+valueString);
         normalsByIndex.push(values);
       }
       break;
@@ -63,30 +61,30 @@ function parse(filename: string, text: string, callback: ImportCallback) {
           break;
         }
 
-        let positions: number[][] = [];
-        let uvs: number[][] = [];
-        let normals: number[][] = [];
+        const positions: number[][] = [];
+        const uvs: number[][] = [];
+        const normals: number[][] = [];
 
-        for (let valueString of valueStrings) {
-          let [ posIndexString, uvIndexString, normalIndexString ] = valueString.split("/");
+        for (const valueString of valueStrings) {
+          const [ posIndexString, uvIndexString, normalIndexString ] = valueString.split("/");
 
-          let posIndex = <any>posIndexString | 0;
-          let pos =
+          const posIndex = <any>posIndexString | 0;
+          const pos =
             (posIndex >= 0) ? positionsByIndex[posIndex - 1]
             : positionsByIndex[positionsByIndex.length + posIndex];
           positions.push(pos);
 
           if (uvIndexString != null && uvIndexString.length > 0) {
-            let uvIndex = <any>uvIndexString | 0;
-            let uv =
+            const uvIndex = <any>uvIndexString | 0;
+            const uv =
               (uvIndex >= 0) ? uvsByIndex[uvIndex - 1]
               : uvsByIndex[uvsByIndex.length + uvIndex];
             uvs.push(uv);
           }
 
           if (normalIndexString != null) {
-            let normalIndex = <any>normalIndexString | 0;
-            let normal =
+            const normalIndex = <any>normalIndexString | 0;
+            const normal =
               (normalIndex >= 0) ? normalsByIndex[normalIndex - 1]
               : normalsByIndex[normalsByIndex.length + normalIndex];
             normals.push(normal);
@@ -147,12 +145,12 @@ function parse(filename: string, text: string, callback: ImportCallback) {
     }
   }
 
-  let buffers: { position: ArrayBuffer; uv: ArrayBuffer; normal: ArrayBuffer } = {
+  const buffers: { position: ArrayBuffer; uv: ArrayBuffer; normal: ArrayBuffer } = {
     position: new Float32Array(arrays.position).buffer,
     uv: undefined, normal: undefined
   };
 
-  let importedAttributes: string[] = [];
+  const importedAttributes: string[] = [];
   if (arrays.uv.length > 0) {
     importedAttributes.push("texture coordinates");
     buffers.uv = new Float32Array(arrays.uv).buffer;
@@ -163,7 +161,7 @@ function parse(filename: string, text: string, callback: ImportCallback) {
     buffers.normal = new Float32Array(arrays.normal).buffer;
   }
 
-  let importInfo = (importedAttributes.length > 0) ? ` with ${importedAttributes.join(", ")}` : "";
+  const importInfo = (importedAttributes.length > 0) ? ` with ${importedAttributes.join(", ")}` : "";
   log.push(createLogInfo(`Imported ${arrays.position.length / 3} vertices${importInfo}.`, filename));
 
   callback(log, { attributes: buffers });
