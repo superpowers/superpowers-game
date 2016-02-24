@@ -209,7 +209,6 @@ declare namespace SupEngine {
     getContext(): AudioContext;
   }
 
-  enum SoundStates { playing, paused, stopped }
   class SoundPlayer {
     audioCtx: AudioContext;
     audioMasterGain: GainNode;
@@ -221,7 +220,7 @@ declare namespace SupEngine {
     offset: number;
     startTime: number;
     isLooping: boolean;
-    state: SoundStates;
+    state: SoundPlayer.State;
     volume: number;
     pitch: number;
     pan: number;
@@ -231,11 +230,15 @@ declare namespace SupEngine {
     play(): void;
     stop(): void;
     pause(): void;
-    getState(): SoundStates;
+    getState(): SoundPlayer.State;
     setLoop(isLooping: boolean): void;
     setVolume(volume: number): void;
     setPan(pan: number): void;
     setPitch(pitch: number): void;
+  }
+
+  namespace SoundPlayer {
+    export enum State { Playing, Paused, Stopped }
   }
 
   class EventEmitter implements NodeJS.EventEmitter {
