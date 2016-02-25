@@ -9,8 +9,8 @@ export default class Behavior extends SupEngine.ActorComponent {
   funcs: BehaviorFunctions;
 
   constructor(actor: SupEngine.Actor, funcs: BehaviorFunctions) {
-    this.funcs = funcs;
     super(actor, "Behavior");
+    this.funcs = funcs;
   }
 
   awake() { if (this.funcs.awake != null) this.funcs.awake(); }
