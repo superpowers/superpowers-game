@@ -29,11 +29,12 @@ gulp.task("typescript", function() {
 // Browserify
 const browserify = require("browserify");
 const source = require("vinyl-source-stream");
-gulp.task("browserify", [ "typescript" ], function() {
-  const bundler = browserify("./src/index.js", { standalone: "SupRuntime" });
-  function bundle() { return bundler.bundle().pipe(source("SupRuntime.js")).pipe(gulp.dest("../public")); };
-  return bundle();
-});
+gulp.task("browserify", [ "typescript" ], () =>
+  browserify("./src/index.js", { standalone: "SupRuntime" })
+    .bundle()
+    .pipe(source("SupRuntime.js"))
+    .pipe(gulp.dest("../public"))
+);
 
 // All
 gulp.task("default", [ "jade", "stylus", "typescript", "browserify" ]);

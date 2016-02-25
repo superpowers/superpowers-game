@@ -21,11 +21,12 @@ gulp.task("typescript", function() {
 // Browserify
 const browserify = require("browserify");
 const source = require("vinyl-source-stream");
-gulp.task("browserify", [ "typescript" ], function() {
-  const bundler = browserify("./src/index.js", { standalone: "SupEngine" });
-  function bundle() { return bundler.bundle().pipe(source("SupEngine.js")).pipe(gulp.dest("../public")); };
-  return bundle();
-});
+gulp.task("browserify", [ "typescript" ], () =>
+  browserify("./src/index.js", { standalone: "SupEngine" })
+    .bundle()
+    .pipe(source("SupEngine.js"))
+    .pipe(gulp.dest("../public"))
+);
 
 // All
 gulp.task("default", [ "typescript", "browserify" ]);
