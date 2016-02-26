@@ -449,7 +449,7 @@ export default class SceneAsset extends SupCore.Data.Base.Asset {
     let componentConfig = this.nodes.componentsByNodeId[nodeId].configsById[componentId];
 
     let commandMethod = (<any>componentConfig)[`client_${command}`];
-    commandMethod.call(componentConfig, ...args);
+    commandMethod.apply(componentConfig, args);
   }
 
   server_removeComponent(client: any, nodeId: string, componentId: string, callback: (err: string, nodeId: string, componentId: string) => any) {

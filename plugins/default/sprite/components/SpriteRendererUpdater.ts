@@ -3,45 +3,29 @@ import SpriteRenderer from "./SpriteRenderer";
 import { SpriteRendererConfigPub } from "../componentConfigs/SpriteRendererConfig";
 
 export default class SpriteRendererUpdater {
-  client: SupClient.ProjectClient;
-  spriteRenderer: SpriteRenderer;
-
-  receiveAssetCallbacks: any;
-  editAssetCallbacks: any;
-
   spriteAssetId: string;
   spriteAsset: SpriteAsset;
+
   animationId: string;
   looping = true;
+
   materialType: string;
   shaderAssetId: string;
   shaderPub: any;
   overrideOpacity = false;
   opacity: number;
 
-  spriteSubscriber = {
-    onAssetReceived: this._onSpriteAssetReceived.bind(this),
-    onAssetEdited: this._onSpriteAssetEdited.bind(this),
-    onAssetTrashed: this._onSpriteAssetTrashed.bind(this)
-  };
+  private spriteSubscriber: SupClient.AssetSubscriber;
+  private shaderSubscriber: SupClient.AssetSubscriber;
 
-  shaderSubscriber = {
-    onAssetReceived: this._onShaderAssetReceived.bind(this),
-    onAssetEdited: this._onShaderAssetEdited.bind(this),
-    onAssetTrashed: this._onShaderAssetTrashed.bind(this)
-  };
-
-  constructor(client: SupClient.ProjectClient, spriteRenderer: SpriteRenderer, config: SpriteRendererConfigPub,
-  receiveAssetCallbacks: any, editAssetCallbacks: any) {
-    this.client = client;
-    this.spriteRenderer = spriteRenderer;
-    this.receiveAssetCallbacks = receiveAssetCallbacks;
-    this.editAssetCallbacks = editAssetCallbacks;
-
+  constructor(private client: SupClient.ProjectClient, public spriteRenderer: SpriteRenderer, config: SpriteRendererConfigPub,
+  private externalSubscriber?: SupClient.AssetSubscriber) {
     this.spriteAssetId = config.spriteAssetId;
     this.animationId = config.animationId;
     this.materialType = config.materialType;
     this.shaderAssetId = config.shaderAssetId;
+
+    if (this.externalSubscriber == null) this.externalSubscriber = {};
 
     this.spriteRenderer.horizontalFlip = config.horizontalFlip;
     this.spriteRenderer.verticalFlip = config.verticalFlip;
@@ -57,6 +41,18 @@ export default class SpriteRendererUpdater {
     let b = (hex & 255) / 255;
     this.spriteRenderer.setColor(r, g, b);
 
+    this.spriteSubscriber = {
+      onAssetReceived: this.onSpriteAssetReceived,
+      onAssetEdited: this.onSpriteAssetEdited,
+      onAssetTrashed: this.onSpriteAssetTrashed
+    };
+
+    this.shaderSubscriber = {
+      onAssetReceived: this.onShaderAssetReceived,
+      onAssetEdited: this.onShaderAssetEdited,
+      onAssetTrashed: this.onShaderAssetTrashed
+    };
+
     if (this.spriteAssetId != null) this.client.subAsset(this.spriteAssetId, "sprite", this.spriteSubscriber);
     if (this.shaderAssetId != null) this.client.subAsset(this.shaderAssetId, "shader", this.shaderSubscriber);
   }
@@ -66,16 +62,17 @@ export default class SpriteRendererUpdater {
     if (this.shaderAssetId != null) this.client.unsubAsset(this.shaderAssetId, this.shaderSubscriber);
   }
 
-  _onSpriteAssetReceived(assetId: string, asset: SpriteAsset) {
+  private onSpriteAssetReceived = (assetId: string, asset: SpriteAsset) => {
     if (this.spriteRenderer.opacity == null) this.spriteRenderer.opacity = asset.pub.opacity;
-    this._prepareMaps(asset.pub.textures, () => {
+    this.prepareMaps(asset.pub.textures, () => {
       this.spriteAsset = asset;
-      this._setSprite();
-      if (this.receiveAssetCallbacks != null) this.receiveAssetCallbacks.sprite();
-    });
-  }
+      this.setSprite();
 
-  _prepareMaps(textures: { [name: string]: THREE.Texture }, callback: () => any) {
+      if (this.externalSubscriber.onAssetReceived != null) this.externalSubscriber.onAssetReceived(assetId, asset);
+    });
+  };
+
+  private prepareMaps(textures: { [name: string]: THREE.Texture }, callback: () => any) {
     let textureNames = Object.keys(textures);
     let texturesToLoad = textureNames.length;
 
@@ -96,109 +93,109 @@ export default class SpriteRendererUpdater {
     });
   }
 
-  _setSprite() {
+  private setSprite() {
     if (this.spriteAsset == null || (this.materialType === "shader" && this.shaderPub == null)) {
       this.spriteRenderer.setSprite(null);
       return;
     }
 
     this.spriteRenderer.setSprite(this.spriteAsset.pub, this.materialType, this.shaderPub);
-    if (this.animationId != null) this._playAnimation();
+    if (this.animationId != null) this.playAnimation();
   }
 
-  _playAnimation() {
+  private playAnimation() {
     let animation = this.spriteAsset.animations.byId[this.animationId];
     if (animation == null) return;
 
     this.spriteRenderer.setAnimation(animation.name, this.looping);
   }
 
-  _onSpriteAssetEdited(id: string, command: string, ...args: any[]) {
+  private onSpriteAssetEdited = (assetId: string, command: string, ...args: any[]) => {
     let callEditCallback = true;
-    let commandFunction = (<any>this)[`_onEditCommand_${command}`];
-    if (commandFunction != null) {
-      if (commandFunction.apply(this, args) === false) callEditCallback = false;
+    const commandFunction = this.onEditCommands[command];
+    if (commandFunction != null && commandFunction.apply(this, args) === false) callEditCallback = false;
+
+    if (callEditCallback && this.externalSubscriber.onAssetEdited != null) {
+      this.externalSubscriber.onAssetEdited(assetId, command, ...args);
     }
+  };
 
-    if (callEditCallback && this.editAssetCallbacks != null) {
-      let editCallback = this.editAssetCallbacks.sprite[command];
-      if (editCallback != null) editCallback.apply(null, args);
+  private onEditCommands: { [command: string]: Function; } = {
+    setMaps: (maps: any) => {
+      // TODO: Only update the maps that changed, don't recreate the whole model
+      this.prepareMaps(this.spriteAsset.pub.textures, () => {
+        this.setSprite();
+        if (this.externalSubscriber.onAssetEdited != null) {
+          this.externalSubscriber.onAssetEdited(this.spriteAsset.id, "setMaps");
+        }
+      });
+      return false;
+    },
+
+    setMapSlot: (slot: string, name: string) => { this.setSprite(); },
+
+    deleteMap: (name: string) => { this.setSprite(); },
+
+    setProperty: (path: string, value: any) => {
+      switch(path) {
+        case "filtering":
+          break;
+
+        case "opacity":
+          if (!this.overrideOpacity) this.spriteRenderer.setOpacity(value);
+          break;
+
+        case "alphaTest":
+          this.spriteRenderer.material.alphaTest = value;
+          this.spriteRenderer.material.needsUpdate = true;
+          break;
+
+        case "pixelsPerUnit":
+        case "origin.x":
+        case "origin.y":
+          this.spriteRenderer.updateShape();
+          break;
+
+        default: this.setSprite(); break;
+      }
+    },
+
+    newAnimation: () => {
+      this.spriteRenderer.updateAnimationsByName();
+      this.playAnimation();
+    },
+
+    deleteAnimation: () => {
+      this.spriteRenderer.updateAnimationsByName();
+      this.playAnimation();
+    },
+
+    setAnimationProperty: () => {
+      this.spriteRenderer.updateAnimationsByName();
+      this.playAnimation();
     }
-  }
+  };
 
-  _onEditCommand_setMaps(maps: any) {
-    // TODO: Only update the maps that changed, don't recreate the whole model
-    this._prepareMaps(this.spriteAsset.pub.textures, () => {
-      this._setSprite();
-      let editCallback = (this.editAssetCallbacks != null) ? this.editAssetCallbacks.sprite["setMaps"] : null;
-      if (editCallback != null) editCallback();
-    });
-    return false;
-  }
-
-  _onEditCommand_setMapSlot(slot: string, name: string) { this._setSprite(); }
-
-  _onEditCommand_deleteMap(name: string) { this._setSprite(); }
-
-  _onEditCommand_setProperty(path: string, value: any) {
-    switch(path) {
-      case "filtering":
-        break;
-
-      case "opacity":
-        if (!this.overrideOpacity) this.spriteRenderer.setOpacity(value);
-        break;
-
-      case "alphaTest":
-        this.spriteRenderer.material.alphaTest = value;
-        this.spriteRenderer.material.needsUpdate = true;
-        break;
-
-      case "pixelsPerUnit":
-      case "origin.x":
-      case "origin.y":
-        this.spriteRenderer.updateShape();
-        break;
-
-      default: this._setSprite(); break;
-    }
-  }
-
-  _onEditCommand_newAnimation() {
-    this.spriteRenderer.updateAnimationsByName();
-    this._playAnimation();
-  }
-
-  _onEditCommand_deleteAnimation() {
-    this.spriteRenderer.updateAnimationsByName();
-    this._playAnimation();
-  }
-
-  _onEditCommand_setAnimationProperty() {
-    this.spriteRenderer.updateAnimationsByName();
-    this._playAnimation();
-  }
-
-  _onSpriteAssetTrashed() {
+  private onSpriteAssetTrashed = (assetId: string) => {
     this.spriteAsset = null;
     this.spriteRenderer.setSprite(null);
-    // FIXME: the updater shouldn't be dealing with SupClient.onAssetTrashed directly
-    if (this.editAssetCallbacks != null) SupClient.onAssetTrashed();
-  }
 
-  _onShaderAssetReceived(assetId: string, asset: { pub: any} ) {
+    if (this.externalSubscriber.onAssetTrashed != null) this.externalSubscriber.onAssetTrashed(assetId);
+  };
+
+  private onShaderAssetReceived = (assetId: string, asset: { pub: any} ) => {
     this.shaderPub = asset.pub;
-    this._setSprite();
-  }
+    this.setSprite();
+  };
 
-  _onShaderAssetEdited(id: string, command: string, ...args: any[]) {
-    if (command !== "editVertexShader" && command !== "editFragmentShader") this._setSprite();
-  }
+  private onShaderAssetEdited = (id: string, command: string, ...args: any[]) => {
+    if (command !== "editVertexShader" && command !== "editFragmentShader") this.setSprite();
+  };
 
-  _onShaderAssetTrashed() {
+  private onShaderAssetTrashed = () => {
     this.shaderPub = null;
-    this._setSprite();
-  }
+    this.setSprite();
+  };
 
   config_setProperty(path: string, value: any) {
     switch (path) {
@@ -214,12 +211,12 @@ export default class SpriteRendererUpdater {
 
       case "animationId":
         this.animationId = value;
-        this._setSprite();
+        this.setSprite();
         break;
 
       case "looping":
         this.looping = value;
-        if (this.animationId != null) this._playAnimation();
+        if (this.animationId != null) this.playAnimation();
         break;
 
       case "horizontalFlip":
@@ -260,7 +257,7 @@ export default class SpriteRendererUpdater {
 
       case "materialType":
         this.materialType = value;
-        this._setSprite();
+        this.setSprite();
         break;
 
       case "shaderAssetId":

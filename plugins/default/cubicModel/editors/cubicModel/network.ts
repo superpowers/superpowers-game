@@ -26,16 +26,16 @@ SupClient.i18n.load([{ root: `${window.location.pathname}/../..`, name: "cubicMo
   socket.on("disconnect", SupClient.onDisconnected);
 });
 
-let onEditCommands: any = {};
+const onEditCommands: { [command: string]: Function; } = {};
 function onConnected() {
   data = {};
   data.projectClient = new SupClient.ProjectClient(socket);
 
-  let cubicModelActor = new SupEngine.Actor(engine.gameInstance, "Cubic Model");
-  let cubicModelRenderer = new CubicModelRenderer(cubicModelActor);
-  let config = { cubicModelAssetId: SupClient.query.asset/*, materialType: "basic"*/ };
-  let receiveCallbacks = { cubicModel: onAssetReceived };
-  let editCallbacks = { cubicModel: onEditCommands };
+  const cubicModelActor = new SupEngine.Actor(engine.gameInstance, "Cubic Model");
+  const cubicModelRenderer = new CubicModelRenderer(cubicModelActor);
+  const config = { cubicModelAssetId: SupClient.query.asset/*, materialType: "basic"*/ };
+  const receiveCallbacks = { cubicModel: onAssetReceived };
+  const editCallbacks = { cubicModel: onEditCommands };
 
   data.cubicModelUpdater = new CubicModelRendererUpdater(data.projectClient, cubicModelRenderer, config, receiveCallbacks, editCallbacks);
 }
@@ -66,11 +66,11 @@ function onAssetReceived() {
   textureArea.setup();
 }
 
-onEditCommands.setProperty = (path: string, value: any) => {
+onEditCommands["setProperty"] = (path: string, value: any) => {
   if (path === "pixelsPerUnit") ui.pixelsPerUnitInput.value = value.toString();
 };
 
-onEditCommands.addNode = (node: Node, parentId: string, index: number) => {
+onEditCommands["addNode"] = (node: Node, parentId: string, index: number) => {
   let nodeElt = createNodeElement(node);
   let parentElt: HTMLLIElement;
   if (parentId != null) parentElt = ui.nodesTreeView.treeRoot.querySelector(`[data-id='${parentId}']`) as HTMLLIElement;
@@ -79,7 +79,7 @@ onEditCommands.addNode = (node: Node, parentId: string, index: number) => {
   textureArea.addNode(node);
 };
 
-onEditCommands.moveNode = (id: string, parentId: string, index: number) => {
+onEditCommands["moveNode"] = (id: string, parentId: string, index: number) => {
   // Reparent tree node
   let nodeElt = ui.nodesTreeView.treeRoot.querySelector(`[data-id='${id}']`) as HTMLLIElement;
   let isInspected = ui.nodesTreeView.selectedNodes.length === 1 && nodeElt === ui.nodesTreeView.selectedNodes[0];
@@ -99,7 +99,7 @@ onEditCommands.moveNode = (id: string, parentId: string, index: number) => {
   setupHelpers();
 };
 
-onEditCommands.moveNodePivot = (id: string, value: { x: number; y: number; z: number; }) => {
+onEditCommands["moveNodePivot"] = (id: string, value: { x: number; y: number; z: number; }) => {
   let nodeElt = ui.nodesTreeView.treeRoot.querySelector(`[data-id='${id}']`);
   let isInspected = ui.nodesTreeView.selectedNodes.length === 1 && nodeElt === ui.nodesTreeView.selectedNodes[0];
   let node = data.cubicModelUpdater.cubicModelAsset.nodes.byId[id];
@@ -114,7 +114,7 @@ onEditCommands.moveNodePivot = (id: string, value: { x: number; y: number; z: nu
   setupHelpers();
 };
 
-onEditCommands.setNodeProperty = (id: string, path: string, value: any) => {
+onEditCommands["setNodeProperty"] = (id: string, path: string, value: any) => {
   let nodeElt = ui.nodesTreeView.treeRoot.querySelector(`[data-id='${id}']`);
   let isInspected = ui.nodesTreeView.selectedNodes.length === 1 && nodeElt === ui.nodesTreeView.selectedNodes[0];
   let node = data.cubicModelUpdater.cubicModelAsset.nodes.byId[id];
@@ -148,14 +148,14 @@ onEditCommands.setNodeProperty = (id: string, path: string, value: any) => {
   setupHelpers();
 };
 
-onEditCommands.duplicateNode = (rootNode: Node, newNodes: DuplicatedNode[]) => {
-  for (let newNode of newNodes) onEditCommands.addNode(newNode.node, newNode.parentId, newNode.index);
+onEditCommands["duplicateNode"] = (rootNode: Node, newNodes: DuplicatedNode[]) => {
+  for (let newNode of newNodes) onEditCommands["addNode"](newNode.node, newNode.parentId, newNode.index);
 
   // TODO: Only refresh if selection is affected
   setupHelpers();
 };
 
-onEditCommands.removeNode = (id: string) => {
+onEditCommands["removeNode"] = (id: string) => {
   let nodeElt = ui.nodesTreeView.treeRoot.querySelector(`[data-id='${id}']`) as HTMLLIElement;
   let isInspected = ui.nodesTreeView.selectedNodes.length === 1 && nodeElt === ui.nodesTreeView.selectedNodes[0];
   ui.nodesTreeView.remove(nodeElt);
@@ -167,18 +167,18 @@ onEditCommands.removeNode = (id: string) => {
   setupHelpers();
 };
 
-onEditCommands.moveNodeTextureOffset = (nodeIds: string[], offset: { x: number; y: number }) => {
+onEditCommands["moveNodeTextureOffset"] = (nodeIds: string[], offset: { x: number; y: number }) => {
   for (let id of nodeIds) {
     let node = data.cubicModelUpdater.cubicModelAsset.nodes.byId[id];
     textureArea.updateNode(node);
   }
 };
 
-onEditCommands.changeTextureWidth = () => {
+onEditCommands["changeTextureWidth"] = () => {
   ui.textureWidthSelect.value = data.cubicModelUpdater.cubicModelAsset.pub.textureWidth.toString();
   textureArea.setupTexture();
 };
-onEditCommands.changeTextureHeight = () => {
+onEditCommands["changeTextureHeight"] = () => {
   ui.textureHeightSelect.value = data.cubicModelUpdater.cubicModelAsset.pub.textureHeight.toString();
   textureArea.setupTexture();
 };

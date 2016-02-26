@@ -56,18 +56,22 @@ function start() {
 }
 
 // Network callbacks
-let onEditCommands: any = {};
+const onEditCommands: { [command: string]: Function; } = {};
 function onConnected() {
   data = {} as any;
   data.projectClient = new SupClient.ProjectClient(socket, { subEntries: false });
 
-  let tileSetActor = new SupEngine.Actor(ui.gameInstance, "Tile Set");
-  let tileSetRenderer = new TileSetRenderer(tileSetActor);
-  let config = { tileSetAssetId: SupClient.query.asset };
-  let receiveCallbacks = { tileSet: onAssetReceived };
-  let editCallbacks = { tileSet: onEditCommands };
+  const tileSetActor = new SupEngine.Actor(ui.gameInstance, "Tile Set");
+  const tileSetRenderer = new TileSetRenderer(tileSetActor);
+  const config = { tileSetAssetId: SupClient.query.asset };
 
-  data.tileSetUpdater = new TileSetRenderer.Updater(data.projectClient, tileSetRenderer, config, receiveCallbacks, editCallbacks);
+  const subscriber: SupClient.AssetSubscriber = {
+    onAssetReceived: onAssetReceived,
+    onAssetEdited: (assetId, command, ...args) => { if (onEditCommands[command] != null) onEditCommands[command](...args); },
+    onAssetTrashed: SupClient.onAssetTrashed
+  };
+
+  data.tileSetUpdater = new TileSetRendererUpdater(data.projectClient, tileSetRenderer, config, subscriber);
 }
 
 function onAssetReceived(err: string, asset: any) {
@@ -76,22 +80,22 @@ function onAssetReceived(err: string, asset: any) {
   selectTile({ x: 0, y: 0 });
 }
 
-onEditCommands.upload = () => {
+onEditCommands["upload"] = () => {
   selectTile({ x: 0, y: 0 });
 };
 
-onEditCommands.setProperty = (key: string, value: any) => {
+onEditCommands["setProperty"] = (key: string, value: any) => {
   setupProperty(key, value);
   selectTile({ x: 0, y: 0 });
 };
 
-onEditCommands.addTileProperty = (tile: { x: number; y: number; }, name: string) => {
+onEditCommands["addTileProperty"] = (tile: { x: number; y: number; }, name: string) => {
   if (tile.x !== data.selectedTile.x && tile.y !== data.selectedTile.y) return;
 
   addTileProperty(name);
 };
 
-onEditCommands.renameTileProperty = (tile: { x: number; y: number; }, name: string, newName: string) => {
+onEditCommands["renameTileProperty"] = (tile: { x: number; y: number; }, name: string, newName: string) => {
   if (tile.x !== data.selectedTile.x && tile.y !== data.selectedTile.y) return;
 
   let liElt = ui.propertiesTreeView.treeRoot.querySelector(`li[data-name="${name}"]`);
@@ -109,13 +113,13 @@ onEditCommands.renameTileProperty = (tile: { x: number; y: number; }, name: stri
   }
 };
 
-onEditCommands.deleteTileProperty = (tile: { x: number; y: number; }, name: string) => {
+onEditCommands["deleteTileProperty"] = (tile: { x: number; y: number; }, name: string) => {
   if (tile.x !== data.selectedTile.x && tile.y !== data.selectedTile.y) return;
 
   ui.propertiesTreeView.remove(ui.propertiesTreeView.treeRoot.querySelector(`li[data-name="${name}"]`));
 };
 
-onEditCommands.editTileProperty = (tile: { x: number; y: number; }, name: string, value: string) => {
+onEditCommands["editTileProperty"] = (tile: { x: number; y: number; }, name: string, value: string) => {
   if (tile.x !== data.selectedTile.x && tile.y !== data.selectedTile.y) return;
 
   let liElt = ui.propertiesTreeView.treeRoot.querySelector(`li[data-name="${name}"]`);

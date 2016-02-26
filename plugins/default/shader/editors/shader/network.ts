@@ -37,16 +37,16 @@ function onAssetReceived(assetId: string, asset: ShaderAsset) {
   setupPreview();
 }
 
-let onEditCommands: any = {};
+const onEditCommands: { [command: string]: Function; } = {};
 function onAssetEdited(id: string, command: string, ...args: any[]) {
-  let commandFunction = onEditCommands[`${command}`];
+  const commandFunction = onEditCommands[command];
   if (commandFunction != null) commandFunction.apply(this, args);
 
   if (ui.previewTypeSelect.value !== "Asset" && command !== "editVertexShader" && command !== "editFragmentShader")
     setupPreview();
 }
 
-onEditCommands.setProperty = (path: string, value: any) => {
+onEditCommands["setProperty"] = (path: string, value: any) => {
   switch (path) {
     case "useLightUniforms":
       ui.useLightUniformsCheckbox.checked = value;
@@ -54,12 +54,12 @@ onEditCommands.setProperty = (path: string, value: any) => {
   }
 };
 
-onEditCommands.newUniform = (uniform: UniformPub) => { setupUniform(uniform); };
-onEditCommands.deleteUniform = (id: string) => {
+onEditCommands["newUniform"] = (uniform: UniformPub) => { setupUniform(uniform); };
+onEditCommands["deleteUniform"] = (id: string) => {
   let rowElt = <HTMLTableRowElement>ui.uniformsList.querySelector(`[data-id='${id}']`);
   rowElt.parentElement.removeChild(rowElt);
 };
-onEditCommands.setUniformProperty = (id: string, key: string, value: any) => {
+onEditCommands["setUniformProperty"] = (id: string, key: string, value: any) => {
   let rowElt = <HTMLDivElement>ui.uniformsList.querySelector(`[data-id='${id}']`);
   if (key === "value") {
     let type = data.shaderAsset.uniforms.byId[id].type;
@@ -93,32 +93,32 @@ function setUniformValues(parentElt: HTMLDivElement, name: string, values: numbe
     (<HTMLInputElement>parentElt.querySelector(`.${name}_${i}`)).value = values[i].toString();
 }
 
-onEditCommands.newAttribute = (attribute: AttributePub) => { setupAttribute(attribute); };
-onEditCommands.deleteAttribute = (id: string) => {
+onEditCommands["newAttribute"] = (attribute: AttributePub) => { setupAttribute(attribute); };
+onEditCommands["deleteAttribute"] = (id: string) => {
   let rowElt = <HTMLTableRowElement>ui.attributesList.querySelector(`[data-id='${id}']`);
   rowElt.parentElement.removeChild(rowElt);
 };
-onEditCommands.setAttributeProperty = (id: string, key: string, value: any) => {
+onEditCommands["setAttributeProperty"] = (id: string, key: string, value: any) => {
   let rowElt = <HTMLDivElement>ui.attributesList.querySelector(`[data-id='${id}']`);
   let fieldElt = <HTMLInputElement>rowElt.querySelector(`.${key}`);
   fieldElt.value = value;
 };
 
-onEditCommands.editVertexShader = (operationData: OperationData) => {
+onEditCommands["editVertexShader"] = (operationData: OperationData) => {
   ui.vertexEditor.receiveEditText(operationData);
   checkVertexShader();
 };
-onEditCommands.saveVertexShader = () => {
+onEditCommands["saveVertexShader"] = () => {
   (<any>ui.vertexHeader.classList).toggle("has-draft", false);
   (<any>ui.vertexHeader.classList).toggle("has-errors", false);
   ui.vertexSaveElt.hidden = true;
 };
 
-onEditCommands.editFragmentShader = (operationData: OperationData) => {
+onEditCommands["editFragmentShader"] = (operationData: OperationData) => {
   ui.fragmentEditor.receiveEditText(operationData);
   checkFragmentShader();
 };
-onEditCommands.saveFragmentShader = () => {
+onEditCommands["saveFragmentShader"] = () => {
   (<any>ui.fragmentHeader.classList).toggle("has-draft", false);
   (<any>ui.fragmentHeader.classList).toggle("has-errors", false);
   ui.fragmentSaveElt.hidden = true;

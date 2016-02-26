@@ -3,38 +3,22 @@ import ModelRenderer from "./ModelRenderer";
 import { ModelRendererConfigPub } from "../componentConfigs/ModelRendererConfig";
 
 export default class ModelRendererUpdater {
-  client: SupClient.ProjectClient;
-  modelRenderer: ModelRenderer;
-
-  receiveAssetCallbacks: any;
-  editAssetCallbacks: any;
-
   modelAssetId: string;
   animationId: string;
   overrideOpacity = false;
+
   modelAsset: ModelAsset = null;
+
   materialType: string;
   shaderAssetId: string;
   shaderPub: any;
 
-  modelSubscriber = {
-    onAssetReceived: this._onModelAssetReceived.bind(this),
-    onAssetEdited: this._onModelAssetEdited.bind(this),
-    onAssetTrashed: this._onModelAssetTrashed.bind(this)
-  };
+  private modelSubscriber: SupClient.AssetSubscriber;
+  private shaderSubscriber: SupClient.AssetSubscriber;
 
-  shaderSubscriber = {
-    onAssetReceived: this._onShaderAssetReceived.bind(this),
-    onAssetEdited: this._onShaderAssetEdited.bind(this),
-    onAssetTrashed: this._onShaderAssetTrashed.bind(this)
-  };
-
-  constructor(client: SupClient.ProjectClient, modelRenderer: ModelRenderer, config: ModelRendererConfigPub,
-  receiveAssetCallbacks: any, editAssetCallbacks: any) {
-    this.client = client;
-    this.modelRenderer = modelRenderer;
-    this.receiveAssetCallbacks = receiveAssetCallbacks;
-    this.editAssetCallbacks = editAssetCallbacks;
+  constructor(private client: SupClient.ProjectClient, public modelRenderer: ModelRenderer, config: ModelRendererConfigPub,
+  private externalSubscriber?: SupClient.AssetSubscriber) {
+    if (this.externalSubscriber == null) this.externalSubscriber = {};
 
     this.modelAssetId = config.modelAssetId;
     this.animationId = config.animationId;
@@ -56,6 +40,18 @@ export default class ModelRendererUpdater {
       this.modelRenderer.color.b = (hex & 255) / 255;
     }
 
+    this.modelSubscriber = {
+      onAssetReceived: this.onModelAssetReceived,
+      onAssetEdited: this.onModelAssetEdited,
+      onAssetTrashed: this.onModelAssetTrashed
+    };
+
+    this.shaderSubscriber = {
+      onAssetReceived: this.onShaderAssetReceived,
+      onAssetEdited: this.onShaderAssetEdited,
+      onAssetTrashed: this.onShaderAssetTrashed
+    };
+
     if (this.modelAssetId != null) this.client.subAsset(this.modelAssetId, "model", this.modelSubscriber);
     if (this.shaderAssetId != null) this.client.subAsset(this.shaderAssetId, "shader", this.shaderSubscriber);
   }
@@ -65,17 +61,17 @@ export default class ModelRendererUpdater {
     if (this.shaderAssetId != null) this.client.unsubAsset(this.shaderAssetId, this.shaderSubscriber);
   }
 
-  _onModelAssetReceived(assetId: string, asset: ModelAsset) {
+  private onModelAssetReceived = (assetId: string, asset: ModelAsset) => {
     if (this.modelRenderer.opacity == null) this.modelRenderer.opacity = asset.pub.opacity;
-    this._prepareMaps(asset.pub.textures, () => {
+    this.prepareMaps(asset.pub.textures, () => {
       this.modelAsset = asset;
-      this._setModel();
-      if (this.receiveAssetCallbacks != null) this.receiveAssetCallbacks.model();
+      this.setModel();
+      if (this.externalSubscriber.onAssetReceived != null) this.externalSubscriber.onAssetReceived(assetId, asset);
     });
-  }
+  };
 
-  _prepareMaps(textures: { [name: string]: THREE.Texture }, callback: () => any) {
-    let textureNames = Object.keys(textures);
+  private prepareMaps(textures: { [name: string]: THREE.Texture }, callback: () => any) {
+    const textureNames = Object.keys(textures);
     let texturesToLoad = textureNames.length;
 
     if (texturesToLoad === 0) {
@@ -89,98 +85,95 @@ export default class ModelRendererUpdater {
     }
 
     textureNames.forEach((key) => {
-      let image = textures[key].image;
+      const image = textures[key].image;
       if (!image.complete) image.addEventListener("load", onTextureLoaded);
       else onTextureLoaded();
     });
   }
 
-  _setModel() {
+  private setModel() {
     if (this.modelAsset == null || (this.materialType === "shader" && this.shaderPub == null)) {
       this.modelRenderer.setModel(null);
       return;
     }
 
     this.modelRenderer.setModel(this.modelAsset.pub, this.materialType, this.shaderPub);
-    if (this.animationId != null) this._playAnimation();
+    if (this.animationId != null) this.playAnimation();
   }
 
-  _playAnimation() {
-    let animation = this.modelAsset.animations.byId[this.animationId];
+  private playAnimation() {
+    const animation = this.modelAsset.animations.byId[this.animationId];
     this.modelRenderer.setAnimation((animation != null) ? animation.name : null);
   }
 
-  _onModelAssetEdited(id: string, command: string, ...args: any[]) {
-    let commandCallback = (<any>this)[`_onEditCommand_${command}`];
-    if (commandCallback != null) commandCallback.apply(this, args);
+  private onModelAssetEdited = (assetId: string, command: string, ...args: any[]) => {
+    const commandFunction = this.onEditCommands[command];
+    if (commandFunction != null) commandFunction.apply(this, args);
 
-    if (this.editAssetCallbacks != null) {
-      let editCallback = this.editAssetCallbacks.model[command];
-      if (editCallback != null) editCallback.apply(null, args);
+    if (this.externalSubscriber.onAssetEdited != null) this.externalSubscriber.onAssetEdited(assetId, command, ...args);
+  };
+
+  private onEditCommands: { [command: string]: Function; } = {
+    setModel: () => {
+      this.setModel();
+    },
+
+    setMaps: (maps: any) => {
+      // TODO: Only update the maps that changed, don't recreate the whole model
+      this.prepareMaps(this.modelAsset.pub.textures, () => {
+        this.setModel();
+      });
+    },
+
+    newAnimation: (animation: any, index: number) => {
+      this.modelRenderer.updateAnimationsByName();
+      this.playAnimation();
+    },
+
+    deleteAnimation: (id: string) => {
+      this.modelRenderer.updateAnimationsByName();
+      this.playAnimation();
+    },
+
+    setAnimationProperty: (id: string, key: string, value: any) => {
+      this.modelRenderer.updateAnimationsByName();
+      this.playAnimation();
+    },
+
+    setMapSlot: (slot: string, name: string) => { this.setModel(); },
+
+    deleteMap: (name: string) => { this.setModel(); },
+
+    setProperty: (path: string, value: any) => {
+      switch(path) {
+        case "unitRatio":
+          this.modelRenderer.setUnitRatio(value);
+          break;
+        case "opacity":
+          if (!this.overrideOpacity) this.modelRenderer.setOpacity(value);
+          break;
+      }
     }
-  }
+  };
 
-  _onEditCommand_setModel() {
-    this._setModel();
-  }
-
-  _onEditCommand_setMaps(maps: any) {
-    // TODO: Only update the maps that changed, don't recreate the whole model
-    this._prepareMaps(this.modelAsset.pub.textures, () => {
-      this._setModel();
-    });
-  }
-
-  _onEditCommand_newAnimation(animation: any, index: number) {
-    this.modelRenderer.updateAnimationsByName();
-    this._playAnimation();
-  }
-
-  _onEditCommand_deleteAnimation(id: string) {
-    this.modelRenderer.updateAnimationsByName();
-    this._playAnimation();
-  }
-
-  _onEditCommand_setAnimationProperty(id: string, key: string, value: any) {
-    this.modelRenderer.updateAnimationsByName();
-    this._playAnimation();
-  }
-
-  _onEditCommand_setMapSlot(slot: string, name: string) { this._setModel(); }
-
-  _onEditCommand_deleteMap(name: string) { this._setModel(); }
-
-  _onEditCommand_setProperty(path: string, value: any) {
-    switch(path) {
-      case "unitRatio":
-        this.modelRenderer.setUnitRatio(value);
-        break;
-      case "opacity":
-        if (!this.overrideOpacity) this.modelRenderer.setOpacity(value);
-        break;
-    }
-  }
-
-  _onModelAssetTrashed() {
+  private onModelAssetTrashed = () => {
     this.modelAsset = null;
     this.modelRenderer.setModel(null);
-    // FIXME: the updater shouldn't be dealing with SupClient.onAssetTrashed directly
-    if (this.editAssetCallbacks != null) SupClient.onAssetTrashed();
-  }
+  };
 
-  _onShaderAssetReceived(assetId: string, asset: { pub: any} ) {
+  private onShaderAssetReceived = (assetId: string, asset: { pub: any} ) => {
     this.shaderPub = asset.pub;
-    this._setModel();
-  }
+    this.setModel();
+  };
 
-  _onShaderAssetEdited(id: string, command: string, ...args: any[]) {
-    if (command !== "editVertexShader" && command !== "editFragmentShader") this._setModel();
-  }
+  private onShaderAssetEdited = (id: string, command: string, ...args: any[]) => {
+    if (command !== "editVertexShader" && command !== "editFragmentShader") this.setModel();
+  };
 
-  _onShaderAssetTrashed() {
+  private onShaderAssetTrashed = () => {
     this.shaderPub = null;
-    this._setModel();
-  }
+    this.setModel();
+  };
 
   config_setProperty(path: string, value: any) {
     switch(path) {
@@ -196,7 +189,7 @@ export default class ModelRendererUpdater {
 
       case "animationId":
         this.animationId = value;
-        if (this.modelAsset != null) this._playAnimation();
+        if (this.modelAsset != null) this.playAnimation();
         break;
 
       case "castShadow":
@@ -224,7 +217,7 @@ export default class ModelRendererUpdater {
 
       case "materialType":
         this.materialType = value;
-        this._setModel();
+        this.setModel();
         break;
 
       case "shaderAssetId":

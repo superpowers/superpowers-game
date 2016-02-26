@@ -83,17 +83,19 @@ function start() {
 }
 
 // Network callbacks
-let onEditCommands: any =  {};
+const onEditCommands: { [command: string]: Function; } =  {};
 function onConnected() {
-  data = {};
-  data.projectClient = new SupClient.ProjectClient(socket);
+  data = { projectClient: new SupClient.ProjectClient(socket) };
 
-  let textActor = new SupEngine.Actor(ui.gameInstance, "Text");
-  let textRenderer = new TextRenderer(textActor);
-  let config = { fontAssetId: SupClient.query.asset, text: noCharsetText, alignment: "center" };
-  let receiveCallbacks = { font: onAssetReceived };
-  let editCallbacks = { font: onEditCommands };
-  data.textUpdater = new TextRendererUpdater(data.projectClient, textRenderer, config, receiveCallbacks, editCallbacks);
+  const textActor = new SupEngine.Actor(ui.gameInstance, "Text");
+  const textRenderer = new TextRenderer(textActor);
+  const config = { fontAssetId: SupClient.query.asset, text: noCharsetText, alignment: "center" };
+  const subscriber: SupClient.AssetSubscriber = {
+    onAssetReceived,
+    onAssetEdited: (assetId, command, ...args) => { if (onEditCommands[command] != null) onEditCommands[command](...args); },
+    onAssetTrashed: SupClient.onAssetTrashed
+  };
+  data.textUpdater = new TextRendererUpdater(data.projectClient, textRenderer, config, subscriber);
 }
 
 function onAssetReceived() {
@@ -112,7 +114,8 @@ function onAssetReceived() {
   ui.colorPicker.value = `#${data.textUpdater.fontAsset.pub.color}`;
   ui.settings["charsetOffset"].disabled = data.textUpdater.fontAsset.pub.isBitmap && data.textUpdater.fontAsset.pub.charset != null;
 }
-onEditCommands.setProperty = (path: string, value: any) => {
+
+onEditCommands["setProperty"] = (path: string, value: any) => {
   if (path === "isBitmap") {
     ui.settings[path].value = value ? "bitmap" : "vector";
     if (!value) data.textUpdater.config_setProperty("text", noCharsetText);

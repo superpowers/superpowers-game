@@ -63,11 +63,7 @@ export function setupPreview(options = { useDraft: false }) {
 
       let componentClass = SupEngine.componentClasses[componentClassName];
       let component = new componentClass(previewActor);
-      data.previewComponentUpdater = new componentClass.Updater(
-        data.projectClient,
-        component,
-        config
-      );
+      data.previewComponentUpdater = new componentClass.Updater(data.projectClient, component, config);
       return;
   }
   material = createShaderMaterial(data.shaderAsset.pub, { map: leonardTexture }, previewGeometry, options);

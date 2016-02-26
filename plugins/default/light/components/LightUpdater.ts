@@ -4,19 +4,10 @@ import LightSettingsResource from "../data/LightSettingsResource";
 let THREE = SupEngine.THREE;
 
 export default class LightUpdater {
-  client: SupClient.ProjectClient;
-  light: Light;
-
   lightSettings: LightSettingsResource;
-  lightSettingsSubscriber = {
-    onResourceReceived: this._onLightResourceRecevied.bind(this),
-    onResourceEdited: this._onLightResourceEdited.bind(this)
-  };
+  lightSettingsSubscriber: SupClient.ResourceSubscriber;
 
-  constructor(client: SupClient.ProjectClient, light: Light, config: LightConfigPub) {
-    this.client = client;
-    this.light = light;
-
+  constructor(private client: SupClient.ProjectClient, public light: Light, config: LightConfigPub) {
     this.light.color = parseInt(config.color, 16);
     this.light.intensity = config.intensity;
     this.light.distance = config.distance;
@@ -37,6 +28,10 @@ export default class LightUpdater {
 
     this.light.setType(config.type);
 
+    this.lightSettingsSubscriber = {
+      onResourceReceived: this.onLightResourceReceived,
+      onResourceEdited: this.onLightResourceEdited
+    };
     this.client.subResource("lightSettings", this.lightSettingsSubscriber);
   }
 
@@ -109,7 +104,7 @@ export default class LightUpdater {
     }
   }
 
-  _updateLightShadowMap() {
+  private updateLightShadowMap() {
     switch (this.lightSettings.pub.shadowMapType) {
       case "basic":
         this.light.actor.gameInstance.threeRenderer.shadowMap.type = THREE.BasicShadowMap;
@@ -127,12 +122,12 @@ export default class LightUpdater {
     });
   }
 
-  _onLightResourceRecevied(resourceId: string, resource: LightSettingsResource) {
+  private onLightResourceReceived(resourceId: string, resource: LightSettingsResource) {
     this.lightSettings = resource;
-    this._updateLightShadowMap();
+    this.updateLightShadowMap();
   }
 
-  _onLightResourceEdited(resourceId: string, command: string, propertyName: string) {
-    if (command === "setProperty" && propertyName === "shadowMapType") this._updateLightShadowMap();
+  private onLightResourceEdited(resourceId: string, command: string, propertyName: string) {
+    if (command === "setProperty" && propertyName === "shadowMapType") this.updateLightShadowMap();
   }
 }

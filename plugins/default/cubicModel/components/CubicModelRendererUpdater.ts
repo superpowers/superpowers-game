@@ -4,7 +4,6 @@ import CubicModelRenderer, { RendererNode } from "./CubicModelRenderer";
 let THREE = SupEngine.THREE;
 
 export default class CubicModelRendererUpdater {
-
   client: SupClient.ProjectClient;
   cubicModelRenderer: CubicModelRenderer;
 
@@ -21,7 +20,7 @@ export default class CubicModelRendererUpdater {
   };
 
   constructor(client: SupClient.ProjectClient, cubicModelRenderer: CubicModelRenderer, config: any,
-  receiveAssetCallbacks: any, editAssetCallbacks: any) {
+  receiveAssetCallbacks?: any, editAssetCallbacks?: any) {
     this.client = client;
     this.cubicModelRenderer = cubicModelRenderer;
     this.receiveAssetCallbacks = receiveAssetCallbacks;
@@ -52,8 +51,8 @@ export default class CubicModelRendererUpdater {
   }
 
   _onCubicModelAssetEdited(id: string, command: string, ...args: any[]) {
-    let commandCallback = (<any>this)[`_onEditCommand_${command}`];
-    if (commandCallback != null) commandCallback.apply(this, args);
+    const commandFunction = (<any>this)[`_onEditCommand_${command}`];
+    if (commandFunction != null) commandFunction.apply(this, args);
 
     if (this.editAssetCallbacks != null) {
       let editCallback = this.editAssetCallbacks.cubicModel[command];

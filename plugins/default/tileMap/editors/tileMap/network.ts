@@ -19,36 +19,45 @@ SupClient.i18n.load([{ root: `${window.location.pathname}/../..`, name: "tileMap
   socket.on("disconnect", SupClient.onDisconnected);
 });
 
-let onEditCommands: any = {};
-let onTileSetEditCommands: any = {};
+const onEditCommands: { [command: string]: Function; } = {};
+const onTileSetEditCommands: { [command: string]: Function; } = {};
 
 function onConnected() {
   data.projectClient = new SupClient.ProjectClient(socket, { subEntries: true });
 
-  let tileMapActor = new SupEngine.Actor(mapArea.gameInstance, "Tile Map");
-  let tileMapRenderer = new TileMapRenderer(tileMapActor);
-  let config = { tileMapAssetId: SupClient.query.asset, tileSetAssetId: null as string, materialType: "basic" };
-  let receiveCallbacks = { tileMap: onTileMapAssetReceived };
-  let editCallbacks = { tileMap: onEditCommands };
-  data.tileMapUpdater = new TileMapRenderer.Updater(data.projectClient, tileMapRenderer, config, receiveCallbacks, editCallbacks);
+  const tileMapActor = new SupEngine.Actor(mapArea.gameInstance, "Tile Map");
+  const tileMapRenderer = new TileMapRenderer(tileMapActor);
+  const config = { tileMapAssetId: SupClient.query.asset, tileSetAssetId: null as string, materialType: "basic" };
+
+  const subscribers: { [name: string]: SupClient.AssetSubscriber } = {
+    tileMap: {
+      onAssetReceived: onTileMapAssetReceived,
+      onAssetEdited: (assetId, command, ...args) => { if (onEditCommands[command] != null) onEditCommands[command](...args); },
+      onAssetTrashed: SupClient.onAssetTrashed
+    }
+  };
+
+  data.tileMapUpdater = new TileMapRendererUpdater(data.projectClient, tileMapRenderer, config, subscribers);
 }
 
 // Tile Map
 function onTileMapAssetReceived() {
-  let pub = data.tileMapUpdater.tileMapAsset.pub;
+  const pub = data.tileMapUpdater.tileMapAsset.pub;
 
-  let tileSetActor = new SupEngine.Actor(tileSetArea.gameInstance, "Tile Set");
-  let tileSetRenderer = new TileSetRenderer(tileSetActor);
-  let config = { tileSetAssetId: pub.tileSetId };
+  const tileSetActor = new SupEngine.Actor(tileSetArea.gameInstance, "Tile Set");
+  const tileSetRenderer = new TileSetRenderer(tileSetActor);
+  const config = { tileSetAssetId: pub.tileSetId };
 
-  let receiveCallbacks = { tileSet: onTileSetAssetReceived };
-  let editCallbacks = { tileSet: onTileSetEditCommands };
-  data.tileSetUpdater = new TileSetRenderer.Updater(data.projectClient, tileSetRenderer, config, receiveCallbacks, editCallbacks);
+  const subscriber: SupClient.AssetSubscriber = {
+    onAssetReceived: onTileSetAssetReceived,
+    onAssetEdited: (assetId, command, ...args) => { if (onTileSetEditCommands[command] != null) onTileSetEditCommands[command](...args); }
+  };
+  data.tileSetUpdater = new TileSetRendererUpdater(data.projectClient, tileSetRenderer, config, subscriber);
 
   updateTileSetInput();
-  onEditCommands.resizeMap();
+  onEditCommands["resizeMap"]();
 
-  for (let setting in ui.settings) onEditCommands.setProperty(setting, (<any>pub)[setting]);
+  for (const setting in ui.settings) onEditCommands["setProperty"](setting, (pub as any)[setting]);
   for (let index = pub.layers.length - 1; index >= 0; index--) setupLayer(pub.layers[index], index);
 
   tileSetArea.selectedLayerId = pub.layers[0].id.toString();
@@ -64,19 +73,19 @@ function updateTileSetInput() {
   ui.openTileSetButton.disabled = data.tileMapUpdater.tileMapAsset.pub.tileSetId == null;
 }
 
-onEditCommands.changeTileSet = () => {
+onEditCommands["changeTileSet"] = () => {
   updateTileSetInput();
   data.tileSetUpdater.changeTileSetId(data.tileMapUpdater.tileMapAsset.pub.tileSetId);
 };
 
-onEditCommands.resizeMap = () => {
+onEditCommands["resizeMap"] = () => {
   let width = data.tileMapUpdater.tileMapAsset.pub.width;
   let height = data.tileMapUpdater.tileMapAsset.pub.height;
   ui.sizeInput.value = `${width} × ${height}`;
   mapArea.gridRenderer.resize(width, height);
 };
 
-onEditCommands.setProperty = (path: string, value: any) => {
+onEditCommands["setProperty"] = (path: string, value: any) => {
   ui.settings[path].value = value;
 
   if (path === "pixelsPerUnit" && data.tileMapUpdater.tileSetAsset != null) {
@@ -90,7 +99,7 @@ onEditCommands.setProperty = (path: string, value: any) => {
   }
 };
 
-onEditCommands.newLayer = (layerPub: TileMapLayerPub, index: number) => {
+onEditCommands["newLayer"] = (layerPub: TileMapLayerPub, index: number) => {
   setupLayer(layerPub, index);
 
   let pub = data.tileMapUpdater.tileMapAsset.pub;
@@ -101,12 +110,12 @@ onEditCommands.newLayer = (layerPub: TileMapLayerPub, index: number) => {
   refreshLayersId();
 };
 
-onEditCommands.renameLayer = (id: string, newName: string) => {
+onEditCommands["renameLayer"] = (id: string, newName: string) => {
   let layerElt = ui.layersTreeView.treeRoot.querySelector(`[data-id="${id}"]`);
   layerElt.querySelector(".name").textContent = newName;
 };
 
-onEditCommands.deleteLayer = (id: string, index: number) => {
+onEditCommands["deleteLayer"] = (id: string, index: number) => {
   let layerElt = ui.layersTreeView.treeRoot.querySelector(`li[data-id="${id}"]`) as HTMLLIElement;
   ui.layersTreeView.remove(layerElt);
 
@@ -125,7 +134,7 @@ onEditCommands.deleteLayer = (id: string, index: number) => {
   refreshLayersId();
 };
 
-onEditCommands.moveLayer = (id: string, newIndex: number) => {
+onEditCommands["moveLayer"] = (id: string, newIndex: number) => {
   let pub = data.tileMapUpdater.tileMapAsset.pub;
 
   let layerElt = ui.layersTreeView.treeRoot.querySelector(`li[data-id="${id}"]`) as HTMLLIElement;
@@ -153,12 +162,12 @@ function onTileSetAssetReceived() {
   mapArea.patternBackgroundRenderer.setup(0x900090, 1 / tileMapPub.pixelsPerUnit, tileSetPub.grid.width);
 };
 
-onTileSetEditCommands.upload = () => {
+onTileSetEditCommands["upload"] = () => {
   mapArea.patternRenderer.setTileSet(new TileSet(data.tileMapUpdater.tileSetAsset.pub));
   if (ui.brushToolButton.checked) selectBrushTool(0, 0);
 };
 
-onTileSetEditCommands.setProperty = () => {
+onTileSetEditCommands["setProperty"] = () => {
   let tileMapPub = data.tileMapUpdater.tileMapAsset.pub;
   let tileSetPub = data.tileMapUpdater.tileSetAsset.pub;
 

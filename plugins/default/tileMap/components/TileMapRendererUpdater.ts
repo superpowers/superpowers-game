@@ -8,12 +8,6 @@ import TileSet from "./TileSet";
 import TileSetAsset from "../data/TileSetAsset";
 
 export default class TileMapRendererUpdater {
-  client: SupClient.ProjectClient;
-  tileMapRenderer: TileMapRenderer;
-
-  receiveAssetCallbacks: any;
-  editAssetCallbacks: any;
-
   tileMapAssetId: string;
   tileSetAssetId: string;
   materialType: string;
@@ -27,18 +21,23 @@ export default class TileMapRendererUpdater {
   tileMapAsset: TileMapAsset;
   tileSetAsset: TileSetAsset;
 
-  constructor(client: SupClient.ProjectClient, tileMapRenderer: TileMapRenderer, config: TileMapRendererConfigPub,
-  receiveAssetCallbacks?: any, editAssetCallbacks?: any) {
-    this.client = client;
-    this.tileMapRenderer = tileMapRenderer;
-    this.receiveAssetCallbacks = receiveAssetCallbacks;
-    this.editAssetCallbacks = editAssetCallbacks;
-
+  constructor(private client: SupClient.ProjectClient, public tileMapRenderer: TileMapRenderer, config: TileMapRendererConfigPub,
+  private externalSubscribers?: { tileMap?: SupClient.AssetSubscriber, tileSet?: SupClient.AssetSubscriber }) {
     this.tileMapAssetId = config.tileMapAssetId;
     this.tileSetAssetId = config.tileSetAssetId;
     this.materialType = config.materialType;
     this.shaderAssetId = config.shaderAssetId;
     this.tileMapRenderer.receiveShadow = config.receiveShadow;
+
+    if (this.externalSubscribers == null) this.externalSubscribers = {};
+    if (this.externalSubscribers.tileMap == null) this.externalSubscribers.tileMap = {};
+    if (this.externalSubscribers.tileSet == null) this.externalSubscribers.tileSet = {};
+
+    this.tileMapSubscriber = {
+      onAssetReceived: this.onTileMapAssetReceived,
+      onAssetEdited: this.onTileMapAssetEdited,
+      onAssetTrashed: this.onTileMapAssetTrashed
+    };
 
     this.tileSetSubscriber = {
       onAssetReceived: this.onTileSetAssetReceived,
@@ -46,24 +45,19 @@ export default class TileMapRendererUpdater {
       onAssetTrashed: this.onTileSetAssetTrashed
     };
 
-    this.tileMapSubscriber = {
-      onAssetReceived: this.onTileMapAssetReceived,
-      onAssetEdited: this.onTileMapAssetEdited,
-      onAssetTrashed: this.onTileMapAssetTrashed
-    };
-    if (this.tileMapAssetId != null) this.client.subAsset(this.tileMapAssetId, "tileMap", this.tileMapSubscriber);
-
     this.shaderSubscriber = {
       onAssetReceived: this.onShaderAssetReceived,
       onAssetEdited: this.onShaderAssetEdited,
       onAssetTrashed: this.onShaderAssetTrashed
     };
+
+    if (this.tileMapAssetId != null) this.client.subAsset(this.tileMapAssetId, "tileMap", this.tileMapSubscriber);
     if (this.shaderAssetId != null) this.client.subAsset(this.shaderAssetId, "shader", this.shaderSubscriber);
   }
 
   destroy() {
     if (this.tileMapAssetId != null) this.client.unsubAsset(this.tileMapAssetId, this.tileMapSubscriber);
-    if (this.tileSetAssetId != null) { this.client.unsubAsset(this.tileSetAssetId, this.tileSetSubscriber); }
+    if (this.tileSetAssetId != null) this.client.unsubAsset(this.tileSetAssetId, this.tileSetSubscriber);
     if (this.shaderAssetId != null) this.client.unsubAsset(this.shaderAssetId, this.shaderSubscriber);
   }
 
@@ -80,61 +74,58 @@ export default class TileMapRendererUpdater {
     this.tileMapAsset = asset;
     this.setTileMap();
 
-    if (this.tileMapAsset.pub.tileSetId != null)
-      this.client.subAsset(this.tileMapAsset.pub.tileSetId, "tileSet", this.tileSetSubscriber);
-    if (this.receiveAssetCallbacks != null && this.receiveAssetCallbacks.tileMap != null) this.receiveAssetCallbacks.tileMap();
+    if (this.tileMapAsset.pub.tileSetId != null) this.client.subAsset(this.tileMapAsset.pub.tileSetId, "tileSet", this.tileSetSubscriber);
+
+    const subscriber = this.externalSubscribers.tileMap;
+    if (subscriber.onAssetReceived != null) subscriber.onAssetReceived(assetId, asset);
   };
 
-  private onTileMapAssetEdited = (id: string, command: string, ...args: any[]) => {
+  private onTileMapAssetEdited = (assetId: string, command: string, ...args: any[]) => {
     if (this.tileSetAsset != null || command === "changeTileSet") {
-      let commandFunction = (<any>this)[`onEditCommand_${command}`];
+      const commandFunction = this.onEditCommands[command];
       if (commandFunction != null) commandFunction.apply(this, args);
     }
 
-    if (this.editAssetCallbacks != null && this.editAssetCallbacks.tileMap != null) {
-      let editCallback = this.editAssetCallbacks.tileMap[command];
-      if (editCallback != null) editCallback.apply(null, args);
-    }
+    const subscriber = this.externalSubscribers.tileMap;
+    if (subscriber.onAssetEdited) subscriber.onAssetEdited(assetId, command, ...args);
   };
 
-  /* tslint:disable:no-unused-variable */
-  private onEditCommand_changeTileSet() {
-    if (this.tileSetAssetId != null) this.client.unsubAsset(this.tileSetAssetId, this.tileSetSubscriber);
+  private onEditCommands: { [command: string]: Function; } = {
+    changeTileSet: () => {
+      if (this.tileSetAssetId != null) this.client.unsubAsset(this.tileSetAssetId, this.tileSetSubscriber);
 
-    this.tileSetAsset = null;
-    this.tileMapRenderer.setTileSet(null);
+      this.tileSetAsset = null;
+      this.tileMapRenderer.setTileSet(null);
 
-    this.tileSetAssetId = this.tileMapAsset.pub.tileSetId;
-    if (this.tileSetAssetId != null) this.client.subAsset(this.tileSetAssetId, "tileSet", this.tileSetSubscriber);
-  }
+      this.tileSetAssetId = this.tileMapAsset.pub.tileSetId;
+      if (this.tileSetAssetId != null) this.client.subAsset(this.tileSetAssetId, "tileSet", this.tileSetSubscriber);
+    },
 
-  private onEditCommand_resizeMap() { this.setTileMap(); }
-  private onEditCommand_moveMap() { this.tileMapRenderer.refreshEntireMap(); }
+    resizeMap: () => { this.setTileMap(); },
+    moveMap: () => { this.tileMapRenderer.refreshEntireMap(); },
 
-  private onEditCommand_setProperty(path: string, value: any) {
-    switch (path) {
-      case "pixelsPerUnit": this.tileMapRenderer.refreshPixelsPerUnit(value); break;
-      case "layerDepthOffset": this.tileMapRenderer.refreshLayersDepth(); break;
-    }
-  }
+    setProperty: (path: string, value: any) => {
+      switch (path) {
+        case "pixelsPerUnit": this.tileMapRenderer.refreshPixelsPerUnit(value); break;
+        case "layerDepthOffset": this.tileMapRenderer.refreshLayersDepth(); break;
+      }
+    },
 
-  private onEditCommand_editMap(layerId: string, edits: { x: number, y: number }[]) {
-    let index = this.tileMapAsset.pub.layers.indexOf(this.tileMapAsset.layers.byId[layerId]);
-    for (let edit of edits) this.tileMapRenderer.refreshTileAt(index, edit.x, edit.y);
-  }
+    editMap: (layerId: string, edits: { x: number, y: number }[]) => {
+      let index = this.tileMapAsset.pub.layers.indexOf(this.tileMapAsset.layers.byId[layerId]);
+      for (let edit of edits) this.tileMapRenderer.refreshTileAt(index, edit.x, edit.y);
+    },
 
-  private onEditCommand_newLayer(layer: TileMapLayerPub, index: number) { this.tileMapRenderer.addLayer(layer.id, index); }
-  private onEditCommand_deleteLayer(id: string, index: number) { this.tileMapRenderer.deleteLayer(index); }
-  private onEditCommand_moveLayer(id: string, newIndex: number) { this.tileMapRenderer.moveLayer(id, newIndex); }
-  /* tslint:enable:no-unused-variable */
+    newLayer: (layer: TileMapLayerPub, index: number) => { this.tileMapRenderer.addLayer(layer.id, index); },
+    deleteLayer: (id: string, index: number) => { this.tileMapRenderer.deleteLayer(index); },
+    moveLayer: (id: string, newIndex: number) => { this.tileMapRenderer.moveLayer(id, newIndex); }
+  };
 
   private onTileMapAssetTrashed = (assetId: string) => {
     this.tileMapRenderer.setTileMap(null);
-    if (this.editAssetCallbacks != null) {
-      // FIXME: We should probably have a this.trashAssetCallback instead
-      // and let editors handle things how they want
-      SupClient.onAssetTrashed();
-    }
+
+    const subscriber = this.externalSubscribers.tileMap;
+    if (subscriber.onAssetTrashed != null) subscriber.onAssetTrashed(assetId);
   };
 
   private onTileSetAssetReceived = (assetId: string, asset: TileSetAsset) => {
@@ -142,7 +133,9 @@ export default class TileMapRendererUpdater {
       this.tileSetAsset = asset;
 
       this.tileMapRenderer.setTileSet(new TileSet(asset.pub));
-      if (this.receiveAssetCallbacks != null && this.receiveAssetCallbacks.tileSet != null) this.receiveAssetCallbacks.tileSet();
+
+      const subscriber = this.externalSubscribers.tileSet;
+      if (subscriber.onAssetReceived != null) subscriber.onAssetReceived(assetId, asset);
     });
   };
 
@@ -156,30 +149,31 @@ export default class TileMapRendererUpdater {
     else texture.image.addEventListener("load", callback);
   }
 
-  private onTileSetAssetEdited = (id: string, command: string, ...args: any[]) => {
-    let commandFunction = (<any>this)[`onTileSetEditCommand_${command}`];
+  private onTileSetAssetEdited = (assetId: string, command: string, ...args: any[]) => {
+    const commandFunction = this.onTileSetEditCommands[command];
     if (commandFunction != null) commandFunction.apply(this, args);
 
-    if (this.editAssetCallbacks != null && this.editAssetCallbacks.tileSet != null) {
-      let editCallback = this.editAssetCallbacks.tileSet[command];
-      if (editCallback != null) editCallback.apply(null, args);
+    const subscriber = this.externalSubscribers.tileSet;
+    if (subscriber.onAssetEdited) subscriber.onAssetEdited(assetId, command, ...args);
+  };
+
+  private onTileSetEditCommands: { [command: string]: Function; } = {
+    upload() {
+      this.prepareTexture(this.tileSetAsset.pub.texture, () => {
+        this.tileMapRenderer.setTileSet(new TileSet(this.tileSetAsset.pub));
+      });
+    },
+
+    setProperty() {
+      this.tileMapRenderer.setTileSet(new TileSet(this.tileSetAsset.pub));
     }
   };
 
-  /* tslint:disable:no-unused-variable */
-  private onTileSetEditCommand_upload() {
-    this.prepareTexture(this.tileSetAsset.pub.texture, () => {
-      this.tileMapRenderer.setTileSet(new TileSet(this.tileSetAsset.pub));
-    });
-  }
-
-  private onTileSetEditCommand_setProperty() {
-    this.tileMapRenderer.setTileSet(new TileSet(this.tileSetAsset.pub));
-  }
-  /* tslint:enable:no-unused-variable */
-
   private onTileSetAssetTrashed = (assetId: string) => {
     this.tileMapRenderer.setTileSet(null);
+
+    const subscriber = this.externalSubscribers.tileSet;
+    if (subscriber.onAssetTrashed) subscriber.onAssetTrashed(assetId);
   };
 
   private onShaderAssetReceived = (assetId: string, asset: { pub: any} ) => {

@@ -118,7 +118,7 @@ declare namespace SupEngine {
     actor: Actor;
     typeName: string;
 
-    static Updater: new(projectClient: any, component: any, config: any, receiveAssetCallbacks: any, editAssetCallbacks: any) => ActorComponentUpdater;
+    static Updater: new(projectClient: any, component: any, config: any) => ActorComponentUpdater;
 
     constructor(actor: Actor, typeName: string);
     _destroy(): void;

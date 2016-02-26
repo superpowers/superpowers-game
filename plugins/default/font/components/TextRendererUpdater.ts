@@ -3,12 +3,6 @@ import TextRenderer from "./TextRenderer";
 import { TextRendererConfigPub } from "../componentConfigs/TextRendererConfig";
 
 export default class TextRendererUpdater {
-  client: SupClient.ProjectClient;
-  textRenderer: TextRenderer;
-
-  receiveAssetCallbacks: any;
-  editAssetCallbacks: any;
-
   fontAssetId: string;
   text: string;
   options: {
@@ -18,20 +12,11 @@ export default class TextRendererUpdater {
     color?: string;
   };
 
-  fontSubscriber: {
-    onAssetReceived: (assetId: string, asset: any) => any;
-    onAssetEdited: (id: string, command: string, ...args: any[]) => any;
-    onAssetTrashed: (assetId: string) => any};
-
+  private fontSubscriber: SupClient.AssetSubscriber;
   fontAsset: FontAsset;
 
-  constructor(client: SupClient.ProjectClient, textRenderer: TextRenderer, config: TextRendererConfigPub,
-  receiveAssetCallbacks?: any, editAssetCallbacks?: any) {
-    this.client = client;
-    this.textRenderer = textRenderer;
-    this.receiveAssetCallbacks = receiveAssetCallbacks;
-    this.editAssetCallbacks = editAssetCallbacks;
-
+  constructor(private client: SupClient.ProjectClient, public textRenderer: TextRenderer, config: TextRendererConfigPub,
+  private externalSubscriber?: SupClient.AssetSubscriber) {
     this.fontAssetId = config.fontAssetId;
     this.text = config.text;
     this.options = {
@@ -40,6 +25,8 @@ export default class TextRendererUpdater {
       size: config.size,
       color: config.color
     };
+
+    if (this.externalSubscriber == null) this.externalSubscriber = {};
 
     this.fontSubscriber = {
       onAssetReceived: this.onFontAssetReceived,
@@ -83,22 +70,19 @@ export default class TextRendererUpdater {
 
     this.textRenderer.setText(this.text);
     this.textRenderer.setOptions(this.options);
-    this._setupFont();
+    this.setupFont();
 
-    if (this.receiveAssetCallbacks != null) this.receiveAssetCallbacks.font(null);
+    if (this.externalSubscriber.onAssetReceived) this.externalSubscriber.onAssetReceived(assetId, asset);
   };
 
-  private onFontAssetEdited = (id: string, command: string, ...args: any[]) => {
-    let commandFunction = (<any>this)[`onEditCommand_${command}`];
+  private onFontAssetEdited = (assetId: string, command: string, ...args: any[]) => {
+    const commandFunction = this.onEditCommands[command];
     if (commandFunction != null) commandFunction.apply(this, args);
 
-    if (this.editAssetCallbacks != null) {
-      let editCallback = this.editAssetCallbacks.font[command];
-      if (editCallback != null) editCallback.apply(null, args);
-    }
+    if (this.externalSubscriber.onAssetEdited) this.externalSubscriber.onAssetEdited(assetId, command, ...args);
   };
 
-  _setupFont() {
+  private setupFont() {
     this.textRenderer.clearMesh();
 
     if (this.fontAsset.pub.isBitmap) {
@@ -118,15 +102,17 @@ export default class TextRendererUpdater {
     }
   }
 
-  onEditCommand_upload() { this._setupFont(); }
+  private onEditCommands: { [command: string]: Function; } = {
+    upload: () => { this.setupFont(); },
 
-  onEditCommand_setProperty(path: string) {
-    if (path === "isBitmap") this._setupFont();
-    else this.textRenderer.setFont(this.fontAsset.pub);
-  }
+    setProperty: (path: string) => {
+      if (path === "isBitmap") this.setupFont();
+      else this.textRenderer.setFont(this.fontAsset.pub);
+    }
+  };
 
-  private onFontAssetTrashed = () => {
+  private onFontAssetTrashed = (assetId: string) => {
     this.textRenderer.clearMesh();
-    if (this.editAssetCallbacks != null) SupClient.onAssetTrashed();
+    if (this.externalSubscriber.onAssetTrashed != null) this.externalSubscriber.onAssetTrashed(assetId);
   };
 }
