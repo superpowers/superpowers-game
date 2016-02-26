@@ -5,8 +5,13 @@ import { Component } from "../data/SceneComponents";
 let tmpVector3 = new SupEngine.THREE.Vector3();
 let tmpQuaternion = new SupEngine.THREE.Quaternion();
 
+interface SceneUpdaterConfig {
+  sceneAssetId: string;
+  isInPrefab: boolean;
+}
+
 export default class SceneUpdater {
-  projectClient: SupClient.ProjectClient;
+  client: SupClient.ProjectClient;
 
   receiveAssetCallbacks: any;
   editAssetCallbacks: any;
@@ -30,10 +35,10 @@ export default class SceneUpdater {
     onAssetTrashed: this._onSceneAssetTrashed.bind(this)
   };
 
-  constructor(projectClient: SupClient.ProjectClient, engine: { gameInstance: SupEngine.GameInstance; actor: SupEngine.Actor; }, config: any,
+  constructor(client: SupClient.ProjectClient, engine: { gameInstance: SupEngine.GameInstance; actor: SupEngine.Actor; }, config: SceneUpdaterConfig,
   receiveAssetCallbacks?: any, editAssetCallbacks?: any) {
 
-    this.projectClient = projectClient;
+    this.client = client;
     this.receiveAssetCallbacks = receiveAssetCallbacks;
     this.editAssetCallbacks = editAssetCallbacks;
 
@@ -42,12 +47,12 @@ export default class SceneUpdater {
     this.sceneAssetId = config.sceneAssetId;
     this.isInPrefab = config.isInPrefab;
 
-    if (this.sceneAssetId != null) this.projectClient.subAsset(this.sceneAssetId, "scene", this.sceneSubscriber);
+    if (this.sceneAssetId != null) this.client.subAsset(this.sceneAssetId, "scene", this.sceneSubscriber);
   }
 
   destroy() {
     this._clearScene();
-    if (this.sceneAssetId != null) this.projectClient.unsubAsset(this.sceneAssetId, this.sceneSubscriber);
+    if (this.sceneAssetId != null) this.client.unsubAsset(this.sceneAssetId, this.sceneSubscriber);
   }
 
   private onSceneAssetReceived(assetId: string, asset: SceneAsset) {
@@ -171,13 +176,13 @@ export default class SceneUpdater {
   config_setProperty(path: string, value: any) {
     switch (path) {
       case "sceneAssetId":
-        if (this.sceneAssetId != null) this.projectClient.unsubAsset(this.sceneAssetId, this.sceneSubscriber);
+        if (this.sceneAssetId != null) this.client.unsubAsset(this.sceneAssetId, this.sceneSubscriber);
         this.sceneAssetId = value;
 
         this._clearScene();
         this.sceneAsset = null;
 
-        if (this.sceneAssetId != null) this.projectClient.subAsset(this.sceneAssetId, "scene", this.sceneSubscriber);
+        if (this.sceneAssetId != null) this.client.subAsset(this.sceneAssetId, "scene", this.sceneSubscriber);
         break;
     }
   }
@@ -209,7 +214,7 @@ export default class SceneUpdater {
 
     this.bySceneNodeId[node.id] = { actor: nodeActor, markerActor, bySceneComponentId: {}, prefabUpdater: null };
     if (node.prefab != null) {
-      this.bySceneNodeId[node.id].prefabUpdater = new SceneUpdater(this.projectClient,
+      this.bySceneNodeId[node.id].prefabUpdater = new SceneUpdater(this.client,
         { gameInstance: this.gameInstance, actor: nodeActor }, { sceneAssetId: node.prefab.sceneAssetId, isInPrefab: true });
     }
 
@@ -224,7 +229,7 @@ export default class SceneUpdater {
 
     this.bySceneNodeId[sceneNode.id].bySceneComponentId[sceneComponent.id] = {
       component: actorComponent,
-      componentUpdater: new componentClass.Updater(this.projectClient, actorComponent, sceneComponent.config),
+      componentUpdater: new componentClass.Updater(this.client, actorComponent, sceneComponent.config),
     };
   }
 

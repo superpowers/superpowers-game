@@ -4,8 +4,7 @@ import LightSettingsResource from "../data/LightSettingsResource";
 let THREE = SupEngine.THREE;
 
 export default class LightUpdater {
-  projectClient: SupClient.ProjectClient;
-
+  client: SupClient.ProjectClient;
   light: Light;
 
   lightSettings: LightSettingsResource;
@@ -14,8 +13,8 @@ export default class LightUpdater {
     onResourceEdited: this._onLightResourceEdited.bind(this)
   };
 
-  constructor(projectClient: SupClient.ProjectClient, light: Light, config: LightConfigPub) {
-    this.projectClient = projectClient;
+  constructor(client: SupClient.ProjectClient, light: Light, config: LightConfigPub) {
+    this.client = client;
     this.light = light;
 
     this.light.color = parseInt(config.color, 16);
@@ -38,11 +37,11 @@ export default class LightUpdater {
 
     this.light.setType(config.type);
 
-    this.projectClient.subResource("lightSettings", this.lightSettingsSubscriber);
+    this.client.subResource("lightSettings", this.lightSettingsSubscriber);
   }
 
   destroy() {
-    this.projectClient.unsubResource("lightSettings", this.lightSettingsSubscriber);
+    this.client.unsubResource("lightSettings", this.lightSettingsSubscriber);
   }
 
   config_setProperty(path: string, value: any) {

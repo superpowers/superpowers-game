@@ -2,8 +2,11 @@ import TileSetAsset from "../data/TileSetAsset";
 import TileSet from "./TileSet";
 import TileSetRenderer from "./TileSetRenderer";
 
-export default class TileSetRendererUpdater {
+interface TileSetRendererConfigPub {
+  tileSetAssetId: string;
+}
 
+export default class TileSetRendererUpdater {
   client: SupClient.ProjectClient;
   tileSetRenderer: TileSetRenderer;
 
@@ -16,7 +19,8 @@ export default class TileSetRendererUpdater {
 
   tileSetAsset: TileSetAsset;
 
-  constructor(client: SupClient.ProjectClient, tileSetRenderer: TileSetRenderer, config: any, receiveAssetCallbacks?: any, editAssetCallbacks?: any) {
+  constructor(client: SupClient.ProjectClient, tileSetRenderer: TileSetRenderer, config: TileSetRendererConfigPub,
+  receiveAssetCallbacks?: any, editAssetCallbacks?: any) {
     this.client = client;
     this.tileSetRenderer = tileSetRenderer;
     this.receiveAssetCallbacks = receiveAssetCallbacks;

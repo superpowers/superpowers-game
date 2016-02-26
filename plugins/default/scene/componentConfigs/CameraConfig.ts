@@ -1,4 +1,4 @@
-interface CameraConfigPub {
+export interface CameraConfigPub {
   formatVersion: number;
 
   mode: string;

@@ -2,12 +2,12 @@ import TileMap from "./TileMap";
 import TileMapRenderer from "./TileMapRenderer";
 import TileMapAsset from "../data/TileMapAsset";
 import { TileMapLayerPub } from "../data/TileMapLayers";
+import { TileMapRendererConfigPub } from "../componentConfigs/TileMapRendererConfig";
 
 import TileSet from "./TileSet";
 import TileSetAsset from "../data/TileSetAsset";
 
 export default class TileMapRendererUpdater {
-
   client: SupClient.ProjectClient;
   tileMapRenderer: TileMapRenderer;
 
@@ -27,7 +27,8 @@ export default class TileMapRendererUpdater {
   tileMapAsset: TileMapAsset;
   tileSetAsset: TileSetAsset;
 
-  constructor(client: SupClient.ProjectClient, tileMapRenderer: TileMapRenderer, config: any, receiveAssetCallbacks?: any, editAssetCallbacks?: any) {
+  constructor(client: SupClient.ProjectClient, tileMapRenderer: TileMapRenderer, config: TileMapRendererConfigPub,
+  receiveAssetCallbacks?: any, editAssetCallbacks?: any) {
     this.client = client;
     this.tileMapRenderer = tileMapRenderer;
     this.receiveAssetCallbacks = receiveAssetCallbacks;

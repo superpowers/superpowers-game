@@ -1,8 +1,8 @@
 import FontAsset from "../data/FontAsset";
 import TextRenderer from "./TextRenderer";
+import { TextRendererConfigPub } from "../componentConfigs/TextRendererConfig";
 
 export default class TextRendererUpdater {
-
   client: SupClient.ProjectClient;
   textRenderer: TextRenderer;
 
@@ -25,7 +25,8 @@ export default class TextRendererUpdater {
 
   fontAsset: FontAsset;
 
-  constructor(client: SupClient.ProjectClient, textRenderer: TextRenderer, config: any, receiveAssetCallbacks?: any, editAssetCallbacks?: any) {
+  constructor(client: SupClient.ProjectClient, textRenderer: TextRenderer, config: TextRendererConfigPub,
+  receiveAssetCallbacks?: any, editAssetCallbacks?: any) {
     this.client = client;
     this.textRenderer = textRenderer;
     this.receiveAssetCallbacks = receiveAssetCallbacks;
@@ -33,7 +34,12 @@ export default class TextRendererUpdater {
 
     this.fontAssetId = config.fontAssetId;
     this.text = config.text;
-    this.options = {alignment: config.alignment, verticalAlignment: config.verticalAlignment, size: config.size, color: config.color};
+    this.options = {
+      alignment: config.alignment,
+      verticalAlignment: config.verticalAlignment,
+      size: config.size,
+      color: config.color
+    };
 
     this.fontSubscriber = {
       onAssetReceived: this.onFontAssetReceived,

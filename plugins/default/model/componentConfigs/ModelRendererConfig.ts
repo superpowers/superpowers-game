@@ -1,11 +1,19 @@
 export interface ModelRendererConfigPub {
-  formatVersion: number;
+  formatVersion?: number;
 
-  modelAssetId: string; animationId: string;
-  castShadow: boolean; receiveShadow: boolean;
-  color: string;
-  overrideOpacity: boolean; opacity: number;
-  materialType: string; shaderAssetId: string;
+  modelAssetId: string;
+  animationId?: string;
+
+  castShadow?: boolean;
+  receiveShadow?: boolean;
+
+  color?: string;
+
+  overrideOpacity?: boolean;
+  opacity?: number;
+
+  materialType: string;
+  shaderAssetId?: string;
 }
 
 export default class ModelRendererConfig extends SupCore.Data.Base.ComponentConfig {

@@ -1,8 +1,8 @@
 import ModelAsset from "../data/ModelAsset";
 import ModelRenderer from "./ModelRenderer";
+import { ModelRendererConfigPub } from "../componentConfigs/ModelRendererConfig";
 
 export default class ModelRendererUpdater {
-
   client: SupClient.ProjectClient;
   modelRenderer: ModelRenderer;
 
@@ -29,7 +29,8 @@ export default class ModelRendererUpdater {
     onAssetTrashed: this._onShaderAssetTrashed.bind(this)
   };
 
-  constructor(client: SupClient.ProjectClient, modelRenderer: ModelRenderer, config: any, receiveAssetCallbacks: any, editAssetCallbacks: any) {
+  constructor(client: SupClient.ProjectClient, modelRenderer: ModelRenderer, config: ModelRendererConfigPub,
+  receiveAssetCallbacks: any, editAssetCallbacks: any) {
     this.client = client;
     this.modelRenderer = modelRenderer;
     this.receiveAssetCallbacks = receiveAssetCallbacks;
@@ -40,15 +41,20 @@ export default class ModelRendererUpdater {
     this.materialType = config.materialType;
     this.shaderAssetId = config.shaderAssetId;
 
-    this.modelRenderer.castShadow = config.castShadow;
-    this.modelRenderer.receiveShadow = config.receiveShadow;
+    if (config.castShadow != null) this.modelRenderer.castShadow = config.castShadow;
+    if (config.receiveShadow != null) this.modelRenderer.receiveShadow = config.receiveShadow;
 
-    this.overrideOpacity = config.overrideOpacity;
-    if (this.overrideOpacity) this.modelRenderer.opacity = config.opacity;
-    let hex = parseInt(config.color, 16);
-    this.modelRenderer.color.r = (hex >> 16 & 255) / 255;
-    this.modelRenderer.color.g = (hex >> 8 & 255) / 255;
-    this.modelRenderer.color.b = (hex & 255) / 255;
+    if (config.overrideOpacity != null) {
+      this.overrideOpacity = config.overrideOpacity;
+      if (this.overrideOpacity) this.modelRenderer.opacity = config.opacity;
+    }
+
+    if (config.color != null) {
+      const hex = parseInt(config.color, 16);
+      this.modelRenderer.color.r = (hex >> 16 & 255) / 255;
+      this.modelRenderer.color.g = (hex >> 8 & 255) / 255;
+      this.modelRenderer.color.b = (hex & 255) / 255;
+    }
 
     if (this.modelAssetId != null) this.client.subAsset(this.modelAssetId, "model", this.modelSubscriber);
     if (this.shaderAssetId != null) this.client.subAsset(this.shaderAssetId, "shader", this.shaderSubscriber);

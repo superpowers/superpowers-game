@@ -1,4 +1,4 @@
-interface P2BodyConfigPub {
+export interface P2BodyConfigPub {
   formatVersion: number;
 
   mass: number;

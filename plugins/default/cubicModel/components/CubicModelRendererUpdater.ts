@@ -20,7 +20,8 @@ export default class CubicModelRendererUpdater {
     onAssetTrashed: this._onCubicModelAssetTrashed.bind(this)
   };
 
-  constructor(client: SupClient.ProjectClient, cubicModelRenderer: CubicModelRenderer, config: any, receiveAssetCallbacks: any, editAssetCallbacks: any) {
+  constructor(client: SupClient.ProjectClient, cubicModelRenderer: CubicModelRenderer, config: any,
+  receiveAssetCallbacks: any, editAssetCallbacks: any) {
     this.client = client;
     this.cubicModelRenderer = cubicModelRenderer;
     this.receiveAssetCallbacks = receiveAssetCallbacks;

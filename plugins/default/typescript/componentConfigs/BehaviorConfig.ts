@@ -1,4 +1,4 @@
-interface Pub {
+export interface BehaviorConfigPub {
   behaviorName: string;
   propertyValues: { [name: string]: { type: string; value: any } };
 }
@@ -22,9 +22,9 @@ export default class BehaviorConfig extends SupCore.Data.Base.ComponentConfig {
 
   static create() { return { behaviorName: "", propertyValues: {} }; }
 
-  pub: Pub;
+  pub: BehaviorConfigPub;
 
-  constructor(pub: Pub) {
+  constructor(pub: BehaviorConfigPub) {
     if (pub.propertyValues == null) pub.propertyValues = {};
     super(pub, BehaviorConfig.schema);
   }

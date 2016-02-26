@@ -1,12 +1,12 @@
-interface TextRendererConfigPub {
-  formatVersion: number;
+export interface TextRendererConfigPub {
+  formatVersion?: number;
 
   fontAssetId: string;
   text: string;
   alignment: string;
-  verticalAlignment: string;
-  size: number;
-  color: string;
+  verticalAlignment?: string;
+  size?: number;
+  color?: string;
 }
 
 export default class TextRendererConfig extends SupCore.Data.Base.ComponentConfig {
@@ -23,7 +23,7 @@ export default class TextRendererConfig extends SupCore.Data.Base.ComponentConfi
   };
 
   static create() {
-    let emptyConfig: TextRendererConfigPub = {
+    const emptyConfig: TextRendererConfigPub = {
       formatVersion: TextRendererConfig.currentFormatVersion,
 
       fontAssetId: null,

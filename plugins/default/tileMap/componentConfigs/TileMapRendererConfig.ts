@@ -1,9 +1,14 @@
-interface TileMapRendererConfigPub {
-  formatVersion: number;
+export interface TileMapRendererConfigPub {
+  formatVersion?: number;
 
-  tileMapAssetId: string; tileSetAssetId: string;
-  castShadow: boolean; receiveShadow: boolean;
-  materialType: string; shaderAssetId: string;
+  tileMapAssetId: string;
+  tileSetAssetId: string;
+
+  castShadow?: boolean;
+  receiveShadow?: boolean;
+
+  materialType: string;
+  shaderAssetId?: string;
 }
 
 export default class TileMapRendererConfig extends SupCore.Data.Base.ComponentConfig {

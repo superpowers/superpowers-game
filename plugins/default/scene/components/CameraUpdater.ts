@@ -1,26 +1,27 @@
 import CameraMarker from "./CameraMarker";
+import { CameraConfigPub } from "../componentConfigs/CameraConfig";
 
 export default class CameraUpdater {
-  projectClient: SupClient.ProjectClient;
+  client: SupClient.ProjectClient;
 
   camera: CameraMarker;
   config: any;
 
   resource: any;
 
-  constructor(projectClient: SupClient.ProjectClient, camera: CameraMarker, config: any) {
-    this.projectClient = projectClient;
+  constructor(client: SupClient.ProjectClient, camera: CameraMarker, config: CameraConfigPub) {
+    this.client = client;
     this.camera = camera;
     this.config = config;
 
     this.camera.setConfig(this.config);
     this.camera.setRatio(5 / 3);
 
-    this.projectClient.subResource("gameSettings", this);
+    this.client.subResource("gameSettings", this);
   }
 
   destroy() {
-    if (this.resource != null) this.projectClient.unsubResource("gameSettings", this);
+    if (this.resource != null) this.client.unsubResource("gameSettings", this);
   }
 
   config_setProperty(path: string, value: any) {

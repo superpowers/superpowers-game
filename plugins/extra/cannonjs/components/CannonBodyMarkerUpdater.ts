@@ -1,11 +1,12 @@
 import CannonBodyMarker from "./CannonBodyMarker";
+import { CannonBodyConfigPub } from "../componentConfigs/CannonBodyConfig";
 
 export default class CannonBodyMarkerUpdater {
   client: SupClient.ProjectClient;
   bodyRenderer: CannonBodyMarker;
-  config: any;
+  config: CannonBodyConfigPub;
 
-  constructor(client: SupClient.ProjectClient, bodyRenderer: CannonBodyMarker, config: any) {
+  constructor(client: SupClient.ProjectClient, bodyRenderer: CannonBodyMarker, config: CannonBodyConfigPub) {
     this.client = client;
     this.bodyRenderer = bodyRenderer;
     this.config = config;

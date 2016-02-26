@@ -1,8 +1,8 @@
 import SpriteAsset from "../data/SpriteAsset";
 import SpriteRenderer from "./SpriteRenderer";
+import { SpriteRendererConfigPub } from "../componentConfigs/SpriteRendererConfig";
 
 export default class SpriteRendererUpdater {
-
   client: SupClient.ProjectClient;
   spriteRenderer: SpriteRenderer;
 
@@ -31,7 +31,8 @@ export default class SpriteRendererUpdater {
     onAssetTrashed: this._onShaderAssetTrashed.bind(this)
   };
 
-  constructor(client: SupClient.ProjectClient, spriteRenderer: SpriteRenderer, config: any, receiveAssetCallbacks: any, editAssetCallbacks: any) {
+  constructor(client: SupClient.ProjectClient, spriteRenderer: SpriteRenderer, config: SpriteRendererConfigPub,
+  receiveAssetCallbacks: any, editAssetCallbacks: any) {
     this.client = client;
     this.spriteRenderer = spriteRenderer;
     this.receiveAssetCallbacks = receiveAssetCallbacks;

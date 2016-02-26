@@ -1,12 +1,22 @@
 export interface SpriteRendererConfigPub {
-  formatVersion: number;
+  formatVersion?: number;
 
-  spriteAssetId: string; animationId: string;
-  horizontalFlip: boolean; verticalFlip: boolean;
-  castShadow: boolean; receiveShadow: boolean;
+  spriteAssetId: string;
+  animationId?: string;
+
+  horizontalFlip?: boolean;
+  verticalFlip?: boolean;
+
+  castShadow?: boolean;
+  receiveShadow?: boolean;
+
   color: string;
-  overrideOpacity: boolean; opacity: number;
-  materialType: string; shaderAssetId: string;
+
+  overrideOpacity?: boolean;
+  opacity?: number;
+
+  materialType: string;
+  shaderAssetId?: string;
 }
 
 export default class SpriteRendererConfig extends SupCore.Data.Base.ComponentConfig {

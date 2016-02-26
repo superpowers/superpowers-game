@@ -1,4 +1,4 @@
-interface CannonBodyConfigPub {
+export interface CannonBodyConfigPub {
   formatVersion: number;
 
   mass: number;
