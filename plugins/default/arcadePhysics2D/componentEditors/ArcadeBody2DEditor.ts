@@ -61,7 +61,7 @@ export default class ArcadeBody2DEditor {
     this.tileMapFields = {};
 
     let tileMapRow = SupClient.table.appendRow(this.tbody, SupClient.i18n.t("componentEditors:ArcadeBody2D.tileMap"));
-    let tileMapName = (config.tileMapAssetId != null) ? this.projectClient.entries.getPathFromId(config.tileMapAssetId) : "";
+    let tileMapName = (this.projectClient.entries.byId[config.tileMapAssetId] != null) ? this.projectClient.entries.getPathFromId(config.tileMapAssetId) : "";
     this.tileMapFields["tileMapAssetId"] = SupClient.table.appendTextField(tileMapRow.valueCell, tileMapName);
     this.tileMapFields["tileMapAssetId"].addEventListener("input", (event: any) => {
       if (event.target.value === "") this.editConfig("setProperty", "tileMapAssetId", null);
@@ -96,7 +96,7 @@ export default class ArcadeBody2DEditor {
 
     } else if (path === "movable") this.boxFields["movable"].checked = value;
     else if (path === "tileMapAssetId") {
-      let tileMapName = (value !== "") ? this.projectClient.entries.getPathFromId(value) : "";
+      let tileMapName = (value !== null) ? this.projectClient.entries.getPathFromId(value) : "";
       this.tileMapFields["tileMapAssetId"].value = tileMapName;
 
     } else {
