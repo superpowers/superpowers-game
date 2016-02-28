@@ -783,21 +783,25 @@ function onDragOver(event: DragEvent) {
   // NOTE: We can't use event.dataTransfer.getData() to do an early check here
   // because of browser security restrictions
 
+  ui.actorDropElt.hidden = false;
+  if (ui.nodesTreeView.selectedNodes.length === 1) {
+    const nodeId = ui.nodesTreeView.selectedNodes[0].dataset["id"];
+    const node = data.sceneUpdater.sceneAsset.nodes.byId[nodeId];
+    if (node.prefab == null) ui.componentDropElt.hidden = false;
+  }
+
   // Ensure we're not hovering the nodes tree view or component area
   let ancestorElt = (event.target as HTMLElement).parentElement;
-  let isHoveringNodesOrComponents = false;
+  let preventDefaultBehavior = true;
   while (ancestorElt != null) {
-    if (ancestorElt === ui.componentsElt || ancestorElt === ui.treeViewElt) {
-      isHoveringNodesOrComponents = true;
+    if (ancestorElt === ui.componentsElt || ancestorElt === ui.treeViewElt || (ui.componentDropElt.hidden && ancestorElt === ui.prefabRow)) {
+      preventDefaultBehavior = false;
       break;
     }
     ancestorElt = ancestorElt.parentElement;
   }
+  if (preventDefaultBehavior) event.preventDefault();
 
-  if (!isHoveringNodesOrComponents) event.preventDefault();
-
-  ui.actorDropElt.hidden = false;
-  ui.componentDropElt.hidden = false;
   if (ui.dropTimeout != null) clearTimeout(ui.dropTimeout);
   ui.dropTimeout = setTimeout(() => { onStopDrag(); }, 300);
 }
