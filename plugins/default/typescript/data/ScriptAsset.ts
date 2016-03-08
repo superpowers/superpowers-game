@@ -121,13 +121,14 @@ Sup.registerBehavior(${behaviorName});
       };
 
       this.server.data.resources.acquire("behaviorProperties", null, (err: Error, behaviorProperties: BehaviorPropertiesResource) => {
+        this.server.data.resources.release("behaviorProperties", null);
+
         if (behaviorProperties.pub.behaviors[behaviorName] == null) {
-          let behaviors: { [behaviorName: string]: { line: number, properties: Array<{name: string; type: string}>; parentBehavior: string; } } = {};
+          const behaviors: { [behaviorName: string]: { line: number, properties: { name: string; type: string; }[]; parentBehavior: string; } } = {};
           behaviors[behaviorName] = { line: 0, properties: [], parentBehavior: null };
           behaviorProperties.setScriptBehaviors(this.id, behaviors);
         }
 
-        this.server.data.resources.release("behaviorProperties", null);
         super.init(options, callback);
       });
     });

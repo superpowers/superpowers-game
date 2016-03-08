@@ -40,6 +40,8 @@ export default class TileMapAsset extends SupCore.Data.Base.Asset {
 
   init(options: any, callback: (err: string) => any) {
     this.server.data.resources.acquire("tileMapSettings", null, (err: Error, tileMapSettings: TileMapSettingsResource) => {
+      this.server.data.resources.release("tileMapSettings", null);
+
       this.pub = {
         formatVersion: TileMapAsset.currentFormatVersion,
         tileSetId: null,

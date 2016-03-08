@@ -102,6 +102,8 @@ export default class SpriteAsset extends SupCore.Data.Base.Asset {
 
   init(options: any, callback: Function) {
     this.server.data.resources.acquire("spriteSettings", null, (err: Error, spriteSettings: any) => {
+      this.server.data.resources.release("spriteSettings", null);
+
       this.pub = {
         formatVersion: SpriteAsset.currentFormatVersion,
 
@@ -128,7 +130,6 @@ export default class SpriteAsset extends SupCore.Data.Base.Asset {
         }
       };
 
-      this.server.data.resources.release("spriteSettings", null);
       super.init(options, callback);
     });
   }
