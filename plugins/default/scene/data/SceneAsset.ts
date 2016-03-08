@@ -82,23 +82,21 @@ export default class SceneAsset extends SupCore.Data.Base.Asset {
 
     if (pub.formatVersion === SceneAsset.currentFormatVersion) { callback(hasMigratedComponents); return; }
 
-    if (pub.formatVersion == null) {
-      // node.prefabId used to be set to the empty string
-      // when the node was a prefab but had no scene associated.
-      //
-      // It was replaced with node.prefab.sceneAssetId
-      // in Superpowers v0.16.
-      function migratePrefab(node: Node) {
-        let oldPrefabId = (node as any).prefabId;
-        if (oldPrefabId != null) {
-          delete (node as any).prefabId;
-          node.prefab = { sceneAssetId: oldPrefabId.length > 0 ? oldPrefabId : null };
-        } else {
-          for (let child of node.children) migratePrefab(child);
-        }
+    // node.prefabId used to be set to the empty string
+    // when the node was a prefab but had no scene associated.
+    // It was replaced with node.prefab.sceneAssetId
+    // in Superpowers v0.16.
+    function migrateOldPrefab(node: Node) {
+      let oldPrefabId = (node as any).prefabId;
+      if (oldPrefabId != null) {
+        delete (node as any).prefabId;
+        node.prefab = { sceneAssetId: oldPrefabId.length > 0 ? oldPrefabId : null };
+      } else {
+        for (const child of node.children) migrateOldPrefab(child);
       }
-      for (let rootNode of pub.nodes) migratePrefab(rootNode);
-
+    }
+    if (pub.formatVersion == null) {
+      for (const rootNode of pub.nodes) migrateOldPrefab(rootNode);
       pub.formatVersion = 1;
     }
 
