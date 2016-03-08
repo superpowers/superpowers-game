@@ -163,7 +163,7 @@ function onSceneAssetReceived(/*err: string, asset: SceneAsset*/) {
   startIfReady();
 }
 
-onEditCommands["addNode"] = (node: Node, parentId: string, index: number) => {
+const addNode = onEditCommands["addNode"] = (node: Node, parentId: string, index: number) => {
   let nodeElt = createNodeElement(node);
   let parentElt: HTMLLIElement;
   if (parentId != null) parentElt = ui.nodesTreeView.treeRoot.querySelector(`[data-id='${parentId}']`) as HTMLLIElement;
@@ -225,7 +225,7 @@ onEditCommands["setNodeProperty"] = (id: string, path: string, value: any) => {
 };
 
 onEditCommands["duplicateNode"] = (rootNode: Node, newNodes: DuplicatedNode[]) => {
-  for (let newNode of newNodes) onEditCommands["addNode"](newNode.node, newNode.parentId, newNode.index);
+  for (let newNode of newNodes) addNode(newNode.node, newNode.parentId, newNode.index);
 
   // TODO: Only refresh if selection is affected
   setupHelpers();

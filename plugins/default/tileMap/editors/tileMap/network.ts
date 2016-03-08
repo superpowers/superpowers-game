@@ -57,7 +57,7 @@ function onTileMapAssetReceived() {
   updateTileSetInput();
   onEditCommands["resizeMap"]();
 
-  for (const setting in ui.settings) onEditCommands["setProperty"](setting, (pub as any)[setting]);
+  for (const setting in ui.settings) setProperty(setting, (pub as any)[setting]);
   for (let index = pub.layers.length - 1; index >= 0; index--) setupLayer(pub.layers[index], index);
 
   tileSetArea.selectedLayerId = pub.layers[0].id.toString();
@@ -85,7 +85,7 @@ onEditCommands["resizeMap"] = () => {
   mapArea.gridRenderer.resize(width, height);
 };
 
-onEditCommands["setProperty"] = (path: string, value: any) => {
+const setProperty = onEditCommands["setProperty"] = (path: string, value: any) => {
   ui.settings[path].value = value;
 
   if (path === "pixelsPerUnit" && data.tileMapUpdater.tileSetAsset != null) {
