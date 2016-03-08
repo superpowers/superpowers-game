@@ -27,7 +27,7 @@ function getInterpolationData(keyFrames: any[], time: number) {
   // TODO: Use a cache to maintain most recently used key frames for each bone
   // and profit from temporal contiguity
   let nextKeyFrame: any;
-  for (let keyFrame of keyFrames) {
+  for (const keyFrame of keyFrames) {
     nextKeyFrame = keyFrame;
     if (keyFrame.time > time) break;
     prevKeyFrame = keyFrame;
@@ -35,9 +35,9 @@ function getInterpolationData(keyFrames: any[], time: number) {
 
   if (prevKeyFrame === nextKeyFrame) nextKeyFrame = keyFrames[0];
 
-  let timeSpan = nextKeyFrame.time - prevKeyFrame.time;
-  let timeProgress = time - prevKeyFrame.time;
-  let t = (timeSpan > 0) ? timeProgress / timeSpan : 0;
+  const timeSpan = nextKeyFrame.time - prevKeyFrame.time;
+  const timeProgress = time - prevKeyFrame.time;
+  const t = (timeSpan > 0) ? timeProgress / timeSpan : 0;
 
   return { prevKeyFrame, nextKeyFrame, t };
 }
@@ -364,19 +364,19 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
       if (boneKeyFrames == null) continue;
 
       if (boneKeyFrames.translation != null) {
-        let { prevKeyFrame, nextKeyFrame, t } = getInterpolationData(boneKeyFrames.translation, time);
+        const { prevKeyFrame, nextKeyFrame, t } = getInterpolationData(boneKeyFrames.translation, time);
         bone.position.fromArray(prevKeyFrame.value);
         bone.position.lerp(tmpVec.fromArray(nextKeyFrame.value), t);
       }
 
       if (boneKeyFrames.rotation != null) {
-        let { prevKeyFrame, nextKeyFrame, t } = getInterpolationData(boneKeyFrames.rotation, time);
+        const { prevKeyFrame, nextKeyFrame, t } = getInterpolationData(boneKeyFrames.rotation, time);
         bone.quaternion.fromArray(prevKeyFrame.value);
         bone.quaternion.slerp(tmpQuat.fromArray(nextKeyFrame.value), t);
       }
 
       if (boneKeyFrames.scale != null) {
-        let { prevKeyFrame, nextKeyFrame, t } = getInterpolationData(boneKeyFrames.scale, time);
+        const { prevKeyFrame, nextKeyFrame, t } = getInterpolationData(boneKeyFrames.scale, time);
         bone.scale.fromArray(prevKeyFrame.value);
         bone.scale.lerp(tmpVec.fromArray(nextKeyFrame.value), t);
       }
