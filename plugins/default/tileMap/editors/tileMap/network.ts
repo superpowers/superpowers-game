@@ -40,6 +40,20 @@ function onConnected() {
   data.tileMapUpdater = new TileMapRendererUpdater(data.projectClient, tileMapRenderer, config, subscribers);
 }
 
+const setProperty = onEditCommands["setProperty"] = (path: string, value: any) => {
+  ui.settings[path].value = value;
+
+  if (path === "pixelsPerUnit" && data.tileMapUpdater.tileSetAsset != null) {
+    let tileSetPub = data.tileMapUpdater.tileSetAsset.pub;
+    let tileMapPub = data.tileMapUpdater.tileMapAsset.pub;
+    mapArea.cameraControls.setMultiplier(value / tileSetPub.grid.width / 1);
+
+    mapArea.gridRenderer.setRatio({ x: tileMapPub.pixelsPerUnit / tileSetPub.grid.width, y: tileMapPub.pixelsPerUnit / tileSetPub.grid.height });
+    mapArea.patternRenderer.refreshPixelsPerUnit(tileMapPub.pixelsPerUnit);
+    mapArea.patternBackgroundRenderer.refreshScale(1 / tileMapPub.pixelsPerUnit);
+  }
+};
+
 // Tile Map
 function onTileMapAssetReceived() {
   const pub = data.tileMapUpdater.tileMapAsset.pub;
@@ -83,20 +97,6 @@ onEditCommands["resizeMap"] = () => {
   let height = data.tileMapUpdater.tileMapAsset.pub.height;
   ui.sizeInput.value = `${width} × ${height}`;
   mapArea.gridRenderer.resize(width, height);
-};
-
-const setProperty = onEditCommands["setProperty"] = (path: string, value: any) => {
-  ui.settings[path].value = value;
-
-  if (path === "pixelsPerUnit" && data.tileMapUpdater.tileSetAsset != null) {
-    let tileSetPub = data.tileMapUpdater.tileSetAsset.pub;
-    let tileMapPub = data.tileMapUpdater.tileMapAsset.pub;
-    mapArea.cameraControls.setMultiplier(value / tileSetPub.grid.width / 1);
-
-    mapArea.gridRenderer.setRatio({ x: tileMapPub.pixelsPerUnit / tileSetPub.grid.width, y: tileMapPub.pixelsPerUnit / tileSetPub.grid.height });
-    mapArea.patternRenderer.refreshPixelsPerUnit(tileMapPub.pixelsPerUnit);
-    mapArea.patternBackgroundRenderer.refreshScale(1 / tileMapPub.pixelsPerUnit);
-  }
 };
 
 onEditCommands["newLayer"] = (layerPub: TileMapLayerPub, index: number) => {
