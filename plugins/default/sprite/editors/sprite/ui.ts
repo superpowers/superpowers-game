@@ -315,6 +315,7 @@ export function updateSelectedAnimation() {
     ui.animationSlider.disabled = false;
     ui.animationSlider.max = (data.spriteUpdater.spriteRenderer.getAnimationFrameCount() - 1).toString();
     updateSelection();
+    ui.animationPlay.textContent = "❚❚";
   } else {
     ui.selectedAnimationId = null;
     data.spriteUpdater.config_setProperty("animationId", null);
@@ -323,13 +324,12 @@ export function updateSelectedAnimation() {
     ui.animationSlider.value = "0";
 
     spritesheetArea.selectionRenderer.clearMesh();
+    ui.animationPlay.textContent = "▶";
   }
 
-  ui.animationPlay.textContent = "❚❚";
-
-  let buttons = document.querySelectorAll(".animations-buttons button");
-  for (let index = 0; index < buttons.length; index ++) {
-    let button: any = buttons.item(index);
+  const buttons = document.querySelectorAll(".animations-buttons button");
+  for (let index = 0; index < buttons.length; index++) {
+    const button = buttons.item(index) as HTMLButtonElement;
     button.disabled = ui.selectedAnimationId == null && button.className !== "new-animation";
   }
 }

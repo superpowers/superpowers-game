@@ -22,26 +22,17 @@ body
     flex-direction column
     canvas { flex: 1; }
 
-    .animation-control
-      background #eee
-      display flex
-      justify-content center
-      align-items center
-      padding 0.5em
+    .animation-control {
+      .animation-play {
+        width: 3em;
+      }
 
-      .animation-play
-        white-space nowrap
-        width 60px
-        padding 0.5em
-        line-height 1
-
-        &:not(:disabled)
-          color #444
-
-      .animation-slider
-        width 300px
-        margin-left 10px
-        margin-right 10px
+      .animation-slider {
+        width: 300px;
+        margin-left: 10px;
+        margin-right 10px;
+      }
+    }
 
 
 .sidebar

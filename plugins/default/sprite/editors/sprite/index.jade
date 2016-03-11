@@ -16,13 +16,14 @@ html
 
       .resize-handle.bottom
       .animation-container
+        .animation-control.toolbar
+          div
+            .title= t("spriteEditor:preview.playback")
+            button(disabled).animation-play ▶
+            input(disabled,type="range",value="0").animation-slider
+            input#loop-checkbox(type="checkbox",checked).animation-loop
+            label(for="loop-checkbox")= t("spriteEditor:preview.loop")
         canvas(tabindex="0")
-
-        .animation-control
-          button(disabled).animation-play ❚❚
-          input(disabled,type="range",value="0").animation-slider
-          input#loop-checkbox(type="checkbox",checked).animation-loop
-          label(for="loop-checkbox")= t("spriteEditor:preview.loop")
 
     .sidebar
       table.properties

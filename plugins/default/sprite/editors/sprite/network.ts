@@ -115,7 +115,7 @@ onEditCommands["setAnimationProperty"] = (id: string, key: string, value: any) =
       break;
     case "endFrameIndex":
       (animationElt.querySelector(".end-frame-index") as HTMLInputElement).value = value;
-      if (id === ui.selectedAnimationId) updateSelection();
+      if (id === ui.selectedAnimationId) updateSelectedAnimation();
       break;
     case "speed":
       (animationElt.querySelector(".speed") as HTMLInputElement).value = value;

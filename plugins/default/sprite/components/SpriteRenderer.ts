@@ -222,7 +222,7 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
       if (animation == null) throw new Error(`Animation ${newAnimationName} doesn't exist`);
 
       this.animationLooping = newAnimationLooping;
-      if (newAnimationName === this.animationName && this.isAnimationPlaying ) return;
+      if (newAnimationName === this.animationName && this.isAnimationPlaying) return;
 
       this.animation = animation;
       this.animationName = newAnimationName;
