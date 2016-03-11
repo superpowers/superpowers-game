@@ -6,6 +6,7 @@ html
     link(rel="stylesheet",href="/styles/treeView.css")
     link(rel="stylesheet",href="/styles/dialogs.css")
     link(rel="stylesheet",href="/styles/properties.css")
+    link(rel="stylesheet",href="/styles/toolbar.css")
     link(rel="stylesheet",href="index.css")
 
   body
@@ -18,7 +19,7 @@ html
         canvas(tabindex="0")
 
         .animation-control
-          button(disabled).animation-play ▐ ▌
+          button(disabled).animation-play ❚❚
           input(disabled,type="range",value="0").animation-slider
           input#loop-checkbox(type="checkbox",checked).animation-loop
           label(for="loop-checkbox")= t("spriteEditor:preview.loop")

@@ -325,7 +325,7 @@ export function updateSelectedAnimation() {
     spritesheetArea.selectionRenderer.clearMesh();
   }
 
-  ui.animationPlay.textContent = "▐ ▌";
+  ui.animationPlay.textContent = "❚❚";
 
   let buttons = document.querySelectorAll(".animations-buttons button");
   for (let index = 0; index < buttons.length; index ++) {
@@ -335,13 +335,13 @@ export function updateSelectedAnimation() {
 }
 
 function onPlayAnimation() {
-  if (ui.animationPlay.textContent === "▐ ▌") {
+  if (ui.animationPlay.textContent === "❚❚") {
     data.spriteUpdater.spriteRenderer.pauseAnimation();
     ui.animationPlay.textContent = "▶";
   }
   else {
     data.spriteUpdater.spriteRenderer.playAnimation(data.spriteUpdater.looping);
-    ui.animationPlay.textContent = "▐ ▌";
+    ui.animationPlay.textContent = "❚❚";
   }
 }
 
