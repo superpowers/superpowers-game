@@ -822,11 +822,12 @@ function onActorDragLeave(event: DragEvent) { ui.actorDropElt.querySelector(".dr
 function onActorDrop(event: DragEvent) {
   if (data == null || data.projectClient.entries == null) return;
 
-  let entryId = event.dataTransfer.getData("application/vnd.superpowers.entry");
+  // TODO: Support importing multiple assets at once
+  const entryId = event.dataTransfer.getData("application/vnd.superpowers.entry").split(",")[0];
   if (typeof entryId !== "string") return;
 
-  let entry = data.projectClient.entries.byId[entryId];
-  let plugin = SupClient.getPlugins<SupClient.ImportIntoScenePlugin>("importIntoScene")[entry.type];
+  const entry = data.projectClient.entries.byId[entryId];
+  const plugin = SupClient.getPlugins<SupClient.ImportIntoScenePlugin>("importIntoScene")[entry.type];
   if (plugin == null || plugin.content.importActor == null) {
     const reason = SupClient.i18n.t("sceneEditor:errors.cantImportAssetTypeIntoScene");
     new SupClient.Dialogs.InfoDialog(SupClient.i18n.t("sceneEditor:failures.importIntoScene", { reason }));
@@ -867,11 +868,12 @@ function onComponentDragLeave(event: DragEvent) { ui.componentDropElt.querySelec
 function onComponentDrop(event: DragEvent) {
   if (data == null || data.projectClient.entries == null) return;
 
-  let entryId = event.dataTransfer.getData("application/vnd.superpowers.entry");
+  // TODO: Support importing multiple assets at once
+  const entryId = event.dataTransfer.getData("application/vnd.superpowers.entry").split(",")[0];
   if (typeof entryId !== "string") return;
 
-  let entry = data.projectClient.entries.byId[entryId];
-  let plugin = SupClient.getPlugins<SupClient.ImportIntoScenePlugin>("importIntoScene")[entry.type];
+  const entry = data.projectClient.entries.byId[entryId];
+  const plugin = SupClient.getPlugins<SupClient.ImportIntoScenePlugin>("importIntoScene")[entry.type];
   if (plugin == null || plugin.content.importComponent == null) {
     const reason = SupClient.i18n.t("sceneEditor:errors.cantImportAssetTypeIntoScene");
     new SupClient.Dialogs.InfoDialog(SupClient.i18n.t("sceneEditor:failures.importIntoScene", { reason }));
@@ -879,6 +881,6 @@ function onComponentDrop(event: DragEvent) {
   }
   event.preventDefault();
 
-  let nodeId = ui.nodesTreeView.selectedNodes[0].dataset["id"];
+  const nodeId = ui.nodesTreeView.selectedNodes[0].dataset["id"];
   plugin.content.importComponent(entry, data.projectClient, nodeId, (err: string, nodeId: string) => { /* Ignore */ });
 }
