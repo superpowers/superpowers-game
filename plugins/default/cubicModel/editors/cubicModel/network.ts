@@ -19,7 +19,6 @@ export let data: { projectClient?: SupClient.ProjectClient; cubicModelUpdater?: 
 
 export let socket: SocketIOClient.Socket;
 SupClient.i18n.load([{ root: `${window.location.pathname}/../..`, name: "cubicModelEditor" }], () => {
-  SupClient.setupHotkeys();
 
   socket = SupClient.connect(SupClient.query.project);
   socket.on("connect", onConnected);

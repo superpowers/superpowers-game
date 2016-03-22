@@ -5,8 +5,6 @@ import * as async from "async";
 const hljs = require("highlight.js"); // import * as hljs from "highlight.js";
 /* tslint:enable */
 
-SupClient.setupHotkeys();
-
 let searchElt = document.querySelector("input[type=search]") as HTMLInputElement;
 let noSearchResultsElt = document.querySelector("main article") as HTMLElement;
 let navListElt = document.querySelector("nav ul");

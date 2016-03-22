@@ -22,8 +22,6 @@ let ui: {
 } = {};
 export default ui;
 
-SupClient.setupHotkeys();
-
 ui.uniformsList = <HTMLTableElement>document.querySelector(".uniforms tbody");
 export function setupUniform(uniform: UniformPub) {
   let rowElt = document.createElement("tr");

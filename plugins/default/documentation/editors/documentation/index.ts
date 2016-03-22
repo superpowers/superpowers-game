@@ -8,7 +8,7 @@ let data: {
 const socket = SupClient.connect(SupClient.query.project);
 socket.on("welcome", onWelcome);
 socket.on("disconnect", SupClient.onDisconnected);
-SupClient.setupHotkeys();
+
 let loaded = false;
 let initialSection: string;
 window.addEventListener("message", (event: any) => {

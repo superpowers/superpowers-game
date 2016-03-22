@@ -19,7 +19,6 @@ function start() {
   socket = SupClient.connect(SupClient.query.project);
   socket.on("connect", onConnected);
   socket.on("disconnect", SupClient.onDisconnected);
-  SupClient.setupHotkeys();
 
   ui.gameInstance = new SupEngine.GameInstance(document.querySelector("canvas") as HTMLCanvasElement);
   ui.gameInstance.threeRenderer.setClearColor(0xbbbbbb);

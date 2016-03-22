@@ -77,8 +77,6 @@ let parameterPopupKeyMap = {
 
 // Setup editor
 export function setupEditor(clientId: number, script: string) {
-  SupClient.setupHotkeys();
-
   let textArea = <HTMLTextAreaElement>document.querySelector(".text-editor");
   ui.editor = new TextEditorWidget(data.projectClient, clientId, textArea, {
     mode: "text/typescript",

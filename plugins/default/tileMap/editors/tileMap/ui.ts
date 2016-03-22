@@ -90,7 +90,6 @@ ui.mousePositionLabel = {
 };
 
 // Keybindings
-SupClient.setupHotkeys();
 document.addEventListener("keyup", (event) => {
   if ((event.target as HTMLInputElement).tagName === "INPUT") return;
 

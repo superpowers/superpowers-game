@@ -32,9 +32,6 @@ const ui: {
 } = {} as any;
 export default ui;
 
-// Setup hotkeys
-SupClient.setupHotkeys();
-
 // Setup resizable panes
 new ResizeHandle(document.querySelector(".sidebar") as HTMLElement, "right");
 

@@ -12,7 +12,6 @@ function start() {
   socket = SupClient.connect(SupClient.query.project);
   socket.on("connect", onConnected);
   socket.on("disconnect", SupClient.onDisconnected);
-  SupClient.setupHotkeys();
 
   // Main
   ui.audioElt = <HTMLAudioElement>document.querySelector("audio");

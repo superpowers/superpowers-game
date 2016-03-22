@@ -228,7 +228,6 @@ let componentEditorPlugins: { [pluginName: string]: { path: string; content: Sup
 
 export function start() {
   componentEditorPlugins = SupClient.getPlugins<SupClient.ComponentEditorPlugin>("componentEditors");
-  SupClient.setupHotkeys();
   SupClient.setupHelpCallback(() => {
       window.parent.postMessage({ type: "openTool", name: "documentation", state: { section: "scene" } }, window.location.origin);
   });
