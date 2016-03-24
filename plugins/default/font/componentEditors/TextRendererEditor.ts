@@ -17,7 +17,13 @@ export default class TextRendererEditor {
   color: string;
   size: number;
 
+  overrideOpacityField: HTMLInputElement;
+  transparentField: HTMLSelectElement;
+  opacityFields: { sliderField: HTMLInputElement; numberField: HTMLInputElement; };
+
   pendingModification = 0;
+  overrideOpacity: boolean;
+  opacity: number;
 
   constructor(tbody: HTMLTableSectionElement, config: any, projectClient: SupClient.ProjectClient, editConfig: any) {
     this.tbody = tbody;
@@ -27,6 +33,9 @@ export default class TextRendererEditor {
     this.fontAssetId = config.fontAssetId;
     this.color = config.color;
     this.size = config.size;
+
+    this.overrideOpacity = config.overrideOpacity;
+    this.opacity = config.opacity;
 
     let fontRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:TextRenderer.font"));
     let fontFields = SupClient.table.appendAssetField(fontRow.valueCell, "");
@@ -106,6 +115,34 @@ export default class TextRendererEditor {
     });
     this.updateSizeField();
 
+    let opacityRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:TextRenderer.opacity"), { checkbox: true } );
+    this.overrideOpacityField = opacityRow.checkbox;
+    this.overrideOpacityField.addEventListener("change", (event: any) => {
+      this.editConfig("setProperty", "opacity", this.fontAsset != null ? this.fontAsset.pub.opacity : null);
+      this.editConfig("setProperty", "overrideOpacity", event.target.checked);
+    });
+
+    let opacityParent = document.createElement("div");
+    opacityRow.valueCell.appendChild(opacityParent);
+
+    let transparentOptions: {[key: string]: string} = {
+      empty: "",
+      opaque: SupClient.i18n.t("componentEditors:TextRenderer.opaque"),
+      transparent: SupClient.i18n.t("componentEditors:TextRenderer.transparent"),
+    };
+    this.transparentField = SupClient.table.appendSelectBox(opacityParent, transparentOptions);
+    (this.transparentField.children[0] as HTMLOptionElement).hidden = true;
+    this.transparentField.addEventListener("change", (event) => {
+      let opacity = this.transparentField.value === "transparent" ? 1 : null;
+      this.editConfig("setProperty", "opacity", opacity);
+    });
+
+    this.opacityFields = SupClient.table.appendSliderField(opacityParent, "", { min: 0, max: 1, step: 0.1, sliderStep: 0.01 });
+    this.opacityFields.numberField.parentElement.addEventListener("input", (event: any) => {
+      this.editConfig("setProperty", "opacity", parseFloat(event.target.value));
+    });
+    this.updateOpacityField();
+
     this.projectClient.subEntries(this);
   }
 
@@ -137,6 +174,15 @@ export default class TextRendererEditor {
 
     } else if (path === "text") {
       if (this.pendingModification === 0) this.fields["text"].value = value;
+
+    } else if (path === "overrideOpacity") {
+      this.overrideOpacity = value;
+      this.updateOpacityField();
+
+    } else if (path === "opacity") {
+      this.opacity = value;
+      this.updateOpacityField();
+
     } else this.fields[path].value = value;
   }
 
@@ -171,11 +217,35 @@ export default class TextRendererEditor {
     this.fields["size"].disabled = this.size == null;
   }
 
+  private updateOpacityField() {
+    this.overrideOpacityField.checked = this.overrideOpacity;
+    this.transparentField.disabled = !this.overrideOpacity;
+    this.opacityFields.sliderField.disabled = !this.overrideOpacity;
+    this.opacityFields.numberField.disabled = !this.overrideOpacity;
+
+    if (!this.overrideOpacity && this.fontAsset == null) {
+      this.transparentField.value = "empty";
+      this.opacityFields.numberField.parentElement.hidden = true;
+    } else {
+      let opacity = this.overrideOpacity ? this.opacity : this.fontAsset.pub.opacity;
+      if (opacity != null) {
+        this.transparentField.value = "transparent";
+        this.opacityFields.numberField.parentElement.hidden = false;
+        this.opacityFields.sliderField.value = opacity.toString();
+        this.opacityFields.numberField.value = opacity.toString();
+      } else {
+        this.transparentField.value = "opaque";
+        this.opacityFields.numberField.parentElement.hidden = true;
+      }
+    }
+  }
+
   // Network callbacks
   onEntriesReceived(entries: SupCore.Data.Entries) {
     if (entries.byId[this.fontAssetId] != null) {
       this.fields["fontAssetId"].value = entries.getPathFromId(this.fontAssetId);
       this.projectClient.subAsset(this.fontAssetId, "sprite", this);
+      this.updateOpacityField();
     }
   }
   onEntryAdded(entry: any, parentId: string, index: number) { /* Nothing to do here */ }
@@ -192,12 +262,15 @@ export default class TextRendererEditor {
 
     this.updateColorField();
     this.updateSizeField();
+    this.updateOpacityField();
   }
   onAssetEdited(assetId: string, command: string, ...args: any[]) {
     if (command !== "setProperty") return;
 
     if (command === "setProperty" && args[0] === "color") this.updateColorField();
     if (command === "setProperty" && (args[0] === "size" || args[0] === "isBitmap")) this.updateSizeField();
+    if (command === "setProperty" && args[0] === "opacity") this.updateOpacityField();
+
   }
   onAssetTrashed(assetId: string) {
     this.fontAsset = null;
@@ -205,5 +278,6 @@ export default class TextRendererEditor {
     this.fields["fontAssetId"].value = "";
     this.updateColorField();
     this.updateSizeField();
+    this.updateOpacityField();
   }
 }

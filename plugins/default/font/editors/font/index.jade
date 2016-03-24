@@ -46,6 +46,15 @@ html
                 input.color.property-color
                 input(type="color").color-picker
           tr
+            th= t("fontEditor:opacity")
+            td
+              select.opacity-select
+                option(value="opaque")= t("fontEditor:opaque")
+                option(value="transparent")= t("fontEditor:transparent")
+              .inputs(hidden)
+                input(type="range",min="0",max="1",step="0.01",style="flex: 2;").opacity-slider
+                input(type="number",min="0",max="1",step="0.1").property-opacity
+          tr
             th(colspan="2")= t("fontEditor:settings")
 
         tbody.vector-font

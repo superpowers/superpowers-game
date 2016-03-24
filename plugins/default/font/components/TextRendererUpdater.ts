@@ -10,6 +10,7 @@ export default class TextRendererUpdater {
     verticalAlignment: string;
     size?: number;
     color?: string;
+    opacity?: number;
   };
 
   private fontSubscriber: SupClient.AssetSubscriber;
@@ -23,7 +24,8 @@ export default class TextRendererUpdater {
       alignment: config.alignment,
       verticalAlignment: config.verticalAlignment,
       size: config.size,
-      color: config.color
+      color: config.color,
+      opacity: config.opacity
     };
 
     if (this.externalSubscriber == null) this.externalSubscriber = {};
@@ -61,6 +63,9 @@ export default class TextRendererUpdater {
       case "color": {
         (<any>this.options)[path] = (value !== "") ? value : null;
         this.textRenderer.setOptions(this.options);
+      } break;
+      case "opacity": {
+        this.textRenderer.setOpacity(value);
       } break;
     }
   }

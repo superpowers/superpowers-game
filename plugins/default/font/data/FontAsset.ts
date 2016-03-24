@@ -10,9 +10,24 @@ if ((<any>global).window != null && (<any>global).window.SupEngine != null) THRE
 
 export interface FontPub {
   formatVersion: number;
-  isBitmap: boolean; filtering: string; pixelsPerUnit: number;
-  font: Buffer; size: number; color: string; name?: string;
-  bitmap: Buffer; gridWidth: number; gridHeight: number; charset: string; charsetOffset: number; texture?: THREE.Texture;
+
+  isBitmap: boolean;
+  filtering: string;
+  pixelsPerUnit: number;
+
+  font: Buffer;
+  size: number;
+  color: string;
+  opacity: number;
+
+  bitmap: Buffer;
+  gridWidth: number;
+  gridHeight: number;
+  charset: string;
+  charsetOffset: number;
+
+  name?: string;
+  texture?: THREE.Texture;
 }
 
 export default class FontAsset extends SupCore.Data.Base.Asset {
@@ -28,6 +43,7 @@ export default class FontAsset extends SupCore.Data.Base.Asset {
     font: { type: "buffer" },
     size: { type: "number", min: 1, mutable: true },
     color: { type: "string", length: 6, mutable: true },
+    opacity: { type: "number?", min: 0, max: 1, mutable: true },
 
     bitmap: { type: "buffer" },
     gridWidth: { type: "number", min: 1, mutable: true },
@@ -56,6 +72,7 @@ export default class FontAsset extends SupCore.Data.Base.Asset {
       font: new Buffer(0),
       size: 32,
       color: "ffffff",
+      opacity: null,
 
       bitmap: new Buffer(0),
       gridWidth: 16,
@@ -87,7 +104,7 @@ export default class FontAsset extends SupCore.Data.Base.Asset {
     if (pub.formatVersion == null) {
       // NOTE: Legacy stuff from Superpowers 0.7
       if (pub.color == null || pub.color.length !== 6) pub.color = "ffffff";
-
+      if (typeof pub.opacity === "undefined") pub.opacity = 1;
       pub.formatVersion = 1;
     }
 

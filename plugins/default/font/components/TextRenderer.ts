@@ -52,6 +52,7 @@ export default class TextRenderer extends SupEngine.ActorComponent {
         mesh.material.transparent = false;
         mesh.material.opacity = 1;
       }
+      mesh.material.needsUpdate = true;
     }
   }
 

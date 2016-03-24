@@ -7,6 +7,7 @@ export interface TextRendererConfigPub {
   verticalAlignment?: string;
   size?: number;
   color?: string;
+  opacity?: number;
 }
 
 export default class TextRendererConfig extends SupCore.Data.Base.ComponentConfig {
@@ -19,7 +20,8 @@ export default class TextRendererConfig extends SupCore.Data.Base.ComponentConfi
     alignment: { type: "enum", items: [ "left", "center", "right" ], mutable: true },
     verticalAlignment: { type: "enum", items: [ "top", "center", "bottom" ], mutable: true },
     size: { type: "integer?", min: 0, mutable: true },
-    color: { type: "string?", length: 6, mutable: true }
+    color: { type: "string?", length: 6, mutable: true },
+    opacity: { type: "number?", min: 0, max: 1, mutable: true }
   };
 
   static create() {
@@ -31,7 +33,9 @@ export default class TextRendererConfig extends SupCore.Data.Base.ComponentConfi
       alignment: "center",
       verticalAlignment: "center",
       size: null,
-      color: null
+      color: null,
+      opacity: null
+
     };
     return emptyConfig;
   }

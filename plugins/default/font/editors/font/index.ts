@@ -10,6 +10,9 @@ let ui: {
   colorPicker: HTMLInputElement,
   vectorFontTBody: HTMLTableSectionElement,
   bitmapFontTBody: HTMLTableSectionElement
+  opacitySelect: HTMLSelectElement;
+  opacitySlider: HTMLInputElement;
+
 } = {} as any;
 let noCharsetText = "The quick brown fox\njumps over the lazy dog\n\n0123456789 +-*/=";
 
@@ -43,7 +46,7 @@ function start() {
   fileSelect.addEventListener("change", onFileSelectChange);
   document.querySelector("button.upload").addEventListener("click", () => { fileSelect.click(); });
 
-  ui.allSettings = ["isBitmap", "filtering", "pixelsPerUnit", "size", "color", "gridWidth", "gridHeight", "charset", "charsetOffset"];
+  ui.allSettings = ["isBitmap", "filtering", "pixelsPerUnit", "size", "color", "opacity", "gridWidth", "gridHeight", "charset", "charsetOffset"];
   ui.settings = {};
   ui.allSettings.forEach((setting: string) => {
     let settingObj: any = ui.settings[setting] = document.querySelector(`.property-${setting}`);
@@ -63,6 +66,12 @@ function start() {
         let isBitmap = event.target.value === "bitmap";
         data.projectClient.editAsset(SupClient.query.asset, "setProperty", event.target.dataset["name"], isBitmap);
       });
+    } else if (setting === "opacity") {
+      settingObj.addEventListener("change", (event: any) => {
+        let value = parseFloat(event.target.value);
+        if (isNaN(value)) return;
+        data.projectClient.editAsset(SupClient.query.asset, "setProperty", setting, value);
+      });
     } else {
       settingObj.addEventListener("change", (event: any) => {
         data.projectClient.editAsset(SupClient.query.asset, "setProperty", event.target.dataset["name"], parseInt(event.target.value, 10));
@@ -73,6 +82,16 @@ function start() {
   ui.colorPicker = document.querySelector("input.color-picker") as HTMLInputElement;
   ui.colorPicker.addEventListener("change", (event: any) => {
     data.projectClient.editAsset(SupClient.query.asset, "setProperty", "color", event.target.value.slice(1));
+  });
+
+  ui.opacitySelect = <HTMLSelectElement>document.querySelector(".opacity-select");
+  ui.opacitySelect.addEventListener("change", (event: any) => {
+    data.projectClient.editAsset(SupClient.query.asset, "setProperty", "opacity", event.target.value === "transparent" ? 1 : null);
+  });
+
+  ui.opacitySlider = <HTMLInputElement>document.querySelector(".opacity-slider");
+  ui.opacitySlider.addEventListener("input", (event: any) => {
+    data.projectClient.editAsset(SupClient.query.asset, "setProperty", "opacity", parseFloat(event.target.value));
   });
 
   ui.vectorFontTBody = document.querySelector("tbody.vector-font") as HTMLTableSectionElement;
@@ -111,6 +130,9 @@ function onAssetReceived() {
     data.textUpdater.config_setProperty("text", data.textUpdater.fontAsset.pub.charset);
 
   ui.colorPicker.value = `#${data.textUpdater.fontAsset.pub.color}`;
+  ui.opacitySlider.parentElement.hidden = data.textUpdater.fontAsset.pub.opacity ? false : true;
+  ui.opacitySelect.value = data.textUpdater.fontAsset.pub.opacity ? "transparent" : "opaque";
+  ui.opacitySlider.value = data.textUpdater.fontAsset.pub.opacity.toString();
   ui.settings["charsetOffset"].disabled = data.textUpdater.fontAsset.pub.isBitmap && data.textUpdater.fontAsset.pub.charset != null;
 }
 
@@ -129,6 +151,17 @@ onEditCommands["setProperty"] = (path: string, value: any) => {
   else if (path === "charset") {
     data.textUpdater.config_setProperty("text", value != null ? value : noCharsetText);
     ui.settings["charsetOffset"].disabled = value != null;
+  }else if (path === "opacity") {
+    if (value == null) {
+      ui.opacitySelect.value = "opaque";
+      ui.opacitySlider.parentElement.hidden = true;
+      data.textUpdater.config_setProperty("opacity", null);
+    } else {
+      ui.opacitySelect.value = "transparent";
+      ui.opacitySlider.parentElement.hidden = false;
+      ui.opacitySlider.value = value;
+      data.textUpdater.config_setProperty("opacity", value);
+    }
   }
 };
 

@@ -16,6 +16,10 @@
       "bottom": "Bottom"
     },
     "size": "Size",
-    "color": "Color"
+    "color": "Color",
+    "opacity": "Opacity",
+    "opaque": "Opaque",
+    "transparent": "Transparent"
+
   }
 }
