@@ -1,0 +1,18 @@
+{
+  "uniforms": "Uniforms",
+  "newUniform": "New uniform",
+  "attributes": "屬性",
+  "newAttribute": "新增屬性",
+  "name": "名稱",
+  "type": "類型",
+  "value": "數值",
+  "useLights": "使用光源",
+  "preview": "預覽",
+  "plane": "平面",
+  "box" : "盒狀",
+  "sphere": "球狀",
+  "asset": "素材",
+  "assetPath": "素材路徑",
+  "vertexShader": "Vertex Shader",
+  "fragmentShader": "Fragment Shader"
+}

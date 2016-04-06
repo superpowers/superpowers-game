@@ -1,0 +1,20 @@
+{
+  "SpriteRenderer": {
+    "label": "Sprite Renderer",
+    "sprite": "Sprite",
+    "animation": "動作",
+    "animationNone": "(無)",
+    "flip": "翻轉",
+    "shadow": {
+      "title": "陰影",
+      "cast": "投射",
+      "receive": "接收"
+    },
+    "color": "色彩",
+    "opacity": "透明度",
+    "transparent": "透明",
+    "opaque": "不透明",
+    "material": "材質",
+    "shader": "著色氣"
+  }
+}

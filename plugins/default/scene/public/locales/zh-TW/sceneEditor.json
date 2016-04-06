@@ -1,0 +1,80 @@
+
+{
+  "controls": {
+    "camera": {
+      "title": "鏡頭",
+      "mode": "模式",
+      "verticalAxis": "Up Axis",
+      "speed": "速度"
+    },
+    "transform": {
+      "title": "操作",
+      "move": "移動",
+      "rotate": "旋轉",
+      "scale": "縮放",
+      "local": "Local"
+    },
+    "grid": {
+      "title": "網格",
+      "size": "大小",
+      "visible": "顯示"
+    },
+    "light": {
+      "title": "光源"
+    }
+  },
+  "treeView": {
+    "newActor": {
+      "title": "New actor",
+      "prompt": "請輸入角色名稱",
+      "initialValue": "Actor"
+    },
+    "newPrefab": {
+      "title": "New prefab",
+      "prompt": "請輸入 prefab 名稱",
+      "initialValue": "Prefab"
+    },
+    "renamePrompt": "請輸入新的角色名稱",
+    "duplicatePrompt": "請輸入新的角色名稱",
+    "deleteConfirm": "您確定要刪除所選的角色嗎?",
+    "visible": {
+      "show": "顯示",
+      "hide": "隱藏"
+    }
+  },
+  "inspector": {
+    "position": "位置",
+    "orientation": "旋轉角度",
+    "scale": "縮放",
+    "visible": "是否可見",
+    "layer": "圖層",
+    "prefab": "Prefab",
+    "newComponent":{
+      "title": "新增元件",
+      "select": "請選擇要建立的元件",
+      "validate": "建立"
+    },
+    "deleteComponent": {
+      "confirm": "您確定要刪除所選的元件嗎?",
+      "validate": "刪除"
+    }
+  },
+  "dropActor": "將素材拖放至此區域建立新角色",
+  "dropComponent": "將素材拖放至此區域建立新元件",
+  "failures": {
+    "newActor": "無法建立新角色: ${reason}",
+    "importIntoScene": "無法匯入: ${reason}"
+  },
+  "errors": {
+    "invalidActorId": "錯誤的角色 ID: ${id}.",
+    "cantImportAssetTypeIntoScene": "選擇的素材類型無法被匯入至場景中",
+    "prefab": {
+      "mustHaveSingleRootActor": "A scene must have a single root actor to be usable as a prefab.",
+      "cantUseSelf": "場景無法把自身作為 prefab 使用",
+      "cyclicalReference": "將場景作為 prefab 使用可能會產生無窮迴圈"
+    },
+    "script": {
+      "noBehaviorsFound": "No behaviors was found in this script."
+    }
+  }
+}

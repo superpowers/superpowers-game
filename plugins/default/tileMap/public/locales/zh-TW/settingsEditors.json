@@ -1,0 +1,10 @@
+{
+  "TileMap": {
+    "label": "Tile Map",
+    "pixelsPerUnit": "單位像素",
+    "defaultWidth": "預設寬度",
+    "defaultHeight": "預設高度",
+    "depthOffset": "深度位移",
+    "tileSetGridSize": "Tile Set 網格大小"
+  }
+}

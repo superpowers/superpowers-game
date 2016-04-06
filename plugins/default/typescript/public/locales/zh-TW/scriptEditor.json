@@ -1,0 +1,24 @@
+{
+  "applyChanges": "套用",
+  "applyChangesWithErrors": "有錯誤也要套用",
+  "draft": "草稿",
+  
+  "errors": {
+    "noErrors": "無錯誤",
+    "oneError": "1 個錯誤",
+    "severalErrors": "${errors} 個錯誤",
+
+    "selfErrorsInfo": "${errors} in this script",
+    "otherErrorsInfo": "${errors} in other scripts",
+    "bothErrorsInfo": "${selfErrors}, ${otherErrors}",
+
+    "line": "行數",
+    "message": "訊息",
+    "script": "Script"
+  },
+
+  "globalSearch": {
+    "prompt": "在所有 TypeScript 中搜尋.",
+    "placeholder": "在專案內尋找"
+  }
+}

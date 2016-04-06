@@ -1,0 +1,13 @@
+{
+  "searchPlaceholder": "在專案內尋找",
+  "matchCase": "大小寫需相符",
+
+  "noResults": "找不到任何結果",
+  "resultInfo": "${results} 在 ${files}",
+  "fileInfo": "${results} 在 \"${fileName}\"",
+
+  "oneResult": "1 個相符結果",
+  "severalResults": "${results} 個相符結果",
+  "oneFile": "1 個檔案",
+  "severalFiles": "${files} 個檔案"
+}

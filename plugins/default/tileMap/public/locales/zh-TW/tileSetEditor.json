@@ -1,0 +1,18 @@
+{
+  "tileSet": "Tile Set",
+  "texture": {
+    "title": "材質",
+    "downloadPrompt": "輸入材質名稱",
+    "downloadInitialValue": "Tile Set"
+  },
+  "grid": "網格 (px)",
+  
+  "data": "Data",
+  "tileID": "Tile ID",
+  
+  "properties": "屬性",
+  "newPropertyPrompt": "輸入新的屬性名稱",
+  "newPropertyInitialValue": "property",
+  "renamePropertyPrompt": "輸入新的屬性名稱",
+  "deletePropertyConfirm": "您確定要刪除所選的屬性嗎?"
+}

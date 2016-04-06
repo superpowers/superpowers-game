@@ -1,0 +1,26 @@
+{
+  "type": "Font Type",
+  "typeOptions": {
+    "bitmap": "Bitmap",
+    "vector": "Vector Font"
+  },
+  "font": {
+    "title": "字型",
+    "download": {
+      "prompt": "輸入字型名稱",
+      "defaultName": "Font"
+    }
+  },
+  "texture": "材質",
+  "rendering": "渲染",
+  "filtering": "過濾",
+  "pixelated": "像素化",
+  "smooth": "平滑",
+  "pixelsPerUnit": "像素/單位",
+  "color": "顏色",
+  "settings": "測定",
+  "size": "大小 (像素)",
+  "gridSize": "網格尺寸",
+  "charset": "字元集",
+  "charsetOffset": "字元集位移"
+}

@@ -1,0 +1,17 @@
+{
+  "sidebar": {
+    "settings": {
+      "sound": {
+        "title": "音效",
+        "file": {
+          "title": "檔案",
+          "download": {
+            "defaultName": "Sound.wav",
+            "prompt": "請輸入音效名稱"
+          }
+        },
+        "streaming": "串流"
+      }
+    }
+  }
+}

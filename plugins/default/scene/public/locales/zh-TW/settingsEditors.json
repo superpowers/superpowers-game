@@ -1,0 +1,7 @@
+{
+  "Scene": {
+    "label": "場景",
+    "defaultCameraMode": "預設鏡頭模式",
+    "defaultCameraVerticalAxis": "預設鏡頭垂直座標"
+  }
+}

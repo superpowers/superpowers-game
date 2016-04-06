@@ -1,0 +1,23 @@
+{
+  "Camera": {
+    "label": "鏡頭",
+    "mode": "模式",
+    "modeOptions": {
+      "perspective": "透視鏡頭",
+      "orthographic": "正投影鏡頭"
+    },
+    "fieldOfView": "Field of View",
+    "orthographicScale": "投影縮放程度",
+    "depth": "深度",
+    "depthTitle": "當多個鏡頭被啟用時，用以決定鏡頭的優先順序",
+    "layers": "圖層",
+    "layersTitle": "圖層順序以及是否顯示圖層",
+    "nearPlane": "Near Plane",
+    "farPlane": "Far Plane",
+    "viewport": {
+      "title": "Viewport",
+      "position": "Top / Left",
+      "size": "Width / Height"
+    }
+  }
+}

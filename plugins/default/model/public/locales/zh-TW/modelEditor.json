@@ -1,0 +1,59 @@
+{
+  "status": {
+    "noErrors": "無錯誤",
+    "oneError": "1 個錯誤",
+    "severalErrors": "${errors} 個錯誤",
+
+    "line": "行",
+    "type": "類型",
+    "message": "訊息",
+    "file": "檔案"
+  },
+
+  "sidebar": {
+    "settings": {
+      "model": "模型",
+      "texture": "材質",
+      "filtering": {
+        "title": "Filtering",
+        "pixelated": "Pixelated",
+        "smooth": "Smooth"
+      },
+      "wrapping": {
+        "title": "Wrapping",
+        "clampToEdge": "Clamp to edge",
+        "repeat": "重複",
+        "mirroredRepeat": "鏡像重複"
+      },
+      "showSkeleton": "顯示骨骼",
+      "unitRatio": "單位比例",
+      "opacity": {
+        "title": "透明度",
+        "opaque": "不透明",
+        "transparent": "透明"
+        }
+    },
+    "animations": {
+      "title": "動作",
+      "new": {
+        "prompt": "請輸入動作名稱",
+        "initialValue": "Animation"
+      },
+      "renamePrompt": "請輸入新的動作名稱",
+      "deleteConfirm": "您確定要刪除所選擇的動作嗎?"
+    },
+    "advancedTextures": {
+      "title": "進階材質選項",
+      "map": "Map",
+      "lightMap": "Light map",
+      "specularMap": "Specular map",
+      "alphaMap": "Alpha map",
+      "normalMap": "法向量貼圖 (Phong)",
+      "newMapPrompt": "請輸入貼圖名稱",
+      "renameMapPrompt": "請輸入新的材質名稱",
+      "deleteMapConfirm": "您確定要刪除所選擇的材質嗎?",
+      "downloadPrompt": "請輸入影像名稱",
+      "downloadInitialValue": "Image"
+    }
+  }
+}

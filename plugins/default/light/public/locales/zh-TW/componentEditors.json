@@ -1,0 +1,30 @@
+{
+  "Light": {
+    "label": "光源",
+    "type": "類型",
+    "typeOptions": {
+      "ambient": "環境光",
+      "point": "點光源",
+      "spot": "聚光燈",
+      "directional": "方向性"
+    },
+
+    "color": "色彩",
+    "intensity": "強度",
+    "distance": "距離",
+    "angle": "角度",
+    "target": "目標",
+    "castShadow": "投射陰影",
+    
+    "shadowSettings": {
+      "title": "陰影設定",
+      "mapSize": "Map Size",
+      "bias": "Bias",
+      "darkness": "亮度",
+      "near-far": "近 / 遠",
+      "fov": "FOV",
+      "top-bottom": "上 / 下",
+      "left-right": "左 / 右"
+    }
+  }
+}

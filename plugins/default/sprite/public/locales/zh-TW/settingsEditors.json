@@ -1,0 +1,11 @@
+{
+  "Sprite": {
+    "label": "Sprite",
+    "filtering": "濾鏡",
+    "pixelated": "像素化",
+    "smooth": "平滑",
+    "framesPerSecond": "每秒幀數",
+    "pixelsPerUnit": "每單位像素",
+    "alphaTesting": "Alpha testing"
+  }
+}

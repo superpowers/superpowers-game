@@ -1,0 +1,18 @@
+{
+  "ArcadeBody2D": {
+    "label": "Arcade Body 2D",
+    "type": "類型",
+    "typeOptions": {
+      "box": "Box",
+      "tileMap": "Tile Map"
+    },
+
+    "movable": "可移動",
+    "size": "尺寸",
+    "offset": "偏移量(offset)",
+
+    "tileMap": "Tile Map",
+    "tileSetProperty": "Tile Set Property",
+    "layers": "圖層"
+  }
+}

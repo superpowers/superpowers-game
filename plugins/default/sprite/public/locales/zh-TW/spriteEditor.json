@@ -1,0 +1,77 @@
+{
+  "preview": {
+    "playback": "Playback",
+    "loop": "重複"
+  },
+  "sidebar": {
+    "settings": {
+      "sprite": {
+        "title": "Sprite",
+        "texture": {
+          "title": "材質",
+          "size": "材質大小 (px)",
+          "download": {
+            "prompt": "請輸入新的圖片名稱",
+            "defaultName": "Image"
+          }
+        },
+        "grid": {
+          "size": "網格大小",
+          "setup": "設定",
+          "widthPrompt": "一列中有幾個畫格?",
+          "setWidth": "設定寬度",
+          "heightPrompt": "一欄內有幾個畫格?",
+          "setHeight": "設定高度"
+        },
+        "origin": "Origin (%)"
+      },
+      "rendering": {
+        "title": "渲染",
+        "pixelsPerUnit": "像素 / 單位",
+        "filtering": {
+          "title": "過濾",
+          "pixelated": "像素化",
+          "smooth": "平滑"
+        },
+        "wrapping": {
+          "title": "Wrapping",
+          "clampToEdge": "Clamp to edge",
+          "repeat": "Repeat",
+          "mirroredRepeat": "Mirrored repeat"
+        },
+        "opacity": {
+          "title": "透明度",
+          "opaque": "不透明",
+          "transparent": "透明"
+        },
+        "alphaTest": "Alpha test"
+      },
+      "animation": {
+         "title": "動作",
+         "framesPerSecond": "畫面 / 秒",
+         "frameOrder": {
+           "title": "畫格順序",
+           "rows": "列",
+           "columns": "欄"
+         }
+      }
+    },
+    "animations": {
+      "title": "動作",
+      "newAnimationPrompt": "請輸入動作名稱",
+      "renameAnimationPrompt": "請輸入新的動作名稱",
+      "deleteAnimationPrompt": "您確定要刪除所選的動作嗎?"
+    },
+    "advancedTextures": {
+      "title": "進階材質選項",
+      "map": "Map",
+      "lightMap": "Light map",
+      "specularMap": "Specular map",
+      "alphaMap": "Alpha map",
+      "normalMap": "法向量貼圖 (Phong)",
+      "newMapPrompt": "請輸入新貼圖名稱",
+      "renameMapPrompt": "請輸入新的材質名稱",
+      "deleteMapPrompt": "您確定要刪除所選的材質嗎?"
+    }
+  }
+}

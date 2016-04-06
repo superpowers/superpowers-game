@@ -1,0 +1,6 @@
+{
+  "Light": {
+    "label": "光源",
+    "shadowMapType": "Shadow Map 類型"
+  }
+}

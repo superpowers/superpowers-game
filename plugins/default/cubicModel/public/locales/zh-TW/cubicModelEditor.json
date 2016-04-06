@@ -1,0 +1,77 @@
+{
+  "3dView": {
+    "settings": {
+      "title": "設定",
+      "linkShapeToPivot": "Link shape to pivot"
+    },
+    "transform": {
+      "title": "Transform",
+      "movePivot": "移動 pivot",
+      "moveShape": "移動 shape",
+      "rotate": "旋轉",
+      "stretch": "伸展",
+      "local": "Local"
+    },
+    "grid": {
+      "title": "網格",
+      "size": "大小",
+      "visible": "顯示"
+    }
+  },
+  "textureView": {
+    "mode": {
+      "title": "模式",
+      "layout": "配置",
+      "paint": "繪製"
+    },
+    "layoutMode": {
+      "title": "設定",
+      "linkTextureToUV": "連結材質到 UV"
+    },
+    "paintMode": {
+      "tool": "工具",
+      "brush": "筆刷",
+      "eraser": "橡皮擦",
+      "fill": "填滿",
+      "color": "顏色"
+    }
+  },
+  "sidebar": {
+    "settings": {
+      "cubicModel": {
+        "title": "Cubic Model",
+        "pixelsPerUnit": "單位像素",
+        "texture": "材質",
+        "download": {
+          "defaultName": "Texture",
+          "prompt": "輸入材質名稱"
+        },
+        "textureSize": "材質大小 (px)"
+      }
+    },
+    "nodes": {
+      "title": "節點",
+      "newNode": {
+        "title": "新增節點",
+        "prompt": "請輸入節點名稱"
+      },
+      "renamePrompt": "請輸入新的節點名稱",
+      "duplicatePrompt": "請輸入新的節點名稱",
+      "deleteConfirm": "您確定要刪除所選的節點嗎?",
+      "hide": "隱藏",
+      "show": "顯示"
+    },
+    "inspector": {
+      "position": "位置",
+      "orientation": "角度",
+      "shape": "形狀",
+      "shapeType": "類型",
+      "shapeOptions": {
+        "box": "盒狀"
+      },
+      "offset": "位移",
+      "size": "尺寸",
+      "stretch": "伸展"
+    }
+  }
+}

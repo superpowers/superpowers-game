@@ -1,0 +1,21 @@
+{
+  "TextRenderer": {
+    "label": "文字渲染",
+    "font": "字型",
+    "text": "文字",
+    "align": {
+      "title": "對齊",
+      "left": "靠左",
+      "center": "置中",
+      "right": "靠右"
+    },
+    "verticalAlign": {
+      "title": "垂直對齊",
+      "top": "上",
+      "center": "中",
+      "bottom": "下"
+    },
+    "size": "大小",
+    "color": "顏色"
+  }
+}

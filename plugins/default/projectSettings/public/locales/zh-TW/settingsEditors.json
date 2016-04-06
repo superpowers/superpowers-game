@@ -1,0 +1,9 @@
+{
+  "Project": {
+    "label": "專案",
+    "deleteTrashedAssetsFromDisk": "清空已刪除的素材",
+    "noFoldersRemoved": "沒有刪除任何資料夾",
+    "oneFolderRemoved": "1 個資料夾已被刪除",
+    "severalFoldersRemoved": "${folders} 個資料夾已被刪除"
+  }
+}

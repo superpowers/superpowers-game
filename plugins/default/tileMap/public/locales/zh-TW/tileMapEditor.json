@@ -1,0 +1,30 @@
+{
+  "tileMap": "Tile Map",
+  "tileSet": "Tile Set",
+  "pixelsPerUnit": "像素 / 單位",
+  "depthOffset": "深度位移",
+
+  "size": "大小",
+  "resize": "調整大小",
+  "newWidthPrompt": "輸入新的 map 寬度",
+  "newHeightPrompt": "輸入新的 map 高度",
+  "move": "移動",
+  "applyOffset": "套用位移",
+  "horizontalOffsetPrompt": "輸入水平位移量",
+  "verticalOffsetPrompt": "輸入垂直位移量",
+  
+  "tools": "工具",
+  "grid": "網格",
+  "highlight": "凸顯",
+  
+  "brush": "筆刷",
+  "fill": "填滿",
+  "selection": "選擇",
+  "eraser": "橡皮擦",
+  
+  "layers": "圖層",
+  "newLayerPrompt": "輸入新的圖層名稱",
+  "newLayerInitialValue": "Layer",
+  "renameLayerPrompt": "輸入新的圖層名稱",
+  "deleteLayerConfirm": "您確定要刪除所選的圖層嗎?"
+}

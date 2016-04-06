@@ -1,0 +1,12 @@
+{
+  "Game": {
+    "label": "遊戲設定",
+    "startupScene": "初始場景",
+    "framesPerSecond": "每秒幀數",
+    "screenRatio": "畫面比例",
+    "width": "寬度",
+    "height": "高度",
+    "layers": "圖層",
+    "newLayer": "新建圖層..."
+  }
+}
