@@ -1,0 +1,15 @@
+{
+  "P2Body": {
+    "label": "P2 Тело",
+    "mass": "Масса",
+    "fixedRotation": "Фиксировать вращение",
+    "offset": "Смещение",
+    "shape": "Форма",
+    "shapeOptions": {
+      "box": "Поле",
+      "circle": "Круг"
+    },
+    "size": "Размер",
+    "radius": "Радиус"
+  }
+}

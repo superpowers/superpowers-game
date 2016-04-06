@@ -1,10 +1,10 @@
 {
   "TileMap": {
-    "label": "Тайл Мап",
+    "label": "ТайлМап",
     "pixelsPerUnit": "Пикселей на единицу",
     "defaultWidth": "Стандартная ширина",
     "defaultHeight": "Стандартная высота",
     "depthOffset": "Глубина смещена",
-    "tileSetGridSize": "Размер сетки Тайл Сета"
+    "tileSetGridSize": "Размер сетки ТайлСета"
   }
 }

@@ -1,7 +1,7 @@
 {
   "Game": {
     "label": "Игра",
-    "startupScene": "Стартовая Сцена",
+    "startupScene": "Начальная Сцена",
     "framesPerSecond": "Кадров в секунду",
     "screenRatio": "Формат экрана",
     "width": "Ширина",

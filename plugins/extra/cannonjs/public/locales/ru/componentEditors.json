@@ -1,0 +1,18 @@
+{
+  "CannonBody": {
+    "label": "Тело Оружия",
+    "mass": "Масса",
+    "fixedRotation": "Фиксировать вращение",
+    "offset": "Смещение",
+    "shape": "Форма",
+    "shapeType": "тип",
+    "shapeOptions": {
+      "box": "Поле",
+      "sphere": "Сфера",
+      "cylinder": "Цилиндр"
+    },
+    "halfSize": "Половина размера",
+    "radius": "Радиус",
+    "height": "Высота"
+  }
+}

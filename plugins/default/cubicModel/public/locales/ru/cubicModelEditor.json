@@ -67,7 +67,7 @@
       "shape": "Форма",
       "shapeType": "Тип",
       "shapeOptions": {
-        "box": "Коробка"
+        "box": "Поле"
       },
       "offset": "Смещение",
       "size": "Размер",

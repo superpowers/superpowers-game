@@ -1,6 +1,6 @@
 {
-  "tileMap": "Тайл Мап",
-  "tileSet": "Тайл Сет",
+  "tileMap": "ТайлМап",
+  "tileSet": "ТайлСет",
   "pixelsPerUnit": "Пиксели / Единица",
   "depthOffset": "Глубина отступа",
 

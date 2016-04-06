@@ -17,7 +17,7 @@
     "castShadow": "Отбрасываемая Тень",
     
     "shadowSettings": {
-      "title": "Настройка Тени",
+      "title": "Настройки Тени",
       "mapSize": "Размер Карты",
       "bias": "Смещение",
       "darkness": "Темнение",
@@ -28,4 +28,3 @@
     }
   }
 }
-Status API Training Shop Blog About Pricing
