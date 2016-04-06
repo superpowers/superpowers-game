@@ -16,7 +16,7 @@
         },
         "grid": {
           "size": "Dimensão da Grade",
-          "setup": "Setup",
+          "setup": "Configurar",
           "widthPrompt": "Quantos quadros por linha?",
           "setWidth": "Definir largura da grade",
           "heightPrompt": "Quantos quadros por coluna?",

@@ -8,7 +8,7 @@
   "resize": "Redimensionar",
   "newWidthPrompt": "Insira uma nova largura para o mapa.",
   "newHeightPrompt": "Insira uma nova altura para o mapa.",
-  "move": "Mover",
+  "move": "Deslocar",
   "applyOffset": "Aplicar deslocamento",
   "horizontalOffsetPrompt": "Insira o deslocamento horizontal.",
   "verticalOffsetPrompt": "Insira o deslocamento vertical.",
