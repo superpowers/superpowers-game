@@ -9,6 +9,7 @@ interface KeyState {
 
 interface MouseButtonState {
   isDown: boolean;
+  doubleClicked: boolean;
   wasJustPressed: boolean;
   wasJustReleased: boolean;
 }
@@ -89,6 +90,7 @@ export default class Input extends EventEmitter {
     // Mouse
     this.canvas.addEventListener("mousemove", this.onMouseMove);
     this.canvas.addEventListener("mousedown", this.onMouseDown);
+    this.canvas.addEventListener("dblclick", this.onMouseDblClick);
     document.addEventListener("mouseup", this.onMouseUp);
     this.canvas.addEventListener("contextmenu", this.onContextMenu);
     this.canvas.addEventListener("DOMMouseScroll", this.onMouseWheel);
@@ -177,7 +179,7 @@ export default class Input extends EventEmitter {
     // Mouse
     this.newScrollDelta = 0;
     for (let i = 0; i <= 6; i++) {
-      this.mouseButtons[i] = { isDown: false, wasJustPressed: false, wasJustReleased: false };
+      this.mouseButtons[i] = { isDown: false, doubleClicked: false, wasJustPressed: false, wasJustReleased: false };
       this.mouseButtonsDown[i] = false;
     }
 
@@ -349,6 +351,11 @@ export default class Input extends EventEmitter {
 
     if (this.wantsFullscreen && !this.wasFullscreen) this._doGoFullscreen();
     if (this.wantsPointerLock && !this.wasPointerLocked) this._doPointerLock();
+  };
+
+  private onMouseDblClick = (event: MouseEvent) => {
+    event.preventDefault();
+    this.mouseButtons[event.button].doubleClicked = true;
   };
 
   private onContextMenu = (event: Event) => {

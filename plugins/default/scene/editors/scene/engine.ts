@@ -176,6 +176,18 @@ function mouseUp() {
   }
   setupSelectedNode();
   setupHelpers();
+
+  if (engine.gameInstance.input.mouseButtons[0].doubleClicked) {
+    focusActor(selectedNodeId);
+    engine.gameInstance.input.mouseButtons[0].doubleClicked = false;
+  }
+}
+
+export function focusActor(selectedNodeId: string) {
+  const position = new THREE.Box3().setFromObject(data.sceneUpdater.bySceneNodeId[selectedNodeId].actor.threeObject).center();
+  if (ui.cameraMode === "2D") position.z = engine.cameraActor.getLocalPosition(new THREE.Vector3()).z;
+  engine.cameraActor.setLocalPosition(position);
+  if (ui.cameraMode === "3D") engine.cameraActor.moveOriented(new THREE.Vector3(0, 0, 20));
 }
 
 export function setupHelpers() {
