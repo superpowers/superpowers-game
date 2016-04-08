@@ -1,0 +1,79 @@
+{
+  "controls": {
+    "camera": {
+      "title": "กล้อง",
+      "mode": "โหมด",
+      "verticalAxis": "แนวตั้ง",
+      "speed": "ความเร็ว"
+    },
+    "transform": {
+      "title": "ทรานส์ฟอร์ม",
+      "move": "เคลื่อนย้าย",
+      "rotate": "หมุน",
+      "scale": "ปรับขนาด",
+      "local": "ส่วนพื้นที่"
+    },
+    "grid": {
+      "title": "ตาราง",
+      "size": "ขนาด",
+      "visible": "มองเห็น"
+    },
+    "light": {
+      "title": "แสง"
+    }
+  },
+  "treeView": {
+    "newActor": {
+      "title": "สร้างแอคเตอร์",
+      "prompt": "ชื่อของแอคเตอร์",
+      "initialValue": "Actor"
+    },
+    "newPrefab": {
+      "title": "สร้างพรีแฟบ",
+      "prompt": "ชื่อของพรีแฟบ",
+      "initialValue": "Prefab"
+    },
+    "renamePrompt": "ชื่อของแอคเตอร์",
+    "duplicatePrompt": "ชื่อของแอคเตอร์",
+    "deleteConfirm": "คุณแน่ใจหรือที่จะลบแอคเตอร์ที่เลือก?",
+    "visible": {
+      "show": "แสดง",
+      "hide": "ซ่อน"
+    }
+  },
+  "inspector": {
+    "position": "ตำแหน่ง",
+    "orientation": "การปรับ",
+    "scale": "ขนาด",
+    "visible": "มองเห็น",
+    "layer": "เลเยอร์",
+    "prefab": "พรีแฟบ",
+    "newComponent":{
+      "title": "สร้างองค์ประกอบใหม่",
+      "select": "เลือกประเภทขององค์ประกอบ",
+      "validate": "สร้าง"
+    },
+    "deleteComponent": {
+      "confirm": "คุณแน่ใจหรือไม่ที่จะลบองค์ประกอบนี้ออก?",
+      "validate": "ลบ"
+    }
+  },
+  "dropActor": "ลากแอสเซทมาไว้ที่นี้เพื่อสร้างแอคเตอร์",
+  "dropComponent": "ลากแอสเซทมาไว้ที่นี้เพื่อสร้างองค์ประกอบ",
+  "failures": {
+    "newActor": "ไม่สามารถสร้างแอคเตอร์ใหม่ได้: ${reason}",
+    "importIntoScene": "ไม่สามารถนำเข้า: ${reason}"
+  },
+  "errors": {
+    "invalidActorId": "ไอดีของแอคเตอร์ไม่ถูกต้อง: ${id}.",
+    "cantImportAssetTypeIntoScene": "แอสเซทชนิดนี้ไม่สามารถนำเข้ามาใส่ในฉากได้",
+    "prefab": {
+      "mustHaveSingleRootActor": "ฉากจะต้องมีรูทเดียวที่ใช้เป็นพรีแฟบได้",
+      "cantUseSelf": "ฉากไม่สามารถใช้ตัวเองเป็นพรีแแฟบได",
+      "cyclicalReference": "หากใช้ฉากนี้เป็นพรีแฟบจะทำให้เกิดลูปไม่สิ้นสุด"
+    },
+    "script": {
+      "noBehaviorsFound": "ไม่พบ behaviors ในสคริปต์นี้"
+    }
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "tileMap": "ไทล์แมพ",
+  "tileSet": "ไทล์เซจ",
+  "pixelsPerUnit": "พิกเซล / หน่วย",
+  "depthOffset": "ระยะชดเชย",
+
+  "size": "ขนาด",
+  "resize": "ปรับขนาด",
+  "newWidthPrompt": "กรอกความกว้างของแมพ",
+  "newHeightPrompt": "กรอกความสูงของแมพ",
+  "move": "เคลื่อนบ้าย",
+  "applyOffset": "ปรับระยะชดเชย",
+  "horizontalOffsetPrompt": "กรอกระยะชดเชยในแนวนอน",
+  "verticalOffsetPrompt": "กรอกระยะชดเชยในแนวตั้ง",
+  
+  "tools": "เครื่องมือ",
+  "grid": "ตาราง",
+  "highlight": "ไฮไลท์",
+  
+  "brush": "พู่กัน",
+  "fill": "ลงสี",
+  "selection": "เลือก",
+  "eraser": "ยางลบ",
+  
+  "layers": "เลเยอร์",
+  "newLayerPrompt": "กรอกชื่อสำหรับเลเยอร์นี้",
+  "newLayerInitialValue": "Layer",
+  "renameLayerPrompt": "กรอกชื่อสำหรับเลเยอร์นี้",
+  "deleteLayerConfirm": "คุณแน่ใจหรือไม่ที่จะลบเลเยอร์นี้ออก"
+}

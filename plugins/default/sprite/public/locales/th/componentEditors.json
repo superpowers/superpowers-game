@@ -1,0 +1,20 @@
+{
+  "SpriteRenderer": {
+    "label": "แสดงสไปรท์",
+    "sprite": "สไปรท์",
+    "animation": "อนิเมชั่น",
+    "animationNone": "(ปกติ)",
+    "flip": "สลับด้าน",
+    "shadow": {
+      "title": "เงา",
+      "cast": "มีเงา",
+      "receive": "รับเงา"
+    },
+    "color": "สี",
+    "opacity": "ความจาง",
+    "transparent": "โปร่งใส",
+    "opaque": "ทึบแสง",
+    "material": "แมททีเรียล",
+    "shader": "เชดเดอร์"
+  }
+}

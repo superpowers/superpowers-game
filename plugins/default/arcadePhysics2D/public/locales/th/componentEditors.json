@@ -1,0 +1,18 @@
+{
+  "ArcadeBody2D": {
+    "label": "Arcade Body 2D",
+    "type": "รูปแบบ",
+    "typeOptions": {
+      "box": "กล่อง",
+      "tileMap": "ไทล์แมพ"
+    },
+
+    "movable": "เคลื่อนย้ายได้",
+    "size": "ขนาด",
+    "offset": "ระยะห่าง",
+
+    "tileMap": "ไทล์แมพ",
+    "tileSetProperty": "กำหนดคุณสมบัติไทล์",
+    "layers": "เลเยอร์"
+  }
+}

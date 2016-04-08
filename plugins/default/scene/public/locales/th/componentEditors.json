@@ -1,0 +1,23 @@
+{
+  "Camera": {
+    "label": "กล้อง",
+    "mode": "รูปแบบ",
+    "modeOptions": {
+      "perspective": "เปอร์สเปคทีฟ",
+      "orthographic": "ออร์โทกราฟิก"
+    },
+    "fieldOfView": "มุมมอง",
+    "orthographicScale": "ขนาดออโธกราฟฟิก",
+    "depth": "ความลึก",
+    "depthTitle": "ใช้ในการกำหนดลำดับการแสดงผลสำหรับกล้องหลายๆตัว",
+    "layers": "เลเยอร์",
+    "layersTitle": "เรียงลำดับเลเยอร์การแสดงผล",
+    "nearPlane": "ระยะมองใกล้",
+    "farPlane": "ระยะมองไกล",
+    "viewport": {
+      "title": "จุดมอง",
+      "position": "บน / ซ้าย",
+      "size": "กว้าง / สูง"
+    }
+  }
+}

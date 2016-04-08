@@ -1,0 +1,26 @@
+{
+  "type": "รูปแบบฟอนต์",
+  "typeOptions": {
+    "bitmap": "บิต",
+    "vector": "เวกเตอร์"
+  },
+  "font": {
+    "title": "ฟอนต์",
+    "download": {
+      "prompt": "กรอกชื่อสำหรับฟอนต์",
+      "defaultName": "Font"
+    }
+  },
+  "texture": "เทกเจอร์",
+  "rendering": "การแสดงผล",
+  "filtering": "Filtering",
+  "pixelated": "Pixelated",
+  "smooth": "เรียบ",
+  "pixelsPerUnit": "พิกเซล / หน่วย",
+  "color": "สี",
+  "settings": "ตั้งค่า",
+  "size": "ขนาด (พิกเซล)",
+  "gridSize": "ขนาดตาราง",
+  "charset": "ตัวอักษร",
+  "charsetOffset": "ระยะห่างตัวอักษร"
+}

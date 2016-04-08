@@ -1,0 +1,17 @@
+{
+  "sidebar": {
+    "settings": {
+      "sound": {
+        "title": "เสียง",
+        "file": {
+          "title": "ไฟล์",
+          "download": {
+            "defaultName": "Sound.wav",
+            "prompt": "ชื่อของเสียง"
+          }
+        },
+        "streaming": "สตรีมมิ่ง"
+      }
+    }
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "3dView": {
+    "settings": {
+      "title": "ตั้งค่า",
+      "linkShapeToPivot": "เชื่อมเข้ากับจุดแกน"
+    },
+    "transform": {
+      "title": "ทรานฟอร์ม",
+      "movePivot": "เคลื่อนจุดแกน",
+      "moveShape": "เคลื่อนรูปทรง",
+      "rotate": "หมุด",
+      "stretch": "ยืดให้พอดี",
+      "local": "พื้นที่"
+    },
+    "grid": {
+      "title": "ตาราง",
+      "size": "ขนาด",
+      "visible": "มองเห็น"
+    }
+  },
+  "textureView": {
+    "mode": {
+      "title": "โหมด",
+      "layout": "เลย์เอาท์",
+      "paint": "ระบายสี"
+    },
+    "layoutMode": {
+      "title": "ตั้งค่า",
+      "linkTextureToUV": "เชื่อมเทกเจอร์เข้ากับ UV"
+    },
+    "paintMode": {
+      "tool": "เครื่องมือ",
+      "brush": "พู่กัน",
+      "eraser": "ยางลบ",
+      "fill": "เทสี",
+      "color": "สี"
+    }
+  },
+  "sidebar": {
+    "settings": {
+      "cubicModel": {
+        "title": "โมเดลแบบลูกบาศก์",
+        "pixelsPerUnit": "พิกเซลต่อหน่วย",
+        "texture": "เทกเจอร์",
+        "download": {
+          "defaultName": "Texture",
+          "prompt": "กรอกชื่อสำหรับเทกเจอร์"
+        },
+        "textureSize": "ขนาดเทกเจอร์ (พิกเซล)"
+      }
+    },
+    "nodes": {
+      "title": "โหนด",
+      "newNode": {
+        "title": "สร้างโหมดใหม่",
+        "prompt": "กรอกชื่อสำหรับโหนด"
+      },
+      "renamePrompt": "กรอกชื่อสำหรับโหนด",
+      "duplicatePrompt": "กรอกชื่อสำหรับโหนด",
+      "deleteConfirm": "คุณแน่ใจหรือที่จะลบโหนดที่เลือกไว้?",
+      "hide": "ซ่อน",
+      "show": "แสดง"
+    },
+    "inspector": {
+      "position": "ตำหน่ง",
+      "orientation": "ปรับให้พอดี",
+      "shape": "รูปร่าง",
+      "shapeType": "ประเภท",
+      "shapeOptions": {
+        "box": "กล่อง"
+      },
+      "offset": "ระยะห่าง",
+      "size": "ขนาด",
+      "stretch": "ยืดให้พอดี"
+    }
+  }
+}

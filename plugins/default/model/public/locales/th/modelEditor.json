@@ -1,0 +1,59 @@
+{
+  "status": {
+    "noErrors": "ไม่มีข้อผิดพลาด",
+    "oneError": "มี 1 ข้อผิดพลาด",
+    "severalErrors": "มี ${errors} ข้อผิดพลาด",
+
+    "line": "บรรทัดที่",
+    "type": "ประเภท",
+    "message": "ข้อความ",
+    "file": "ไฟล์"
+  },
+
+  "sidebar": {
+    "settings": {
+      "model": "โมเดล",
+      "texture": "เทกเจอร์",
+      "filtering": {
+        "title": "ฟิลเตอร์",
+        "pixelated": "พิกเซล",
+        "smooth": "เรียบ"
+      },
+      "wrapping": {
+        "title": "ห่อ (Wrapping)",
+        "clampToEdge": "ยึดขอบ",
+        "repeat": "ซ้ำ",
+        "mirroredRepeat": "สะท้อนด้าน"
+      },
+      "showSkeleton": "แสดงกระดูก",
+      "unitRatio": "อัตราส่วนของหน่วย",
+      "opacity": {
+        "title": "ความโปร่งแสง",
+        "opaque": "ทึบแสง",
+        "transparent": "โปร่งใส"
+        }
+    },
+    "animations": {
+      "title": "อนิเมชั่น",
+      "new": {
+        "prompt": "กรอกชื่อสำหรับอนิเมชั่นนี้",
+        "initialValue": "Animation"
+      },
+      "renamePrompt": "กรอกชื่อสำหรับอนิเมชั่นนี้",
+      "deleteConfirm": "คุณแน่ใจหรือไม่ที่จะลบอนิเมชั่นนี้ออก"
+    },
+    "advancedTextures": {
+      "title": "เทกเจอร์ขั้นสูง",
+      "map": "แมพ",
+      "lightMap": "ไลท์แมพ",
+      "specularMap": "สเปคคูล่าแมพ",
+      "alphaMap": "แอลฟ่า",
+      "normalMap": "นอมอลแมพ (Phong)",
+      "newMapPrompt": "กรอกชื่อสำหรับแมพนี้",
+      "renameMapPrompt": "กรอกชื่อสำหรับเทกเจอร์นี้",
+      "deleteMapConfirm": "คุณแน่ใจหรือไม่ที่จะลบเทกเจอร์นี้ออก",
+      "downloadPrompt": "กรอกชื่อสำหรับรูปภาพนี้",
+      "downloadInitialValue": "Image"
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "Game": {
+    "label": "เกม",
+    "startupScene": "ฉากเริ่มต้น",
+    "framesPerSecond": "เฟรมต่อวินาที",
+    "screenRatio": "อัตราส่วนหน้าจอ",
+    "width": "ความกว้าง",
+    "height": "ความสูง",
+    "layers": "เลเยอร์",
+    "newLayer": "เลเยอร์ใหม่..."
+  }
+}

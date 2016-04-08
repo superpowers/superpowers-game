@@ -1,0 +1,16 @@
+{
+  "ModelRenderer": {
+    "label": "แสดงโมเดล",
+    "model": "โมเดล",
+    "animation": "อนิเมชั่น",
+    "shadow": {
+      "title": "เงา",
+      "cast": "กำเนิดเงา",
+      "receive": "รับเงา"
+    },
+    "color": "สี",
+    "opacity": "ความโปร่งแสง",
+    "material": "แมททีเรียล",
+    "shader": "เชดเดอร์"
+  }
+}

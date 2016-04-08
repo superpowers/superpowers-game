@@ -1,0 +1,7 @@
+{
+  "Scene": {
+    "label": "ฉาก",
+    "defaultCameraMode": "กำหนดค่าเริ่มต้นของโหมดกล้อง",
+    "defaultCameraVerticalAxis": "กำหนดแกนกล้องแนวตั้งเริ่มต้น"
+  }
+}

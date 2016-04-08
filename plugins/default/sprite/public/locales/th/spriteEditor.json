@@ -1,0 +1,76 @@
+{
+  "preview": {
+    "loop": "ลูป"
+  },
+  "sidebar": {
+    "settings": {
+      "sprite": {
+        "title": "สไปรท์",
+        "texture": {
+          "title": "เทกเจอร์",
+          "size": "ขนาดเทกเจอร์ (พิกเซล)",
+          "download": {
+            "prompt": "กรอกชื่อสำหรับเทกเจอร์นี้",
+            "defaultName": "Texture"
+          }
+        },
+        "grid": {
+          "size": "ขนาดตาราง",
+          "setup": "ตั้งค่า",
+          "widthPrompt": "จำนวนเฟรมต่อแถว",
+          "setWidth": "กำหนดความกว้างตาราง",
+          "heightPrompt": "จำนวนเฟรมต่อคอลัมน์",
+          "setHeight": "กำหนดความสูงตาราง"
+        },
+        "origin": "ห่างจุดกำเนิด (%)"
+      },
+      "rendering": {
+        "title": "การแสดงผล",
+        "pixelsPerUnit": "พิกเซล / หน่วย",
+        "filtering": {
+          "title": "ฟิลเตอร์",
+          "pixelated": "พิกเซล",
+          "smooth": "ราบ"
+        },
+        "wrapping": {
+          "title": "ห่อ (Wrapping)",
+          "clampToEdge": "ยึดขอบ",
+          "repeat": "ซ้ำ",
+          "mirroredRepeat": "สะท้อนด้าน"
+        },
+        "opacity": {
+          "title": "ความโปร่งใส",
+          "opaque": "ทึบแสง",
+          "transparent": "โปร่งใส"
+        },
+        "alphaTest": "ทดสอบอัลฟา"
+      },
+      "animation": {
+         "title": "อนิเมชั่น",
+         "framesPerSecond": "เฟรม / วินที",
+         "frameOrder": {
+           "title": "ลำดับเฟรม",
+           "rows": "แถว",
+           "columns": "คอลัมน์"
+         }
+      }
+    },
+    "animations": {
+      "title": "อนิเมชั่น",
+      "newAnimationPrompt": "ชื่ออนิเมชั่น",
+      "renameAnimationPrompt": "ชื่อของอนิเมชั่น",
+      "deleteAnimationPrompt": "คุณแน่ใจหรือที่จะลบอนิเมชั่นที่เลือก?"
+    },
+    "advancedTextures": {
+      "title": " เทกเจอร์",
+      "map": "แมพ",
+      "lightMap": "ไลท์แมพ",
+      "specularMap": "สเปคคูล่าแมพ",
+      "alphaMap": "อัลฟาแมพ",
+      "normalMap": "นอมอลแมพ (Phong)",
+      "newMapPrompt": "ชื่อของแมพ",
+      "renameMapPrompt": "ชื่อของแมพ",
+      "deleteMapPrompt": "คุณแน่ใจหรือที่จะลบแมพที่เลือก?"
+    }
+  }
+}

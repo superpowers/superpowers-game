@@ -1,0 +1,14 @@
+{
+  "TileMapRenderer": {
+    "label": "แสดงไทล์แมพ",
+    "tileMap": "ไทล์แมพ",
+    "tileSet": "ไทล์เซต",
+    "shadow": {
+      "title": "เงา",
+      "cast": "กำเนิดเงา",
+      "receive": "รับเงา"
+    },
+    "material": "แมททีเรียล",
+    "shader": "เชดเดอร์"
+  }
+}

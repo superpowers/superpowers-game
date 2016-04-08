@@ -1,0 +1,9 @@
+{
+  "Project": {
+    "label": "โปรเจค",
+    "deleteTrashedAssetsFromDisk": "ลบไฟล์ในถังขยะออกจากไดรฟ์",
+    "noFoldersRemoved": "ไม่มีโฟลเดอร์ถูกลบออก",
+    "oneFolderRemoved": "1 โฟลเดอร์ถูกลบออก",
+    "severalFoldersRemoved": "${folders} โฟลเดอร์ถูกลบออก"
+  }
+}

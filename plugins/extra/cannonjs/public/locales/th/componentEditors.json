@@ -1,0 +1,18 @@
+{
+  "CannonBody": {
+    "label": "Cannon Body",
+    "mass": "มวล",
+    "fixedRotation": "กำหนดค่าการหมุนคงที่",
+    "offset": "ระยะชดเชย",
+    "shape": "รูปร่าง",
+    "shapeType": "รูปแบบ",
+    "shapeOptions": {
+      "box": "สีเหลี่ยม",
+      "sphere": "วงกลม",
+      "cylinder": "ทรงกระบอก"
+    },
+    "halfSize": "ขนาดครึ่งหนึ่ง",
+    "radius": "รัศมี",
+    "height": "ความสูง"
+  }
+}

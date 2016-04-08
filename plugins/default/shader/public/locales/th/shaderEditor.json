@@ -1,0 +1,18 @@
+{
+  "uniforms": "ยูนิฟอร์ม",
+  "newUniform": "ยูนิฟอร์มใหม่",
+  "attributes": "คุณสมบัติ",
+  "newAttribute": "คุณสมบัติใหม่",
+  "name": "ชื่อ",
+  "type": "รูปแบบ",
+  "value": "ค่า",
+  "useLights": "ใช้แสง",
+  "preview": "ตัวอย่าง",
+  "plane": "พื้นราบ",
+  "box" : "กล่อง",
+  "sphere": "ทรงกลม",
+  "asset": "ทรัพยากร",
+  "assetPath": "ที่อยู่ของทรัพยากร",
+  "vertexShader": "เวอร์เทคเชดเดอร์",
+  "fragmentShader": "แฟรกเมนท์เชดเดอร์"
+}

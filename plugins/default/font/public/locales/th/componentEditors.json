@@ -1,0 +1,21 @@
+{
+  "TextRenderer": {
+    "label": "แสดงตัวอักษร",
+    "font": "ฟอนต์",
+    "text": "ตัวอักษร",
+    "align": {
+      "title": "การเรียง",
+      "left": "ชิดซ้าย",
+      "center": "ตรงกลาง",
+      "right": "ชิดขวา"
+    },
+    "verticalAlign": {
+      "title": "เรียงแนวตั้ง",
+      "top": "บน",
+      "center": "ตรงกลาง",
+      "bottom": "ล่าง"
+    },
+    "size": "ขนาด",
+    "color": "สี"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "tileSet": "ไทล์แมพ",
+  "texture": {
+    "title": "เทกเจอร์",
+    "downloadPrompt": "กรอกชื่อสำหรับเทกเจอร์นี้",
+    "downloadInitialValue": "ไทล์เซต"
+  },
+  "grid": "ตาราง (พิกเซล)",
+  
+  "data": "ข้อมูล",
+  "tileID": "ไทล์ไอดี",
+  
+  "properties": "คุณสมบัติ",
+  "newPropertyPrompt": "กรอกชื่อสำหรับคุณสมบัตินี้",
+  "newPropertyInitialValue": "property",
+  "renamePropertyPrompt": "กรอกชื่อสำหรับคุณสมบัตินี้",
+  "deletePropertyConfirm": "คุณแน่ใจหรือไม่ที่จะลบคุณสมบัตินี้ออก"
+}

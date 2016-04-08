@@ -1,0 +1,30 @@
+{
+  "Light": {
+    "label": "แสง",
+    "type": "รูปแบบ",
+    "typeOptions": {
+      "ambient": "พื้นที่โดยรอบ",
+      "point": "จุด",
+      "spot": "ไฟฉาย",
+      "directional": "พระอาทิตย์"
+    },
+
+    "color": "สี",
+    "intensity": "ความเข้ม",
+    "distance": "ระยะทาง",
+    "angle": "มุม",
+    "target": "เป้าหมาย",
+    "castShadow": "กำเนิดเงา",
+    
+    "shadowSettings": {
+      "title": "ตั้งค่าเงา",
+      "mapSize": "ขนาดแผนที่",
+      "bias": "เส้นทแยง",
+      "darkness": "ความมืด",
+      "near-far": "ใกล้ / ไกล",
+      "fov": "มุมมอง",
+      "top-bottom": "บน / ล่าง",
+      "left-right": "ซ้าย / ขวา"
+    }
+  }
+}

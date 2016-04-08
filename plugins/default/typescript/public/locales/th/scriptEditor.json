@@ -1,0 +1,24 @@
+{
+  "applyChanges": "บันทึก",
+  "applyChangesWithErrors": "บันทึก(มีข้อผิดพลาด)",
+  "draft": "ยังไม่ได้บันทึก",
+  
+  "errors": {
+    "noErrors": "ไม่มีข้อผิดพลาดใดๆ",
+    "oneError": "มีข้อผิดพลาด 1 จุด",
+    "severalErrors": "มีข้อผิดพลาด ${errors} จุด",
+
+    "selfErrorsInfo": "${errors}ในสคริปต์นี้",
+    "otherErrorsInfo": "${errors}ในสคริปต์อื่น",
+    "bothErrorsInfo": "${selfErrors}, ${otherErrors}",
+
+    "line": "บรรทัดที่",
+    "message": "ข้อความ",
+    "script": "สคริปต์"
+  },
+
+  "globalSearch": {
+    "prompt": "ค้นหาใน TypeScript ทั้งหมด",
+    "placeholder": "ค้นหาในโปรเจค"
+  }
+}

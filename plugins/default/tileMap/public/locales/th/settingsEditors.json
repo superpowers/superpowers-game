@@ -1,0 +1,10 @@
+{
+  "TileMap": {
+    "label": "ไทล์แมพ",
+    "pixelsPerUnit": "พิกเซลต่อหน่วอย",
+    "defaultWidth": "ความกว้างพื้นฐาน",
+    "defaultHeight": "ความสูงพื้นฐาน",
+    "depthOffset": "ระยะชดเชย",
+    "tileSetGridSize": "ขนาดตาราง"
+  }
+}

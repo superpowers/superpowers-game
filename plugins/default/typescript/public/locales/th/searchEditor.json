@@ -1,0 +1,13 @@
+{
+  "searchPlaceholder": "ค้นหาในโปรเจค",
+  "matchCase": "ตรงกับ",
+
+  "noResults": "ไม่มีผลลัพธ์ที่ค้นหา",
+  "resultInfo": "${results} อยู่ใน ${files}",
+  "fileInfo": "${results} อยู่ใน \"${fileName}\"",
+
+  "oneResult": "พบ 1 ผลลัพธ์",
+  "severalResults": "พบ ${results} ผลลัพธ์",
+  "oneFile": "1 ไฟล์",
+  "severalFiles": "${files} ไฟล์"
+}

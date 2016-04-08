@@ -1,0 +1,15 @@
+{
+  "P2Body": {
+    "label": "P2 Body",
+    "mass": "มวล",
+    "fixedRotation": "กำหนดค่าการหมุนคงที่",
+    "offset": "ระยะชดเชย",
+    "shape": "รูปร่าง",
+    "shapeOptions": {
+      "box": "สีเหลี่ยม",
+      "circle": "วงกลม"
+    },
+    "size": "ขนาด",
+    "radius": "รัศมี"
+  }
+}
