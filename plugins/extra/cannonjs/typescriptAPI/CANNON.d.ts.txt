@@ -886,12 +886,12 @@ declare module CANNON {
         vertices: Vec3[];
         worldVertices: Vec3[];
         worldVerticesNeedsUpdate: boolean;
-        faces: number[];
+        faces: number[][];
         faceNormals: Vec3[];
         uniqueEdges: Vec3[];
         uniqueAxes: Vec3[];
 
-        constructor(points?: Vec3[], faces?: number[]);
+        constructor(points?: Vec3[], faces?: number[][]);
 
         computeEdges(): void;
         computeNormals(): void;
