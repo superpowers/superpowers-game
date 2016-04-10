@@ -7,11 +7,12 @@ export interface TextRendererConfigPub {
   verticalAlignment?: string;
   size?: number;
   color?: string;
+
+  overrideOpacity?: boolean;
   opacity?: number;
 }
 
 export default class TextRendererConfig extends SupCore.Data.Base.ComponentConfig {
-
   static schema: SupCore.Data.Schema = {
     formatVersion: { type: "integer" },
 
@@ -21,6 +22,8 @@ export default class TextRendererConfig extends SupCore.Data.Base.ComponentConfi
     verticalAlignment: { type: "enum", items: [ "top", "center", "bottom" ], mutable: true },
     size: { type: "integer?", min: 0, mutable: true },
     color: { type: "string?", length: 6, mutable: true },
+
+    overrideOpacity: { type: "boolean", mutable: true },
     opacity: { type: "number?", min: 0, max: 1, mutable: true }
   };
 
@@ -34,13 +37,14 @@ export default class TextRendererConfig extends SupCore.Data.Base.ComponentConfi
       verticalAlignment: "center",
       size: null,
       color: null,
-      opacity: null
 
+      overrideOpacity: false,
+      opacity: null
     };
     return emptyConfig;
   }
 
-  static currentFormatVersion = 1;
+  static currentFormatVersion = 2;
   static migrate(pub: TextRendererConfigPub) {
     if (pub.formatVersion === TextRendererConfig.currentFormatVersion) return false;
 
@@ -53,6 +57,13 @@ export default class TextRendererConfig extends SupCore.Data.Base.ComponentConfi
       // NOTE: Migration from old "align" property
       if ((pub as any).align != null) { pub.alignment = (pub as any).align; delete (pub as any).align; }
       if (pub.verticalAlignment == null) pub.verticalAlignment = "center";
+    }
+
+    if (pub.formatVersion === 1) {
+      pub.overrideOpacity = false;
+      pub.opacity = null;
+
+      pub.formatVersion = 2;
     }
 
     return true;

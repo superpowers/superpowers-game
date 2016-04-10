@@ -63,7 +63,7 @@ export default class SpriteRendererUpdater {
   }
 
   private onSpriteAssetReceived = (assetId: string, asset: SpriteAsset) => {
-    if (this.spriteRenderer.opacity == null) this.spriteRenderer.opacity = asset.pub.opacity;
+    if (!this.overrideOpacity) this.spriteRenderer.opacity = asset.pub.opacity;
     this.prepareMaps(asset.pub.textures, () => {
       this.spriteAsset = asset;
       this.setSprite();

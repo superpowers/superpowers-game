@@ -31,7 +31,7 @@ export interface FontPub {
 }
 
 export default class FontAsset extends SupCore.Data.Base.Asset {
-  static currentFormatVersion = 1;
+  static currentFormatVersion = 2;
 
   static schema: SupCore.Data.Schema = {
     formatVersion: { type: "integer" },
@@ -102,10 +102,13 @@ export default class FontAsset extends SupCore.Data.Base.Asset {
     if (pub.formatVersion === FontAsset.currentFormatVersion) { callback(false); return; }
 
     if (pub.formatVersion == null) {
-      // NOTE: Legacy stuff from Superpowers 0.7
       if (pub.color == null || pub.color.length !== 6) pub.color = "ffffff";
-      if (typeof pub.opacity === "undefined") pub.opacity = 1;
       pub.formatVersion = 1;
+    }
+
+    if (pub.formatVersion === 1) {
+      pub.opacity = null;
+      pub.formatVersion = 2;
     }
 
     callback(true);

@@ -10,8 +10,10 @@ export default class TextRendererUpdater {
     verticalAlignment: string;
     size?: number;
     color?: string;
-    opacity?: number;
   };
+
+  overrideOpacity: boolean;
+  opacity: number;
 
   private fontSubscriber: SupClient.AssetSubscriber;
   fontAsset: FontAsset;
@@ -25,8 +27,11 @@ export default class TextRendererUpdater {
       verticalAlignment: config.verticalAlignment,
       size: config.size,
       color: config.color,
-      opacity: config.opacity
     };
+
+    this.overrideOpacity = config.overrideOpacity;
+    this.opacity = config.opacity;
+    if (this.overrideOpacity) this.textRenderer.setOpacity(this.opacity);
 
     if (this.externalSubscriber == null) this.externalSubscriber = {};
 
@@ -53,19 +58,26 @@ export default class TextRendererUpdater {
 
         if (this.fontAssetId != null) this.client.subAsset(this.fontAssetId, "font", this.fontSubscriber);
       } break;
+
       case "text": {
         this.text = value;
         this.textRenderer.setText(this.text);
       } break;
+
       case "alignment":
       case "verticalAlignment":
       case "size":
       case "color": {
-        (<any>this.options)[path] = (value !== "") ? value : null;
+        (this.options as any)[path] = (value !== "") ? value : null;
         this.textRenderer.setOptions(this.options);
       } break;
+
+      case "overrideOpacity":
       case "opacity": {
-        this.textRenderer.setOpacity(value);
+        (this as any)[path] = value;
+
+        if (this.overrideOpacity) this.textRenderer.setOpacity(this.opacity);
+        else if (this.fontAsset != null) this.textRenderer.setOpacity(this.fontAsset.pub.opacity);
       } break;
     }
   }
@@ -75,6 +87,8 @@ export default class TextRendererUpdater {
 
     this.textRenderer.setText(this.text);
     this.textRenderer.setOptions(this.options);
+
+    if (!this.overrideOpacity) this.textRenderer.opacity = asset.pub.opacity;
     this.setupFont();
 
     if (this.externalSubscriber.onAssetReceived) this.externalSubscriber.onAssetReceived(assetId, asset);
@@ -110,9 +124,12 @@ export default class TextRendererUpdater {
   private onEditCommands: { [command: string]: Function; } = {
     upload: () => { this.setupFont(); },
 
-    setProperty: (path: string) => {
-      if (path === "isBitmap") this.setupFont();
-      else this.textRenderer.setFont(this.fontAsset.pub);
+    setProperty: (path: string, value: any) => {
+      switch(path) {
+        case "isBitmap": this.setupFont(); break;
+        case "opacity": if (!this.overrideOpacity) this.textRenderer.setOpacity(value); break;
+        default: this.textRenderer.setFont(this.fontAsset.pub);
+      }
     }
   };
 

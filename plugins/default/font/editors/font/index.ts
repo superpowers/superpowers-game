@@ -12,7 +12,6 @@ let ui: {
   bitmapFontTBody: HTMLTableSectionElement
   opacitySelect: HTMLSelectElement;
   opacitySlider: HTMLInputElement;
-
 } = {} as any;
 let noCharsetText = "The quick brown fox\njumps over the lazy dog\n\n0123456789 +-*/=";
 
@@ -130,9 +129,16 @@ function onAssetReceived() {
     data.textUpdater.config_setProperty("text", data.textUpdater.fontAsset.pub.charset);
 
   ui.colorPicker.value = `#${data.textUpdater.fontAsset.pub.color}`;
-  ui.opacitySlider.parentElement.hidden = data.textUpdater.fontAsset.pub.opacity ? false : true;
-  ui.opacitySelect.value = data.textUpdater.fontAsset.pub.opacity ? "transparent" : "opaque";
-  ui.opacitySlider.value = data.textUpdater.fontAsset.pub.opacity.toString();
+
+  if (data.textUpdater.fontAsset.pub.opacity == null) {
+    ui.opacitySelect.value = "opaque";
+    ui.opacitySlider.parentElement.hidden = true;
+  } else {
+    ui.opacitySelect.value = "transparent";
+    ui.opacitySlider.parentElement.hidden = false;
+    ui.opacitySlider.value = data.textUpdater.fontAsset.pub.opacity.toString();
+  }
+
   ui.settings["charsetOffset"].disabled = data.textUpdater.fontAsset.pub.isBitmap && data.textUpdater.fontAsset.pub.charset != null;
 }
 
