@@ -1,6 +1,7 @@
 /// <reference path="../../../../typings/tsd.d.ts" />
 /// <reference path="../SupRuntime.d.ts" />
 /// <reference path="../../../../SupCore/SupCore.d.ts" />
+/// <reference path="../../../../SupClient/typings/SupApp.d.ts" />
 
 import * as async from "async";
 import * as querystring from "querystring";
@@ -36,15 +37,24 @@ SupCore.system = new SupCore.System("", "");
 
 // In app, open links in a browser window
 let playerWindow: GitHubElectron.BrowserWindow;
-if (window.navigator.userAgent.indexOf("Electron") !== -1) {
-  const nodeRequire = require;
-  const electron = nodeRequire("electron");
-  playerWindow = electron.remote.getCurrentWindow();
+let electron: any;
 
+if (SupApp != null) {
+  playerWindow = SupApp.getCurrentWindow();
+} else {
+  const nodeRequire = require;
+  try { electron = nodeRequire("electron"); } catch (e) { /* Ignore */ }
+  if (electron != null) playerWindow = electron.remote.getCurrentWindow();
+}
+
+if (playerWindow != null) {
   document.body.addEventListener("click", (event) => {
     if ((event.target as HTMLElement).tagName !== "A") return;
     event.preventDefault();
-    electron.shell.openExternal((event.target as HTMLAnchorElement).href);
+
+    const url = (event.target as HTMLAnchorElement).href;
+    if (SupApp != null) SupApp.openLink(url);
+    else electron.shell.openExternal(url);
   });
 }
 const qs = querystring.parse(window.location.search.slice(1));

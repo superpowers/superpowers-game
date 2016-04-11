@@ -217,7 +217,7 @@ document.querySelector("button.download").addEventListener("click", (event) => {
     validationLabel: SupClient.i18n.t("common:actions.download")
   };
 
-  if (SupClient.isApp) {
+  if (SupApp != null) {
     triggerDownload(options.initialValue);
   } else {
     /* tslint:disable:no-unused-expression */

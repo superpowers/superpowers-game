@@ -24,14 +24,12 @@ let textureArea: {
 export default textureArea;
 
 let canvas = document.querySelector(".texture-container canvas") as HTMLCanvasElement;
-if (SupClient.isApp) {
-  let electron: GitHubElectron.Electron = (top as any).global.require("electron");
-
+if (SupApp != null) {
   document.addEventListener("copy", (event: ClipboardEvent) => {
     if (document.activeElement !== canvas) return;
 
     let dataURL = data.cubicModelUpdater.cubicModelAsset.clientTextureDatas["map"].ctx.canvas.toDataURL();
-    electron.clipboard.writeImage(electron.nativeImage.createFromDataURL(dataURL));
+    SupApp.clipboard.copyFromDataURL(dataURL);
   });
 }
 

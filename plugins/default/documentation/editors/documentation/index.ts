@@ -40,6 +40,14 @@ function loadPlugins() {
 const navListElt = document.querySelector("nav ul");
 const mainElt =  document.querySelector("main");
 
+mainElt.addEventListener("click", (event) => {
+  const target = event.target as HTMLAnchorElement;
+  if (target.tagName !== "A") return;
+
+  event.preventDefault();
+  SupApp.openLink(target.href);
+});
+
 function openDocumentation(name: string) {
   (navListElt.querySelector("li a.active") as HTMLAnchorElement).classList.remove("active");
   (mainElt.querySelector("article.active") as HTMLElement).classList.remove("active");
@@ -69,17 +77,9 @@ function setupDocs() {
       articleElt.innerHTML = marked(content);
       anchorElt.textContent = articleElt.firstElementChild.textContent;
 
-      const linkElts = articleElt.querySelectorAll("a") as NodeListOf<HTMLAnchorElement>;
-      if (SupClient.isApp) {
-        const electron: GitHubElectron.Electron = (top as any).global.require("electron");
-        for (let i = 0; i < linkElts.length; i++) {
-          linkElts[i].addEventListener("click", (event: any) => {
-            event.preventDefault();
-            electron.shell.openExternal(event.target.href);
-          });
-        }
-      } else {
-        for (let i = 0; i < linkElts.length; i++) linkElts[i].target = "_blank";
+      if (SupApp == null) {
+        const linkElts = articleElt.querySelectorAll("a") as any as HTMLAnchorElement[];
+        for (const linkElt of linkElts) linkElt.target = "_blank";
       }
     }
 
