@@ -1,4 +1,3 @@
-**/node_modules
 player/**/*.js
 SupEngine/**/*.js
 SupRuntime/**/*.js
@@ -20,3 +19,5 @@ plugins/**/*.js
 !gulpfile.js
 !TransformControls.js
 !rng.js
+
+**/node_modules

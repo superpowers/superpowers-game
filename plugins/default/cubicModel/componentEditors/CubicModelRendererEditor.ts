@@ -10,8 +10,7 @@ export default class CubicModelRendererEditor {
   animationId: string;
   shaderAssetId: string;
 
-  cubicModelTextField: HTMLInputElement;
-  cubicModelButtonElt: HTMLButtonElement;
+  cubicModelFieldSubscriber: SupClient.table.AssetFieldSubscriber;
   // animationSelectBox: HTMLSelectElement;
   // horizontalFlipField: HTMLInputElement;
   // verticalFlipField: HTMLInputElement;
@@ -37,15 +36,11 @@ export default class CubicModelRendererEditor {
     // this.shaderAssetId = config.shaderAssetId;
 
     let cubicModelRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:CubicModelRenderer.cubicModel"));
-    let cubicModelFields = SupClient.table.appendAssetField(cubicModelRow.valueCell, "");
-    this.cubicModelTextField = cubicModelFields.textField;
-    this.cubicModelTextField.addEventListener("input", this.onChangeCubicModelAsset);
-    this.cubicModelTextField.disabled = true;
-    this.cubicModelButtonElt = cubicModelFields.buttonElt;
-    this.cubicModelButtonElt.addEventListener("click", (event) => {
-      window.parent.postMessage({ type: "openEntry", id: this.cubicModelAssetId }, window.location.origin);
+    this.cubicModelFieldSubscriber = SupClient.table.appendAssetField(cubicModelRow.valueCell, this.cubicModelAssetId, "cubicModel", projectClient);
+    this.cubicModelFieldSubscriber.on("select", (assetId: string) => {
+      this.editConfig("setProperty", "cubicModelAssetId", assetId);
+      // this.editConfig("setProperty", "animationId", null);
     });
-    this.cubicModelButtonElt.disabled = this.cubicModelAssetId == null;
 
     /*
     let animationRow = SupClient.table.appendRow(tbody, "Animation");
@@ -162,12 +157,10 @@ export default class CubicModelRendererEditor {
     });
     this.shaderButtonElt.disabled = this.shaderAssetId == null;
     this._updateShaderField(config.materialType);*/
-
-    this.projectClient.subEntries(this);
   }
 
   destroy() {
-    this.projectClient.unsubEntries(this);
+    this.cubicModelFieldSubscriber.destroy();
 
     if (this.cubicModelAssetId != null) this.projectClient.unsubAsset(this.cubicModelAssetId, this);
   }
@@ -177,16 +170,15 @@ export default class CubicModelRendererEditor {
 
     switch (path) {
       case "cubicModelAssetId":
-        if (this.cubicModelAssetId != null) this.projectClient.unsubAsset(this.cubicModelAssetId, this);
+        if (this.cubicModelAssetId != null) {
+          this.projectClient.unsubAsset(this.cubicModelAssetId, this);
+          this.asset = null;
+        }
         this.cubicModelAssetId = value;
-        this.cubicModelButtonElt.disabled = this.cubicModelAssetId == null;
         // this.animationSelectBox.disabled = true;
 
-        if (this.cubicModelAssetId != null) {
-          this.cubicModelTextField.value = this.projectClient.entries.getPathFromId(this.cubicModelAssetId);
-          this.projectClient.subAsset(this.cubicModelAssetId, "cubicModel", this);
-        }
-        else this.cubicModelTextField.value = "";
+        if (this.cubicModelAssetId != null) this.projectClient.subAsset(this.cubicModelAssetId, "cubicModel", this);
+        this.cubicModelFieldSubscriber.onChangeAssetId(this.cubicModelAssetId);
         break;
 
       /*case "animationId":
@@ -244,44 +236,6 @@ export default class CubicModelRendererEditor {
   }
 
   // Network callbacks
-  onEntriesReceived(entries: SupCore.Data.Entries) {
-    this.cubicModelTextField.disabled = false;
-    // this.castShadowField.disabled = false;
-    // this.receiveShadowField.disabled = false;
-    // this.colorField.disabled = false;
-    // this.colorPicker.disabled = false;
-    // this.materialSelectBox.disabled = false;
-    // this.shaderTextField.disabled = false;
-
-    if (entries.byId[this.cubicModelAssetId] != null) {
-      this.cubicModelTextField.value = entries.getPathFromId(this.cubicModelAssetId);
-      this.projectClient.subAsset(this.cubicModelAssetId, "cubicModel", this);
-    }
-
-    /*if (entries.byId[this.shaderAssetId] != null) {
-      this.shaderTextField.value = entries.getPathFromId(this.shaderAssetId);
-    }*/
-  }
-
-  onEntryAdded(entry: any, parentId: string, index: number) { /* Nothing to do here */ }
-  onEntryMoved(id: string, parentId: string, index: number) {
-    if (id === this.cubicModelAssetId) {
-      this.cubicModelTextField.value = this.projectClient.entries.getPathFromId(this.cubicModelAssetId);
-    } else if (id === this.shaderAssetId) {
-      // this.shaderTextField.value = this.projectClient.entries.getPathFromId(this.shaderAssetId);
-    }
-  }
-  onSetEntryProperty(id: string, key: string, value: any) {
-    if (key !== "name") return;
-
-    if (id === this.cubicModelAssetId) {
-      this.cubicModelTextField.value = this.projectClient.entries.getPathFromId(this.cubicModelAssetId);
-    } else if (id === this.shaderAssetId) {
-      // this.shaderTextField.value = this.projectClient.entries.getPathFromId(this.shaderAssetId);
-    }
-  }
-  onEntryTrashed(id: string) { /* Nothing to do here */ }
-
   onAssetReceived(assetId: string, asset: any) {
     if (assetId !== this.cubicModelAssetId) return;
     this.asset = asset;
@@ -314,9 +268,9 @@ export default class CubicModelRendererEditor {
   }
 
   onAssetTrashed() {
+    this.asset = null;
     this.clearAnimations();
 
-    this.cubicModelTextField.value = "";
     // this.animationSelectBox.value = "";
     // this.animationSelectBox.disabled = true;
   }
@@ -336,20 +290,6 @@ export default class CubicModelRendererEditor {
     //   if (shaderRow.parentElement == null) this.tbody.appendChild(shaderRow);
     // } else if (shaderRow.parentElement != null) shaderRow.parentElement.removeChild(shaderRow);
   // }
-
-  private onChangeCubicModelAsset = (event: any) => {
-    if (event.target.value === "") {
-      this.editConfig("setProperty", "cubicModelAssetId", null);
-      // this.editConfig("setProperty", "animationId", null);
-    }
-    else {
-      let entry = SupClient.findEntryByPath(this.projectClient.entries.pub, event.target.value);
-      if (entry != null && entry.type === "cubicModel") {
-        this.editConfig("setProperty", "cubicModelAssetId", entry.id);
-        // this.editConfig("setProperty", "animationId", null);
-      }
-    }
-  };
 
   // private onChangeCubicModelAnimation = (event: any) => {
   //   let animationId = (event.target.value === "") ? null : event.target.value;

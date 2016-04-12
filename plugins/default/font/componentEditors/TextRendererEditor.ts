@@ -17,6 +17,8 @@ export default class TextRendererEditor {
   color: string;
   size: number;
 
+  fontFieldSubscriber: SupClient.table.AssetFieldSubscriber;
+
   overrideOpacityField: HTMLInputElement;
   transparentField: HTMLSelectElement;
   opacityFields: { sliderField: HTMLInputElement; numberField: HTMLInputElement; };
@@ -38,14 +40,10 @@ export default class TextRendererEditor {
     this.opacity = config.opacity;
 
     let fontRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:TextRenderer.font"));
-    let fontFields = SupClient.table.appendAssetField(fontRow.valueCell, "");
-    this.fields["fontAssetId"] = fontFields.textField;
-    this.fields["fontAssetId"].addEventListener("input", this.onChangeFontAsset);
-    this.fontButtonElt = fontFields.buttonElt;
-    this.fontButtonElt.addEventListener("click", (event) => {
-      window.parent.postMessage({ type: "openEntry", id: this.fontAssetId }, window.location.origin);
+    this.fontFieldSubscriber = SupClient.table.appendAssetField(fontRow.valueCell, this.fontAssetId, "font", projectClient);
+    this.fontFieldSubscriber.on("select", (assetId: string) => {
+      this.editConfig("setProperty", "fontAssetId", assetId);
     });
-    this.fontButtonElt.disabled = this.fontAssetId == null;
 
     let textRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:TextRenderer.text"));
     this.fields["text"] = SupClient.table.appendTextAreaField(textRow.valueCell, config.text);
@@ -142,11 +140,9 @@ export default class TextRendererEditor {
       this.editConfig("setProperty", "opacity", parseFloat(event.target.value));
     });
     this.updateOpacityField();
-
-    this.projectClient.subEntries(this);
   }
 
-  destroy() { this.projectClient.unsubEntries(this); }
+  destroy() { this.fontFieldSubscriber.destroy(); }
 
   config_setProperty(path: string, value: any) {
     if (path === "fontAssetId") {
@@ -155,14 +151,10 @@ export default class TextRendererEditor {
         this.fontAsset = null;
       }
       this.fontAssetId = value;
-      this.fontButtonElt.disabled = this.fontAssetId == null;
-
       this.updateColorField();
 
-      if (this.fontAssetId != null) {
-        this.fields["fontAssetId"].value = this.projectClient.entries.getPathFromId(value);
-        this.projectClient.subAsset(this.fontAssetId, "font", this);
-      } else this.fields["fontAssetId"].value = "";
+      if (this.fontAssetId != null) this.projectClient.subAsset(this.fontAssetId, "font", this);
+      this.fontFieldSubscriber.onChangeAssetId(this.fontAssetId);
 
     } else if (path === "color") {
       this.color = value;
@@ -185,14 +177,6 @@ export default class TextRendererEditor {
 
     } else this.fields[path].value = value;
   }
-
-  private onChangeFontAsset = (event: any) => {
-    if (event.target.value === "") this.editConfig("setProperty", "fontAssetId", null);
-    else {
-      let entry = SupClient.findEntryByPath(this.projectClient.entries.pub, event.target.value);
-      if (entry != null && entry.type === "font") this.editConfig("setProperty", "fontAssetId", entry.id);
-    }
-  };
 
   private updateColorField() {
     let color = this.color != null ? this.color : (this.fontAsset != null ? this.fontAsset.pub.color : "");
@@ -241,22 +225,6 @@ export default class TextRendererEditor {
   }
 
   // Network callbacks
-  onEntriesReceived(entries: SupCore.Data.Entries) {
-    if (entries.byId[this.fontAssetId] != null) {
-      this.fields["fontAssetId"].value = entries.getPathFromId(this.fontAssetId);
-      this.projectClient.subAsset(this.fontAssetId, "sprite", this);
-      this.updateOpacityField();
-    }
-  }
-  onEntryAdded(entry: any, parentId: string, index: number) { /* Nothing to do here */ }
-  onEntryMoved(id: string, parentId: string, index: number) {
-    if (id === this.fontAssetId) this.fields["fontAssetId"].value = this.projectClient.entries.getPathFromId(this.fontAssetId);
-  }
-  onSetEntryProperty(id: string, key: string, value: any) {
-    if (id === this.fontAssetId) this.fields["fontAssetId"].value = this.projectClient.entries.getPathFromId(this.fontAssetId);
-  }
-  onEntryTrashed(id: string) { /* Nothing to do here */ }
-
   onAssetReceived(assetId: string, asset: FontAsset) {
     this.fontAsset = asset;
 
@@ -275,7 +243,6 @@ export default class TextRendererEditor {
   onAssetTrashed(assetId: string) {
     this.fontAsset = null;
 
-    this.fields["fontAssetId"].value = "";
     this.updateColorField();
     this.updateSizeField();
     this.updateOpacityField();

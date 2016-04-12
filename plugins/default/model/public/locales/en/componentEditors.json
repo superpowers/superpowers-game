@@ -2,6 +2,7 @@
   "ModelRenderer": {
     "label": "Model Renderer",
     "model": "Model",
+    "searchModelPlaceholder": "Search for a model",
     "animation": "Animation",
     "shadow": {
       "title": "Shadow",
