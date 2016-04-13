@@ -153,7 +153,7 @@ export default class CubicModelRendererEditor {
     this.shaderTextField.disabled = true;
     this.shaderButtonElt = shaderFields.buttonElt;
     this.shaderButtonElt.addEventListener("click", (event) => {
-      window.parent.postMessage({ type: "openEntry", id: this.shaderAssetId }, window.location.origin);
+      SupClient.openEntry(this.shaderAssetId);
     });
     this.shaderButtonElt.disabled = this.shaderAssetId == null;
     this._updateShaderField(config.materialType);*/

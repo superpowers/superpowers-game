@@ -43,7 +43,7 @@ ui.tileSetInput.addEventListener("keyup", (event: Event) => { event.stopPropagat
 
 ui.openTileSetButton = document.querySelector("button.open-tileSet") as HTMLButtonElement;
 ui.openTileSetButton.addEventListener("click", (event) => {
-  window.parent.postMessage({ type: "openEntry", id: data.tileMapUpdater.tileMapAsset.pub.tileSetId }, window.location.origin);
+  SupClient.openEntry(data.tileMapUpdater.tileMapAsset.pub.tileSetId);
 });
 
 ui.sizeInput = document.querySelector(".property-size") as HTMLInputElement;

@@ -318,8 +318,7 @@ export default class BehaviorEditor {
 
   private onOpenBehavior = () => {
     let behavior = this.behaviorPropertiesResource.pub.behaviors[this.config.behaviorName];
-    if (behavior != null)
-      window.parent.postMessage({ type: "openEntry", id: behavior.scriptId, state: { line: behavior.line != null ? behavior.line : 0, ch: 0 } }, window.location.origin);
+    if (behavior != null) SupClient.openEntry(behavior.scriptId, { line: behavior.line != null ? behavior.line : 0, ch: 0 });
   };
   // private onChangePropertySet = (event: any) => {}
 

@@ -286,7 +286,7 @@ function onErrorTBodyClick(event: MouseEvent) {
     ui.editor.codeMirrorInstance.getDoc().setCursor({ line: parseInt(line, 10), ch: parseInt(character, 10) });
     ui.editor.codeMirrorInstance.focus();
   } else {
-    if (window.parent != null) window.parent.postMessage({ type: "openEntry", id: assetId, state: { line, ch: character } }, window.location.origin);
+    if (window.parent != null) SupClient.openEntry(assetId, { line, ch: character });
   }
 }
 

@@ -188,7 +188,7 @@ ui.prefabOpenElt.addEventListener("click", (event) => {
   let selectedNode = ui.nodesTreeView.selectedNodes[0];
   let node = data.sceneUpdater.sceneAsset.nodes.byId[selectedNode.dataset["id"]];
   let id = node.prefab.sceneAssetId;
-  window.parent.postMessage({ type: "openEntry", id }, window.location.origin);
+  SupClient.openEntry(id);
 });
 
 for (let transformType in ui.transform) {

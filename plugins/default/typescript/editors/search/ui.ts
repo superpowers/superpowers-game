@@ -99,8 +99,7 @@ export function searchAsset(assetId: string) {
       let line = target.dataset["line"];
       let ch = target.dataset["ch"];
 
-      if (window.parent != null)
-        window.parent.postMessage({ type: "openEntry", id, state: { line, ch } }, window.location.origin);
+      if (window.parent != null) SupClient.openEntry(id, { line, ch });
     });
 
   } else {
