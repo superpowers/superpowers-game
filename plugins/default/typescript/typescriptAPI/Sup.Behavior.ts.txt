@@ -10,7 +10,7 @@ namespace Sup {
 
       super(actor.__outer);
 
-      let funcs = {};
+      const funcs = {};
       funcs["awake"] = this.awake != null ? this.awake.bind(this) : null;
       funcs["start"] = this.start != null ? this.start.bind(this) : null;
       funcs["update"] = this.update != null ? this.update.bind(this) : null;
@@ -19,13 +19,15 @@ namespace Sup {
 
       this.__inner.__outer = this;
       
-      let behaviorList = this.actor.__behaviors[this.constructor["name"]];
+      const behaviorList = this.actor.__behaviors[this.constructor["name"]];
       if (behaviorList == null) behaviorList = this.actor.__behaviors[this.constructor["name"]] = [];
       behaviorList.push(this);
     }
     
     destroy() {
-      let behaviorList = this.actor.__behaviors[this.constructor["name"]];
+      if (this.__inner.pendingForDestruction) return;
+
+      const behaviorList = this.actor.__behaviors[this.constructor["name"]];
       behaviorList.splice(behaviorList.indexOf(this), 1);
       if (behaviorList.length === 0) delete this.actor.__behaviors[this.constructor["name"]];
       super.destroy();

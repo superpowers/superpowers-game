@@ -3,6 +3,7 @@ import Actor from "./Actor";
 abstract class ActorComponent {
   actor: Actor;
   typeName: string;
+  pendingForDestruction = false;
 
   constructor(actor: Actor, typeName: string) {
     this.actor = actor;

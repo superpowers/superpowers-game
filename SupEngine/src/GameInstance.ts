@@ -176,9 +176,10 @@ export default class GameInstance extends EventEmitter {
   clear() { this.threeRenderer.clear(); }
 
   destroyComponent(component: ActorComponent) {
-    if (this.componentsToBeDestroyed.indexOf(component) !== -1) return;
+    if (component.pendingForDestruction) return;
 
     this.componentsToBeDestroyed.push(component);
+    component.pendingForDestruction = true;
 
     let index = this.componentsToBeStarted.indexOf(component);
     if (index !== -1) this.componentsToBeStarted.splice(index, 1);

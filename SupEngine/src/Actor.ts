@@ -41,16 +41,18 @@ export default class Actor {
     }
   }
 
-  awake() { for (let component of this.components.slice()) { component.awake(); } }
+  awake() { for (const component of this.components.slice()) { component.awake(); } }
 
   setActiveLayer(layer: number) {
-    let active = layer == null || this.layer === layer;
-    for (let component of this.components) component.setIsLayerActive(active);
+    const active = layer == null || this.layer === layer;
+    for (const component of this.components) component.setIsLayerActive(active);
   }
 
   update() {
     if (this.pendingForDestruction) return;
-    for (let component of this.components.slice()) { component.update(); }
+    for (const component of this.components.slice()) {
+      if (!component.pendingForDestruction) component.update();
+    }
   }
 
   // Transform
