@@ -44,7 +44,7 @@ export default class TextRenderer extends SupEngine.ActorComponent {
   setOpacity(opacity: number) {
     this.opacity = opacity;
 
-    for (let mesh of this.threeMeshes) {
+    for (const mesh of this.threeMeshes) {
       if (this.opacity != null) {
         mesh.material.transparent = true;
         mesh.material.opacity = this.opacity;
@@ -63,7 +63,7 @@ export default class TextRenderer extends SupEngine.ActorComponent {
     if (!this.font.isBitmap) this._createFontMesh();
     else if (this.font.texture != null) this._createBitmapMesh();
 
-    for (let threeMesh of this.threeMeshes) {
+    for (const threeMesh of this.threeMeshes) {
       this.actor.threeObject.add(threeMesh);
       let scale = 1 / this.font.pixelsPerUnit;
       threeMesh.scale.set(scale, scale, scale);
