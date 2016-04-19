@@ -161,13 +161,21 @@ Sup.registerBehavior(${behaviorName});
     // and the acquire callback will be called immediately
 
     let pub: ScriptAssetPub;
-    let readDraft = (text: string) => {
+
+    const finishLoading = () => {
+      if (pub.draft != null) pub.draft = pub.draft.replace(/\r\n/g, "\n");
+      pub.text = pub.text.replace(/\r\n/g, "\n");
+
+      this._onLoaded(assetPath, pub);
+    };
+
+    const readDraft = (text: string) => {
       fs.readFile(path.join(assetPath, "draft.ts"), { encoding: "utf8" }, (err, draft) => {
         // NOTE: draft.txt was renamed to draft.ts in Superpowers 0.11
         if (err != null && err.code === "ENOENT") {
           fs.readFile(path.join(assetPath, "draft.txt"), { encoding: "utf8" }, (err, draft) => {
             pub = { revisionId: 0, text, draft: (draft != null) ? draft : text };
-            this._onLoaded(assetPath, pub);
+            finishLoading();
 
             if (draft != null) {
               if (draft !== text) fs.writeFile(path.join(assetPath, "draft.ts"), draft, { encoding: "utf8" });
@@ -177,7 +185,7 @@ Sup.registerBehavior(${behaviorName});
           });
         } else {
           pub = { revisionId: 0, text, draft: (draft != null) ? draft : text };
-          this._onLoaded(assetPath, pub);
+          finishLoading();
         }
       });
     };
