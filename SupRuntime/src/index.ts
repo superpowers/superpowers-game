@@ -37,7 +37,12 @@ SupCore.system = new SupCore.System("", "");
 
 // Setup SupApp
 if ((global as any).SupApp == null) {
-  (global as any).SupApp = ((top as any).SupApp != null) ? (top as any).SupApp : null;
+  (global as any).SupApp = null;
+  try {
+    (global as any).SupApp = ((top as any).SupApp != null) ? (top as any).SupApp : null;
+  } catch (err) {
+    /* Ignore */
+  }
 }
 
 // In app, open links in a browser window
