@@ -19,7 +19,7 @@ namespace Sup {
 
       this.__inner.__outer = this;
       
-      const behaviorList = this.actor.__behaviors[this.constructor["name"]];
+      let behaviorList = this.actor.__behaviors[this.constructor["name"]];
       if (behaviorList == null) behaviorList = this.actor.__behaviors[this.constructor["name"]] = [];
       behaviorList.push(this);
     }
