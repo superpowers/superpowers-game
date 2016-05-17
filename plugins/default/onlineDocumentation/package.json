@@ -1,6 +1,6 @@
 {
-  "name": "superpowers-game-default-documentation-plugin",
-  "description": "Documentation plugin for Superpowers Game, the HTML5 2D+3D game maker",
+  "name": "superpowers-game-default-online-documentation-plugin",
+  "description": "Online documentation for Superpowers Game, the HTML5 2D+3D game maker",
   "version": "1.0.0",
   "license": "ISC",
   "repository": {
@@ -9,8 +9,5 @@
   },
   "scripts": {
     "build": "gulp --gulpfile=../../../../../scripts/pluginGulpfile.js --cwd=."
-  },
-  "dependencies": {
-    "marked": "^0.3.5"
   }
 }
