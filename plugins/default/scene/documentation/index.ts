@@ -1,3 +1,3 @@
 /// <reference path="../../../common/documentation/DocumentationPlugin.d.ts" />
 
-SupClient.registerPlugin<SupClient.DocumentationPlugin>("documentation", "scene", true);
+SupClient.registerPlugin<SupClient.DocumentationPlugin>("documentation", "scene", { isFirstSection: false });
