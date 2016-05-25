@@ -13,7 +13,7 @@ SupClient.i18n.load([], () => {
   socket.on("disconnect", SupClient.onDisconnected);
 });
 
-function onWelcome(clientId: number) {
+function onWelcome(clientId: string) {
   data = { projectClient: new SupClient.ProjectClient(socket, { subEntries: true }) };
   setupEditors(clientId);
 

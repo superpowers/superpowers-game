@@ -258,7 +258,7 @@ ${tab}gl_FragColor = texture2D(map, vUv);
     ], (err: Error) => { callback(err); });
   }
 
-  server_newUniform(client: any, name: string, callback: (err: string, uniform: UniformPub, actualIndex: number) => any) {
+  server_newUniform(client: SupCore.RemoteClient, name: string, callback: (err: string, uniform: UniformPub, actualIndex: number) => any) {
     for (let uniform of this.pub.uniforms) {
       if (uniform.name === name) {
         callback(`An uniform named ${name} already exists`, null, null);
@@ -279,7 +279,7 @@ ${tab}gl_FragColor = texture2D(map, vUv);
     this.uniforms.client_add(uniform, actualIndex);
   }
 
-  server_deleteUniform(client: any, id: string, callback: (err: string, id?: string) => any) {
+  server_deleteUniform(client: SupCore.RemoteClient, id: string, callback: (err: string, id?: string) => any) {
     this.uniforms.remove(id, (err) => {
       if (err != null) { callback(err); return; }
 
@@ -293,7 +293,7 @@ ${tab}gl_FragColor = texture2D(map, vUv);
     return;
   }
 
-  server_setUniformProperty(client: any, id: string, key: string, value: any, callback: (err: string, id?: string, key?: string, actualValue?: any) => any) {
+  server_setUniformProperty(client: SupCore.RemoteClient, id: string, key: string, value: any, callback: (err: string, id?: string, key?: string, actualValue?: any) => any) {
     if (key === "name") {
       if (typeof(value) !== "string") { callback("Invalid value"); return; }
       value = value.trim();
@@ -316,7 +316,7 @@ ${tab}gl_FragColor = texture2D(map, vUv);
     this.uniforms.client_setProperty(id, key, actualValue);
   }
 
-  server_newAttribute(client: any, name: string, callback: (err: string, attribute: AttributePub, actualIndex: number) => any) {
+  server_newAttribute(client: SupCore.RemoteClient, name: string, callback: (err: string, attribute: AttributePub, actualIndex: number) => any) {
     for (let attribute of this.pub.attributes) {
       if (attribute.name === name) {
         callback(`An attribute named ${name} already exists`, null, null);
@@ -337,7 +337,7 @@ ${tab}gl_FragColor = texture2D(map, vUv);
     this.attributes.client_add(attribute, actualIndex);
   }
 
-  server_deleteAttribute(client: any, id: string, callback: (err: string, id?: string) => any) {
+  server_deleteAttribute(client: SupCore.RemoteClient, id: string, callback: (err: string, id?: string) => any) {
     this.attributes.remove(id, (err) => {
       if (err != null) { callback(err); return; }
 
@@ -351,7 +351,7 @@ ${tab}gl_FragColor = texture2D(map, vUv);
     return;
   }
 
-  server_setAttributeProperty(client: any, id: string, key: string, value: any, callback: (err: string, id?: string, key?: string, actualValue?: any) => any) {
+  server_setAttributeProperty(client: SupCore.RemoteClient, id: string, key: string, value: any, callback: (err: string, id?: string, key?: string, actualValue?: any) => any) {
     if (key === "name") {
       if (typeof(value) !== "string") { callback("Invalid value"); return; }
       value = value.trim();
@@ -374,7 +374,7 @@ ${tab}gl_FragColor = texture2D(map, vUv);
     this.attributes.client_setProperty(id, key, actualValue);
   }
 
-  server_editVertexShader(client: any, operationData: OperationData, revisionIndex: number, callback: (err: string, operationData?: any, revisionIndex?: number) => any) {
+  server_editVertexShader(client: SupCore.RemoteClient, operationData: OperationData, revisionIndex: number, callback: (err: string, operationData?: any, revisionIndex?: number) => any) {
     if (operationData.userId !== client.id) { callback("Invalid client id"); return; }
 
     let operation = new OT.TextOperation();
@@ -398,7 +398,7 @@ ${tab}gl_FragColor = texture2D(map, vUv);
     this.pub.vertexShader.revisionId++;
   }
 
-  server_saveVertexShader(client: any, callback: (err: string) => any) {
+  server_saveVertexShader(client: SupCore.RemoteClient, callback: (err: string) => any) {
     this.pub.vertexShader.text = this.pub.vertexShader.draft;
     callback(null);
     this.emit("change");
@@ -408,7 +408,7 @@ ${tab}gl_FragColor = texture2D(map, vUv);
     this.pub.vertexShader.text = this.pub.vertexShader.draft;
   }
 
-  server_editFragmentShader(client: any, operationData: OperationData, revisionIndex: number, callback: (err: string, operationData?: any, revisionIndex?: number) => any) {
+  server_editFragmentShader(client: SupCore.RemoteClient, operationData: OperationData, revisionIndex: number, callback: (err: string, operationData?: any, revisionIndex?: number) => any) {
     if (operationData.userId !== client.id) { callback("Invalid client id"); return; }
 
     let operation = new OT.TextOperation();
@@ -432,7 +432,7 @@ ${tab}gl_FragColor = texture2D(map, vUv);
     this.pub.fragmentShader.revisionId++;
   }
 
-  server_saveFragmentShader(client: any, callback: (err: string) => any) {
+  server_saveFragmentShader(client: SupCore.RemoteClient, callback: (err: string) => any) {
     this.pub.fragmentShader.text = this.pub.fragmentShader.draft;
     callback(null);
     this.emit("change");

@@ -24,7 +24,7 @@ declare namespace SupCore {
         // and calling this.emit("addDependencies" / "removeDependencies", ...) as needed
         // setProperty(path, value, callback) {}
 
-        server_setProperty(client: any, path: string, value: number|string|boolean, callback: (err: string, path?: string, value?: any) => any): void;
+        server_setProperty(client: SupCore.RemoteClient, path: string, value: number|string|boolean, callback: (err: string, path?: string, value?: any) => any): void;
       }
     }
   }

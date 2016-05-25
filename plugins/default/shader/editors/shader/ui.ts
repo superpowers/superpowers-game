@@ -204,7 +204,7 @@ ui.fragmentSaveElt = <HTMLButtonElement>document.querySelector(".fragment button
 ui.fragmentHeader = <HTMLDivElement>document.querySelector(".fragment .header");
 ui.fragmentSaveElt.addEventListener("click", onSaveFragment);
 
-export function setupEditors(clientId: number) {
+export function setupEditors(clientId: string) {
   let vertexTextArea = <HTMLTextAreaElement>document.querySelector(".vertex textarea");
   ui.vertexEditor = new TextEditorWidget(data.projectClient, clientId, vertexTextArea, {
     mode: "x-shader/x-vertex",

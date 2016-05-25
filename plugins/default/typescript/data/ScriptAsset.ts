@@ -217,7 +217,7 @@ Sup.registerBehavior(${behaviorName});
     });
   }
 
-  server_editText(client: any, operationData: OperationData, revisionIndex: number, callback: (err: string, operationData?: any, revisionIndex?: number) => any) {
+  server_editText(client: SupCore.RemoteClient, operationData: OperationData, revisionIndex: number, callback: (err: string, operationData?: any, revisionIndex?: number) => any) {
     if (operationData.userId !== client.id) { callback("Invalid client id"); return; }
 
     let operation = new OT.TextOperation();
@@ -246,7 +246,7 @@ Sup.registerBehavior(${behaviorName});
     this.pub.revisionId++;
   }
 
-  server_applyDraftChanges(client: any, options: { ignoreErrors: boolean }, callback: (err: string) => any) {
+  server_applyDraftChanges(client: SupCore.RemoteClient, options: { ignoreErrors: boolean }, callback: (err: string) => any) {
     let text = this.pub.draft;
 
     let scriptNames: string[] = [];

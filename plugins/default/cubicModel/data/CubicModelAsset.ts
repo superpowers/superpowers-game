@@ -193,7 +193,7 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
   }
 
   // Nodes
-  server_addNode(client: any, name: string, options: any, callback: (err: string, node: Node, parentId: string, index: number) => any) {
+  server_addNode(client: SupCore.RemoteClient, name: string, options: any, callback: (err: string, node: Node, parentId: string, index: number) => any) {
     let parentId = (options != null) ? options.parentId : null;
 
     let node: Node = {
@@ -303,7 +303,7 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
   }
 
 
-  server_setNodeProperty(client: any, id: string, path: string, value: any, callback: (err: string, id: string, path: string, value: any) => any) {
+  server_setNodeProperty(client: SupCore.RemoteClient, id: string, path: string, value: any, callback: (err: string, id: string, path: string, value: any) => any) {
     let oldSize = this.nodes.byId[id].shape.settings.size;
 
     this.nodes.setProperty(id, path, value, (err, actualValue) => {
@@ -346,7 +346,7 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
     }
   }
 
-  server_moveNodePivot(client: any, id: string, value: { x: number; y: number; z: number; }, callback: (err: string, id: string, value: { x: number; y: number; z: number; }) => any) {
+  server_moveNodePivot(client: SupCore.RemoteClient, id: string, value: { x: number; y: number; z: number; }, callback: (err: string, id: string, value: { x: number; y: number; z: number; }) => any) {
     let node = this.nodes.byId[id];
     let oldMatrix = (node != null) ? this.computeGlobalMatrix(node) : null;
 
@@ -384,7 +384,7 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
   }
 
 
-  server_moveNode(client: any, id: string, parentId: string, index: number, callback: (err: string, id: string, parentId: string, index: number) => any) {
+  server_moveNode(client: SupCore.RemoteClient, id: string, parentId: string, index: number, callback: (err: string, id: string, parentId: string, index: number) => any) {
     let node = this.nodes.byId[id];
     if (node == null) { callback(`Invalid node id: ${id}`, null, null, null); return; }
 
@@ -460,7 +460,7 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
   }
 
 
-  server_duplicateNode(client: any, newName: string, id: string, index: number, callback: (err: string, rootNode: Node, newNodes: DuplicatedNode[]) => any) {
+  server_duplicateNode(client: SupCore.RemoteClient, newName: string, id: string, index: number, callback: (err: string, rootNode: Node, newNodes: DuplicatedNode[]) => any) {
     let referenceNode = this.nodes.byId[id];
     if (referenceNode == null) { callback(`Invalid node id: ${id}`, null, null); return; }
 
@@ -516,7 +516,7 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
   }
 
 
-  server_removeNode(client: any, id: string, callback: (err: string, id: string) => any) {
+  server_removeNode(client: SupCore.RemoteClient, id: string, callback: (err: string, id: string) => any) {
     this.nodes.remove(id, (err) => {
       if (err != null) { callback(err, null); return; }
 
@@ -529,7 +529,7 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
     this.nodes.client_remove(id);
   }
 
-  server_moveNodeTextureOffset(client: any, nodeIds: string[], offset: { x: number; y: number }, callback: (err: string, nodeIds: string[], offset: { x: number; y: number }) => any) {
+  server_moveNodeTextureOffset(client: SupCore.RemoteClient, nodeIds: string[], offset: { x: number; y: number }, callback: (err: string, nodeIds: string[], offset: { x: number; y: number }) => any) {
     // TODO: add checks
 
     this.client_moveNodeTextureOffset(nodeIds, offset);
@@ -549,7 +549,7 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
   }
 
   // Texture
-  server_changeTextureWidth(client: any, newWidth: number, callback: (err: string, newWidth: number) => void) {
+  server_changeTextureWidth(client: SupCore.RemoteClient, newWidth: number, callback: (err: string, newWidth: number) => void) {
     if (CubicModelAsset.validTextureSizes.indexOf(newWidth) === -1) { callback(`Invalid new texture width: ${newWidth}`, null); return; }
 
     this._changeTextureWidth(newWidth);
@@ -589,7 +589,7 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
     this.pub.textureWidth = newWidth;
   }
 
-  server_changeTextureHeight(client: any, newHeight: number, callback: (err: string, newHeight: number) => void) {
+  server_changeTextureHeight(client: SupCore.RemoteClient, newHeight: number, callback: (err: string, newHeight: number) => void) {
     if (CubicModelAsset.validTextureSizes.indexOf(newHeight) === -1) { callback(`Invalid new texture height: ${newHeight}`, null); return; }
 
     this._changeTextureHeight(newHeight);
@@ -625,7 +625,7 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
     this.pub.textureHeight = newHeight;
   }
 
-  server_editTexture(client: any, name: string, edits: TextureEdit[], callback: (err: string, name: string, edits: TextureEdit[]) => void) {
+  server_editTexture(client: SupCore.RemoteClient, name: string, edits: TextureEdit[], callback: (err: string, name: string, edits: TextureEdit[]) => void) {
     if (this.pub.maps[name] == null) { callback(`Invalid map name: ${name}`, null, null); return; }
     for (let edit of edits) {
       if (edit.x == null || edit.x < 0 || edit.x >= this.pub.textureWidth) { callback(`Invalid edit x: ${edit.x}`, null, null); return; }

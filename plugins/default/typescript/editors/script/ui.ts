@@ -76,7 +76,7 @@ let parameterPopupKeyMap = {
 };
 
 // Setup editor
-export function setupEditor(clientId: number, script: string) {
+export function setupEditor(clientId: string, script: string) {
   let textArea = <HTMLTextAreaElement>document.querySelector(".text-editor");
   ui.editor = new TextEditorWidget(data.projectClient, clientId, textArea, {
     mode: "text/typescript",

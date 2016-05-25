@@ -6,7 +6,7 @@ import * as async from "async";
 import ScriptAsset from "../../data/ScriptAsset";
 
 export let data = {
-  clientId: <number>null,
+  clientId: null as string,
   projectClient: <SupClient.ProjectClient>null,
   typescriptWorker: new Worker("typescriptWorker.js"),
 
@@ -307,7 +307,7 @@ export function setNextCompletion(completion: CompletionRequest) {
   if (activeCompletion == null) startAutocomplete();
 }
 
-function onWelcome(clientId: number) {
+function onWelcome(clientId: string) {
   data.clientId = clientId;
   loadPlugins();
 }

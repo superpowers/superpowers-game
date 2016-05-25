@@ -141,7 +141,7 @@ export default class TileSetAsset extends SupCore.Data.Base.Asset {
     this.pub.texture = null;
   }
 
-  server_upload(client: any, image: Buffer, callback: (err: string, image: Buffer) => any) {
+  server_upload(client: SupCore.RemoteClient, image: Buffer, callback: (err: string, image: Buffer) => any) {
     if (!(image instanceof Buffer)) { callback("Image must be an ArrayBuffer", null); return; }
 
     this.pub.image = image;
@@ -155,7 +155,7 @@ export default class TileSetAsset extends SupCore.Data.Base.Asset {
     this.loadTexture();
   }
 
-  server_addTileProperty(client: any, tile: {x: number; y: number}, name: string,
+  server_addTileProperty(client: SupCore.RemoteClient, tile: {x: number; y: number}, name: string,
   callback: (err: string, tile: {x: number; y: number}, name: string) => any) {
 
     if (typeof(tile) !== "object" ||
@@ -191,7 +191,7 @@ export default class TileSetAsset extends SupCore.Data.Base.Asset {
     this.pub.tileProperties[`${tile.x}_${tile.y}`][name] = "";
   }
 
-  server_renameTileProperty(client: any, tile: {x: number; y: number}, name: string, newName: string,
+  server_renameTileProperty(client: SupCore.RemoteClient, tile: {x: number; y: number}, name: string, newName: string,
   callback: (err: string, tile: {x: number; y: number}, name: string, newName: string) => any) {
     if (typeof(tile) !== "object" ||
     tile.x == null || typeof(tile.x) !== "number" ||
@@ -225,7 +225,7 @@ export default class TileSetAsset extends SupCore.Data.Base.Asset {
     delete this.pub.tileProperties[`${tile.x}_${tile.y}`][name];
   }
 
-  server_deleteTileProperty(client: any, tile: {x: number; y: number}, name: string,
+  server_deleteTileProperty(client: SupCore.RemoteClient, tile: {x: number; y: number}, name: string,
   callback: (err: string, tile: {x: number; y: number}, name: string) => any) {
 
     if (typeof(tile) !== "object" ||
@@ -255,7 +255,7 @@ export default class TileSetAsset extends SupCore.Data.Base.Asset {
       delete this.pub.tileProperties[`${tile.x}_${tile.y}`];
   }
 
-  server_editTileProperty(client: any, tile: {x: number; y: number}, name: string, value: string,
+  server_editTileProperty(client: SupCore.RemoteClient, tile: {x: number; y: number}, name: string, value: string,
   callback: (err: string, tile: {x: number; y: number}, name: string, value: string) => any) {
 
     if (typeof(tile) !== "object" ||

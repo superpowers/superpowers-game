@@ -143,7 +143,7 @@ export default class SceneAsset extends SupCore.Data.Base.Asset {
     this.emit("addDependencies", Object.keys(this.componentPathsByDependentAssetId));
   }
 
-  server_addNode(client: any, name: string, options: any, callback: (err: string, node: Node, parentId: string, index: number) => any) {
+  server_addNode(client: SupCore.RemoteClient, name: string, options: any, callback: (err: string, node: Node, parentId: string, index: number) => any) {
     if (name.indexOf("/") !== -1) { callback("Actor name cannot contain slashes", null, null, null); return; }
 
     let parentId = (options != null) ? options.parentId : null;
@@ -182,7 +182,7 @@ export default class SceneAsset extends SupCore.Data.Base.Asset {
     this.nodes.client_add(node, parentId, index);
   }
 
-  server_setNodeProperty(client: any, id: string, path: string, value: any, callback: (err: string, id: string, path: string, value: any) => any) {
+  server_setNodeProperty(client: SupCore.RemoteClient, id: string, path: string, value: any, callback: (err: string, id: string, path: string, value: any) => any) {
     if (path === "name" && value.indexOf("/") !== -1) { callback("Actor name cannot contain slashes", null, null, null); return; }
 
     this.nodes.setProperty(id, path, value, (err, actualValue) => {
@@ -197,7 +197,7 @@ export default class SceneAsset extends SupCore.Data.Base.Asset {
     this.nodes.client_setProperty(id, path, value);
   }
 
-  server_moveNode(client: any, id: string, parentId: string, index: number, callback: (err: string, id: string, parentId: string, index: number) => any) {
+  server_moveNode(client: SupCore.RemoteClient, id: string, parentId: string, index: number, callback: (err: string, id: string, parentId: string, index: number) => any) {
     let node = this.nodes.byId[id];
     if (node == null) { callback(`Invalid node id: ${id}`, null, null, null); return; }
 
@@ -262,7 +262,7 @@ export default class SceneAsset extends SupCore.Data.Base.Asset {
   }
 
 
-  server_duplicateNode(client: any, newName: string, id: string, index: number, callback: (err: string, rootNode: Node, newNodes: DuplicatedNode[]) => any) {
+  server_duplicateNode(client: SupCore.RemoteClient, newName: string, id: string, index: number, callback: (err: string, rootNode: Node, newNodes: DuplicatedNode[]) => any) {
     if (newName.indexOf("/") !== -1) { callback("Actor name cannot contain slashes", null, null); return; }
 
     let referenceNode = this.nodes.byId[id];
@@ -340,7 +340,7 @@ export default class SceneAsset extends SupCore.Data.Base.Asset {
     }
   }
 
-  server_removeNode(client: any, id: string, callback: (err: string, id: string) => any) {
+  server_removeNode(client: SupCore.RemoteClient, id: string, callback: (err: string, id: string) => any) {
     this.nodes.remove(id, (err) => {
       if (err != null) { callback(err, null); return; }
 
@@ -390,7 +390,7 @@ export default class SceneAsset extends SupCore.Data.Base.Asset {
     if (removedDepIds.length > 0) this.emit("removeDependencies", removedDepIds);
   };
 
-  server_addComponent(client: any, nodeId: string, componentType: string, index: number,
+  server_addComponent(client: SupCore.RemoteClient, nodeId: string, componentType: string, index: number,
   callback: (err: string, component: Component, nodeId: string, index: number) => any) {
 
     let componentConfigClass = this.server.system.getPlugins<SupCore.Data.ComponentConfigClass>("componentConfigs")[componentType];
@@ -423,7 +423,7 @@ export default class SceneAsset extends SupCore.Data.Base.Asset {
     this.nodes.client_addComponent(nodeId, component, index);
   }
 
-  server_editComponent(client: any, nodeId: string, componentId: string, command: string, ...args: any[]) {
+  server_editComponent(client: SupCore.RemoteClient, nodeId: string, componentId: string, command: string, ...args: any[]) {
     let callback: (err: string, nodeId: string, componentId: string, command: string, ...args: any[]) => any = args.pop();
 
     let components = this.nodes.componentsByNodeId[nodeId];
@@ -450,7 +450,7 @@ export default class SceneAsset extends SupCore.Data.Base.Asset {
     commandMethod.apply(componentConfig, args);
   }
 
-  server_removeComponent(client: any, nodeId: string, componentId: string, callback: (err: string, nodeId: string, componentId: string) => any) {
+  server_removeComponent(client: SupCore.RemoteClient, nodeId: string, componentId: string, callback: (err: string, nodeId: string, componentId: string) => any) {
     let components = this.nodes.componentsByNodeId[nodeId];
     if (components == null) { callback(`Invalid node id: ${nodeId}`, null, null); return; }
 

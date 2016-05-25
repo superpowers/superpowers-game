@@ -391,7 +391,7 @@ export default class ModelAsset extends SupCore.Data.Base.Asset {
     }
   }
 
-  server_setModel(client: any, upAxisMatrix: number[], attributes: { [name: string]: any }, bones: any[],
+  server_setModel(client: SupCore.RemoteClient, upAxisMatrix: number[], attributes: { [name: string]: any }, bones: any[],
   callback: (err: string, upAxisMatrix?: number[], attributes?: { [name: string]: any }, bones?: any[]) => any) {
     // Validate up matrix
     if (upAxisMatrix != null) {
@@ -429,7 +429,7 @@ export default class ModelAsset extends SupCore.Data.Base.Asset {
     this.pub.bones = bones;
   }
 
-  server_setMaps(client: any, maps: any, callback: (err: string, maps?: any) => any) {
+  server_setMaps(client: SupCore.RemoteClient, maps: any, callback: (err: string, maps?: any) => any) {
     if (maps == null || typeof maps !== "object") { callback("Maps must be an object"); return; }
 
     for (let mapName in maps) {
@@ -449,7 +449,7 @@ export default class ModelAsset extends SupCore.Data.Base.Asset {
     this._loadTextures();
   }
 
-  server_newMap(client: any, name: string, callback: (err: string, name: string) => any) {
+  server_newMap(client: SupCore.RemoteClient, name: string, callback: (err: string, name: string) => any) {
     if (name == null || typeof name !== "string") { callback("Name of the map must be a string", null); return; }
     if (this.pub.maps[name] != null) { callback(`The map ${name} already exists`, null); return; }
 
@@ -462,7 +462,7 @@ export default class ModelAsset extends SupCore.Data.Base.Asset {
     this.pub.maps[name] = new Buffer(0);
   }
 
-  server_deleteMap(client: any, name: string, callback: (err: string, name: string) => any) {
+  server_deleteMap(client: SupCore.RemoteClient, name: string, callback: (err: string, name: string) => any) {
     if (name == null || typeof name !== "string") { callback("Name of the map must be a string", null); return; }
     if (this.pub.maps[name] == null) { callback(`The map ${name} doesn't exist`, null); return; }
 
@@ -481,7 +481,7 @@ export default class ModelAsset extends SupCore.Data.Base.Asset {
     this.pub.maps[name] = null;
   }
 
-  server_renameMap(client: any, oldName: string, newName: string, callback: (err: string, oldName: string, newName: string) => any) {
+  server_renameMap(client: SupCore.RemoteClient, oldName: string, newName: string, callback: (err: string, oldName: string, newName: string) => any) {
     if (oldName == null || typeof oldName !== "string") { callback("Name of the map must be a string", null, null); return; }
     if (newName == null || typeof newName !== "string") { callback("New name of the map must be a string", null, null); return; }
     if (this.pub.maps[newName] != null) { callback(`The map ${newName} already exists`, null, null); return; }
@@ -501,7 +501,7 @@ export default class ModelAsset extends SupCore.Data.Base.Asset {
     }
   }
 
-  server_setMapSlot(client: any, slot: string, map: string, callback: (err: string, slot: string, map: string) => any) {
+  server_setMapSlot(client: SupCore.RemoteClient, slot: string, map: string, callback: (err: string, slot: string, map: string) => any) {
     if (slot == null || typeof slot !== "string") { callback("Name of the slot must be a string", null, null); return; }
     if (map != null && typeof map !== "string") { callback("Name of the map must be a string", null, null); return; }
     if (map != null && this.pub.maps[map] == null) { callback(`The map ${map} doesn't exist`, null, null); return; }
@@ -516,7 +516,7 @@ export default class ModelAsset extends SupCore.Data.Base.Asset {
   }
 
   // Animations
-  server_newAnimation(client: any, name: string, duration: number, keyFrames: any, callback: (err: string, animation?: Animation, actualIndex?: number) => any) {
+  server_newAnimation(client: SupCore.RemoteClient, name: string, duration: number, keyFrames: any, callback: (err: string, animation?: Animation, actualIndex?: number) => any) {
     if (duration == null) duration = 0;
     if (keyFrames == null) keyFrames = [];
     let animation: Animation = { name, duration, keyFrames };
@@ -535,7 +535,7 @@ export default class ModelAsset extends SupCore.Data.Base.Asset {
     this.animations.client_add(animation, actualIndex);
   }
 
-  server_deleteAnimation(client: any, id: string, callback: (err: string, id?: string) => any) {
+  server_deleteAnimation(client: SupCore.RemoteClient, id: string, callback: (err: string, id?: string) => any) {
     this.animations.remove(id, (err) => {
       if (err != null) { callback(err); return; }
 
@@ -548,7 +548,7 @@ export default class ModelAsset extends SupCore.Data.Base.Asset {
     this.animations.client_remove(id);
   }
 
-  server_moveAnimation(client: any, id: string, newIndex: number, callback: (err: string, id?: string, actualIndex?: number) => any) {
+  server_moveAnimation(client: SupCore.RemoteClient, id: string, newIndex: number, callback: (err: string, id?: string, actualIndex?: number) => any) {
     this.animations.move(id, newIndex, (err, actualIndex) => {
       if (err != null) { callback(err); return; }
 
@@ -561,7 +561,7 @@ export default class ModelAsset extends SupCore.Data.Base.Asset {
     this.animations.client_move(id, newIndex);
   }
 
-  server_setAnimationProperty(client: any, id: string, key: string, value: any, callback: (err: string, id?: string, key?: string, actualValue?: any) => any) {
+  server_setAnimationProperty(client: SupCore.RemoteClient, id: string, key: string, value: any, callback: (err: string, id?: string, key?: string, actualValue?: any) => any) {
     if (key === "name") {
       if (typeof value !== "string") { callback("Invalid value"); return; }
       value = value.trim();
@@ -583,7 +583,7 @@ export default class ModelAsset extends SupCore.Data.Base.Asset {
     this.animations.client_setProperty(id, key, actualValue);
   }
 
-  server_setAnimation(client: any, id: string, duration: number, keyFrames: any, callback: (err: string, id?: string, duration?: number, keyFrames?: any) => any) {
+  server_setAnimation(client: SupCore.RemoteClient, id: string, duration: number, keyFrames: any, callback: (err: string, id?: string, duration?: number, keyFrames?: any) => any) {
     let violation = SupCore.Data.Base.getRuleViolation(duration, ModelAnimations.schema["duration"], true);
     if (violation != null) { callback(`Invalid duration: ${SupCore.Data.Base.formatRuleViolation(violation)}`); return; }
 

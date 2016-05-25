@@ -68,7 +68,7 @@ export default class GameSettingsResource extends SupCore.Data.Base.Resource {
     }
   }
 
-  server_setProperty(client: any, path: string, value: number|string|boolean, callback: (err: string, path?: string, value?: any) => any) {
+  server_setProperty(client: SupCore.RemoteClient, path: string, value: number|string|boolean, callback: (err: string, path?: string, value?: any) => any) {
     let oldSceneId: string;
     if (path === "startupSceneId") oldSceneId = this.pub.startupSceneId;
 

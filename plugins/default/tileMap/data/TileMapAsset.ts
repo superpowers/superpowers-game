@@ -110,7 +110,7 @@ export default class TileMapAsset extends SupCore.Data.Base.Asset {
     if (this.pub.tileSetId != null) this.emit("addDependencies", [ this.pub.tileSetId ]);
   }
 
-  server_changeTileSet(client: any, tileSetId: string, callback: (err: string, tileSetId: string) => any) {
+  server_changeTileSet(client: SupCore.RemoteClient, tileSetId: string, callback: (err: string, tileSetId: string) => any) {
     if (tileSetId != null) {
       if (typeof(tileSetId) !== "string") { callback("tileSetId must be a string or null", null); return; }
 
@@ -132,7 +132,7 @@ export default class TileMapAsset extends SupCore.Data.Base.Asset {
     this.pub.tileSetId = tileSetId;
   }
 
-  server_resizeMap(client: any, width: number, height: number, callback: (err: string, width: number, height: number) => any) {
+  server_resizeMap(client: SupCore.RemoteClient, width: number, height: number, callback: (err: string, width: number, height: number) => any) {
     if (typeof width  !== "number" || width  < 0) { callback("width must be positive integer", null, null); return; }
     if (typeof height !== "number" || height < 0) { callback("height must be positive integer", null, null); return; }
     if (width === this.pub.width && height === this.pub.height) return;
@@ -170,7 +170,7 @@ export default class TileMapAsset extends SupCore.Data.Base.Asset {
     }
   }
 
-  server_moveMap(client: any, horizontalOffset: number, verticalOffset: number,
+  server_moveMap(client: SupCore.RemoteClient, horizontalOffset: number, verticalOffset: number,
   callback: (err: string, horizontalOffset: number, verticalOffset: number) => any) {
 
     if (typeof horizontalOffset !== "number") { callback("horizontalOffset must be an integer", null, null); return; }
@@ -215,7 +215,7 @@ export default class TileMapAsset extends SupCore.Data.Base.Asset {
     }
   }
 
-  server_editMap(client: any, layerId: string, edits: {x: number, y: number, tileValue: (number|boolean)[]}[],
+  server_editMap(client: SupCore.RemoteClient, layerId: string, edits: {x: number, y: number, tileValue: (number|boolean)[]}[],
   callback: (err: string, layerId: string, edits: {x: number, y: number, tileValue: (number|boolean)[]}[]) => any) {
     if (typeof layerId !== "string" || this.layers.byId[layerId] == null) { callback("no such layer", null, null); return; }
     if (!Array.isArray(edits)) { callback("edits must be an array", null, null); return; }
@@ -268,7 +268,7 @@ export default class TileMapAsset extends SupCore.Data.Base.Asset {
     return newLayer;
   }
 
-  server_newLayer(client: any, layerName: string, index: number, callback: (err: string, layer: TileMapLayerPub, index: number) => any) {
+  server_newLayer(client: SupCore.RemoteClient, layerName: string, index: number, callback: (err: string, layer: TileMapLayerPub, index: number) => any) {
     let newLayer = this.createEmptyLayer(layerName);
     this.layers.add(newLayer, index, (err, actualIndex) => {
       if (err != null) { callback(err, null, null); return; }
@@ -282,7 +282,7 @@ export default class TileMapAsset extends SupCore.Data.Base.Asset {
     this.layers.client_add(newLayer, actualIndex);
   }
 
-  server_renameLayer(client: any, layerId: string, newName: string, callback: (err: string, layerId: string, newName: string) => any) {
+  server_renameLayer(client: SupCore.RemoteClient, layerId: string, newName: string, callback: (err: string, layerId: string, newName: string) => any) {
     if (typeof layerId !== "string" || this.layers.byId[layerId] == null) { callback("no such layer", null, null); return; }
 
     this.layers.setProperty(layerId, "name", newName, (err) => {
@@ -297,7 +297,7 @@ export default class TileMapAsset extends SupCore.Data.Base.Asset {
     this.layers.client_setProperty(layerId, "name", newName);
   }
 
-  server_deleteLayer(client: any, layerId: string, callback: (err: string, layerId: string, index: number) => any) {
+  server_deleteLayer(client: SupCore.RemoteClient, layerId: string, callback: (err: string, layerId: string, index: number) => any) {
     if (typeof layerId !== "string" || this.layers.byId[layerId] == null) { callback("no such layer", null, null); return; }
     if (this.pub.layers.length === 1) { callback("Last layer can't be deleted", null, null); return; }
 
@@ -313,7 +313,7 @@ export default class TileMapAsset extends SupCore.Data.Base.Asset {
     this.layers.client_remove(layerId);
   }
 
-  server_moveLayer(client: any, layerId: string, layerIndex: number, callback: (err: string, layerId: string, layerIndex: number) => any) {
+  server_moveLayer(client: SupCore.RemoteClient, layerId: string, layerIndex: number, callback: (err: string, layerId: string, layerIndex: number) => any) {
     if (typeof layerId !== "string" || this.layers.byId[layerId] == null) { callback("no such layer", null, null); return; }
     if (typeof layerIndex !== "number") { callback("index must be an integer", null, null); return; }
 
