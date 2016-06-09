@@ -17,6 +17,16 @@ import * as _ from "lodash";
 import { Component } from "./SceneComponents";
 import SceneNodes, { Node } from "./SceneNodes";
 
+type AddNodeCallback = SupCore.Data.Base.ErrorCallback & ((err: string, nodeId: string, node: Node, parentId: string, index: number) => void);
+type SetNodePropertyCallback = SupCore.Data.Base.ErrorCallback & ((err: string, ack: any, id: string, path: string, value: any) => void);
+type MoveNodeCallback = SupCore.Data.Base.ErrorCallback & ((err: string, ack: any, id: string, parentId: string, index: number) => void);
+type DuplicateNodeCallback = SupCore.Data.Base.ErrorCallback & ((err: string, nodeId: string, rootNode: Node, newNodes: DuplicatedNode[]) => void);
+type RemoveNodeCallback = SupCore.Data.Base.ErrorCallback & ((err: string, ack: any, id: string) => void);
+
+type AddComponentCallback = SupCore.Data.Base.ErrorCallback & ((err: string, componentId: string, component: Component, nodeId: string, index: number) => void);
+type EditComponentCallback = SupCore.Data.Base.ErrorCallback & ((err: string, ack: any, nodeId: string, componentId: string, command: string, ...args: any[]) => void);
+type RemoveComponentCallback = SupCore.Data.Base.ErrorCallback & ((err: string, ack: any, nodeId: string, componentId: string) => void);
+
 export interface DuplicatedNode {
   node: Node;
   parentId: string;
@@ -143,20 +153,20 @@ export default class SceneAsset extends SupCore.Data.Base.Asset {
     this.emit("addDependencies", Object.keys(this.componentPathsByDependentAssetId));
   }
 
-  server_addNode(client: SupCore.RemoteClient, name: string, options: any, callback: (err: string, node: Node, parentId: string, index: number) => any) {
-    if (name.indexOf("/") !== -1) { callback("Actor name cannot contain slashes", null, null, null); return; }
+  server_addNode(client: SupCore.RemoteClient, name: string, options: any, callback: AddNodeCallback) {
+    if (name.indexOf("/") !== -1) { callback("Actor name cannot contain slashes"); return; }
 
     let parentId = (options != null) ? options.parentId : null;
     let parentNode = this.nodes.byId[parentId];
     if (parentNode != null && parentNode.prefab != null) {
-      callback("Can't create children node on prefabs", null, null, null);
+      callback("Can't create children node on prefabs");
       return;
     }
 
     if (this.nodes.pub.length !== 0 && parentNode == null) {
       let entry = this.server.data.entries.byId[this.id];
       if (entry.dependentAssetIds.length > 0) {
-        callback("A prefab can only have one root actor", null, null, null);
+        callback("A prefab can only have one root actor");
         return;
       }
     }
@@ -171,9 +181,9 @@ export default class SceneAsset extends SupCore.Data.Base.Asset {
 
     let index = (options != null) ? options.index : null;
     this.nodes.add(sceneNode, parentId, index, (err, actualIndex) => {
-      if (err != null) { callback(err, null, null, null); return; }
+      if (err != null) { callback(err); return; }
 
-      callback(null, sceneNode, parentId, actualIndex);
+      callback(null, sceneNode.id, sceneNode, parentId, actualIndex);
       this.emit("change");
     });
   }
@@ -182,13 +192,13 @@ export default class SceneAsset extends SupCore.Data.Base.Asset {
     this.nodes.client_add(node, parentId, index);
   }
 
-  server_setNodeProperty(client: SupCore.RemoteClient, id: string, path: string, value: any, callback: (err: string, id: string, path: string, value: any) => any) {
-    if (path === "name" && value.indexOf("/") !== -1) { callback("Actor name cannot contain slashes", null, null, null); return; }
+  server_setNodeProperty(client: SupCore.RemoteClient, id: string, path: string, value: any, callback: SetNodePropertyCallback) {
+    if (path === "name" && value.indexOf("/") !== -1) { callback("Actor name cannot contain slashes"); return; }
 
     this.nodes.setProperty(id, path, value, (err, actualValue) => {
-      if (err != null) { callback(err, null, null, null); return; }
+      if (err != null) { callback(err); return; }
 
-      callback(null, id, path, actualValue);
+      callback(null, null, id, path, actualValue);
       this.emit("change");
     });
   }
@@ -197,20 +207,20 @@ export default class SceneAsset extends SupCore.Data.Base.Asset {
     this.nodes.client_setProperty(id, path, value);
   }
 
-  server_moveNode(client: SupCore.RemoteClient, id: string, parentId: string, index: number, callback: (err: string, id: string, parentId: string, index: number) => any) {
+  server_moveNode(client: SupCore.RemoteClient, id: string, parentId: string, index: number, callback: MoveNodeCallback) {
     let node = this.nodes.byId[id];
-    if (node == null) { callback(`Invalid node id: ${id}`, null, null, null); return; }
+    if (node == null) { callback(`Invalid node id: ${id}`); return; }
 
     let parentNode = this.nodes.byId[parentId];
     if (parentNode != null && parentNode.prefab != null) {
-      callback("Can't move children node on prefabs", null, null, null);
+      callback("Can't move children node on prefabs");
       return;
     }
 
     if (parentNode == null) {
       let entry = this.server.data.entries.byId[this.id];
       if (entry.dependentAssetIds.length > 0) {
-        callback("A prefab can only have one root actor", null, null, null);
+        callback("A prefab can only have one root actor");
         return;
       }
     }
@@ -218,11 +228,11 @@ export default class SceneAsset extends SupCore.Data.Base.Asset {
     let globalMatrix = this.computeGlobalMatrix(node);
 
     this.nodes.move(id, parentId, index, (err, actualIndex) => {
-      if (err != null) { callback(err, null, null, null); return; }
+      if (err != null) { callback(err); return; }
 
       this.applyGlobalMatrix(node, globalMatrix);
 
-      callback(null, id, parentId, actualIndex);
+      callback(null, null, id, parentId, actualIndex);
       this.emit("change");
     });
   }
@@ -262,17 +272,17 @@ export default class SceneAsset extends SupCore.Data.Base.Asset {
   }
 
 
-  server_duplicateNode(client: SupCore.RemoteClient, newName: string, id: string, index: number, callback: (err: string, rootNode: Node, newNodes: DuplicatedNode[]) => any) {
-    if (newName.indexOf("/") !== -1) { callback("Actor name cannot contain slashes", null, null); return; }
+  server_duplicateNode(client: SupCore.RemoteClient, newName: string, id: string, index: number, callback: DuplicateNodeCallback) {
+    if (newName.indexOf("/") !== -1) { callback("Actor name cannot contain slashes"); return; }
 
     let referenceNode = this.nodes.byId[id];
-    if (referenceNode == null) { callback(`Invalid node id: ${id}`, null, null); return; }
+    if (referenceNode == null) { callback(`Invalid node id: ${id}`); return; }
 
     let parentNode = this.nodes.parentNodesById[id];
     if (parentNode == null) {
       let entry = this.server.data.entries.byId[this.id];
       if (entry.dependentAssetIds.length > 0) {
-        callback("A prefab can only have one root actor", null, null);
+        callback("A prefab can only have one root actor");
         return;
       }
     }
@@ -297,7 +307,7 @@ export default class SceneAsset extends SupCore.Data.Base.Asset {
 
     let addNode = (newNode: Node, parentId: string, index: number, children: Node[]) => {
       this.nodes.add(newNode, parentId, index, (err, actualIndex) => {
-        if (err != null) { callback(err, null, null); return; }
+        if (err != null) { callback(err); return; }
 
         for (let componentId in this.nodes.componentsByNodeId[newNode.id].configsById) {
           let config = this.nodes.componentsByNodeId[newNode.id].configsById[componentId];
@@ -312,7 +322,7 @@ export default class SceneAsset extends SupCore.Data.Base.Asset {
         newNodes.push({ node: newNode, parentId, index: actualIndex });
 
         if (newNodes.length === totalNodeCount) {
-          callback(null, rootNode, newNodes);
+          callback(null, rootNode.id, rootNode, newNodes);
           this.emit("change");
         }
 
@@ -340,11 +350,11 @@ export default class SceneAsset extends SupCore.Data.Base.Asset {
     }
   }
 
-  server_removeNode(client: SupCore.RemoteClient, id: string, callback: (err: string, id: string) => any) {
+  server_removeNode(client: SupCore.RemoteClient, id: string, callback: RemoveNodeCallback) {
     this.nodes.remove(id, (err) => {
-      if (err != null) { callback(err, null); return; }
+      if (err != null) { callback(err); return; }
 
-      callback(null, id);
+      callback(null, null, id);
       this.emit("change");
     });
   }
@@ -390,15 +400,14 @@ export default class SceneAsset extends SupCore.Data.Base.Asset {
     if (removedDepIds.length > 0) this.emit("removeDependencies", removedDepIds);
   };
 
-  server_addComponent(client: SupCore.RemoteClient, nodeId: string, componentType: string, index: number,
-  callback: (err: string, component: Component, nodeId: string, index: number) => any) {
+  server_addComponent(client: SupCore.RemoteClient, nodeId: string, componentType: string, index: number, callback: AddComponentCallback) {
 
     let componentConfigClass = this.server.system.getPlugins<SupCore.Data.ComponentConfigClass>("componentConfigs")[componentType];
-    if (componentConfigClass == null) { callback("Invalid component type", null, null, null); return; }
+    if (componentConfigClass == null) { callback("Invalid component type"); return; }
 
     let node = this.nodes.byId[nodeId];
 
-    if (node != null && node.prefab != null) { callback("Can't add component on prefabs", null, null, null); return; }
+    if (node != null && node.prefab != null) { callback("Can't add component on prefabs"); return; }
 
     let component: Component = {
       type: componentType,
@@ -406,7 +415,7 @@ export default class SceneAsset extends SupCore.Data.Base.Asset {
     };
 
     this.nodes.addComponent(nodeId, component, index, (err, actualIndex) => {
-      if (err != null) { callback(err, null, null, null); return; }
+      if (err != null) { callback(err); return; }
 
       let config = this.nodes.componentsByNodeId[nodeId].configsById[component.id];
 
@@ -414,7 +423,7 @@ export default class SceneAsset extends SupCore.Data.Base.Asset {
       config.on("addDependencies", (depIds: string[]) => { this._onAddComponentDependencies(componentPath, depIds); });
       config.on("removeDependencies", (depIds: string[]) => { this._onRemoveComponentDependencies(componentPath, depIds); });
 
-      callback(null, component, nodeId, actualIndex);
+      callback(null, component.id, component, nodeId, actualIndex);
       this.emit("change");
     });
   }
@@ -424,21 +433,21 @@ export default class SceneAsset extends SupCore.Data.Base.Asset {
   }
 
   server_editComponent(client: SupCore.RemoteClient, nodeId: string, componentId: string, command: string, ...args: any[]) {
-    let callback: (err: string, nodeId: string, componentId: string, command: string, ...args: any[]) => any = args.pop();
+    let callback: EditComponentCallback = args.pop();
 
     let components = this.nodes.componentsByNodeId[nodeId];
-    if (components == null) { callback(`Invalid node id: ${nodeId}`, null, null, null, null); return; }
+    if (components == null) { callback(`Invalid node id: ${nodeId}`); return; }
 
     let componentConfig = components.configsById[componentId];
-    if (componentConfig == null) { callback(`Invalid component id: ${componentId}`, null, null, null, null); return; }
+    if (componentConfig == null) { callback(`Invalid component id: ${componentId}`); return; }
 
     let commandMethod = (<any>componentConfig)[`server_${command}`];
-    if (commandMethod == null) { callback("Invalid component command", null, null, null, null); return; }
+    if (commandMethod == null) { callback("Invalid component command"); return; }
 
     commandMethod.call(componentConfig, client, ...args, (err: string, ...callbackArgs: any[]) => {
-      if (err != null) { callback(err, null, null, null, null); return; }
+      if (err != null) { callback(err); return; }
 
-      callback(null, nodeId, componentId, command, ...callbackArgs);
+      callback(null, null, nodeId, componentId, command, ...callbackArgs);
       this.emit("change");
     });
   }
@@ -450,14 +459,14 @@ export default class SceneAsset extends SupCore.Data.Base.Asset {
     commandMethod.apply(componentConfig, args);
   }
 
-  server_removeComponent(client: SupCore.RemoteClient, nodeId: string, componentId: string, callback: (err: string, nodeId: string, componentId: string) => any) {
+  server_removeComponent(client: SupCore.RemoteClient, nodeId: string, componentId: string, callback: RemoveComponentCallback) {
     let components = this.nodes.componentsByNodeId[nodeId];
-    if (components == null) { callback(`Invalid node id: ${nodeId}`, null, null); return; }
+    if (components == null) { callback(`Invalid node id: ${nodeId}`); return; }
 
     components.remove(componentId, (err) => {
-      if (err != null) { callback(err, null, null); return; }
+      if (err != null) { callback(err); return; }
 
-      callback(null, nodeId, componentId);
+      callback(null, null, nodeId, componentId);
       this.emit("change");
     });
   }

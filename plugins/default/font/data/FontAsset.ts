@@ -8,6 +8,8 @@ declare let FontFace: any;
 let THREE: typeof SupEngine.THREE;
 if ((<any>global).window != null && (<any>global).window.SupEngine != null) THREE = (<any>global).window.SupEngine.THREE;
 
+type UploadCallback = SupCore.Data.Base.ErrorCallback & ((err: string, ack: any, font: any) => void);
+
 export interface FontPub {
   formatVersion: number;
 
@@ -192,13 +194,13 @@ export default class FontAsset extends SupCore.Data.Base.Asset {
     }
   }
 
-  server_upload(client: SupCore.RemoteClient, font: any, callback: (err: string, font: any) => any) {
-    if (!(font instanceof Buffer)) { callback("Image must be an ArrayBuffer", null); return; }
+  server_upload(client: SupCore.RemoteClient, font: any, callback: UploadCallback) {
+    if (!(font instanceof Buffer)) { callback("Image must be an ArrayBuffer"); return; }
 
     if (this.pub.isBitmap) this.pub.bitmap = font;
     else this.pub.font = font;
 
-    callback(null, font);
+    callback(null, null, font);
     this.emit("change");
   }
 

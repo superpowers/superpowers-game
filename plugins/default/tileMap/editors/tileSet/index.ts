@@ -239,7 +239,7 @@ function onNewPropertyClick() {
     /* tslint:enable:no-unused-expression */
     if (name == null) return;
 
-    data.projectClient.editAsset(SupClient.query.asset, "addTileProperty", data.selectedTile, name, (id: string) => {
+    data.projectClient.editAsset(SupClient.query.asset, "addTileProperty", data.selectedTile, name, () => {
       ui.selectedProperty = name;
       ui.propertiesTreeView.clearSelection();
       let liElt = ui.propertiesTreeView.treeRoot.querySelector(`li[data-name="${ui.selectedProperty}"]`);

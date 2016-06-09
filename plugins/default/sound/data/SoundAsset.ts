@@ -1,6 +1,8 @@
 import * as path from "path";
 import * as fs from "fs";
 
+type UploadCallback = SupCore.Data.Base.ErrorCallback & ((err: string, ack: any, sound: Buffer) => void);
+
 interface SoundAssetPub {
   formatVersion: number;
   sound: Buffer;
@@ -73,12 +75,12 @@ export default class SoundAsset extends SupCore.Data.Base.Asset {
     });
   }
 
-  server_upload(client: SupCore.RemoteClient, sound: Buffer, callback: (err: string, sound?: Buffer) => any) {
+  server_upload(client: SupCore.RemoteClient, sound: Buffer, callback: UploadCallback) {
     if (!(sound instanceof Buffer)) { callback("Sound must be an ArrayBuffer"); return; }
 
     this.pub.sound = sound;
 
-    callback(null, sound);
+    callback(null, null, sound);
     this.emit("change");
   }
 

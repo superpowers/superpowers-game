@@ -48,6 +48,9 @@ if ((<any>global).window == null) {
   globalDefs = globalDefs.replace("// INSERT_COMPONENT_ACCESSORS", actorComponentAccessors.join("\n    "));
 }
 
+type EditTextCallback = SupCore.Data.Base.ErrorCallback & ((err: string, ack: any, operationData: OperationData, revisionIndex: number) => void);
+type ApplyDraftChangesCallback = SupCore.Data.Base.ErrorCallback;
+
 interface ScriptAssetPub {
   text: string;
   draft: string;
@@ -217,7 +220,7 @@ Sup.registerBehavior(${behaviorName});
     });
   }
 
-  server_editText(client: SupCore.RemoteClient, operationData: OperationData, revisionIndex: number, callback: (err: string, operationData?: any, revisionIndex?: number) => any) {
+  server_editText(client: SupCore.RemoteClient, operationData: OperationData, revisionIndex: number, callback: EditTextCallback) {
     if (operationData.userId !== client.id) { callback("Invalid client id"); return; }
 
     let operation = new OT.TextOperation();
@@ -229,7 +232,7 @@ Sup.registerBehavior(${behaviorName});
     this.pub.draft = this.document.text;
     this.pub.revisionId++;
 
-    callback(null, operation.serialize(), this.document.getRevisionId() - 1);
+    callback(null, null, operation.serialize(), this.document.getRevisionId() - 1);
 
     if (!this.hasDraft) {
       this.hasDraft = true;
@@ -246,7 +249,7 @@ Sup.registerBehavior(${behaviorName});
     this.pub.revisionId++;
   }
 
-  server_applyDraftChanges(client: SupCore.RemoteClient, options: { ignoreErrors: boolean }, callback: (err: string) => any) {
+  server_applyDraftChanges(client: SupCore.RemoteClient, options: { ignoreErrors: boolean }, callback: ApplyDraftChangesCallback) {
     let text = this.pub.draft;
 
     let scriptNames: string[] = [];

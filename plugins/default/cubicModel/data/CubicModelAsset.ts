@@ -13,6 +13,19 @@ import * as _ from "lodash";
 
 import CubicModelNodes, { XYZ, Node, Shape, getShapeTextureSize, getShapeTextureFaceSize } from "./CubicModelNodes";
 
+type AddNodeCallback = SupCore.Data.Base.ErrorCallback & ((err: string, nodeId: string, node: Node, parentId: string, index: number) => void);
+type SetNodePropertyCallback = SupCore.Data.Base.ErrorCallback & ((err: string, ack: any, id: string, path: string, value: any) => void);
+type MoveNodePivotCallback = SupCore.Data.Base.ErrorCallback & ((err: string, ack: any, id: string, value: { x: number; y: number; z: number; }) => void);
+type MoveNodeCallback = SupCore.Data.Base.ErrorCallback & ((err: string, ack: any, id: string, parentId: string, index: number) => void);
+type DuplicateNodeCallback = SupCore.Data.Base.ErrorCallback & ((err: string, nodeId: string, rootNode: Node, newNodes: DuplicatedNode[]) => void);
+type RemoveNodeCallback = SupCore.Data.Base.ErrorCallback & ((err: string, ack: any, id: string) => void);
+
+type MoveNodeTextureOffsetCallback = SupCore.Data.Base.ErrorCallback & ((err: string, ack: any, nodeIds: string[], offset: { x: number; y: number }) => void);
+
+type ChangeTextureWidthCallback = SupCore.Data.Base.ErrorCallback & ((err: string, ack: any, newWidth: number) => void);
+type ChangeTextureHeightCallback = SupCore.Data.Base.ErrorCallback & ((err: string, ack: any, newHeight: number) => void);
+type EditTextureCallback = SupCore.Data.Base.ErrorCallback & ((err: string, ack: any, name: string, edits: TextureEdit[]) => void);
+
 export interface CubicModelAssetPub {
   pixelsPerUnit: number;
   nodes: Node[];
@@ -193,7 +206,7 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
   }
 
   // Nodes
-  server_addNode(client: SupCore.RemoteClient, name: string, options: any, callback: (err: string, node: Node, parentId: string, index: number) => any) {
+  server_addNode(client: SupCore.RemoteClient, name: string, options: any, callback: AddNodeCallback) {
     let parentId = (options != null) ? options.parentId : null;
 
     let node: Node = {
@@ -291,9 +304,9 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
 
     let index = (options != null) ? options.index : null;
     this.nodes.add(node, parentId, index, (err, actualIndex) => {
-      if (err != null) { callback(err, null, null, null); return; }
+      if (err != null) { callback(err); return; }
 
-      callback(null, node, parentId, actualIndex);
+      callback(null, node.id, node, parentId, actualIndex);
       this.emit("change");
     });
   }
@@ -303,15 +316,15 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
   }
 
 
-  server_setNodeProperty(client: SupCore.RemoteClient, id: string, path: string, value: any, callback: (err: string, id: string, path: string, value: any) => any) {
+  server_setNodeProperty(client: SupCore.RemoteClient, id: string, path: string, value: any, callback: SetNodePropertyCallback) {
     let oldSize = this.nodes.byId[id].shape.settings.size;
 
     this.nodes.setProperty(id, path, value, (err, actualValue) => {
-      if (err != null) { callback(err, null, null, null); return; }
+      if (err != null) { callback(err); return; }
 
       if (path === "shape.settings.size") this._updateNodeUvFromSize(oldSize, this.nodes.byId[id].shape);
 
-      callback(null, id, path, actualValue);
+      callback(null, null, id, path, actualValue);
       this.emit("change");
     });
   }
@@ -346,12 +359,12 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
     }
   }
 
-  server_moveNodePivot(client: SupCore.RemoteClient, id: string, value: { x: number; y: number; z: number; }, callback: (err: string, id: string, value: { x: number; y: number; z: number; }) => any) {
+  server_moveNodePivot(client: SupCore.RemoteClient, id: string, value: { x: number; y: number; z: number; }, callback: MoveNodePivotCallback) {
     let node = this.nodes.byId[id];
     let oldMatrix = (node != null) ? this.computeGlobalMatrix(node) : null;
 
     this.nodes.setProperty(id, "position", value, (err, actualValue) => {
-      if (err != null) { callback(err, null, null); return; }
+      if (err != null) { callback(err); return; }
 
       let newInverseMatrix = this.computeGlobalMatrix(node);
       newInverseMatrix.getInverse(newInverseMatrix);
@@ -362,7 +375,7 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
       node.shape.offset.y = offset.y;
       node.shape.offset.z = offset.z;
 
-      callback(null, id, actualValue);
+      callback(null, null, id, actualValue);
       this.emit("change");
     });
   }
@@ -384,18 +397,18 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
   }
 
 
-  server_moveNode(client: SupCore.RemoteClient, id: string, parentId: string, index: number, callback: (err: string, id: string, parentId: string, index: number) => any) {
+  server_moveNode(client: SupCore.RemoteClient, id: string, parentId: string, index: number, callback: MoveNodeCallback) {
     let node = this.nodes.byId[id];
-    if (node == null) { callback(`Invalid node id: ${id}`, null, null, null); return; }
+    if (node == null) { callback(`Invalid node id: ${id}`); return; }
 
     let globalMatrix = this.computeGlobalMatrix(node);
 
     this.nodes.move(id, parentId, index, (err, actualIndex) => {
-      if (err != null) { callback(err, null, null, null); return; }
+      if (err != null) { callback(err); return; }
 
       this.applyGlobalMatrix(node, globalMatrix);
 
-      callback(null, id, parentId, actualIndex);
+      callback(null, null, id, parentId, actualIndex);
       this.emit("change");
     });
   }
@@ -460,9 +473,9 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
   }
 
 
-  server_duplicateNode(client: SupCore.RemoteClient, newName: string, id: string, index: number, callback: (err: string, rootNode: Node, newNodes: DuplicatedNode[]) => any) {
+  server_duplicateNode(client: SupCore.RemoteClient, newName: string, id: string, index: number, callback: DuplicateNodeCallback) {
     let referenceNode = this.nodes.byId[id];
-    if (referenceNode == null) { callback(`Invalid node id: ${id}`, null, null); return; }
+    if (referenceNode == null) { callback(`Invalid node id: ${id}`); return; }
 
     let newNodes: DuplicatedNode[] = [];
     let totalNodeCount = 0;
@@ -482,14 +495,14 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
 
     let addNode = (newNode: Node, parentId: string, index: number, children: Node[]) => {
       this.nodes.add(newNode, parentId, index, (err, actualIndex) => {
-        if (err != null) { callback(err, null, null); return; }
+        if (err != null) { callback(err); return; }
 
         // TODO: Copy shape
 
         newNodes.push({ node: newNode, parentId, index: actualIndex });
 
         if (newNodes.length === totalNodeCount) {
-          callback(null, rootNode, newNodes);
+          callback(null, rootNode.id, rootNode, newNodes);
           this.emit("change");
         }
 
@@ -516,11 +529,11 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
   }
 
 
-  server_removeNode(client: SupCore.RemoteClient, id: string, callback: (err: string, id: string) => any) {
+  server_removeNode(client: SupCore.RemoteClient, id: string, callback: RemoveNodeCallback) {
     this.nodes.remove(id, (err) => {
-      if (err != null) { callback(err, null); return; }
+      if (err != null) { callback(err); return; }
 
-      callback(null, id);
+      callback(null, null, id);
       this.emit("change");
     });
   }
@@ -529,11 +542,11 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
     this.nodes.client_remove(id);
   }
 
-  server_moveNodeTextureOffset(client: SupCore.RemoteClient, nodeIds: string[], offset: { x: number; y: number }, callback: (err: string, nodeIds: string[], offset: { x: number; y: number }) => any) {
+  server_moveNodeTextureOffset(client: SupCore.RemoteClient, nodeIds: string[], offset: { x: number; y: number }, callback: MoveNodeTextureOffsetCallback) {
     // TODO: add checks
 
     this.client_moveNodeTextureOffset(nodeIds, offset);
-    callback(null, nodeIds, offset);
+    callback(null, null, nodeIds, offset);
     this.emit("change");
   }
 
@@ -549,11 +562,11 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
   }
 
   // Texture
-  server_changeTextureWidth(client: SupCore.RemoteClient, newWidth: number, callback: (err: string, newWidth: number) => void) {
-    if (CubicModelAsset.validTextureSizes.indexOf(newWidth) === -1) { callback(`Invalid new texture width: ${newWidth}`, null); return; }
+  server_changeTextureWidth(client: SupCore.RemoteClient, newWidth: number, callback: ChangeTextureWidthCallback) {
+    if (CubicModelAsset.validTextureSizes.indexOf(newWidth) === -1) { callback(`Invalid new texture width: ${newWidth}`); return; }
 
     this._changeTextureWidth(newWidth);
-    callback(null, newWidth);
+    callback(null, null, newWidth);
     this.emit("change");
   }
 
@@ -589,11 +602,11 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
     this.pub.textureWidth = newWidth;
   }
 
-  server_changeTextureHeight(client: SupCore.RemoteClient, newHeight: number, callback: (err: string, newHeight: number) => void) {
-    if (CubicModelAsset.validTextureSizes.indexOf(newHeight) === -1) { callback(`Invalid new texture height: ${newHeight}`, null); return; }
+  server_changeTextureHeight(client: SupCore.RemoteClient, newHeight: number, callback: ChangeTextureHeightCallback) {
+    if (CubicModelAsset.validTextureSizes.indexOf(newHeight) === -1) { callback(`Invalid new texture height: ${newHeight}`); return; }
 
     this._changeTextureHeight(newHeight);
-    callback(null, newHeight);
+    callback(null, null, newHeight);
     this.emit("change");
   }
 
@@ -625,20 +638,20 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
     this.pub.textureHeight = newHeight;
   }
 
-  server_editTexture(client: SupCore.RemoteClient, name: string, edits: TextureEdit[], callback: (err: string, name: string, edits: TextureEdit[]) => void) {
-    if (this.pub.maps[name] == null) { callback(`Invalid map name: ${name}`, null, null); return; }
+  server_editTexture(client: SupCore.RemoteClient, name: string, edits: TextureEdit[], callback: EditTextureCallback) {
+    if (this.pub.maps[name] == null) { callback(`Invalid map name: ${name}`); return; }
     for (let edit of edits) {
-      if (edit.x == null || edit.x < 0 || edit.x >= this.pub.textureWidth) { callback(`Invalid edit x: ${edit.x}`, null, null); return; }
-      if (edit.y == null || edit.y < 0 || edit.y >= this.pub.textureHeight) { callback(`Invalid edit y: ${edit.y}`, null, null); return; }
-      if (edit.value.r == null || edit.value.r < 0 || edit.value.r > 255) { callback(`Invalid edit value r: ${edit.value.r}`, null, null); return; }
-      if (edit.value.g == null || edit.value.g < 0 || edit.value.g > 255) { callback(`Invalid edit value g: ${edit.value.g}`, null, null); return; }
-      if (edit.value.b == null || edit.value.b < 0 || edit.value.b > 255) { callback(`Invalid edit value b: ${edit.value.b}`, null, null); return; }
-      if (edit.value.a == null || edit.value.a < 0 || edit.value.a > 255) { callback(`Invalid edit value a: ${edit.value.a}`, null, null); return; }
+      if (edit.x == null || edit.x < 0 || edit.x >= this.pub.textureWidth) { callback(`Invalid edit x: ${edit.x}`); return; }
+      if (edit.y == null || edit.y < 0 || edit.y >= this.pub.textureHeight) { callback(`Invalid edit y: ${edit.y}`); return; }
+      if (edit.value.r == null || edit.value.r < 0 || edit.value.r > 255) { callback(`Invalid edit value r: ${edit.value.r}`); return; }
+      if (edit.value.g == null || edit.value.g < 0 || edit.value.g > 255) { callback(`Invalid edit value g: ${edit.value.g}`); return; }
+      if (edit.value.b == null || edit.value.b < 0 || edit.value.b > 255) { callback(`Invalid edit value b: ${edit.value.b}`); return; }
+      if (edit.value.a == null || edit.value.a < 0 || edit.value.a > 255) { callback(`Invalid edit value a: ${edit.value.a}`); return; }
     }
 
     this._editTextureData(name, edits);
 
-    callback(null, name, edits);
+    callback(null, null, name, edits);
     this.emit("change");
   }
 

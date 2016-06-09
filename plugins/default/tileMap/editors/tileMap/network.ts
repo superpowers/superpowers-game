@@ -115,13 +115,12 @@ onEditCommands["renameLayer"] = (id: string, newName: string) => {
   layerElt.querySelector(".name").textContent = newName;
 };
 
-onEditCommands["deleteLayer"] = (id: string, index: number) => {
+onEditCommands["deleteLayer"] = (id: string) => {
   let layerElt = ui.layersTreeView.treeRoot.querySelector(`li[data-id="${id}"]`) as HTMLLIElement;
   ui.layersTreeView.remove(layerElt);
 
   if (id === tileSetArea.selectedLayerId) {
-    index = Math.max(0, index - 1);
-    tileSetArea.selectedLayerId = data.tileMapUpdater.tileMapAsset.pub.layers[index].id;
+    tileSetArea.selectedLayerId = data.tileMapUpdater.tileMapAsset.pub.layers[0].id;
     ui.layersTreeView.clearSelection();
     ui.layersTreeView.addToSelection(ui.layersTreeView.treeRoot.querySelector(`li[data-id="${tileSetArea.selectedLayerId}"]`) as HTMLLIElement);
   }
