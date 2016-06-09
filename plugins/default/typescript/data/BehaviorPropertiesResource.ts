@@ -70,7 +70,7 @@ export default class BehaviorPropertiesResource extends SupCore.Data.Base.Resour
 
   setScriptBehaviors(scriptId: string, behaviors: {[behaviorName: string]: { line: number; properties: BehaviorProperty[]; parentBehavior: string }}) {
     this.client_setScriptBehaviors(scriptId, behaviors);
-    this.emit("command", "setScriptBehaviors", scriptId, behaviors);
+    this.emit("edit", "setScriptBehaviors", scriptId, behaviors);
     this.emit("change");
   }
 
@@ -95,7 +95,7 @@ export default class BehaviorPropertiesResource extends SupCore.Data.Base.Resour
 
   clearScriptBehaviors(scriptId: string) {
     this.client_clearScriptBehaviors(scriptId);
-    this.emit("command", "clearScriptBehaviors", scriptId);
+    this.emit("edit", "clearScriptBehaviors", scriptId);
     this.emit("change");
   }
 
