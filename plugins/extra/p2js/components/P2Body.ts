@@ -67,7 +67,7 @@ export default class P2Body extends SupEngine.ActorComponent {
   }
 
   _destroy() {
-    (<any>SupEngine).P2.World.removeBody(this.body);
+    (<any>SupEngine).P2.world.removeBody(this.body);
     this.body = null;
     super._destroy();
   }
