@@ -20,7 +20,7 @@ export default class P2Body extends SupEngine.ActorComponent {
     super(actor, "P2Body");
 
     this.body = new (<any>window).p2.Body();
-    (<any>SupEngine).P2.World.addBody(this.body);
+    (<any>SupEngine).P2.world.addBody(this.body);
   }
 
   setIsLayerActive(active: boolean) { /* Nothing to render */ }
@@ -36,7 +36,7 @@ export default class P2Body extends SupEngine.ActorComponent {
 
     this.body.mass = this.mass;
     this.body.type = (this.mass === 0) ? (<any>window).p2.Body.STATIC : (<any>window).p2.Body.DYNAMIC;
-    this.body.material = (<any>SupEngine).P2.World.defaultMaterial;
+    this.body.material = (<any>SupEngine).P2.world.defaultMaterial;
     this.body.fixedRotation = this.fixedRotation;
     this.body.updateMassProperties();
 
