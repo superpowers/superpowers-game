@@ -480,7 +480,10 @@ declare module p2 {
         invInertia: number;
         invMassSolve: number;
         invInertiaSolve: number;
-        fixedRotation: number;
+        fixedRotation: boolean;
+        fixedX: boolean;
+        fixedY: boolean;
+        massMultiplier: number[];
         position: number[];
         interpolatedPosition: number[];
         interpolatedAngle: number;
@@ -506,6 +509,10 @@ declare module p2 {
         sleepTimeLimit: number;
         gravityScale: number;
         collisionResponse: boolean;
+        idleTime: number;
+        timeLastSleepy: number;
+        ccdSpeedThreshold: number;
+        ccdIterations: number;
 
         updateSolveMassProperties(): void;
         setDensity(density: number): void;
@@ -517,8 +524,13 @@ declare module p2 {
         removeShape(shape: Shape): boolean;
         updateMassProperties(): void;
         applyForce(force: number[], worldPoint: number[]): void;
+        applyForceLocal(localForce: number[], localPoint: number[]): void;
+        applyImpulse(impulseVector: number[], relativePoint: number[]): void;
+        applyImpulseLocal(localImpulse: number[], localPoint: number[]): void;
         toLocalFrame(out: number[], worldPoint: number[]): void;
         toWorldFrame(out: number[], localPoint: number[]): void;
+        vectorToLocalFrame(out: number[], worldVector: number[]): void;
+        vectorToWorldFrame(out: number[], localVector: number[]): void;
         fromPolygon(path: number[][], options?: {
             optimalDecomp?: boolean;
             skipSimpleCheck?: boolean;
@@ -527,14 +539,15 @@ declare module p2 {
         adjustCenterOfMass(): void;
         setZeroForce(): void;
         resetConstraintVelocity(): void;
+        addConstraintVelocity(): void;
         applyDamping(dy: number): void;
         wakeUp(): void;
         sleep(): void;
         sleepTick(time: number, dontSleep: boolean, dt: number): void;
-        getVelocityFromPosition(story: number[], dt: number): number[];
-        getAngularVelocityFromPosition(timeStep: number): number;
         overlaps(body: Body): boolean;
-
+        integrate(dt: number): void;
+        integrateToTimeOfImpact(dt: number): void;
+        getVelocityAtPoint(result: number[], relativePoint: number[]): number[];
     }
 
     export class Spring {
