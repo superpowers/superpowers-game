@@ -1,4 +1,4 @@
-player/**/*.js
+server/**/*.js
 SupEngine/**/*.js
 SupRuntime/**/*.js
 

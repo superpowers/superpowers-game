@@ -119,6 +119,8 @@ const onLoaded = (err: Error) => {
 };
 
 // Load plugins
+const pluginBundleNames = [ "components", "runtime", "typescriptAPI" ];
+
 supFetch("plugins.json", "json", (err: Error, pluginsInfo: SupCore.PluginsInfo) => {
   if (err != null) {
     console.log(err);
@@ -127,7 +129,7 @@ supFetch("plugins.json", "json", (err: Error, pluginsInfo: SupCore.PluginsInfo) 
   }
 
   async.each(pluginsInfo.list, (pluginName, pluginCallback) => {
-    async.each(pluginsInfo.publishedBundles, (bundle, cb) => {
+    async.each(pluginBundleNames, (bundle, cb) => {
       const script = document.createElement("script");
       script.src = `plugins/${pluginName}/bundles/${bundle}.js`;
       script.addEventListener("load", () => cb(null));
