@@ -42,16 +42,8 @@ socket.on("welcome", onWelcome);
 
 function onWelcome(clientId: number, config: { buildPort: number; systemId: string; }) {
   SupClient.fetch(`/systems/${config.systemId}/plugins.json`, "json", (err: Error, pluginsInfo: SupCore.PluginsInfo) => {
-    async.each(pluginsInfo.list, (pluginName, pluginCallback) => {
-      async.series([
-        (cb) => {
-          let apiScript = document.createElement("script");
-          apiScript.src = `/systems/${config.systemId}/plugins/${pluginName}/bundles/typescriptAPI.js`;
-          apiScript.addEventListener("load", (event: any) => { cb(null, null); } );
-          apiScript.addEventListener("error", (event: any) => { cb(null, null); } );
-          document.body.appendChild(apiScript);
-        }
-      ], pluginCallback);
+    async.each(pluginsInfo.list, (pluginName, cb) => {
+      SupClient.loadScript(`/systems/${config.systemId}/plugins/${pluginName}/bundles/typescriptAPI.js`, cb);
     }, onAPILoaded);
   });
 }

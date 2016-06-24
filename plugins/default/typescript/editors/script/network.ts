@@ -314,12 +314,8 @@ function onWelcome(clientId: string) {
 
 function loadPlugins() {
   SupClient.fetch(`/systems/${SupCore.system.id}/plugins.json`, "json", (err: Error, pluginsInfo: SupCore.PluginsInfo) => {
-    async.each(pluginsInfo.list, (pluginName, pluginCallback) => {
-      let apiScript = document.createElement("script");
-      apiScript.src = `/systems/${SupCore.system.id}/plugins/${pluginName}/bundles/typescriptAPI.js`;
-      apiScript.addEventListener("load", () => { pluginCallback(); } );
-      apiScript.addEventListener("error", () => { pluginCallback(); } );
-      document.body.appendChild(apiScript);
+    async.each(pluginsInfo.list, (pluginName, cb) => {
+      SupClient.loadScript(`/systems/${SupCore.system.id}/plugins/${pluginName}/bundles/typescriptAPI.js`, cb);
     }, (err) => {
       // Read API definitions
       let globalDefs = "";

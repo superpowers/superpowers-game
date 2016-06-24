@@ -132,14 +132,14 @@ supFetch("plugins.json", "json", (err: Error, pluginsInfo: SupCore.PluginsInfo) 
     return;
   }
 
-  async.each(pluginsInfo.list, (pluginName, pluginCallback) => {
+  async.each(pluginsInfo.list, (pluginName, cb) => {
     async.each(pluginBundleNames, (bundle, cb) => {
       const script = document.createElement("script");
       script.src = `plugins/${pluginName}/bundles/${bundle}.js`;
       script.addEventListener("load", () => cb(null));
       script.addEventListener("error", (err) => cb(null));
       document.body.appendChild(script);
-    }, pluginCallback);
+    }, cb);
   }, (err) => {
     if (err != null) console.log(err);
     // Load game
