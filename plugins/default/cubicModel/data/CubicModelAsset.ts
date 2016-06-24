@@ -147,33 +147,52 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
   client_load() { this.loadTextures(); }
   client_unload() { this.unloadTextures(); }
 
-  save(assetPath: string, saveCallback: (err: Error) => void) {
-    let maps = this.pub.maps;
+  save(outputPath: string, callback: (err: Error) => void) {
+    this.write(fs.writeFile, outputPath, (err) => {
+      if (err != null) { callback(err); return; }
 
-    (<any>this.pub).maps = [];
+      // Clean up old maps from disk
+      async.each(Object.keys(this.pub.maps), (mapName, cb) => {
+        const map = new Buffer(new Uint8ClampedArray(this.pub.maps[mapName]));
+        if (map != null) { cb(); return; }
+
+        fs.unlink(path.join(outputPath, `map-${mapName}.dat`), (err) => {
+          if (err != null && err.code !== "ENOENT") { cb(err); return; }
+          cb();
+        });
+      }, callback);
+    });
+  }
+
+  clientExport(outputPath: string, callback: (err: Error) => void) {
+    this.write(SupApp.writeFile, outputPath, callback);
+  }
+
+  private write(writeFile: Function, outputPath: string, writeCallback: (err: Error) => void) {
+    const maps = this.pub.maps;
+
+    (this.pub as any).maps = [];
     for (let key in maps) {
-      if (maps[key] != null) (<any>this.pub).maps.push(key);
+      if (maps[key] != null) (this.pub as any).maps.push(key);
     }
 
-    let json = JSON.stringify(this.pub, null, 2);
-    this.pub.maps = maps;
+    const textures = this.pub.textures;
+    delete this.pub.textures;
 
-    fs.writeFile(path.join(assetPath, "cubicModel.json"), json, { encoding: "utf8" }, (err) => {
-      if (err) { saveCallback(err); return; }
+    let json = JSON.stringify(this.pub, null, 2);
+
+    this.pub.maps = maps;
+    this.pub.textures = textures;
+
+    writeFile(path.join(outputPath, "cubicModel.json"), json, { encoding: "utf8" }, (err: Error) => {
+      if (err != null) { writeCallback(err); return; }
 
       async.each(Object.keys(maps), (mapName, cb) => {
-        let map = new Buffer(new Uint8ClampedArray(maps[mapName]));
+        if (maps[mapName] == null) { cb(); return; }
 
-        if (map == null) {
-          fs.unlink(path.join(assetPath, `map-${mapName}.dat`), (err) => {
-            if (err != null && err.code !== "ENOENT") { cb(err); return; }
-            cb();
-          });
-          return;
-        }
-
-        fs.writeFile(path.join(assetPath, `map-${mapName}.dat`), map, cb);
-      }, saveCallback);
+        const map = new Buffer(new Uint8ClampedArray(maps[mapName]));
+        writeFile(path.join(outputPath, `map-${mapName}.dat`), map, cb);
+      }, writeCallback);
     });
   }
 

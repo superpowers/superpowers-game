@@ -207,12 +207,57 @@ ${tab}gl_FragColor = texture2D(map, vUv);
     callback(true);
   }
 
-  save(assetPath: string, callback: (err: Error) => any) {
+  save(outputPath: string, callback: (err: Error) => void) {
     // NOTE: Doing a clone here because of asynchronous operations below
-    // We should use the (future) asset locking system instead
-    let vertexShader = _.cloneDeep(this.pub.vertexShader);
+    // We should use the new asset locking system instead
+    const vertexShader = _.cloneDeep(this.pub.vertexShader);
+    const fragmentShader = _.cloneDeep(this.pub.fragmentShader);
+
+    this.write(fs.writeFile, outputPath, (err) => {
+      if (err != null) { callback(err); return; }
+
+      async.series([
+        (cb) => {
+          if (vertexShader.draft !== vertexShader.text) {
+            fs.writeFile(path.join(outputPath, "vertexShaderDraft.txt"), vertexShader.draft, { encoding: "utf8" }, (err) => {
+              if (err != null && err.code !== "ENOENT") cb(err);
+              else cb(null);
+            });
+          } else {
+            fs.unlink(path.join(outputPath, "vertexShaderDraft.txt"), (err) => {
+              if (err != null && err.code !== "ENOENT") cb(err);
+              else cb(null);
+            });
+          }
+        },
+
+        (cb) => {
+          if (fragmentShader.draft !== fragmentShader.text) {
+            fs.writeFile(path.join(outputPath, "fragmentShaderDraft.txt"), fragmentShader.draft, { encoding: "utf8" }, (err) => {
+              if (err != null && err.code !== "ENOENT") cb(err);
+              else cb(null);
+            });
+          } else {
+            fs.unlink(path.join(outputPath, "fragmentShaderDraft.txt"), (err) => {
+              if (err != null && err.code !== "ENOENT") cb(err);
+              else cb(null);
+            });
+          }
+        }
+      ], callback);
+    });
+  }
+
+  clientExport(outputPath: string, callback: (err: Error) => void) {
+    this.write(SupApp.writeFile, outputPath, callback);
+  }
+
+  private write(writeFile: Function, outputPath: string, callback: (err: Error) => void) {
+    // NOTE: Doing a clone here because of asynchronous operations below
+    // We should use the new asset locking system instead
+    const vertexShader = _.cloneDeep(this.pub.vertexShader);
+    const fragmentShader = _.cloneDeep(this.pub.fragmentShader);
     delete this.pub.vertexShader;
-    let fragmentShader = _.cloneDeep(this.pub.fragmentShader);
     delete this.pub.fragmentShader;
 
     const json = JSON.stringify(this.pub, null, 2);
@@ -222,55 +267,29 @@ ${tab}gl_FragColor = texture2D(map, vUv);
 
     // TODO: Rename to .glsl instead of .txt
     async.series([
-      (cb: (err: Error) => any) => {
-        fs.writeFile(path.join(assetPath, "shader.json"), json, { encoding: "utf8" }, (err) => {
+      (cb) => {
+        writeFile(path.join(outputPath, "shader.json"), json, { encoding: "utf8" }, (err: Error) => {
           if (err != null) cb(err);
           else cb(null);
         });
       },
-      (cb: (err: Error) => any) => {
-        fs.writeFile(path.join(assetPath, "vertexShader.txt"), vertexShader.text, { encoding: "utf8" }, (err) => {
+      (cb) => {
+        writeFile(path.join(outputPath, "vertexShader.txt"), vertexShader.text, { encoding: "utf8" }, (err: Error) => {
           if (err != null) cb(err);
           else cb(null);
         });
       },
-      (cb: (err: Error) => any) => {
-        if (vertexShader.draft !== vertexShader.text) {
-          fs.writeFile(path.join(assetPath, "vertexShaderDraft.txt"), vertexShader.draft, { encoding: "utf8" }, (err) => {
-            if (err != null && err.code !== "ENOENT") cb(err);
-            else cb(null);
-          });
-        } else {
-          fs.unlink(path.join(assetPath, "vertexShaderDraft.txt"), (err) => {
-            if (err != null && err.code !== "ENOENT") cb(err);
-            else cb(null);
-          });
-        }
-      },
-      (cb: (err: Error) => any) => {
-        fs.writeFile(path.join(assetPath, "fragmentShader.txt"), fragmentShader.text, { encoding: "utf8" }, (err) => {
+      (cb) => {
+        writeFile(path.join(outputPath, "fragmentShader.txt"), fragmentShader.text, { encoding: "utf8" }, (err: Error) => {
           if (err != null) cb(err);
           else cb(null);
         });
       },
-      (cb: (err: Error) => any) => {
-        if (fragmentShader.draft !== fragmentShader.text) {
-          fs.writeFile(path.join(assetPath, "fragmentShaderDraft.txt"), fragmentShader.draft, { encoding: "utf8" }, (err) => {
-            if (err != null && err.code !== "ENOENT") cb(err);
-            else cb(null);
-          });
-        } else {
-          fs.unlink(path.join(assetPath, "fragmentShaderDraft.txt"), (err) => {
-            if (err != null && err.code !== "ENOENT") cb(err);
-            else cb(null);
-          });
-        }
-      }
-    ], (err: Error) => { callback(err); });
+    ], callback);
   }
 
   server_newUniform(client: SupCore.RemoteClient, name: string, callback: NewUniformCallback) {
-    for (let uniform of this.pub.uniforms) {
+    for (const uniform of this.pub.uniforms) {
       if (uniform.name === name) {
         callback(`An uniform named ${name} already exists`);
         return;
@@ -328,7 +347,7 @@ ${tab}gl_FragColor = texture2D(map, vUv);
   }
 
   server_newAttribute(client: SupCore.RemoteClient, name: string, callback: NewAttributeCallback) {
-    for (let attribute of this.pub.attributes) {
+    for (const attribute of this.pub.attributes) {
       if (attribute.name === name) {
         callback(`An attribute named ${name} already exists`);
         return;

@@ -1,0 +1,7 @@
+{
+  "game": {
+    "errors": {
+      "exportFailed": "Failed to export ${path}."
+    }
+  }
+}

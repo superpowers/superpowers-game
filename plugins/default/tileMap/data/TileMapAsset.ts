@@ -108,9 +108,17 @@ export default class TileMapAsset extends SupCore.Data.Base.Asset {
     callback(true);
   }
 
-  save(assetPath: string, callback: (err: Error) => any) {
-    let json = JSON.stringify(this.pub, null);
-    fs.writeFile(path.join(assetPath, "tilemap.json"), json, { encoding: "utf8" }, callback);
+  save(outputPath: string, callback: (err: Error) => void) {
+    this.write(fs.writeFile, outputPath, callback);
+  }
+
+  clientExport(outputPath: string, callback: (err: Error) => void) {
+    this.write(SupApp.writeFile, outputPath, callback);
+  }
+
+  private write(writeFile: Function, outputPath: string, callback: (err: Error) => void) {
+    const json = JSON.stringify(this.pub, null);
+    writeFile(path.join(outputPath, "tilemap.json"), json, { encoding: "utf8" }, callback);
   }
 
   setup() {

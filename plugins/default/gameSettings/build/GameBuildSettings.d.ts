@@ -1,0 +1,3 @@
+interface GameBuildSettings {
+  outputFolder: string;
+}

@@ -119,18 +119,31 @@ export default class FontAsset extends SupCore.Data.Base.Asset {
   client_load() { this.loadFont(); }
   client_unload() { this.unloadFont(); }
 
-  save(assetPath: string, callback: Function) {
-    let font = this.pub.font;
-    let bitmap = this.pub.bitmap;
+  save(outputPath: string, callback: (err: Error) => void) {
+    this.write(fs.writeFile, outputPath, callback);
+  }
+
+  clientExport(outputPath: string, callback: (err: Error) => void) {
+    this.write(SupApp.writeFile, outputPath, callback);
+  }
+
+  private write(writeFile: Function, outputPath: string, callback: (err: Error) => void) {
+    const font = this.pub.font;
+    const bitmap = this.pub.bitmap;
+    const texture = this.pub.texture;
     delete this.pub.font;
     delete this.pub.bitmap;
+    delete this.pub.texture;
+
     const json = JSON.stringify(this.pub, null, 2);
+
     this.pub.font = font;
     this.pub.bitmap = bitmap;
+    this.pub.texture = texture;
 
-    fs.writeFile(path.join(assetPath, "asset.json"), json, { encoding: "utf8" }, () => {
-      fs.writeFile(path.join(assetPath, "font.dat"), font, () => {
-        fs.writeFile(path.join(assetPath, "bitmap.dat"), bitmap, callback);
+    writeFile(path.join(outputPath, "asset.json"), json, { encoding: "utf8" }, () => {
+      writeFile(path.join(outputPath, "font.dat"), font, () => {
+        writeFile(path.join(outputPath, "bitmap.dat"), bitmap, callback);
       });
     });
   }

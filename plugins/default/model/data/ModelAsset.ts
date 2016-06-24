@@ -264,61 +264,87 @@ export default class ModelAsset extends SupCore.Data.Base.Asset {
     this.unloadTextures();
   }
 
-  save(assetPath: string, saveCallback: Function) {
-    let attributes: any = this.pub.attributes;
-    let maps = this.pub.maps;
+  save(outputPath: string, callback: (err: Error) => void) {
+    this.write(fs.writeFile, outputPath, (err) => {
+      if (err != null) { callback(err); return; }
 
-    (<any>this.pub).attributes = [];
-    for (let key in attributes) {
-      if (attributes[key] != null) (<any>this.pub).attributes.push(key);
-    }
+      // Clean up old attributes and maps from disk
+      async.series([
+        (callback) => {
+          async.each(Object.keys(ModelAsset.schema["attributes"].properties), (key, cb) => {
+            const value = this.pub.attributes[key];
+            if (value != null) { cb(); return; }
 
-    (<any>this.pub).maps = [];
-    for (let mapName in maps) {
-      if (maps[mapName] != null) (<any>this.pub).maps.push(mapName);
-    }
-
-    let json = JSON.stringify(this.pub, null, 2);
-    this.pub.attributes = attributes;
-    this.pub.maps = maps;
-
-    async.series([
-
-      (callback) => { fs.writeFile(path.join(assetPath, "model.json"), json, { encoding: "utf8" }, (err) => { callback(err, null); }); },
-
-      (callback) => {
-        async.each(Object.keys(ModelAsset.schema["attributes"].properties), (key, cb) => {
-          let value = attributes[key];
-
-          if (value == null) {
-            fs.unlink(path.join(assetPath, `attr-${key}.dat`), (err) => {
+            fs.unlink(path.join(outputPath, `attr-${key}.dat`), (err) => {
               if (err != null && err.code !== "ENOENT") { cb(err); return; }
               cb();
             });
-            return;
-          }
+          }, callback);
+        },
 
-          fs.writeFile(path.join(assetPath, `attr-${key}.dat`), value, cb);
-        }, (err) => { callback(err, null); });
+        (callback) => {
+          async.each(Object.keys(this.pub.maps), (mapName, cb) => {
+            const value = this.pub.maps[mapName];
+            if (value != null) { cb(); return; }
+
+            fs.unlink(path.join(outputPath, `map-${mapName}.dat`), (err) => {
+              if (err != null && err.code !== "ENOENT") { cb(err); return; }
+              cb();
+            });
+          }, callback);
+        }
+      ], callback);
+    });
+  }
+
+  clientExport(outputPath: string, callback: (err: Error) => void) {
+    this.write(SupApp.writeFile, outputPath, callback);
+  }
+
+  private write(writeFile: Function, outputPath: string, writeCallback: (err: Error) => void) {
+    const attributes = this.pub.attributes;
+    const maps = this.pub.maps;
+
+    (this.pub as any).attributes = [];
+    for (const key in attributes) {
+      if (attributes[key] != null) (this.pub as any).attributes.push(key);
+    }
+
+    (this.pub as any).maps = [];
+    for (const mapName in maps) {
+      if (maps[mapName] != null) (this.pub as any).maps.push(mapName);
+    }
+
+    const textures = this.pub.textures;
+    delete this.pub.textures;
+
+    const json = JSON.stringify(this.pub, null, 2);
+
+    this.pub.attributes = attributes;
+    this.pub.maps = maps;
+    this.pub.textures = textures;
+
+    async.series([
+      (callback) => { writeFile(path.join(outputPath, "model.json"), json, { encoding: "utf8" }, callback); },
+
+      (callback) => {
+        async.each(Object.keys(ModelAsset.schema["attributes"].properties), (key, cb) => {
+          const value = attributes[key];
+          if (value == null) { cb(); return; }
+
+          writeFile(path.join(outputPath, `attr-${key}.dat`), value, cb);
+        }, callback);
       },
 
       (callback) => {
         async.each(Object.keys(maps), (mapName, cb) => {
-          let value = maps[mapName];
+          const value = maps[mapName];
+          if (value == null) { cb(); return; }
 
-          if (value == null) {
-            fs.unlink(path.join(assetPath, `map-${mapName}.dat`), (err) => {
-              if (err != null && err.code !== "ENOENT") { cb(err); return; }
-              cb();
-            });
-            return;
-          }
-
-          fs.writeFile(path.join(assetPath, `map-${mapName}.dat`), value, cb);
-        }, (err) => { callback(err, null); });
+          writeFile(path.join(outputPath, `map-${mapName}.dat`), value, cb);
+        }, callback);
       }
-
-    ], (err) => { saveCallback(err); });
+    ], writeCallback);
   }
 
   private unloadTextures() {

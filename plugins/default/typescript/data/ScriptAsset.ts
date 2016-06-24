@@ -205,19 +205,27 @@ Sup.registerBehavior(${behaviorName});
     });
   }
 
-  save(assetPath: string, callback: (err: Error) => any) {
-    fs.writeFile(path.join(assetPath, "script.ts"), this.pub.text, { encoding: "utf8" }, (err) => {
+  save(outputPath: string, callback: (err: Error) => void) {
+    this.write(fs.writeFile, outputPath, (err) => {
       if (err != null) { callback(err); return; }
 
       if (this.hasDraft) {
-        fs.writeFile(path.join(assetPath, "draft.ts"), this.pub.draft, { encoding: "utf8" }, callback);
+        fs.writeFile(path.join(outputPath, "draft.ts"), this.pub.draft, { encoding: "utf8" }, callback);
       } else {
-        fs.unlink(path.join(assetPath, "draft.ts"), (err) => {
+        fs.unlink(path.join(outputPath, "draft.ts"), (err) => {
           if (err != null && err.code !== "ENOENT") { callback(err); return; }
           callback(null);
         });
       }
     });
+  }
+
+  clientExport(outputPath: string, callback: (err: Error) => void) {
+    this.write(SupApp.writeFile, outputPath, callback);
+  }
+
+  private write(writeFile: Function, outputPath: string, callback: (err: Error) => void) {
+    writeFile(path.join(outputPath, "script.ts"), this.pub.text, { encoding: "utf8" }, callback);
   }
 
   server_editText(client: SupCore.RemoteClient, operationData: OperationData, revisionIndex: number, callback: EditTextCallback) {

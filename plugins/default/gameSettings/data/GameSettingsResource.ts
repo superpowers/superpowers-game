@@ -1,3 +1,5 @@
+import * as path from "path";
+
 export interface GameSettingsResourcePub {
   formatVersion: number;
 
@@ -66,6 +68,10 @@ export default class GameSettingsResource extends SupCore.Data.Base.Resource {
     if (this.pub.startupSceneId != null && this.server.data.entries.byId[this.pub.startupSceneId] != null) {
       this.emit("setAssetBadge", this.pub.startupSceneId, "startupScene", "info");
     }
+  }
+
+  clientExport(outputPath: string, callback: (err: Error) => void) {
+    SupApp.writeFile(path.join(outputPath, "resource.json"), JSON.stringify(this.pub), callback);
   }
 
   server_setProperty(client: SupCore.RemoteClient, path: string, value: number|string|boolean, callback: SupCore.Data.Base.SetPropertyCallback) {

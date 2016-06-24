@@ -1,3 +1,5 @@
+import * as path from "path";
+
 export interface BehaviorProperty {
   name: string;
   type: string;
@@ -15,7 +17,6 @@ export interface BehaviorPropertiesResourcePub {
 }
 
 export default class BehaviorPropertiesResource extends SupCore.Data.Base.Resource {
-
   static schema: SupCore.Data.Schema = {
     behaviors: {
       type: "hash",
@@ -66,6 +67,10 @@ export default class BehaviorPropertiesResource extends SupCore.Data.Base.Resour
   init(callback: Function) {
     this.pub = { behaviors: {} };
     super.init(callback);
+  }
+
+  clientExport(outputPath: string, callback: (err: Error) => void) {
+    SupApp.writeFile(path.join(outputPath, "resource.json"), JSON.stringify(this.pub), callback);
   }
 
   setScriptBehaviors(scriptId: string, behaviors: {[behaviorName: string]: { line: number; properties: BehaviorProperty[]; parentBehavior: string }}) {

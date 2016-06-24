@@ -1,3 +1,5 @@
+import * as path from "path";
+
 export default class LightSettingsResource extends SupCore.Data.Base.Resource {
 
   static schema: SupCore.Data.Schema = {
@@ -14,5 +16,9 @@ export default class LightSettingsResource extends SupCore.Data.Base.Resource {
     };
 
     super.init(callback);
+  }
+
+  clientExport(outputPath: string, callback: (err: Error) => void) {
+    SupApp.writeFile(path.join(outputPath, "resource.json"), JSON.stringify(this.pub), callback);
   }
 }

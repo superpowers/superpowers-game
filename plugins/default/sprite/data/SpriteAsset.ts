@@ -250,36 +250,55 @@ export default class SpriteAsset extends SupCore.Data.Base.Asset {
     this.unloadTextures();
   }
 
-  save(assetPath: string, saveCallback: Function) {
-    let maps = this.pub.maps;
-    let mapsName = <string[]>[];
-    for (let key in maps) {
-      if (maps[key] != null) mapsName.push(key);
+  save(outputPath: string, callback: (err: Error) => void) {
+    this.write(fs.writeFile, outputPath, (err) => {
+      if (err != null) { callback(err); return; }
+
+      // Clean up old maps from disk
+      async.each(Object.keys(this.pub.maps), (key, cb) => {
+        const value = this.pub.maps[key];
+        if (value != null) { cb(); return; }
+
+        fs.unlink(path.join(outputPath, `map-${key}.dat`), (err) => {
+          if (err != null && err.code !== "ENOENT") { cb(err); return; }
+          cb();
+        });
+      }, callback);
+    });
+  }
+
+  clientExport(outputPath: string, callback: (err: Error) => void) {
+    this.write(SupApp.writeFile, outputPath, callback);
+  }
+
+  private write(writeFile: Function, outputPath: string, writeCallback: (err: Error) => void) {
+    const maps = this.pub.maps;
+
+    (this.pub as any).maps = [];
+    for (const mapName in maps) {
+      if (maps[mapName] != null) (this.pub as any).maps.push(mapName);
     }
-    (<any>this.pub).maps = mapsName;
-    let json = JSON.stringify(this.pub, null, 2);
+
+    const textures = this.pub.textures;
+    delete this.pub.textures;
+
+    const json = JSON.stringify(this.pub, null, 2);
+
     this.pub.maps = maps;
+    this.pub.textures = textures;
 
     async.series([
-      (callback) => { fs.writeFile(path.join(assetPath, "sprite.json"), json, { encoding: "utf8" }, (err) => { callback(err, null); }); },
+      (callback) => { writeFile(path.join(outputPath, "sprite.json"), json, { encoding: "utf8" }, callback); },
 
       (callback) => {
-        async.each(mapsName, (key, cb) => {
-          let value = maps[key];
+        async.each(Object.keys(maps), (key, cb) => {
+          const value = maps[key];
+          if (value == null) { cb(); return; }
 
-          if (value == null) {
-            fs.unlink(path.join(assetPath, `map-${key}.dat`), (err) => {
-              if (err != null && err.code !== "ENOENT") { cb(err); return; }
-              cb();
-            });
-            return;
-          }
-
-          fs.writeFile(path.join(assetPath, `map-${key}.dat`), value, cb);
-        }, (err) => { callback(err, null); });
+          writeFile(path.join(outputPath, `map-${key}.dat`), value, cb);
+        }, callback);
       }
-
-    ], (err) => { saveCallback(err); });
+    ], writeCallback);
   }
 
   private unloadTextures() {

@@ -111,13 +111,28 @@ export default class TileSetAsset extends SupCore.Data.Base.Asset {
   client_load() { this.loadTexture(); }
   client_unload() { this.unloadTexture(); }
 
-  save(assetPath: string, callback: (err: NodeJS.ErrnoException) => any) {
-    let buffer = this.pub.image;
+  save(outputPath: string, callback: (err: Error) => void) {
+    this.write(fs.writeFile, outputPath, callback);
+  }
+
+  clientExport(outputPath: string, callback: (err: Error) => void) {
+    this.write(SupApp.writeFile, outputPath, callback);
+  }
+
+  private write(writeFile: Function, outputPath: string, callback: (err: Error) => void) {
+    const buffer = this.pub.image;
+    const texture = this.pub.texture;
+
     delete this.pub.image;
-    let json = JSON.stringify(this.pub, null, 2);
+    delete this.pub.texture;
+
+    const json = JSON.stringify(this.pub, null, 2);
+
     this.pub.image = buffer;
-    fs.writeFile(path.join(assetPath, "tileset.json"), json, { encoding: "utf8" }, () => {
-      fs.writeFile(path.join(assetPath, "image.dat"), buffer, callback);
+    this.pub.texture = texture;
+
+    writeFile(path.join(outputPath, "tileset.json"), json, { encoding: "utf8" }, () => {
+      writeFile(path.join(outputPath, "image.dat"), buffer, callback);
     });
   }
 
