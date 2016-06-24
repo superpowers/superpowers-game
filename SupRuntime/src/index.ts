@@ -66,6 +66,10 @@ if (playerWindow != null) {
     if (SupApp != null) SupApp.openLink(url);
     else electron.shell.openExternal(url);
   });
+
+  SupApp.getIpc().addListener("forceQuit", () => {
+    playerWindow.close();
+  });
 }
 const qs = querystring.parse(window.location.search.slice(1));
 
