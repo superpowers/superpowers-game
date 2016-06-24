@@ -4,7 +4,7 @@ import * as async from "async";
 
 // Reference to THREE, client-side only
 let THREE: typeof SupEngine.THREE;
-if ((<any>global).window != null && (<any>window).SupEngine != null) THREE = SupEngine.THREE;
+if ((global as any).window != null && (window as any).SupEngine != null) THREE = SupEngine.THREE;
 
 import ModelAnimations from "./ModelAnimations";
 interface Animation {
@@ -157,8 +157,8 @@ export default class ModelAsset extends SupCore.Data.Base.Asset {
   load(assetPath: string) {
     let pub: ModelAssetPub;
 
-    let loadAttributesMaps = () => {
-      let mapNames: string[] = <any>pub.maps;
+    const loadAttributesMaps = () => {
+      const mapNames: string[] = pub.maps as any;
       // NOTE: "diffuse" was renamed to "map" in Superpowers 0.11
       if (pub.formatVersion == null && mapNames.length === 1 && mapNames[0] === "diffuse") mapNames[0] = "map";
 
@@ -257,11 +257,11 @@ export default class ModelAsset extends SupCore.Data.Base.Asset {
 
   client_load() {
     this.mapObjectURLs = {};
-    this._loadTextures();
+    this.loadTextures();
   }
 
   client_unload() {
-    this._unloadTextures();
+    this.unloadTextures();
   }
 
   save(assetPath: string, saveCallback: Function) {
@@ -321,21 +321,21 @@ export default class ModelAsset extends SupCore.Data.Base.Asset {
     ], (err) => { saveCallback(err); });
   }
 
-  _unloadTextures() {
-    for (let textureName in this.pub.textures) this.pub.textures[textureName].dispose();
+  private unloadTextures() {
+    for (const textureName in this.pub.textures) this.pub.textures[textureName].dispose();
 
-    for (let key in this.mapObjectURLs) {
+    for (const key in this.mapObjectURLs) {
       URL.revokeObjectURL(this.mapObjectURLs[key]);
       delete this.mapObjectURLs[key];
     }
   }
 
-  _loadTextures() {
-    this._unloadTextures();
+  private loadTextures() {
+    this.unloadTextures();
     this.pub.textures = {};
 
     Object.keys(this.pub.maps).forEach((key) => {
-      let buffer: any = this.pub.maps[key];
+      const buffer: any = this.pub.maps[key];
       if (buffer == null || buffer.byteLength === 0) return;
 
       let texture = this.pub.textures[key];
@@ -358,8 +358,8 @@ export default class ModelAsset extends SupCore.Data.Base.Asset {
           texture.wrapT = SupEngine.THREE.MirroredRepeatWrapping;
         }
 
-        let typedArray = new Uint8Array(buffer);
-        let blob = new Blob([ typedArray ], { type: "image/*" });
+        const typedArray = new Uint8Array(buffer);
+        const blob = new Blob([ typedArray ], { type: "image/*" });
         image.src = this.mapObjectURLs[key] = URL.createObjectURL(blob);
       }
 
@@ -374,8 +374,8 @@ export default class ModelAsset extends SupCore.Data.Base.Asset {
 
     switch (path) {
       case "filtering":
-        for (let textureName in this.pub.textures) {
-          let texture = this.pub.textures[textureName];
+        for (const textureName in this.pub.textures) {
+          const texture = this.pub.textures[textureName];
           if (this.pub.filtering === "pixelated") {
             texture.magFilter = THREE.NearestFilter;
             texture.minFilter = THREE.NearestFilter;
@@ -387,8 +387,8 @@ export default class ModelAsset extends SupCore.Data.Base.Asset {
         }
         break;
       case "wrapping":
-        for (let textureName in this.pub.textures) {
-          let texture = this.pub.textures[textureName];
+        for (const textureName in this.pub.textures) {
+          const texture = this.pub.textures[textureName];
           if (value === "clampToEdge") {
             texture.wrapS = SupEngine.THREE.ClampToEdgeWrapping;
             texture.wrapT = SupEngine.THREE.ClampToEdgeWrapping;
@@ -417,7 +417,7 @@ export default class ModelAsset extends SupCore.Data.Base.Asset {
 
     for (let key in attributes) {
       let value = attributes[key];
-      if ((<any>ModelAsset.schema["attributes"].properties)[key] == null) { callback(`Unsupported attribute type: ${key}`); return; }
+      if ((ModelAsset.schema["attributes"].properties as any)[key] == null) { callback(`Unsupported attribute type: ${key}`); return; }
       if (value != null && !(value instanceof Buffer)) { callback(`Value for ${key} must be an ArrayBuffer or null`); return; }
     }
 
@@ -459,7 +459,7 @@ export default class ModelAsset extends SupCore.Data.Base.Asset {
 
   client_setMaps(maps: any) {
     for (let mapName in maps) this.pub.maps[mapName] = maps[mapName];
-    this._loadTextures();
+    this.loadTextures();
   }
 
   server_newMap(client: SupCore.RemoteClient, name: string, callback: NewMapCallback) {

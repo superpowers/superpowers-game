@@ -215,7 +215,7 @@ ${tab}gl_FragColor = texture2D(map, vUv);
     let fragmentShader = _.cloneDeep(this.pub.fragmentShader);
     delete this.pub.fragmentShader;
 
-    let json = JSON.stringify(this.pub, null, 2);
+    const json = JSON.stringify(this.pub, null, 2);
 
     this.pub.vertexShader = vertexShader;
     this.pub.fragmentShader = fragmentShader;

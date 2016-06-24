@@ -20,14 +20,14 @@ export default class SceneComponents extends SupCore.Data.Base.ListById {
     super(pub, SceneComponents.schema);
     this.sceneAsset = sceneAsset;
 
-    let system = (this.sceneAsset.server != null) ? this.sceneAsset.server.system : SupCore.system;
+    const system = (this.sceneAsset.server != null) ? this.sceneAsset.server.system : SupCore.system;
 
-    for (let item of this.pub) {
-      let componentConfigClass = system.getPlugins<SupCore.Data.ComponentConfigClass>("componentConfigs")[item.type];
+    for (const item of this.pub) {
+      const componentConfigClass = system.getPlugins<SupCore.Data.ComponentConfigClass>("componentConfigs")[item.type];
 
       if (componentConfigClass == null) {
         if (sceneAsset != null) {
-          let scenePath = sceneAsset.server.data.entries.getPathFromId(sceneAsset.id);
+          const scenePath = sceneAsset.server.data.entries.getPathFromId(sceneAsset.id);
           throw new Error(`Could not find component config class for type ${item.type} in scene ${scenePath} ` +
           `of project ${sceneAsset.server.data.manifest.pub.name} (${sceneAsset.server.data.manifest.pub.id})`);
         } else {
@@ -43,7 +43,7 @@ export default class SceneComponents extends SupCore.Data.Base.ListById {
     super.add(component, index, (err, actualIndex) => {
       if (err != null) { callback(err, null); return; }
 
-      let componentConfigClass = this.sceneAsset.server.system.getPlugins<SupCore.Data.ComponentConfigClass>("componentConfigs")[component.type];
+      const componentConfigClass = this.sceneAsset.server.system.getPlugins<SupCore.Data.ComponentConfigClass>("componentConfigs")[component.type];
       this.configsById[component.id] = new componentConfigClass(component.config, this.sceneAsset);
 
       callback(null, actualIndex);
@@ -53,7 +53,7 @@ export default class SceneComponents extends SupCore.Data.Base.ListById {
   client_add(component: any, index: number) {
     super.client_add(component, index);
 
-    let componentConfigClass = SupCore.system.getPlugins<SupCore.Data.ComponentConfigClass>("componentConfigs")[component.type];
+    const componentConfigClass = SupCore.system.getPlugins<SupCore.Data.ComponentConfigClass>("componentConfigs")[component.type];
     this.configsById[component.id] = new componentConfigClass(component.config);
   }
 

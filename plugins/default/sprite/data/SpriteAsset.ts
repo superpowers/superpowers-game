@@ -6,7 +6,7 @@ import SpriteAnimations, { SpriteAnimationPub } from "./SpriteAnimations";
 
 // Reference to THREE, client-side only
 let THREE: typeof SupEngine.THREE;
-if ((<any>global).window != null && (<any>window).SupEngine != null) THREE = SupEngine.THREE;
+if ((global as any).window != null && (window as any).SupEngine != null) THREE = SupEngine.THREE;
 
 type SetMapsCallback = SupCore.Data.Base.ErrorCallback & ((err: string, ack: any, maps: any) => void);
 type NewMapCallback = SupCore.Data.Base.ErrorCallback & ((err: string, ack: any, name: string) => void);
@@ -152,7 +152,7 @@ export default class SpriteAsset extends SupCore.Data.Base.Asset {
   load(assetPath: string) {
     let pub: SpriteAssetPub;
     let loadMaps = () => {
-      let mapsName: string[] = <any>pub.maps;
+      let mapsName: string[] = pub.maps as any;
       // NOTE: Support for multiple maps was introduced in Superpowers 0.11
       if (mapsName == null) mapsName = ["map"];
 
@@ -243,11 +243,11 @@ export default class SpriteAsset extends SupCore.Data.Base.Asset {
 
   client_load() {
     this.mapObjectURLs = {};
-    this._loadTextures();
+    this.loadTextures();
   }
 
   client_unload() {
-    this._unloadTextures();
+    this.unloadTextures();
   }
 
   save(assetPath: string, saveCallback: Function) {
@@ -282,21 +282,21 @@ export default class SpriteAsset extends SupCore.Data.Base.Asset {
     ], (err) => { saveCallback(err); });
   }
 
-  _unloadTextures() {
-    for (let textureName in this.pub.textures) this.pub.textures[textureName].dispose();
+  private unloadTextures() {
+    for (const textureName in this.pub.textures) this.pub.textures[textureName].dispose();
 
-    for (let key in this.mapObjectURLs) {
+    for (const key in this.mapObjectURLs) {
       URL.revokeObjectURL(this.mapObjectURLs[key]);
       delete this.mapObjectURLs[key];
     }
   }
 
-  _loadTextures() {
-    this._unloadTextures();
+  private loadTextures() {
+    this.unloadTextures();
     this.pub.textures = {};
 
     Object.keys(this.pub.maps).forEach((key) => {
-      let buffer: any = this.pub.maps[key];
+      const buffer: any = this.pub.maps[key];
       if (buffer == null || buffer.byteLength === 0) return;
 
       let texture = this.pub.textures[key];
@@ -319,8 +319,8 @@ export default class SpriteAsset extends SupCore.Data.Base.Asset {
           texture.wrapT = SupEngine.THREE.MirroredRepeatWrapping;
         }
 
-        let typedArray = new Uint8Array(buffer);
-        let blob = new Blob([ typedArray ], { type: "image/*" });
+        const typedArray = new Uint8Array(buffer);
+        const blob = new Blob([ typedArray ], { type: "image/*" });
         image.src = this.mapObjectURLs[key] = URL.createObjectURL(blob);
       }
 
@@ -389,7 +389,7 @@ export default class SpriteAsset extends SupCore.Data.Base.Asset {
 
   client_setMaps(maps: any) {
     for (let key in maps) this.pub.maps[key] = maps[key];
-    this._loadTextures();
+    this.loadTextures();
   }
 
   server_newMap(client: SupCore.RemoteClient, name: string, callback: NewMapCallback) {

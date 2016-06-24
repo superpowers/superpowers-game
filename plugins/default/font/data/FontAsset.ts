@@ -116,15 +116,15 @@ export default class FontAsset extends SupCore.Data.Base.Asset {
     callback(true);
   }
 
-  client_load() { this._loadFont(); }
-  client_unload() { this._unloadFont(); }
+  client_load() { this.loadFont(); }
+  client_unload() { this.unloadFont(); }
 
   save(assetPath: string, callback: Function) {
     let font = this.pub.font;
     let bitmap = this.pub.bitmap;
     delete this.pub.font;
     delete this.pub.bitmap;
-    let json = JSON.stringify(this.pub, null, 2);
+    const json = JSON.stringify(this.pub, null, 2);
     this.pub.font = font;
     this.pub.bitmap = bitmap;
 
@@ -135,14 +135,14 @@ export default class FontAsset extends SupCore.Data.Base.Asset {
     });
   }
 
-  _loadFont() {
-    this._unloadFont();
+  private loadFont() {
+    this.unloadFont();
 
-    if (this.pub.isBitmap) this._loadBitmapFont();
-    else this._loadTTFont();
+    if (this.pub.isBitmap) this.loadBitmapFont();
+    else this.loadTTFont();
   }
 
-  _unloadFont() {
+  private unloadFont() {
     if (this.url != null) URL.revokeObjectURL(this.url);
 
     if (this.font != null) delete this.font;
@@ -152,7 +152,7 @@ export default class FontAsset extends SupCore.Data.Base.Asset {
     }
   }
 
-  _loadTTFont() {
+  private loadTTFont() {
     if ((<any>this.pub.font).byteLength === 0) return;
 
     let typedArray = new Uint8Array(this.pub.font);
@@ -163,7 +163,7 @@ export default class FontAsset extends SupCore.Data.Base.Asset {
     (<any>document).fonts.add(this.font);
   }
 
-  _loadBitmapFont() {
+  private loadBitmapFont() {
     if ((<any>this.pub.bitmap).byteLength === 0) return;
 
     let image = new Image();
@@ -181,7 +181,7 @@ export default class FontAsset extends SupCore.Data.Base.Asset {
     if (!image.complete) image.addEventListener("load", () => { this.pub.texture.needsUpdate = true; });
   }
 
-  _setupFiltering() {
+  private setupFiltering() {
     if (this.pub.texture != null) {
       if (this.pub.filtering === "pixelated") {
         this.pub.texture.magFilter = THREE.NearestFilter;
@@ -208,13 +208,13 @@ export default class FontAsset extends SupCore.Data.Base.Asset {
     if (this.pub.isBitmap) this.pub.bitmap = font;
     else this.pub.font = font;
 
-    this._loadFont();
+    this.loadFont();
   }
 
   client_setProperty(path: string, value: any) {
     super.client_setProperty(path, value);
 
-    if (path === "isBitmap") this._loadFont();
-    if (path === "filtering") this._setupFiltering();
+    if (path === "isBitmap") this.loadFont();
+    if (path === "filtering") this.setupFiltering();
   }
 }

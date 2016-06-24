@@ -144,8 +144,8 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
     });
   }
 
-  client_load() { this._loadTextures(); }
-  client_unload() { this._unloadTextures(); }
+  client_load() { this.loadTextures(); }
+  client_unload() { this.unloadTextures(); }
 
   save(assetPath: string, saveCallback: (err: Error) => void) {
     let maps = this.pub.maps;
@@ -177,29 +177,29 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
     });
   }
 
-  _unloadTextures() {
-    for (let textureName in this.pub.textures) this.pub.textures[textureName].dispose();
+  private unloadTextures() {
+    for (const textureName in this.pub.textures) this.pub.textures[textureName].dispose();
   }
 
-  _loadTextures() {
-    this._unloadTextures();
+  private loadTextures() {
+    this.unloadTextures();
     this.pub.textures = {};
     this.clientTextureDatas = {};
 
     // Texturing
     // NOTE: This is the unoptimized variant for editing
     // There should be an option you can pass to setModel to ask for editable version vs (default) optimized
-    for (let mapName in this.pub.maps) {
-      let canvas = document.createElement("canvas");
+    for (const mapName in this.pub.maps) {
+      const canvas = document.createElement("canvas");
       canvas.width = this.pub.textureWidth;
       canvas.height = this.pub.textureHeight;
-      let ctx = canvas.getContext("2d");
-      let texture = this.pub.textures[mapName] = new THREE.Texture(canvas);
+      const  ctx = canvas.getContext("2d");
+      const texture = this.pub.textures[mapName] = new THREE.Texture(canvas);
       texture.needsUpdate = true;
       texture.magFilter = THREE.NearestFilter;
       texture.minFilter = THREE.NearestFilter;
 
-      let imageData = new ImageData(this.textureDatas[mapName], this.pub.textureWidth, this.pub.textureHeight);
+      const imageData = new ImageData(this.textureDatas[mapName], this.pub.textureWidth, this.pub.textureHeight);
       ctx.putImageData(imageData, 0, 0);
       this.clientTextureDatas[mapName] = { imageData, ctx };
     }
@@ -572,7 +572,7 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
 
   client_changeTextureWidth(newWidth: number) {
     this._changeTextureWidth(newWidth);
-    this._loadTextures();
+    this.loadTextures();
   }
 
   _changeTextureWidth(newWidth: number) {
@@ -612,7 +612,7 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
 
   client_changeTextureHeight(newHeight: number) {
     this._changeTextureHeight(newHeight);
-    this._loadTextures();
+    this.loadTextures();
   }
 
   _changeTextureHeight(newHeight: number) {
