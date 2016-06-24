@@ -21,9 +21,10 @@ export default class SceneComponents extends SupCore.Data.Base.ListById {
     this.sceneAsset = sceneAsset;
 
     const system = (this.sceneAsset.server != null) ? this.sceneAsset.server.system : SupCore.system;
+    const componentConfigClasses = system.getPlugins<SupCore.Data.ComponentConfigClass>("componentConfigs");
 
     for (const item of this.pub) {
-      const componentConfigClass = system.getPlugins<SupCore.Data.ComponentConfigClass>("componentConfigs")[item.type];
+      const componentConfigClass = componentConfigClasses[item.type];
 
       if (componentConfigClass == null) {
         if (sceneAsset != null) {
