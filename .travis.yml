@@ -11,6 +11,7 @@ before_script:
 - mv ../superpowers-game systems/game
 - cd systems
 - ls -l
+- cd ..
 cache:
   directories:
   - node_modules
@@ -23,3 +24,15 @@ notifications:
     on_success: change
     on_failure: always
     on_start: never
+before_deploy:
+- npm run package game
+deploy:
+  provider: releases
+  api_key:
+    secure: 3FnilBjgvu7xo9i2SOHSeMeOfv60pEAUFe+Y2XbBTUgBI8n+QYWzZzO23NSUIOh7CQTXAm3ZN769HdSt7kY/WLM7XeU8UickDo+Px3GqFgo/L9W7vuGsrtg6fefjld3TUq9lkqm6zVUShMr+EFatQVhqeY3snlGpWDLxvD3j9ahMztFQuZHhMpnZFHQdx1q65bNmMSTQ3nhhTCIFVMKtiJRNnY5Ejn7KJa78YfjFQQuVMW/s9yhGriqzLzoy5PvyUdEn+k7pgogBBU3i1eZWUuduopZjis75iyzHeVgTmFRF37t5pqlDz0qhYo4zqG+aPcIm+1HAzlLmg+9rvaELEU4eOY3IXIajrGRKIXNnNQH+KB8U3oJTE7qIqWXpfaUYl8QmLDC05+K1ygJl8xF1Ad/EKn4bFe7xeJbSleBpglyY6jHrU/es1Q9916tBRYTDb8AMvlDAanYx+raXPq2mPIZnqFW/zLGWeFMbq6w8S+gflrINga6cva1vUQVG241EHkRouKrDYjSuXx4fNEyWusFVCayA4VhQaD1Uz1U9+BLee4dhk6DGneiFMX3OwAD1eEu2LerPxucXwtCmeoaoHera3CV5q2RCP2JkoxR+BLhxjeT7/sauM9CrS79uG94kS3RHTD3UX0/nEMTl/T6ocET8wtxkoVniWql9LiausdA=
+  file_glob: true
+  file: "packages/superpowers-game-*.zip"
+  skip_cleanup: true
+  on:
+    repo: superpowers/superpowers-game
+    tags: true
