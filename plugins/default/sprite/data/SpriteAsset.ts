@@ -292,8 +292,9 @@ export default class SpriteAsset extends SupCore.Data.Base.Asset {
 
       (callback) => {
         async.each(Object.keys(maps), (key, cb) => {
-          const value = maps[key];
+          let value = maps[key];
           if (value == null) { cb(); return; }
+          if (value instanceof ArrayBuffer) value = (Buffer as any).from(value);
 
           writeFile(path.join(outputPath, `map-${key}.dat`), value, cb);
         }, callback);

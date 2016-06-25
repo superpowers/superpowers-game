@@ -74,10 +74,13 @@ export default class SoundAsset extends SupCore.Data.Base.Asset {
   }
 
   private write(writeFile: Function, assetPath: string, callback: (err: Error) => void) {
-    const buffer = this.pub.sound;
+    let buffer = this.pub.sound;
     delete this.pub.sound;
     const  json = JSON.stringify(this.pub, null, 2);
     this.pub.sound = buffer;
+
+    if (buffer instanceof ArrayBuffer) buffer = (Buffer as any).from(buffer);
+
     writeFile(path.join(assetPath, "sound.json"), json, { encoding: "utf8" }, () => {
       writeFile(path.join(assetPath, "sound.dat"), buffer, callback);
     });

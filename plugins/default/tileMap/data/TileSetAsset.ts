@@ -120,7 +120,7 @@ export default class TileSetAsset extends SupCore.Data.Base.Asset {
   }
 
   private write(writeFile: Function, outputPath: string, callback: (err: Error) => void) {
-    const buffer = this.pub.image;
+    let buffer = this.pub.image;
     const texture = this.pub.texture;
 
     delete this.pub.image;
@@ -130,6 +130,8 @@ export default class TileSetAsset extends SupCore.Data.Base.Asset {
 
     this.pub.image = buffer;
     this.pub.texture = texture;
+
+    if (buffer instanceof ArrayBuffer) buffer = (Buffer as any).from(buffer);
 
     writeFile(path.join(outputPath, "tileset.json"), json, { encoding: "utf8" }, () => {
       writeFile(path.join(outputPath, "image.dat"), buffer, callback);

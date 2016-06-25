@@ -128,8 +128,8 @@ export default class FontAsset extends SupCore.Data.Base.Asset {
   }
 
   private write(writeFile: Function, outputPath: string, callback: (err: Error) => void) {
-    const font = this.pub.font;
-    const bitmap = this.pub.bitmap;
+    let font = this.pub.font;
+    let bitmap = this.pub.bitmap;
     const texture = this.pub.texture;
     delete this.pub.font;
     delete this.pub.bitmap;
@@ -140,6 +140,9 @@ export default class FontAsset extends SupCore.Data.Base.Asset {
     this.pub.font = font;
     this.pub.bitmap = bitmap;
     this.pub.texture = texture;
+
+    if (font instanceof ArrayBuffer) font = (Buffer as any).from(font);
+    if (bitmap instanceof ArrayBuffer) bitmap = (Buffer as any).from(bitmap);
 
     writeFile(path.join(outputPath, "asset.json"), json, { encoding: "utf8" }, () => {
       writeFile(path.join(outputPath, "font.dat"), font, () => {
