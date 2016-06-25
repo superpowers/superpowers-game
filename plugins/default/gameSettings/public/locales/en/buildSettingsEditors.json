@@ -1,0 +1,8 @@
+{
+  "game": {
+    "label": "Default",
+    "description": "Export as HTML5",
+    
+    "outputFolder": "Output folder"
+  }
+}
