@@ -1,9 +1,8 @@
 import * as fs from "fs";
 import * as async from "async";
+import * as mkdirp from "mkdirp";
 
-let systemBuildFiles: string[];
-
-SupCore.system.serverBuild = (server: ProjectServer, buildPath: string, callback: (err: string, extraBuildFiles?: string[]) => void) => {
+SupCore.system.serverBuild = (server: ProjectServer, buildPath: string, callback: (err: string) => void) => {
   const exportedProject = { name: server.data.manifest.pub.name, assets: server.data.entries.getForStorage() };
 
   fs.mkdirSync(`${buildPath}/assets`);
@@ -15,9 +14,12 @@ SupCore.system.serverBuild = (server: ProjectServer, buildPath: string, callback
 
   async.each(assetIdsToExport, (assetId, cb) => {
     server.data.assets.acquire(assetId, null, (err: Error, asset: SupCore.Data.Base.Asset) => {
-      asset.publish(buildPath, (err) => {
-        server.data.assets.release(assetId, null);
-        cb();
+      const folderPath = `${buildPath}/assets/${server.data.entries.getStoragePathFromId(assetId)}`;
+      mkdirp(folderPath, (err) => {
+        asset.save(folderPath, (err) => {
+          server.data.assets.release(assetId, null);
+          cb();
+        });
       });
     });
   }, (err) => {
@@ -27,9 +29,12 @@ SupCore.system.serverBuild = (server: ProjectServer, buildPath: string, callback
 
     async.each(Object.keys(server.system.data.resourceClasses), (resourceId, cb) => {
       server.data.resources.acquire(resourceId, null, (err: Error, resource: SupCore.Data.Base.Resource) => {
-        resource.publish(buildPath, (err) => {
-          server.data.resources.release(resourceId, null);
-          cb();
+        const folderPath = `${buildPath}/resources/${resourceId}`;
+        fs.mkdir(folderPath, (err) => {
+          resource.save(folderPath, (err) => {
+            server.data.resources.release(resourceId, null);
+            cb();
+          });
         });
       });
     }, (err) => {
@@ -39,26 +44,8 @@ SupCore.system.serverBuild = (server: ProjectServer, buildPath: string, callback
       fs.writeFile(`${buildPath}/project.json`, json, { encoding: "utf8" }, (err) => {
         if (err != null) { callback("Could not save project.json"); return; }
 
-        if (systemBuildFiles == null) setupSystemBuildFiles(server.system);
-        callback(null, systemBuildFiles);
+        callback(null);
       });
     });
   });
 };
-
-function setupSystemBuildFiles(system: SupCore.System) {
-  systemBuildFiles = [ "/SupCore.js" ];
-
-  const pluginsInfo = system.pluginsInfo;
-
-  for (const plugin of pluginsInfo.list) {
-    systemBuildFiles.push(`/systems/${system.id}/plugins/${plugin}/bundles/components.js`);
-    systemBuildFiles.push(`/systems/${system.id}/plugins/${plugin}/bundles/runtime.js`);
-  }
-
-  systemBuildFiles.push(`/systems/${system.id}/index.html`);
-  systemBuildFiles.push(`/systems/${system.id}/index.css`);
-  systemBuildFiles.push(`/systems/${system.id}/images/superpowers-splash.svg`);
-  systemBuildFiles.push(`/systems/${system.id}/SupEngine.js`);
-  systemBuildFiles.push(`/systems/${system.id}/SupRuntime.js`);
-}
