@@ -9,9 +9,7 @@ before_script:
 - cd superpowers-core
 - mkdir systems
 - mv ../superpowers-game systems/game
-- cd systems
-- ls -l
-- cd ..
+- ls -l systems
 cache:
   directories:
   - node_modules
