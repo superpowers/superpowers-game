@@ -108,7 +108,6 @@ function onEntriesReceived(theEntries: SupCore.Data.Entries) {
     progress.total++;
     SupClient.fetch(systemBuildFile, "text", (err, data) => {
       if (err != null) {
-        console.log(err);
         progress.errors++;
         SupClient.html("li", { parent: detailsListElt, textContent: SupClient.i18n.t("builds:game.errors.exportFailed", { path: outputPath }) });
         progress.index++;

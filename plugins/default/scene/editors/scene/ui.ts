@@ -582,7 +582,6 @@ function onDuplicateNodeClick() {
     /* tslint:enable:no-unused-expression */
     if (newName == null) return;
     let options = SupClient.getTreeViewInsertionPoint(ui.nodesTreeView);
-    console.log(options);
 
     data.projectClient.editAsset(SupClient.query.asset, "duplicateNode", newName, node.id, options.index, (nodeId: string) => {
       ui.nodesTreeView.clearSelection();
