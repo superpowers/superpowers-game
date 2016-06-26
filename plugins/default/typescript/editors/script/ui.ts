@@ -185,87 +185,89 @@ interface CompilationError {
 }
 
 export function refreshErrors(errors: CompilationError[]) {
-  // Remove all previous errors
-  for (let textMarker of ui.editor.codeMirrorInstance.getDoc().getAllMarks()) {
-    if ((<any>textMarker).className !== "line-error") continue;
-    textMarker.clear();
-  }
-
-  ui.editor.codeMirrorInstance.clearGutter("line-error-gutter");
-
-  ui.errorsTBody.innerHTML = "";
-
-  ui.saveButton.hidden = false;
-  ui.saveWithErrorsButton.hidden = true;
-
-  if (errors.length === 0) {
-    ui.errorPaneInfo.textContent = SupClient.i18n.t("scriptEditor:errors.noErrors");
-    ui.errorPaneStatus.classList.remove("has-errors");
-    return;
-  }
-
-  ui.errorPaneStatus.classList.add("has-errors");
-
-  let selfErrorsCount = 0;
-  let lastSelfErrorRow: HTMLTableRowElement = null;
-
-  // Display new ones
-  for (let error of errors) {
-    let errorRow = document.createElement("tr");
-
-    errorRow.dataset["line"] = error.position.line.toString();
-    errorRow.dataset["character"] = error.position.character.toString();
-
-    let positionCell = document.createElement("td");
-    positionCell.textContent = (error.position.line + 1).toString();
-    errorRow.appendChild(positionCell);
-
-    let messageCell = document.createElement("td");
-    messageCell.textContent = error.message;
-    errorRow.appendChild(messageCell);
-
-    let scriptCell = document.createElement("td");
-    errorRow.appendChild(scriptCell);
-    if (error.file !== "") {
-      errorRow.dataset["assetId"] = data.files[error.file].id;
-      scriptCell.textContent = error.file.substring(0, error.file.length - 3);
-    } else scriptCell.textContent = "Internal";
-
-    if (error.file !== data.fileNamesByScriptId[SupClient.query.asset]) {
-      ui.errorsTBody.appendChild(errorRow);
-      continue;
+  ui.editor.codeMirrorInstance.operation(() => {
+    // Remove all previous errors
+    for (let textMarker of ui.editor.codeMirrorInstance.getDoc().getAllMarks()) {
+      if ((<any>textMarker).className !== "line-error") continue;
+      textMarker.clear();
     }
 
-    ui.errorsTBody.insertBefore(errorRow, (lastSelfErrorRow != null) ? lastSelfErrorRow.nextElementSibling : ui.errorsTBody.firstChild);
-    lastSelfErrorRow = errorRow;
-    selfErrorsCount++;
+    ui.editor.codeMirrorInstance.clearGutter("line-error-gutter");
 
-    let line = error.position.line;
-    ui.editor.codeMirrorInstance.getDoc().markText(
-      { line , ch: error.position.character },
-      { line, ch: error.position.character + error.length },
-      { className: "line-error" }
-    );
+    ui.errorsTBody.innerHTML = "";
 
-    let gutter = document.createElement("div");
-    gutter.className = "line-error-gutter";
-    gutter.innerHTML = "●";
-    ui.editor.codeMirrorInstance.setGutterMarker(line, "line-error-gutter", gutter);
-  }
-  let otherErrorsCount = errors.length - selfErrorsCount;
+    ui.saveButton.hidden = false;
+    ui.saveWithErrorsButton.hidden = true;
 
-  let selfErrorsValue = SupClient.i18n.t(`scriptEditor:errors.${selfErrorsCount > 1 ? "severalErrors" : "oneError"}`, { errors: selfErrorsCount.toString() });
-  let selfErrors = SupClient.i18n.t("scriptEditor:errors.selfErrorsInfo", { errors: selfErrorsValue.toString() });
-  let otherErrorsValue = SupClient.i18n.t(`scriptEditor:errors.${otherErrorsCount > 1 ? "severalErrors" : "oneError"}`, { errors: otherErrorsCount.toString() });
-  let otherErrors = SupClient.i18n.t("scriptEditor:errors.otherErrorsInfo", { errors: otherErrorsValue.toString() });
+    if (errors.length === 0) {
+      ui.errorPaneInfo.textContent = SupClient.i18n.t("scriptEditor:errors.noErrors");
+      ui.errorPaneStatus.classList.remove("has-errors");
+      return;
+    }
 
-  if (selfErrorsCount > 0) {
-    ui.saveButton.hidden = true;
-    ui.saveWithErrorsButton.hidden = false;
+    ui.errorPaneStatus.classList.add("has-errors");
 
-    if (otherErrorsCount === 0) ui.errorPaneInfo.textContent = selfErrors;
-    else ui.errorPaneInfo.textContent = SupClient.i18n.t("scriptEditor:errors.bothErrorsInfo", { selfErrors, otherErrors });
-  } else ui.errorPaneInfo.textContent = otherErrors;
+    let selfErrorsCount = 0;
+    let lastSelfErrorRow: HTMLTableRowElement = null;
+
+    // Display new ones
+    for (let error of errors) {
+      let errorRow = document.createElement("tr");
+
+      errorRow.dataset["line"] = error.position.line.toString();
+      errorRow.dataset["character"] = error.position.character.toString();
+
+      let positionCell = document.createElement("td");
+      positionCell.textContent = (error.position.line + 1).toString();
+      errorRow.appendChild(positionCell);
+
+      let messageCell = document.createElement("td");
+      messageCell.textContent = error.message;
+      errorRow.appendChild(messageCell);
+
+      let scriptCell = document.createElement("td");
+      errorRow.appendChild(scriptCell);
+      if (error.file !== "") {
+        errorRow.dataset["assetId"] = data.files[error.file].id;
+        scriptCell.textContent = error.file.substring(0, error.file.length - 3);
+      } else scriptCell.textContent = "Internal";
+
+      if (error.file !== data.fileNamesByScriptId[SupClient.query.asset]) {
+        ui.errorsTBody.appendChild(errorRow);
+        continue;
+      }
+
+      ui.errorsTBody.insertBefore(errorRow, (lastSelfErrorRow != null) ? lastSelfErrorRow.nextElementSibling : ui.errorsTBody.firstChild);
+      lastSelfErrorRow = errorRow;
+      selfErrorsCount++;
+
+      let line = error.position.line;
+      ui.editor.codeMirrorInstance.getDoc().markText(
+        { line , ch: error.position.character },
+        { line, ch: error.position.character + error.length },
+        { className: "line-error" }
+      );
+
+      let gutter = document.createElement("div");
+      gutter.className = "line-error-gutter";
+      gutter.innerHTML = "●";
+      ui.editor.codeMirrorInstance.setGutterMarker(line, "line-error-gutter", gutter);
+    }
+    let otherErrorsCount = errors.length - selfErrorsCount;
+
+    let selfErrorsValue = SupClient.i18n.t(`scriptEditor:errors.${selfErrorsCount > 1 ? "severalErrors" : "oneError"}`, { errors: selfErrorsCount.toString() });
+    let selfErrors = SupClient.i18n.t("scriptEditor:errors.selfErrorsInfo", { errors: selfErrorsValue.toString() });
+    let otherErrorsValue = SupClient.i18n.t(`scriptEditor:errors.${otherErrorsCount > 1 ? "severalErrors" : "oneError"}`, { errors: otherErrorsCount.toString() });
+    let otherErrors = SupClient.i18n.t("scriptEditor:errors.otherErrorsInfo", { errors: otherErrorsValue.toString() });
+
+    if (selfErrorsCount > 0) {
+      ui.saveButton.hidden = true;
+      ui.saveWithErrorsButton.hidden = false;
+
+      if (otherErrorsCount === 0) ui.errorPaneInfo.textContent = selfErrors;
+      else ui.errorPaneInfo.textContent = SupClient.i18n.t("scriptEditor:errors.bothErrorsInfo", { selfErrors, otherErrors });
+    } else ui.errorPaneInfo.textContent = otherErrors;
+  });
 }
 
 function onErrorTBodyClick(event: MouseEvent) {
