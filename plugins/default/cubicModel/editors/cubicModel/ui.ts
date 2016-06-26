@@ -135,9 +135,7 @@ document.querySelector("button.download").addEventListener("click", (event) => {
   if (SupApp != null) {
     triggerDownload(options.initialValue);
   } else {
-    /* tslint:disable:no-unused-expression */
     new SupClient.Dialogs.PromptDialog(SupClient.i18n.t("cubicModelEditor:sidebar.settings.cubicModel.download.prompt"), options, (name) => {
-      /* tslint:enable:no-unused-expression */
       if (name == null) return;
       triggerDownload(name);
     });
@@ -421,9 +419,7 @@ function onNewNodeClick() {
     validationLabel: SupClient.i18n.t("common:actions.create")
   };
 
-  /* tslint:disable:no-unused-expression */
   new SupClient.Dialogs.PromptDialog(SupClient.i18n.t("cubicModelEditor:sidebar.nodes.newNode.prompt"), options, (name) => {
-    /* tslint:enable:no-unused-expression */
     if (name == null) return;
 
     let options = SupClient.getTreeViewInsertionPoint(ui.nodesTreeView);
@@ -474,9 +470,7 @@ function onRenameNodeClick() {
     validationLabel: SupClient.i18n.t("common:actions.rename")
   };
 
-  /* tslint:disable:no-unused-expression */
   new SupClient.Dialogs.PromptDialog(SupClient.i18n.t("cubicModelEditor:sidebar.nodes.renamePrompt"), options, (newName) => {
-    /* tslint:enable:no-unused-expression */
     if (newName == null) return;
 
     data.projectClient.editAsset(SupClient.query.asset, "setNodeProperty", node.id, "name", newName);
@@ -494,9 +488,7 @@ function onDuplicateNodeClick() {
     validationLabel: SupClient.i18n.t("common:actions.duplicate")
   };
 
-  /* tslint:disable:no-unused-expression */
   new SupClient.Dialogs.PromptDialog(SupClient.i18n.t("cubicModelEditor:sidebar.nodes.duplicatePrompt"), options, (newName) => {
-    /* tslint:enable:no-unused-expression */
     if (newName == null) return;
     let options = SupClient.getTreeViewInsertionPoint(ui.nodesTreeView);
 
@@ -513,9 +505,7 @@ function onDeleteNodeClick() {
 
   let confirmLabel = SupClient.i18n.t("cubicModelEditor:sidebar.nodes.deleteConfirm");
   let validationLabel = SupClient.i18n.t("common:actions.delete");
-  /* tslint:disable:no-unused-expression */
   new SupClient.Dialogs.ConfirmDialog(confirmLabel, { validationLabel }, (confirm) => {
-    /* tslint:enable:no-unused-expression */
     if (!confirm) return;
 
     for (let selectedNode of ui.nodesTreeView.selectedNodes) {

@@ -346,9 +346,7 @@ export default class BehaviorEditor {
 
     this.editConfig("setBehaviorPropertyValue", propertyName, propertyType, propertyValue, (err: string) => {
       if (err != null) {
-        /* tslint:disable:no-unused-expression */
         new SupClient.Dialogs.InfoDialog(err);
-        /* tslint:enable:no-unused-expression */
         return;
       }
     });

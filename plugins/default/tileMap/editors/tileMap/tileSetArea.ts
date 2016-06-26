@@ -22,13 +22,11 @@ let cameraActor = new SupEngine.Actor(tileSetArea.gameInstance, "Camera");
 cameraActor.setLocalPosition(new SupEngine.THREE.Vector3(0, 0, 10));
 tileSetArea.cameraComponent = new SupEngine.componentClasses["Camera"](cameraActor);
 tileSetArea.cameraComponent.setOrthographicMode(true);
-/* tslint:disable:no-unused-expression */
 new SupEngine.editorComponentClasses["Camera2DControls"](
   cameraActor, tileSetArea.cameraComponent,
   { zoomSpeed: 1.5, zoomMin: 0.1, zoomMax: 10000 },
   () => { data.tileSetUpdater.tileSetRenderer.gridRenderer.setOrthgraphicScale(tileSetArea.cameraComponent.orthographicScale); }
 );
-/* tslint:enable:no-unused-expression */
 export default tileSetArea;
 
 function getTileSetGridPosition(gameInstance: SupEngine.GameInstance, cameraComponent: any) {

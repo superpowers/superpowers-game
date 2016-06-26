@@ -198,9 +198,7 @@ export default class SceneUpdater {
       markerActor = new SupEngine.Actor(this.gameInstance, `${nodeId} Marker`, null, { layer: -1 });
       markerActor.setGlobalPosition(nodeActor.getGlobalPosition(tmpVector3));
       markerActor.setGlobalOrientation(nodeActor.getGlobalOrientation(tmpQuaternion));
-      /* tslint:disable:no-unused-expression */
       new SupEngine.editorComponentClasses["TransformMarker"](markerActor);
-      /* tslint:enable:no-unused-expression */
     }
 
     this.bySceneNodeId[node.id] = { actor: nodeActor, markerActor, bySceneComponentId: {}, prefabUpdater: null };

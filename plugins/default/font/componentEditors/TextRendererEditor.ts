@@ -51,12 +51,7 @@ export default class TextRendererEditor {
       this.pendingModification += 1;
       this.editConfig("setProperty", "text", event.target.value, (err: string) => {
         this.pendingModification -= 1;
-        if (err != null) {
-          /* tslint:disable:no-unused-expression */
-          new SupClient.Dialogs.InfoDialog(err);
-          /* tslint:enable:no-unused-expression */
-          return;
-        }
+        if (err != null) { new SupClient.Dialogs.InfoDialog(err); return; }
       });
     });
 

@@ -497,9 +497,7 @@ function onNewNodeClick() {
     title: SupClient.i18n.t("common:namePatternDescription")
   };
 
-  /* tslint:disable:no-unused-expression */
   new SupClient.Dialogs.PromptDialog(SupClient.i18n.t("sceneEditor:treeView.newActor.prompt"), options, (name) => {
-    /* tslint:enable:no-unused-expression */
     if (name == null) return;
     createNewNode(name, false);
   });
@@ -513,9 +511,7 @@ function onNewPrefabClick() {
     title: SupClient.i18n.t("common:namePatternDescription")
   };
 
-  /* tslint:disable:no-unused-expression */
   new SupClient.Dialogs.PromptDialog(SupClient.i18n.t("sceneEditor:treeView.newPrefab.prompt"), options, (name) => {
-    /* tslint:enable:no-unused-expression */
     if (name == null) return;
     createNewNode(name, true);
   });
@@ -555,9 +551,7 @@ function onRenameNodeClick() {
     title: SupClient.i18n.t("common:namePatternDescription")
   };
 
-  /* tslint:disable:no-unused-expression */
   new SupClient.Dialogs.PromptDialog(SupClient.i18n.t("sceneEditor:treeView.renamePrompt"), options, (newName) => {
-    /* tslint:enable:no-unused-expression */
     if (newName == null) return;
 
     data.projectClient.editAsset(SupClient.query.asset, "setNodeProperty", node.id, "name", newName);
@@ -577,9 +571,7 @@ function onDuplicateNodeClick() {
     title: SupClient.i18n.t("common:namePatternDescription")
   };
 
-  /* tslint:disable:no-unused-expression */
   new SupClient.Dialogs.PromptDialog(SupClient.i18n.t("sceneEditor:treeView.duplicatePrompt"), options, (newName) => {
-    /* tslint:enable:no-unused-expression */
     if (newName == null) return;
     let options = SupClient.getTreeViewInsertionPoint(ui.nodesTreeView);
 
@@ -596,9 +588,7 @@ function onDeleteNodeClick() {
 
   let confirmLabel = SupClient.i18n.t("sceneEditor:treeView.deleteConfirm");
   let validationLabel = SupClient.i18n.t("common:actions.delete");
-  /* tslint:disable:no-unused-expression */
   new SupClient.Dialogs.ConfirmDialog(confirmLabel, { validationLabel }, (confirm) => {
-    /* tslint:enable:no-unused-expression */
     if (!confirm) return;
 
     for (let selectedNode of ui.nodesTreeView.selectedNodes) {
@@ -671,9 +661,7 @@ export function createComponentElement(nodeId: string, component: Component) {
 
   let editConfig = (command: string, ...args: any[]) => {
     let callback = (err: string) => {
-      /* tslint:disable:no-unused-expression */
       if (err != null) new SupClient.Dialogs.InfoDialog(err);
-      /* tslint:enable:no-unused-expression */
     };
 
     // Override callback if one is given
@@ -708,9 +696,7 @@ export function createComponentElement(nodeId: string, component: Component) {
 function onNewComponentClick() {
   let selectLabel = SupClient.i18n.t("sceneEditor:inspector.newComponent.select");
   let validationLabel = SupClient.i18n.t("sceneEditor:inspector.newComponent.validate");
-  /* tslint:disable:no-unused-expression */
   new SupClient.Dialogs.SelectDialog(selectLabel, ui.availableComponents, { validationLabel, size: 12 }, (type) => {
-    /* tslint:enable:no-unused-expression */
     if (type == null) return;
 
     let nodeId = ui.nodesTreeView.selectedNodes[0].dataset["id"];
@@ -722,9 +708,7 @@ function onNewComponentClick() {
 function onDeleteComponentClick(event: any) {
   let confirmLabel = SupClient.i18n.t("sceneEditor:inspector.deleteComponent.confirm");
   let validationLabel = SupClient.i18n.t("sceneEditor:inspector.deleteComponent.validate");
-  /* tslint:disable:no-unused-expression */
   new SupClient.Dialogs.ConfirmDialog(confirmLabel, { validationLabel }, (confirm) => {
-    /* tslint:enable:no-unused-expression */
     if (!confirm) return;
 
     let nodeId = ui.nodesTreeView.selectedNodes[0].dataset["id"];

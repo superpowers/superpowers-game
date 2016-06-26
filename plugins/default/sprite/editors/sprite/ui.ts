@@ -195,9 +195,7 @@ function downloadTexture(textureName: string) {
   if (SupApp != null) {
     triggerDownload(options.initialValue);
   } else {
-    /* tslint:disable:no-unused-expression */
     new SupClient.Dialogs.PromptDialog(SupClient.i18n.t("spriteEditor:sidebar.settings.sprite.texture.download.prompt"), options, (name) => {
-      /* tslint:enable:no-unused-expression */
       if (name == null) return;
       triggerDownload(name);
     });
@@ -215,9 +213,7 @@ function onSetGridSize(event: any) {
     cancelLabel: SupClient.i18n.t("common:actions.skip")
   };
 
-  /* tslint:disable:no-unused-expression */
   new SupClient.Dialogs.PromptDialog(SupClient.i18n.t("spriteEditor:sidebar.settings.sprite.grid.widthPrompt"), options, (framesPerRow) => {
-    /* tslint:enable:no-unused-expression */
     if (framesPerRow != null) {
       let framesPerRowNum = parseInt(framesPerRow, 10);
       if (isNaN(framesPerRowNum)) return;
@@ -227,9 +223,7 @@ function onSetGridSize(event: any) {
 
     options.validationLabel = SupClient.i18n.t("spriteEditor:sidebar.settings.sprite.grid.setHeight");
 
-    /* tslint:disable:no-unused-expression */
     new SupClient.Dialogs.PromptDialog(SupClient.i18n.t("spriteEditor:sidebar.settings.sprite.grid.heightPrompt"), options, (framesPerColumn) => {
-      /* tslint:enable:no-unused-expression */
       if (framesPerColumn != null) {
         let framesPerColumnNum = parseInt(framesPerColumn, 10);
         if (isNaN(framesPerColumnNum)) return;
@@ -246,9 +240,7 @@ function onNewAnimationClick() {
     validationLabel: SupClient.i18n.t("common:actions.create")
   };
 
-  /* tslint:disable:no-unused-expression */
   new SupClient.Dialogs.PromptDialog(SupClient.i18n.t("spriteEditor:sidebar.animations.newAnimationPrompt"), options, (name) => {
-    /* tslint:enable:no-unused-expression */
     if (name == null) return;
 
     data.projectClient.editAsset(SupClient.query.asset, "newAnimation", name, (animationId: string) => {
@@ -270,9 +262,7 @@ function onRenameAnimationClick() {
     validationLabel: SupClient.i18n.t("common:actions.rename")
   };
 
-  /* tslint:disable:no-unused-expression */
   new SupClient.Dialogs.PromptDialog(SupClient.i18n.t("spriteEditor:sidebar.animations.renameAnimationPrompt"), options, (newName) => {
-    /* tslint:enable:no-unused-expression */
     if (newName == null) return;
 
     data.projectClient.editAsset(SupClient.query.asset, "setAnimationProperty", animation.id, "name", newName);
@@ -284,9 +274,7 @@ function onDeleteAnimationClick() {
 
   let confirmLabel = SupClient.i18n.t("spriteEditor:sidebar.animations.deleteAnimationPrompt");
   let validationLabel = SupClient.i18n.t("common:actions.delete");
-  /* tslint:disable:no-unused-expression */
   new SupClient.Dialogs.ConfirmDialog(confirmLabel, { validationLabel }, (confirm) => {
-    /* tslint:enable:no-unused-expression */
     if (!confirm) return;
 
     ui.animationsTreeView.selectedNodes.forEach((selectedNode: any) => { data.projectClient.editAsset(SupClient.query.asset, "deleteAnimation", selectedNode.dataset["id"]); });
@@ -492,9 +480,7 @@ function onNewMapClick() {
     validationLabel: SupClient.i18n.t("common:actions.create")
   };
 
-  /* tslint:disable:no-unused-expression */
   new SupClient.Dialogs.PromptDialog(SupClient.i18n.t("spriteEditor:sidebar.advancedTextures.newMapPrompt"), options, (name) => {
-    /* tslint:enable:no-unused-expression */
     if (name == null) return;
 
     data.projectClient.editAsset(SupClient.query.asset, "newMap", name);
@@ -526,9 +512,7 @@ function onRenameMapClick() {
     validationLabel: SupClient.i18n.t("common:actions.rename")
   };
 
-  /* tslint:disable:no-unused-expression */
   new SupClient.Dialogs.PromptDialog(SupClient.i18n.t("spriteEditor:sidebar.advancedTextures.renameMapPrompt"), options, (newName) => {
-    /* tslint:enable:no-unused-expression */
     if (newName == null) return;
 
     data.projectClient.editAsset(SupClient.query.asset, "renameMap", textureName, newName);
@@ -540,9 +524,7 @@ function onDeleteMapClick() {
 
   let confirmLabel = SupClient.i18n.t("spriteEditor:sidebar.advancedTextures.deleteMapPrompt");
   let validationLabel = SupClient.i18n.t("common:actions.delete");
-  /* tslint:disable:no-unused-expression */
   new SupClient.Dialogs.ConfirmDialog(confirmLabel, { validationLabel }, (confirm) => {
-    /* tslint:enable:no-unused-expression */
     if (!confirm) return;
 
     for (let selectedNode of ui.texturesTreeView.selectedNodes) data.projectClient.editAsset(SupClient.query.asset, "deleteMap", selectedNode.dataset["name"]);

@@ -237,9 +237,7 @@ function downloadTexture(textureName: string) {
   if (SupApp != null) {
     triggerDownload(options.initialValue);
   } else {
-    /* tslint:disable:no-unused-expression */
     new SupClient.Dialogs.PromptDialog(SupClient.i18n.t("modelEditor:sidebar.advancedTextures.downloadPrompt"), options, (name) => {
-      /* tslint:enable:no-unused-expression */
       if (name == null) return;
       triggerDownload(name);
     });
@@ -263,9 +261,7 @@ function onNewAnimationClick() {
     validationLabel: SupClient.i18n.t("common:actions.create")
   };
 
-  /* tslint:disable:no-unused-expression */
   new SupClient.Dialogs.PromptDialog(SupClient.i18n.t("modelEditor:sidebar.animations.new.prompt"), options, (name) => {
-    /* tslint:enable:no-unused-expression */
     if (name == null) return;
 
     data.projectClient.editAsset(SupClient.query.asset, "newAnimation", name, null, null, (animationId: string) => {
@@ -287,12 +283,8 @@ function onAnimationFileSelectChange(event: any) {
     setImportLog(log);
 
     if (data != null) {
-      if (result.animation == null) {
-        /* tslint:disable:no-unused-expression */
-        new SupClient.Dialogs.InfoDialog("No animation found in imported files");
-        /* tslint:enable:no-unused-expression */
-        return;
-      }
+      if (result.animation == null) { new SupClient.Dialogs.InfoDialog("No animation found in imported files"); return; }
+
       // TODO: Check if bones are compatible
       data.projectClient.editAsset(SupClient.query.asset, "setAnimation", animationId, result.animation.duration, result.animation.keyFrames);
     }
@@ -310,9 +302,7 @@ function onRenameAnimationClick() {
     validationLabel: SupClient.i18n.t("common:actions.rename")
   };
 
-  /* tslint:disable:no-unused-expression */
   new SupClient.Dialogs.PromptDialog(SupClient.i18n.t("modelEditor:sidebar.animations.renamePrompt"), options, (newName) => {
-    /* tslint:enable:no-unused-expression */
     if (newName == null) return;
 
     data.projectClient.editAsset(SupClient.query.asset, "setAnimationProperty", animation.id, "name", newName);
@@ -324,9 +314,7 @@ function onDeleteAnimationClick() {
 
   const confirmLabel = SupClient.i18n.t("modelEditor:sidebar.animations.deleteConfirm");
   const validationLabel = SupClient.i18n.t("common:actions.delete");
-  /* tslint:disable:no-unused-expression */
   new SupClient.Dialogs.ConfirmDialog(confirmLabel, { validationLabel }, (confirm) => {
-    /* tslint:enable:no-unused-expression */
     if (!confirm) return;
 
     for (const selectedNode of ui.animationsTreeView.selectedNodes)
@@ -383,9 +371,7 @@ function onNewMapClick() {
     validationLabel: SupClient.i18n.t("common:actions.create")
   };
 
-  /* tslint:disable:no-unused-expression */
   new SupClient.Dialogs.PromptDialog(SupClient.i18n.t("modelEditor:sidebar.advancedTextures.newMapPrompt"), options, (name) => {
-    /* tslint:enable:no-unused-expression */
     if (name == null) return;
 
     data.projectClient.editAsset(SupClient.query.asset, "newMap", name);
@@ -421,9 +407,7 @@ function onRenameMapClick() {
     validationLabel: SupClient.i18n.t("common:actions.rename")
   };
 
-  /* tslint:disable:no-unused-expression */
   new SupClient.Dialogs.PromptDialog(SupClient.i18n.t("modelEditor:sidebar.advancedTextures.renameMapPrompt"), options, (newName) => {
-    /* tslint:enable:no-unused-expression */
     if (newName == null) return;
 
     data.projectClient.editAsset(SupClient.query.asset, "renameMap", textureName, newName);
@@ -435,9 +419,7 @@ function onDeleteMapClick() {
 
   const confirmLabel = SupClient.i18n.t("modelEditor:sidebar.advancedTextures.deleteMapConfirm");
   const validationLabel = SupClient.i18n.t("common:actions.delete");
-  /* tslint:disable:no-unused-expression */
   new SupClient.Dialogs.ConfirmDialog(confirmLabel, { validationLabel }, (confirmed) => {
-    /* tslint:enable:no-unused-expression */
     if (!confirmed) return;
 
     for (const selectedNode of ui.texturesTreeView.selectedNodes)

@@ -24,12 +24,7 @@ export default class ProjectSettingsEditor {
         button.disabled = true;
         this.projectClient.socket.emit("vacuum:project", (err: string, deletedCount: number) => {
           button.disabled = false;
-          if (err != null) {
-            /* tslint:disable:no-unused-expression */
-            new SupClient.Dialogs.InfoDialog(err);
-            /* tslint:enable:no-unused-expression */
-            return;
-          }
+          if (err != null) { new SupClient.Dialogs.InfoDialog(err); return; }
 
           if (deletedCount > 0) {
             if (deletedCount > 1) span.textContent = SupClient.i18n.t("settingsEditors:Project.severalFoldersRemoved", { folders: deletedCount.toString() });

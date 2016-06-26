@@ -11,9 +11,7 @@ engine.gameInstance = new SupEngine.GameInstance(canvasElt);
 let cameraActor = new SupEngine.Actor(engine.gameInstance, "Camera");
 cameraActor.setLocalPosition(new THREE.Vector3(0, 0, 10));
 let cameraComponent = new SupEngine.componentClasses["Camera"](cameraActor);
-/* tslint:disable:no-unused-expression */
 new SupEngine.editorComponentClasses["Camera3DControls"](cameraActor, cameraComponent);
-/* tslint:enable:no-unused-expression */
 
 let light = new THREE.AmbientLight(0xcfcfcf);
 engine.gameInstance.threeScene.add(light);

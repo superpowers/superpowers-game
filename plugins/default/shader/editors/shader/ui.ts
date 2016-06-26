@@ -231,9 +231,7 @@ export function setupEditors(clientId: string) {
 }
 
 let previewPane = document.querySelector(".preview") as HTMLDivElement;
-/* tslint:disable:no-unused-expression */
 new ResizeHandle(previewPane, "right");
-/* tslint:enable:no-unused-expression */
 ui.previewTypeSelect = <HTMLSelectElement>previewPane.querySelector("select");
 ui.previewTypeSelect.addEventListener("change", () => {
   ui.previewAssetInput.hidden = ui.previewTypeSelect.value !== "Asset";

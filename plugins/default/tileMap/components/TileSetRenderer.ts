@@ -24,9 +24,7 @@ export default class TileSetRenderer extends SupEngine.ActorComponent {
     });
 
     this.selectedTileActor = new SupEngine.Actor(this.actor.gameInstance, "Selection", null, { visible: false });
-    /* tslint:disable:no-unused-expression */
     new SupEngine.editorComponentClasses["FlatColorRenderer"](this.selectedTileActor, 0x900090, 1, 1);
-    /* tslint:enable:no-unused-expression */
 
     this.setTileSet(asset);
   }

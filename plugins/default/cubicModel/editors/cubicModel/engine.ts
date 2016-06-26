@@ -24,9 +24,7 @@ engine.cameraActor.setLocalPosition(new THREE.Vector3(0, 0, 10));
 
 let cameraComponent = new SupEngine.componentClasses["Camera"](engine.cameraActor);
 cameraComponent.layers = [ 0, -1 ];
-/* tslint:disable:no-unused-expression */
 new SupEngine.editorComponentClasses["Camera3DControls"](engine.cameraActor, cameraComponent);
-/* tslint:enable:no-unused-expression */
 
 let markerActor = new SupEngine.Actor(engine.gameInstance, "Marker", null, { layer: -1 });
 engine.transformMarkerComponent = new SupEngine.editorComponentClasses["TransformMarker"](markerActor);

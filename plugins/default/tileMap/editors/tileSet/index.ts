@@ -207,9 +207,7 @@ function onDownloadTileset(event: Event) {
   if (SupApp != null) {
     triggerDownload(options.initialValue);
   } else {
-    /* tslint:disable:no-unused-expression */
     new SupClient.Dialogs.PromptDialog(SupClient.i18n.t("tileSetEditor:texture.downloadPrompt"), options, (name) => {
-      /* tslint:enable:no-unused-expression */
       if (name == null) return;
       triggerDownload(name);
     });
@@ -234,9 +232,7 @@ function onNewPropertyClick() {
     validationLabel: SupClient.i18n.t("common:actions.create")
   };
 
-  /* tslint:disable:no-unused-expression */
   new SupClient.Dialogs.PromptDialog(SupClient.i18n.t("tileSetEditor:newPropertyPrompt"), options, (name) => {
-    /* tslint:enable:no-unused-expression */
     if (name == null) return;
 
     data.projectClient.editAsset(SupClient.query.asset, "addTileProperty", data.selectedTile, name, () => {
@@ -259,9 +255,7 @@ function onRenamePropertyClick() {
     validationLabel: SupClient.i18n.t("common:actions.rename")
   };
 
-  /* tslint:disable:no-unused-expression */
   new SupClient.Dialogs.PromptDialog(SupClient.i18n.t("tileSetEditor:renamePropertyPrompt"), options, (newName) => {
-    /* tslint:enable:no-unused-expression */
     if (newName == null) return;
     data.projectClient.editAsset(SupClient.query.asset, "renameTileProperty", data.selectedTile, ui.selectedProperty, newName);
   });
@@ -272,9 +266,7 @@ function onDeletePropertyClick() {
 
   let confirmLabel = SupClient.i18n.t("tileSetEditor:deletePropertyConfirm");
   let validationLabel = SupClient.i18n.t("common:actions.delete");
-  /* tslint:disable:no-unused-expression */
   new SupClient.Dialogs.ConfirmDialog(confirmLabel, { validationLabel }, (confirm) => {
-    /* tslint:enable:no-unused-expression */
     if (!confirm) return;
     data.projectClient.editAsset(SupClient.query.asset, "deleteTileProperty", data.selectedTile, ui.selectedProperty);
   });

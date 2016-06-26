@@ -32,13 +32,11 @@ function start() {
   let cameraComponent = new SupEngine.componentClasses["Camera"](cameraActor);
   cameraComponent.setOrthographicMode(true);
   cameraComponent.setOrthographicScale(5);
-  /* tslint:disable:no-unused-expression */
   new SupEngine.editorComponentClasses["Camera2DControls"](cameraActor, cameraComponent, {
     zoomSpeed: 1.5,
     zoomMin: 1,
     zoomMax: 200
   });
-  /* tslint:enable:no-unused-expression */
 
   // Sidebar
   let fileSelect = document.querySelector("input.file-select") as HTMLInputElement;
@@ -220,9 +218,7 @@ document.querySelector("button.download").addEventListener("click", (event) => {
   if (SupApp != null) {
     triggerDownload(options.initialValue);
   } else {
-    /* tslint:disable:no-unused-expression */
     new SupClient.Dialogs.PromptDialog(SupClient.i18n.t("fontEditor:font.download.prompt"), options, (name) => {
-      /* tslint:enable:no-unused-expression */
       if (name == null) return;
       triggerDownload(name);
     });

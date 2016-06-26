@@ -10,9 +10,7 @@ let gameInstance = new SupEngine.GameInstance(canvasElt);
 let cameraActor = new SupEngine.Actor(gameInstance, "Camera");
 cameraActor.setLocalPosition(new THREE.Vector3(0, 0, 10));
 let cameraComponent = new SupEngine.componentClasses["Camera"](cameraActor);
-/* tslint:disable:no-unused-expression */
 new SupEngine.editorComponentClasses["Camera3DControls"](cameraActor, cameraComponent);
-/* tslint:enable:no-unused-expression */
 
 let loader = new THREE.TextureLoader();
 let leonardTexture = loader.load("leonard.png", undefined);
