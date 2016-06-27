@@ -1,6 +1,9 @@
-import { data, scheduleErrorCheck, setNextCompletion } from "./network";
+import ScriptAsset from "../../data/ScriptAsset";
+import { data, scheduleErrorCheck, setNextCompletion, updateWorkerFile } from "./network";
 
 let ui: {
+  selectedRevision: string;
+
   editor: TextEditorWidget;
   previousLine: number;
 
@@ -27,10 +30,13 @@ let ui: {
 } = {} as any;
 export default ui;
 
+ui.selectedRevision = "current";
+
 let defaultPosition: CodeMirror.Position;
 window.addEventListener("message", (event) => {
-  if (event.data.type === "activate") ui.editor.codeMirrorInstance.focus();
-  if (event.data.type === "setState") {
+  if (event.data.type === "setRevision") onSelectRevision(event.data.revisionId);
+  else if (event.data.type === "activate") ui.editor.codeMirrorInstance.focus();
+  else if (event.data.type === "setState") {
     let line = parseInt(event.data.state.line, 10);
     let ch = parseInt(event.data.state.ch, 10);
     if (ui.editor != null) ui.editor.codeMirrorInstance.getDoc().setCursor({ line , ch });
@@ -75,9 +81,31 @@ let parameterPopupKeyMap = {
   }
 };
 
+export function clear() {
+  (document.querySelector(".loading") as HTMLDivElement).hidden = false;
+  (document.querySelector(".text-editor-container") as HTMLDivElement).hidden = true;
+
+  ui.editor.setText("");
+  ui.errorPaneInfo.textContent = SupClient.i18n.t("common:states.loading");
+  ui.errorPaneStatus.classList.toggle("has-draft", false);
+  ui.errorPaneStatus.classList.toggle("has-errors", false);
+  clearErrors();
+}
+
+export function start(asset: ScriptAsset) {
+  (document.querySelector(".loading") as HTMLDivElement).hidden = true;
+  (document.querySelector(".text-editor-container") as HTMLDivElement).hidden = false;
+
+  ui.editor.setText(asset.pub.draft);
+  ui.errorPaneStatus.classList.toggle("has-draft", asset.hasDraft && ui.selectedRevision === "current");
+
+  if (ui.selectedRevision !== "current") ui.editor.codeMirrorInstance.setOption("readOnly", true);
+  else if (defaultPosition != null) ui.editor.codeMirrorInstance.getDoc().setCursor(defaultPosition);
+}
+
 // Setup editor
-export function setupEditor(clientId: string, script: string) {
-  let textArea = <HTMLTextAreaElement>document.querySelector(".text-editor");
+export function setupEditor(clientId: string) {
+  const textArea = document.querySelector(".text-editor") as HTMLTextAreaElement;
   ui.editor = new TextEditorWidget(data.projectClient, clientId, textArea, {
     mode: "text/typescript",
     extraKeys: {
@@ -112,7 +140,10 @@ export function setupEditor(clientId: string, script: string) {
       }
     },
     editCallback: onEditText,
-    sendOperationCallback: (operation: OperationData) => { data.projectClient.editAsset(SupClient.query.asset, "editText", operation, data.asset.document.getRevisionId()); }
+    sendOperationCallback: (operation: OperationData) => {
+      console.log(data.asset.document.getRevisionId());
+      data.projectClient.editAsset(SupClient.query.asset, "editText", operation, data.asset.document.getRevisionId());
+    }
   });
   ui.previousLine = -1;
 
@@ -146,10 +177,8 @@ export function setupEditor(clientId: string, script: string) {
     ui.completionOpened = false;
     if (ui.parameterElement.parentElement != null) ui.editor.codeMirrorInstance.addKeyMap(parameterPopupKeyMap);
   });
-
-  ui.editor.setText(script);
-  if (defaultPosition != null) ui.editor.codeMirrorInstance.getDoc().setCursor(defaultPosition);
 }
+
 
 let localVersionNumber = 0;
 function onEditText(text: string, origin: string) {
@@ -166,7 +195,27 @@ function onEditText(text: string, origin: string) {
   }
 }
 
+function onSelectRevision(revisionId: string) {
+  if (revisionId === "restored") {
+    ui.selectedRevision = "current";
+    ui.editor.codeMirrorInstance.setOption("readOnly", false);
+    return;
+  }
 
+  ui.selectedRevision = revisionId;
+  clear();
+
+  if (ui.selectedRevision === "current") {
+    data.asset = data.assetsById[SupClient.query.asset] as ScriptAsset;
+    start(data.asset);
+    updateWorkerFile(SupClient.query.asset, data.asset.pub.draft, data.asset.pub.revisionId.toString());
+  } else {
+    data.projectClient.getAssetRevision(SupClient.query.asset, "script", ui.selectedRevision, (id: string, asset: ScriptAsset) => {
+      start(asset);
+      updateWorkerFile(SupClient.query.asset, asset.pub.draft, `l${localVersionNumber}`);
+    });
+  }
+}
 
 // Error pane
 ui.errorPane = <HTMLDivElement>document.querySelector(".error-pane");
@@ -184,7 +233,7 @@ interface CompilationError {
   message: string;
 }
 
-export function refreshErrors(errors: CompilationError[]) {
+function clearErrors() {
   ui.editor.codeMirrorInstance.operation(() => {
     // Remove all previous errors
     for (let textMarker of ui.editor.codeMirrorInstance.getDoc().getAllMarks()) {
@@ -193,24 +242,29 @@ export function refreshErrors(errors: CompilationError[]) {
     }
 
     ui.editor.codeMirrorInstance.clearGutter("line-error-gutter");
-
     ui.errorsTBody.innerHTML = "";
+  });
+}
 
-    ui.saveButton.hidden = false;
-    ui.saveWithErrorsButton.hidden = true;
+export function refreshErrors(errors: CompilationError[]) {
+  clearErrors();
 
-    if (errors.length === 0) {
-      ui.errorPaneInfo.textContent = SupClient.i18n.t("scriptEditor:errors.noErrors");
-      ui.errorPaneStatus.classList.remove("has-errors");
-      return;
-    }
+  ui.saveButton.hidden = false;
+  ui.saveWithErrorsButton.hidden = true;
 
-    ui.errorPaneStatus.classList.add("has-errors");
+  if (errors.length === 0) {
+    ui.errorPaneInfo.textContent = SupClient.i18n.t("scriptEditor:errors.noErrors");
+    ui.errorPaneStatus.classList.remove("has-errors");
+    return;
+  }
 
-    let selfErrorsCount = 0;
-    let lastSelfErrorRow: HTMLTableRowElement = null;
+  ui.errorPaneStatus.classList.add("has-errors");
 
-    // Display new ones
+  let selfErrorsCount = 0;
+  let lastSelfErrorRow: HTMLTableRowElement = null;
+
+  // Display new ones
+  ui.editor.codeMirrorInstance.operation(() => {
     for (let error of errors) {
       let errorRow = document.createElement("tr");
 
@@ -366,8 +420,6 @@ function clearInfoPopup() {
   if (ui.infoElement.parentElement != null) ui.infoElement.parentElement.removeChild(ui.infoElement);
   if (ui.infoTimeout != null) clearTimeout(ui.infoTimeout);
 }
-
-
 
 export function showParameterPopup(texts: { prefix: string; parameters: string[]; suffix: string; }[], selectedItemIndex: number, selectedArgumentIndex: number) {
   ui.signatureTexts = texts;

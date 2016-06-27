@@ -8,8 +8,11 @@ html
     link(rel="stylesheet",href="index.css")
 
   body
-    .text-editor-container
-      textarea(disabled).text-editor
+    .loading
+        div= t("common:states.loading")
+
+    .text-editor-container(hidden)
+      textarea(read-only).text-editor
 
     .resize-handle.bottom
     .error-pane.collapsable

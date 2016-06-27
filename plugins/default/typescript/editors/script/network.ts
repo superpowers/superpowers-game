@@ -1,11 +1,11 @@
 /// <reference path="../../typescriptAPI/TypeScriptAPIPlugin.d.ts" />
 
-import ui, { setupEditor, refreshErrors, showParameterPopup, clearParameterPopup } from "./ui";
+import ui, { start as startUI, setupEditor, refreshErrors, showParameterPopup, clearParameterPopup } from "./ui";
 
 import * as async from "async";
 import ScriptAsset from "../../data/ScriptAsset";
 
-export let data = {
+export const data = {
   clientId: null as string,
   projectClient: <SupClient.ProjectClient>null,
   typescriptWorker: new Worker("typescriptWorker.js"),
@@ -25,29 +25,30 @@ SupClient.i18n.load([{ root: `${window.location.pathname}/../..`, name: "scriptE
   socket.on("disconnect", SupClient.onDisconnected);
 });
 
-let onAssetCommands: any = {};
-onAssetCommands.editText = (operationData: OperationData) => {
+const onAssetCommands: { [command: string]: Function; } = {};
+onAssetCommands["editText"] = (operationData: OperationData) => {
   ui.errorPaneStatus.classList.add("has-draft");
   ui.editor.receiveEditText(operationData);
 };
 
-onAssetCommands.applyDraftChanges = () => {
+onAssetCommands["applyDraftChanges"] = () => {
   ui.errorPaneStatus.classList.remove("has-draft");
 };
 
 let allScriptsReceived = false;
-let scriptSubscriber: SupClient.AssetSubscriber = {
+const scriptSubscriber: SupClient.AssetSubscriber = {
   onAssetReceived: (id: string, asset: ScriptAsset) => {
-    data.assetsById[asset.id] = asset;
-    let fileName = `${data.projectClient.entries.getPathFromId(asset.id)}.ts`;
-    let file = { id: asset.id, text: asset.pub.text, version: asset.pub.revisionId.toString() };
+    data.assetsById[id] = asset;
+    const fileName = `${data.projectClient.entries.getPathFromId(id)}.ts`;
+    const file = { id: id, text: id === SupClient.query.asset ? asset.pub.draft : asset.pub.text, version: asset.pub.revisionId.toString() };
     data.files[fileName] = file;
 
-    if (asset.id === SupClient.query.asset) {
-      data.asset = asset;
+    if (id === SupClient.query.asset) {
+      setupEditor(data.clientId);
+      SupClient.setEntryRevisionDisabled(false);
 
-      (<any>ui.errorPaneStatus.classList.toggle)("has-draft", data.asset.hasDraft);
-      setupEditor(data.clientId, data.asset.pub.draft);
+      data.asset = asset;
+      startUI(data.asset);
     }
 
     if (!allScriptsReceived) {
@@ -63,12 +64,25 @@ let scriptSubscriber: SupClient.AssetSubscriber = {
     }
   },
 
+  onAssetRestored: (id: string, asset: ScriptAsset) => {
+    data.assetsById[id] = asset;
+    if (id === SupClient.query.asset) {
+      data.asset = asset;
+      if (ui.selectedRevision === "current") {
+        startUI(data.asset);
+        updateWorkerFile(id, asset.pub.draft, asset.pub.revisionId.toString());
+      }
+    } else {
+      updateWorkerFile(id, asset.pub.text, asset.pub.revisionId.toString());
+    }
+  },
+
   onAssetEdited: (id: string, command: string, ...args: any[]) => {
     if (id !== SupClient.query.asset) {
       if (command === "applyDraftChanges") {
-        let fileName = `${data.projectClient.entries.getPathFromId(id)}.ts`;
-        let asset = data.assetsById[id];
-        let file = data.files[fileName];
+        const fileName = `${data.projectClient.entries.getPathFromId(id)}.ts`;
+        const asset = data.assetsById[id];
+        const file = data.files[fileName];
         file.text = asset.pub.text;
         file.version = asset.pub.revisionId.toString();
 
@@ -78,7 +92,7 @@ let scriptSubscriber: SupClient.AssetSubscriber = {
       return;
     }
 
-    if (onAssetCommands[command] != null) onAssetCommands[command].apply(data.asset, args);
+    if (ui.selectedRevision === "current" && onAssetCommands[command] != null) onAssetCommands[command].apply(data.asset, args);
   },
 
   onAssetTrashed: (id: string) => {
@@ -91,12 +105,22 @@ let scriptSubscriber: SupClient.AssetSubscriber = {
   },
 };
 
-let entriesSubscriber = {
+export function updateWorkerFile(id: string, text: string, version: string) {
+  const fileName = `${data.projectClient.entries.getPathFromId(id)}.ts`;
+  const file = data.files[fileName];
+  file.text = text;
+  file.version = version;
+
+  data.typescriptWorker.postMessage({ type: "updateFile", fileName, text: file.text, version: file.version });
+  scheduleErrorCheck();
+}
+
+const entriesSubscriber = {
   onEntriesReceived: (entries: SupCore.Data.Entries) => {
     entries.walk((entry) => {
       if (entry.type !== "script") return;
 
-      let fileName = `${data.projectClient.entries.getPathFromId(entry.id)}.ts`;
+      const fileName = `${data.projectClient.entries.getPathFromId(entry.id)}.ts`;
       data.fileNames.push(fileName);
       data.fileNamesByScriptId[entry.id] = fileName;
       data.projectClient.subAsset(entry.id, "script", scriptSubscriber);
@@ -106,7 +130,7 @@ let entriesSubscriber = {
   onEntryAdded: (newEntry: any, parentId: string, index: number) => {
     if (newEntry.type !== "script") return;
 
-    let fileName = `${data.projectClient.entries.getPathFromId(newEntry.id)}.ts`;
+    const fileName = `${data.projectClient.entries.getPathFromId(newEntry.id)}.ts`;
 
     let i = 0;
     data.projectClient.entries.walk((entry) => {
@@ -119,15 +143,15 @@ let entriesSubscriber = {
   },
 
   onEntryMoved: (id: string, parentId: string, index: number) => {
-    let entry = data.projectClient.entries.byId[id];
+    const entry = data.projectClient.entries.byId[id];
     if (entry.type != null && entry.type !== "script") return;
 
-    let renameFile = (entry: SupCore.Data.EntryNode) => {
+    const renameFile = (entry: SupCore.Data.EntryNode) => {
       if (entry.type == null) {
-        for (let child of entry.children) renameFile(child);
+        for (const child of entry.children) renameFile(child);
       } else if (entry.type === "script") {
-        let oldFileName = data.fileNamesByScriptId[entry.id];
-        let newFileName = `${data.projectClient.entries.getPathFromId(entry.id)}.ts`;
+        const oldFileName = data.fileNamesByScriptId[entry.id];
+        const newFileName = `${data.projectClient.entries.getPathFromId(entry.id)}.ts`;
 
         data.fileNames.splice(data.fileNames.indexOf(oldFileName), 1);
         let i = 0;
@@ -138,7 +162,7 @@ let entriesSubscriber = {
         });
 
         data.fileNamesByScriptId[entry.id] = newFileName;
-        let file = data.files[oldFileName];
+        const file = data.files[oldFileName];
         data.files[newFileName] = file;
         if (newFileName !== oldFileName) delete data.files[oldFileName];
 
@@ -151,21 +175,21 @@ let entriesSubscriber = {
   },
 
   onSetEntryProperty: (id: string, key: string, value: any) => {
-    let entry = data.projectClient.entries.byId[id];
+    const entry = data.projectClient.entries.byId[id];
     if ((entry.type != null && entry.type !== "script") || key !== "name") return;
 
-    let renameFile = (entry: SupCore.Data.EntryNode) => {
+    const renameFile = (entry: SupCore.Data.EntryNode) => {
       if (entry.type == null) {
-        for (let child of entry.children) renameFile(child);
+        for (const child of entry.children) renameFile(child);
       } else if (entry.type === "script") {
-        let oldFileName = data.fileNamesByScriptId[entry.id];
-        let newFileName = `${data.projectClient.entries.getPathFromId(entry.id)}.ts`;
+        const oldFileName = data.fileNamesByScriptId[entry.id];
+        const newFileName = `${data.projectClient.entries.getPathFromId(entry.id)}.ts`;
         if (newFileName === oldFileName) return;
 
-        let scriptIndex = data.fileNames.indexOf(oldFileName);
+        const scriptIndex = data.fileNames.indexOf(oldFileName);
         data.fileNames[scriptIndex] = newFileName;
         data.fileNamesByScriptId[entry.id] = newFileName;
-        let file = data.files[oldFileName];
+        const file = data.files[oldFileName];
         data.files[newFileName] = file;
         delete data.files[oldFileName];
 
@@ -178,7 +202,7 @@ let entriesSubscriber = {
   },
 
   onEntryTrashed: (id: string) => {
-    let fileName = data.fileNamesByScriptId[id];
+    const fileName = data.fileNamesByScriptId[id];
     if (fileName == null) return;
 
     data.fileNames.splice(data.fileNames.indexOf(fileName), 1);
@@ -218,34 +242,34 @@ data.typescriptWorker.onmessage = (event: MessageEvent) => {
         return;
       }
 
-      for (let item of event.data.list) {
+      for (const item of event.data.list) {
         item.render = (parentElt: HTMLDivElement, data: any, item: { kind: string; name: string; info: string }) => {
           parentElt.style.maxWidth = "100em";
 
-          let rowElement = document.createElement("div");
+          const rowElement = document.createElement("div");
           rowElement.style.display = "flex";
           parentElt.appendChild(rowElement);
 
-          let kindElement = document.createElement("div");
+          const kindElement = document.createElement("div");
           kindElement.style.marginRight = "0.5em";
           kindElement.style.width = "6em";
           kindElement.textContent = item.kind;
           rowElement.appendChild(kindElement);
 
-          let nameElement = document.createElement("div");
+          const nameElement = document.createElement("div");
           nameElement.style.marginRight = "0.5em";
           nameElement.style.width = "15em";
           nameElement.style.fontWeight = "bold";
           nameElement.textContent = item.name;
           rowElement.appendChild(nameElement);
 
-          let infoElement = document.createElement("div");
+          const infoElement = document.createElement("div");
           infoElement.textContent = item.info;
           rowElement.appendChild(infoElement);
         };
       }
-      let from = { line: activeCompletion.cursor.line, ch: activeCompletion.token.start };
-      let to = { line: activeCompletion.cursor.line, ch: activeCompletion.token.end };
+      const from = { line: activeCompletion.cursor.line, ch: activeCompletion.token.start };
+      const to = { line: activeCompletion.cursor.line, ch: activeCompletion.token.end };
       activeCompletion.callback({ list: event.data.list, from, to });
       activeCompletion = null;
       break;
@@ -320,10 +344,10 @@ function loadPlugins() {
       // Read API definitions
       let globalDefs = "";
 
-      let actorComponentAccessors: string[] = [];
-      let plugins = SupCore.system.getPlugins<SupCore.TypeScriptAPIPlugin>("typescriptAPI");
-      for (let pluginName in plugins) {
-        let plugin = plugins[pluginName];
+      const actorComponentAccessors: string[] = [];
+      const plugins = SupCore.system.getPlugins<SupCore.TypeScriptAPIPlugin>("typescriptAPI");
+      for (const pluginName in plugins) {
+        const plugin = plugins[pluginName];
         if (plugin.defs != null) globalDefs += plugin.defs;
         if (plugin.exposeActorComponent != null) actorComponentAccessors.push(`${plugin.exposeActorComponent.propertyName}: ${plugin.exposeActorComponent.className};`);
       }
