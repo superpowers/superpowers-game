@@ -46,7 +46,7 @@ if ((global as any).SupApp == null) {
 }
 
 // In app, open links in a browser window
-let playerWindow: GitHubElectron.BrowserWindow;
+let playerWindow: Electron.BrowserWindow;
 let electron: any;
 
 if (SupApp != null) {
