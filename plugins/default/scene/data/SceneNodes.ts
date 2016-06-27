@@ -190,8 +190,8 @@ export default class SceneNodes extends SupCore.Data.Base.TreeById {
 
     let checkScene = (sceneId: string) => {
       acquiringScene++;
-      this.sceneAsset.server.data.assets.acquire(sceneId, this, (error: Error, asset: SceneAsset) => {
-        this.sceneAsset.server.data.assets.release(sceneId, this);
+      this.sceneAsset.server.data.assets.acquire(sceneId, null, (error: Error, asset: SceneAsset) => {
+        this.sceneAsset.server.data.assets.release(sceneId, null);
 
         // Check the scene has only one root actor
         if (asset.pub.nodes.length !== 1) {
