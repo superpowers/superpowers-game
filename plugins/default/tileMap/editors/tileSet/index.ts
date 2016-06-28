@@ -8,6 +8,30 @@ let data: { projectClient: SupClient.ProjectClient; tileSetUpdater: TileSetRende
 let ui: any = {};
 let socket: SocketIOClient.Socket;
 
+let hasStarted = false;
+let isTabActive = true;
+let animationFrame: number;
+
+window.addEventListener("message", (event) => {
+  if (event.data.type === "deactivate" || event.data.type === "activate") {
+    isTabActive = event.data.type === "activate";
+    onChangeActive();
+  }
+});
+
+function onChangeActive() {
+  const stopRendering = !hasStarted || !isTabActive;
+
+  if (stopRendering) {
+    if (animationFrame != null) {
+      cancelAnimationFrame(animationFrame);
+      animationFrame = null;
+    }
+  } else if (animationFrame == null) {
+    animationFrame = requestAnimationFrame(tick);
+  }
+}
+
 function start() {
   socket = SupClient.connect(SupClient.query.project);
   socket.on("connect", onConnected);
@@ -51,7 +75,8 @@ function start() {
   document.querySelector("button.rename-property").addEventListener("click", onRenamePropertyClick);
   document.querySelector("button.delete-property").addEventListener("click", onDeletePropertyClick);
 
-  requestAnimationFrame(tick);
+  hasStarted = true;
+  onChangeActive();
 }
 
 // Network callbacks
@@ -276,7 +301,7 @@ function onDeletePropertyClick() {
 let lastTimestamp = 0;
 let accumulatedTime = 0;
 function tick(timestamp = 0) {
-  requestAnimationFrame(tick);
+  animationFrame = requestAnimationFrame(tick);
 
   accumulatedTime += timestamp - lastTimestamp;
   lastTimestamp = timestamp;

@@ -38,6 +38,30 @@ let transformHandlesActor = new SupEngine.Actor(engine.gameInstance, "Transform 
 
 let draggingControls = false;
 
+let hasStarted = false;
+let isTabActive = true;
+let animationFrame: number;
+
+window.addEventListener("message", (event) => {
+  if (event.data.type === "deactivate" || event.data.type === "activate") {
+    isTabActive = event.data.type === "activate";
+    onChangeActive();
+  }
+});
+
+function onChangeActive() {
+  const stopRendering = !hasStarted || !isTabActive;
+
+  if (stopRendering) {
+    if (animationFrame != null) {
+      cancelAnimationFrame(animationFrame);
+      animationFrame = null;
+    }
+  } else if (animationFrame == null) {
+    animationFrame = requestAnimationFrame(tick);
+  }
+}
+
 export function start() {
   // Those classes are loaded asynchronously
   engine.selectionBoxComponent = new SupEngine.editorComponentClasses["SelectionBox"](selectionActor);
@@ -49,7 +73,8 @@ export function start() {
   engine.gridHelperComponent = new SupEngine.editorComponentClasses["GridHelper"](gridActor, ui.gridSize, ui.gridStep);
   engine.gridHelperComponent.setVisible(false);
 
-  requestAnimationFrame(tick);
+  hasStarted = true;
+  onChangeActive();
 }
 
 export function updateCameraMode() {
@@ -89,7 +114,7 @@ function tick(timestamp = 0) {
   accumulatedTime = timeLeft;
 
   if (updates > 0) engine.gameInstance.draw();
-  requestAnimationFrame(tick);
+  animationFrame = requestAnimationFrame(tick);
 }
 
 let pos = new THREE.Vector3();

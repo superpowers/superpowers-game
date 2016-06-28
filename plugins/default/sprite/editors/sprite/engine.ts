@@ -1,6 +1,29 @@
 import spritesheetArea from "./spritesheetArea";
 import animationArea, { handleAnimationArea } from "./animationArea";
 
+let isTabActive = true;
+let animationFrame: number;
+
+window.addEventListener("message", (event) => {
+  if (event.data.type === "deactivate" || event.data.type === "activate") {
+    isTabActive = event.data.type === "activate";
+    onChangeActive();
+  }
+});
+
+function onChangeActive() {
+  const stopRendering = !isTabActive;
+
+  if (stopRendering) {
+    if (animationFrame != null) {
+      cancelAnimationFrame(animationFrame);
+      animationFrame = null;
+    }
+  } else if (animationFrame == null) {
+    animationFrame = requestAnimationFrame(tick);
+  }
+}
+
 let lastTimestamp = 0;
 let accumulatedTime = 0;
 function tick(timestamp = 0) {
@@ -18,6 +41,6 @@ function tick(timestamp = 0) {
     spritesheetArea.gameInstance.draw();
     animationArea.gameInstance.draw();
   }
-  requestAnimationFrame(tick);
+  animationFrame = requestAnimationFrame(tick);
 }
-requestAnimationFrame(tick);
+animationFrame = requestAnimationFrame(tick);

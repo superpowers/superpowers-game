@@ -295,16 +295,31 @@ data.typescriptWorker.onmessage = (event: MessageEvent) => {
   }
 };
 
+let isTabActive = true;
+let errorCheckPending = false;
+window.addEventListener("message", (event) => {
+  if (event.data.type === "deactivate" || event.data.type === "activate") {
+    isTabActive = event.data.type === "activate";
+
+    if (isTabActive && errorCheckPending) startErrorCheck();
+  }
+});
+
 function startErrorCheck() {
   if (isCheckingForErrors) return;
 
   isCheckingForErrors = true;
   hasScheduledErrorCheck = false;
+  errorCheckPending = false;
   data.typescriptWorker.postMessage({ type: "checkForErrors" });
 }
 
 export function scheduleErrorCheck() {
   if (ui.errorCheckTimeout != null) clearTimeout(ui.errorCheckTimeout);
+  if (!isTabActive) {
+    errorCheckPending = true;
+    return;
+  }
 
   ui.errorCheckTimeout = window.setTimeout(() => {
     hasScheduledErrorCheck = true;
