@@ -191,7 +191,7 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
         let value = maps[mapName];
         if (value == null) { cb(); return; }
 
-        writeFile(path.join(outputPath, `map-${mapName}.dat`), Buffer.from(value), cb);
+        writeFile(path.join(outputPath, `map-${mapName}.dat`), new Buffer(value), cb);
       }, writeCallback);
     });
   }
