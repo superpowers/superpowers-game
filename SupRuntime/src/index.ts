@@ -67,7 +67,7 @@ if (playerWindow != null) {
     else electron.shell.openExternal(url);
   });
 
-  SupApp.getIpc().addListener("forceQuit", () => {
+  SupApp.onMessage("force-quit", () => {
     playerWindow.close();
   });
 }
