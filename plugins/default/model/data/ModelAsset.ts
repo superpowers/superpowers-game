@@ -331,7 +331,7 @@ export default class ModelAsset extends SupCore.Data.Base.Asset {
         async.each(Object.keys(ModelAsset.schema["attributes"].properties), (key, cb) => {
           let value = attributes[key];
           if (value == null) { cb(); return; }
-          if (value instanceof ArrayBuffer) value = (Buffer as any).from(value);
+          if (value instanceof ArrayBuffer) value = Buffer.from(value);
 
           writeFile(path.join(outputPath, `attr-${key}.dat`), value, cb);
         }, callback);
@@ -341,7 +341,7 @@ export default class ModelAsset extends SupCore.Data.Base.Asset {
         async.each(Object.keys(maps), (mapName, cb) => {
           let value = maps[mapName];
           if (value == null) { cb(); return; }
-          if (value instanceof ArrayBuffer) value = (Buffer as any).from(value);
+          if (value instanceof ArrayBuffer) value = Buffer.from(value);
 
           writeFile(path.join(outputPath, `map-${mapName}.dat`), value, cb);
         }, callback);

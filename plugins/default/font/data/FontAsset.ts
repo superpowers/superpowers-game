@@ -141,8 +141,8 @@ export default class FontAsset extends SupCore.Data.Base.Asset {
     this.pub.bitmap = bitmap;
     this.pub.texture = texture;
 
-    if (font instanceof ArrayBuffer) font = (Buffer as any).from(font);
-    if (bitmap instanceof ArrayBuffer) bitmap = (Buffer as any).from(bitmap);
+    if (font instanceof ArrayBuffer) font = Buffer.from(font);
+    if (bitmap instanceof ArrayBuffer) bitmap = Buffer.from(bitmap);
 
     writeFile(path.join(outputPath, "asset.json"), json, { encoding: "utf8" }, () => {
       writeFile(path.join(outputPath, "font.dat"), font, () => {
