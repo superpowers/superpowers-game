@@ -37,8 +37,7 @@ export default class GameBuildSettingsEditor implements SupClient.BuildSettingsE
   }
 
   private selectOutputfolder() {
-    SupApp.chooseFolder((err, folder) => {
-      if (err != null) return;
+    SupApp.chooseFolder((folder) => {
       this.outputFolder = folder;
       this.outputFolderTextfield.value = (folder != null) ? folder : "";
     });
