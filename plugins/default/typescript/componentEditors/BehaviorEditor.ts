@@ -237,6 +237,7 @@ export default class BehaviorEditor {
           propertySetting.valueCell.innerHTML = "";
           propertyField = SupClient.table.appendNumberField(propertySetting.valueCell, 0);
           propertyField.addEventListener("change", this.onChangePropertyValue);
+          propertyField.addEventListener("drop", this.onDropPropertyValue);
         }
 
         propertyField.value = propertyValue;
@@ -251,6 +252,7 @@ export default class BehaviorEditor {
           propertySetting.valueCell.innerHTML = "";
           propertyField = SupClient.table.appendTextField(propertySetting.valueCell, "");
           propertyField.addEventListener("change", this.onChangePropertyValue);
+          propertyField.addEventListener("drop", this.onDropPropertyValue);
         }
 
         propertyField.value = propertyValue;
@@ -324,15 +326,19 @@ export default class BehaviorEditor {
   };
   // private onChangePropertySet = (event: any) => {}
 
-  private onChangePropertyValue = (event: any) => {
-    let propertyName = event.target.dataset["behaviorPropertyName"];
-    let propertyType = event.target.dataset["behaviorPropertyType"];
-    let propertyValue: any;
+  private onChangePropertyValue = (event: Event) => {
+    this.applyPropertyValueChange(event.target as HTMLInputElement);
+  };
 
+  private applyPropertyValueChange(target: HTMLInputElement) {
+    const propertyName = target.dataset["behaviorPropertyName"];
+    const propertyType = target.dataset["behaviorPropertyType"];
+
+    let propertyValue: any;
     switch (propertyType) {
-      case "boolean": propertyValue = event.target.checked; break;
-      case "number": propertyValue = parseFloat(event.target.value); break;
-      case "string": propertyValue = event.target.value; break;
+      case "boolean": propertyValue = target.checked; break;
+      case "number": propertyValue = parseFloat(target.value); break;
+      case "string": propertyValue = target.value; break;
       case "Sup.Math.Vector2":
       case "Sup.Math.Vector3": {
         const parent = (<HTMLDivElement>target.parentElement);
@@ -352,5 +358,13 @@ export default class BehaviorEditor {
         return;
       }
     });
+  };
+
+  private onDropPropertyValue = (event: DragEvent) => {
+    // When the drop event is called, the value won't have been updated yet since it can be cancelled
+    // so we'll call .applyPropertyValueChange after the event has been applied
+    setTimeout(() => {
+      this.applyPropertyValueChange(event.target as HTMLInputElement);
+    }, 0);
   };
 }
