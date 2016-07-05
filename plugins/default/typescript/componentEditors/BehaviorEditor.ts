@@ -27,8 +27,8 @@ export default class BehaviorEditor {
 
     // Using a <select> rather than <input> + <datalist> because of bugs in Chrome and Electron
     // See https://trello.com/c/jNNRLgdb/651 and https://github.com/atom/electron/issues/360
-    let behaviorNameRow = SupClient.table.appendRow(this.tbody, SupClient.i18n.t("componentEditors:Behavior.class"));
-    let behaviorDiv = document.createElement("div") as HTMLDivElement;
+    const behaviorNameRow = SupClient.table.appendRow(this.tbody, SupClient.i18n.t("componentEditors:Behavior.class"));
+    const behaviorDiv = document.createElement("div") as HTMLDivElement;
     behaviorDiv.classList.add("inputs");
     behaviorNameRow.valueCell.appendChild(behaviorDiv);
 
@@ -84,10 +84,10 @@ export default class BehaviorEditor {
     // Setup behavior list
     while (this.behaviorNameField.childElementCount > 1) this.behaviorNameField.removeChild(this.behaviorNameField.lastElementChild);
 
-    let entries: (string|string[])[] = [];
+    const entries: (string|string[])[] = [];
 
-    for (let scriptId in this.behaviorPropertiesResource.behaviorNamesByScriptId) {
-      let behaviorNames = this.behaviorPropertiesResource.behaviorNamesByScriptId[scriptId];
+    for (const scriptId in this.behaviorPropertiesResource.behaviorNamesByScriptId) {
+      const behaviorNames = this.behaviorPropertiesResource.behaviorNamesByScriptId[scriptId];
       if (behaviorNames.length > 1) {
         entries.push([ this.projectClient.entries.getPathFromId(scriptId) ].concat(behaviorNames));
       } else if (behaviorNames.length === 1) {
@@ -101,10 +101,10 @@ export default class BehaviorEditor {
       return (a as string).localeCompare(b as string);
     });
 
-    for (let entry of entries) {
+    for (const entry of entries) {
       if (Array.isArray(entry)) {
-        let group = SupClient.table.appendSelectOptionGroup(this.behaviorNameField, entry[0]);
-        for (let behaviorName of entry.slice(1)) {
+        const group = SupClient.table.appendSelectOptionGroup(this.behaviorNameField, entry[0]);
+        for (const behaviorName of entry.slice(1)) {
           SupClient.table.appendSelectOption(group, behaviorName, behaviorName);
         }
       } else {
@@ -120,8 +120,8 @@ export default class BehaviorEditor {
     this.behaviorNameField.value = this.config.behaviorName;
 
     // Clear old property settings
-    for (let name in this.propertySettingsByName) {
-      let propertySetting = this.propertySettingsByName[name];
+    for (const name in this.propertySettingsByName) {
+      const propertySetting = this.propertySettingsByName[name];
       propertySetting.row.parentElement.removeChild(propertySetting.row);
     }
 
@@ -130,13 +130,13 @@ export default class BehaviorEditor {
     // Setup new property settings
     let behaviorName = this.config.behaviorName;
 
-    let listedProperties: string[] = [];
+    const listedProperties: string[] = [];
 
     while (behaviorName != null) {
-      let behavior = this.behaviorPropertiesResource.pub.behaviors[behaviorName];
+      const behavior = this.behaviorPropertiesResource.pub.behaviors[behaviorName];
       if (behavior == null) break;
 
-      for (let property of behavior.properties) {
+      for (const property of behavior.properties) {
         if (listedProperties.indexOf(property.name) !== -1) continue;
 
         listedProperties.push(property.name);
@@ -149,7 +149,7 @@ export default class BehaviorEditor {
   }
 
   _createPropertySetting(property: {name: string; type: string}) {
-    let propertySetting = SupClient.table.appendRow(this.tbody, property.name, { checkbox: true, title: `${property.name} (${property.type})` });
+    const propertySetting = SupClient.table.appendRow(this.tbody, property.name, { checkbox: true, title: `${property.name} (${property.type})` });
     this.propertySettingsByName[property.name] = propertySetting;
     this._createPropertyField(property.name);
 
@@ -180,7 +180,7 @@ export default class BehaviorEditor {
     let behaviorName = this.config.behaviorName;
     let property: BehaviorProperty;
     while (behaviorName != null) {
-      let behavior = this.behaviorPropertiesResource.pub.behaviors[behaviorName];
+      const behavior = this.behaviorPropertiesResource.pub.behaviors[behaviorName];
 
       property = this.behaviorPropertiesResource.propertiesByNameByBehavior[behaviorName][propertyName];
       if (property != null) break;
@@ -188,15 +188,15 @@ export default class BehaviorEditor {
       behaviorName = behavior.parentBehavior;
     }
 
-    let propertySetting = this.propertySettingsByName[propertyName];
+    const propertySetting = this.propertySettingsByName[propertyName];
 
     // TODO: We probably want to collect and display default values?
     // defaultPropertyValue = behaviorProperty?.value
 
-    let propertyValue: any = null;
-    let uiType = property.type;
+    let  propertyValue: any = null;
+    let  uiType = property.type;
 
-    let propertyValueInfo = this.config.propertyValues[property.name];
+    const propertyValueInfo = this.config.propertyValues[property.name];
     if (propertyValueInfo != null) {
       propertyValue = propertyValueInfo.value;
       if (propertyValueInfo.type !== property.type) uiType = "incompatibleType";
@@ -262,13 +262,16 @@ export default class BehaviorEditor {
 
       case "Sup.Math.Vector2":
       case "Sup.Math.Vector3": {
-        let vectorContainer = <HTMLDivElement>propertySetting.valueCell.querySelector(".inputs");
+        const vectorContainer = <HTMLDivElement>propertySetting.valueCell.querySelector(".inputs");
         if (vectorContainer == null) {
           propertySetting.valueCell.innerHTML = "";
-          let defaultValues = uiType === "Sup.Math.Vector3" ? [ 0, 0, 0 ] : [ 0, 0 ];
+          const defaultValues = uiType === "Sup.Math.Vector3" ? [ 0, 0, 0 ] : [ 0, 0 ];
           propertyFields = SupClient.table.appendNumberFields(propertySetting.valueCell, defaultValues);
 
-          for (let field of propertyFields) field.addEventListener("change", this.onChangePropertyValue);
+          for (const field of propertyFields) {
+            field.addEventListener("change", this.onChangePropertyValue);
+            field.addEventListener("drop", this.onDropPropertyValue);
+          }
         } else {
           propertyFields = Array.prototype.slice.call(vectorContainer.querySelectorAll("input"));
         }
@@ -276,7 +279,7 @@ export default class BehaviorEditor {
         propertyFields[0].value = (propertyValue != null) ? propertyValue.x : "";
         propertyFields[1].value = (propertyValue != null) ? propertyValue.y : "";
         if (uiType === "Sup.Math.Vector3") propertyFields[2].value = (propertyValue != null) ? propertyValue.z : "";
-        for (let field of propertyFields) field.disabled = propertyValueInfo == null;
+        for (const field of propertyFields) field.disabled = propertyValueInfo == null;
       } break;
 
       // TODO: Support more types
@@ -287,7 +290,7 @@ export default class BehaviorEditor {
       }
     }
 
-    for (let field of propertyFields) {
+    for (const field of propertyFields) {
       field.dataset["behaviorPropertyName"] = property.name;
       field.dataset["behaviorPropertyType"] = property.type;
     }
@@ -317,7 +320,7 @@ export default class BehaviorEditor {
   private onChangeBehaviorName = (event: any) => { this.editConfig("setProperty", "behaviorName", event.target.value); };
 
   private onOpenBehavior = () => {
-    let behavior = this.behaviorPropertiesResource.pub.behaviors[this.config.behaviorName];
+    const behavior = this.behaviorPropertiesResource.pub.behaviors[this.config.behaviorName];
     if (behavior != null) SupClient.openEntry(behavior.scriptId, { line: behavior.line != null ? behavior.line : 0, ch: 0 });
   };
   // private onChangePropertySet = (event: any) => {}
@@ -333,7 +336,7 @@ export default class BehaviorEditor {
       case "string": propertyValue = event.target.value; break;
       case "Sup.Math.Vector2":
       case "Sup.Math.Vector3": {
-        let parent =  (<HTMLDivElement>event.target.parentElement);
+        const parent = (<HTMLDivElement>target.parentElement);
         propertyValue = {
           x: parseFloat((<HTMLInputElement>parent.children[0]).value),
           y: parseFloat((<HTMLInputElement>parent.children[1]).value)
