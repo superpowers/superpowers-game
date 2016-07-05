@@ -209,7 +209,6 @@ export default class BehaviorEditor {
         if (propertyField == null) {
           propertySetting.valueCell.innerHTML = "";
           propertyField = SupClient.table.appendTextField(propertySetting.valueCell, "");
-          propertyField.addEventListener("change", this.onChangePropertyValue);
         }
 
         propertyField.value = `(Incompatible type: ${propertyValueInfo.type})`;
