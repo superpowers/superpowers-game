@@ -573,7 +573,7 @@ function onDuplicateNodeClick() {
 
   new SupClient.Dialogs.PromptDialog(SupClient.i18n.t("sceneEditor:treeView.duplicatePrompt"), options, (newName) => {
     if (newName == null) return;
-    let options = SupClient.getTreeViewInsertionPoint(ui.nodesTreeView);
+    let options = SupClient.getTreeViewSiblingInsertionPoint(ui.nodesTreeView);
 
     data.projectClient.editAsset(SupClient.query.asset, "duplicateNode", newName, node.id, options.index, (nodeId: string) => {
       ui.nodesTreeView.clearSelection();
