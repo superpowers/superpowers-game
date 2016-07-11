@@ -2,6 +2,7 @@
   "ModelRenderer": {
     "label": "Рендер Модели",
     "model": "Модель",
+    "searchModelPlaceholder": "Поиск по моделям",
     "animation": "Анимация",
     "shadow": {
       "title": "Тень",

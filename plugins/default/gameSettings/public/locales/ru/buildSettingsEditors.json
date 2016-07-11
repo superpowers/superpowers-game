@@ -1,0 +1,13 @@
+{
+  "game": {
+    "label": "По умолчанию",
+    "description": "Экспорт в HTML5",
+    
+    "outputFolder": "Папка экспорта",
+    "errors": {
+      "selectDestionationFolder": "Выберите папку для экспорта.",
+      "emptyDirectoryCheckFail": "Не удалось проверить, является ли выбранная папка пустой.",
+      "destinationFolderEmpty": "Папка для экспорта должна быть пустой."
+    }
+  }
+}
