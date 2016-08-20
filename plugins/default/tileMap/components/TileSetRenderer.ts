@@ -8,6 +8,8 @@ export default class TileSetRenderer extends SupEngine.ActorComponent {
   /* tslint:enable:variable-name */
 
   asset: TileSet;
+
+  private material = new THREE.MeshBasicMaterial({ alphaTest: 0.1, side: THREE.DoubleSide, transparent: true });
   mesh: THREE.Mesh;
   gridRenderer: any;
   selectedTileActor: SupEngine.Actor;
@@ -34,10 +36,10 @@ export default class TileSetRenderer extends SupEngine.ActorComponent {
     this.asset = asset;
     if (this.asset == null) return;
 
-    let geometry = new THREE.PlaneBufferGeometry(asset.data.texture.image.width, asset.data.texture.image.height);
-    let material = new THREE.MeshBasicMaterial({ map: asset.data.texture, alphaTest: 0.1, side: THREE.DoubleSide });
+    const geometry = new THREE.PlaneBufferGeometry(asset.data.texture.image.width, asset.data.texture.image.height);
+    this.material.map = asset.data.texture;
 
-    this.mesh = new THREE.Mesh(geometry, material);
+    this.mesh = new THREE.Mesh(geometry, this.material);
     this.actor.threeObject.add(this.mesh);
     this.refreshScaleRatio();
     this.selectedTileActor.threeObject.visible = true;
