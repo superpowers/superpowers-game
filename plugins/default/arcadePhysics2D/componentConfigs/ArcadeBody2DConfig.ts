@@ -65,7 +65,7 @@ export default class ArcadeBody2DConfig extends SupCore.Data.Base.ComponentConfi
     return newConfig;
   }
 
-  static currentFormatVersion = 1;
+  static currentFormatVersion = 2;
   static migrate(pub: ConfigPub) {
     if (pub.formatVersion === ArcadeBody2DConfig.currentFormatVersion) return false;
 
@@ -88,6 +88,12 @@ export default class ArcadeBody2DConfig extends SupCore.Data.Base.ComponentConfi
         pub.tileSetPropertyName = null;
         pub.layersIndex = null;
       }
+    }
+
+    if (pub.formatVersion === 1) {
+      pub.formatVersion = 2;
+
+      pub.bounce = { x: 0, y: 0 };
     }
 
     return true;
