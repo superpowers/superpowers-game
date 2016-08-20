@@ -141,7 +141,6 @@ export function setupEditor(clientId: string) {
     },
     editCallback: onEditText,
     sendOperationCallback: (operation: OperationData) => {
-      console.log(data.asset.document.getRevisionId());
       data.projectClient.editAsset(SupClient.query.asset, "editText", operation, data.asset.document.getRevisionId());
     }
   });
