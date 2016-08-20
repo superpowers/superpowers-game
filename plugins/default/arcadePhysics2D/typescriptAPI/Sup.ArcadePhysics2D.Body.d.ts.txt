@@ -3,8 +3,7 @@ interface BoxOptions {
   width: number;
   height: number;
   offset?: { x: number; y: number; };
-  bounceX?: number;
-  bounceY?: number
+  bounce?: { x: number; y: number; };
 }
 
 interface TileMapOptions {
