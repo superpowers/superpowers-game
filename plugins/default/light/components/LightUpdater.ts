@@ -122,12 +122,12 @@ export default class LightUpdater {
     });
   }
 
-  private onLightResourceReceived(resourceId: string, resource: LightSettingsResource) {
+  private onLightResourceReceived = (resourceId: string, resource: LightSettingsResource) => {
     this.lightSettings = resource;
     this.updateLightShadowMap();
   }
 
-  private onLightResourceEdited(resourceId: string, command: string, propertyName: string) {
+  private onLightResourceEdited = (resourceId: string, command: string, propertyName: string) => {
     if (command === "setProperty" && propertyName === "shadowMapType") this.updateLightShadowMap();
   }
 }
