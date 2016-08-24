@@ -318,6 +318,8 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
   clearPose() {
     if (this.threeMesh == null) return;
 
+    if ((<THREE.SkinnedMesh>this.threeMesh).skeleton == null) return;
+
     for (let i = 0; i < (<THREE.SkinnedMesh>this.threeMesh).skeleton.bones.length; i++) {
       let bone = (<THREE.SkinnedMesh>this.threeMesh).skeleton.bones[i];
       bone.matrix.fromArray(this.asset.bones[i].matrix);
@@ -357,6 +359,8 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
         this.isAnimationPlaying = false;
       }
     }
+
+    if ((<THREE.SkinnedMesh>this.threeMesh).skeleton == null) return;
 
     for (let i = 0; i < (<THREE.SkinnedMesh>this.threeMesh).skeleton.bones.length; i++) {
       let bone = (<THREE.SkinnedMesh>this.threeMesh).skeleton.bones[i];
