@@ -243,6 +243,25 @@ declare module p2 {
 
     }
 
+    export class WheelConstraint extends Constraint {
+        constructor(vehicle: TopDownVehicle, options?: {
+            localForwardVector?: number[],
+            localPosition?: number[],
+            sideFriction?: number
+        });
+        setBrakeForce(number): void;
+        setSideFriction(number): void;
+        getSpeed(): number;
+        update(): void;
+
+        vehicle: TopDownVehicle;
+        steerValue: number;
+        engineForce: number;
+        localForwardVector: number[];
+        localPosition: number[];
+
+    }
+
     export class AngleLockEquation extends Equation {
 
         constructor(bodyA: Body, bodyB: Body, options?: {
@@ -595,6 +614,22 @@ declare module p2 {
         });
 
         restAngle: number;
+
+    }
+
+    export class TopDownVehicle {
+        constructor(chassiBody: Body, options?: {});
+        addToWorld(world: World): void;
+        removeFromWorld(): void;
+        addWheel(wheelOptions?: {
+            localForwardVector?: number[],
+            localPosition?: number[],
+            sideFriction?: number
+        }): WheelConstraint;
+        update(): void;
+
+        chassisBody: Body;
+        wheels: WheelConstraint[];
 
     }
 
