@@ -127,6 +127,8 @@ namespace ArcadePhysics2D {
     body1.touches.right = false;
     body1.touches.left = false;
 
+    if (!body1.enabled) return false;
+
     let gotCollision = false;
     for (let body2 of bodies) {
       if (body2 === body1 || !body2.enabled) continue;
