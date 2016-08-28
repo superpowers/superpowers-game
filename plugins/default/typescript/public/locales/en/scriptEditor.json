@@ -2,7 +2,7 @@
   "applyChanges": "Apply changes",
   "applyChangesWithErrors": "Apply changes with errors",
   "draft": "Draft",
-  
+
   "errors": {
     "noErrors": "No errors",
     "oneError": "1 error",
