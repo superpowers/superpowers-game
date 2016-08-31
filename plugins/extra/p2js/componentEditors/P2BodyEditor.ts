@@ -63,7 +63,7 @@ export default class P2BodyEditor {
     });
 
     this.angleRow = SupClient.table.appendRow(this.tbody, SupClient.i18n.t("componentEditors:P2Body.angle"));
-    this.fields["angle"] = SupClient.table.appendNumberField(this.angleRow.valueCell, config.angle, { min: 0 });
+    this.fields["angle"] = SupClient.table.appendNumberField(this.angleRow.valueCell, config.angle, { min: -360, max: 360 });
     this.fields["angle"].addEventListener("change", (event: any) => {
       this.editConfig("setProperty", "angle", parseFloat(event.target.value));
     });
