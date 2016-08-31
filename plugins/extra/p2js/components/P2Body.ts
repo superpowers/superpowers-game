@@ -11,6 +11,7 @@ export default class P2Body extends SupEngine.ActorComponent {
 
   width: number;
   height: number;
+  angle: number;
   radius: number;
 
   actorPosition = new THREE.Vector3();
@@ -45,16 +46,18 @@ export default class P2Body extends SupEngine.ActorComponent {
       case "box": {
         this.width = (config.width != null) ? config.width : 0.5;
         this.height = (config.height != null) ? config.height : 0.5;
+        this.angle = (config.angle != null) ? config.angle : 0;
         this.body.addShape(new (<any>window).p2.Box({ width: this.width, height: this.height }));
       } break;
       case "circle": {
         this.radius = (config.radius != null) ? config.radius : 1;
+        this.angle = 0;
         this.body.addShape(new (<any>window).p2.Circle({ radius: this.radius }));
       } break;
     }
     this.body.position = [ this.actorPosition.x, this.actorPosition.y ];
     this.body.shapes[0].position = [ this.offsetX, this.offsetY ];
-    this.body.angle = this.actorAngles.z;
+    this.body.angle = this.actorAngles.z + this.angle;
   }
 
   update() {
@@ -62,7 +65,7 @@ export default class P2Body extends SupEngine.ActorComponent {
     this.actorPosition.y = this.body.position[1];
     this.actor.setGlobalPosition(this.actorPosition);
 
-    this.actorAngles.z = this.body.angle;
+    this.actorAngles.z = this.body.angle - this.angle;
     this.actor.setGlobalEulerAngles(this.actorAngles);
   }
 

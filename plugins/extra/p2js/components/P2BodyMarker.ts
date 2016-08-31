@@ -8,6 +8,7 @@ export default class P2BodyMarker extends SupEngine.ActorComponent {
 
   mesh: THREE.Line|THREE.Mesh;
   offset = new THREE.Vector3(0, 0, 0);
+  angle = 0;
 
   constructor(actor: SupEngine.Actor) {
     super(actor, "P2BodyMarker");
@@ -32,6 +33,7 @@ export default class P2BodyMarker extends SupEngine.ActorComponent {
     this.mesh = new THREE.Line(geometry, material);
     this.actor.threeObject.add(this.mesh);
     this.mesh.position.copy(this.offset);
+    this.mesh.rotation.z = this.angle;
     this.mesh.updateMatrixWorld(false);
   }
 
@@ -49,6 +51,12 @@ export default class P2BodyMarker extends SupEngine.ActorComponent {
   setOffset(xOffset: number, yOffset: number) {
     this.offset.set(xOffset, yOffset, 0);
     this.mesh.position.copy(this.offset);
+    this.mesh.updateMatrixWorld(false);
+  }
+
+  setAngle(angle: number) {
+    this.angle = angle;
+    this.mesh.rotation.z = this.angle;
     this.mesh.updateMatrixWorld(false);
   }
 
