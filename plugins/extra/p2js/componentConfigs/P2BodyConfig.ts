@@ -25,7 +25,7 @@ export default class P2BodyConfig extends SupCore.Data.Base.ComponentConfig {
     shape: { type: "enum", items: [ "box", "circle" ], mutable: true },
     width: { type: "number", min: 0, mutable: true },
     height: { type: "number", min: 0, mutable: true },
-    angle: { type: "number", min: 0, mutable: true },
+    angle: { type: "number", min: -360, max: 360, mutable: true },
     radius: { type: "number", min: 0, mutable: true }
   };
 

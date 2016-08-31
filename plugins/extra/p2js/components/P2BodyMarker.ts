@@ -56,7 +56,7 @@ export default class P2BodyMarker extends SupEngine.ActorComponent {
 
   setAngle(angle: number) {
     this.angle = angle;
-    this.mesh.rotation.z = this.angle;
+    this.mesh.rotation.z = this.angle * (Math.PI / 180);
     this.mesh.updateMatrixWorld(false);
   }
 

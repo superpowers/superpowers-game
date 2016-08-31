@@ -46,7 +46,7 @@ export default class P2Body extends SupEngine.ActorComponent {
       case "box": {
         this.width = (config.width != null) ? config.width : 0.5;
         this.height = (config.height != null) ? config.height : 0.5;
-        this.angle = (config.angle != null) ? config.angle : 0;
+        this.angle = (config.angle != null) ? config.angle * (Math.PI / 180) : 0;
         this.body.addShape(new (<any>window).p2.Box({ width: this.width, height: this.height }));
       } break;
       case "circle": {
