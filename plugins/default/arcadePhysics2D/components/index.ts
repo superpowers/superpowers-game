@@ -12,10 +12,10 @@ namespace ArcadePhysics2D {
   export function intersects(body1: ArcadeBody2D, body2: ArcadeBody2D) {
     if (body2.type === "tileMap") return checkTileMap(body1, body2, { moveBody: false });
 
-    if (body1.right() < body2.left()) return false;
-    if (body1.left() > body2.right()) return false;
-    if (body1.bottom() > body2.top()) return false;
-    if (body1.top() < body2.bottom()) return false;
+    if (body1.right() <= body2.left()) return false;
+    if (body1.left() >= body2.right()) return false;
+    if (body1.bottom() >= body2.top()) return false;
+    if (body1.top() <= body2.bottom()) return false;
     return true;
   }
 
@@ -32,18 +32,18 @@ namespace ArcadePhysics2D {
       if (body1.deltaY() / insideY > 0) {
         body1.velocity.y = -body1.velocity.y * body1.bounceY;
         body1.position.y -= insideY;
-
-        if (body1.position.y > body2.position.y) body1.touches.bottom = true;
-        else body1.touches.top = true;
       }
+
+      if (body1.position.y > body2.position.y) body1.touches.bottom = true;
+      else body1.touches.top = true;
     } else {
       if (body1.deltaX() / insideX > 0) {
         body1.velocity.x = -body1.velocity.x * body1.bounceX;
         body1.position.x -= insideX;
-
-        if (body1.position.x > body2.position.x) body1.touches.left = true;
-        else body1.touches.right = true;
       }
+
+      if (body1.position.x > body2.position.x) body1.touches.left = true;
+      else body1.touches.right = true;
     }
   }
 
