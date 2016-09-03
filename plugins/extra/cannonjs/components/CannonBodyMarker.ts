@@ -1,6 +1,8 @@
-let THREE = SupEngine.THREE;
-
 import CannonBodyMarkerUpdater from "./CannonBodyMarkerUpdater";
+
+let THREE = SupEngine.THREE;
+let tmpVector3 = new THREE.Vector3();
+let tmpEulerAngles = new THREE.Euler();
 
 export default
 class CannonBodyMarker extends SupEngine.ActorComponent {
@@ -8,13 +10,26 @@ class CannonBodyMarker extends SupEngine.ActorComponent {
   static Updater = CannonBodyMarkerUpdater;
   /* tslint:enable:variable-name */
 
+  markerActor: SupEngine.Actor;
   mesh: THREE.Mesh;
 
   constructor(actor: SupEngine.Actor) {
     super(actor, "CannonBodyMarker");
+
+    this.markerActor = new SupEngine.Actor(this.actor.gameInstance, `Marker`, null, { layer: -1 });
   }
 
   setIsLayerActive(active: boolean) { if (this.mesh != null) this.mesh.visible = active; }
+
+  update() {
+    super.update();
+
+    this.actor.getGlobalPosition(tmpVector3);
+    this.markerActor.setGlobalPosition(tmpVector3);
+
+    this.actor.getGlobalEulerAngles(tmpEulerAngles);
+    this.markerActor.setGlobalEulerAngles(tmpEulerAngles);
+  }
 
   setBox(orientationOffset: any, halfSize: any) {
     if (this.mesh != null) this._clearRenderer();
@@ -26,7 +41,7 @@ class CannonBodyMarker extends SupEngine.ActorComponent {
       THREE.Math.degToRad(orientationOffset.y),
       THREE.Math.degToRad(orientationOffset.z)
     ));
-    this.actor.threeObject.add(this.mesh);
+    this.markerActor.threeObject.add(this.mesh);
     this.mesh.updateMatrixWorld(false);
   }
   setSphere(radius: number) {
@@ -34,7 +49,7 @@ class CannonBodyMarker extends SupEngine.ActorComponent {
     let geometry = new THREE.SphereGeometry(radius);
     let material = new THREE.MeshBasicMaterial({ wireframe: true, color: 0xf459e4, transparent: true, opacity: 0.2 });
     this.mesh = new THREE.Mesh(geometry, material);
-    this.actor.threeObject.add(this.mesh);
+    this.markerActor.threeObject.add(this.mesh);
     this.mesh.updateMatrixWorld(false);
   }
   setCylinder(orientationOffset: any, radius: number, height: number, segments: number) {
@@ -47,7 +62,7 @@ class CannonBodyMarker extends SupEngine.ActorComponent {
       THREE.Math.degToRad(orientationOffset.y),
       THREE.Math.degToRad(orientationOffset.z)
     ));
-    this.actor.threeObject.add(this.mesh);
+    this.markerActor.threeObject.add(this.mesh);
     this.mesh.updateMatrixWorld(false);
   }
 
@@ -57,7 +72,7 @@ class CannonBodyMarker extends SupEngine.ActorComponent {
   }
 
   _clearRenderer() {
-    this.actor.threeObject.remove(this.mesh);
+    this.markerActor.threeObject.remove(this.mesh);
     this.mesh.traverse((obj: any) => {
      if (obj.dispose != null) obj.dispose();
     });
