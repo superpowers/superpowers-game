@@ -33,7 +33,7 @@ export default class P2BodyMarker extends SupEngine.ActorComponent {
     this.mesh = new THREE.Line(geometry, material);
     this.actor.threeObject.add(this.mesh);
     this.mesh.position.copy(this.offset);
-    this.mesh.rotation.z = this.angle * (Math.PI / 180);
+    this.mesh.rotation.z = this.angle;
     this.mesh.updateMatrixWorld(false);
   }
 
@@ -55,8 +55,8 @@ export default class P2BodyMarker extends SupEngine.ActorComponent {
   }
 
   setAngle(angle: number) {
-    this.angle = angle;
-    this.mesh.rotation.z = this.angle * (Math.PI / 180);
+    this.angle = angle * (Math.PI / 180);
+    this.mesh.rotation.z = this.angle;
     this.mesh.updateMatrixWorld(false);
   }
 
