@@ -59,6 +59,8 @@ export default class P2BodyConfig extends SupCore.Data.Base.ComponentConfig {
     }
 
     if (pub.formatVersion === 1) {
+      pub.formatVersion = 2;
+
       pub.angle = 0;
     }
 
