@@ -4,6 +4,7 @@
     "mass": "Mass",
     "fixedRotation": "Fixed rotation",
     "offset": "Offset",
+    "angle": "Angle",
     "shape": "Shape",
     "shapeOptions": {
       "box": "Box",

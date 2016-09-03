@@ -7,6 +7,7 @@ export default class P2BodyEditor {
 
   sizeRow: SupClient.table.RowParts;
   radiusRow: SupClient.table.RowParts;
+  angleRow: SupClient.table.RowParts;
 
   constructor(tbody: HTMLTableSectionElement, config: any, projectClient: SupClient.ProjectClient, editConfig: any) {
     this.tbody = tbody;
@@ -61,6 +62,12 @@ export default class P2BodyEditor {
       this.editConfig("setProperty", "height", parseFloat(event.target.value));
     });
 
+    this.angleRow = SupClient.table.appendRow(this.tbody, SupClient.i18n.t("componentEditors:P2Body.angle"));
+    this.fields["angle"] = SupClient.table.appendNumberField(this.angleRow.valueCell, config.angle, { min: -360, max: 360 });
+    this.fields["angle"].addEventListener("change", (event: any) => {
+      this.editConfig("setProperty", "angle", parseFloat(event.target.value));
+    });
+
     // Circle
     this.radiusRow = SupClient.table.appendRow(this.tbody, SupClient.i18n.t("componentEditors:P2Body.radius"));
     this.fields["radius"] = SupClient.table.appendNumberField(this.radiusRow.valueCell, config.radius, { min: 0 });
@@ -76,11 +83,13 @@ export default class P2BodyEditor {
       case "box": {
         this.sizeRow.row.hidden = false;
         this.radiusRow.row.hidden = true;
+        this.angleRow.row.hidden = false;
       } break;
 
       case "circle": {
         this.sizeRow.row.hidden = true;
         this.radiusRow.row.hidden = false;
+        this.angleRow.row.hidden = true;
       } break;
     }
   }

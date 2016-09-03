@@ -14,6 +14,7 @@ export default class P2BodyMarkerUpdater {
       case "circle": { this.bodyRenderer.setCircle(this.config.radius); } break;
     }
     this.bodyRenderer.setOffset(this.config.offsetX, this.config.offsetY);
+    this.bodyRenderer.setAngle(this.config.angle);
   }
 
   destroy() { /* Ignore */ }
@@ -29,6 +30,10 @@ export default class P2BodyMarkerUpdater {
 
     if (path === "offsetX" || path === "offsetY") {
       this.bodyRenderer.setOffset(this.config.offsetX, this.config.offsetY);
+    }
+
+    if (path === "angle") {
+      this.bodyRenderer.setAngle(this.config.angle);
     }
   }
 }
