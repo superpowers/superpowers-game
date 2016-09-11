@@ -8,7 +8,6 @@ export default class TextRendererEditor {
   fields: {[key: string]: any} = {};
   fontButtonElt: HTMLButtonElement;
   colorCheckbox: HTMLInputElement;
-  colorPicker: HTMLInputElement;
   sizeRow: HTMLTableRowElement;
   sizeCheckbox: HTMLInputElement;
 
@@ -80,16 +79,9 @@ export default class TextRendererEditor {
       this.editConfig("setProperty", "color", color);
     });
 
-    let colorInputs = SupClient.table.appendColorField(colorRow.valueCell, "");
-    this.fields["color"] = colorInputs.textField;
-    this.fields["color"].addEventListener("input", (event: any) => {
-      if (event.target.value.length !== 6) return;
-      this.editConfig("setProperty", "color", event.target.value);
-    });
-
-    this.colorPicker = colorInputs.pickerField;
-    this.colorPicker.addEventListener("change", (event: any) => {
-      this.editConfig("setProperty", "color", event.target.value.slice(1));
+    const colorField = this.fields["color"] = SupClient.table.appendColorField(colorRow.valueCell, null);
+    colorField.addListener("change", (color: string) => {
+      this.editConfig("setProperty", "color", color);
     });
     this.updateColorField();
 
@@ -174,13 +166,11 @@ export default class TextRendererEditor {
   }
 
   private updateColorField() {
-    let color = this.color != null ? this.color : (this.fontAsset != null ? this.fontAsset.pub.color : "");
-    this.fields["color"].value = color;
-    this.colorPicker.value = (color !== "") ? `#${color}` : "#000000";
+    let color = this.color != null ? this.color : (this.fontAsset != null ? this.fontAsset.pub.color : null);
+    this.fields["color"].setValue(color);
 
     this.colorCheckbox.checked = this.color != null;
-    this.fields["color"].disabled = this.color == null;
-    this.colorPicker.disabled = this.color == null;
+    this.fields["color"].setDisabled(this.color == null);
   }
 
   private updateSizeField() {

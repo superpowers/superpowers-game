@@ -6,8 +6,8 @@ export default class LightEditor {
   castShadow: boolean;
 
   fields: { [name: string]: HTMLInputElement; } = {};
+  colorField: SupClient.table.ColorField;
   shadowRows: HTMLTableRowElement[] = [];
-  colorPicker: HTMLInputElement;
 
   constructor(tbody: HTMLTableSectionElement, config: LightConfigPub, projectClient: SupClient.ProjectClient, editConfig: any) {
     this.tbody = tbody;
@@ -27,16 +27,9 @@ export default class LightEditor {
     });
 
     let colorRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:Light.color"));
-    let colorInputs = SupClient.table.appendColorField(colorRow.valueCell, config.color);
-
-    this.fields["color"] = colorInputs.textField;
-    this.fields["color"].addEventListener("change", (event: any) => {
-      this.editConfig("setProperty", "color", event.target.value);
-    });
-
-    this.colorPicker = colorInputs.pickerField;
-    this.colorPicker.addEventListener("change", (event: any) => {
-      this.editConfig("setProperty", "color", event.target.value.slice(1));
+    this.colorField = SupClient.table.appendColorField(colorRow.valueCell, config.color);
+    this.colorField.addListener("change", (color: string) => {
+      this.editConfig("setProperty", "color", color);
     });
 
     let intensityRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:Light.intensity"));
@@ -160,10 +153,11 @@ export default class LightEditor {
       this.fields[path].checked = value;
       this.castShadow = value;
       this.updateFields();
+    } else if (path === "color") {
+      this.colorField.setValue(value);
     } else this.fields[path].value = value;
 
     if (path === "type") this.updateFields();
-    if (path === "color") this.colorPicker.value = `#${value}`;
   }
 
   updateFields() {

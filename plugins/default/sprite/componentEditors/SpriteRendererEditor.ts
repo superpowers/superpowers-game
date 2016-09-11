@@ -20,7 +20,7 @@ export default class SpriteRendererEditor {
   castShadowField: HTMLInputElement;
   receiveShadowField: HTMLInputElement;
 
-  colorField: HTMLInputElement;
+  colorField: SupClient.table.ColorField;
   colorPicker: HTMLInputElement;
 
   overrideOpacityField: HTMLInputElement;
@@ -107,16 +107,10 @@ export default class SpriteRendererEditor {
     });
 
     let colorRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:SpriteRenderer.color"));
-    let colorInputs = SupClient.table.appendColorField(colorRow.valueCell, config.color);
+    this.colorField = SupClient.table.appendColorField(colorRow.valueCell, config.color);
 
-    this.colorField = colorInputs.textField;
-    this.colorField.addEventListener("change", (event: any) => {
-      this.editConfig("setProperty", "color", event.target.value);
-    });
-
-    this.colorPicker = colorInputs.pickerField;
-    this.colorPicker.addEventListener("change", (event: any) => {
-      this.editConfig("setProperty", "color", event.target.value.slice(1));
+    this.colorField.addListener("change", (color: string) => {
+      this.editConfig("setProperty", "color", color);
     });
 
     let opacityRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:SpriteRenderer.opacity"), { checkbox: true } );
@@ -209,8 +203,7 @@ export default class SpriteRendererEditor {
         break;
 
       case "color":
-        this.colorField.value = value;
-        this.colorPicker.value = `#${value}`;
+        this.colorField.setValue(value);
         break;
 
       case "overrideOpacity":
