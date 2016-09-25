@@ -117,7 +117,7 @@ function tick(timestamp = 0) {
   animationFrame = requestAnimationFrame(tick);
 }
 
-let pos = new THREE.Vector3();
+let gridPosition = new THREE.Vector3();
 function update() {
   if (ui.cameraMode === "3D" && engine.gameInstance.input.keyboardButtons[(<any>window).KeyEvent.DOM_VK_CONTROL].isDown) {
     if (engine.gameInstance.input.mouseButtons[5].isDown) {
@@ -139,11 +139,11 @@ function update() {
   }
 
   if (ui.cameraMode === "2D") {
-    engine.cameraActor.getLocalPosition(pos);
-    pos.x += (ui.gridStep - pos.x % ui.gridStep);
-    pos.y += (ui.gridStep - pos.y % ui.gridStep);
-    pos.z = 0;
-    gridActor.setLocalPosition(pos);
+    engine.cameraActor.getLocalPosition(gridPosition);
+    gridPosition.x -= gridPosition.x % ui.gridStep;
+    gridPosition.y -= gridPosition.y % ui.gridStep;
+    gridPosition.z = 0;
+    gridActor.setLocalPosition(gridPosition);
   }
 }
 

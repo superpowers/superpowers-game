@@ -21,7 +21,7 @@ export default class GridHelper extends SupEngine.ActorComponent {
 
     let actualSize = Math.ceil(size / step) * step;
 
-    this.gridHelper = new THREE.GridHelper(actualSize, step, new THREE.Color(1, 1, 1), new THREE.Color(1, 1, 1));
+    this.gridHelper = new THREE.GridHelper(actualSize, actualSize / step * 2, new THREE.Color(1, 1, 1), new THREE.Color(1, 1, 1));
     this.gridHelper.material.transparent = true;
     this.gridHelper.material.opacity = 0.25;
     this.actor.threeObject.add(this.gridHelper);
