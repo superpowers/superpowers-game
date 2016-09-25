@@ -130,16 +130,11 @@ function onAssetTrashed() {
 
 let gl = document.createElement("canvas").getContext("webgl") as WebGLRenderingContext;
 function replaceShaderChunk(shader: string) {
-  let keyword = "THREE_ShaderChunk(";
-  let index = shader.indexOf(keyword);
-  while (index !== -1) {
-    let end = shader.indexOf(")", index + 1);
-    let shaderChunk = shader.slice(index + keyword.length, end);
-    shaderChunk.trim();
-    shader = shader.slice(0, index) + SupEngine.THREE.ShaderChunk[shaderChunk] + shader.slice(end + 1);
+  shader = shader.replace(/#include +<([\w\d.]+)>/g, (match, include) => SupEngine.THREE.ShaderChunk[include]);
 
-    index = shader.indexOf(keyword, index + 1);
-  }
+  for (const lightNumString of ["NUM_DIR_LIGHTS", "NUM_SPOT_LIGHTS", "NUM_POINT_LIGHTS", "NUM_HEMI_LIGHTS"])
+    shader = shader.replace(RegExp(lightNumString, "g"), "1");
+
   return shader;
 }
 
@@ -147,11 +142,6 @@ let vertexStart = `precision mediump float;precision mediump int;
 #define SHADER_NAME ShaderMaterial
 #define VERTEX_TEXTURES
 #define GAMMA_FACTOR 2
-#define MAX_DIR_LIGHTS 0
-#define MAX_POINT_LIGHTS 0
-#define MAX_SPOT_LIGHTS 0
-#define MAX_HEMI_LIGHTS 0
-#define MAX_SHADOWS 0
 #define MAX_BONES 251
 uniform mat4 modelMatrix;
 uniform mat4 modelViewMatrix;
@@ -214,11 +204,6 @@ function checkVertexShader() {
 let fragmentStart = `precision mediump float;
 precision mediump int;
 #define SHADER_NAME ShaderMaterial
-#define MAX_DIR_LIGHTS 0
-#define MAX_POINT_LIGHTS 0
-#define MAX_SPOT_LIGHTS 0
-#define MAX_HEMI_LIGHTS 0
-#define MAX_SHADOWS 0
 #define GAMMA_FACTOR 2
 uniform mat4 viewMatrix;
 uniform vec3 cameraPosition;
@@ -245,5 +230,3 @@ function checkFragmentShader() {
   ui.fragmentHeader.classList.toggle("has-draft", true);
   ui.fragmentSaveElt.hidden = errors.length > 0;
 }
-
-

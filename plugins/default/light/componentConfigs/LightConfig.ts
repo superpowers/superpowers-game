@@ -10,7 +10,6 @@ export interface LightConfigPub {
   castShadow: boolean;
   shadowMapSize: { width: number; height: number; };
   shadowBias: number;
-  shadowDarkness: number;
   shadowCameraNearPlane: number; shadowCameraFarPlane: number;
   shadowCameraFov: number;
   shadowCameraSize: { top: number; bottom: number; left: number; right: number; };
@@ -71,7 +70,6 @@ export default class LightConfig extends SupCore.Data.Base.ComponentConfig {
       castShadow: false,
       shadowMapSize: { width: 512, height: 512 },
       shadowBias: 0,
-      shadowDarkness: 0.5,
       shadowCameraNearPlane: 0.1, shadowCameraFarPlane: 1000,
       shadowCameraFov: 50,
       shadowCameraSize: { top: 100, bottom: -100, left: -100, right: 100 }
@@ -79,22 +77,27 @@ export default class LightConfig extends SupCore.Data.Base.ComponentConfig {
     return emptyConfig;
   }
 
-  static currentFormatVersion = 1;
+  static currentFormatVersion = 2;
   static migrate(pub: LightConfigPub) {
     if (pub.formatVersion === LightConfig.currentFormatVersion) return false;
 
     if (pub.formatVersion == null) {
-      pub.formatVersion = 1;
+      pub.formatVersion = 2;
 
       if (pub.shadowMapSize == null) {
         pub.shadowMapSize = { width: 512, height: 512 };
         pub.shadowBias = 0;
-        pub.shadowDarkness = 0.5;
         pub.shadowCameraNearPlane = 0.1;
         pub.shadowCameraFarPlane = 1000;
         pub.shadowCameraFov = 50;
         pub.shadowCameraSize = { top: 100, bottom: -100, left: -100, right: 100 };
       }
+    }
+
+    if (pub.formatVersion === 1) {
+      pub.formatVersion = 2;
+
+      delete (pub as any).shadowDarkness;
     }
 
     return true;

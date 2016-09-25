@@ -17,7 +17,6 @@ export default class LightUpdater {
     this.light.castShadow = config.castShadow;
     this.light.shadow.mapSize.set(config.shadowMapSize.width, config.shadowMapSize.height);
     this.light.shadow.bias = config.shadowBias;
-    this.light.shadow.darkness = config.shadowDarkness;
     this.light.shadow.camera.near = config.shadowCameraNearPlane;
     this.light.shadow.camera.far = config.shadowCameraFarPlane;
     this.light.shadow.camera.fov = config.shadowCameraFov;
@@ -76,9 +75,6 @@ export default class LightUpdater {
         break;
       case "shadowBias":
         this.light.setShadowBias(value);
-        break;
-      case "shadowDarkness":
-        this.light.setShadowDarkness(value);
         break;
       case "shadowCameraNearPlane":
         this.light.setShadowCameraNearPlane(value);

@@ -93,13 +93,6 @@ export default class LightEditor {
     });
     this.shadowRows.push(shadowBiasRow.row);
 
-    let shadowDarknessRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:Light.shadowSettings.darkness"));
-    this.fields["shadowDarkness"] = SupClient.table.appendNumberField(shadowDarknessRow.valueCell, config.shadowDarkness, { min: 0, max: 1 });
-    this.fields["shadowDarkness"].addEventListener("change", (event: any) => {
-      this.editConfig("setProperty", "shadowDarkness", parseFloat(event.target.value));
-    });
-    this.shadowRows.push(shadowDarknessRow.row);
-
     let shadowPlanesRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:Light.shadowSettings.near-far"));
     let shadowPlanesFields = SupClient.table.appendNumberFields(shadowPlanesRow.valueCell, [config.shadowCameraNearPlane, config.shadowCameraFarPlane], { min: 0 });
     this.fields["shadowCameraNearPlane"] = shadowPlanesFields[0];

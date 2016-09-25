@@ -18,8 +18,6 @@ export default class Light extends SupEngine.ActorComponent {
   shadow = {
     mapSize: new THREE.Vector2(512, 512),
     bias: 0,
-    // FIXME: Three.js has changed the default to 1.0, should we update?
-    darkness: 0.5,
 
     camera: {
       near: 0.1,
@@ -55,7 +53,6 @@ export default class Light extends SupEngine.ActorComponent {
         spotLight.target.updateMatrixWorld(false);
         spotLight.shadow.mapSize.copy(this.shadow.mapSize);
         spotLight.shadow.bias = this.shadow.bias;
-        spotLight.shadow.darkness = this.shadow.darkness;
         spotLight.shadow.camera = new THREE.PerspectiveCamera(
           this.shadow.camera.fov,
           this.shadow.mapSize.x / this.shadow.mapSize.y,
@@ -69,7 +66,6 @@ export default class Light extends SupEngine.ActorComponent {
         directionalLight.target.updateMatrixWorld(false);
         directionalLight.shadow.mapSize.copy(this.shadow.mapSize);
         directionalLight.shadow.bias = this.shadow.bias;
-        directionalLight.shadow.darkness = this.shadow.darkness;
         directionalLight.shadow.camera = new THREE.OrthographicCamera(
           this.shadow.camera.left, this.shadow.camera.right,
           this.shadow.camera.top, this.shadow.camera.bottom,
@@ -144,14 +140,6 @@ export default class Light extends SupEngine.ActorComponent {
 
     let shadow = (this.light as THREE.SpotLight|THREE.DirectionalLight).shadow;
     shadow.bias = this.shadow.bias;
-  }
-
-  setShadowDarkness(darkness: number) {
-    this.shadow.darkness = darkness;
-    if (this.type !== "spot" && this.type !== "directional") return;
-
-    let shadow = (this.light as THREE.SpotLight|THREE.DirectionalLight).shadow;
-    shadow.darkness = this.shadow.darkness;
   }
 
   setShadowCameraNearPlane(near: number) {
