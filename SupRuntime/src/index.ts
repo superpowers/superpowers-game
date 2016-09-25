@@ -67,9 +67,7 @@ if (playerWindow != null) {
     else electron.shell.openExternal(url);
   });
 
-  SupApp.onMessage("force-quit", () => {
-    playerWindow.close();
-  });
+  if (SupApp != null) SupApp.onMessage("force-quit", () => { playerWindow.close(); });
 }
 const qs = querystring.parse(window.location.search.slice(1));
 
