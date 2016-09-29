@@ -2,18 +2,18 @@ import ui from "./ui";
 import { data } from "./network";
 import { createShaderMaterial } from "../../components/Shader";
 
-let THREE = SupEngine.THREE;
+const THREE = SupEngine.THREE;
 
-let canvasElt = <HTMLCanvasElement>document.querySelector("canvas");
-let gameInstance = new SupEngine.GameInstance(canvasElt);
+const canvasElt = <HTMLCanvasElement>document.querySelector("canvas");
+const gameInstance = new SupEngine.GameInstance(canvasElt);
 
-let cameraActor = new SupEngine.Actor(gameInstance, "Camera");
+const cameraActor = new SupEngine.Actor(gameInstance, "Camera");
 cameraActor.setLocalPosition(new THREE.Vector3(0, 0, 10));
-let cameraComponent = new SupEngine.componentClasses["Camera"](cameraActor);
+const cameraComponent = new SupEngine.componentClasses["Camera"](cameraActor);
 new SupEngine.editorComponentClasses["Camera3DControls"](cameraActor, cameraComponent);
 
-let loader = new THREE.TextureLoader();
-let leonardTexture = loader.load("leonard.png", undefined);
+const loader = new THREE.TextureLoader();
+const leonardTexture = loader.load("leonard.png", undefined);
 leonardTexture.magFilter = THREE.NearestFilter;
 leonardTexture.minFilter = THREE.NearestFilter;
 
@@ -50,7 +50,7 @@ export function setupPreview(options = { useDraft: false }) {
       break;
     case "Asset":
       let componentClassName: string;
-      let config = { materialType: "shader", shaderAssetId: SupClient.query.asset, spriteAssetId: <string>null, modelAssetId: <string>null };
+      const config = { materialType: "shader", shaderAssetId: SupClient.query.asset, spriteAssetId: <string>null, modelAssetId: <string>null };
       if (ui.previewEntry.type === "sprite") {
         componentClassName = "SpriteRenderer";
         config.spriteAssetId = ui.previewEntry.id;
@@ -59,8 +59,8 @@ export function setupPreview(options = { useDraft: false }) {
         config.modelAssetId = ui.previewEntry.id;
       }
 
-      let componentClass = SupEngine.componentClasses[componentClassName];
-      let component = new componentClass(previewActor);
+      const componentClass = SupEngine.componentClasses[componentClassName];
+      const component = new componentClass(previewActor);
       data.previewComponentUpdater = new componentClass.Updater(data.projectClient, component, config);
       return;
   }
@@ -100,7 +100,7 @@ function tick(timestamp = 0) {
 
   accumulatedTime += timestamp - lastTimestamp;
   lastTimestamp = timestamp;
-  let { updates, timeLeft } = gameInstance.tick(accumulatedTime);
+  const { updates, timeLeft } = gameInstance.tick(accumulatedTime);
   accumulatedTime = timeLeft;
 
   if (updates !== 0 && material != null)

@@ -16,8 +16,8 @@ export default class CameraEditor {
     this.projectClient = projectClient;
     this.editConfig = editConfig;
 
-    let modeRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:Camera.mode"));
-    let modeOptions: { [value: string]: string; } = {
+    const modeRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:Camera.mode"));
+    const modeOptions: { [value: string]: string; } = {
       perspective: SupClient.i18n.t("componentEditors:Camera.modeOptions.perspective"),
       orthographic: SupClient.i18n.t("componentEditors:Camera.modeOptions.orthographic")
     };
@@ -32,28 +32,28 @@ export default class CameraEditor {
     if (config.mode === "perspective") this.orthographicScaleRowParts.row.style.display = "none";
     else this.fovRowParts.row.style.display = "none";
 
-    let depthOptions = { title: SupClient.i18n.t("componentEditors:Camera.depthTitle") };
-    let depthRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:Camera.depth"), depthOptions);
+    const depthOptions = { title: SupClient.i18n.t("componentEditors:Camera.depthTitle") };
+    const depthRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:Camera.depth"), depthOptions);
     this.depthField = SupClient.table.appendNumberField(depthRow.valueCell, config.depth);
 
-    let layersOptions = { title: SupClient.i18n.t("componentEditors:Camera.layersTitle") };
-    let layersRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:Camera.layers"), layersOptions);
-    let layersField = SupClient.table.appendTextField(layersRow.valueCell, "");
+    const layersOptions = { title: SupClient.i18n.t("componentEditors:Camera.layersTitle") };
+    const layersRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:Camera.layers"), layersOptions);
+    const layersField = SupClient.table.appendTextField(layersRow.valueCell, "");
     layersField.disabled = true;
     layersField.placeholder = "(not yet customizable)";
 
-    let nearClippingPlaneRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:Camera.nearPlane"));
+    const nearClippingPlaneRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:Camera.nearPlane"));
     this.nearClippingPlaneField = SupClient.table.appendNumberField(nearClippingPlaneRow.valueCell, config.nearClippingPlane, { min: 0.1 });
 
-    let farClippingPlaneRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:Camera.farPlane"));
+    const farClippingPlaneRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:Camera.farPlane"));
     this.farClippingPlaneField = SupClient.table.appendNumberField(farClippingPlaneRow.valueCell, config.farClippingPlane, { min: 0.1 });
 
     SupClient.table.appendHeader(tbody, SupClient.i18n.t("componentEditors:Camera.viewport.title"));
-    let viewportXRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:Camera.viewport.position"));
+    const viewportXRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:Camera.viewport.position"));
     [ this.viewportFields.x, this.viewportFields.y ] = SupClient.table.appendNumberFields(viewportXRow.valueCell, [ config.viewport.x, config.viewport.y ]
     , { min: 0, max: 1, step: 0.1 });
 
-    let widthRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:Camera.viewport.size"));
+    const widthRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:Camera.viewport.size"));
     [ this.viewportFields.width, this.viewportFields.height ] = SupClient.table.appendNumberFields(widthRow.valueCell, [ config.viewport.width, config.viewport.height ]
     , { min: 0, max: 1, step: 0.1 });
 

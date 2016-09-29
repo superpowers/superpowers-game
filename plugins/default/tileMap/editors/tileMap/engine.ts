@@ -29,7 +29,7 @@ let accumulatedTime = 0;
 function tick(timestamp = 0) {
   accumulatedTime += timestamp - lastTimestamp;
   lastTimestamp = timestamp;
-  let { updates, timeLeft } = mapArea.gameInstance.tick(accumulatedTime, handleMapArea);
+  const { updates, timeLeft } = mapArea.gameInstance.tick(accumulatedTime, handleMapArea);
   accumulatedTime = timeLeft;
 
   if (updates > 0) {

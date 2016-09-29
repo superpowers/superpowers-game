@@ -1,7 +1,7 @@
 import Light from "./Light";
 import { LightConfigPub } from "../componentConfigs/LightConfig";
 import LightSettingsResource from "../data/LightSettingsResource";
-let THREE = SupEngine.THREE;
+const THREE = SupEngine.THREE;
 
 export default class LightUpdater {
   lightSettings: LightSettingsResource;
@@ -113,7 +113,7 @@ export default class LightUpdater {
         break;
     }
     this.light.actor.gameInstance.threeScene.traverse((object: any) => {
-      let material: THREE.Material = object.material;
+      const material: THREE.Material = object.material;
       if (material != null) material.needsUpdate = true;
     });
   }

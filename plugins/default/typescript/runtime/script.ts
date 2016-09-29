@@ -7,15 +7,15 @@ const combine: any = require("combine-source-map");
 /* tslint:enable */
 import compileTypeScript from "./compileTypeScript";
 
-let globalNames: string[] = [];
-let globals: {[name: string]: string} = {};
-let globalDefs: {[name: string]: string} = {};
+const globalNames: string[] = [];
+const globals: {[name: string]: string} = {};
+const globalDefs: {[name: string]: string} = {};
 
-let scriptNames: string[] = [];
-let scripts: {[name: string]: string} = {};
+const scriptNames: string[] = [];
+const scripts: {[name: string]: string} = {};
 
-let actorComponentTypesByName: {[name: string]: any} = {};
-let actorComponentAccessors: string[] = [];
+const actorComponentTypesByName: {[name: string]: any} = {};
+const actorComponentAccessors: string[] = [];
 
 export function init(player: any, callback: Function) {
   player.behaviorClasses = {};
@@ -24,11 +24,11 @@ export function init(player: any, callback: Function) {
     return new (<any>window).Sup.Actor(name, parentActor, options);
   };
 
-  let plugins = SupCore.system.getPlugins<SupCore.TypeScriptAPIPlugin>("typescriptAPI");
+  const plugins = SupCore.system.getPlugins<SupCore.TypeScriptAPIPlugin>("typescriptAPI");
 
   player.createComponent = (type: string, actor: any, config: any) => {
     if (type === "Behavior") {
-      let behaviorClass = player.behaviorClasses[config.behaviorName];
+      const behaviorClass = player.behaviorClasses[config.behaviorName];
       if (behaviorClass == null) {
         throw new Error(`Could not find a behavior class named "${config.behaviorName}" for actor "${actor.getName()}". ` +
         "Make sure you're using the class name, not the script's name and that the class is declared " +
@@ -38,15 +38,15 @@ export function init(player: any, callback: Function) {
     } else {
       if (actorComponentTypesByName[type] == null) {
         actorComponentTypesByName[type] = window;
-        let parts = plugins[type].exposeActorComponent.className.split(".");
-        for (let part of parts) actorComponentTypesByName[type] = actorComponentTypesByName[type][part];
+        const parts = plugins[type].exposeActorComponent.className.split(".");
+        for (const part of parts) actorComponentTypesByName[type] = actorComponentTypesByName[type][part];
       }
       return new actorComponentTypesByName[type](actor);
     }
   };
 
-  for (let pluginName in plugins) {
-    let plugin = plugins[pluginName];
+  for (const pluginName in plugins) {
+    const plugin = plugins[pluginName];
     if (plugin.code != null) {
       globalNames.push(`${pluginName}.ts`);
       globals[`${pluginName}.ts`] = plugin.code;
@@ -62,7 +62,7 @@ export function start(player: SupRuntime.Player, callback: Function) {
   console.log("Compiling scripts...");
 
   // Plug component accessors exposed by plugins into Sup.Actor class
-  let joinedActorComponentAccessors = actorComponentAccessors.join("\n    ");
+  const joinedActorComponentAccessors = actorComponentAccessors.join("\n    ");
   globals["Sup.Actor.ts"] = globals["Sup.Actor.ts"].replace("// INSERT_COMPONENT_ACCESSORS", joinedActorComponentAccessors);
   globalDefs["Sup.Actor.d.ts"] = globalDefs["Sup.Actor.d.ts"].replace("// INSERT_COMPONENT_ACCESSORS", joinedActorComponentAccessors);
 
@@ -71,19 +71,19 @@ export function start(player: SupRuntime.Player, callback: Function) {
   globalNames.unshift(globalNames.splice(globalNames.indexOf("Sup.ts"), 1)[0]);
 
   // Compile plugin globals
-  let jsGlobals = compileTypeScript(globalNames, globals, `${globalDefs["lib.d.ts"]}\ndeclare var console, window, localStorage, player, SupEngine, SupRuntime, require;`, { sourceMap: false });
+  const jsGlobals = compileTypeScript(globalNames, globals, `${globalDefs["lib.d.ts"]}\ndeclare var console, window, localStorage, player, SupEngine, SupRuntime, require;`, { sourceMap: false });
   if (jsGlobals.errors.length > 0) {
-    for (let error of jsGlobals.errors) console.log(`${error.file}(${error.position.line}): ${error.message}`);
+    for (const error of jsGlobals.errors) console.log(`${error.file}(${error.position.line}): ${error.message}`);
     callback(new Error("Compilation failed. Check the devtools (F12) for errors."));
     return;
   }
 
   // Compile game scripts
   let concatenatedGlobalDefs = "";
-  for (let name in globalDefs) concatenatedGlobalDefs += globalDefs[name];
-  let results = compileTypeScript(scriptNames, scripts, concatenatedGlobalDefs, { sourceMap: true });
+  for (const name in globalDefs) concatenatedGlobalDefs += globalDefs[name];
+  const results = compileTypeScript(scriptNames, scripts, concatenatedGlobalDefs, { sourceMap: true });
   if (results.errors.length > 0) {
-    for (let error of results.errors) console.log(`${error.file}(${error.position.line}): ${error.message}`);
+    for (const error of results.errors) console.log(`${error.file}(${error.position.line}): ${error.message}`);
     callback(new Error("Compilation failed. Check the devtools (F12) for errors."));
     return;
   }
@@ -91,7 +91,7 @@ export function start(player: SupRuntime.Player, callback: Function) {
   console.log("Compilation successful!");
 
   // Prepare source maps
-  let getLineCounts = (text: string) => {
+  const getLineCounts = (text: string) => {
     let count = 1, index = -1;
     while (true) {
       index = text.indexOf("\n", index + 1);
@@ -108,18 +108,18 @@ ${jsGlobals.script}
 `;
 
   let line = getLineCounts(jsGlobals.script) + 2;
-  let combinedSourceMap = combine.create("bundle.js");
-  for (let file of results.files) {
-    let comment = convert.fromObject(results.sourceMaps[file.name]).toComment();
+  const combinedSourceMap = combine.create("bundle.js");
+  for (const file of results.files) {
+    const comment = convert.fromObject(results.sourceMaps[file.name]).toComment();
     combinedSourceMap.addFile({ sourceFile: `/${player.gameName}/${file.name}`, source: file.text + `\n${comment}` }, { line });
     line += getLineCounts(file.text);
   }
 
-  let code = `${jsGlobals.script}${results.script}
+  const code = `${jsGlobals.script}${results.script}
 //# sourceMappingURL=data:application/json;charset=utf-8;base64,${combinedSourceMap.base64()}`;
 
   // Execute the generated code
-  let scriptFunction = new Function("_player", code);
+  const scriptFunction = new Function("_player", code);
   scriptFunction(player);
 
   callback();

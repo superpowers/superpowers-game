@@ -30,7 +30,7 @@ export default class P2BodyConfig extends SupCore.Data.Base.ComponentConfig {
   };
 
   static create() {
-    let emptyConfig: P2BodyConfigPub = {
+    const emptyConfig: P2BodyConfigPub = {
       formatVersion: P2BodyConfig.currentFormatVersion,
 
       mass: 0,

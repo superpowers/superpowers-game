@@ -151,7 +151,7 @@ export default class SpriteAsset extends SupCore.Data.Base.Asset {
 
   load(assetPath: string) {
     let pub: SpriteAssetPub;
-    let loadMaps = () => {
+    const loadMaps = () => {
       let mapsName: string[] = pub.maps as any;
       // NOTE: Support for multiple maps was introduced in Superpowers 0.11
       if (mapsName == null) mapsName = ["map"];
@@ -221,7 +221,7 @@ export default class SpriteAsset extends SupCore.Data.Base.Asset {
       }
 
       // NOTE: Animation speed was introduced in Superpowers 0.12
-      for (let animation of pub.animations) {
+      for (const animation of pub.animations) {
         if (animation.speed == null) animation.speed = 1;
       }
       pub.formatVersion = 1;
@@ -361,8 +361,8 @@ export default class SpriteAsset extends SupCore.Data.Base.Asset {
 
     switch (path) {
       case "filtering":
-        for (let textureName in this.pub.textures) {
-          let texture = this.pub.textures[textureName];
+        for (const textureName in this.pub.textures) {
+          const texture = this.pub.textures[textureName];
           if (this.pub.filtering === "pixelated") {
             texture.magFilter = THREE.NearestFilter;
             texture.minFilter = THREE.NearestFilter;
@@ -374,8 +374,8 @@ export default class SpriteAsset extends SupCore.Data.Base.Asset {
         }
         break;
       case "wrapping":
-        for (let textureName in this.pub.textures) {
-          let texture = this.pub.textures[textureName];
+        for (const textureName in this.pub.textures) {
+          const texture = this.pub.textures[textureName];
           if (value === "clampToEdge") {
             texture.wrapS = SupEngine.THREE.ClampToEdgeWrapping;
             texture.wrapT = SupEngine.THREE.ClampToEdgeWrapping;
@@ -395,20 +395,20 @@ export default class SpriteAsset extends SupCore.Data.Base.Asset {
   server_setMaps(client: SupCore.RemoteClient, maps: any, callback: SetMapsCallback) {
     if (maps == null || typeof maps !== "object") { callback("Maps must be an object"); return; }
 
-    for (let key in maps) {
-      let value = maps[key];
+    for (const key in maps) {
+      const value = maps[key];
       if (this.pub.maps[key] == null) { callback(`The map ${key} doesn't exist`); return; }
       if (value != null && !(value instanceof Buffer)) { callback(`Value for ${key} must be an ArrayBuffer or null`); return; }
     }
 
-    for (let key in maps) this.pub.maps[key] = maps[key];
+    for (const key in maps) this.pub.maps[key] = maps[key];
 
     callback(null, null, maps);
     this.emit("change");
   }
 
   client_setMaps(maps: any) {
-    for (let key in maps) this.pub.maps[key] = maps[key];
+    for (const key in maps) this.pub.maps[key] = maps[key];
     this.loadTextures();
   }
 
@@ -437,8 +437,8 @@ export default class SpriteAsset extends SupCore.Data.Base.Asset {
   }
 
   client_deleteMap(name: string) {
-    for (let slotName in this.pub.mapSlots) {
-      let map = this.pub.mapSlots[slotName];
+    for (const slotName in this.pub.mapSlots) {
+      const map = this.pub.mapSlots[slotName];
       if (map === name) this.pub.mapSlots[slotName] = null;
     }
 
@@ -460,8 +460,8 @@ export default class SpriteAsset extends SupCore.Data.Base.Asset {
     this.pub.maps[newName] = this.pub.maps[oldName];
     this.pub.maps[oldName] = null;
 
-    for (let slotName in this.pub.mapSlots) {
-      let map = this.pub.mapSlots[slotName];
+    for (const slotName in this.pub.mapSlots) {
+      const map = this.pub.mapSlots[slotName];
       if (map === oldName) this.pub.mapSlots[slotName] = newName;
     }
   }
@@ -482,7 +482,7 @@ export default class SpriteAsset extends SupCore.Data.Base.Asset {
   }
 
   server_newAnimation(client: SupCore.RemoteClient, name: string, callback: NewAnimationCallback) {
-    let animation: SpriteAnimationPub = { id: null, name, startFrameIndex: 0, endFrameIndex: 0, speed: 1 };
+    const animation: SpriteAnimationPub = { id: null, name, startFrameIndex: 0, endFrameIndex: 0, speed: 1 };
 
     this.animations.add(animation, null, (err, actualIndex) => {
       if (err != null) { callback(err); return; }

@@ -1,4 +1,4 @@
-let serverRequire = require;
+const serverRequire = require;
 let THREE: typeof SupEngine.THREE;
 // NOTE: It is important that we require THREE through SupEngine
 // so that we inherit any settings, like the global Euler order
@@ -106,7 +106,7 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
         }
       };
 
-      let data = new Uint8ClampedArray(this.pub.maps["map"]);
+      const data = new Uint8ClampedArray(this.pub.maps["map"]);
       for (let i = 0; i < data.length; i++) data[i] = 255;
 
       super.init(options, callback);
@@ -117,16 +117,16 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
     this.nodes = new CubicModelNodes(this);
 
     this.textureDatas = {};
-    for (let mapName in this.pub.maps) {
+    for (const mapName in this.pub.maps) {
       this.textureDatas[mapName] = new Uint8ClampedArray(this.pub.maps[mapName]);
     }
   }
 
   load(assetPath: string) {
     fs.readFile(path.join(assetPath, "cubicModel.json"), { encoding: "utf8" }, (err, json) => {
-      let pub: CubicModelAssetPub = JSON.parse(json);
+      const pub: CubicModelAssetPub = JSON.parse(json);
 
-      let mapNames: string[] = <any>pub.maps;
+      const mapNames = (pub as any).maps as string[];
       pub.maps = {};
 
       async.each(mapNames, (mapName, cb) => {
@@ -172,14 +172,14 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
     const maps = this.pub.maps;
 
     (this.pub as any).maps = [];
-    for (let key in maps) {
+    for (const key in maps) {
       if (maps[key] != null) (this.pub as any).maps.push(key);
     }
 
     const textures = this.pub.textures;
     delete this.pub.textures;
 
-    let json = JSON.stringify(this.pub, null, 2);
+    const json = JSON.stringify(this.pub, null, 2);
 
     this.pub.maps = maps;
     this.pub.textures = textures;
@@ -188,7 +188,7 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
       if (err != null) { writeCallback(err); return; }
 
       async.each(Object.keys(maps), (mapName, cb) => {
-        let value = maps[mapName];
+        const value = maps[mapName];
         if (value == null) { cb(); return; }
 
         writeFile(path.join(outputPath, `map-${mapName}.dat`), new Buffer(value), cb);
@@ -226,9 +226,9 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
 
   // Nodes
   server_addNode(client: SupCore.RemoteClient, name: string, options: any, callback: AddNodeCallback) {
-    let parentId = (options != null) ? options.parentId : null;
+    const parentId = (options != null) ? options.parentId : null;
 
-    let node: Node = {
+    const node: Node = {
       id: null, name: name, children: [],
       position: (options != null && options.transform != null && options.transform.position != null) ? options.transform.position : { x: 0, y: 0, z: 0 },
       orientation: (options != null && options.transform != null && options.transform.orientation != null) ? options.transform.orientation : { x: 0, y: 0, z: 0, w: 1 },
@@ -237,24 +237,24 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
     node.shape.textureLayoutCustom = false;
 
     if (node.shape.type !== "none") {
-      let origin = { x: 0, y: 0 };
+      const origin = { x: 0, y: 0 };
       let placed = false;
-      let size = getShapeTextureSize(node.shape);
+      const size = getShapeTextureSize(node.shape);
 
       for (let j = 0; j < this.pub.textureHeight - size.height; j++) {
         for (let i = 0; i < this.pub.textureWidth; i++) {
           let pushed: boolean;
           do {
             pushed = false;
-            for (let otherNodeId in this.nodes.byId) {
-              let otherNode = this.nodes.byId[otherNodeId];
+            for (const otherNodeId in this.nodes.byId) {
+              const otherNode = this.nodes.byId[otherNodeId];
               if (otherNode.shape.type === "none") continue;
 
               // + 1 and - 1 because we need a one-pixel border
               // to avoid filtering issues
-              for (let faceName in otherNode.shape.textureLayout) {
-                let faceOffset = otherNode.shape.textureLayout[faceName].offset;
-                let otherSize = getShapeTextureFaceSize(otherNode.shape, faceName);
+              for (const faceName in otherNode.shape.textureLayout) {
+                const faceOffset = otherNode.shape.textureLayout[faceName].offset;
+                const otherSize = getShapeTextureFaceSize(otherNode.shape, faceName);
                 if ((i + size.width >= faceOffset.x - 1) && (j + size.height >= faceOffset.y - 1) &&
                 (i <= faceOffset.x + otherSize.width + 1) && (j <= faceOffset.y + otherSize.height + 1)) {
                   i = faceOffset.x + otherSize.width + 2;
@@ -281,7 +281,7 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
 
       switch (node.shape.type) {
         case "box":
-          let size = node.shape.settings.size as { x: number; y: number; z: number; };
+          const size = node.shape.settings.size as { x: number; y: number; z: number; };
           node.shape.textureLayout = {
             "top": {
               offset: { x: origin.x + size.z, y: origin.y },
@@ -321,7 +321,7 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
       }
     }
 
-    let index = (options != null) ? options.index : null;
+    const index = (options != null) ? options.index : null;
     this.nodes.add(node, parentId, index, (err, actualIndex) => {
       if (err != null) { callback(err); return; }
 
@@ -336,7 +336,7 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
 
 
   server_setNodeProperty(client: SupCore.RemoteClient, id: string, path: string, value: any, callback: SetNodePropertyCallback) {
-    let oldSize = this.nodes.byId[id].shape.settings.size;
+    const oldSize = this.nodes.byId[id].shape.settings.size;
 
     this.nodes.setProperty(id, path, value, (err, actualValue) => {
       if (err != null) { callback(err); return; }
@@ -349,7 +349,7 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
   }
 
   client_setNodeProperty(id: string, path: string, value: any) {
-    let oldSize = this.nodes.byId[id].shape.settings.size;
+    const oldSize = this.nodes.byId[id].shape.settings.size;
     this.nodes.client_setProperty(id, path, value);
     if (path === "shape.settings.size") this._updateNodeUvFromSize(oldSize, this.nodes.byId[id].shape);
   }
@@ -359,9 +359,9 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
 
     switch (shape.type) {
       case "box":
-        let newSize: XYZ = shape.settings.size;
-        let x = newSize.x - oldSize.x;
-        let z = newSize.z - oldSize.z;
+        const newSize: XYZ = shape.settings.size;
+        const x = newSize.x - oldSize.x;
+        const z = newSize.z - oldSize.z;
 
         shape.textureLayout["top"].offset.x += z;
         shape.textureLayout["bottom"].offset.x += x + z;
@@ -379,16 +379,16 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
   }
 
   server_moveNodePivot(client: SupCore.RemoteClient, id: string, value: { x: number; y: number; z: number; }, callback: MoveNodePivotCallback) {
-    let node = this.nodes.byId[id];
-    let oldMatrix = (node != null) ? this.computeGlobalMatrix(node) : null;
+    const node = this.nodes.byId[id];
+    const oldMatrix = (node != null) ? this.computeGlobalMatrix(node) : null;
 
     this.nodes.setProperty(id, "position", value, (err, actualValue) => {
       if (err != null) { callback(err); return; }
 
-      let newInverseMatrix = this.computeGlobalMatrix(node);
+      const newInverseMatrix = this.computeGlobalMatrix(node);
       newInverseMatrix.getInverse(newInverseMatrix);
 
-      let offset = new THREE.Vector3(node.shape.offset.x, node.shape.offset.y, node.shape.offset.z);
+      const offset = new THREE.Vector3(node.shape.offset.x, node.shape.offset.y, node.shape.offset.z);
       offset.applyMatrix4(oldMatrix).applyMatrix4(newInverseMatrix);
       node.shape.offset.x = offset.x;
       node.shape.offset.y = offset.y;
@@ -400,15 +400,15 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
   }
 
   client_moveNodePivot(id: string, value: { x: number; y: number; z: number; }) {
-    let node = this.nodes.byId[id];
-    let oldMatrix = (node != null) ? this.computeGlobalMatrix(node) : null;
+    const node = this.nodes.byId[id];
+    const oldMatrix = (node != null) ? this.computeGlobalMatrix(node) : null;
 
     this.nodes.client_setProperty(id, "position", value);
 
-    let newInverseMatrix = this.computeGlobalMatrix(node);
+    const newInverseMatrix = this.computeGlobalMatrix(node);
     newInverseMatrix.getInverse(newInverseMatrix);
 
-    let offset = new THREE.Vector3(node.shape.offset.x, node.shape.offset.y, node.shape.offset.z);
+    const offset = new THREE.Vector3(node.shape.offset.x, node.shape.offset.y, node.shape.offset.z);
     offset.applyMatrix4(oldMatrix).applyMatrix4(newInverseMatrix);
     node.shape.offset.x = offset.x;
     node.shape.offset.y = offset.y;
@@ -417,10 +417,10 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
 
 
   server_moveNode(client: SupCore.RemoteClient, id: string, parentId: string, index: number, callback: MoveNodeCallback) {
-    let node = this.nodes.byId[id];
+    const node = this.nodes.byId[id];
     if (node == null) { callback(`Invalid node id: ${id}`); return; }
 
-    let globalMatrix = this.computeGlobalMatrix(node);
+    const globalMatrix = this.computeGlobalMatrix(node);
 
     this.nodes.move(id, parentId, index, (err, actualIndex) => {
       if (err != null) { callback(err); return; }
@@ -433,13 +433,13 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
   }
 
   computeGlobalMatrix(node: Node, includeShapeOffset = false) {
-    let defaultScale = new THREE.Vector3(1, 1, 1);
-    let matrix = new THREE.Matrix4().compose(<THREE.Vector3>node.position, <THREE.Quaternion>node.orientation, defaultScale);
+    const defaultScale = new THREE.Vector3(1, 1, 1);
+    const matrix = new THREE.Matrix4().compose(<THREE.Vector3>node.position, <THREE.Quaternion>node.orientation, defaultScale);
 
     let parentNode = this.nodes.parentNodesById[node.id];
-    let parentMatrix = new THREE.Matrix4();
-    let parentPosition  = new THREE.Vector3();
-    let parentOffset = new THREE.Vector3();
+    const parentMatrix = new THREE.Matrix4();
+    const parentPosition  = new THREE.Vector3();
+    const parentOffset = new THREE.Vector3();
     while (parentNode != null) {
       parentPosition.set(parentNode.position.x, parentNode.position.y, parentNode.position.z);
       parentOffset.set(parentNode.shape.offset.x, parentNode.shape.offset.y, parentNode.shape.offset.z);
@@ -453,13 +453,13 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
   }
 
   applyGlobalMatrix(node: Node, matrix: THREE.Matrix4) {
-    let parentGlobalMatrix = new THREE.Matrix4();
+    const parentGlobalMatrix = new THREE.Matrix4();
 
     let parentNode = this.nodes.parentNodesById[node.id];
-    let parentMatrix = new THREE.Matrix4();
-    let defaultScale = new THREE.Vector3(1, 1, 1);
-    let parentPosition  = new THREE.Vector3();
-    let parentOffset = new THREE.Vector3();
+    const parentMatrix = new THREE.Matrix4();
+    const defaultScale = new THREE.Vector3(1, 1, 1);
+    const parentPosition  = new THREE.Vector3();
+    const parentOffset = new THREE.Vector3();
     while (parentNode != null) {
       parentPosition.set(parentNode.position.x, parentNode.position.y, parentNode.position.z);
       parentOffset.set(parentNode.shape.offset.x, parentNode.shape.offset.y, parentNode.shape.offset.z);
@@ -472,8 +472,8 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
 
     matrix.multiplyMatrices(parentGlobalMatrix.getInverse(parentGlobalMatrix), matrix);
 
-    let position = new THREE.Vector3();
-    let orientation = new THREE.Quaternion();
+    const position = new THREE.Vector3();
+    const orientation = new THREE.Quaternion();
     matrix.decompose(position, orientation, defaultScale);
     node.position.x = position.x;
     node.position.y = position.y;
@@ -485,34 +485,34 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
   }
 
   client_moveNode(id: string, parentId: string, index: number) {
-    let node = this.nodes.byId[id];
-    let globalMatrix = this.computeGlobalMatrix(node);
+    const node = this.nodes.byId[id];
+    const globalMatrix = this.computeGlobalMatrix(node);
     this.nodes.client_move(id, parentId, index);
     this.applyGlobalMatrix(node, globalMatrix);
   }
 
 
   server_duplicateNode(client: SupCore.RemoteClient, newName: string, id: string, index: number, callback: DuplicateNodeCallback) {
-    let referenceNode = this.nodes.byId[id];
+    const referenceNode = this.nodes.byId[id];
     if (referenceNode == null) { callback(`Invalid node id: ${id}`); return; }
 
-    let newNodes: DuplicatedNode[] = [];
+    const newNodes: DuplicatedNode[] = [];
     let totalNodeCount = 0;
-    let walk = (node: Node) => {
+    const walk = (node: Node) => {
       totalNodeCount += 1;
-      for (let childNode of node.children) walk(childNode);
+      for (const childNode of node.children) walk(childNode);
     };
     walk(referenceNode);
 
-    let rootNode: Node = {
+    const rootNode: Node = {
       id: null, name: newName, children: [],
       position: _.cloneDeep(referenceNode.position),
       orientation: _.cloneDeep(referenceNode.orientation),
       shape: _.cloneDeep(referenceNode.shape)
     };
-    let parentId = (this.nodes.parentNodesById[id] != null) ? this.nodes.parentNodesById[id].id : null;
+    const parentId = (this.nodes.parentNodesById[id] != null) ? this.nodes.parentNodesById[id].id : null;
 
-    let addNode = (newNode: Node, parentId: string, index: number, children: Node[]) => {
+    const addNode = (newNode: Node, parentId: string, index: number, children: Node[]) => {
       this.nodes.add(newNode, parentId, index, (err, actualIndex) => {
         if (err != null) { callback(err); return; }
 
@@ -526,8 +526,8 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
         }
 
         for (let childIndex = 0; childIndex < children.length; childIndex++) {
-          let childNode = children[childIndex];
-          let node: Node = {
+          const childNode = children[childIndex];
+          const node: Node = {
             id: null, name: childNode.name, children: [],
             position: _.cloneDeep(childNode.position),
             orientation: _.cloneDeep(childNode.orientation),
@@ -541,7 +541,7 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
   }
 
   client_duplicateNode(rootNode: Node, newNodes: DuplicatedNode[]) {
-    for (let newNode of newNodes) {
+    for (const newNode of newNodes) {
       newNode.node.children.length = 0;
       this.nodes.client_add(newNode.node, newNode.parentId, newNode.index);
     }
@@ -570,10 +570,10 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
   }
 
   client_moveNodeTextureOffset(nodeIds: string[], offset: { x: number; y: number }) {
-    for (let id of nodeIds) {
-      let node = this.nodes.byId[id];
-      for (let faceName in node.shape.textureLayout) {
-        let faceOffset = node.shape.textureLayout[faceName].offset;
+    for (const id of nodeIds) {
+      const node = this.nodes.byId[id];
+      for (const faceName in node.shape.textureLayout) {
+        const faceOffset = node.shape.textureLayout[faceName].offset;
         faceOffset.x += offset.x;
         faceOffset.y += offset.y;
       }
@@ -595,20 +595,20 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
   }
 
   _changeTextureWidth(newWidth: number) {
-    for (let mapName in this.pub.maps) {
-      let oldMapData = this.textureDatas[mapName];
+    for (const mapName in this.pub.maps) {
+      const oldMapData = this.textureDatas[mapName];
 
-      let newMapBuffer = new ArrayBuffer(newWidth * this.pub.textureHeight * 4);
-      let newMapData = new Uint8ClampedArray(newMapBuffer);
+      const newMapBuffer = new ArrayBuffer(newWidth * this.pub.textureHeight * 4);
+      const newMapData = new Uint8ClampedArray(newMapBuffer);
 
       for (let y = 0; y < this.pub.textureHeight; y++) {
         let x = 0;
         while (x < Math.max(this.pub.textureWidth, newWidth)) {
-          let oldIndex = (y * this.pub.textureWidth + x) * 4;
-          let newIndex = (y * newWidth              + x) * 4;
+          const oldIndex = (y * this.pub.textureWidth + x) * 4;
+          const newIndex = (y * newWidth              + x) * 4;
 
           for (let i = 0; i < 4; i++) {
-            let value = x >= this.pub.textureWidth ? 255 : oldMapData[oldIndex + i];
+            const value = x >= this.pub.textureWidth ? 255 : oldMapData[oldIndex + i];
             newMapData[newIndex + i] = value;
           }
           x++;
@@ -635,11 +635,11 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
   }
 
   _changeTextureHeight(newHeight: number) {
-    for (let mapName in this.pub.maps) {
-      let oldMapData = this.textureDatas[mapName];
+    for (const mapName in this.pub.maps) {
+      const oldMapData = this.textureDatas[mapName];
 
-      let newMapBuffer = new ArrayBuffer(this.pub.textureWidth * newHeight * 4);
-      let newMapData = new Uint8ClampedArray(newMapBuffer);
+      const newMapBuffer = new ArrayBuffer(this.pub.textureWidth * newHeight * 4);
+      const newMapData = new Uint8ClampedArray(newMapBuffer);
 
       for (let y = 0; y < Math.max(this.pub.textureHeight, newHeight); y++) {
         for (let x = 0; x < this.pub.textureWidth; x++) {
@@ -659,7 +659,7 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
 
   server_editTexture(client: SupCore.RemoteClient, name: string, edits: TextureEdit[], callback: EditTextureCallback) {
     if (this.pub.maps[name] == null) { callback(`Invalid map name: ${name}`); return; }
-    for (let edit of edits) {
+    for (const edit of edits) {
       if (edit.x == null || edit.x < 0 || edit.x >= this.pub.textureWidth) { callback(`Invalid edit x: ${edit.x}`); return; }
       if (edit.y == null || edit.y < 0 || edit.y >= this.pub.textureHeight) { callback(`Invalid edit y: ${edit.y}`); return; }
       if (edit.value.r == null || edit.value.r < 0 || edit.value.r > 255) { callback(`Invalid edit value r: ${edit.value.r}`); return; }
@@ -677,16 +677,15 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
   client_editTexture(name: string, edits: TextureEdit[]) {
     this._editTextureData(name, edits);
 
-    let imageData = this.clientTextureDatas[name].imageData;
+    const imageData = this.clientTextureDatas[name].imageData;
     this.clientTextureDatas[name].ctx.putImageData(imageData, 0, 0);
     this.pub.textures[name].needsUpdate = true;
   }
 
   _editTextureData(name: string, edits: TextureEdit[]) {
-    let array = this.textureDatas[name];
-    for (let edit of edits) {
-      let index = edit.y * this.pub.textureWidth + edit.x;
-      index *= 4;
+    const array = this.textureDatas[name];
+    for (const edit of edits) {
+      const index = (edit.y * this.pub.textureWidth + edit.x) * 4;
       array[index + 0] = edit.value.r;
       array[index + 1] = edit.value.g;
       array[index + 2] = edit.value.b;

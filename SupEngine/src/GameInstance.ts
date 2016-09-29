@@ -56,7 +56,7 @@ export default class GameInstance extends EventEmitter {
   }
 
   tick(accumulatedTime: number, callback?: Function): { updates: number; timeLeft: number; }  {
-    let updateInterval = 1 / this.framesPerSecond * 1000;
+    const updateInterval = 1 / this.framesPerSecond * 1000;
 
     // Limit how many update()s to try and catch up,
     // to avoid falling into the "black pit of despair" aka "doom spiral".
@@ -64,7 +64,7 @@ export default class GameInstance extends EventEmitter {
     // See http://blogs.msdn.com/b/shawnhar/archive/2011/03/25/technical-term-that-should-exist-quot-black-pit-of-despair-quot.aspx
     const maxAccumulatedUpdates = 5;
 
-    let maxAccumulatedTime = maxAccumulatedUpdates * updateInterval;
+    const maxAccumulatedTime = maxAccumulatedUpdates * updateInterval;
     if (accumulatedTime > maxAccumulatedTime) accumulatedTime = maxAccumulatedTime;
 
     // Update
@@ -90,7 +90,7 @@ export default class GameInstance extends EventEmitter {
     // Start newly-added components
     let index = 0;
     while (index < this.componentsToBeStarted.length) {
-      let component = this.componentsToBeStarted[index];
+      const component = this.componentsToBeStarted[index];
 
       // If the component to be started is part of an actor
       // which will not be updated, skip it until next loop
@@ -103,7 +103,7 @@ export default class GameInstance extends EventEmitter {
       this.componentsToBeStarted.splice(index, 1);
     }
 
-    for (let pluginName in SupEngine.earlyUpdateFunctions) SupEngine.earlyUpdateFunctions[pluginName](this);
+    for (const pluginName in SupEngine.earlyUpdateFunctions) SupEngine.earlyUpdateFunctions[pluginName](this);
 
     // Update all actors
     this.cachedActors.forEach((actor) => { actor.update(); });
@@ -158,7 +158,7 @@ export default class GameInstance extends EventEmitter {
   }
 
   setActiveLayer(layer: number) {
-    for (let cachedActor of this.cachedActors) cachedActor.setActiveLayer(layer);
+    for (const cachedActor of this.cachedActors) cachedActor.setActiveLayer(layer);
   }
 
   draw() {
@@ -170,7 +170,7 @@ export default class GameInstance extends EventEmitter {
       if (order === 0) order = this.cachedActors.indexOf(a.actor) - this.cachedActors.indexOf(b.actor);
       return order;
     });
-    for (let renderComponent of this.renderComponents) renderComponent.render();
+    for (const renderComponent of this.renderComponents) renderComponent.render();
   }
 
   clear() { this.threeRenderer.clear(); }
@@ -181,7 +181,7 @@ export default class GameInstance extends EventEmitter {
     this.componentsToBeDestroyed.push(component);
     component.pendingForDestruction = true;
 
-    let index = this.componentsToBeStarted.indexOf(component);
+    const index = this.componentsToBeStarted.indexOf(component);
     if (index !== -1) this.componentsToBeStarted.splice(index, 1);
   }
 
@@ -202,7 +202,7 @@ export default class GameInstance extends EventEmitter {
   _doActorDestruction(actor: Actor) {
     while (actor.children.length > 0) this._doActorDestruction(actor.children[0]);
 
-    let cachedIndex = this.cachedActors.indexOf(actor);
+    const cachedIndex = this.cachedActors.indexOf(actor);
     if (cachedIndex !== -1) this.cachedActors.splice(cachedIndex, 1);
 
     actor._destroy();

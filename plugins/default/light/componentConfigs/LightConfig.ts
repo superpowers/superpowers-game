@@ -58,7 +58,7 @@ export default class LightConfig extends SupCore.Data.Base.ComponentConfig {
   };
 
   static create() {
-    let emptyConfig: LightConfigPub = {
+    const emptyConfig: LightConfigPub = {
       formatVersion: LightConfig.currentFormatVersion,
 
       type: "ambient",

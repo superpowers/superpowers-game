@@ -9,15 +9,15 @@ export default class ProjectSettingsEditor {
 
     // Vacuum
     {
-      let vacuumContainer = <HTMLDivElement>document.createElement("div");
+      const vacuumContainer = <HTMLDivElement>document.createElement("div");
       container.appendChild(vacuumContainer);
 
-      let button = <HTMLButtonElement>document.createElement("button");
+      const button = <HTMLButtonElement>document.createElement("button");
       button.style.marginRight = "0.5em";
       button.textContent = SupClient.i18n.t("settingsEditors:Project.deleteTrashedAssetsFromDisk");
       vacuumContainer.appendChild(button);
 
-      let span = <HTMLSpanElement>document.createElement("span");
+      const span = <HTMLSpanElement>document.createElement("span");
       vacuumContainer.appendChild(span);
 
       button.addEventListener("click", (event) => {

@@ -1,7 +1,7 @@
 import ArcadeBody2DUpdater from "./ArcadeBody2DUpdater";
 
-let THREE = SupEngine.THREE;
-let tmpVector3 = new THREE.Vector3();
+const THREE = SupEngine.THREE;
+const tmpVector3 = new THREE.Vector3();
 
 export default class ArcadeBody2DMarker extends SupEngine.ActorComponent {
   /* tslint:disable:variable-name */
@@ -30,7 +30,7 @@ export default class ArcadeBody2DMarker extends SupEngine.ActorComponent {
   setBox(width: number, height: number) {
     if (this.line != null) this._clearRenderer();
 
-    let geometry = new THREE.Geometry();
+    const geometry = new THREE.Geometry();
     geometry.vertices.push(
       new THREE.Vector3(-width / 2, -height / 2, 0.01),
       new THREE.Vector3( width / 2, -height / 2, 0.01),
@@ -39,7 +39,7 @@ export default class ArcadeBody2DMarker extends SupEngine.ActorComponent {
       new THREE.Vector3(-width / 2, -height / 2, 0.01)
     );
 
-    let material = new THREE.LineBasicMaterial({color: 0xf459e4});
+    const material = new THREE.LineBasicMaterial({color: 0xf459e4});
 
     this.line = new THREE.Line(geometry, material);
     this.markerActor.threeObject.add(this.line);

@@ -4,13 +4,13 @@ export function loadAsset(player: SupRuntime.Player, entry: any, callback: (err:
   player.getAssetData(`assets/${entry.storagePath}/sprite.json`, "json", (err, data) => {
     data.textures = {};
 
-    let mapsList = data.maps;
+    const mapsList = data.maps;
       data.textures = {};
       async.each<string>(mapsList, (key, cb) => {
-        let image = new Image();
+        const image = new Image();
 
         image.onload = () => {
-          let texture = data.textures[key] = new SupEngine.THREE.Texture(image);
+          const texture = data.textures[key] = new SupEngine.THREE.Texture(image);
 
           // Three.js might resize our texture to make its dimensions power-of-twos
           // because of WebGL limitations (see https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/Tutorial/Using_textures_in_WebGL#Non_power-of-two_textures)

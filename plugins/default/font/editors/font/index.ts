@@ -2,7 +2,7 @@ import TextRenderer from "../../components/TextRenderer";
 import TextRendererUpdater from "../../components/TextRendererUpdater";
 
 let data: { projectClient?: SupClient.ProjectClient; textUpdater?: TextRendererUpdater; };
-let ui: {
+const ui: {
   gameInstance: SupEngine.GameInstance,
 
   allSettings: string[],
@@ -13,7 +13,7 @@ let ui: {
   opacitySelect: HTMLSelectElement;
   opacitySlider: HTMLInputElement;
 } = {} as any;
-let noCharsetText = "The quick brown fox\njumps over the lazy dog\n\n0123456789 +-*/=";
+const noCharsetText = "The quick brown fox\njumps over the lazy dog\n\n0123456789 +-*/=";
 
 let socket: SocketIOClient.Socket;
 
@@ -27,9 +27,9 @@ function start() {
   ui.gameInstance.update();
   ui.gameInstance.draw();
 
-  let cameraActor = new SupEngine.Actor(ui.gameInstance, "Camera");
+  const cameraActor = new SupEngine.Actor(ui.gameInstance, "Camera");
   cameraActor.setLocalPosition(new SupEngine.THREE.Vector3(0, 0, 1));
-  let cameraComponent = new SupEngine.componentClasses["Camera"](cameraActor);
+  const cameraComponent = new SupEngine.componentClasses["Camera"](cameraActor);
   cameraComponent.setOrthographicMode(true);
   cameraComponent.setOrthographicScale(5);
   new SupEngine.editorComponentClasses["Camera2DControls"](cameraActor, cameraComponent, {
@@ -39,14 +39,14 @@ function start() {
   });
 
   // Sidebar
-  let fileSelect = document.querySelector("input.file-select") as HTMLInputElement;
+  const fileSelect = document.querySelector("input.file-select") as HTMLInputElement;
   fileSelect.addEventListener("change", onFileSelectChange);
   document.querySelector("button.upload").addEventListener("click", () => { fileSelect.click(); });
 
   ui.allSettings = ["isBitmap", "filtering", "pixelsPerUnit", "size", "color", "opacity", "gridWidth", "gridHeight", "charset", "charsetOffset"];
   ui.settings = {};
   ui.allSettings.forEach((setting: string) => {
-    let settingObj: any = ui.settings[setting] = document.querySelector(`.property-${setting}`);
+    const settingObj: any = ui.settings[setting] = document.querySelector(`.property-${setting}`);
     settingObj.dataset["name"] = setting;
 
     if (setting === "filtering" || setting === "color") {
@@ -55,17 +55,17 @@ function start() {
       });
     } else if (setting === "charset") {
       settingObj.addEventListener("input", (event: any) => {
-        let charset = (event.target.value !== "") ? event.target.value : null;
+        const charset = (event.target.value !== "") ? event.target.value : null;
         data.projectClient.editAsset(SupClient.query.asset, "setProperty", event.target.dataset["name"], charset);
       });
     } else if (setting === "isBitmap") {
       settingObj.addEventListener("change", (event: any) => {
-        let isBitmap = event.target.value === "bitmap";
+        const isBitmap = event.target.value === "bitmap";
         data.projectClient.editAsset(SupClient.query.asset, "setProperty", event.target.dataset["name"], isBitmap);
       });
     } else if (setting === "opacity") {
       settingObj.addEventListener("change", (event: any) => {
-        let value = parseFloat(event.target.value);
+        const value = parseFloat(event.target.value);
         if (isNaN(value)) return;
         data.projectClient.editAsset(SupClient.query.asset, "setProperty", setting, value);
       });
@@ -145,7 +145,7 @@ onEditCommands["setProperty"] = (path: string, value: any) => {
     ui.settings[path].value = value ? "bitmap" : "vector";
     if (!value) data.textUpdater.config_setProperty("text", noCharsetText);
     else {
-      let charset = data.textUpdater.fontAsset.pub.charset;
+      const charset = data.textUpdater.fontAsset.pub.charset;
       data.textUpdater.config_setProperty("text", charset != null ? charset : noCharsetText);
     }
     refreshFontMode();
@@ -170,7 +170,7 @@ onEditCommands["setProperty"] = (path: string, value: any) => {
 };
 
 function refreshFontMode() {
-  let fontOrImageString = SupClient.i18n.t(`fontEditor:${data.textUpdater.fontAsset.pub.isBitmap ? "texture" : "font.title"}`);
+  const fontOrImageString = SupClient.i18n.t(`fontEditor:${data.textUpdater.fontAsset.pub.isBitmap ? "texture" : "font.title"}`);
   document.querySelector(".sidebar .font-or-image th").textContent = fontOrImageString;
 
   if (data.textUpdater.fontAsset.pub.isBitmap) {
@@ -187,7 +187,7 @@ function refreshFontMode() {
 function onFileSelectChange(event: any) {
   if (event.target.files.length === 0) return;
 
-  let reader = new FileReader();
+  const reader = new FileReader();
   reader.onload = (event: any) => {
     data.projectClient.editAsset(SupClient.query.asset, "upload", event.target.result);
   };
@@ -199,7 +199,7 @@ function onFileSelectChange(event: any) {
 // Font download
 document.querySelector("button.download").addEventListener("click", (event) => {
   function triggerDownload(name: string) {
-    let anchor = document.createElement("a");
+    const anchor = document.createElement("a");
     document.body.appendChild(anchor);
     anchor.style.display = "none";
     anchor.href = data.textUpdater.fontAsset.url;
@@ -210,7 +210,7 @@ document.querySelector("button.download").addEventListener("click", (event) => {
     document.body.removeChild(anchor);
   }
 
-  let options = {
+  const options = {
     initialValue: SupClient.i18n.t("fontEditor:font.download.defaultName"),
     validationLabel: SupClient.i18n.t("common:actions.download")
   };
@@ -231,7 +231,7 @@ let accumulatedTime = 0;
 function tick(timestamp = 0) {
   accumulatedTime += timestamp - lastTimestamp;
   lastTimestamp = timestamp;
-  let { updates, timeLeft } = ui.gameInstance.tick(accumulatedTime);
+  const { updates, timeLeft } = ui.gameInstance.tick(accumulatedTime);
   accumulatedTime = timeLeft;
 
   if (updates > 0) ui.gameInstance.draw();

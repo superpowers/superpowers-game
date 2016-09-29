@@ -33,8 +33,8 @@ function onConnected() {
 }
 
 function onAssetReceived() {
-  let pub = data.spriteUpdater.spriteAsset.pub;
-  let texture = pub.textures[pub.mapSlots["map"]];
+  const pub = data.spriteUpdater.spriteAsset.pub;
+  const texture = pub.textures[pub.mapSlots["map"]];
 
   spritesheetArea.spritesheet = {
     textures: { map: texture },
@@ -62,8 +62,8 @@ function onAssetReceived() {
   centerAnimationCamera();
   centerSpritesheetCamera();
 
-  let width = texture != null ? texture.size.width / pub.grid.width : 1;
-  let height = texture != null ? texture.size.height / pub.grid.height : 1;
+  const width = texture != null ? texture.size.width / pub.grid.width : 1;
+  const height = texture != null ? texture.size.height / pub.grid.height : 1;
 
   spritesheetArea.gridRenderer.setGrid({
     width, height,
@@ -73,7 +73,7 @@ function onAssetReceived() {
   });
 
   ui.allSettings.forEach((setting: string) => {
-    let parts = setting.split(".");
+    const parts = setting.split(".");
     let obj = <any>pub;
     parts.slice(0, parts.length - 1).forEach((part) => { obj = obj[part]; });
     setupProperty(setting, obj[parts[parts.length - 1]]);
@@ -83,8 +83,8 @@ function onAssetReceived() {
     setupAnimation(animation, index);
   });
 
-  for (let mapName in pub.maps) if (pub.maps[mapName] != null) setupMap(mapName);
-  for (let slotName in pub.mapSlots) ui.mapSlotsInput[slotName].value = pub.mapSlots[slotName] != null ? pub.mapSlots[slotName] : "";
+  for (const mapName in pub.maps) if (pub.maps[mapName] != null) setupMap(mapName);
+  for (const slotName in pub.mapSlots) ui.mapSlotsInput[slotName].value = pub.mapSlots[slotName] != null ? pub.mapSlots[slotName] : "";
 }
 
 onEditCommands["setProperty"] = (path: string, value: any) => {
@@ -93,19 +93,19 @@ onEditCommands["setProperty"] = (path: string, value: any) => {
 onEditCommands["newAnimation"] = (animation: any, index: number) => { setupAnimation(animation, index); };
 
 onEditCommands["deleteAnimation"] = (id: string) => {
-  let animationElt = ui.animationsTreeView.treeRoot.querySelector(`li[data-id='${id}']`) as HTMLLIElement;
+  const animationElt = ui.animationsTreeView.treeRoot.querySelector(`li[data-id='${id}']`) as HTMLLIElement;
   ui.animationsTreeView.remove(animationElt);
 
   if (ui.selectedAnimationId === id) updateSelectedAnimation();
 };
 
 onEditCommands["moveAnimation"] = (id: string, index: number) => {
-  let animationElt = ui.animationsTreeView.treeRoot.querySelector(`li[data-id='${id}']`) as HTMLLIElement;
+  const animationElt = ui.animationsTreeView.treeRoot.querySelector(`li[data-id='${id}']`) as HTMLLIElement;
   ui.animationsTreeView.insertAt(animationElt, "item", index);
 };
 
 onEditCommands["setAnimationProperty"] = (id: string, key: string, value: any) => {
-  let animationElt = ui.animationsTreeView.treeRoot.querySelector(`li[data-id='${id}']`) as HTMLLIElement;
+  const animationElt = ui.animationsTreeView.treeRoot.querySelector(`li[data-id='${id}']`) as HTMLLIElement;
 
   switch (key) {
     case "name": animationElt.querySelector(".name").textContent = value; break;
@@ -124,11 +124,11 @@ onEditCommands["setAnimationProperty"] = (id: string, key: string, value: any) =
 };
 
 function updateSpritesheet() {
-  let pub = data.spriteUpdater.spriteAsset.pub;
-  let texture = pub.textures[pub.mapSlots["map"]];
+  const pub = data.spriteUpdater.spriteAsset.pub;
+  const texture = pub.textures[pub.mapSlots["map"]];
   if (texture == null) return;
 
-  let asset = spritesheetArea.spritesheet;
+  const asset = spritesheetArea.spritesheet;
   asset.textures["map"] = texture;
   asset.textures["map"].needsUpdate = true;
   asset.grid.width = texture.size.width;
@@ -146,22 +146,22 @@ onEditCommands["setMaps"] = () => { updateSpritesheet(); };
 onEditCommands["newMap"] = (name: string) => { setupMap(name); };
 
 onEditCommands["renameMap"] = (oldName: string, newName: string) => {
-  let pub = data.spriteUpdater.spriteAsset.pub;
+  const pub = data.spriteUpdater.spriteAsset.pub;
 
-  let textureElt = <HTMLLIElement>ui.texturesTreeView.treeRoot.querySelector(`[data-name="${oldName}"]`);
+  const textureElt = <HTMLLIElement>ui.texturesTreeView.treeRoot.querySelector(`[data-name="${oldName}"]`);
   textureElt.dataset["name"] = newName;
   textureElt.querySelector("span").textContent = newName;
 
-  for (let slotName in pub.mapSlots)
+  for (const slotName in pub.mapSlots)
     if (ui.mapSlotsInput[slotName].value === oldName) ui.mapSlotsInput[slotName].value = newName;
 };
 
 onEditCommands["deleteMap"] = (name: string) => {
-  let textureElt = ui.texturesTreeView.treeRoot.querySelector(`li[data-name="${name}"]`) as HTMLLIElement;
+  const textureElt = ui.texturesTreeView.treeRoot.querySelector(`li[data-name="${name}"]`) as HTMLLIElement;
   ui.texturesTreeView.remove(textureElt);
 
-  let pub = data.spriteUpdater.spriteAsset.pub;
-  for (let slotName in pub.mapSlots)
+  const pub = data.spriteUpdater.spriteAsset.pub;
+  for (const slotName in pub.mapSlots)
     if (ui.mapSlotsInput[slotName].value === name) ui.mapSlotsInput[slotName].value = "";
 };
 

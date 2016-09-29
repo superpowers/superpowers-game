@@ -7,7 +7,7 @@ import ui, {
 import engine, { start as engineStart, setupHelpers } from "./engine";
 import * as async from "async";
 
-let THREE = SupEngine.THREE;
+const THREE = SupEngine.THREE;
 import { DuplicatedNode } from "../../data/SceneAsset";
 import SceneSettingsResource from "../../data/SceneSettingsResource";
 import GameSettingsResource from "../../../gameSettings/data/GameSettingsResource";
@@ -57,7 +57,7 @@ function onWelcome() {
 }
 
 function loadPlugins(callback: (err: Error) => void) {
-  let i18nFiles: SupClient.i18n.File[] = [];
+  const i18nFiles: SupClient.i18n.File[] = [];
   i18nFiles.push({ root: `${window.location.pathname}/../..`, name: "sceneEditor" });
 
   SupClient.fetch(`/systems/${SupCore.system.id}/plugins.json`, "json", (err: Error, pluginsInfo: SupCore.PluginsInfo) => {
@@ -119,20 +119,20 @@ function onSceneAssetReceived(/*err: string, asset: SceneAsset*/) {
   ui.nodesTreeView.clearSelection();
   ui.nodesTreeView.treeRoot.innerHTML = "";
 
-  let box = {
+  const box = {
     x: { min: Infinity, max: -Infinity },
     y: { min: Infinity, max: -Infinity },
     z: { min: Infinity, max: -Infinity },
   };
 
-  let pos = new THREE.Vector3();
+  const pos = new THREE.Vector3();
   function walk(node: Node, parentNode: Node, parentElt: HTMLLIElement) {
-    let liElt = createNodeElement(node);
+    const liElt = createNodeElement(node);
     ui.nodesTreeView.append(liElt, "group", parentElt);
 
     if (node.children != null && node.children.length > 0) {
       liElt.classList.add("collapsed");
-      for (let child of node.children) walk(child, node, liElt);
+      for (const child of node.children) walk(child, node, liElt);
     }
 
     // Compute scene bounding box
@@ -147,11 +147,11 @@ function onSceneAssetReceived(/*err: string, asset: SceneAsset*/) {
     box.z.min = Math.min(box.z.min, pos.z);
     box.z.max = Math.max(box.z.max, pos.z);
   }
-  for (let node of data.sceneUpdater.sceneAsset.nodes.pub) walk(node, null, null);
+  for (const node of data.sceneUpdater.sceneAsset.nodes.pub) walk(node, null, null);
 
   // Place camera so that it fits the scene
   if (data.sceneUpdater.sceneAsset.nodes.pub.length > 0) {
-    let z = box.z.max + 10;
+    const z = box.z.max + 10;
     engine.cameraActor.setLocalPosition(new THREE.Vector3((box.x.min + box.x.max) / 2, (box.y.min + box.y.max) / 2, z));
     ui.camera2DZ.value = z.toString();
   }
@@ -160,7 +160,7 @@ function onSceneAssetReceived(/*err: string, asset: SceneAsset*/) {
 }
 
 const addNode = onEditCommands["addNode"] = (node: Node, parentId: string, index: number) => {
-  let nodeElt = createNodeElement(node);
+  const nodeElt = createNodeElement(node);
   let parentElt: HTMLLIElement;
   if (parentId != null) parentElt = ui.nodesTreeView.treeRoot.querySelector(`[data-id='${parentId}']`) as HTMLLIElement;
   ui.nodesTreeView.insertAt(nodeElt, "group", index, parentElt);
@@ -168,8 +168,8 @@ const addNode = onEditCommands["addNode"] = (node: Node, parentId: string, index
 
 onEditCommands["moveNode"] = (id: string, parentId: string, index: number) => {
   // Reparent tree node
-  let nodeElt = ui.nodesTreeView.treeRoot.querySelector(`[data-id='${id}']`) as HTMLLIElement;
-  let isInspected = ui.nodesTreeView.selectedNodes.length === 1 && nodeElt === ui.nodesTreeView.selectedNodes[0];
+  const nodeElt = ui.nodesTreeView.treeRoot.querySelector(`[data-id='${id}']`) as HTMLLIElement;
+  const isInspected = ui.nodesTreeView.selectedNodes.length === 1 && nodeElt === ui.nodesTreeView.selectedNodes[0];
 
   let parentElt: HTMLLIElement;
   if (parentId != null) parentElt = ui.nodesTreeView.treeRoot.querySelector(`[data-id='${parentId}']`) as HTMLLIElement;
@@ -177,7 +177,7 @@ onEditCommands["moveNode"] = (id: string, parentId: string, index: number) => {
 
   // Refresh inspector
   if (isInspected) {
-    let node = data.sceneUpdater.sceneAsset.nodes.byId[id];
+    const node = data.sceneUpdater.sceneAsset.nodes.byId[id];
     setInspectorPosition(<THREE.Vector3>node.position);
     setInspectorOrientation(<THREE.Quaternion>node.orientation);
     setInspectorScale(<THREE.Vector3>node.scale);
@@ -188,9 +188,9 @@ onEditCommands["moveNode"] = (id: string, parentId: string, index: number) => {
 };
 
 onEditCommands["setNodeProperty"] = (id: string, path: string, value: any) => {
-  let nodeElt = ui.nodesTreeView.treeRoot.querySelector(`[data-id='${id}']`);
-  let isInspected = ui.nodesTreeView.selectedNodes.length === 1 && nodeElt === ui.nodesTreeView.selectedNodes[0];
-  let node = data.sceneUpdater.sceneAsset.nodes.byId[id];
+  const nodeElt = ui.nodesTreeView.treeRoot.querySelector(`[data-id='${id}']`);
+  const isInspected = ui.nodesTreeView.selectedNodes.length === 1 && nodeElt === ui.nodesTreeView.selectedNodes[0];
+  const node = data.sceneUpdater.sceneAsset.nodes.byId[id];
 
   switch (path) {
     case "name":
@@ -221,15 +221,15 @@ onEditCommands["setNodeProperty"] = (id: string, path: string, value: any) => {
 };
 
 onEditCommands["duplicateNode"] = (rootNode: Node, newNodes: DuplicatedNode[]) => {
-  for (let newNode of newNodes) addNode(newNode.node, newNode.parentId, newNode.index);
+  for (const newNode of newNodes) addNode(newNode.node, newNode.parentId, newNode.index);
 
   // TODO: Only refresh if selection is affected
   setupHelpers();
 };
 
 onEditCommands["removeNode"] = (id: string) => {
-  let nodeElt = ui.nodesTreeView.treeRoot.querySelector(`[data-id='${id}']`) as HTMLLIElement;
-  let isInspected = ui.nodesTreeView.selectedNodes.length === 1 && nodeElt === ui.nodesTreeView.selectedNodes[0];
+  const nodeElt = ui.nodesTreeView.treeRoot.querySelector(`[data-id='${id}']`) as HTMLLIElement;
+  const isInspected = ui.nodesTreeView.selectedNodes.length === 1 && nodeElt === ui.nodesTreeView.selectedNodes[0];
 
   ui.nodesTreeView.remove(nodeElt);
   if (isInspected) setupSelectedNode();
@@ -238,10 +238,10 @@ onEditCommands["removeNode"] = (id: string) => {
 };
 
 onEditCommands["addComponent"] = (nodeComponent: Component, nodeId: string, index: number) => {
-  let isInspected = ui.nodesTreeView.selectedNodes.length === 1 && nodeId === ui.nodesTreeView.selectedNodes[0].dataset["id"];
+  const isInspected = ui.nodesTreeView.selectedNodes.length === 1 && nodeId === ui.nodesTreeView.selectedNodes[0].dataset["id"];
 
   if (isInspected) {
-    let componentElt = createComponentElement(nodeId, nodeComponent);
+    const componentElt = createComponentElement(nodeId, nodeComponent);
     // TODO: Take index into account
     ui.inspectorElt.querySelector(".components").appendChild(componentElt);
   }
@@ -251,9 +251,9 @@ onEditCommands["addComponent"] = (nodeComponent: Component, nodeId: string, inde
 };
 
 onEditCommands["editComponent"] = (nodeId: string, componentId: string, command: string, ...args: any[]) => {
-  let isInspected = ui.nodesTreeView.selectedNodes.length === 1 && nodeId === ui.nodesTreeView.selectedNodes[0].dataset["id"];
+  const isInspected = ui.nodesTreeView.selectedNodes.length === 1 && nodeId === ui.nodesTreeView.selectedNodes[0].dataset["id"];
   if (isInspected) {
-    let componentEditor = ui.componentEditors[componentId];
+    const componentEditor = ui.componentEditors[componentId];
     const commandFunction = (componentEditor as any)[`config_${command}`];
     if (commandFunction != null) commandFunction.apply(componentEditor, args);
   }
@@ -263,13 +263,13 @@ onEditCommands["editComponent"] = (nodeId: string, componentId: string, command:
 };
 
 onEditCommands["removeComponent"] = (nodeId: string, componentId: string) => {
-  let isInspected = ui.nodesTreeView.selectedNodes.length === 1 && nodeId === ui.nodesTreeView.selectedNodes[0].dataset["id"];
+  const isInspected = ui.nodesTreeView.selectedNodes.length === 1 && nodeId === ui.nodesTreeView.selectedNodes[0].dataset["id"];
 
   if (isInspected) {
     ui.componentEditors[componentId].destroy();
     delete ui.componentEditors[componentId];
 
-    let componentElt = <HTMLDivElement>ui.inspectorElt.querySelector(`.components > div[data-component-id='${componentId}']`);
+    const componentElt = <HTMLDivElement>ui.inspectorElt.querySelector(`.components > div[data-component-id='${componentId}']`);
     componentElt.parentElement.removeChild(componentElt);
   }
 

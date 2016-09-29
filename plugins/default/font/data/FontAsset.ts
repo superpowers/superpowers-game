@@ -88,7 +88,7 @@ export default class FontAsset extends SupCore.Data.Base.Asset {
 
   load(assetPath: string) {
     fs.readFile(path.join(assetPath, "asset.json"), { encoding: "utf8" }, (err, json) => {
-      let pub = JSON.parse(json);
+      const pub = JSON.parse(json);
 
       fs.readFile(path.join(assetPath, "font.dat"), (err, buffer) => {
         pub.font = buffer;
@@ -171,8 +171,8 @@ export default class FontAsset extends SupCore.Data.Base.Asset {
   private loadTTFont() {
     if ((<any>this.pub.font).byteLength === 0) return;
 
-    let typedArray = new Uint8Array(this.pub.font);
-    let blob = new Blob([ typedArray ], { type: "font/*" });
+    const typedArray = new Uint8Array(this.pub.font);
+    const blob = new Blob([ typedArray ], { type: "font/*" });
     this.url = URL.createObjectURL(blob);
     this.pub.name = `Font${this.id}`;
     this.font = new FontFace(this.pub.name, `url(${this.url})`);
@@ -182,9 +182,9 @@ export default class FontAsset extends SupCore.Data.Base.Asset {
   private loadBitmapFont() {
     if ((<any>this.pub.bitmap).byteLength === 0) return;
 
-    let image = new Image();
-    let typedArray = new Uint8Array(this.pub.bitmap);
-    let blob = new Blob([ typedArray ], { type: "image/*" });
+    const image = new Image();
+    const typedArray = new Uint8Array(this.pub.bitmap);
+    const blob = new Blob([ typedArray ], { type: "image/*" });
     this.url = URL.createObjectURL(blob);
     image.src = this.url;
 

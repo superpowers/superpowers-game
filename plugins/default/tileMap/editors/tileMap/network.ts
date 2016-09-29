@@ -10,7 +10,7 @@ import TileSet from "../../components/TileSet";
 import TileSetRenderer from "../../components/TileSetRenderer";
 import TileSetRendererUpdater from "../../components/TileSetRendererUpdater";
 
-export let data: { projectClient?: SupClient.ProjectClient; tileMapUpdater?: TileMapRendererUpdater, tileSetUpdater?: TileSetRendererUpdater } = {};
+export const data: { projectClient?: SupClient.ProjectClient; tileMapUpdater?: TileMapRendererUpdater, tileSetUpdater?: TileSetRendererUpdater } = {};
 
 let socket: SocketIOClient.Socket;
 SupClient.i18n.load([{ root: `${window.location.pathname}/../..`, name: "tileMapEditor" }], () => {
@@ -44,8 +44,8 @@ const setProperty = onEditCommands["setProperty"] = (path: string, value: any) =
   ui.settings[path].value = value;
 
   if (path === "pixelsPerUnit" && data.tileMapUpdater.tileSetAsset != null) {
-    let tileSetPub = data.tileMapUpdater.tileSetAsset.pub;
-    let tileMapPub = data.tileMapUpdater.tileMapAsset.pub;
+    const tileSetPub = data.tileMapUpdater.tileSetAsset.pub;
+    const tileMapPub = data.tileMapUpdater.tileMapAsset.pub;
     mapArea.cameraControls.setMultiplier(value / tileSetPub.grid.width / 1);
 
     mapArea.gridRenderer.setRatio({ x: tileMapPub.pixelsPerUnit / tileSetPub.grid.width, y: tileMapPub.pixelsPerUnit / tileSetPub.grid.height });
@@ -80,7 +80,7 @@ function onTileMapAssetReceived() {
 }
 
 function updateTileSetInput() {
-  let tileSetName =
+  const tileSetName =
     (data.tileMapUpdater.tileMapAsset.pub.tileSetId != null) ?
       data.projectClient.entries.getPathFromId(data.tileMapUpdater.tileMapAsset.pub.tileSetId) : "";
   ui.tileSetInput.value = tileSetName;
@@ -93,8 +93,8 @@ onEditCommands["changeTileSet"] = () => {
 };
 
 onEditCommands["resizeMap"] = () => {
-  let width = data.tileMapUpdater.tileMapAsset.pub.width;
-  let height = data.tileMapUpdater.tileMapAsset.pub.height;
+  const width = data.tileMapUpdater.tileMapAsset.pub.width;
+  const height = data.tileMapUpdater.tileMapAsset.pub.height;
   ui.sizeInput.value = `${width} × ${height}`;
   mapArea.gridRenderer.resize(width, height);
 };
@@ -102,21 +102,21 @@ onEditCommands["resizeMap"] = () => {
 onEditCommands["newLayer"] = (layerPub: TileMapLayerPub, index: number) => {
   setupLayer(layerPub, index);
 
-  let pub = data.tileMapUpdater.tileMapAsset.pub;
-  let layer = data.tileMapUpdater.tileMapAsset.layers.byId[tileSetArea.selectedLayerId];
-  let z = (pub.layers.indexOf(layer) + 0.5) * pub.layerDepthOffset;
+  const pub = data.tileMapUpdater.tileMapAsset.pub;
+  const layer = data.tileMapUpdater.tileMapAsset.layers.byId[tileSetArea.selectedLayerId];
+  const z = (pub.layers.indexOf(layer) + 0.5) * pub.layerDepthOffset;
   mapArea.patternActor.setLocalPosition(new SupEngine.THREE.Vector3(0, 0, z));
 
   refreshLayersId();
 };
 
 onEditCommands["renameLayer"] = (id: string, newName: string) => {
-  let layerElt = ui.layersTreeView.treeRoot.querySelector(`[data-id="${id}"]`);
+  const layerElt = ui.layersTreeView.treeRoot.querySelector(`[data-id="${id}"]`);
   layerElt.querySelector(".name").textContent = newName;
 };
 
 onEditCommands["deleteLayer"] = (id: string) => {
-  let layerElt = ui.layersTreeView.treeRoot.querySelector(`li[data-id="${id}"]`) as HTMLLIElement;
+  const layerElt = ui.layersTreeView.treeRoot.querySelector(`li[data-id="${id}"]`) as HTMLLIElement;
   ui.layersTreeView.remove(layerElt);
 
   if (id === tileSetArea.selectedLayerId) {
@@ -125,22 +125,22 @@ onEditCommands["deleteLayer"] = (id: string) => {
     ui.layersTreeView.addToSelection(ui.layersTreeView.treeRoot.querySelector(`li[data-id="${tileSetArea.selectedLayerId}"]`) as HTMLLIElement);
   }
 
-  let pub = data.tileMapUpdater.tileMapAsset.pub;
-  let layer = data.tileMapUpdater.tileMapAsset.layers.byId[tileSetArea.selectedLayerId];
-  let z = (pub.layers.indexOf(layer) + 0.5) * pub.layerDepthOffset;
+  const pub = data.tileMapUpdater.tileMapAsset.pub;
+  const layer = data.tileMapUpdater.tileMapAsset.layers.byId[tileSetArea.selectedLayerId];
+  const z = (pub.layers.indexOf(layer) + 0.5) * pub.layerDepthOffset;
   mapArea.patternActor.setLocalPosition(new SupEngine.THREE.Vector3(0, 0, z));
 
   refreshLayersId();
 };
 
 onEditCommands["moveLayer"] = (id: string, newIndex: number) => {
-  let pub = data.tileMapUpdater.tileMapAsset.pub;
+  const pub = data.tileMapUpdater.tileMapAsset.pub;
 
-  let layerElt = ui.layersTreeView.treeRoot.querySelector(`li[data-id="${id}"]`) as HTMLLIElement;
+  const layerElt = ui.layersTreeView.treeRoot.querySelector(`li[data-id="${id}"]`) as HTMLLIElement;
   ui.layersTreeView.insertAt(layerElt, "item", pub.layers.length - newIndex);
 
-  let layer = data.tileMapUpdater.tileMapAsset.layers.byId[tileSetArea.selectedLayerId];
-  let z = (pub.layers.indexOf(layer) + 0.5) * pub.layerDepthOffset;
+  const layer = data.tileMapUpdater.tileMapAsset.layers.byId[tileSetArea.selectedLayerId];
+  const z = (pub.layers.indexOf(layer) + 0.5) * pub.layerDepthOffset;
   mapArea.patternActor.setLocalPosition(new SupEngine.THREE.Vector3(0, 0, z));
 
   refreshLayersId();
@@ -148,8 +148,8 @@ onEditCommands["moveLayer"] = (id: string, newIndex: number) => {
 
 // Tile Set
 function onTileSetAssetReceived() {
-  let tileMapPub = data.tileMapUpdater.tileMapAsset.pub;
-  let tileSetPub = data.tileMapUpdater.tileSetAsset.pub;
+  const tileMapPub = data.tileMapUpdater.tileMapAsset.pub;
+  const tileSetPub = data.tileMapUpdater.tileSetAsset.pub;
 
   mapArea.cameraControls.setMultiplier(tileMapPub.pixelsPerUnit / tileSetPub.grid.width / 1);
   mapArea.gridRenderer.setRatio({ x: tileMapPub.pixelsPerUnit / tileSetPub.grid.width, y: tileMapPub.pixelsPerUnit / tileSetPub.grid.height });
@@ -167,8 +167,8 @@ onTileSetEditCommands["upload"] = () => {
 };
 
 onTileSetEditCommands["setProperty"] = () => {
-  let tileMapPub = data.tileMapUpdater.tileMapAsset.pub;
-  let tileSetPub = data.tileMapUpdater.tileSetAsset.pub;
+  const tileMapPub = data.tileMapUpdater.tileMapAsset.pub;
+  const tileSetPub = data.tileMapUpdater.tileSetAsset.pub;
 
   mapArea.cameraControls.setMultiplier(tileMapPub.pixelsPerUnit / tileSetPub.grid.width / 1);
   mapArea.gridRenderer.setRatio({ x: tileMapPub.pixelsPerUnit / tileSetPub.grid.width, y: tileMapPub.pixelsPerUnit / tileSetPub.grid.height });

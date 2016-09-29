@@ -16,7 +16,7 @@ export default class TileMapSettingsEditor {
   constructor(container: HTMLDivElement, projectClient: SupClient.ProjectClient) {
     this.projectClient = projectClient;
 
-    let { tbody } = SupClient.table.createTable(container);
+    const { tbody } = SupClient.table.createTable(container);
 
     this.pixelsPerUnitRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("settingsEditors:TileMap.pixelsPerUnit"));
     this.fields["pixelsPerUnit"] = SupClient.table.appendNumberField(this.pixelsPerUnitRow.valueCell, "");
@@ -31,13 +31,13 @@ export default class TileMapSettingsEditor {
     this.fields["layerDepthOffset"] = SupClient.table.appendNumberField(this.depthOffsetRow.valueCell, "");
 
     this.gridSizeRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("settingsEditors:TileMap.tileSetGridSize"));
-    let gridFields = SupClient.table.appendNumberFields(this.gridSizeRow.valueCell, ["", ""]);
+    const gridFields = SupClient.table.appendNumberFields(this.gridSizeRow.valueCell, ["", ""]);
     this.fields["grid.width"] = gridFields[0];
     this.fields["grid.height"] = gridFields[1];
 
-    let fieldNames = Object.keys(this.fields);
+    const fieldNames = Object.keys(this.fields);
     fieldNames.forEach((fieldName) => {
-      let field = this.fields[fieldName];
+      const field = this.fields[fieldName];
       field.addEventListener("change", (event: any) => {
         this.projectClient.editResource("tileMapSettings", "setProperty", fieldName, parseInt(event.target.value, 10));
       });
@@ -48,7 +48,7 @@ export default class TileMapSettingsEditor {
   onResourceReceived = (resourceId: string, resource: TileMapSettingsResource) => {
     this.resource = resource;
 
-    for (let setting in resource.pub) {
+    for (const setting in resource.pub) {
       if (setting === "formatVersion") continue;
 
       if (setting === "grid") {

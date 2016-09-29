@@ -1,4 +1,4 @@
-let THREE = SupEngine.THREE;
+const THREE = SupEngine.THREE;
 import Light from "./Light";
 
 export default class LightMarker extends Light {

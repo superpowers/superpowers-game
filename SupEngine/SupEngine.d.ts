@@ -1,18 +1,18 @@
 /// <reference path="../../../typings/tsd.d.ts" />
 /// <reference path="./typings/tsd.d.ts" />
 
-declare let __tmpTHREE: typeof THREE;
+declare const __tmpTHREE: typeof THREE;
 
 declare namespace SupEngine {
-  export let THREE: typeof __tmpTHREE;
+  export const THREE: typeof __tmpTHREE;
 
-  export let editorComponentClasses: { [name: string]: any };
+  export const editorComponentClasses: { [name: string]: any };
   export function registerEditorComponentClass(name: string, component: any): void;
 
-  export let componentClasses: { [name: string]: any };
+  export const componentClasses: { [name: string]: any };
   export function registerComponentClass(name: string, plugin: any): void;
 
-  export let earlyUpdateFunctions: { [name: string]: (gameInstance: GameInstance) => void };
+  export const earlyUpdateFunctions: { [name: string]: (gameInstance: GameInstance) => void };
   export function registerEarlyUpdateFunction(name: string, callback: (gameInstance: GameInstance) => void): void;
 
   class GameInstance extends EventEmitter {

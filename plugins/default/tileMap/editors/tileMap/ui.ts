@@ -52,11 +52,11 @@ ui.sizeInput = document.querySelector(".property-size") as HTMLInputElement;
 
 ui.settings = {};
 [ "pixelsPerUnit", "layerDepthOffset" ].forEach((setting: string) => {
-  let queryName = `.property-${setting}`;
-  let settingObj = ui.settings[setting] = document.querySelector(queryName) as HTMLInputElement;
+  const queryName = `.property-${setting}`;
+  const settingObj = ui.settings[setting] = document.querySelector(queryName) as HTMLInputElement;
 
   settingObj.addEventListener("change", (event) => {
-    let value = (setting === "layerDepthOffset") ? parseFloat(settingObj.value) : parseInt(settingObj.value, 10);
+    const value = (setting === "layerDepthOffset") ? parseFloat(settingObj.value) : parseInt(settingObj.value, 10);
     data.projectClient.editAsset(SupClient.query.asset, "setProperty", setting, value);
   });
 });
@@ -93,7 +93,7 @@ ui.mousePositionLabel = {
 document.addEventListener("keyup", (event) => {
   if ((event.target as HTMLInputElement).tagName === "INPUT") return;
 
-  let keyEvent = (window as any).KeyEvent;
+  const keyEvent = (window as any).KeyEvent;
   switch (event.keyCode) {
     case keyEvent.DOM_VK_B: selectBrushTool(); break;
     case keyEvent.DOM_VK_F: selectFillTool(); break;
@@ -117,15 +117,15 @@ SupClient.setupHelpCallback(() => {
 });
 
 function onTileSetChange(event: Event) {
-  let value = (event.target as HTMLInputElement).value;
+  const value = (event.target as HTMLInputElement).value;
   if (value === "") { data.projectClient.editAsset(SupClient.query.asset, "changeTileSet", null); return; }
 
-  let entry = SupClient.findEntryByPath(data.projectClient.entries.pub, value);
+  const entry = SupClient.findEntryByPath(data.projectClient.entries.pub, value);
   if (entry != null && entry.type === "tileSet") data.projectClient.editAsset(SupClient.query.asset, "changeTileSet", entry.id);
 }
 
 function onResizeMapClick() {
-  let options = {
+  const options = {
     initialValue: data.tileMapUpdater.tileMapAsset.pub.width.toString(),
     validationLabel: SupClient.i18n.t("tileMapEditor:resize"),
     cancelLabel: SupClient.i18n.t("common:actions.skip")
@@ -136,7 +136,7 @@ function onResizeMapClick() {
     if (newWidthString != null && !isNaN(parseInt(newWidthString, 10)))
       newWidth = parseInt(newWidthString, 10);
 
-    let options = {
+    const options = {
       initialValue: data.tileMapUpdater.tileMapAsset.pub.height.toString(),
       validationLabel: SupClient.i18n.t("tileMapEditor:resize"),
       cancelLabel: SupClient.i18n.t("common:actions.skip")
@@ -154,7 +154,7 @@ function onResizeMapClick() {
 }
 
 function onMoveMapClick() {
-  let options = {
+  const options = {
     initialValue: "0",
     validationLabel: SupClient.i18n.t("tileMapEditor:applyOffset"),
     cancelLabel: SupClient.i18n.t("common:actions.skip")
@@ -177,7 +177,7 @@ function onMoveMapClick() {
 }
 
 function onNewLayerClick() {
-  let options = {
+  const options = {
     initialValue: SupClient.i18n.t("tileMapEditor:newLayerInitialValue"),
     validationLabel: SupClient.i18n.t("common:actions.create")
   };
@@ -198,10 +198,10 @@ function onNewLayerClick() {
 function onRenameLayerClick() {
   if (ui.layersTreeView.selectedNodes.length !== 1) return;
 
-  let selectedNode = ui.layersTreeView.selectedNodes[0];
-  let layer = data.tileMapUpdater.tileMapAsset.layers.byId[selectedNode.dataset["id"]];
+  const selectedNode = ui.layersTreeView.selectedNodes[0];
+  const layer = data.tileMapUpdater.tileMapAsset.layers.byId[selectedNode.dataset["id"]];
 
-  let options = {
+  const options = {
     initialValue: layer.name,
     validationLabel: SupClient.i18n.t("common:actions.rename")
   };
@@ -215,19 +215,19 @@ function onRenameLayerClick() {
 function onDeleteLayerClick() {
   if (ui.layersTreeView.selectedNodes.length !== 1) return;
 
-  let confirmLabel = SupClient.i18n.t("tileMapEditor:deleteLayerConfirm");
-  let validationLabel = SupClient.i18n.t("common:actions.delete");
+  const confirmLabel = SupClient.i18n.t("tileMapEditor:deleteLayerConfirm");
+  const validationLabel = SupClient.i18n.t("common:actions.delete");
   new SupClient.Dialogs.ConfirmDialog(confirmLabel, { validationLabel }, (confirm) => {
     if (!confirm) return;
 
-    let selectedNode = ui.layersTreeView.selectedNodes[0];
+    const selectedNode = ui.layersTreeView.selectedNodes[0];
     data.projectClient.editAsset(SupClient.query.asset, "deleteLayer", selectedNode.dataset["id"]);
   });
 }
 
 function onLayersTreeViewDrop(event: DragEvent, dropLocation: TreeView.DropLocation, orderedNodes: HTMLLIElement[]) {
-  let id = orderedNodes[0].dataset["id"];
-  let newIndex = SupClient.getListViewDropIndex(dropLocation, data.tileMapUpdater.tileMapAsset.layers, true);
+  const id = orderedNodes[0].dataset["id"];
+  const newIndex = SupClient.getListViewDropIndex(dropLocation, data.tileMapUpdater.tileMapAsset.layers, true);
 
   data.projectClient.editAsset(SupClient.query.asset, "moveLayer", id, newIndex);
   return false;
@@ -242,9 +242,9 @@ function onLayerSelect() {
 
   onChangeHighlight();
 
-  let pub = data.tileMapUpdater.tileMapAsset.pub;
-  let layer = data.tileMapUpdater.tileMapAsset.layers.byId[tileSetArea.selectedLayerId];
-  let z = (pub.layers.indexOf(layer) + 0.5) * pub.layerDepthOffset;
+  const pub = data.tileMapUpdater.tileMapAsset.pub;
+  const layer = data.tileMapUpdater.tileMapAsset.layers.byId[tileSetArea.selectedLayerId];
+  const z = (pub.layers.indexOf(layer) + 0.5) * pub.layerDepthOffset;
   mapArea.patternActor.setLocalPosition(new SupEngine.THREE.Vector3(0, 0, z));
 }
 
@@ -253,8 +253,8 @@ function onChangeGridDisplay() {
 }
 
 function onChangeHighlight() {
-  for (let id in data.tileMapUpdater.tileMapRenderer.layerMeshesById) {
-    let layerMesh = data.tileMapUpdater.tileMapRenderer.layerMeshesById[id];
+  for (const id in data.tileMapUpdater.tileMapRenderer.layerMeshesById) {
+    const layerMesh = data.tileMapUpdater.tileMapRenderer.layerMeshesById[id];
 
     if (ui.highlightCheckbox.checked && id !== tileSetArea.selectedLayerId) {
       layerMesh.material.opacity = parseFloat(ui.highlightSlider.value) / 100;
@@ -270,12 +270,12 @@ export function selectBrushTool(x?: number, y?: number, width = 1, height = 1) {
   if (data.tileMapUpdater.tileSetAsset == null || data.tileMapUpdater.tileSetAsset.pub == null) return;
   if (x != null && y != null) data.tileSetUpdater.tileSetRenderer.select(x, y, width, height);
 
-  let ratio = data.tileSetUpdater.tileSetAsset.pub.grid.width / data.tileSetUpdater.tileSetAsset.pub.grid.height;
+  const ratio = data.tileSetUpdater.tileSetAsset.pub.grid.width / data.tileSetUpdater.tileSetAsset.pub.grid.height;
   data.tileSetUpdater.tileSetRenderer.selectedTileActor.getLocalPosition(tmpPosition);
   tmpPosition.y = Math.round(tmpPosition.y * ratio);
   data.tileSetUpdater.tileSetRenderer.selectedTileActor.getLocalScale(tmpScale);
   tmpScale.y = Math.round(tmpScale.y * ratio);
-  let layerData: (number|boolean)[][] = [];
+  const layerData: (number|boolean)[][] = [];
   for (let y = -tmpScale.y - 1; y >= 0; y--) {
     for (let x = 0; x < tmpScale.x; x++) {
       layerData.push([ tmpPosition.x + x, -tmpPosition.y + y, false, false, 0 ]);
@@ -324,15 +324,15 @@ export function selectEraserTool() {
   mapArea.patternActor.threeObject.visible = false;
   data.tileSetUpdater.tileSetRenderer.selectedTileActor.threeObject.visible = false;
   mapArea.patternBackgroundActor.threeObject.visible = true;
-  let ratio = data.tileSetUpdater.tileSetAsset.pub.grid.width / data.tileSetUpdater.tileSetAsset.pub.grid.height;
+  const ratio = data.tileSetUpdater.tileSetAsset.pub.grid.width / data.tileSetUpdater.tileSetAsset.pub.grid.height;
   mapArea.patternBackgroundActor.setLocalScale(new SupEngine.THREE.Vector3(1, 1 / ratio, 1));
 }
 
 export function setupLayer(layer: TileMapLayerPub, index: number) {
-  let liElt = document.createElement("li") as HTMLLIElement;
+  const liElt = document.createElement("li") as HTMLLIElement;
   liElt.dataset["id"] = layer.id;
 
-  let displayCheckbox = document.createElement("input");
+  const displayCheckbox = document.createElement("input");
   displayCheckbox.classList.add("display");
   displayCheckbox.type = "checkbox";
   displayCheckbox.checked = true;
@@ -342,12 +342,12 @@ export function setupLayer(layer: TileMapLayerPub, index: number) {
   displayCheckbox.addEventListener("click", (event) => { event.stopPropagation(); });
   liElt.appendChild(displayCheckbox);
 
-  let indexSpan = document.createElement("span");
+  const indexSpan = document.createElement("span");
   indexSpan.classList.add("index");
   indexSpan.textContent = `${index} -`;
   liElt.appendChild(indexSpan);
 
-  let nameSpan = document.createElement("span");
+  const nameSpan = document.createElement("span");
   nameSpan.classList.add("name");
   nameSpan.textContent = layer.name;
   liElt.appendChild(nameSpan);
@@ -357,8 +357,8 @@ export function setupLayer(layer: TileMapLayerPub, index: number) {
 
 export function refreshLayersId() {
   for (let layerIndex = 0; layerIndex < data.tileMapUpdater.tileMapAsset.pub.layers.length; layerIndex++) {
-    let layerId = data.tileMapUpdater.tileMapAsset.pub.layers[layerIndex].id;
-    let indexSpanElt = ui.layersTreeView.treeRoot.querySelector(`[data-id="${layerId}"] .index`) as HTMLSpanElement;
+    const layerId = data.tileMapUpdater.tileMapAsset.pub.layers[layerIndex].id;
+    const indexSpanElt = ui.layersTreeView.treeRoot.querySelector(`[data-id="${layerId}"] .index`) as HTMLSpanElement;
     indexSpanElt.textContent = `${layerIndex} -`;
   }
 }

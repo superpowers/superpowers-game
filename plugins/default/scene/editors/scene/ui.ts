@@ -185,15 +185,15 @@ ui.prefabInput.addEventListener("input", onPrefabInput);
 
 ui.prefabOpenElt = ui.inspectorElt.querySelector(".prefab button") as HTMLButtonElement;
 ui.prefabOpenElt.addEventListener("click", (event) => {
-  let selectedNode = ui.nodesTreeView.selectedNodes[0];
-  let node = data.sceneUpdater.sceneAsset.nodes.byId[selectedNode.dataset["id"]];
-  let id = node.prefab.sceneAssetId;
+  const selectedNode = ui.nodesTreeView.selectedNodes[0];
+  const node = data.sceneUpdater.sceneAsset.nodes.byId[selectedNode.dataset["id"]];
+  const id = node.prefab.sceneAssetId;
   SupClient.openEntry(id);
 });
 
-for (let transformType in ui.transform) {
-  let inputs: HTMLInputElement[] = (ui.transform as any)[transformType];
-  for (let input of inputs) input.addEventListener("change", onTransformInputChange);
+for (const transformType in ui.transform) {
+  const inputs: HTMLInputElement[] = (ui.transform as any)[transformType];
+  for (const input of inputs) input.addEventListener("change", onTransformInputChange);
 }
 
 ui.newComponentButton = document.querySelector("button.new-component") as HTMLButtonElement;
@@ -259,7 +259,7 @@ function onTransformModeClick(event: any) {
   if (event.target.id === "transform-space") {
     engine.transformHandleComponent.setSpace(event.target.checked ? "local" : "world");
   } else {
-    let transformSpaceCheckbox = document.getElementById("transform-space") as HTMLInputElement;
+    const transformSpaceCheckbox = document.getElementById("transform-space") as HTMLInputElement;
     transformSpaceCheckbox.disabled = event.target.value === "scale";
     engine.transformHandleComponent.setMode(event.target.value);
   }
@@ -273,7 +273,7 @@ ui.gridStep = 1;
 document.getElementById("grid-step").addEventListener("input", onGridStepInput);
 
 function onGridStepInput(event: UIEvent) {
-  let target = event.target as HTMLInputElement;
+  const target = event.target as HTMLInputElement;
   let value = parseFloat(target.value);
   if (value !== 0 && value < 0.0001) { value = 0; target.value = "0"; }
   if (isNaN(value) || value <= 0) { (target as any).reportValidity(); return; }
@@ -293,23 +293,23 @@ document.getElementById("show-light").addEventListener("change", (event: any) =>
 });
 
 export function createNodeElement(node: Node) {
-  let liElt = document.createElement("li");
+  const liElt = document.createElement("li");
   liElt.dataset["id"] = node.id;
 
-  let nameSpan = document.createElement("span");
+  const nameSpan = document.createElement("span");
   nameSpan.classList.add("name");
   if (node.prefab != null) nameSpan.classList.add("prefab");
   nameSpan.textContent = node.name;
   liElt.appendChild(nameSpan);
 
-  let visibleButton = document.createElement("button");
+  const visibleButton = document.createElement("button");
   visibleButton.textContent = SupClient.i18n.t("sceneEditor:treeView.visible.hide");
   visibleButton.classList.add("show");
   visibleButton.addEventListener("click", (event: any) => {
     event.stopPropagation();
-    let actor = data.sceneUpdater.bySceneNodeId[event.target.parentElement.dataset["id"]].actor;
+    const actor = data.sceneUpdater.bySceneNodeId[event.target.parentElement.dataset["id"]].actor;
     actor.threeObject.visible = !actor.threeObject.visible;
-    let visible = actor.threeObject.visible ? "hide" : "show";
+    const visible = actor.threeObject.visible ? "hide" : "show";
     visibleButton.textContent = SupClient.i18n.t(`sceneEditor:treeView.visible.${visible}`);
     if (actor.threeObject.visible) visibleButton.classList.add("show");
     else visibleButton.classList.remove("show");
@@ -325,7 +325,7 @@ function onNodesTreeViewDrop(event: DragEvent, dropLocation: TreeView.DropLocati
   const dropPoint = SupClient.getTreeViewDropPoint(dropLocation, data.sceneUpdater.sceneAsset.nodes);
 
   const nodeIds: string[] = [];
-  for (let node of orderedNodes ) nodeIds.push(node.dataset["id"]);
+  for (const node of orderedNodes ) nodeIds.push(node.dataset["id"]);
 
   const sourceParentNode = data.sceneUpdater.sceneAsset.nodes.parentNodesById[nodeIds[0]];
   const sourceChildren = (sourceParentNode != null && sourceParentNode.children != null) ? sourceParentNode.children : data.sceneUpdater.sceneAsset.nodes.pub;
@@ -350,11 +350,11 @@ export function setupSelectedNode() {
   setupHelpers();
 
   // Clear component editors
-  for (let componentId in ui.componentEditors) ui.componentEditors[componentId].destroy();
+  for (const componentId in ui.componentEditors) ui.componentEditors[componentId].destroy();
   ui.componentEditors = {};
 
   // Setup transform
-  let nodeElt = ui.nodesTreeView.selectedNodes[0];
+  const nodeElt = ui.nodesTreeView.selectedNodes[0];
   if (nodeElt == null || ui.nodesTreeView.selectedNodes.length !== 1) {
     ui.inspectorElt.hidden = true;
 
@@ -368,7 +368,7 @@ export function setupSelectedNode() {
 
   ui.inspectorElt.hidden = false;
 
-  let node = data.sceneUpdater.sceneAsset.nodes.byId[nodeElt.dataset["id"]];
+  const node = data.sceneUpdater.sceneAsset.nodes.byId[nodeElt.dataset["id"]];
   setInspectorPosition(node.position as THREE.Vector3);
   setInspectorOrientation(node.orientation as THREE.Quaternion);
   setInspectorScale(node.scale as THREE.Vector3);
@@ -377,7 +377,7 @@ export function setupSelectedNode() {
   ui.layerSelect.value = node.layer.toString();
 
   // If it's a prefab, disable various buttons
-  let isPrefab = node.prefab != null;
+  const isPrefab = node.prefab != null;
   ui.newActorButton.disabled = isPrefab;
   ui.newPrefabButton.disabled = isPrefab;
   ui.renameNodeButton.disabled = false;
@@ -392,8 +392,8 @@ export function setupSelectedNode() {
   // Setup component editors
   ui.componentsElt.innerHTML = "";
 
-  for (let component of node.components) {
-    let componentElt = createComponentElement(node.id, component);
+  for (const component of node.components) {
+    const componentElt = createComponentElement(node.id, component);
     ui.componentsElt.appendChild(componentElt);
   }
   ui.newComponentButton.disabled = isPrefab;
@@ -402,7 +402,7 @@ export function setupSelectedNode() {
 function roundForInspector(number: number) { return parseFloat(number.toFixed(3)); }
 
 export function setInspectorPosition(position: THREE.Vector3) {
-  let values = [
+  const values = [
     roundForInspector(position.x).toString(),
     roundForInspector(position.y).toString(),
     roundForInspector(position.z).toString()
@@ -417,9 +417,9 @@ export function setInspectorPosition(position: THREE.Vector3) {
 }
 
 export function setInspectorOrientation(orientation: THREE.Quaternion) {
-  let euler = new THREE.Euler().setFromQuaternion(orientation);
+  const euler = new THREE.Euler().setFromQuaternion(orientation);
 
-  let values = [
+  const values = [
     roundForInspector(THREE.Math.radToDeg(euler.x)).toString(),
     roundForInspector(THREE.Math.radToDeg(euler.y)).toString(),
     roundForInspector(THREE.Math.radToDeg(euler.z)).toString()
@@ -441,7 +441,7 @@ export function setInspectorOrientation(orientation: THREE.Quaternion) {
 }
 
 export function setInspectorScale(scale: THREE.Vector3) {
-  let values = [
+  const values = [
     roundForInspector(scale.x).toString(),
     roundForInspector(scale.y).toString(),
     roundForInspector(scale.z).toString()
@@ -490,7 +490,7 @@ export function setInspectorPrefabScene(sceneAssetId: string) {
 }
 
 function onNewNodeClick() {
-  let options = {
+  const options = {
     initialValue: SupClient.i18n.t("sceneEditor:treeView.newActor.initialValue"),
     validationLabel: SupClient.i18n.t("common:actions.create"),
     pattern: SupClient.namePattern,
@@ -504,7 +504,7 @@ function onNewNodeClick() {
 }
 
 function onNewPrefabClick() {
-  let options = {
+  const options = {
     initialValue: SupClient.i18n.t("sceneEditor:treeView.newPrefab.initialValue"),
     validationLabel: SupClient.i18n.t("common:actions.create"),
     pattern: SupClient.namePattern,
@@ -518,14 +518,14 @@ function onNewPrefabClick() {
 }
 
 function createNewNode(name: string, prefab: boolean) {
-  let options = SupClient.getTreeViewInsertionPoint(ui.nodesTreeView);
+  const options = SupClient.getTreeViewInsertionPoint(ui.nodesTreeView);
 
-  let offset = new THREE.Vector3(0, 0, -10).applyQuaternion(engine.cameraActor.getGlobalOrientation(new THREE.Quaternion()));
-  let position = new THREE.Vector3();
+  const offset = new THREE.Vector3(0, 0, -10).applyQuaternion(engine.cameraActor.getGlobalOrientation(new THREE.Quaternion()));
+  const position = new THREE.Vector3();
   engine.cameraActor.getGlobalPosition(position).add(offset);
 
   if (options.parentId != null) {
-    let parentMatrix = data.sceneUpdater.bySceneNodeId[options.parentId].actor.getGlobalMatrix(new THREE.Matrix4());
+    const parentMatrix = data.sceneUpdater.bySceneNodeId[options.parentId].actor.getGlobalMatrix(new THREE.Matrix4());
     position.applyMatrix4(parentMatrix.getInverse(parentMatrix));
   }
   (options as any).transform = { position };
@@ -541,10 +541,10 @@ function createNewNode(name: string, prefab: boolean) {
 function onRenameNodeClick() {
   if (ui.nodesTreeView.selectedNodes.length !== 1) return;
 
-  let selectedNode = ui.nodesTreeView.selectedNodes[0];
-  let node = data.sceneUpdater.sceneAsset.nodes.byId[selectedNode.dataset["id"]];
+  const selectedNode = ui.nodesTreeView.selectedNodes[0];
+  const node = data.sceneUpdater.sceneAsset.nodes.byId[selectedNode.dataset["id"]];
 
-  let options = {
+  const options = {
     initialValue: node.name,
     validationLabel: SupClient.i18n.t("common:actions.rename"),
     pattern: SupClient.namePattern,
@@ -561,10 +561,10 @@ function onRenameNodeClick() {
 function onDuplicateNodeClick() {
   if (ui.nodesTreeView.selectedNodes.length !== 1) return;
 
-  let selectedNode = ui.nodesTreeView.selectedNodes[0];
-  let node = data.sceneUpdater.sceneAsset.nodes.byId[selectedNode.dataset["id"]];
+  const selectedNode = ui.nodesTreeView.selectedNodes[0];
+  const node = data.sceneUpdater.sceneAsset.nodes.byId[selectedNode.dataset["id"]];
 
-  let options = {
+  const options = {
     initialValue: node.name,
     validationLabel: SupClient.i18n.t("common:actions.duplicate"),
     pattern: SupClient.namePattern,
@@ -573,7 +573,7 @@ function onDuplicateNodeClick() {
 
   new SupClient.Dialogs.PromptDialog(SupClient.i18n.t("sceneEditor:treeView.duplicatePrompt"), options, (newName) => {
     if (newName == null) return;
-    let options = SupClient.getTreeViewSiblingInsertionPoint(ui.nodesTreeView);
+    const options = SupClient.getTreeViewSiblingInsertionPoint(ui.nodesTreeView);
 
     data.projectClient.editAsset(SupClient.query.asset, "duplicateNode", newName, node.id, options.index, (nodeId: string) => {
       ui.nodesTreeView.clearSelection();
@@ -586,12 +586,12 @@ function onDuplicateNodeClick() {
 function onDeleteNodeClick() {
   if (ui.nodesTreeView.selectedNodes.length === 0) return;
 
-  let confirmLabel = SupClient.i18n.t("sceneEditor:treeView.deleteConfirm");
-  let validationLabel = SupClient.i18n.t("common:actions.delete");
+  const confirmLabel = SupClient.i18n.t("sceneEditor:treeView.deleteConfirm");
+  const validationLabel = SupClient.i18n.t("common:actions.delete");
   new SupClient.Dialogs.ConfirmDialog(confirmLabel, { validationLabel }, (confirm) => {
     if (!confirm) return;
 
-    for (let selectedNode of ui.nodesTreeView.selectedNodes) {
+    for (const selectedNode of ui.nodesTreeView.selectedNodes) {
       data.projectClient.editAsset(SupClient.query.asset, "removeNode", selectedNode.dataset["id"]);
     }
   });
@@ -600,8 +600,8 @@ function onDeleteNodeClick() {
 function onTransformInputChange(event: any) {
   if (ui.nodesTreeView.selectedNodes.length !== 1) return;
 
-  let transformType = event.target.parentElement.parentElement.parentElement.className;
-  let inputs: HTMLInputElement[] = (ui.transform as any)[`${transformType}Elts`];
+  const transformType = event.target.parentElement.parentElement.parentElement.className;
+  const inputs: HTMLInputElement[] = (ui.transform as any)[`${transformType}Elts`];
 
   let value: { x: number; y: number; z: number; w?: number } = {
     x: parseFloat(inputs[0].value),
@@ -610,11 +610,11 @@ function onTransformInputChange(event: any) {
   };
 
   if (transformType === "orientation") {
-    let euler = new THREE.Euler(THREE.Math.degToRad(value.x), THREE.Math.degToRad(value.y), THREE.Math.degToRad(value.z));
-    let quaternion = new THREE.Quaternion().setFromEuler(euler);
+    const euler = new THREE.Euler(THREE.Math.degToRad(value.x), THREE.Math.degToRad(value.y), THREE.Math.degToRad(value.z));
+    const quaternion = new THREE.Quaternion().setFromEuler(euler);
     value = { x: quaternion.x, y: quaternion.y, z: quaternion.z, w: quaternion.w };
   }
-  let nodeId = ui.nodesTreeView.selectedNodes[0].dataset["id"];
+  const nodeId = ui.nodesTreeView.selectedNodes[0].dataset["id"];
 
   data.projectClient.editAsset(SupClient.query.asset, "setNodeProperty", nodeId, transformType, value);
 }
@@ -622,27 +622,27 @@ function onTransformInputChange(event: any) {
 function onVisibleChange(event: any) {
   if (ui.nodesTreeView.selectedNodes.length !== 1) return;
 
-  let nodeId = ui.nodesTreeView.selectedNodes[0].dataset["id"];
+  const nodeId = ui.nodesTreeView.selectedNodes[0].dataset["id"];
   data.projectClient.editAsset(SupClient.query.asset, "setNodeProperty", nodeId, "visible", event.target.checked);
 }
 
 function onLayerChange(event: any) {
   if (ui.nodesTreeView.selectedNodes.length !== 1) return;
 
-  let nodeId = ui.nodesTreeView.selectedNodes[0].dataset["id"];
+  const nodeId = ui.nodesTreeView.selectedNodes[0].dataset["id"];
   data.projectClient.editAsset(SupClient.query.asset, "setNodeProperty", nodeId, "layer", parseInt(event.target.value, 10));
 }
 
 function onPrefabInput(event: any) {
   if (ui.nodesTreeView.selectedNodes.length !== 1) return;
 
-  let nodeId = ui.nodesTreeView.selectedNodes[0].dataset["id"];
+  const nodeId = ui.nodesTreeView.selectedNodes[0].dataset["id"];
 
   if (event.target.value === "") {
     data.projectClient.editAsset(SupClient.query.asset, "setNodeProperty", nodeId, "prefab.sceneAssetId", null);
   }
   else {
-    let entry = SupClient.findEntryByPath(data.projectClient.entries.pub, event.target.value);
+    const entry = SupClient.findEntryByPath(data.projectClient.entries.pub, event.target.value);
     if (entry != null && entry.type === "scene") {
       data.projectClient.editAsset(SupClient.query.asset, "setNodeProperty", nodeId, "prefab.sceneAssetId", entry.id);
     }
@@ -650,16 +650,16 @@ function onPrefabInput(event: any) {
 }
 
 export function createComponentElement(nodeId: string, component: Component) {
-  let componentElt = document.createElement("div");
+  const componentElt = document.createElement("div");
   componentElt.dataset["componentId"] = component.id;
 
-  let template = document.getElementById("component-cartridge-template") as HTMLElement;
-  let clone = document.importNode((template as any).content, true) as HTMLElement;
+  const template = document.getElementById("component-cartridge-template") as HTMLElement;
+  const clone = document.importNode((template as any).content, true) as HTMLElement;
 
   clone.querySelector(".type").textContent = SupClient.i18n.t(`componentEditors:${component.type}.label`);
-  let table = clone.querySelector(".settings") as HTMLElement;
+  const table = clone.querySelector(".settings") as HTMLElement;
 
-  let editConfig = (command: string, ...args: any[]) => {
+  const editConfig = (command: string, ...args: any[]) => {
     let callback = (err: string) => {
       if (err != null) new SupClient.Dialogs.InfoDialog(err);
     };
@@ -676,7 +676,7 @@ export function createComponentElement(nodeId: string, component: Component) {
   const componentEditorPlugin = componentEditorPlugins[component.type].content;
   ui.componentEditors[component.id] = new componentEditorPlugin(table.querySelector("tbody") as HTMLTableSectionElement, component.config, data.projectClient, editConfig);
 
-  let shrinkButton = clone.querySelector(".shrink-component");
+  const shrinkButton = clone.querySelector(".shrink-component");
   shrinkButton.addEventListener("click", () => {
     if (table.style.display === "none") {
       table.style.display = "";
@@ -694,25 +694,25 @@ export function createComponentElement(nodeId: string, component: Component) {
 }
 
 function onNewComponentClick() {
-  let selectLabel = SupClient.i18n.t("sceneEditor:inspector.newComponent.select");
-  let validationLabel = SupClient.i18n.t("sceneEditor:inspector.newComponent.validate");
+  const selectLabel = SupClient.i18n.t("sceneEditor:inspector.newComponent.select");
+  const validationLabel = SupClient.i18n.t("sceneEditor:inspector.newComponent.validate");
   new SupClient.Dialogs.SelectDialog(selectLabel, ui.availableComponents, { validationLabel, size: 12 }, (type) => {
     if (type == null) return;
 
-    let nodeId = ui.nodesTreeView.selectedNodes[0].dataset["id"];
+    const nodeId = ui.nodesTreeView.selectedNodes[0].dataset["id"];
 
     data.projectClient.editAsset(SupClient.query.asset, "addComponent", nodeId, type, null);
   });
 }
 
 function onDeleteComponentClick(event: any) {
-  let confirmLabel = SupClient.i18n.t("sceneEditor:inspector.deleteComponent.confirm");
-  let validationLabel = SupClient.i18n.t("sceneEditor:inspector.deleteComponent.validate");
+  const confirmLabel = SupClient.i18n.t("sceneEditor:inspector.deleteComponent.confirm");
+  const validationLabel = SupClient.i18n.t("sceneEditor:inspector.deleteComponent.validate");
   new SupClient.Dialogs.ConfirmDialog(confirmLabel, { validationLabel }, (confirm) => {
     if (!confirm) return;
 
-    let nodeId = ui.nodesTreeView.selectedNodes[0].dataset["id"];
-    let componentId = event.target.parentElement.parentElement.dataset["componentId"];
+    const nodeId = ui.nodesTreeView.selectedNodes[0].dataset["id"];
+    const componentId = event.target.parentElement.parentElement.dataset["componentId"];
 
     data.projectClient.editAsset(SupClient.query.asset, "removeComponent", nodeId, componentId);
   });
@@ -726,7 +726,7 @@ export function setCameraMode(mode: string) {
   (document.querySelector(".controls .camera-speed") as HTMLDivElement).hidden = ui.cameraMode !== "3D";
   (document.querySelector(".controls .camera-2d-z") as HTMLDivElement).hidden = ui.cameraMode === "3D";
 
-  let axis = ui.cameraMode === "3D" ? ui.cameraVerticalAxis : "Y";
+  const axis = ui.cameraMode === "3D" ? ui.cameraVerticalAxis : "Y";
   engine.cameraRoot.setLocalEulerAngles(new THREE.Euler(axis === "Y" ? 0 : Math.PI / 2, 0, 0));
   updateCameraMode();
   ui.cameraModeButton.textContent = ui.cameraMode;
@@ -752,7 +752,7 @@ function onChangeCameraSpeed() {
 }
 
 function onChangeCamera2DZ() {
-  let z = parseFloat(ui.camera2DZ.value);
+  const z = parseFloat(ui.camera2DZ.value);
   if (isNaN(z)) return;
 
   engine.cameraActor.threeObject.position.setZ(z);

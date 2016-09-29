@@ -141,17 +141,17 @@ export default class TileSetAsset extends SupCore.Data.Base.Asset {
   private loadTexture() {
     this.unloadTexture();
 
-    let buffer = this.pub.image as ArrayBuffer;
+    const buffer = this.pub.image as ArrayBuffer;
     if (buffer.byteLength === 0) return;
 
-    let image = new Image;
-    let texture = this.pub.texture = new THREE.Texture(image);
+    const image = new Image;
+    const texture = this.pub.texture = new THREE.Texture(image);
 
     texture.magFilter = THREE.NearestFilter;
     texture.minFilter = THREE.NearestFilter;
 
-    let typedArray = new Uint8Array(buffer);
-    let blob = new Blob([ typedArray ], { type: "image/*" });
+    const typedArray = new Uint8Array(buffer);
+    const blob = new Blob([ typedArray ], { type: "image/*" });
     image.src = this.url = URL.createObjectURL(blob);
 
     if (!image.complete) image.addEventListener("load", () => { texture.needsUpdate = true; });
@@ -191,9 +191,9 @@ export default class TileSetAsset extends SupCore.Data.Base.Asset {
 
     if (typeof(name) !== "string") { callback("Invalid property name"); return; }
 
-    let properties: { [name: string]: string} = {};
+    const properties: { [name: string]: string} = {};
     properties[name] = "";
-    let violation = SupCore.Data.Base.getRuleViolation(properties, TileSetAsset.schema["tileProperties"].values, true);
+    const violation = SupCore.Data.Base.getRuleViolation(properties, TileSetAsset.schema["tileProperties"].values, true);
     if (violation != null) { callback(`Invalid property: ${SupCore.Data.Base.formatRuleViolation(violation)}`); return; }
 
     if (this.pub.tileProperties[`${tile.x}_${tile.y}`] != null &&
@@ -228,9 +228,9 @@ export default class TileSetAsset extends SupCore.Data.Base.Asset {
 
     if (this.pub.tileProperties[`${tile.x}_${tile.y}`] == null) { callback(`Tile ${tile.x}_${tile.y} doesn't have any property`); return; }
 
-    let properties: { [name: string]: string} = {};
+    const properties: { [name: string]: string} = {};
     properties[newName] = "";
-    let violation = SupCore.Data.Base.getRuleViolation(properties, TileSetAsset.schema["tileProperties"].values, true);
+    const violation = SupCore.Data.Base.getRuleViolation(properties, TileSetAsset.schema["tileProperties"].values, true);
     if (violation != null) { callback(`Invalid property: ${SupCore.Data.Base.formatRuleViolation(violation)}`); return; }
 
     if (this.pub.tileProperties[`${tile.x}_${tile.y}`][name] == null) { callback(`Property ${name} doesn't exists`); return; }
@@ -291,9 +291,9 @@ export default class TileSetAsset extends SupCore.Data.Base.Asset {
     if (this.pub.tileProperties[`${tile.x}_${tile.y}`][name] == null) { callback(`Property ${name} doesn't exists`); return; }
     if (typeof(value) !== "string") { callback("Invalid property value"); return; }
 
-    let properties: { [name: string]: string } = {};
+    const properties: { [name: string]: string } = {};
     properties[name] = value;
-    let violation = SupCore.Data.Base.getRuleViolation(properties, TileSetAsset.schema["tileProperties"].values, true);
+    const violation = SupCore.Data.Base.getRuleViolation(properties, TileSetAsset.schema["tileProperties"].values, true);
     if (violation != null) { callback(`Invalid property: ${SupCore.Data.Base.formatRuleViolation(violation)}`); return; }
 
     this.pub.tileProperties[`${tile.x}_${tile.y}`][name] = value;

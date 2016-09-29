@@ -23,10 +23,10 @@ function onWelcome(clientId: string) {
 function onAssetReceived(assetId: string, asset: ShaderAsset) {
   data.shaderAsset = asset;
 
-  for (let uniform of asset.pub.uniforms) setupUniform(uniform);
+  for (const uniform of asset.pub.uniforms) setupUniform(uniform);
   ui.useLightUniformsCheckbox.checked = asset.pub.useLightUniforms;
 
-  for (let attribute of asset.pub.attributes) setupAttribute(attribute);
+  for (const attribute of asset.pub.attributes) setupAttribute(attribute);
 
   ui.vertexEditor.setText(asset.pub.vertexShader.draft);
   if (asset.pub.vertexShader.draft !== asset.pub.vertexShader.text) checkVertexShader();
@@ -56,16 +56,16 @@ onEditCommands["setProperty"] = (path: string, value: any) => {
 
 onEditCommands["newUniform"] = (uniform: UniformPub) => { setupUniform(uniform); };
 onEditCommands["deleteUniform"] = (id: string) => {
-  let rowElt = <HTMLTableRowElement>ui.uniformsList.querySelector(`[data-id='${id}']`);
+  const rowElt = <HTMLTableRowElement>ui.uniformsList.querySelector(`[data-id='${id}']`);
   rowElt.parentElement.removeChild(rowElt);
 };
 onEditCommands["setUniformProperty"] = (id: string, key: string, value: any) => {
-  let rowElt = <HTMLDivElement>ui.uniformsList.querySelector(`[data-id='${id}']`);
+  const rowElt = <HTMLDivElement>ui.uniformsList.querySelector(`[data-id='${id}']`);
   if (key === "value") {
-    let type = data.shaderAsset.uniforms.byId[id].type;
+    const type = data.shaderAsset.uniforms.byId[id].type;
     switch(type) {
       case "f":
-        let floatInputElt = <HTMLInputElement>rowElt.querySelector(".float");
+        const floatInputElt = <HTMLInputElement>rowElt.querySelector(".float");
         floatInputElt.value = value;
         break;
 
@@ -76,13 +76,13 @@ onEditCommands["setUniformProperty"] = (id: string, key: string, value: any) => 
         setUniformValues(rowElt, type, value);
         break;
       case "t":
-        let textInputElt = <HTMLInputElement>rowElt.querySelector(".text");
+        const textInputElt = <HTMLInputElement>rowElt.querySelector(".text");
         textInputElt.value = value;
         break;
     }
 
   } else {
-    let fieldElt = <HTMLInputElement>rowElt.querySelector(`.${key}`);
+    const fieldElt = <HTMLInputElement>rowElt.querySelector(`.${key}`);
     fieldElt.value = value;
   }
   if (key === "type") setUniformValueInputs(id);
@@ -95,12 +95,12 @@ function setUniformValues(parentElt: HTMLDivElement, name: string, values: numbe
 
 onEditCommands["newAttribute"] = (attribute: AttributePub) => { setupAttribute(attribute); };
 onEditCommands["deleteAttribute"] = (id: string) => {
-  let rowElt = <HTMLTableRowElement>ui.attributesList.querySelector(`[data-id='${id}']`);
+  const rowElt = <HTMLTableRowElement>ui.attributesList.querySelector(`[data-id='${id}']`);
   rowElt.parentElement.removeChild(rowElt);
 };
 onEditCommands["setAttributeProperty"] = (id: string, key: string, value: any) => {
-  let rowElt = <HTMLDivElement>ui.attributesList.querySelector(`[data-id='${id}']`);
-  let fieldElt = <HTMLInputElement>rowElt.querySelector(`.${key}`);
+  const rowElt = <HTMLDivElement>ui.attributesList.querySelector(`[data-id='${id}']`);
+  const fieldElt = <HTMLInputElement>rowElt.querySelector(`.${key}`);
   fieldElt.value = value;
 };
 
@@ -128,7 +128,7 @@ function onAssetTrashed() {
   SupClient.onAssetTrashed();
 }
 
-let gl = document.createElement("canvas").getContext("webgl") as WebGLRenderingContext;
+const gl = document.createElement("canvas").getContext("webgl") as WebGLRenderingContext;
 function replaceShaderChunk(shader: string) {
   shader = shader.replace(/#include +<([\w\d.]+)>/g, (match, include) => SupEngine.THREE.ShaderChunk[include]);
 
@@ -138,7 +138,7 @@ function replaceShaderChunk(shader: string) {
   return shader;
 }
 
-let vertexStart = `precision mediump float;precision mediump int;
+const vertexStart = `precision mediump float;precision mediump int;
 #define SHADER_NAME ShaderMaterial
 #define VERTEX_TEXTURES
 #define GAMMA_FACTOR 2
@@ -177,22 +177,22 @@ attribute vec2 uv;
   attribute vec4 skinWeight;
 #endif
 `;
-let vertexStartLength = vertexStart.split("\n").length;
+const vertexStartLength = vertexStart.split("\n").length;
 
 function checkVertexShader() {
-  let shader = gl.createShader(gl.VERTEX_SHADER);
-  let shaderCode = replaceShaderChunk(ui.vertexEditor.codeMirrorInstance.getDoc().getValue());
+  const shader = gl.createShader(gl.VERTEX_SHADER);
+  const shaderCode = replaceShaderChunk(ui.vertexEditor.codeMirrorInstance.getDoc().getValue());
   gl.shaderSource(shader, `${vertexStart}\n${shaderCode}`);
   gl.compileShader(shader);
-  let log = gl.getShaderInfoLog(shader);
+  const log = gl.getShaderInfoLog(shader);
 
-  let errors = log.split("\n");
+  const errors = log.split("\n");
   if (errors[errors.length - 1] === "") errors.pop();
   for (let error of errors) {
     error = error.replace("ERROR: 0:", "");
-    let lineLimiterIndex = error.indexOf(":");
-    let line = parseInt(error.slice(0, lineLimiterIndex), 10) - vertexStartLength;
-    let message = error.slice(lineLimiterIndex + 2);
+    const lineLimiterIndex = error.indexOf(":");
+    const line = parseInt(error.slice(0, lineLimiterIndex), 10) - vertexStartLength;
+    const message = error.slice(lineLimiterIndex + 2);
     console.log(`Error at line "${line}": ${message}`);
   }
 
@@ -201,29 +201,29 @@ function checkVertexShader() {
   ui.vertexSaveElt.hidden = errors.length > 0;
 }
 
-let fragmentStart = `precision mediump float;
+const fragmentStart = `precision mediump float;
 precision mediump int;
 #define SHADER_NAME ShaderMaterial
 #define GAMMA_FACTOR 2
 uniform mat4 viewMatrix;
 uniform vec3 cameraPosition;
 `;
-let fragmentStartLength = fragmentStart.split("\n").length;
+const fragmentStartLength = fragmentStart.split("\n").length;
 
 function checkFragmentShader() {
-  let shader = gl.createShader(gl.FRAGMENT_SHADER);
-  let shaderCode = replaceShaderChunk(ui.fragmentEditor.codeMirrorInstance.getDoc().getValue());
+  const shader = gl.createShader(gl.FRAGMENT_SHADER);
+  const shaderCode = replaceShaderChunk(ui.fragmentEditor.codeMirrorInstance.getDoc().getValue());
   gl.shaderSource(shader, `${fragmentStart}\n${shaderCode}`);
   gl.compileShader(shader);
-  let log = gl.getShaderInfoLog(shader);
+  const log = gl.getShaderInfoLog(shader);
 
-  let errors = log.split("\n");
+  const errors = log.split("\n");
   if (errors[errors.length - 1] === "") errors.pop();
   for (let error of errors) {
     error = error.replace("ERROR: 0:", "");
-    let lineLimiterIndex = error.indexOf(":");
-    let line = parseInt(error.slice(0, lineLimiterIndex), 10) - fragmentStartLength;
-    let message = error.slice(lineLimiterIndex + 2);
+    const lineLimiterIndex = error.indexOf(":");
+    const line = parseInt(error.slice(0, lineLimiterIndex), 10) - fragmentStartLength;
+    const message = error.slice(lineLimiterIndex + 2);
     console.log(`Error at line "${line}": ${message}`);
   }
   ui.fragmentHeader.classList.toggle("has-errors", errors.length > 0);

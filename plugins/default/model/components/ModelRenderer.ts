@@ -1,7 +1,7 @@
-let THREE = SupEngine.THREE;
-let tmpBoneMatrix = new THREE.Matrix4;
-let tmpVec = new THREE.Vector3;
-let tmpQuat = new THREE.Quaternion;
+const THREE = SupEngine.THREE;
+const tmpBoneMatrix = new THREE.Matrix4;
+const tmpVec = new THREE.Vector3;
+const tmpQuat = new THREE.Quaternion;
 
 import { ModelAssetPub } from "../data/ModelAsset";
 import ModelRendererUpdater from "./ModelRendererUpdater";
@@ -103,34 +103,34 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
 
     this.updateAnimationsByName();
 
-    let geometry = new THREE.BufferGeometry;
+    const geometry = new THREE.BufferGeometry;
 
     if (this.asset.attributes["position"] != null) {
-      let buffer = new Float32Array(this.asset.attributes["position"]);
+      const buffer = new Float32Array(this.asset.attributes["position"]);
       geometry.addAttribute("position", new THREE.BufferAttribute(buffer, 3));
     }
     if (this.asset.attributes["index"] != null) {
-      let buffer = new Uint16Array(this.asset.attributes["index"]);
+      const buffer = new Uint16Array(this.asset.attributes["index"]);
       geometry.setIndex(new THREE.BufferAttribute(buffer, 1));
     }
     if (this.asset.attributes["uv"] != null) {
-      let buffer = new Float32Array(this.asset.attributes["uv"]);
+      const buffer = new Float32Array(this.asset.attributes["uv"]);
       geometry.addAttribute("uv", new THREE.BufferAttribute(buffer, 2));
     }
     if (this.asset.attributes["normal"] != null) {
-      let buffer = new Float32Array(this.asset.attributes["normal"]);
+      const buffer = new Float32Array(this.asset.attributes["normal"]);
       geometry.addAttribute("normal", new THREE.BufferAttribute(buffer, 3));
     }
     if (this.asset.attributes["color"] != null) {
-      let buffer = new Float32Array(this.asset.attributes["color"]);
+      const buffer = new Float32Array(this.asset.attributes["color"]);
       geometry.addAttribute("color", new THREE.BufferAttribute(buffer, 3));
     }
     if (this.asset.attributes["skinIndex"] != null) {
-      let buffer = new Float32Array(this.asset.attributes["skinIndex"]);
+      const buffer = new Float32Array(this.asset.attributes["skinIndex"]);
       geometry.addAttribute("skinIndex", new THREE.BufferAttribute(buffer, 4));
     }
     if (this.asset.attributes["skinWeight"] != null) {
-      let buffer = new Float32Array(this.asset.attributes["skinWeight"]);
+      const buffer = new Float32Array(this.asset.attributes["skinWeight"]);
       geometry.addAttribute("skinWeight", new THREE.BufferAttribute(buffer, 4));
     }
 
@@ -163,15 +163,15 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
       this.threeMesh = new THREE.SkinnedMesh(geometry, this.material);
 
       if (this.asset.upAxisMatrix != null) {
-        let upAxisMatrix = new THREE.Matrix4().fromArray(this.asset.upAxisMatrix);
+        const upAxisMatrix = new THREE.Matrix4().fromArray(this.asset.upAxisMatrix);
         this.threeMesh.applyMatrix(upAxisMatrix);
       }
 
-      let bones: THREE.Bone[] = [];
+      const bones: THREE.Bone[] = [];
       this.bonesByName = {};
 
-      for (let boneInfo of this.asset.bones) {
-        let bone = new THREE.Bone(<THREE.SkinnedMesh>this.threeMesh);
+      for (const boneInfo of this.asset.bones) {
+        const bone = new THREE.Bone(<THREE.SkinnedMesh>this.threeMesh);
         bone.name = boneInfo.name;
         this.bonesByName[bone.name] = bone;
         bone.applyMatrix(tmpBoneMatrix.fromArray(boneInfo.matrix));
@@ -179,14 +179,14 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
       }
 
       for (let i = 0; i < this.asset.bones.length; i++) {
-        let boneInfo = this.asset.bones[i];
+        const boneInfo = this.asset.bones[i];
         if (boneInfo.parentIndex != null) bones[boneInfo.parentIndex].add(bones[i]);
         else this.threeMesh.add(bones[i]);
       }
 
       this.threeMesh.updateMatrixWorld(true);
 
-      let useVertexTexture = false;
+      const useVertexTexture = false;
       (<THREE.SkinnedMesh>this.threeMesh).bind(new THREE.Skeleton(bones, undefined, useVertexTexture));
       this.material.skinning = true;
 
@@ -227,7 +227,7 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
     this.color.g = g;
     this.color.b = b;
     if (this.material instanceof THREE.ShaderMaterial) {
-      let uniforms = (<THREE.ShaderMaterial>this.material).uniforms;
+      const uniforms = (<THREE.ShaderMaterial>this.material).uniforms;
       if (uniforms.color != null) uniforms.color.value.setRGB(r, g, b);
     } else (<THREE.MeshBasicMaterial>this.material).color.setRGB(r, g, b);
    }
@@ -235,7 +235,7 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
    setUnitRatio(unitRatio: number) {
      if (this.threeMesh == null) return;
 
-     let ratio = 1 / unitRatio;
+     const ratio = 1 / unitRatio;
      this.threeMesh.scale.set(ratio, ratio, ratio);
      this.threeMesh.updateMatrixWorld(false);
    }
@@ -246,7 +246,7 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
     if (show) {
       this.skeletonHelper = new THREE.SkeletonHelper(this.threeMesh);
       if (this.asset.upAxisMatrix != null) {
-        let upAxisMatrix = new THREE.Matrix4().fromArray(this.asset.upAxisMatrix);
+        const upAxisMatrix = new THREE.Matrix4().fromArray(this.asset.upAxisMatrix);
         this.skeletonHelper.root = this.skeletonHelper;
         this.skeletonHelper.applyMatrix(upAxisMatrix);
         this.skeletonHelper.update();
@@ -262,14 +262,14 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
   }
 
   updateAnimationsByName() {
-    for (let animation of this.asset.animations) {
+    for (const animation of this.asset.animations) {
       this.animationsByName[animation.name] = animation;
     }
   }
 
   setAnimation(newAnimationName: string, newAnimationLooping = true) {
     if (newAnimationName != null) {
-      let newAnimation = this.animationsByName[newAnimationName];
+      const newAnimation = this.animationsByName[newAnimationName];
       if (newAnimation == null) throw new Error(`Animation ${newAnimationName} doesn't exist`);
       if (newAnimation === this.animation && this.isAnimationPlaying) return;
 
@@ -318,7 +318,7 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
     if ((<THREE.SkinnedMesh>this.threeMesh).skeleton == null) return;
 
     for (let i = 0; i < (<THREE.SkinnedMesh>this.threeMesh).skeleton.bones.length; i++) {
-      let bone = (<THREE.SkinnedMesh>this.threeMesh).skeleton.bones[i];
+      const bone = (<THREE.SkinnedMesh>this.threeMesh).skeleton.bones[i];
       bone.matrix.fromArray(this.asset.bones[i].matrix);
       bone.matrix.decompose(bone.position, bone.quaternion, bone.scale);
     }
@@ -330,9 +330,9 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
   getBoneTransform(name: string) {
     if (!this.hasPoseBeenUpdated) this._tickAnimation();
 
-    let position = new THREE.Vector3;
-    let orientation = new THREE.Quaternion;
-    let scale = new THREE.Vector3;
+    const position = new THREE.Vector3;
+    const orientation = new THREE.Quaternion;
+    const scale = new THREE.Vector3;
 
     if (this.bonesByName == null || this.bonesByName[name] == null) return null;
 
@@ -344,7 +344,7 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
     this.hasPoseBeenUpdated = true;
 
     // TODO: this.asset.speedMultiplier
-    let speedMultiplier = 1;
+    const speedMultiplier = 1;
     let time = this.animationTimer * speedMultiplier / this.actor.gameInstance.framesPerSecond;
 
     if (time > this.animation.duration) {
@@ -360,8 +360,8 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
     if ((<THREE.SkinnedMesh>this.threeMesh).skeleton == null) return;
 
     for (let i = 0; i < (<THREE.SkinnedMesh>this.threeMesh).skeleton.bones.length; i++) {
-      let bone = (<THREE.SkinnedMesh>this.threeMesh).skeleton.bones[i];
-      let boneKeyFrames = this.animation.keyFrames[bone.name];
+      const bone = (<THREE.SkinnedMesh>this.threeMesh).skeleton.bones[i];
+      const boneKeyFrames = this.animation.keyFrames[bone.name];
       if (boneKeyFrames == null) continue;
 
       if (boneKeyFrames.translation != null) {
@@ -389,7 +389,7 @@ export default class ModelRenderer extends SupEngine.ActorComponent {
 
   update() {
     if (this.material != null) {
-      let uniforms = (<THREE.ShaderMaterial>this.material).uniforms;
+      const uniforms = (<THREE.ShaderMaterial>this.material).uniforms;
       if (uniforms != null) uniforms.time.value += 1 / this.actor.gameInstance.framesPerSecond;
     }
 

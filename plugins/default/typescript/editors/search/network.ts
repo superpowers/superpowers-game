@@ -2,7 +2,7 @@ import { searchAsset, refreshFileStatus } from "./ui";
 
 import ScriptAsset from "../../data/ScriptAsset";
 
-export let data: {
+export const data: {
   assetsById?: { [id: string]: ScriptAsset; }
   projectClient?: SupClient.ProjectClient,
 } = {};
@@ -14,7 +14,7 @@ SupClient.i18n.load([{ root: `${window.location.pathname}/../..`, name: "searchE
   socket.on("disconnect", SupClient.onDisconnected);
 });
 
-let scriptSubscriber = {
+const scriptSubscriber = {
   onAssetReceived: (err: string, asset: ScriptAsset) => {
     data.assetsById[asset.id] = asset;
     searchAsset(asset.id);
@@ -27,7 +27,7 @@ let scriptSubscriber = {
   onAssetTrashed: (id: string) => { /* Nothing to do here */ },
 };
 
-let entriesSubscriber = {
+const entriesSubscriber = {
   onEntriesReceived: (entries: SupCore.Data.Entries) => {
     entries.walk((entry) => {
       if (entry.type !== "script") return;
@@ -41,25 +41,25 @@ let entriesSubscriber = {
   },
 
   onEntryMoved: (id: string, parentId: string, index: number) => {
-    let entry = data.projectClient.entries.byId[id];
+    const entry = data.projectClient.entries.byId[id];
     if (entry.type !== "script") return;
 
-    let nameElt = <HTMLSpanElement>document.querySelector(`span[data-id='${id}']`);
+    const nameElt = <HTMLSpanElement>document.querySelector(`span[data-id='${id}']`);
     if (nameElt != null) {
-      let tableElt = <HTMLTableElement>document.querySelector(`table[data-id='${id}']`);
-      let name = data.projectClient.entries.getPathFromId(id);
+      const tableElt = <HTMLTableElement>document.querySelector(`table[data-id='${id}']`);
+      const name = data.projectClient.entries.getPathFromId(id);
       refreshFileStatus(name, nameElt, tableElt.children.length);
     }
   },
 
   onSetEntryProperty: (id: string, key: string, value: any) => {
-    let entry = data.projectClient.entries.byId[id];
+    const entry = data.projectClient.entries.byId[id];
     if (entry.type !== "script" || key !== "name") return;
 
-    let nameElt = <HTMLSpanElement>document.querySelector(`span[data-id='${id}']`);
+    const nameElt = <HTMLSpanElement>document.querySelector(`span[data-id='${id}']`);
     if (nameElt != null) {
-      let tableElt = <HTMLTableElement>document.querySelector(`table[data-id='${id}']`);
-      let name = data.projectClient.entries.getPathFromId(id);
+      const tableElt = <HTMLTableElement>document.querySelector(`table[data-id='${id}']`);
+      const name = data.projectClient.entries.getPathFromId(id);
       refreshFileStatus(name, nameElt, tableElt.children.length);
     }
   },
@@ -67,8 +67,8 @@ let entriesSubscriber = {
   onEntryTrashed: (id: string) => {
     if (data.assetsById[id] != null) delete data.assetsById[id];
 
-    let nameElt = <HTMLSpanElement>document.querySelector(`span[data-id='${id}']`);
-    let tableElt = <HTMLTableElement>document.querySelector(`table[data-id='${id}']`);
+    const nameElt = <HTMLSpanElement>document.querySelector(`span[data-id='${id}']`);
+    const tableElt = <HTMLTableElement>document.querySelector(`table[data-id='${id}']`);
 
     if (nameElt != null) nameElt.parentElement.removeChild(nameElt);
     if (tableElt != null) tableElt.parentElement.removeChild(tableElt);

@@ -1,4 +1,4 @@
-let THREE = SupEngine.THREE;
+const THREE = SupEngine.THREE;
 
 export default class SelectionBox extends SupEngine.ActorComponent {
   line: THREE.LineSegments;
@@ -35,20 +35,20 @@ export default class SelectionBox extends SupEngine.ActorComponent {
   }
 
   resize() {
-    let vec = new THREE.Vector3();
-    let box = new THREE.Box3();
-    let inverseTargetMatrixWorld = new THREE.Matrix4().compose(this.target.getWorldPosition(), this.target.getWorldQuaternion(), <THREE.Vector3>{ x: 1, y: 1, z: 1 });
+    const vec = new THREE.Vector3();
+    const box = new THREE.Box3();
+    const inverseTargetMatrixWorld = new THREE.Matrix4().compose(this.target.getWorldPosition(), this.target.getWorldQuaternion(), <THREE.Vector3>{ x: 1, y: 1, z: 1 });
 
     inverseTargetMatrixWorld.getInverse(inverseTargetMatrixWorld);
 
     this.target.traverse((node) => {
-      let geometry: THREE.Geometry|THREE.BufferGeometry = (<any>node).geometry;
+      const geometry: THREE.Geometry|THREE.BufferGeometry = (<any>node).geometry;
 
       if (geometry != null) {
         node.updateMatrixWorld(false);
 
         if (geometry instanceof THREE.Geometry) {
-          let vertices = geometry.vertices;
+          const vertices = geometry.vertices;
 
           for (let i = 0, il = vertices.length; i < il; i++) {
             vec.copy(vertices[i]).applyMatrix4(node.matrixWorld).applyMatrix4(inverseTargetMatrixWorld);
@@ -56,7 +56,7 @@ export default class SelectionBox extends SupEngine.ActorComponent {
           }
 
         } else if (geometry instanceof THREE.BufferGeometry && (<any>geometry.attributes)["position"] != null) {
-          let positions: Float32Array = (<any>geometry.attributes)["position"].array;
+          const positions: Float32Array = (<any>geometry.attributes)["position"].array;
 
           for (let i = 0, il = positions.length; i < il; i += 3) {
             vec.set(positions[i], positions[i + 1], positions[i + 2]);
@@ -67,8 +67,8 @@ export default class SelectionBox extends SupEngine.ActorComponent {
       }
     });
 
-    let min = box.min;
-    let max = box.max;
+    const min = box.min;
+    const max = box.max;
 
     // Front
     this.geometry.vertices[0].set(max.x, min.y, min.z);

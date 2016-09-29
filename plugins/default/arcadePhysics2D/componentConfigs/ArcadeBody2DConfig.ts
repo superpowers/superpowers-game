@@ -47,7 +47,7 @@ export default class ArcadeBody2DConfig extends SupCore.Data.Base.ComponentConfi
   };
 
   static create() {
-    let newConfig: ConfigPub = {
+    const newConfig: ConfigPub = {
       formatVersion: ArcadeBody2DConfig.currentFormatVersion,
 
       type: "box",

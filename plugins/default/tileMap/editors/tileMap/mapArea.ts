@@ -7,10 +7,10 @@ import * as _ from "lodash";
 import TileMap from "../../components/TileMap";
 import TileMapRenderer from "../../components/TileMapRenderer";
 
-let tmpVector3 = new SupEngine.THREE.Vector3();
+const tmpVector3 = new SupEngine.THREE.Vector3();
 
 // Map Area
-let mapArea: {
+const mapArea: {
   gameInstance?: SupEngine.GameInstance;
 
   cameraComponent?: any;
@@ -39,7 +39,7 @@ export default mapArea;
 mapArea.gameInstance = new SupEngine.GameInstance(<HTMLCanvasElement>document.querySelector("canvas.map"));
 mapArea.gameInstance.threeRenderer.setClearColor(0xbbbbbb);
 
-let cameraActor = new SupEngine.Actor(mapArea.gameInstance, "Camera");
+const cameraActor = new SupEngine.Actor(mapArea.gameInstance, "Camera");
 cameraActor.setLocalPosition(new SupEngine.THREE.Vector3(0, 0, 100));
 mapArea.cameraComponent = new SupEngine.componentClasses["Camera"](cameraActor);
 mapArea.cameraComponent.setOrthographicMode(true);
@@ -71,13 +71,13 @@ export function setupPattern(layerData: TileData[], width = 1, startX?: number, 
   mapArea.patternData = layerData;
   mapArea.patternDataWidth = width;
 
-  let pub = data.tileMapUpdater.tileMapAsset.pub;
-  let height = layerData.length / width;
+  const pub = data.tileMapUpdater.tileMapAsset.pub;
+  const height = layerData.length / width;
 
   if (startX == null) startX = mapArea.cursorPoint.x;
   if (startY == null) startY = mapArea.cursorPoint.y;
 
-  let patternLayerData: ((number|boolean)[]|number)[] = [];
+  const patternLayerData: ((number|boolean)[]|number)[] = [];
   for (let y = 0; y < pub.height; y++) {
     for (let x = 0; x < pub.width; x++) {
       let localX = x - startX;
@@ -88,7 +88,7 @@ export function setupPattern(layerData: TileData[], width = 1, startX?: number, 
     }
   }
 
-  let patternData = {
+  const patternData = {
     tileSetId: null as string,
     width: pub.width, height: pub.height,
     pixelsPerUnit: pub.pixelsPerUnit,
@@ -100,27 +100,27 @@ export function setupPattern(layerData: TileData[], width = 1, startX?: number, 
 }
 
 export function setupFillPattern(newTileData: TileData) {
-  let pub = data.tileMapUpdater.tileMapAsset.pub;
-  let layerData = data.tileMapUpdater.tileMapAsset.layers.byId[tileSetArea.selectedLayerId].data;
+  const pub = data.tileMapUpdater.tileMapAsset.pub;
+  const layerData = data.tileMapUpdater.tileMapAsset.layers.byId[tileSetArea.selectedLayerId].data;
 
-  let patternLayerData: ((number|boolean)[]|number)[] = [];
+  const patternLayerData: ((number|boolean)[]|number)[] = [];
   for (let y = 0; y < pub.height; y++) {
     for (let x = 0; x < pub.width; x++) {
       patternLayerData.push(0);
     }
   }
 
-  let refTileData = <(number|boolean)[]>layerData[mapArea.cursorPoint.y * pub.width + mapArea.cursorPoint.x];
+  const refTileData = <(number|boolean)[]>layerData[mapArea.cursorPoint.y * pub.width + mapArea.cursorPoint.x];
   function checkTile(x: number, y: number) {
     if (x < 0 || x >= pub.width || y < 0 || y >= pub.height) return;
 
-    let index = y * pub.width + x;
+    const index = y * pub.width + x;
     // Skip if target tile on pattern isn't empty
-    let patternTile = patternLayerData[index];
+    const patternTile = patternLayerData[index];
     if (patternTile !== 0) return;
 
     // Skip if target tile on layer is different from the base tile
-    let layerTile = <(number|boolean)[]>layerData[index];
+    const layerTile = <(number|boolean)[]>layerData[index];
     if ((<any>layerTile) === 0) {
       if ((<any>refTileData) !== 0) return;
     } else {
@@ -139,7 +139,7 @@ export function setupFillPattern(newTileData: TileData) {
   if (mapArea.cursorPoint.x >= 0 && mapArea.cursorPoint.x < pub.width && mapArea.cursorPoint.y >= 0 && mapArea.cursorPoint.y < pub.height)
     checkTile(mapArea.cursorPoint.x, mapArea.cursorPoint.y);
 
-  let patternData = {
+  const patternData = {
     tileSetId: <string>null,
     width: pub.width, height: pub.height,
     pixelsPerUnit: pub.pixelsPerUnit,
@@ -153,12 +153,12 @@ export function setupFillPattern(newTileData: TileData) {
 export function flipTilesHorizontally() {
   if (!mapArea.patternActor.threeObject.visible) return;
 
-  let width = mapArea.patternDataWidth;
-  let height = mapArea.patternData.length / mapArea.patternDataWidth;
-  let layerData: ((number|boolean)[]|number)[] = [];
+  const width = mapArea.patternDataWidth;
+  const height = mapArea.patternData.length / mapArea.patternDataWidth;
+  const layerData: ((number|boolean)[]|number)[] = [];
   for (let y = 0; y < height; y++) {
     for (let x = width - 1; x >= 0; x--) {
-      let tileValue = mapArea.patternData[y * width + x];
+      const tileValue = mapArea.patternData[y * width + x];
       if (typeof tileValue === "number") layerData.push(0);
       else {
         tileValue[2] = !tileValue[2];
@@ -175,12 +175,12 @@ export function flipTilesHorizontally() {
 export function flipTilesVertically() {
   if (!mapArea.patternActor.threeObject.visible) return;
 
-  let width = mapArea.patternDataWidth;
-  let height = mapArea.patternData.length / mapArea.patternDataWidth;
-  let layerData: TileData[] = [];
+  const width = mapArea.patternDataWidth;
+  const height = mapArea.patternData.length / mapArea.patternDataWidth;
+  const layerData: TileData[] = [];
   for (let y = height - 1; y >= 0; y--) {
     for (let x = 0; x < width; x++) {
-      let tileValue = mapArea.patternData[y * width + x];
+      const tileValue = mapArea.patternData[y * width + x];
       if (typeof tileValue === "number") layerData.push(0);
       else {
         tileValue[3] = !tileValue[3];
@@ -197,12 +197,12 @@ export function flipTilesVertically() {
 export function rotateTiles() {
   if (!mapArea.patternActor.threeObject.visible) return;
 
-  let width = mapArea.patternDataWidth;
-  let height = mapArea.patternData.length / mapArea.patternDataWidth;
-  let layerData: TileData[] = [];
+  const width = mapArea.patternDataWidth;
+  const height = mapArea.patternData.length / mapArea.patternDataWidth;
+  const layerData: TileData[] = [];
   for (let x = 0; x < width; x++) {
     for (let y = height - 1; y >= 0; y--) {
-      let tileValue = mapArea.patternData[y * width + x];
+      const tileValue = mapArea.patternData[y * width + x];
       if (typeof tileValue === "number") layerData.push(0);
       else {
         (<any>tileValue)[4] += 90;
@@ -214,7 +214,7 @@ export function rotateTiles() {
   }
 
   setupPattern(layerData, height);
-  let ratio = data.tileSetUpdater.tileSetAsset.pub.grid.width / data.tileSetUpdater.tileSetAsset.pub.grid.height;
+  const ratio = data.tileSetUpdater.tileSetAsset.pub.grid.width / data.tileSetUpdater.tileSetAsset.pub.grid.height;
   mapArea.patternBackgroundActor.setLocalScale(new SupEngine.THREE.Vector3(height, width / ratio, 1));
 }
 
@@ -225,11 +225,11 @@ interface Edits {
 }
 
 function getEditsFromPattern(point: { x: number; y: number }) {
-  let edits: Edits[] = [];
+  const edits: Edits[] = [];
   for (let tileIndex = 0; tileIndex < mapArea.patternData.length; tileIndex++) {
-    let tileValue = mapArea.patternData[tileIndex];
-    let x = point.x + tileIndex % mapArea.patternDataWidth;
-    let y = point.y + Math.floor(tileIndex / mapArea.patternDataWidth);
+    const tileValue = mapArea.patternData[tileIndex];
+    const x = point.x + tileIndex % mapArea.patternDataWidth;
+    const y = point.y + Math.floor(tileIndex / mapArea.patternDataWidth);
 
     edits.push({ x, y, tileValue });
   }
@@ -237,19 +237,19 @@ function getEditsFromPattern(point: { x: number; y: number }) {
 }
 
 function editMap(edits: Edits[]) {
-  let actualEdits: Edits[] = [];
-  let layer = data.tileMapUpdater.tileMapAsset.layers.byId[tileSetArea.selectedLayerId];
+  const actualEdits: Edits[] = [];
+  const layer = data.tileMapUpdater.tileMapAsset.layers.byId[tileSetArea.selectedLayerId];
 
-  for (let edit of edits) {
+  for (const edit of edits) {
     if (edit.x >= 0 && edit.x < data.tileMapUpdater.tileMapAsset.pub.width && edit.y >= 0 && edit.y < data.tileMapUpdater.tileMapAsset.pub.height) {
 
-      let index = edit.y * data.tileMapUpdater.tileMapAsset.pub.width + edit.x;
+      const index = edit.y * data.tileMapUpdater.tileMapAsset.pub.width + edit.x;
 
       let sameTile = true;
       if (edit.tileValue === 0) {
         if (layer.data[index] !== 0) sameTile = false;
       } else {
-        let tileValue = edit.tileValue as (number|boolean)[];
+        const tileValue = edit.tileValue as (number|boolean)[];
         for (let i = 0; i < tileValue.length; i++) {
           if ((layer.data[index] as (number|boolean)[])[i] !== tileValue[i]) {
             sameTile = false;
@@ -266,8 +266,8 @@ function editMap(edits: Edits[]) {
 }
 
 function getMapGridPosition(gameInstance: SupEngine.GameInstance, cameraComponent: any) {
-  let mousePosition = gameInstance.input.mousePosition;
-  let position = new SupEngine.THREE.Vector3(mousePosition.x, mousePosition.y, 0);
+  const mousePosition = gameInstance.input.mousePosition;
+  const position = new SupEngine.THREE.Vector3(mousePosition.x, mousePosition.y, 0);
   cameraComponent.actor.getLocalPosition(tmpVector3);
 
   let x = position.x / gameInstance.threeRenderer.domElement.width;
@@ -295,10 +295,10 @@ export function handleMapArea() {
     return;
   }
 
-  let pub = data.tileMapUpdater.tileMapAsset.pub;
-  let input = mapArea.gameInstance.input;
+  const pub = data.tileMapUpdater.tileMapAsset.pub;
+  const input = mapArea.gameInstance.input;
 
-  let [ mouseX, mouseY ] = getMapGridPosition(mapArea.gameInstance, mapArea.cameraComponent);
+  const [ mouseX, mouseY ] = getMapGridPosition(mapArea.gameInstance, mapArea.cameraComponent);
   let cursorHasMoved = false;
   if (mouseX !== mapArea.cursorPoint.x || mouseY !== mapArea.cursorPoint.y) {
     cursorHasMoved = true;
@@ -318,8 +318,8 @@ export function handleMapArea() {
   // Quick switch to Brush or Eraser
   if (input.mouseButtons[2].wasJustReleased && (ui.brushToolButton.checked || ui.eraserToolButton.checked))  {
     if (mouseX >= 0 && mouseX < pub.width && mouseY >= 0 && mouseY < pub.height) {
-      let layer = data.tileMapUpdater.tileMapAsset.layers.byId[tileSetArea.selectedLayerId];
-      let tile = layer.data[mouseY * pub.width + mouseX];
+      const layer = data.tileMapUpdater.tileMapAsset.layers.byId[tileSetArea.selectedLayerId];
+      const tile = layer.data[mouseY * pub.width + mouseX];
       if (typeof tile === "number") {
         selectEraserTool();
       } else {
@@ -331,29 +331,29 @@ export function handleMapArea() {
 
   // Update pattern background
   if (mapArea.patternActor.threeObject.visible || ui.eraserToolButton.checked) {
-    let layer = data.tileMapUpdater.tileMapAsset.layers.byId[tileSetArea.selectedLayerId];
-    let z = (pub.layers.indexOf(layer) + 0.5) * pub.layerDepthOffset;
-    let ratioX = pub.pixelsPerUnit / data.tileMapUpdater.tileSetAsset.pub.grid.width;
-    let ratioY = pub.pixelsPerUnit / data.tileMapUpdater.tileSetAsset.pub.grid.height;
-    let patternPosition = new SupEngine.THREE.Vector3(mouseX / ratioX, mouseY / ratioY, z);
+    const layer = data.tileMapUpdater.tileMapAsset.layers.byId[tileSetArea.selectedLayerId];
+    const z = (pub.layers.indexOf(layer) + 0.5) * pub.layerDepthOffset;
+    const ratioX = pub.pixelsPerUnit / data.tileMapUpdater.tileSetAsset.pub.grid.width;
+    const ratioY = pub.pixelsPerUnit / data.tileMapUpdater.tileSetAsset.pub.grid.height;
+    const patternPosition = new SupEngine.THREE.Vector3(mouseX / ratioX, mouseY / ratioY, z);
     mapArea.patternBackgroundActor.setLocalPosition(patternPosition);
   }
 }
 
 function handleBrushMode(cursorHasMoved: boolean) {
-  let pub = data.tileMapUpdater.tileMapAsset.pub;
-  let input = mapArea.gameInstance.input;
+  const pub = data.tileMapUpdater.tileMapAsset.pub;
+  const input = mapArea.gameInstance.input;
 
-  let shiftKey = input.keyboardButtons[(<any>window).KeyEvent.DOM_VK_SHIFT];
+  const shiftKey = input.keyboardButtons[(<any>window).KeyEvent.DOM_VK_SHIFT];
 
   if (input.mouseButtons[0].isDown) {
     if (mapArea.lastTile != null && shiftKey.isDown) {
-      let xMin = Math.min(mapArea.cursorPoint.x, mapArea.lastTile.x);
-      let xOffset = Math.abs(mapArea.cursorPoint.x - mapArea.lastTile.x) + 1;
-      let yMin = Math.min(mapArea.cursorPoint.y, mapArea.lastTile.y);
-      let yOffset = Math.abs(mapArea.cursorPoint.y - mapArea.lastTile.y) + 1;
+      const xMin = Math.min(mapArea.cursorPoint.x, mapArea.lastTile.x);
+      const xOffset = Math.abs(mapArea.cursorPoint.x - mapArea.lastTile.x) + 1;
+      const yMin = Math.min(mapArea.cursorPoint.y, mapArea.lastTile.y);
+      const yOffset = Math.abs(mapArea.cursorPoint.y - mapArea.lastTile.y) + 1;
 
-      let point = { x: 0, y: 0 };
+      const point = { x: 0, y: 0 };
       if (xOffset > yOffset) {
         point.x = xMin;
         point.y = mapArea.lastTile.y;
@@ -365,8 +365,8 @@ function handleBrushMode(cursorHasMoved: boolean) {
       setupPattern([mapArea.patternData[0]], 1);
     } else editMap(getEditsFromPattern(mapArea.cursorPoint));
 
-    let x = mapArea.cursorPoint.x;
-    let y = mapArea.cursorPoint.y;
+    const x = mapArea.cursorPoint.x;
+    const y = mapArea.cursorPoint.y;
     if (mapArea.patternData.length === 1 && x >= 0 && x < pub.width && y >= 0 && y < pub.height)
       mapArea.lastTile = { x, y, tile: (mapArea.patternData[0] as (number|boolean)[]).slice() };
 
@@ -374,12 +374,12 @@ function handleBrushMode(cursorHasMoved: boolean) {
     setupPattern([mapArea.lastTile.tile]);
 
   } else if (mapArea.lastTile != null && shiftKey.isDown) {
-    let xMin = Math.min(mapArea.cursorPoint.x, mapArea.lastTile.x);
-    let xOffset = Math.abs(mapArea.cursorPoint.x - mapArea.lastTile.x) + 1;
-    let yMin = Math.min(mapArea.cursorPoint.y, mapArea.lastTile.y);
-    let yOffset = Math.abs(mapArea.cursorPoint.y - mapArea.lastTile.y) + 1;
+    const xMin = Math.min(mapArea.cursorPoint.x, mapArea.lastTile.x);
+    const xOffset = Math.abs(mapArea.cursorPoint.x - mapArea.lastTile.x) + 1;
+    const yMin = Math.min(mapArea.cursorPoint.y, mapArea.lastTile.y);
+    const yOffset = Math.abs(mapArea.cursorPoint.y - mapArea.lastTile.y) + 1;
 
-    let patternData: TileData[] = [];
+    const patternData: TileData[] = [];
     if (xOffset > yOffset) {
       for (let x = 0; x < xOffset; x++) patternData.push(mapArea.lastTile.tile);
       setupPattern(patternData, xOffset, xMin, mapArea.lastTile.y);
@@ -398,11 +398,11 @@ function handleFillMode(cursorHasMoved: boolean) {
 
   if (!mapArea.gameInstance.input.mouseButtons[0].wasJustPressed) return;
 
-  let pub = data.tileMapUpdater.tileMapAsset.pub;
-  let edits: Edits[] = [];
+  const pub = data.tileMapUpdater.tileMapAsset.pub;
+  const edits: Edits[] = [];
   for (let y = 0; y < pub.height; y++) {
     for (let x = 0; x < pub.width; x++) {
-      let tileValue = mapArea.patternRenderer.tileMap.getTileAt(0, x, y);
+      const tileValue = mapArea.patternRenderer.tileMap.getTileAt(0, x, y);
       if (tileValue !== 0) edits.push({ x, y, tileValue });
     }
   }
@@ -410,11 +410,11 @@ function handleFillMode(cursorHasMoved: boolean) {
 }
 
 function handleSelectionMode(cursorHasMoved: boolean) {
-  let pub = data.tileMapUpdater.tileMapAsset.pub;
-  let input = mapArea.gameInstance.input;
-  let keyEvent = (<any>window).KeyEvent;
+  const pub = data.tileMapUpdater.tileMapAsset.pub;
+  const input = mapArea.gameInstance.input;
+  const keyEvent = (<any>window).KeyEvent;
 
-  let cancelAction = input.mouseButtons[2].wasJustPressed || input.keyboardButtons[keyEvent.DOM_VK_ESCAPE].wasJustPressed;
+  const cancelAction = input.mouseButtons[2].wasJustPressed || input.keyboardButtons[keyEvent.DOM_VK_ESCAPE].wasJustPressed;
 
   // Moving/duplicating a pattern
   if (mapArea.patternActor.threeObject.visible) {
@@ -447,28 +447,28 @@ function handleSelectionMode(cursorHasMoved: boolean) {
 
   if (input.mouseButtons[0].isDown) {
     // Clamp mouse values
-    let x = Math.max(0, Math.min(pub.width - 1, mapArea.cursorPoint.x));
-    let y = Math.max(0, Math.min(pub.height - 1, mapArea.cursorPoint.y));
+    const x = Math.max(0, Math.min(pub.width - 1, mapArea.cursorPoint.x));
+    const y = Math.max(0, Math.min(pub.height - 1, mapArea.cursorPoint.y));
 
     mapArea.selectionEndPoint = { x, y };
   }
 
-  let startX = Math.min(mapArea.selectionStartPoint.x, mapArea.selectionEndPoint.x);
-  let startY = Math.min(mapArea.selectionStartPoint.y, mapArea.selectionEndPoint.y);
-  let width = Math.abs(mapArea.selectionEndPoint.x - mapArea.selectionStartPoint.x) + 1;
-  let height = Math.abs(mapArea.selectionEndPoint.y - mapArea.selectionStartPoint.y) + 1;
+  const startX = Math.min(mapArea.selectionStartPoint.x, mapArea.selectionEndPoint.x);
+  const startY = Math.min(mapArea.selectionStartPoint.y, mapArea.selectionEndPoint.y);
+  const width = Math.abs(mapArea.selectionEndPoint.x - mapArea.selectionStartPoint.x) + 1;
+  const height = Math.abs(mapArea.selectionEndPoint.y - mapArea.selectionStartPoint.y) + 1;
 
-  let ratioX = pub.pixelsPerUnit / data.tileMapUpdater.tileSetAsset.pub.grid.width;
-  let ratioY = pub.pixelsPerUnit / data.tileMapUpdater.tileSetAsset.pub.grid.height;
-  let z = data.tileMapUpdater.tileMapAsset.layers.pub.length * pub.layerDepthOffset;
-  let patternPosition = new SupEngine.THREE.Vector3(startX / ratioX, startY / ratioY, z);
+  const ratioX = pub.pixelsPerUnit / data.tileMapUpdater.tileSetAsset.pub.grid.width;
+  const ratioY = pub.pixelsPerUnit / data.tileMapUpdater.tileSetAsset.pub.grid.height;
+  const z = data.tileMapUpdater.tileMapAsset.layers.pub.length * pub.layerDepthOffset;
+  const patternPosition = new SupEngine.THREE.Vector3(startX / ratioX, startY / ratioY, z);
   mapArea.patternBackgroundActor.setLocalPosition(patternPosition);
-  let ratio = data.tileSetUpdater.tileSetAsset.pub.grid.width / data.tileSetUpdater.tileSetAsset.pub.grid.height;
+  const ratio = data.tileSetUpdater.tileSetAsset.pub.grid.width / data.tileSetUpdater.tileSetAsset.pub.grid.height;
   mapArea.patternBackgroundActor.setLocalScale(new SupEngine.THREE.Vector3(width, height / ratio, 1));
 
   // Delete selection
   if (input.keyboardButtons[keyEvent.DOM_VK_DELETE].wasJustReleased) {
-    let edits: Edits[] = [];
+    const edits: Edits[] = [];
     walkSelection((x, y) => { edits.push({ x: startX + x, y: startY + y, tileValue: 0 }); });
     editMap(edits);
 
@@ -478,18 +478,18 @@ function handleSelectionMode(cursorHasMoved: boolean) {
 
   // Move/duplicate the selection
   else if (input.keyboardButtons[keyEvent.DOM_VK_M].wasJustReleased || input.keyboardButtons[keyEvent.DOM_VK_D].wasJustReleased) {
-    let layer = data.tileMapUpdater.tileMapAsset.layers.byId[tileSetArea.selectedLayerId];
+    const layer = data.tileMapUpdater.tileMapAsset.layers.byId[tileSetArea.selectedLayerId];
 
     mapArea.duplicatingSelection = input.keyboardButtons[keyEvent.DOM_VK_D].wasJustReleased;
     if (!mapArea.duplicatingSelection) {
-      let edits: Edits[] = [];
+      const edits: Edits[] = [];
       walkSelection((x, y) => { edits.push({ x: startX + x, y: startY + y, tileValue: 0 }); });
       editMap(edits);
     }
 
-    let layerData: ((number|boolean)[]|number)[] = [];
+    const layerData: ((number|boolean)[]|number)[] = [];
     walkSelection((x, y) => {
-      let tile = layer.data[(startY + y) * pub.width + startX + x];
+      const tile = layer.data[(startY + y) * pub.width + startX + x];
       layerData.push(tile);
     });
 
@@ -500,8 +500,8 @@ function handleSelectionMode(cursorHasMoved: boolean) {
 }
 
 function walkSelection(callback: (x: number, y: number) => void) {
-  let width = Math.abs(mapArea.selectionEndPoint.x - mapArea.selectionStartPoint.x) + 1;
-  let height = Math.abs(mapArea.selectionEndPoint.y - mapArea.selectionStartPoint.y) + 1;
+  const width = Math.abs(mapArea.selectionEndPoint.x - mapArea.selectionStartPoint.x) + 1;
+  const height = Math.abs(mapArea.selectionEndPoint.y - mapArea.selectionStartPoint.y) + 1;
 
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {

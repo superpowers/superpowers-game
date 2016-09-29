@@ -33,7 +33,7 @@ class SoundPlayer {
 
     // if this.buffer instanceof HTMLAudioElement
     if (typeof this.buffer === "string") {
-      let audio = new Audio();
+      const audio = new Audio();
       audio.src = <string>this.buffer;
       this.source = this.audioCtx.createMediaElementSource(audio);
       // FIXME: Very new so not included in d.ts file just yet
@@ -42,7 +42,7 @@ class SoundPlayer {
     }
     else {
       // Assuming AudioBuffer
-      let source = this.source = this.audioCtx.createBufferSource();
+      const source = this.source = this.audioCtx.createBufferSource();
       source.buffer = <AudioBuffer>this.buffer;
       source.loop = this.isLooping;
 

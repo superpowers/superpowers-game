@@ -1,4 +1,4 @@
-let THREE = SupEngine.THREE;
+const THREE = SupEngine.THREE;
 import { ShaderAssetPub } from "../data/ShaderAsset";
 
 export function createShaderMaterial(asset: ShaderAssetPub, textures: { [name: string]: THREE.Texture }, geometry: THREE.BufferGeometry, options = { useDraft: false }) {
@@ -10,7 +10,7 @@ export function createShaderMaterial(asset: ShaderAssetPub, textures: { [name: s
   }
   uniforms["time"] = { type: "f", value: 0.0 };
 
-  for (let uniform of asset.uniforms) {
+  for (const uniform of asset.uniforms) {
     let value: any;
     switch (uniform.type) {
       case "f":
@@ -40,8 +40,8 @@ export function createShaderMaterial(asset: ShaderAssetPub, textures: { [name: s
     uniforms[uniform.name] = { type: uniform.type, value };
   }
 
-  for (let attribute of asset.attributes) {
-    let values = <any[]>[];
+  for (const attribute of asset.attributes) {
+    const values = <any[]>[];
     let itemSize: number;
     switch (attribute.type) {
       case "f":
@@ -68,8 +68,8 @@ export function createShaderMaterial(asset: ShaderAssetPub, textures: { [name: s
     geometry.addAttribute(attribute.name, new THREE.BufferAttribute(new Float32Array(values), itemSize));
   }
 
-  let vertexShader = options.useDraft ? asset.vertexShader.draft : asset.vertexShader.text;
-  let fragmentShader = options.useDraft ? asset.fragmentShader.draft : asset.fragmentShader.text;
+  const vertexShader = options.useDraft ? asset.vertexShader.draft : asset.vertexShader.text;
+  const fragmentShader = options.useDraft ? asset.fragmentShader.draft : asset.fragmentShader.text;
 
   return new THREE.ShaderMaterial({
     uniforms,

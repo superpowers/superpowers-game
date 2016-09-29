@@ -1,9 +1,9 @@
 import { data } from "./network";
 import ui, { setupSelectedNode } from "./ui";
 
-let THREE = SupEngine.THREE;
+const THREE = SupEngine.THREE;
 
-let engine: {
+const engine: {
   gameInstance: SupEngine.GameInstance;
 
   cameraRoot: SupEngine.Actor;
@@ -19,7 +19,7 @@ let engine: {
 } = <any>{};
 export default engine;
 
-let canvasElt = document.querySelector("canvas") as HTMLCanvasElement;
+const canvasElt = document.querySelector("canvas") as HTMLCanvasElement;
 
 engine.gameInstance = new SupEngine.GameInstance(canvasElt);
 engine.cameraRoot = new SupEngine.Actor(engine.gameInstance, "Camera Root");
@@ -32,9 +32,9 @@ engine.cameraControls = new SupEngine.editorComponentClasses["Camera3DControls"]
 
 engine.ambientLight = new THREE.AmbientLight(0xcfcfcf);
 
-let gridActor = new SupEngine.Actor(engine.gameInstance, "Grid", null, { layer: 0 });
-let selectionActor = new SupEngine.Actor(engine.gameInstance, "Selection Box", null, { layer: -1 });
-let transformHandlesActor = new SupEngine.Actor(engine.gameInstance, "Transform Handles", null, { layer: -1 });
+const gridActor = new SupEngine.Actor(engine.gameInstance, "Grid", null, { layer: 0 });
+const selectionActor = new SupEngine.Actor(engine.gameInstance, "Selection Box", null, { layer: -1 });
+const transformHandlesActor = new SupEngine.Actor(engine.gameInstance, "Transform Handles", null, { layer: -1 });
 
 let draggingControls = false;
 
@@ -110,14 +110,14 @@ let accumulatedTime = 0;
 function tick(timestamp = 0) {
   accumulatedTime += timestamp - lastTimestamp;
   lastTimestamp = timestamp;
-  let { updates, timeLeft } = engine.gameInstance.tick(accumulatedTime, update);
+  const { updates, timeLeft } = engine.gameInstance.tick(accumulatedTime, update);
   accumulatedTime = timeLeft;
 
   if (updates > 0) engine.gameInstance.draw();
   animationFrame = requestAnimationFrame(tick);
 }
 
-let gridPosition = new THREE.Vector3();
+const gridPosition = new THREE.Vector3();
 function update() {
   if (ui.cameraMode === "3D" && engine.gameInstance.input.keyboardButtons[(<any>window).KeyEvent.DOM_VK_CONTROL].isDown) {
     if (engine.gameInstance.input.mouseButtons[5].isDown) {
@@ -131,7 +131,7 @@ function update() {
 
   if (engine.gameInstance.input.mouseButtons[0].wasJustReleased) mouseUp();
 
-  let snap = engine.gameInstance.input.keyboardButtons[(<any>window).KeyEvent.DOM_VK_CONTROL].isDown;
+  const snap = engine.gameInstance.input.keyboardButtons[(<any>window).KeyEvent.DOM_VK_CONTROL].isDown;
 
   if (snap !== (engine.transformHandleComponent.control.translationSnap != null)) {
     engine.transformHandleComponent.control.setTranslationSnap(snap ? ui.gridStep : null);
@@ -148,8 +148,8 @@ function update() {
 }
 
 // Mouse picking
-let mousePosition = new THREE.Vector2;
-let raycaster = new THREE.Raycaster;
+const mousePosition = new THREE.Vector2;
+const raycaster = new THREE.Raycaster;
 
 function mouseUp() {
   if (draggingControls) {
@@ -165,11 +165,11 @@ function mouseUp() {
   let selectedNodeId: string = ui.nodesTreeView.selectedNodes.length > 0 ? ui.nodesTreeView.selectedNodes[0].dataset["id"] : null;
   ui.nodesTreeView.clearSelection();
 
-  let intersects = raycaster.intersectObject(engine.gameInstance.threeScene, true);
+  const intersects = raycaster.intersectObject(engine.gameInstance.threeScene, true);
   if (intersects.length > 0) {
-    let hoveredNodeIds: string[] = [];
+    const hoveredNodeIds: string[] = [];
 
-    for (let intersect of intersects) {
+    for (const intersect of intersects) {
       let threeObject = intersect.object;
       while (threeObject != null) {
         if (threeObject.userData.nodeId != null) {
@@ -216,7 +216,7 @@ export function focusActor(selectedNodeId: string) {
 }
 
 export function setupHelpers() {
-  let nodeElt = ui.nodesTreeView.selectedNodes[0];
+  const nodeElt = ui.nodesTreeView.selectedNodes[0];
   if (nodeElt != null && ui.nodesTreeView.selectedNodes.length === 1) {
     engine.selectionBoxComponent.setTarget(data.sceneUpdater.bySceneNodeId[nodeElt.dataset["id"]].actor.threeObject);
     engine.transformHandleComponent.setTarget(data.sceneUpdater.bySceneNodeId[nodeElt.dataset["id"]].actor.threeObject);
@@ -227,11 +227,11 @@ export function setupHelpers() {
 }
 
 function onTransformChange() {
-  let nodeElt = ui.nodesTreeView.selectedNodes[0];
-  let nodeId = nodeElt.dataset["id"];
-  let target = data.sceneUpdater.bySceneNodeId[nodeId].actor;
+  const nodeElt = ui.nodesTreeView.selectedNodes[0];
+  const nodeId = nodeElt.dataset["id"];
+  const target = data.sceneUpdater.bySceneNodeId[nodeId].actor;
 
-  let object = <THREE.Object3D>engine.transformHandleComponent.control.object;
+  const object = <THREE.Object3D>engine.transformHandleComponent.control.object;
 
   let transformType: string;
   let value: any;
@@ -240,9 +240,9 @@ function onTransformChange() {
     case "translate": {
       transformType = "position";
 
-      let position = object.getWorldPosition();
+      const position = object.getWorldPosition();
       if (target.parent != null) {
-        let mtx = target.parent.getGlobalMatrix(new THREE.Matrix4());
+        const mtx = target.parent.getGlobalMatrix(new THREE.Matrix4());
         mtx.getInverse(mtx);
         position.applyMatrix4(mtx);
       }
@@ -252,9 +252,9 @@ function onTransformChange() {
     case "rotate": {
       transformType = "orientation";
 
-      let orientation = object.getWorldQuaternion();
+      const orientation = object.getWorldQuaternion();
       if (target.parent != null) {
-        let q = target.parent.getGlobalOrientation(new THREE.Quaternion()).inverse();
+        const q = target.parent.getGlobalOrientation(new THREE.Quaternion()).inverse();
         orientation.multiply(q);
       }
       value = { x: orientation.x, y: orientation.y, z: orientation.z, w: orientation.w };

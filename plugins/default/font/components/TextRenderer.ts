@@ -1,4 +1,4 @@
-let THREE = SupEngine.THREE;
+const THREE = SupEngine.THREE;
 
 import TextRendererUpdater from "./TextRendererUpdater";
 import TextRendererGeometry from "./TextRendererGeometry";
@@ -65,32 +65,32 @@ export default class TextRenderer extends SupEngine.ActorComponent {
 
     for (const threeMesh of this.threeMeshes) {
       this.actor.threeObject.add(threeMesh);
-      let scale = 1 / this.font.pixelsPerUnit;
+      const scale = 1 / this.font.pixelsPerUnit;
       threeMesh.scale.set(scale, scale, scale);
       threeMesh.updateMatrixWorld(false);
     }
   }
 
   _createFontMesh() {
-    let fontSize = (this.options.size != null) ? this.options.size : this.font.size;
-    let texts = this.text.split("\n");
+    const fontSize = (this.options.size != null) ? this.options.size : this.font.size;
+    const texts = this.text.split("\n");
 
-    let canvas = document.createElement("canvas");
-    let ctx = <CanvasRenderingContext2D>canvas.getContext("2d");
+    const canvas = document.createElement("canvas");
+    const ctx = <CanvasRenderingContext2D>canvas.getContext("2d");
     ctx.font = `${fontSize}px ${this.font.name}`;
     let width = 1;
-    for (let text of texts) width = Math.max(width, ctx.measureText(text).width);
+    for (const text of texts) width = Math.max(width, ctx.measureText(text).width);
 
     // Arbitrary value that should be enough for most fonts
     // We might want to make it configurable in the future
-    let heightBorder = fontSize * 0.3;
+    const heightBorder = fontSize * 0.3;
 
-    let heightWithoutBorder = fontSize * texts.length;
-    let height = heightWithoutBorder + heightBorder * 2;
+    const heightWithoutBorder = fontSize * texts.length;
+    const height = heightWithoutBorder + heightBorder * 2;
     canvas.width = width;
     canvas.height = height;
 
-    let color = (this.options.color != null) ? this.options.color : this.font.color;
+    const color = (this.options.color != null) ? this.options.color : this.font.color;
     ctx.fillStyle = `#${color}`;
     ctx.font = `${fontSize}px ${this.font.name}`;
     ctx.textBaseline = "middle";
@@ -116,8 +116,8 @@ export default class TextRenderer extends SupEngine.ActorComponent {
     }
     this.texture.needsUpdate = true;
 
-    let geometry = new THREE.PlaneBufferGeometry(width, height);
-    let material = new THREE.MeshBasicMaterial({
+    const geometry = new THREE.PlaneBufferGeometry(width, height);
+    const material = new THREE.MeshBasicMaterial({
       map: this.texture,
       alphaTest: 0.01,
       side: THREE.DoubleSide
@@ -136,17 +136,17 @@ export default class TextRenderer extends SupEngine.ActorComponent {
   }
 
   _createBitmapMesh() {
-    let texts = this.text.split("\n");
+    const texts = this.text.split("\n");
     for (let index = 0; index < texts.length; index++) {
-      let text = texts[index];
+      const text = texts[index];
 
-      let geometry = new TextRendererGeometry(this.font.gridWidth * text.length, this.font.gridHeight, text.length, 1);
-      let material = new THREE.MeshBasicMaterial({
+      const geometry = new TextRendererGeometry(this.font.gridWidth * text.length, this.font.gridHeight, text.length, 1);
+      const material = new THREE.MeshBasicMaterial({
         map: this.font.texture,
         alphaTest: 0.1,
         side: THREE.DoubleSide
       });
-      let color = (this.options.color != null) ? this.options.color : this.font.color;
+      const color = (this.options.color != null) ? this.options.color : this.font.color;
       material.color.setHex(parseInt(color, 16));
       this.threeMeshes[index] = new THREE.Mesh(geometry, material);
       switch (this.options.alignment) {
@@ -162,22 +162,22 @@ export default class TextRenderer extends SupEngine.ActorComponent {
       }
       this.threeMeshes[index].position.setY(-y);
 
-      let uvs = <THREE.BufferAttribute>geometry.getAttribute("uv");
+      const uvs = <THREE.BufferAttribute>geometry.getAttribute("uv");
       uvs.needsUpdate = true;
 
-      let charsByRow = this.font.texture.image.width / this.font.gridWidth;
+      const charsByRow = this.font.texture.image.width / this.font.gridWidth;
       for (let x = 0; x < text.length; x++) {
         let index: number;
         if (this.font.charset == null) index = text.charCodeAt(x) - this.font.charsetOffset;
         else index = this.font.charset.indexOf(text[x]);
 
-        let tileX = index % charsByRow;
-        let tileY = Math.floor(index / charsByRow);
+        const tileX = index % charsByRow;
+        const tileY = Math.floor(index / charsByRow);
 
-        let left   = (tileX * this.font.gridWidth + 0.2) / this.font.texture.image.width;
-        let right  = ((tileX + 1) * this.font.gridWidth - 0.2) / this.font.texture.image.width;
-        let bottom = 1 - ((tileY + 1) * this.font.gridHeight - 0.2) / this.font.texture.image.height;
-        let top    = 1 - (tileY * this.font.gridHeight + 0.2) / this.font.texture.image.height;
+        const left   = (tileX * this.font.gridWidth + 0.2) / this.font.texture.image.width;
+        const right  = ((tileX + 1) * this.font.gridWidth - 0.2) / this.font.texture.image.width;
+        const bottom = 1 - ((tileY + 1) * this.font.gridHeight - 0.2) / this.font.texture.image.height;
+        const top    = 1 - (tileY * this.font.gridHeight + 0.2) / this.font.texture.image.height;
 
         uvs.array[x * 8 + 0] = left;
         uvs.array[x * 8 + 1] = bottom;
@@ -196,11 +196,10 @@ export default class TextRenderer extends SupEngine.ActorComponent {
   }
 
   clearMesh() {
-    for (let threeMesh of this.threeMeshes) {
+    for (const threeMesh of this.threeMeshes) {
       this.actor.threeObject.remove(threeMesh);
       threeMesh.geometry.dispose();
       threeMesh.material.dispose();
-      threeMesh = null;
     }
     this.threeMeshes.length = 0;
 
@@ -215,5 +214,5 @@ export default class TextRenderer extends SupEngine.ActorComponent {
     super._destroy();
   }
 
-  setIsLayerActive(active: boolean) { for (let threeMesh of this.threeMeshes) threeMesh.visible = active; }
+  setIsLayerActive(active: boolean) { for (const threeMesh of this.threeMeshes) threeMesh.visible = active; }
 }

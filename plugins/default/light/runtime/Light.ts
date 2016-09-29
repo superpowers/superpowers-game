@@ -1,6 +1,6 @@
 import Light from "../components/Light";
 
-let THREE = SupEngine.THREE;
+const THREE = SupEngine.THREE;
 export function init(player: any, callback: Function) {
   switch (player.resources.lightSettings.shadowMapType) {
     case "basic":

@@ -211,7 +211,7 @@ export default class ModelRendererUpdater {
         break;
 
       case "color":
-        let hex = parseInt(value, 16);
+        const hex = parseInt(value, 16);
         this.modelRenderer.setColor((hex >> 16 & 255) / 255, (hex >> 8 & 255) / 255, (hex & 255) / 255);
         break;
 

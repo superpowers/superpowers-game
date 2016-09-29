@@ -1,4 +1,4 @@
-let THREE = SupEngine.THREE;
+const THREE = SupEngine.THREE;
 
 export default class TextRendererGeometry extends THREE.BufferGeometry {
   width: number;
@@ -11,9 +11,9 @@ export default class TextRendererGeometry extends THREE.BufferGeometry {
     this.width = width;
     this.height = height;
 
-    let vertices = new Float32Array(widthSegments * heightSegments * 4 * 3);
-    let normals  = new Float32Array(widthSegments * heightSegments * 4 * 3);
-    let uvs      = new Float32Array(widthSegments * heightSegments * 4 * 2);
+    const vertices = new Float32Array(widthSegments * heightSegments * 4 * 3);
+    const normals  = new Float32Array(widthSegments * heightSegments * 4 * 3);
+    const uvs      = new Float32Array(widthSegments * heightSegments * 4 * 2);
     let indices: Uint32Array|Uint16Array;
     if (vertices.length / 3 > 65535) indices = new Uint32Array(widthSegments * heightSegments * 6);
     else indices = new Uint16Array(widthSegments * heightSegments * 6);
@@ -23,10 +23,10 @@ export default class TextRendererGeometry extends THREE.BufferGeometry {
     let offset3 = 0;
 
     for (let iy = 0; iy < heightSegments; iy++) {
-      let y = iy * height / heightSegments;
+      const y = iy * height / heightSegments;
 
       for (let ix = 0; ix < widthSegments; ix++) {
-        let x = ix * width / widthSegments;
+        const x = ix * width / widthSegments;
 
         // Left bottom
         vertices[offset + 0]  = x;
@@ -56,7 +56,7 @@ export default class TextRendererGeometry extends THREE.BufferGeometry {
         uvs[offset2 + 6] = ix / widthSegments;
         uvs[offset2 + 7] = (iy + 1) / heightSegments;
 
-        let ref = (ix + iy * widthSegments) * 4;
+        const ref = (ix + iy * widthSegments) * 4;
         // Bottom right corner
         indices[offset3 + 0] = ref + 0;
         indices[offset3 + 1] = ref + 1;

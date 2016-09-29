@@ -25,8 +25,8 @@ export default class FlatColorRenderer extends ActorComponent {
     this.width = width;
     this.height = (height) ? height : this.width;
 
-    let geometry = new THREE.PlaneBufferGeometry(this.width, this.height);
-    let material = new THREE.MeshBasicMaterial({
+    const geometry = new THREE.PlaneBufferGeometry(this.width, this.height);
+    const material = new THREE.MeshBasicMaterial({
       color: color,
       alphaTest: 0.1,
       side: THREE.DoubleSide,

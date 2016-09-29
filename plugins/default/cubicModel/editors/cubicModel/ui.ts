@@ -8,9 +8,9 @@ import { Node } from "../../data/CubicModelNodes";
 import * as TreeView from "dnd-tree-view";
 import * as ResizeHandle from "resize-handle";
 
-let THREE = SupEngine.THREE;
+const THREE = SupEngine.THREE;
 
-let ui: {
+const ui: {
   canvasElt: HTMLCanvasElement;
   treeViewElt: HTMLDivElement;
   nodesTreeView: TreeView;
@@ -94,7 +94,7 @@ document.getElementById("grid-step").addEventListener("input", onGridStepInput);
 document.getElementById("grid-visible").addEventListener("change", onGridVisibleChange);
 
 function onGridStepInput(event: UIEvent) {
-  let target = (<HTMLInputElement>event.target);
+  const target = (<HTMLInputElement>event.target);
   let value = parseFloat(target.value);
   if (value !== 0 && value < 0.0001) { value = 0; target.value = "0"; }
   if (isNaN(value) || value <= 0) { (<any>target).reportValidity(); return; }
@@ -116,7 +116,7 @@ function onChangePixelsPerUnit(event: any) { data.projectClient.editAsset(SupCli
 // Texture download
 document.querySelector("button.download").addEventListener("click", (event) => {
   function triggerDownload(name: string) {
-    let anchor = document.createElement("a");
+    const anchor = document.createElement("a");
     document.body.appendChild(anchor);
     anchor.style.display = "none";
     anchor.href = data.cubicModelUpdater.cubicModelAsset.clientTextureDatas["map"].ctx.canvas.toDataURL();
@@ -127,7 +127,7 @@ document.querySelector("button.download").addEventListener("click", (event) => {
     document.body.removeChild(anchor);
   }
 
-  let options = {
+  const options = {
     initialValue: SupClient.i18n.t("cubicModelEditor:sidebar.settings.cubicModel.download.defaultName"),
     validationLabel: SupClient.i18n.t("common:actions.download")
   };
@@ -145,13 +145,13 @@ document.querySelector("button.download").addEventListener("click", (event) => {
 // Texture size
 ui.textureWidthSelect = document.querySelector("select.property-texture-width") as HTMLSelectElement;
 ui.textureHeightSelect = document.querySelector("select.property-texture-height") as HTMLSelectElement;
-let addOption = (parent: HTMLSelectElement, value: number) => {
-  let optionElt = document.createElement("option");
+const addOption = (parent: HTMLSelectElement, value: number) => {
+  const optionElt = document.createElement("option");
   optionElt.textContent = value.toString();
   optionElt.value = value.toString();
   parent.appendChild(optionElt);
 };
-for (let size of CubicModelAsset.validTextureSizes) {
+for (const size of CubicModelAsset.validTextureSizes) {
   addOption(ui.textureWidthSelect, size);
   addOption(ui.textureHeightSelect, size);
 }
@@ -165,20 +165,20 @@ ui.nodesTreeView.on("activate", onNodeActivate);
 ui.nodesTreeView.on("selectionChange", () => { setupSelectedNode(); });
 
 export function createNodeElement(node: Node) {
-  let liElt = document.createElement("li");
+  const liElt = document.createElement("li");
   liElt.dataset["id"] = node.id;
 
-  let nameSpan = document.createElement("span");
+  const nameSpan = document.createElement("span");
   nameSpan.classList.add("name");
   nameSpan.textContent = node.name;
   liElt.appendChild(nameSpan);
 
-  let visibleButton = document.createElement("button");
+  const visibleButton = document.createElement("button");
   visibleButton.textContent = SupClient.i18n.t("cubicModelEditor:sidebar.nodes.hide");
   visibleButton.classList.add("show");
   visibleButton.addEventListener("click", (event: any) => {
     event.stopPropagation();
-    let { shape } = data.cubicModelUpdater.cubicModelRenderer.byNodeId[event.target.parentElement.dataset["id"]];
+    const { shape } = data.cubicModelUpdater.cubicModelRenderer.byNodeId[event.target.parentElement.dataset["id"]];
     shape.visible = !shape.visible;
     visibleButton.textContent = SupClient.i18n.t(`cubicModelEditor:sidebar.nodes.${(shape.visible) ? "hide" : "show"}`);
     if (shape.visible) visibleButton.classList.add("show");
@@ -190,17 +190,17 @@ export function createNodeElement(node: Node) {
 }
 
 function onNodesTreeViewDrop(event: DragEvent, dropLocation: TreeView.DropLocation, orderedNodes: HTMLLIElement[]) {
-  let dropPoint = SupClient.getTreeViewDropPoint(dropLocation, data.cubicModelUpdater.cubicModelAsset.nodes);
+  const dropPoint = SupClient.getTreeViewDropPoint(dropLocation, data.cubicModelUpdater.cubicModelAsset.nodes);
 
-  let nodeIds: string[] = [];
-  for (let node of orderedNodes ) nodeIds.push(node.dataset["id"]);
+  const nodeIds: string[] = [];
+  for (const node of orderedNodes ) nodeIds.push(node.dataset["id"]);
 
-  let sourceParentNode = data.cubicModelUpdater.cubicModelAsset.nodes.parentNodesById[nodeIds[0]];
-  let sourceChildren = (sourceParentNode != null && sourceParentNode.children != null) ? sourceParentNode.children : data.cubicModelUpdater.cubicModelAsset.nodes.pub;
-  let sameParent = (sourceParentNode != null && dropPoint.parentId === sourceParentNode.id);
+  const sourceParentNode = data.cubicModelUpdater.cubicModelAsset.nodes.parentNodesById[nodeIds[0]];
+  const sourceChildren = (sourceParentNode != null && sourceParentNode.children != null) ? sourceParentNode.children : data.cubicModelUpdater.cubicModelAsset.nodes.pub;
+  const sameParent = (sourceParentNode != null && dropPoint.parentId === sourceParentNode.id);
 
   let i = 0;
-  for (let id of nodeIds) {
+  for (const id of nodeIds) {
     data.projectClient.editAsset(SupClient.query.asset, "moveNode", id, dropPoint.parentId, dropPoint.index + i);
     if (!sameParent || sourceChildren.indexOf(data.cubicModelUpdater.cubicModelAsset.nodes.byId[id]) >= dropPoint.index) i++;
   }
@@ -213,12 +213,12 @@ export function setupSelectedNode() {
   setupHelpers();
 
   // Setup texture area
-  let nodeIds: string[] = [];
-  for (let node of ui.nodesTreeView.selectedNodes) nodeIds.push(node.dataset["id"]);
+  const nodeIds: string[] = [];
+  for (const node of ui.nodesTreeView.selectedNodes) nodeIds.push(node.dataset["id"]);
   setTextureAreaSelectedNode(nodeIds);
 
   // Setup transform
-  let nodeElt = ui.nodesTreeView.selectedNodes[0];
+  const nodeElt = ui.nodesTreeView.selectedNodes[0];
   if (nodeElt == null || ui.nodesTreeView.selectedNodes.length !== 1) {
     ui.inspectorElt.hidden = true;
 
@@ -230,7 +230,7 @@ export function setupSelectedNode() {
 
   ui.inspectorElt.hidden = false;
 
-  let node = data.cubicModelUpdater.cubicModelAsset.nodes.byId[nodeElt.dataset["id"]];
+  const node = data.cubicModelUpdater.cubicModelAsset.nodes.byId[nodeElt.dataset["id"]];
   setInspectorPosition(<THREE.Vector3>node.position);
   setInspectorOrientation(<THREE.Quaternion>node.orientation);
 
@@ -241,7 +241,7 @@ export function setupSelectedNode() {
 
   ui.shapeTbodyElt.hidden = node.shape.type !== "box";
   if (!ui.shapeTbodyElt.hidden) {
-    let boxSettings: any = node.shape.settings;
+    const boxSettings: any = node.shape.settings;
 
     setInspectorBoxSize(<THREE.Vector3>boxSettings.size);
     setInspectorBoxStretch(<THREE.Vector3>boxSettings.stretch);
@@ -256,7 +256,7 @@ export function setupSelectedNode() {
 function roundForInspector(number: number) { return parseFloat(number.toFixed(3)); }
 
 export function setInspectorPosition(position: THREE.Vector3) {
-  let values = [
+  const values = [
     roundForInspector(position.x).toString(),
     roundForInspector(position.y).toString(),
     roundForInspector(position.z).toString()
@@ -271,9 +271,9 @@ export function setInspectorPosition(position: THREE.Vector3) {
 }
 
 export function setInspectorOrientation(orientation: THREE.Quaternion) {
-  let euler = new THREE.Euler().setFromQuaternion(orientation);
+  const euler = new THREE.Euler().setFromQuaternion(orientation);
 
-  let values = [
+  const values = [
     roundForInspector(THREE.Math.radToDeg(euler.x)).toString(),
     roundForInspector(THREE.Math.radToDeg(euler.y)).toString(),
     roundForInspector(THREE.Math.radToDeg(euler.z)).toString()
@@ -295,7 +295,7 @@ export function setInspectorOrientation(orientation: THREE.Quaternion) {
 }
 
 export function setInspectorShapeOffset(offset: THREE.Vector3) {
-  let values = [
+  const values = [
     roundForInspector(offset.x).toString(),
     roundForInspector(offset.y).toString(),
     roundForInspector(offset.z).toString()
@@ -310,7 +310,7 @@ export function setInspectorShapeOffset(offset: THREE.Vector3) {
 }
 
 export function setInspectorBoxSize(size: THREE.Vector3) {
-  let values = [ size.x.toString(), size.y.toString(), size.z.toString() ];
+  const values = [ size.x.toString(), size.y.toString(), size.z.toString() ];
 
   for (let i = 0; i < 3; i++) {
     // NOTE: This helps avoid clearing selection when possible
@@ -321,7 +321,7 @@ export function setInspectorBoxSize(size: THREE.Vector3) {
 }
 
 export function setInspectorBoxStretch(stretch: THREE.Vector3) {
-  let values = [
+  const values = [
     roundForInspector(stretch.x).toString(),
     roundForInspector(stretch.y).toString(),
     roundForInspector(stretch.z).toString()
@@ -341,19 +341,19 @@ document.querySelector(".main .controls .transform-mode").addEventListener("clic
 document.querySelector(".main .controls .transform-settings").addEventListener("click", onTransformSettingsClick);
 
 function onTransformModeClick(event: UIEvent) {
-  let target = <HTMLInputElement>event.target;
+  const target = <HTMLInputElement>event.target;
   if (target.tagName !== "INPUT") return;
 
   if (target.id === "transform-space") {
     engine.transformHandleComponent.setSpace(target.checked ? "local" : "world");
   } else {
-    let transformSpaceCheckbox = <HTMLInputElement>document.getElementById("transform-space");
+    const transformSpaceCheckbox = <HTMLInputElement>document.getElementById("transform-space");
     transformSpaceCheckbox.disabled = target.value === "scale";
     engine.transformHandleComponent.setMode(target.value);
 
     if (target.value === "translate") {
       ui.translateMode = target.dataset["target"];
-      let linkShapeToPivot = (<HTMLInputElement>document.getElementById("translate-pivot-shape")).checked;
+      const linkShapeToPivot = (<HTMLInputElement>document.getElementById("translate-pivot-shape")).checked;
       if (ui.translateMode === "pivot" && linkShapeToPivot) ui.translateMode = "all";
     }
   }
@@ -362,13 +362,13 @@ function onTransformModeClick(event: UIEvent) {
 }
 
 function onTransformSettingsClick(event: UIEvent) {
-  let target = <HTMLInputElement>event.target;
+  const target = <HTMLInputElement>event.target;
   if (target.tagName !== "INPUT") return;
 
   if (target.id === "transform-space") {
     engine.transformHandleComponent.setSpace(target.checked ? "local" : "world");
   } else if (target.id === "translate-pivot-shape") {
-    let linkShapeToPivot = (<HTMLInputElement>document.getElementById("translate-pivot-shape")).checked;
+    const linkShapeToPivot = (<HTMLInputElement>document.getElementById("translate-pivot-shape")).checked;
     if (ui.translateMode === "pivot" && linkShapeToPivot) ui.translateMode = "all";
     else if (ui.translateMode === "all" && !linkShapeToPivot) ui.translateMode = "pivot";
   }
@@ -403,18 +403,18 @@ ui.inspectorFields = {
   }
 };
 
-for (let input of ui.inspectorFields.position) input.addEventListener("change", onInspectorInputChange);
-for (let input of ui.inspectorFields.orientation) input.addEventListener("change", onInspectorInputChange);
+for (const input of ui.inspectorFields.position) input.addEventListener("change", onInspectorInputChange);
+for (const input of ui.inspectorFields.orientation) input.addEventListener("change", onInspectorInputChange);
 
-for (let input of ui.inspectorFields.shape.offset) input.addEventListener("change", onInspectorInputChange);
+for (const input of ui.inspectorFields.shape.offset) input.addEventListener("change", onInspectorInputChange);
 
-for (let input of ui.inspectorFields.shape.box.size) input.addEventListener("change", onInspectorInputChange);
-for (let input of ui.inspectorFields.shape.box.stretch) input.addEventListener("change", onInspectorInputChange);
+for (const input of ui.inspectorFields.shape.box.size) input.addEventListener("change", onInspectorInputChange);
+for (const input of ui.inspectorFields.shape.box.stretch) input.addEventListener("change", onInspectorInputChange);
 
 
 function onNewNodeClick() {
   // TODO: Allow choosing shape and default texture color
-  let options = {
+  const options = {
     initialValue: "Node",
     validationLabel: SupClient.i18n.t("common:actions.create")
   };
@@ -422,19 +422,19 @@ function onNewNodeClick() {
   new SupClient.Dialogs.PromptDialog(SupClient.i18n.t("cubicModelEditor:sidebar.nodes.newNode.prompt"), options, (name) => {
     if (name == null) return;
 
-    let options = SupClient.getTreeViewInsertionPoint(ui.nodesTreeView);
+    const options = SupClient.getTreeViewInsertionPoint(ui.nodesTreeView);
 
-    let quaternion = new THREE.Quaternion();
+    const quaternion = new THREE.Quaternion();
     engine.cameraActor.getGlobalOrientation(quaternion);
-    let offset = new THREE.Vector3(0, 0, -10).applyQuaternion(quaternion);
+    const offset = new THREE.Vector3(0, 0, -10).applyQuaternion(quaternion);
 
-    let position = new THREE.Vector3();
+    const position = new THREE.Vector3();
     engine.cameraActor.getGlobalPosition(position).add(offset);
 
-    let pixelsPerunit = data.cubicModelUpdater.cubicModelAsset.pub.pixelsPerUnit;
+    const pixelsPerunit = data.cubicModelUpdater.cubicModelAsset.pub.pixelsPerUnit;
 
     if (options.parentId != null) {
-      let inverseParentMatrix = new THREE.Matrix4().getInverse(data.cubicModelUpdater.cubicModelRenderer.byNodeId[options.parentId].pivot.matrixWorld);
+      const inverseParentMatrix = new THREE.Matrix4().getInverse(data.cubicModelUpdater.cubicModelRenderer.byNodeId[options.parentId].pivot.matrixWorld);
       position.applyMatrix4(inverseParentMatrix);
     } else {
       position.multiplyScalar(pixelsPerunit);
@@ -462,10 +462,10 @@ function onNewNodeClick() {
 function onRenameNodeClick() {
   if (ui.nodesTreeView.selectedNodes.length !== 1) return;
 
-  let selectedNode = ui.nodesTreeView.selectedNodes[0];
-  let node = data.cubicModelUpdater.cubicModelAsset.nodes.byId[selectedNode.dataset["id"]];
+  const selectedNode = ui.nodesTreeView.selectedNodes[0];
+  const node = data.cubicModelUpdater.cubicModelAsset.nodes.byId[selectedNode.dataset["id"]];
 
-  let options = {
+  const options = {
     initialValue: node.name,
     validationLabel: SupClient.i18n.t("common:actions.rename")
   };
@@ -480,17 +480,17 @@ function onRenameNodeClick() {
 function onDuplicateNodeClick() {
   if (ui.nodesTreeView.selectedNodes.length !== 1) return;
 
-  let selectedNode = ui.nodesTreeView.selectedNodes[0];
-  let node = data.cubicModelUpdater.cubicModelAsset.nodes.byId[selectedNode.dataset["id"]];
+  const selectedNode = ui.nodesTreeView.selectedNodes[0];
+  const node = data.cubicModelUpdater.cubicModelAsset.nodes.byId[selectedNode.dataset["id"]];
 
-  let options = {
+  const options = {
     initialValue: node.name,
     validationLabel: SupClient.i18n.t("common:actions.duplicate")
   };
 
   new SupClient.Dialogs.PromptDialog(SupClient.i18n.t("cubicModelEditor:sidebar.nodes.duplicatePrompt"), options, (newName) => {
     if (newName == null) return;
-    let options = SupClient.getTreeViewInsertionPoint(ui.nodesTreeView);
+    const options = SupClient.getTreeViewInsertionPoint(ui.nodesTreeView);
 
     data.projectClient.editAsset(SupClient.query.asset, "duplicateNode", newName, node.id, options.index, (nodeId: string) => {
       ui.nodesTreeView.clearSelection();
@@ -503,12 +503,12 @@ function onDuplicateNodeClick() {
 function onDeleteNodeClick() {
   if (ui.nodesTreeView.selectedNodes.length === 0) return;
 
-  let confirmLabel = SupClient.i18n.t("cubicModelEditor:sidebar.nodes.deleteConfirm");
-  let validationLabel = SupClient.i18n.t("common:actions.delete");
+  const confirmLabel = SupClient.i18n.t("cubicModelEditor:sidebar.nodes.deleteConfirm");
+  const validationLabel = SupClient.i18n.t("common:actions.delete");
   new SupClient.Dialogs.ConfirmDialog(confirmLabel, { validationLabel }, (confirm) => {
     if (!confirm) return;
 
-    for (let selectedNode of ui.nodesTreeView.selectedNodes) {
+    for (const selectedNode of ui.nodesTreeView.selectedNodes) {
       data.projectClient.editAsset(SupClient.query.asset, "removeNode", selectedNode.dataset["id"]);
     }
   });
@@ -516,10 +516,10 @@ function onDeleteNodeClick() {
 
 function onInspectorInputChange(event: any) {
   if (ui.nodesTreeView.selectedNodes.length !== 1) return;
-  let nodeId = ui.nodesTreeView.selectedNodes[0].dataset["id"];
+  const nodeId = ui.nodesTreeView.selectedNodes[0].dataset["id"];
 
   // transform, shape or box-shape
-  let context = event.target.parentElement.parentElement.parentElement.parentElement.className;
+  const context = event.target.parentElement.parentElement.parentElement.parentElement.className;
   let path: string;
   let uiFields: any;
 
@@ -534,7 +534,7 @@ function onInspectorInputChange(event: any) {
     uiFields = ui.inspectorFields.shape.box;
   } else throw new Error("Unsupported inspector input context");
 
-  let propertyType = event.target.parentElement.parentElement.parentElement.className;
+  const propertyType = event.target.parentElement.parentElement.parentElement.className;
   let value: any;
 
   if (context === "shape" && propertyType === "type") {
@@ -542,7 +542,7 @@ function onInspectorInputChange(event: any) {
     value = uiFields[propertyType].value;
   } else {
     // Multiple values
-    let inputs: HTMLInputElement[] = uiFields[propertyType];
+    const inputs: HTMLInputElement[] = uiFields[propertyType];
 
     value = {
       x: parseFloat(inputs[0].value),
@@ -551,8 +551,8 @@ function onInspectorInputChange(event: any) {
     };
 
     if (propertyType === "orientation") {
-      let euler = new THREE.Euler(THREE.Math.degToRad(value.x), THREE.Math.degToRad(value.y), THREE.Math.degToRad(value.z));
-      let quaternion = new THREE.Quaternion().setFromEuler(euler);
+      const euler = new THREE.Euler(THREE.Math.degToRad(value.x), THREE.Math.degToRad(value.y), THREE.Math.degToRad(value.z));
+      const quaternion = new THREE.Quaternion().setFromEuler(euler);
       value = { x: quaternion.x, y: quaternion.y, z: quaternion.z, w: quaternion.w };
     }
   }

@@ -3,7 +3,7 @@ import * as async from "async";
 export function loadAsset(player: SupRuntime.Player, entry: any, callback: (err: Error, asset?: any) => any) {
   player.getAssetData(`assets/${entry.storagePath}/model.json`, "json", (err: Error, data: any) => {
 
-    let attributesList = data.attributes;
+    const attributesList = data.attributes;
     data.attributes = {};
     async.each<string>(attributesList, (key, cb) => {
       player.getAssetData(`assets/${entry.storagePath}/attr-${key}.dat`, "arraybuffer", (err: Error, buffer: ArrayBuffer) => {
@@ -11,13 +11,13 @@ export function loadAsset(player: SupRuntime.Player, entry: any, callback: (err:
         cb();
       });
     }, () => {
-      let mapsList = data.maps;
+      const mapsList = data.maps;
       data.textures = {};
       async.each<string>(mapsList, (key, cb) => {
-        let image = new Image();
+        const image = new Image();
 
         image.onload = () => {
-          let texture = data.textures[key] = new SupEngine.THREE.Texture(image);
+          const texture = data.textures[key] = new SupEngine.THREE.Texture(image);
           texture.needsUpdate = true;
 
           if (data.filtering === "pixelated") {

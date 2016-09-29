@@ -2,9 +2,9 @@ import * as THREE from "three";
 import GameInstance from "./GameInstance";
 import ActorComponent from "./ActorComponent";
 
-let tmpMatrix = new THREE.Matrix4();
-let tmpVector3 = new THREE.Vector3();
-let tmpQuaternion = new THREE.Quaternion();
+const tmpMatrix = new THREE.Matrix4();
+const tmpVector3 = new THREE.Vector3();
+const tmpQuaternion = new THREE.Quaternion();
 
 export default class Actor {
   name: string;
@@ -93,8 +93,8 @@ export default class Actor {
   }
 
   lookAt(target: THREE.Vector3, up = this.threeObject.up) {
-    let m = new THREE.Matrix4();
-    m.lookAt(this.getGlobalPosition(tmpVector3), target, up );
+    const m = new THREE.Matrix4();
+    m.lookAt(this.getGlobalPosition(tmpVector3), target, up);
     this.setGlobalOrientation(tmpQuaternion.setFromRotationMatrix(m));
   }
 
@@ -108,7 +108,7 @@ export default class Actor {
   }
 
   setGlobalOrientation(quaternion: THREE.Quaternion) {
-    let inverseParentQuaternion = new THREE.Quaternion().setFromRotationMatrix(tmpMatrix.extractRotation(this.threeObject.parent.matrixWorld)).inverse();
+    const inverseParentQuaternion = new THREE.Quaternion().setFromRotationMatrix(tmpMatrix.extractRotation(this.threeObject.parent.matrixWorld)).inverse();
     quaternion.multiplyQuaternions(inverseParentQuaternion, quaternion);
     this.threeObject.quaternion.copy(quaternion);
     this.threeObject.updateMatrixWorld(false);
@@ -120,8 +120,8 @@ export default class Actor {
   }
 
   setGlobalEulerAngles(eulerAngles: THREE.Euler) {
-    let globalQuaternion = new THREE.Quaternion().setFromEuler(eulerAngles);
-    let inverseParentQuaternion = new THREE.Quaternion().setFromRotationMatrix(tmpMatrix.extractRotation(this.threeObject.parent.matrixWorld)).inverse();
+    const globalQuaternion = new THREE.Quaternion().setFromEuler(eulerAngles);
+    const inverseParentQuaternion = new THREE.Quaternion().setFromRotationMatrix(tmpMatrix.extractRotation(this.threeObject.parent.matrixWorld)).inverse();
     globalQuaternion.multiplyQuaternions(inverseParentQuaternion, globalQuaternion);
     this.threeObject.quaternion.copy(globalQuaternion);
     this.threeObject.updateMatrixWorld(false);
@@ -138,15 +138,15 @@ export default class Actor {
 
     if (!keepLocal) this.getGlobalMatrix(tmpMatrix);
 
-    let oldSiblings = (this.parent != null) ? this.parent.children : this.gameInstance.tree.root;
+    const oldSiblings = (this.parent != null) ? this.parent.children : this.gameInstance.tree.root;
     oldSiblings.splice(oldSiblings.indexOf(this), 1);
     this.threeObject.parent.remove(this.threeObject);
 
     this.parent = newParent;
 
-    let siblings = (newParent != null) ? newParent.children : this.gameInstance.tree.root;
+    const siblings = (newParent != null) ? newParent.children : this.gameInstance.tree.root;
     siblings.push(this);
-    let threeParent = (newParent != null) ? newParent.threeObject : this.gameInstance.threeScene;
+    const threeParent = (newParent != null) ? newParent.threeObject : this.gameInstance.threeScene;
     threeParent.add(this.threeObject);
 
     if (!keepLocal) this.setGlobalMatrix(tmpMatrix);
@@ -165,12 +165,12 @@ export default class Actor {
   }
 
   rotateGlobalEulerAngles(eulerAngles: THREE.Euler) {
-    let quaternion = new THREE.Quaternion().setFromEuler(eulerAngles);
+    const quaternion = new THREE.Quaternion().setFromEuler(eulerAngles);
     this.rotateGlobal(quaternion);
   }
 
   rotateLocalEulerAngles(eulerAngles: THREE.Euler) {
-    let quaternion = new THREE.Quaternion().setFromEuler(eulerAngles);
+    const quaternion = new THREE.Quaternion().setFromEuler(eulerAngles);
     this.threeObject.quaternion.multiplyQuaternions(quaternion, this.threeObject.quaternion);
     this.threeObject.updateMatrixWorld(false);
   }
@@ -206,7 +206,7 @@ export default class Actor {
     }
     this.threeObject = null;
 
-    let outer = (<any>this).__outer;
+    const outer = (<any>this).__outer;
     if (outer != null) outer.__inner = null;
 
     this.gameInstance = null;
@@ -214,6 +214,6 @@ export default class Actor {
 
   _markDestructionPending() {
     this.pendingForDestruction = true;
-    for (let child of this.children) child._markDestructionPending();
+    for (const child of this.children) child._markDestructionPending();
   }
 }

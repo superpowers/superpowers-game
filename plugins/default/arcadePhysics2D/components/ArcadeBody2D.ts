@@ -1,5 +1,5 @@
-let THREE = SupEngine.THREE;
-let tmpVector3 = new THREE.Vector3();
+const THREE = SupEngine.THREE;
+const tmpVector3 = new THREE.Vector3();
 
 export default class ArcadeBody2D extends SupEngine.ActorComponent {
   type: string;
@@ -76,8 +76,8 @@ export default class ArcadeBody2D extends SupEngine.ActorComponent {
     };
     this.tileSetPropertyName = config.tileSetPropertyName;
     if (config.layersIndex != null) {
-      let layers = <string[]>config.layersIndex.split(",");
-      for (let layer of layers) this.layersIndex.push(parseInt(layer.trim(), 10));
+      const layers = <string[]>config.layersIndex.split(",");
+      for (const layer of layers) this.layersIndex.push(parseInt(layer.trim(), 10));
     } else {
       for (let i = 0; i < this.tileMapAsset.__inner.data.layers.length; i++) this.layersIndex.push(i);
     }

@@ -19,7 +19,7 @@ export default class GameSettingsEditor {
   constructor(container: HTMLDivElement, projectClient: SupClient.ProjectClient) {
     this.projectClient = projectClient;
 
-    let { tbody } = SupClient.table.createTable(container);
+    const { tbody } = SupClient.table.createTable(container);
 
     this.startupSceneRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("settingsEditors:Game.startupScene"));
     this.sceneFieldSubscriber = SupClient.table.appendAssetField(this.startupSceneRow.valueCell, this.sceneAssetId, "scene", projectClient);
@@ -31,7 +31,7 @@ export default class GameSettingsEditor {
     this.fields["framesPerSecond"] = SupClient.table.appendNumberField(this.fpsRow.valueCell, "", { min: 1 });
 
     this.ratioRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("settingsEditors:Game.screenRatio"));
-    let ratioContainer = document.createElement("div");
+    const ratioContainer = document.createElement("div");
     ratioContainer.className = "";
     this.ratioRow.valueCell.appendChild(ratioContainer);
 
@@ -47,7 +47,7 @@ export default class GameSettingsEditor {
     this.fields["defaultLayer"].readOnly = true;
 
     for (let i = 0; i < GameSettingsResource.schema["customLayers"].maxLength; i++) {
-      let field = this.fields[`customLayer${i}`] = SupClient.table.appendTextField(this.layerContainers, "");
+      const field = this.fields[`customLayer${i}`] = SupClient.table.appendTextField(this.layerContainers, "");
       field.dataset["customLayerIndex"] = i.toString();
       field.addEventListener("change", this.onCustomLayerFieldChange);
     }
@@ -77,7 +77,7 @@ export default class GameSettingsEditor {
 
     this._setupCustomLayers();
 
-    for (let setting in resource.pub) {
+    for (const setting in resource.pub) {
       if (setting === "formatVersion" || setting === "customLayers") continue;
 
       if (setting === "startupSceneId") this._setStartupScene(resource.pub.startupSceneId);
@@ -88,7 +88,7 @@ export default class GameSettingsEditor {
   _setupCustomLayers() {
     this.customLayers = this.resource.pub.customLayers.slice(0);
     for (let i = 0; i < GameSettingsResource.schema["customLayers"].maxLength; i++) {
-      let field = this.fields[`customLayer${i}`];
+      const field = this.fields[`customLayer${i}`];
       if (i === this.customLayers.length) {
         field.placeholder = SupClient.i18n.t("settingsEditors:Game.newLayer");
         field.value = "";
@@ -112,7 +112,7 @@ export default class GameSettingsEditor {
   };
 
   onCustomLayerFieldChange = (event: any) => {
-    let index = parseInt(event.target.dataset["customLayerIndex"], 10);
+    const index = parseInt(event.target.dataset["customLayerIndex"], 10);
     if (index > this.customLayers.length) return;
 
     if (index === this.customLayers.length) {

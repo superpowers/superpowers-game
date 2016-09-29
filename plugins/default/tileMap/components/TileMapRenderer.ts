@@ -1,4 +1,4 @@
-let THREE = SupEngine.THREE;
+const THREE = SupEngine.THREE;
 import TileMap from "./TileMap";
 import TileSet from "./TileSet";
 import TileLayerGeometry from "./TileLayerGeometry";
@@ -56,7 +56,7 @@ export default class TileMapRenderer extends SupEngine.ActorComponent {
     this.layerVisibleById = {};
 
     for (let layerIndex = 0; layerIndex < this.tileMap.getLayersCount(); layerIndex++) {
-      let layerId = this.tileMap.getLayerId(layerIndex);
+      const layerId = this.tileMap.getLayerId(layerIndex);
       this.addLayer(layerId, layerIndex);
     }
     this.setCastShadow(this.castShadow);
@@ -65,7 +65,7 @@ export default class TileMapRenderer extends SupEngine.ActorComponent {
   }
 
   _clearLayerMeshes() {
-    for (let layerMesh of this.layerMeshes) {
+    for (const layerMesh of this.layerMeshes) {
       layerMesh.geometry.dispose();
       layerMesh.material.dispose();
       this.actor.threeObject.remove(layerMesh);
@@ -86,9 +86,9 @@ export default class TileMapRenderer extends SupEngine.ActorComponent {
   }
 
   addLayer(layerId: string, layerIndex: number) {
-    let width = this.tileMap.getWidth() * this.tileSet.data.grid.width;
-    let height = this.tileMap.getHeight() * this.tileSet.data.grid.height;
-    let geometry = new TileLayerGeometry(width, height, this.tileMap.getWidth(), this.tileMap.getHeight());
+    const width = this.tileMap.getWidth() * this.tileSet.data.grid.width;
+    const height = this.tileMap.getHeight() * this.tileSet.data.grid.height;
+    const geometry = new TileLayerGeometry(width, height, this.tileMap.getWidth(), this.tileMap.getHeight());
 
     let material: THREE.MeshBasicMaterial|THREE.MeshPhongMaterial;
     if (this.materialType === "shader") {
@@ -108,10 +108,10 @@ export default class TileMapRenderer extends SupEngine.ActorComponent {
       material.transparent = true;
     }
 
-    let layerMesh = new THREE.Mesh(geometry, material);
+    const layerMesh = new THREE.Mesh(geometry, material);
     layerMesh.receiveShadow = this.receiveShadow;
 
-    let scaleRatio = 1 / this.tileMap.getPixelsPerUnit();
+    const scaleRatio = 1 / this.tileMap.getPixelsPerUnit();
     layerMesh.scale.set(scaleRatio, scaleRatio, 1);
     layerMesh.updateMatrixWorld(false);
 
@@ -137,8 +137,8 @@ export default class TileMapRenderer extends SupEngine.ActorComponent {
   }
 
   moveLayer(layerId: string, newIndex: number) {
-    let layer = this.layerMeshesById[layerId];
-    let oldIndex = this.layerMeshes.indexOf(layer);
+    const layer = this.layerMeshesById[layerId];
+    const oldIndex = this.layerMeshes.indexOf(layer);
     this.layerMeshes.splice(oldIndex, 1);
 
     if (oldIndex < newIndex) newIndex--;
@@ -149,26 +149,26 @@ export default class TileMapRenderer extends SupEngine.ActorComponent {
 
   setCastShadow(castShadow: boolean) {
     this.castShadow = castShadow;
-    for (let layerMesh of this.layerMeshes) layerMesh.castShadow = castShadow;
+    for (const layerMesh of this.layerMeshes) layerMesh.castShadow = castShadow;
     if (!castShadow) return;
 
     this.actor.gameInstance.threeScene.traverse((object: any) => {
-      let material: THREE.Material = object.material;
+      const material: THREE.Material = object.material;
       if (material != null) material.needsUpdate = true;
     });
   }
 
   setReceiveShadow(receiveShadow: boolean) {
     this.receiveShadow = receiveShadow;
-    for (let layerMesh of this.layerMeshes) {
+    for (const layerMesh of this.layerMeshes) {
       layerMesh.receiveShadow = receiveShadow;
       layerMesh.material.needsUpdate = true;
     }
   }
 
   refreshPixelsPerUnit(pixelsPerUnit: number) {
-    let scaleRatio = 1 / this.tileMap.getPixelsPerUnit();
-    for (let layerMesh of this.layerMeshes) {
+    const scaleRatio = 1 / this.tileMap.getPixelsPerUnit();
+    for (const layerMesh of this.layerMeshes) {
       layerMesh.scale.set(scaleRatio, scaleRatio, 1);
       layerMesh.updateMatrixWorld(false);
     }
@@ -176,7 +176,7 @@ export default class TileMapRenderer extends SupEngine.ActorComponent {
 
   refreshLayersDepth() {
     for (let layerMeshIndex = 0; layerMeshIndex < this.layerMeshes.length; layerMeshIndex++) {
-      let layerMesh = this.layerMeshes[layerMeshIndex];
+      const layerMesh = this.layerMeshes[layerMeshIndex];
       layerMesh.position.setZ(layerMeshIndex * this.tileMap.getLayersDepthOffset());
       layerMesh.updateMatrixWorld(false);
     }
@@ -201,7 +201,7 @@ export default class TileMapRenderer extends SupEngine.ActorComponent {
     let flipX = false; let flipY = false;
     let angle = 0;
 
-    let tileInfo = <(number|boolean)[]>this.tileMap.getTileAt(layerIndex, x, y);
+    const tileInfo = <(number|boolean)[]>this.tileMap.getTileAt(layerIndex, x, y);
     if ((<any>tileInfo) !== 0) {
       tileX = <number>tileInfo[0];
       tileY = <number>tileInfo[1];
@@ -216,7 +216,7 @@ export default class TileMapRenderer extends SupEngine.ActorComponent {
       tileY = this.tilesPerColumn - 1;
     }
 
-    let image = this.tileSet.data.texture.image;
+    const image = this.tileSet.data.texture.image;
     let left   = (tileX           * this.tileSet.data.grid.width + 0.2) / image.width;
     let right  = ((tileX + 1)     * this.tileSet.data.grid.width - 0.2) / image.width;
     let bottom = 1 - ((tileY + 1) * this.tileSet.data.grid.height - 0.2) / image.height;
@@ -225,9 +225,9 @@ export default class TileMapRenderer extends SupEngine.ActorComponent {
     if (flipX) [right, left] = [left, right];
     if (flipY) [top, bottom] = [bottom, top];
 
-    let quadIndex = (x + y * this.tileMap.getWidth());
-    let layerMesh = this.layerMeshes[layerIndex];
-    let uvs = (<any>layerMesh.geometry).getAttribute("uv");
+    const quadIndex = (x + y * this.tileMap.getWidth());
+    const layerMesh = this.layerMeshes[layerIndex];
+    const uvs = (<any>layerMesh.geometry).getAttribute("uv");
     uvs.needsUpdate = true;
 
     switch (angle) {
@@ -292,7 +292,7 @@ export default class TileMapRenderer extends SupEngine.ActorComponent {
   setIsLayerActive(active: boolean) {
     if (this.layerMeshes == null) return;
 
-    for (let layerId in this.layerMeshesById)
+    for (const layerId in this.layerMeshesById)
       this.layerMeshesById[layerId].visible = active && this.layerVisibleById[layerId];
   }
 }

@@ -12,7 +12,7 @@ export default class CubicModelSettingsEditor {
   constructor(container: HTMLDivElement, projectClient: SupClient.ProjectClient) {
     this.projectClient = projectClient;
 
-    let { tbody } = SupClient.table.createTable(container);
+    const { tbody } = SupClient.table.createTable(container);
 
     this.pixelsPerUnitRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("settingsEditors:CubicModel.pixelsPerUnit"));
     this.fields["pixelsPerUnit"] = SupClient.table.appendNumberField(this.pixelsPerUnitRow.valueCell, "");
@@ -26,7 +26,7 @@ export default class CubicModelSettingsEditor {
   onResourceReceived = (resourceId: string, resource: CubicModelSettingsResource) => {
     this.resource = resource;
 
-    for (let setting in resource.pub) {
+    for (const setting in resource.pub) {
       this.fields[setting].value = resource.pub[setting];
     }
   };

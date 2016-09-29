@@ -1,11 +1,11 @@
 import SoundAsset from "../../data/SoundAsset";
 
-let data: {
+const data: {
   projectClient: SupClient.ProjectClient;
   asset: SoundAsset;
 } = {} as any;
 
-let ui: { streamingSelect?: HTMLSelectElement; audioElt?: HTMLAudioElement; } = {};
+const ui: { streamingSelect?: HTMLSelectElement; audioElt?: HTMLAudioElement; } = {};
 let socket: SocketIOClient.Socket = null;
 
 function start() {
@@ -17,7 +17,7 @@ function start() {
   ui.audioElt = <HTMLAudioElement>document.querySelector("audio");
 
   // Upload
-  let fileSelect = <HTMLInputElement>document.querySelector("input.file-select");
+  const fileSelect = <HTMLInputElement>document.querySelector("input.file-select");
   fileSelect.addEventListener("change", onFileSelectChange);
   document.querySelector("button.upload").addEventListener("click", () => { fileSelect.click(); } );
   document.querySelector("button.download").addEventListener("click", onDownloadSound);
@@ -30,12 +30,12 @@ function start() {
 }
 
 // Network callbacks
-let onAssetCommands: any = {};
+const onAssetCommands: any = {};
 
 function onConnected() {
   data.projectClient = new SupClient.ProjectClient(socket);
 
-  let soundSubscriber = {
+  const soundSubscriber = {
     onAssetReceived,
     onAssetEdited,
     onAssetTrashed: SupClient.onAssetTrashed
@@ -61,7 +61,7 @@ let objectURL: string;
 function onFileSelectChange(event: any) {
   if (event.target.files.length === 0) return;
 
-  let reader = new FileReader();
+  const reader = new FileReader();
   reader.onload = (event) => {
     data.projectClient.editAsset(SupClient.query.asset, "upload", reader.result);
   };
@@ -71,7 +71,7 @@ function onFileSelectChange(event: any) {
 
 function onDownloadSound() {
   function triggerDownload(name: string) {
-    let anchor = document.createElement("a");
+    const anchor = document.createElement("a");
     document.body.appendChild(anchor);
     anchor.style.display = "none";
     anchor.href = objectURL;
@@ -82,7 +82,7 @@ function onDownloadSound() {
     document.body.removeChild(anchor);
   }
 
-  let options = {
+  const options = {
     initialValue: SupClient.i18n.t("soundEditor:sidebar.settings.sound.file.download.defaultName"),
     validationLabel: SupClient.i18n.t("common:actions.download")
   };
@@ -100,8 +100,8 @@ function onDownloadSound() {
 function setupSound() {
   if (objectURL != null) URL.revokeObjectURL(objectURL);
 
-  let typedArray = new Uint8Array(data.asset.pub.sound);
-  let blob = new Blob([ typedArray ], {type: "audio"});
+  const typedArray = new Uint8Array(data.asset.pub.sound);
+  const blob = new Blob([ typedArray ], {type: "audio"});
   objectURL = URL.createObjectURL(blob);
   ui.audioElt.src = objectURL;
 }

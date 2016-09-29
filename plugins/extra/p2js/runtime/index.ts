@@ -8,8 +8,8 @@ const p2 = require("p2");
 namespace P2 {
   "use strict";
 
-  export let world = new p2.World();
-  export let autoUpdate = true;
+  export const world = new p2.World();
+  export const autoUpdate = true;
 };
 (<any>SupEngine).P2 = P2;
 

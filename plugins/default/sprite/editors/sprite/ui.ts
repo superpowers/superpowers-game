@@ -33,12 +33,12 @@ export default ui;
 new ResizeHandle(document.querySelector(".sidebar") as HTMLElement, "right");
 
 // Setup properties
-let fileSelect = <HTMLInputElement>document.querySelector("input.file-select");
+const fileSelect = <HTMLInputElement>document.querySelector("input.file-select");
 fileSelect.addEventListener("change", onFileSelectChange);
 document.querySelector("button.upload").addEventListener("click", () => { fileSelect.click(); });
 
 document.querySelector("button.download").addEventListener("click", () => {
-  let textureName = data.spriteUpdater.spriteAsset.pub.mapSlots["map"];
+  const textureName = data.spriteUpdater.spriteAsset.pub.mapSlots["map"];
   downloadTexture(textureName);
 });
 
@@ -47,7 +47,7 @@ ui.allSettings = [
   "frameOrder", "grid.width", "grid.height", "origin.x", "origin.y" ];
 ui.settings = {};
 ui.allSettings.forEach((setting: string) => {
-  let parts = setting.split(".");
+  const parts = setting.split(".");
 
   let obj = ui.settings;
   let queryName = ".property-";
@@ -59,7 +59,7 @@ ui.allSettings.forEach((setting: string) => {
   });
 
   queryName += parts[parts.length - 1];
-  let settingObj = obj[parts[parts.length - 1]] = document.querySelector(queryName);
+  const settingObj = obj[parts[parts.length - 1]] = document.querySelector(queryName);
 
   switch (setting) {
     case "filtering":
@@ -71,7 +71,7 @@ ui.allSettings.forEach((setting: string) => {
     case "opacity":
     case "alphaTest":
       settingObj.addEventListener("input", (event: any) => {
-        let value = parseFloat(event.target.value);
+        const value = parseFloat(event.target.value);
         if (isNaN(value)) return;
         data.projectClient.editAsset(SupClient.query.asset, "setProperty", setting, value);
       });
@@ -119,21 +119,21 @@ ui.texturesTreeView = new TreeView(document.querySelector(".textures-tree-view")
 ui.texturesTreeView.on("selectionChange", updateSelectedMap);
 
 ui.mapSlotsInput = {};
-for (let slotName in SpriteAsset.schema["mapSlots"].properties) {
+for (const slotName in SpriteAsset.schema["mapSlots"].properties) {
   ui.mapSlotsInput[slotName] = <HTMLInputElement>document.querySelector(`.map-${slotName}`);
   ui.mapSlotsInput[slotName].dataset["name"] = slotName;
   ui.mapSlotsInput[slotName].addEventListener("input", onEditMapSlot);
 }
 
 document.querySelector("button.new-map").addEventListener("click", onNewMapClick);
-let mapFileSelect = <HTMLInputElement>document.querySelector(".upload-map.file-select");
+const mapFileSelect = <HTMLInputElement>document.querySelector(".upload-map.file-select");
 mapFileSelect.addEventListener("change", onMapFileSelectChange);
 document.querySelector("button.upload-map").addEventListener("click", () => { mapFileSelect.click(); });
 document.querySelector("button.download-map").addEventListener("click", () => {
   if (ui.texturesTreeView.selectedNodes.length !== 1) return;
 
-  let selectedNode = ui.texturesTreeView.selectedNodes[0];
-  let textureName = selectedNode.dataset["name"];
+  const selectedNode = ui.texturesTreeView.selectedNodes[0];
+  const textureName = selectedNode.dataset["name"];
 
   downloadTexture(textureName);
 });
@@ -176,7 +176,7 @@ function onFileSelectChange(event: Event) {
 
 function downloadTexture(textureName: string) {
   function triggerDownload(name: string) {
-    let anchor = document.createElement("a");
+    const anchor = document.createElement("a");
     document.body.appendChild(anchor);
     anchor.style.display = "none";
     anchor.href = data.spriteUpdater.spriteAsset.mapObjectURLs[textureName];
@@ -187,7 +187,7 @@ function downloadTexture(textureName: string) {
     document.body.removeChild(anchor);
   }
 
-  let options = {
+  const options = {
     initialValue: SupClient.i18n.t("spriteEditor:sidebar.settings.sprite.texture.download.defaultName"),
     validationLabel: SupClient.i18n.t("common:actions.download")
   };
@@ -203,11 +203,11 @@ function downloadTexture(textureName: string) {
 }
 
 function onSetGridSize(event: any) {
-  let texture = data.spriteUpdater.spriteAsset.pub.textures["map"];
+  const texture = data.spriteUpdater.spriteAsset.pub.textures["map"];
   if (texture == null) return;
 
   // TODO: Replace with a single popup
-  let options = {
+  const options = {
     initialValue: "1",
     validationLabel: SupClient.i18n.t("spriteEditor:sidebar.settings.sprite.grid.setWidth"),
     cancelLabel: SupClient.i18n.t("common:actions.skip")
@@ -215,7 +215,7 @@ function onSetGridSize(event: any) {
 
   new SupClient.Dialogs.PromptDialog(SupClient.i18n.t("spriteEditor:sidebar.settings.sprite.grid.widthPrompt"), options, (framesPerRow) => {
     if (framesPerRow != null) {
-      let framesPerRowNum = parseInt(framesPerRow, 10);
+      const framesPerRowNum = parseInt(framesPerRow, 10);
       if (isNaN(framesPerRowNum)) return;
 
       data.projectClient.editAsset(SupClient.query.asset, "setProperty", "grid.width", Math.floor(texture.size.width / framesPerRowNum));
@@ -225,7 +225,7 @@ function onSetGridSize(event: any) {
 
     new SupClient.Dialogs.PromptDialog(SupClient.i18n.t("spriteEditor:sidebar.settings.sprite.grid.heightPrompt"), options, (framesPerColumn) => {
       if (framesPerColumn != null) {
-        let framesPerColumnNum = parseInt(framesPerColumn, 10);
+        const framesPerColumnNum = parseInt(framesPerColumn, 10);
         if (isNaN(framesPerColumnNum)) return;
 
         data.projectClient.editAsset(SupClient.query.asset, "setProperty", "grid.height", Math.floor(texture.size.height / framesPerColumnNum));
@@ -235,7 +235,7 @@ function onSetGridSize(event: any) {
 }
 
 function onNewAnimationClick() {
-  let options = {
+  const options = {
     initialValue: "Animation",
     validationLabel: SupClient.i18n.t("common:actions.create")
   };
@@ -254,10 +254,10 @@ function onNewAnimationClick() {
 function onRenameAnimationClick() {
   if (ui.animationsTreeView.selectedNodes.length !== 1) return;
 
-  let selectedNode = ui.animationsTreeView.selectedNodes[0];
-  let animation = data.spriteUpdater.spriteAsset.animations.byId[selectedNode.dataset["id"]];
+  const selectedNode = ui.animationsTreeView.selectedNodes[0];
+  const animation = data.spriteUpdater.spriteAsset.animations.byId[selectedNode.dataset["id"]];
 
-  let options = {
+  const options = {
     initialValue: animation.name,
     validationLabel: SupClient.i18n.t("common:actions.rename")
   };
@@ -272,8 +272,8 @@ function onRenameAnimationClick() {
 function onDeleteAnimationClick() {
   if (ui.animationsTreeView.selectedNodes.length === 0) return;
 
-  let confirmLabel = SupClient.i18n.t("spriteEditor:sidebar.animations.deleteAnimationPrompt");
-  let validationLabel = SupClient.i18n.t("common:actions.delete");
+  const confirmLabel = SupClient.i18n.t("spriteEditor:sidebar.animations.deleteAnimationPrompt");
+  const validationLabel = SupClient.i18n.t("common:actions.delete");
   new SupClient.Dialogs.ConfirmDialog(confirmLabel, { validationLabel }, (confirm) => {
     if (!confirm) return;
 
@@ -282,17 +282,17 @@ function onDeleteAnimationClick() {
 }
 
 function onAnimationsTreeViewDrop(event: DragEvent, dropLocation: TreeView.DropLocation, orderedNodes: HTMLLIElement[]) {
-  let animationIds: number[] = [];
+  const animationIds: number[] = [];
   orderedNodes.forEach((animation: any) => { animationIds.push(animation.dataset["id"]); });
 
-  let index = SupClient.getListViewDropIndex(dropLocation, data.spriteUpdater.spriteAsset.animations);
+  const index = SupClient.getListViewDropIndex(dropLocation, data.spriteUpdater.spriteAsset.animations);
 
   animationIds.forEach((id, i) => { data.projectClient.editAsset(SupClient.query.asset, "moveAnimation", id, index + i); });
   return false;
 }
 
 export function updateSelectedAnimation() {
-  let selectedAnimElt = ui.animationsTreeView.selectedNodes[0];
+  const selectedAnimElt = ui.animationsTreeView.selectedNodes[0];
   if (selectedAnimElt != null) {
     ui.selectedAnimationId = selectedAnimElt.dataset["id"];
     data.spriteUpdater.config_setProperty("animationId", ui.selectedAnimationId);
@@ -340,7 +340,7 @@ export function setupProperty(path: string, value: any) {
     ui.settings["grid"]["width"].value = value.width;
     ui.settings["grid"]["height"].value = value.height;
   } else {
-    let parts = path.split(".");
+    const parts = path.split(".");
     let obj = ui.settings;
     parts.slice(0, parts.length - 1).forEach((part) => { obj = obj[part]; });
     if (path.indexOf("origin") !== -1) value *= 100;
@@ -406,7 +406,7 @@ export function setupProperty(path: string, value: any) {
   const gridPaths = [ "grid", "grid.width", "grid.height" ];
   if (gridPaths.indexOf(path) !== -1) {
     spritesheetArea.gridRenderer.setRatio({ x: pub.pixelsPerUnit / pub.grid.width, y: pub.pixelsPerUnit / pub.grid.height });
-    let texture = pub.textures[pub.mapSlots["map"]];
+    const texture = pub.textures[pub.mapSlots["map"]];
     if (texture != null) {
       spritesheetArea.gridRenderer.resize(texture.size.width / pub.grid.width, texture.size.height / pub.grid.height);
     }
@@ -417,15 +417,15 @@ export function setupProperty(path: string, value: any) {
 }
 
 export function setupAnimation(animation: any, index: number) {
-  let liElt = document.createElement("li");
+  const liElt = document.createElement("li");
   liElt.dataset["id"] = animation.id;
 
-  let nameSpan = document.createElement("span");
+  const nameSpan = document.createElement("span");
   nameSpan.className = "name";
   nameSpan.textContent = animation.name;
   liElt.appendChild(nameSpan);
 
-  let startFrameIndexInput = document.createElement("input");
+  const startFrameIndexInput = document.createElement("input");
   startFrameIndexInput.type = "number";
   startFrameIndexInput.min = "0";
   startFrameIndexInput.className = "start-frame-index";
@@ -433,14 +433,14 @@ export function setupAnimation(animation: any, index: number) {
   liElt.appendChild(startFrameIndexInput);
 
   startFrameIndexInput.addEventListener("change", (event: any) => {
-    let startFrameIndex = parseInt(event.target.value, 10);
+    const startFrameIndex = parseInt(event.target.value, 10);
     data.projectClient.editAsset(SupClient.query.asset, "setAnimationProperty", animation.id, "startFrameIndex", startFrameIndex);
 
     if (startFrameIndex > data.spriteUpdater.spriteAsset.animations.byId[ui.selectedAnimationId].endFrameIndex)
       data.projectClient.editAsset(SupClient.query.asset, "setAnimationProperty", animation.id, "endFrameIndex", startFrameIndex);
   });
 
-  let endFrameIndexInput = document.createElement("input");
+  const endFrameIndexInput = document.createElement("input");
   endFrameIndexInput.type = "number";
   endFrameIndexInput.min = "0";
   endFrameIndexInput.className = "end-frame-index";
@@ -448,14 +448,14 @@ export function setupAnimation(animation: any, index: number) {
   liElt.appendChild(endFrameIndexInput);
 
   endFrameIndexInput.addEventListener("change", (event: any) => {
-    let endFrameIndex = parseInt(event.target.value, 10);
+    const endFrameIndex = parseInt(event.target.value, 10);
     data.projectClient.editAsset(SupClient.query.asset, "setAnimationProperty", animation.id, "endFrameIndex", endFrameIndex);
 
     if (endFrameIndex < data.spriteUpdater.spriteAsset.animations.byId[ui.selectedAnimationId].startFrameIndex)
       data.projectClient.editAsset(SupClient.query.asset, "setAnimationProperty", animation.id, "startFrameIndex", endFrameIndex);
   });
 
-  let speedInput = document.createElement("input");
+  const speedInput = document.createElement("input");
   speedInput.type = "number";
   speedInput.className = "speed";
   speedInput.value = animation.speed;
@@ -470,12 +470,12 @@ export function setupAnimation(animation: any, index: number) {
 
 function onEditMapSlot(event: any) {
   if (event.target.value !== "" && data.spriteUpdater.spriteAsset.pub.maps[event.target.value] == null) return;
-  let slot = event.target.value !== "" ? event.target.value : null;
+  const slot = event.target.value !== "" ? event.target.value : null;
   data.projectClient.editAsset(SupClient.query.asset, "setMapSlot", event.target.dataset["name"], slot);
 }
 
 function onNewMapClick() {
-  let options = {
+  const options = {
     initialValue: "map",
     validationLabel: SupClient.i18n.t("common:actions.create")
   };
@@ -488,14 +488,14 @@ function onNewMapClick() {
 }
 
 function onMapFileSelectChange(event: any) {
-  let reader = new FileReader;
-  let maps: any = {};
+  const reader = new FileReader;
+  const maps: any = {};
   reader.onload = (event) => {
     maps[ui.selectedTextureName] = reader.result;
     data.projectClient.editAsset(SupClient.query.asset, "setMaps", maps);
   };
 
-  let element = <HTMLInputElement>event.target;
+  const element = <HTMLInputElement>event.target;
   reader.readAsArrayBuffer(element.files[0]);
   (<HTMLFormElement>element.parentElement).reset();
   return;
@@ -504,10 +504,10 @@ function onMapFileSelectChange(event: any) {
 function onRenameMapClick() {
   if (ui.texturesTreeView.selectedNodes.length !== 1) return;
 
-  let selectedNode = ui.texturesTreeView.selectedNodes[0];
-  let textureName = selectedNode.dataset["name"];
+  const selectedNode = ui.texturesTreeView.selectedNodes[0];
+  const textureName = selectedNode.dataset["name"];
 
-  let options = {
+  const options = {
     initialValue: textureName,
     validationLabel: SupClient.i18n.t("common:actions.rename")
   };
@@ -522,32 +522,32 @@ function onRenameMapClick() {
 function onDeleteMapClick() {
   if (ui.texturesTreeView.selectedNodes.length === 0) return;
 
-  let confirmLabel = SupClient.i18n.t("spriteEditor:sidebar.advancedTextures.deleteMapPrompt");
-  let validationLabel = SupClient.i18n.t("common:actions.delete");
+  const confirmLabel = SupClient.i18n.t("spriteEditor:sidebar.advancedTextures.deleteMapPrompt");
+  const validationLabel = SupClient.i18n.t("common:actions.delete");
   new SupClient.Dialogs.ConfirmDialog(confirmLabel, { validationLabel }, (confirm) => {
     if (!confirm) return;
 
-    for (let selectedNode of ui.texturesTreeView.selectedNodes) data.projectClient.editAsset(SupClient.query.asset, "deleteMap", selectedNode.dataset["name"]);
+    for (const selectedNode of ui.texturesTreeView.selectedNodes) data.projectClient.editAsset(SupClient.query.asset, "deleteMap", selectedNode.dataset["name"]);
   });
 }
 
 export function updateSelectedMap() {
-  let selectedMapElt = ui.texturesTreeView.selectedNodes[0];
+  const selectedMapElt = ui.texturesTreeView.selectedNodes[0];
   if (selectedMapElt != null) ui.selectedTextureName = selectedMapElt.dataset["name"];
   else ui.selectedTextureName = null;
 
-  let buttons = document.querySelectorAll(".textures-buttons button");
+  const buttons = document.querySelectorAll(".textures-buttons button");
   for (let i = 0; i < buttons.length; i++) {
-    let button = <HTMLButtonElement>buttons[i];
+    const button = <HTMLButtonElement>buttons[i];
     button.disabled = ui.selectedTextureName == null && button.className !== "new-map";
   }
 }
 
 export function setupMap(mapName: string) {
-  let liElt = document.createElement("li");
+  const liElt = document.createElement("li");
   liElt.dataset["name"] = mapName;
 
-  let nameSpan = document.createElement("span");
+  const nameSpan = document.createElement("span");
   nameSpan.className = "name";
   nameSpan.textContent = mapName;
   liElt.appendChild(nameSpan);

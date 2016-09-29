@@ -25,7 +25,7 @@ import SelectionRenderer from "./components/SelectionRenderer";
 
 import Camera from "./components/Camera";
 
-export let editorComponentClasses: { [name: string]: new(...args: any[]) => ActorComponent } = {
+export const editorComponentClasses: { [name: string]: new(...args: any[]) => ActorComponent } = {
   Camera2DControls, Camera3DControls, FlatColorRenderer, GridRenderer, SelectionRenderer
 };
 
@@ -38,7 +38,7 @@ export function registerEditorComponentClass(name: string, componentClass: new(.
   editorComponentClasses[name] = componentClass;
 };
 
-export let componentClasses: { [name: string]: new(...args: any[]) => ActorComponent } = {
+export const componentClasses: { [name: string]: new(...args: any[]) => ActorComponent } = {
   /* Built-ins */ Camera
 };
 
@@ -51,7 +51,7 @@ export function registerComponentClass(name: string, plugin: new(...args: any[])
   componentClasses[name] = plugin;
 };
 
-export let earlyUpdateFunctions: {[name: string]: (gameInstance: GameInstance) => void } = {};
+export const earlyUpdateFunctions: {[name: string]: (gameInstance: GameInstance) => void } = {};
 export function registerEarlyUpdateFunction(name: string, callback: (gameInstance: GameInstance) => void) {
   if (earlyUpdateFunctions[name] != null) {
     console.error(`SupEngine.registerEarlyUpdateFunction: Tried to register two or more functions named "${name}"`);

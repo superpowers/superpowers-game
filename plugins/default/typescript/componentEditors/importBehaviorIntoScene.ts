@@ -7,7 +7,7 @@ callback: (err: string, nodeId: string) => any) {
 
     let name = entry.name;
     if (name === "Behavior" || name === "Behaviour") {
-      let parentNode = projectClient.entries.parentNodesById[entry.id];
+      const parentNode = projectClient.entries.parentNodesById[entry.id];
       if (parentNode != null) name = parentNode.name;
     }
 

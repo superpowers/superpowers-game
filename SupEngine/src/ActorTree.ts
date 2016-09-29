@@ -8,7 +8,7 @@ export default class ActorTree {
   _walkRecurseTopDown(node: Actor, parentNode: Actor, callback: (node: Actor, parentNode?: Actor) => boolean) {
     if (callback(node, parentNode) === false) return false;
 
-    for (let child of node.children) {
+    for (const child of node.children) {
       if (this._walkRecurseTopDown(child, node, callback) === false) return false;
     }
 
@@ -16,7 +16,7 @@ export default class ActorTree {
   }
 
   walkTopDown(callback: (node: Actor, parentNode?: Actor) => boolean): boolean {
-    for (let child of this.root) {
+    for (const child of this.root) {
       if (this._walkRecurseTopDown(child, null, callback) === false) return false;
     }
 
@@ -24,7 +24,7 @@ export default class ActorTree {
   }
 
   walkDown(rootNode: Actor, callback: (node: Actor, parentNode?: Actor) => any) {
-    for (let child of rootNode.children) {
+    for (const child of rootNode.children) {
       if (this._walkRecurseTopDown(child, rootNode, callback) === false) return false;
     }
 

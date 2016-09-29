@@ -1,4 +1,4 @@
-let THREE = SupEngine.THREE;
+const THREE = SupEngine.THREE;
 import LightUpdater from "./LightUpdater";
 
 export default class Light extends SupEngine.ActorComponent {
@@ -48,7 +48,7 @@ export default class Light extends SupEngine.ActorComponent {
         this.light = new THREE.PointLight(this.color, this.intensity, this.distance);
         break;
       case "spot":
-        let spotLight = new THREE.SpotLight(this.color, this.intensity, this.distance, this.angle * Math.PI / 180);
+        const spotLight = new THREE.SpotLight(this.color, this.intensity, this.distance, this.angle * Math.PI / 180);
         spotLight.target.position.copy(this.target);
         spotLight.target.updateMatrixWorld(false);
         spotLight.shadow.mapSize.copy(this.shadow.mapSize);
@@ -61,7 +61,7 @@ export default class Light extends SupEngine.ActorComponent {
         this.setCastShadow(this.castShadow);
         break;
       case "directional":
-        let directionalLight = new THREE.DirectionalLight(this.color, this.intensity);
+        const directionalLight = new THREE.DirectionalLight(this.color, this.intensity);
         directionalLight.target.position.copy(this.target);
         directionalLight.target.updateMatrixWorld(false);
         directionalLight.shadow.mapSize.copy(this.shadow.mapSize);
@@ -78,7 +78,7 @@ export default class Light extends SupEngine.ActorComponent {
     this.light.updateMatrixWorld(false);
 
     this.actor.gameInstance.threeScene.traverse((object: any) => {
-      let material: THREE.Material = object.material;
+      const material: THREE.Material = object.material;
       if (material != null) material.needsUpdate = true;
     });
   }
@@ -119,7 +119,7 @@ export default class Light extends SupEngine.ActorComponent {
 
     this.light.castShadow = this.castShadow;
     this.actor.gameInstance.threeScene.traverse((object: any) => {
-      let material: THREE.Material = object.material;
+      const material: THREE.Material = object.material;
       if (material != null) material.needsUpdate = true;
     });
   }
@@ -129,7 +129,7 @@ export default class Light extends SupEngine.ActorComponent {
     if (height != null) this.shadow.mapSize.y = height;
     if (this.type !== "spot" && this.type !== "directional") return;
 
-    let shadow = (this.light as THREE.SpotLight|THREE.DirectionalLight).shadow;
+    const shadow = (this.light as THREE.SpotLight|THREE.DirectionalLight).shadow;
     shadow.mapSize.copy(this.shadow.mapSize);
     this.setType(this.type);
   }
@@ -138,7 +138,7 @@ export default class Light extends SupEngine.ActorComponent {
     this.shadow.bias = bias;
     if (this.type !== "spot" && this.type !== "directional") return;
 
-    let shadow = (this.light as THREE.SpotLight|THREE.DirectionalLight).shadow;
+    const shadow = (this.light as THREE.SpotLight|THREE.DirectionalLight).shadow;
     shadow.bias = this.shadow.bias;
   }
 
@@ -146,8 +146,8 @@ export default class Light extends SupEngine.ActorComponent {
     this.shadow.camera.near = near;
     if (this.type !== "spot" && this.type !== "directional") return;
 
-    let shadow = (this.light as THREE.SpotLight|THREE.DirectionalLight).shadow;
-    let camera = <THREE.PerspectiveCamera>shadow.camera;
+    const shadow = (this.light as THREE.SpotLight|THREE.DirectionalLight).shadow;
+    const camera = <THREE.PerspectiveCamera>shadow.camera;
     camera.near = this.shadow.camera.near;
     camera.updateProjectionMatrix();
   }
@@ -156,8 +156,8 @@ export default class Light extends SupEngine.ActorComponent {
     this.shadow.camera.far = far;
     if (this.type !== "spot" && this.type !== "directional") return;
 
-    let shadow = (this.light as THREE.SpotLight|THREE.DirectionalLight).shadow;
-    let camera = <THREE.PerspectiveCamera>shadow.camera;
+    const shadow = (this.light as THREE.SpotLight|THREE.DirectionalLight).shadow;
+    const camera = <THREE.PerspectiveCamera>shadow.camera;
     camera.far = this.shadow.camera.far;
     camera.updateProjectionMatrix();
   }
@@ -166,8 +166,8 @@ export default class Light extends SupEngine.ActorComponent {
     this.shadow.camera.fov = fov;
     if (this.type !== "spot") return;
 
-    let shadow = (this.light as THREE.SpotLight|THREE.DirectionalLight).shadow;
-    let camera = <THREE.PerspectiveCamera>shadow.camera;
+    const shadow = (this.light as THREE.SpotLight|THREE.DirectionalLight).shadow;
+    const camera = <THREE.PerspectiveCamera>shadow.camera;
     camera.fov = this.shadow.camera.fov;
     camera.updateProjectionMatrix();
   }
@@ -179,7 +179,7 @@ export default class Light extends SupEngine.ActorComponent {
     if (right != null) this.shadow.camera.right = right;
     if (this.type !== "directional") return;
 
-    let camera = (<THREE.OrthographicCamera>(<THREE.SpotLight>this.light).shadow.camera);
+    const camera = (<THREE.OrthographicCamera>(<THREE.SpotLight>this.light).shadow.camera);
     camera.top = this.shadow.camera.top;
     camera.bottom = this.shadow.camera.bottom;
     camera.left = this.shadow.camera.left;
@@ -191,7 +191,7 @@ export default class Light extends SupEngine.ActorComponent {
     this.actor.threeObject.remove(this.light);
     if (this.castShadow) {
       this.actor.gameInstance.threeScene.traverse((object: any) => {
-        let material: THREE.Material = object.material;
+        const material: THREE.Material = object.material;
         if (material != null) material.needsUpdate = true;
       });
     }

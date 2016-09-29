@@ -261,7 +261,7 @@ export default class Input extends EventEmitter {
   }
 
   private onPointerLockChange = () => {
-    let isPointerLocked = this._isPointerLocked();
+    const isPointerLocked = this._isPointerLocked();
     if (this.wasPointerLocked !== isPointerLocked) {
       this.emit("mouseLockStateChange", isPointerLocked ? "active" : "suspended");
       this.wasPointerLocked = isPointerLocked;
@@ -300,7 +300,7 @@ export default class Input extends EventEmitter {
   }
 
   private onFullscreenChange = () => {
-    let isFullscreen = this._isFullscreen();
+    const isFullscreen = this._isFullscreen();
     if (this.wasFullscreen !== isFullscreen) {
       this.emit("fullscreenStateChange", isFullscreen ? "active" : "suspended");
       this.wasFullscreen = isFullscreen;
@@ -322,7 +322,7 @@ export default class Input extends EventEmitter {
 
     if (this.wantsPointerLock) {
       if (this.wasPointerLocked) {
-        let delta = { x: 0, y: 0 };
+        const delta = { x: 0, y: 0 };
         if (event.movementX != null) { delta.x = event.movementX; delta.y = event.movementY; }
         else if (event.webkitMovementX != null) { delta.x = event.webkitMovementX; delta.y = event.webkitMovementY; }
         else if (event.mozMovementX == null) { delta.x = event.mozMovementX; delta.y = event.mozMovementY; }
@@ -331,7 +331,7 @@ export default class Input extends EventEmitter {
         this.newMouseDelta.y += delta.y;
       }
     } else {
-      let rect = event.target.getBoundingClientRect();
+      const rect = event.target.getBoundingClientRect();
       this.newMousePosition = { x: event.clientX - rect.left, y: event.clientY - rect.top };
     }
   };
@@ -371,9 +371,9 @@ export default class Input extends EventEmitter {
   private onTouchStart = (event: any) => {
     event.preventDefault();
 
-    let rect = event.target.getBoundingClientRect();
+    const rect = event.target.getBoundingClientRect();
     for (let i = 0; i < event.changedTouches.length; i++) {
-      let touch = event.changedTouches[i];
+      const touch = event.changedTouches[i];
       this.touches[touch.identifier].position.x = touch.clientX - rect.left;
       this.touches[touch.identifier].position.y = touch.clientY - rect.top;
 
@@ -390,7 +390,7 @@ export default class Input extends EventEmitter {
     event.preventDefault();
 
     for (let i = 0; i < event.changedTouches.length; i++) {
-      let touch = event.changedTouches[i];
+      const touch = event.changedTouches[i];
       this.touchesDown[touch.identifier] = false;
       if (touch.identifier === 0) this.mouseButtonsDown[0] = false;
     }
@@ -399,10 +399,10 @@ export default class Input extends EventEmitter {
   private onTouchMove = (event: any) => {
     event.preventDefault();
 
-    let rect = event.target.getBoundingClientRect();
+    const rect = event.target.getBoundingClientRect();
 
     for (let i = 0; i < event.changedTouches.length; i++) {
-      let touch = event.changedTouches[i];
+      const touch = event.changedTouches[i];
       this.touches[touch.identifier].position.x = touch.clientX - rect.left;
       this.touches[touch.identifier].position.y = touch.clientY - rect.top;
 
@@ -466,8 +466,8 @@ export default class Input extends EventEmitter {
     }
 
     for (let i = 0; i < this.mouseButtons.length; i++) {
-      let mouseButton = this.mouseButtons[i];
-      let wasDown = mouseButton.isDown;
+      const mouseButton = this.mouseButtons[i];
+      const wasDown = mouseButton.isDown;
       mouseButton.isDown = this.mouseButtonsDown[i];
 
       mouseButton.wasJustPressed = !wasDown && mouseButton.isDown;
@@ -475,8 +475,8 @@ export default class Input extends EventEmitter {
     }
 
     for (let i = 0; i < this.touches.length; i++) {
-      let touch = this.touches[i];
-      let wasDown = touch.isDown;
+      const touch = this.touches[i];
+      const wasDown = touch.isDown;
       touch.isDown = this.touchesDown[i];
 
       touch.wasStarted = !wasDown && touch.isDown;
@@ -484,8 +484,8 @@ export default class Input extends EventEmitter {
     }
 
     for (let i = 0; i < this.keyboardButtons.length; i++) {
-      let keyboardButton = this.keyboardButtons[i];
-      let wasDown = keyboardButton.isDown;
+      const keyboardButton = this.keyboardButtons[i];
+      const wasDown = keyboardButton.isDown;
       keyboardButton.isDown = this.keyboardButtonsDown[i];
 
       keyboardButton.wasJustPressed = !wasDown && keyboardButton.isDown;
@@ -501,18 +501,18 @@ export default class Input extends EventEmitter {
     this.textEntered = this.newTextEntered;
     this.newTextEntered = "";
 
-    let gamepads = (navigator.getGamepads != null) ? navigator.getGamepads() : null;
+    const gamepads = (navigator.getGamepads != null) ? navigator.getGamepads() : null;
     if (gamepads == null) return;
 
     for (let index = 0; index < 4; index++) {
-      let gamepad = gamepads[index];
+      const gamepad = gamepads[index];
       if (gamepad == null) continue;
 
       for (let i = 0; i < this.gamepadsButtons[index].length; i++) {
         if (gamepad.buttons[i] == null) continue;
 
-        let button = this.gamepadsButtons[index][i];
-        let wasDown = button.isDown;
+        const button = this.gamepadsButtons[index][i];
+        const wasDown = button.isDown;
         button.isDown = gamepad.buttons[i].pressed;
         button.value = gamepad.buttons[i].value;
 
@@ -525,11 +525,11 @@ export default class Input extends EventEmitter {
 
       for (let stick = 0; stick < 2; stick++) {
         if (gamepad.axes[2 * stick] == null || gamepad.axes[2 * stick + 1] == null) continue;
-        let axisLength = Math.sqrt( Math.pow(Math.abs(gamepad.axes[2 * stick]), 2) + Math.pow(Math.abs(gamepad.axes[2 * stick + 1]), 2) );
+        const axisLength = Math.sqrt( Math.pow(Math.abs(gamepad.axes[2 * stick]), 2) + Math.pow(Math.abs(gamepad.axes[2 * stick + 1]), 2) );
 
-        let axes = [ this.gamepadsAxes[index][2 * stick], this.gamepadsAxes[index][2 * stick + 1] ];
+        const axes = [ this.gamepadsAxes[index][2 * stick], this.gamepadsAxes[index][2 * stick + 1] ];
 
-        let wasAxisDown = [
+        const wasAxisDown = [
           { positive: axes[0].value > pressedValue, negative: axes[0].value < -pressedValue },
           { positive: axes[1].value > pressedValue, negative: axes[1].value < -pressedValue }
         ];
@@ -542,7 +542,7 @@ export default class Input extends EventEmitter {
           axes[1].value = gamepad.axes[2 * stick + 1];
         }
 
-        let isAxisDown = [
+        const isAxisDown = [
           { positive: axes[0].value > pressedValue, negative: axes[0].value < -pressedValue },
           { positive: axes[1].value > pressedValue, negative: axes[1].value < -pressedValue }
         ];
@@ -565,9 +565,9 @@ export default class Input extends EventEmitter {
 
         let currentAutoRepeat = this.gamepadsAutoRepeats[index];
         if (currentAutoRepeat != null) {
-          let axisIndex = currentAutoRepeat.axis - stick * 2;
+          const axisIndex = currentAutoRepeat.axis - stick * 2;
           if (axisIndex === 0 || axisIndex === 1) {
-            let autoRepeatedAxis = axes[axisIndex];
+            const autoRepeatedAxis = axes[axisIndex];
             if ((currentAutoRepeat.positive && !isAxisDown[axisIndex].positive) ||
             (!currentAutoRepeat.positive && !isAxisDown[axisIndex].negative)) {
               // Auto-repeated axis has been released

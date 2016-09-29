@@ -1,7 +1,7 @@
 import ScriptAsset from "../../data/ScriptAsset";
 import { data, scheduleErrorCheck, setNextCompletion, updateWorkerFile } from "./network";
 
-let ui: {
+const ui: {
   selectedRevision: string;
 
   editor: TextEditorWidget;
@@ -37,8 +37,8 @@ window.addEventListener("message", (event) => {
   if (event.data.type === "setRevision") onSelectRevision(event.data.revisionId);
   else if (event.data.type === "activate") ui.editor.codeMirrorInstance.focus();
   else if (event.data.type === "setState") {
-    let line = parseInt(event.data.state.line, 10);
-    let ch = parseInt(event.data.state.ch, 10);
+    const line = parseInt(event.data.state.line, 10);
+    const ch = parseInt(event.data.state.ch, 10);
     if (ui.editor != null) ui.editor.codeMirrorInstance.getDoc().setCursor({ line , ch });
     else defaultPosition = { line, ch };
   }
@@ -49,15 +49,15 @@ ui.parameterElement = <HTMLDivElement>document.querySelector(".popup-parameter")
 ui.parameterElement.parentElement.removeChild(ui.parameterElement);
 ui.parameterElement.style.display = "";
 
-let parameterPopupKeyMap = {
+const parameterPopupKeyMap = {
   "Esc": () => { clearParameterPopup(); },
   "Up": () => { updateParameterHint(ui.selectedSignatureIndex - 1); },
   "Down": () => { updateParameterHint(ui.selectedSignatureIndex + 1); },
   "Enter": () => {
-    let selectedSignature = ui.signatureTexts[ui.selectedSignatureIndex];
+    const selectedSignature = ui.signatureTexts[ui.selectedSignatureIndex];
     if (selectedSignature.parameters.length === 0) return;
 
-    let cursorPosition = ui.editor.codeMirrorInstance.getDoc().getCursor();
+    const cursorPosition = ui.editor.codeMirrorInstance.getDoc().getCursor();
     let text = "";
 
     for (let parameterIndex = 0; parameterIndex < selectedSignature.parameters.length; parameterIndex++) {
@@ -65,18 +65,18 @@ let parameterPopupKeyMap = {
       text += selectedSignature.parameters[parameterIndex];
     }
     ui.editor.codeMirrorInstance.getDoc().replaceRange(text, cursorPosition, null);
-    let endSelection = { line: cursorPosition.line, ch: cursorPosition.ch + selectedSignature.parameters[0].length };
+    const endSelection = { line: cursorPosition.line, ch: cursorPosition.ch + selectedSignature.parameters[0].length };
     ui.editor.codeMirrorInstance.getDoc().setSelection(cursorPosition, endSelection);
   },
   "Tab": () => {
-    let selectedSignature = ui.signatureTexts[ui.selectedSignatureIndex];
+    const selectedSignature = ui.signatureTexts[ui.selectedSignatureIndex];
     if (selectedSignature.parameters.length === 0) return;
     if (ui.selectedArgumentIndex === selectedSignature.parameters.length - 1) return;
 
-    let cursorPosition = ui.editor.codeMirrorInstance.getDoc().getCursor();
+    const cursorPosition = ui.editor.codeMirrorInstance.getDoc().getCursor();
 
     cursorPosition.ch += 2;
-    let endSelection = { line: cursorPosition.line, ch: cursorPosition.ch + selectedSignature.parameters[ui.selectedArgumentIndex + 1].length };
+    const endSelection = { line: cursorPosition.line, ch: cursorPosition.ch + selectedSignature.parameters[ui.selectedArgumentIndex + 1].length };
     ui.editor.codeMirrorInstance.getDoc().setSelection(cursorPosition, endSelection);
   }
 };
@@ -124,8 +124,8 @@ export function setupEditor(clientId: string) {
       "Shift-Ctrl-F": () => { onGlobalSearch(); },
       "Shift-Cmd-F": () => { onGlobalSearch(); },
       "F8": () => {
-        let cursor = ui.editor.codeMirrorInstance.getDoc().getCursor();
-        let token = ui.editor.codeMirrorInstance.getTokenAt(cursor);
+        const cursor = ui.editor.codeMirrorInstance.getDoc().getCursor();
+        const token = ui.editor.codeMirrorInstance.getTokenAt(cursor);
         if (token.string === ".") token.start = token.end;
 
         let start = 0;
@@ -166,7 +166,7 @@ export function setupEditor(clientId: string) {
   });
 
   (<any>ui.editor.codeMirrorInstance).on("cursorActivity", () => {
-    let currentLine = ui.editor.codeMirrorInstance.getDoc().getCursor().line;
+    const currentLine = ui.editor.codeMirrorInstance.getDoc().getCursor().line;
     if (Math.abs(currentLine - ui.previousLine) >= 1) clearParameterPopup();
     else if (ui.parameterElement.parentElement != null) scheduleParameterHint();
     ui.previousLine = currentLine;
@@ -181,8 +181,8 @@ export function setupEditor(clientId: string) {
 
 let localVersionNumber = 0;
 function onEditText(text: string, origin: string) {
-  let localFileName = data.fileNamesByScriptId[SupClient.query.asset];
-  let localFile = data.files[localFileName];
+  const localFileName = data.fileNamesByScriptId[SupClient.query.asset];
+  const localFile = data.files[localFileName];
   localFile.text = text;
   localVersionNumber++;
   localFile.version = `l${localVersionNumber}`;
@@ -221,7 +221,7 @@ ui.errorPane = <HTMLDivElement>document.querySelector(".error-pane");
 ui.errorPaneStatus = <HTMLDivElement>ui.errorPane.querySelector(".header");
 ui.errorPaneInfo = <HTMLDivElement>ui.errorPaneStatus.querySelector(".info");
 
-let errorsContent = ui.errorPane.querySelector(".content") as HTMLDivElement;
+const errorsContent = ui.errorPane.querySelector(".content") as HTMLDivElement;
 ui.errorsTBody = <HTMLTableSectionElement>errorsContent.querySelector("tbody");
 ui.errorsTBody.addEventListener("click", onErrorTBodyClick);
 
@@ -235,7 +235,7 @@ interface CompilationError {
 function clearErrors() {
   ui.editor.codeMirrorInstance.operation(() => {
     // Remove all previous errors
-    for (let textMarker of ui.editor.codeMirrorInstance.getDoc().getAllMarks()) {
+    for (const textMarker of ui.editor.codeMirrorInstance.getDoc().getAllMarks()) {
       if ((<any>textMarker).className !== "line-error") continue;
       textMarker.clear();
     }
@@ -264,21 +264,21 @@ export function refreshErrors(errors: CompilationError[]) {
 
   // Display new ones
   ui.editor.codeMirrorInstance.operation(() => {
-    for (let error of errors) {
-      let errorRow = document.createElement("tr");
+    for (const error of errors) {
+      const errorRow = document.createElement("tr");
 
       errorRow.dataset["line"] = error.position.line.toString();
       errorRow.dataset["character"] = error.position.character.toString();
 
-      let positionCell = document.createElement("td");
+      const positionCell = document.createElement("td");
       positionCell.textContent = (error.position.line + 1).toString();
       errorRow.appendChild(positionCell);
 
-      let messageCell = document.createElement("td");
+      const messageCell = document.createElement("td");
       messageCell.textContent = error.message;
       errorRow.appendChild(messageCell);
 
-      let scriptCell = document.createElement("td");
+      const scriptCell = document.createElement("td");
       errorRow.appendChild(scriptCell);
       if (error.file !== "") {
         errorRow.dataset["assetId"] = data.files[error.file].id;
@@ -294,24 +294,24 @@ export function refreshErrors(errors: CompilationError[]) {
       lastSelfErrorRow = errorRow;
       selfErrorsCount++;
 
-      let line = error.position.line;
+      const line = error.position.line;
       ui.editor.codeMirrorInstance.getDoc().markText(
         { line , ch: error.position.character },
         { line, ch: error.position.character + error.length },
         { className: "line-error" }
       );
 
-      let gutter = document.createElement("div");
+      const gutter = document.createElement("div");
       gutter.className = "line-error-gutter";
       gutter.innerHTML = "●";
       ui.editor.codeMirrorInstance.setGutterMarker(line, "line-error-gutter", gutter);
     }
-    let otherErrorsCount = errors.length - selfErrorsCount;
+    const otherErrorsCount = errors.length - selfErrorsCount;
 
-    let selfErrorsValue = SupClient.i18n.t(`scriptEditor:errors.${selfErrorsCount > 1 ? "severalErrors" : "oneError"}`, { errors: selfErrorsCount.toString() });
-    let selfErrors = SupClient.i18n.t("scriptEditor:errors.selfErrorsInfo", { errors: selfErrorsValue.toString() });
-    let otherErrorsValue = SupClient.i18n.t(`scriptEditor:errors.${otherErrorsCount > 1 ? "severalErrors" : "oneError"}`, { errors: otherErrorsCount.toString() });
-    let otherErrors = SupClient.i18n.t("scriptEditor:errors.otherErrorsInfo", { errors: otherErrorsValue.toString() });
+    const selfErrorsValue = SupClient.i18n.t(`scriptEditor:errors.${selfErrorsCount > 1 ? "severalErrors" : "oneError"}`, { errors: selfErrorsCount.toString() });
+    const selfErrors = SupClient.i18n.t("scriptEditor:errors.selfErrorsInfo", { errors: selfErrorsValue.toString() });
+    const otherErrorsValue = SupClient.i18n.t(`scriptEditor:errors.${otherErrorsCount > 1 ? "severalErrors" : "oneError"}`, { errors: otherErrorsCount.toString() });
+    const otherErrors = SupClient.i18n.t("scriptEditor:errors.otherErrorsInfo", { errors: otherErrorsValue.toString() });
 
     if (selfErrorsCount > 0) {
       ui.saveButton.hidden = true;
@@ -331,11 +331,11 @@ function onErrorTBodyClick(event: MouseEvent) {
     target = target.parentElement;
   }
 
-  let assetId = target.dataset["assetId"];
+  const assetId = target.dataset["assetId"];
   if (assetId == null) return;
 
-  let line = target.dataset["line"];
-  let character = target.dataset["character"];
+  const line = target.dataset["line"];
+  const character = target.dataset["character"];
 
   if (assetId === SupClient.query.asset) {
     ui.editor.codeMirrorInstance.getDoc().setCursor({ line: parseInt(line, 10), ch: parseInt(character, 10) });
@@ -425,8 +425,8 @@ export function showParameterPopup(texts: { prefix: string; parameters: string[]
   ui.selectedArgumentIndex = selectedArgumentIndex;
   updateParameterHint(selectedItemIndex);
 
-  let position = ui.editor.codeMirrorInstance.getDoc().getCursor();
-  let coordinates  = ui.editor.codeMirrorInstance.cursorCoords(position, "page");
+  const position = ui.editor.codeMirrorInstance.getDoc().getCursor();
+  const coordinates  = ui.editor.codeMirrorInstance.cursorCoords(position, "page");
 
   ui.parameterElement.style.top = `${Math.round(coordinates.top - 30)}px`;
   ui.parameterElement.style.left = `${coordinates.left}px`;
@@ -441,7 +441,7 @@ function updateParameterHint(index: number) {
   ui.selectedSignatureIndex = index;
   ui.parameterElement.querySelector(".item").textContent = `(${index + 1}/${ui.signatureTexts.length})`;
 
-  let text = ui.signatureTexts[index];
+  const text = ui.signatureTexts[index];
   let prefix = text.prefix;
   let parameter = "";
   let suffix = "";
@@ -478,8 +478,8 @@ function scheduleParameterHint() {
   if (ui.parameterTimeout != null) clearTimeout(ui.parameterTimeout);
 
   ui.parameterTimeout = window.setTimeout(() => {
-    let cursor = ui.editor.codeMirrorInstance.getDoc().getCursor();
-    let token = ui.editor.codeMirrorInstance.getTokenAt(cursor);
+    const cursor = ui.editor.codeMirrorInstance.getDoc().getCursor();
+    const token = ui.editor.codeMirrorInstance.getTokenAt(cursor);
     if (token.string === ".") token.start = token.end;
 
     let start = 0;
@@ -497,8 +497,8 @@ function scheduleParameterHint() {
 }
 
 function hint(instance: any, callback: any) {
-  let cursor = ui.editor.codeMirrorInstance.getDoc().getCursor();
-  let token = ui.editor.codeMirrorInstance.getTokenAt(cursor);
+  const cursor = ui.editor.codeMirrorInstance.getDoc().getCursor();
+  const token = ui.editor.codeMirrorInstance.getTokenAt(cursor);
   if (token.string === ".") token.start = token.end;
 
   let start = 0;
@@ -509,7 +509,7 @@ function hint(instance: any, callback: any) {
 }
 (<any>hint).async = true;
 
-let hintCustomKeys = {
+const hintCustomKeys = {
   "Up": (cm: any, commands: any) => { commands.moveFocus(-1); },
   "Down": (cm: any, commands: any) => { commands.moveFocus(1); },
   "Enter": (cm: any, commands: any) => { commands.pick(); },
@@ -536,7 +536,7 @@ function onGlobalSearch() {
     return;
   }
 
-  let options = {
+  const options = {
     placeholder: SupClient.i18n.t("scriptEditor:globalSearch.placeholder"),
     initialValue: ui.editor.codeMirrorInstance.getDoc().getSelection(),
     validationLabel: SupClient.i18n.t("common:actions.search")
