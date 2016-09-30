@@ -1,7 +1,7 @@
 {
   "name": "superpowers-game",
   "description": "Three.js-based game development system for Superpowers, the HTML5 app for real-time collaborative projects",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "license": "ISC",
   "repository": {
     "type": "git",
