@@ -1,0 +1,24 @@
+{
+  "applyChanges": "Applica modifiche",
+  "applyChangesWithErrors": "Applica modifiche con errori",
+  "draft": "Bozza",
+
+  "errors": {
+    "noErrors": "Nessun errore",
+    "oneError": "1 errore",
+    "severalErrors": "${errors} errori",
+
+    "selfErrorsInfo": "${errors} in questo script",
+    "otherErrorsInfo": "${errors} in altri script",
+    "bothErrorsInfo": "${selfErrors}, ${otherErrors}",
+
+    "line": "Riga",
+    "message": "Messaggio",
+    "script": "Script"
+  },
+
+  "globalSearch": {
+    "prompt": "Search in tutti gli script TypeScript.",
+    "placeholder": "Trova nel progetto"
+  }
+}
