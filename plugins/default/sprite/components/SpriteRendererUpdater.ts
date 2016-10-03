@@ -35,10 +35,10 @@ export default class SpriteRendererUpdater {
     this.overrideOpacity = config.overrideOpacity;
     this.opacity = config.opacity;
     if (this.overrideOpacity) this.spriteRenderer.setOpacity(this.opacity);
-    let hex = parseInt(config.color, 16);
-    let r = (hex >> 16 & 255) / 255;
-    let g = (hex >> 8 & 255) / 255;
-    let b = (hex & 255) / 255;
+    const hex = parseInt(config.color, 16);
+    const r = (hex >> 16 & 255) / 255;
+    const g = (hex >> 8 & 255) / 255;
+    const b = (hex & 255) / 255;
     this.spriteRenderer.setColor(r, g, b);
 
     this.spriteSubscriber = {
@@ -73,7 +73,7 @@ export default class SpriteRendererUpdater {
   };
 
   private prepareMaps(textures: { [name: string]: THREE.Texture }, callback: () => any) {
-    let textureNames = Object.keys(textures);
+    const textureNames = Object.keys(textures);
     let texturesToLoad = textureNames.length;
 
     if (texturesToLoad === 0) {
@@ -87,7 +87,7 @@ export default class SpriteRendererUpdater {
     }
 
     textureNames.forEach((key) => {
-      let image = textures[key].image;
+      const image = textures[key].image;
       if (!image.complete) image.addEventListener("load", onTextureLoaded);
       else onTextureLoaded();
     });
@@ -104,7 +104,7 @@ export default class SpriteRendererUpdater {
   }
 
   private playAnimation() {
-    let animation = this.spriteAsset.animations.byId[this.animationId];
+    const animation = this.spriteAsset.animations.byId[this.animationId];
     if (animation == null) return;
 
     this.spriteRenderer.setAnimation(animation.name, this.looping);
@@ -238,10 +238,10 @@ export default class SpriteRendererUpdater {
         break;
 
       case "color":
-        let hex = parseInt(value, 16);
-        let r = (hex >> 16 & 255) / 255;
-        let g = (hex >> 8 & 255) / 255;
-        let b = (hex & 255) / 255;
+        const hex = parseInt(value, 16);
+        const r = (hex >> 16 & 255) / 255;
+        const g = (hex >> 8 & 255) / 255;
+        const b = (hex & 255) / 255;
         this.spriteRenderer.setColor(r, g, b);
         break;
 

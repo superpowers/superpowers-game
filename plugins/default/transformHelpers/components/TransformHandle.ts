@@ -1,4 +1,4 @@
-let THREE = SupEngine.THREE;
+const THREE = SupEngine.THREE;
 import "./TransformControls";
 
 export default class TransformHandle extends SupEngine.ActorComponent {

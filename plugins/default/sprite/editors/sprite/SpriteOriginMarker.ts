@@ -1,4 +1,4 @@
-let THREE = SupEngine.THREE;
+const THREE = SupEngine.THREE;
 
 export default class SpriteOriginMarker extends SupEngine.ActorComponent {
 
@@ -7,7 +7,7 @@ export default class SpriteOriginMarker extends SupEngine.ActorComponent {
   constructor(actor: SupEngine.Actor) {
     super(actor, "SpriteOriginMarker");
 
-    let geometry = new THREE.Geometry();
+    const geometry = new THREE.Geometry();
     geometry.vertices.push(
       new THREE.Vector3(-0.2, 0, 0),
       new THREE.Vector3( 0.2, 0, 0),

@@ -41,27 +41,27 @@ export default class ModelRendererEditor {
     this.overrideOpacity = config.overrideOpacity;
     this.opacity = config.opacity;
 
-    let modelRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:ModelRenderer.model"));
+    const modelRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:ModelRenderer.model"));
     this.modelFieldSubscriber = SupClient.table.appendAssetField(modelRow.valueCell, this.modelAssetId, "model", projectClient);
     this.modelFieldSubscriber.on("select", (assetId: string) => {
       this.editConfig("setProperty", "modelAssetId", assetId);
       this.editConfig("setProperty", "animationId", null);
     });
 
-    let animationRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:ModelRenderer.animation"));
+    const animationRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:ModelRenderer.animation"));
     this.animationSelectBox = SupClient.table.appendSelectBox(animationRow.valueCell, { "": SupClient.i18n.t("common:none") });
     this.animationSelectBox.addEventListener("change", (event: any) => {
-      let animationId = (event.target.value === "") ? null : event.target.value;
+      const animationId = (event.target.value === "") ? null : event.target.value;
       this.editConfig("setProperty", "animationId", animationId);
     });
     this.animationSelectBox.disabled = true;
 
-    let shadowRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:ModelRenderer.shadow.title"));
-    let shadowDiv = document.createElement("div") as HTMLDivElement;
+    const shadowRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:ModelRenderer.shadow.title"));
+    const shadowDiv = document.createElement("div") as HTMLDivElement;
     shadowDiv.classList.add("inputs");
     shadowRow.valueCell.appendChild(shadowDiv);
 
-    let castSpan = document.createElement("span");
+    const castSpan = document.createElement("span");
     castSpan.style.marginLeft = "5px";
     castSpan.textContent = SupClient.i18n.t("componentEditors:ModelRenderer.shadow.cast");
     shadowDiv.appendChild(castSpan);
@@ -70,7 +70,7 @@ export default class ModelRendererEditor {
       this.editConfig("setProperty", "castShadow", event.target.checked);
     });
 
-    let receiveSpan = document.createElement("span");
+    const receiveSpan = document.createElement("span");
     receiveSpan.style.marginLeft = "5px";
     receiveSpan.textContent = SupClient.i18n.t("componentEditors:ModelRenderer.shadow.receive");
     shadowDiv.appendChild(receiveSpan);
@@ -79,23 +79,23 @@ export default class ModelRendererEditor {
       this.editConfig("setProperty", "receiveShadow", event.target.checked);
     });
 
-    let colorRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:ModelRenderer.color"));
+    const colorRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:ModelRenderer.color"));
     this.colorField = SupClient.table.appendColorField(colorRow.valueCell, config.color);
     this.colorField.addListener("change", (color: string) => {
       this.editConfig("setProperty", "color", color);
     });
 
-    let opacityRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:SpriteRenderer.opacity"), { checkbox: true } );
+    const opacityRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:SpriteRenderer.opacity"), { checkbox: true } );
     this.overrideOpacityField = opacityRow.checkbox;
     this.overrideOpacityField.addEventListener("change", (event: any) => {
       this.editConfig("setProperty", "opacity", this.asset != null ? this.asset.pub.opacity : null);
       this.editConfig("setProperty", "overrideOpacity", event.target.checked);
     });
 
-    let opacityParent = document.createElement("div");
+    const opacityParent = document.createElement("div");
     opacityRow.valueCell.appendChild(opacityParent);
 
-    let transparentOptions: {[key: string]: string} = {
+    const transparentOptions: {[key: string]: string} = {
       empty: "",
       opaque: SupClient.i18n.t("componentEditors:SpriteRenderer.opaque"),
       transparent: SupClient.i18n.t("componentEditors:SpriteRenderer.transparent"),
@@ -103,7 +103,7 @@ export default class ModelRendererEditor {
     this.transparentField = SupClient.table.appendSelectBox(opacityParent, transparentOptions);
     (this.transparentField.children[0] as HTMLOptionElement).hidden = true;
     this.transparentField.addEventListener("change", (event) => {
-      let opacity = this.transparentField.value === "transparent" ? 1 : null;
+      const opacity = this.transparentField.value === "transparent" ? 1 : null;
       this.editConfig("setProperty", "opacity", opacity);
     });
 
@@ -113,13 +113,13 @@ export default class ModelRendererEditor {
     });
     this.updateOpacityField();
 
-    let materialRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:ModelRenderer.material"));
+    const materialRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:ModelRenderer.material"));
     this.materialSelectBox = SupClient.table.appendSelectBox(materialRow.valueCell, { "basic": "Basic", "phong": "Phong", "shader": "Shader" }, config.materialType);
     this.materialSelectBox.addEventListener("change", (event: any) => {
       this.editConfig("setProperty", "materialType", event.target.value);
     });
 
-    let shaderRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:ModelRenderer.shader"));
+    const shaderRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:ModelRenderer.shader"));
     this.shaderRow = shaderRow.row;
     this.shaderFieldSubscriber = SupClient.table.appendAssetField(shaderRow.valueCell, this.shaderAssetId, "shader", this.projectClient);
     this.shaderFieldSubscriber.on("select", (assetId: string) => {
@@ -202,7 +202,7 @@ export default class ModelRendererEditor {
 
     this._clearAnimations();
 
-    for (let animation of this.asset.pub.animations) {
+    for (const animation of this.asset.pub.animations) {
       SupClient.table.appendSelectOption(this.animationSelectBox, animation.id, animation.name);
     }
 
@@ -218,11 +218,11 @@ export default class ModelRendererEditor {
     if (command === "setProperty" && args[0] === "opacity") this.updateOpacityField();
 
     if (command.indexOf("Animation") !== -1) return;
-    let animationId = this.animationSelectBox.value;
+    const animationId = this.animationSelectBox.value;
 
     this._clearAnimations();
 
-    for (let animation of this.asset.pub.animations) {
+    for (const animation of this.asset.pub.animations) {
       SupClient.table.appendSelectOption(this.animationSelectBox, animation.id, animation.name);
     }
 
@@ -241,7 +241,7 @@ export default class ModelRendererEditor {
   // User interface
   _clearAnimations() {
     while (true) {
-      let child = this.animationSelectBox.children[1];
+      const child = this.animationSelectBox.children[1];
       if (child == null) break;
       this.animationSelectBox.removeChild(child);
     }
@@ -257,7 +257,7 @@ export default class ModelRendererEditor {
       this.transparentField.value = "empty";
       this.opacityFields.numberField.parentElement.hidden = true;
     } else {
-      let opacity = this.overrideOpacity ? this.opacity : this.asset.pub.opacity;
+      const opacity = this.overrideOpacity ? this.opacity : this.asset.pub.opacity;
       if (opacity != null) {
         this.transparentField.value = "transparent";
         this.opacityFields.numberField.parentElement.hidden = false;

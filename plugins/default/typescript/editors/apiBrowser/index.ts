@@ -5,10 +5,10 @@ import * as async from "async";
 const hljs = require("highlight.js"); // import * as hljs from "highlight.js";
 /* tslint:enable */
 
-let searchElt = document.querySelector("input[type=search]") as HTMLInputElement;
-let noSearchResultsElt = document.querySelector("main article") as HTMLElement;
-let navListElt = document.querySelector("nav ul");
-let mainElt = document.querySelector("main");
+const searchElt = document.querySelector("input[type=search]") as HTMLInputElement;
+const noSearchResultsElt = document.querySelector("main article") as HTMLElement;
+const navListElt = document.querySelector("nav ul");
+const mainElt = document.querySelector("main");
 let preElts: HTMLPreElement[];
 
 function findText(containerNode: Node, offset: number) {
@@ -18,7 +18,7 @@ function findText(containerNode: Node, offset: number) {
   while (node != null) {
     if (node.nodeType === Node.ELEMENT_NODE && (node as HTMLElement).tagName === "BR") index++;
     else if (node.nodeType === Node.TEXT_NODE) {
-      let length = (node as Text).data.length;
+      const length = (node as Text).data.length;
       if (index + length > offset) return { node, index: offset - index };
       else index += length;
     }
@@ -37,7 +37,7 @@ function findText(containerNode: Node, offset: number) {
   }
 }
 
-let socket = SupClient.connect(SupClient.query.project);
+const socket = SupClient.connect(SupClient.query.project);
 socket.on("welcome", onWelcome);
 
 function onWelcome(clientId: number, config: { buildPort: number; systemId: string; }) {
@@ -49,12 +49,12 @@ function onWelcome(clientId: number, config: { buildPort: number; systemId: stri
 }
 
 function onAPILoaded() {
-  let allDefs: { [pluginName: string]: string } = {};
+  const allDefs: { [pluginName: string]: string } = {};
 
-  let actorComponentAccessors: string[] = [];
-  let plugins = SupCore.system.getPlugins<SupCore.TypeScriptAPIPlugin>("typescriptAPI");
-  for (let pluginName in plugins) {
-    let plugin = plugins[pluginName];
+  const actorComponentAccessors: string[] = [];
+  const plugins = SupCore.system.getPlugins<SupCore.TypeScriptAPIPlugin>("typescriptAPI");
+  for (const pluginName in plugins) {
+    const plugin = plugins[pluginName];
     name = pluginName;
     if (name === "lib") name = "Built-ins";
 
@@ -67,40 +67,39 @@ function onAPILoaded() {
 
   allDefs["Sup.Actor"] = allDefs["Sup.Actor"].replace("// INSERT_COMPONENT_ACCESSORS", actorComponentAccessors.join("\n    "));
 
-  let sortedDefNames = Object.keys(allDefs);
+  const sortedDefNames = Object.keys(allDefs);
   sortedDefNames.sort((a, b) => (a.toLowerCase() < b.toLowerCase()) ? -1 : 1);
   sortedDefNames.unshift(sortedDefNames.splice(sortedDefNames.indexOf("Built-ins"), 1)[0]);
 
   preElts = [];
 
-  for (let name of sortedDefNames) {
-    let defs = allDefs[name];
+  for (const name of sortedDefNames) {
+    const defs = allDefs[name];
 
-    let liElt = document.createElement("li");
+    const liElt = document.createElement("li");
     navListElt.appendChild(liElt);
 
-    let anchorElt = document.createElement("a");
+    const anchorElt = document.createElement("a");
     anchorElt.id = `link-${name}`;
     anchorElt.href = `#${name}`;
     liElt.appendChild(anchorElt);
 
-    let nameElt = document.createElement("span");
+    const nameElt = document.createElement("span");
     nameElt.className = "name";
     nameElt.textContent = name;
     anchorElt.appendChild(nameElt);
 
-    let resultsElt = document.createElement("span");
+    const resultsElt = document.createElement("span");
     resultsElt.className = "results";
     anchorElt.appendChild(resultsElt);
 
-    let articleElt = document.createElement("article");
+    const articleElt = document.createElement("article");
     articleElt.id = `doc-${name}`;
     mainElt.appendChild(articleElt);
 
-    let preElt = document.createElement("pre");
+    const preElt = document.createElement("pre");
 
-    let content = hljs.highlight("typescript", defs, true).value;
-    content = content.replace(/\n/g, "<br>");
+    const content = hljs.highlight("typescript", defs, true).value.replace(/\n/g, "<br>");
 
     preElt.innerHTML = content;
     articleElt.appendChild(preElt);
@@ -120,12 +119,12 @@ function onAPILoaded() {
   searchElt.addEventListener("input", (event) => {
     results = null;
     // Clear result badges
-    for (let defName of sortedDefNames) document.getElementById(`link-${defName}`).firstChild.nextSibling.textContent = "";
+    for (const defName of sortedDefNames) document.getElementById(`link-${defName}`).firstChild.nextSibling.textContent = "";
   });
   searchElt.form.addEventListener("submit", (event) => {
     event.preventDefault();
 
-    let needle = searchElt.value.toLowerCase();
+    const needle = searchElt.value.toLowerCase();
     if (needle.length < 3) return;
 
     if (results == null) {
@@ -133,9 +132,9 @@ function onAPILoaded() {
       resultIndex = 0;
 
       for (let i = 0; i < sortedDefNames.length; i++) {
-        let defName = sortedDefNames[i];
-        let def = allDefs[defName].toLowerCase();
-        let preElt = preElts[i];
+        const defName = sortedDefNames[i];
+        const def = allDefs[defName].toLowerCase();
+        const preElt = preElts[i];
 
         if (preElt.parentElement.classList.contains("active")) resultIndex = results.length;
 
@@ -145,8 +144,8 @@ function onAPILoaded() {
           targetIndex = def.indexOf(needle, targetIndex + 1);
           if (targetIndex === -1) break;
 
-          let start = findText(preElt, targetIndex);
-          let end = findText(preElt, targetIndex + needle.length);
+          const start = findText(preElt, targetIndex);
+          const end = findText(preElt, targetIndex + needle.length);
           results.push({ articleElt: preElt.parentElement, start, end });
           resultsCount++;
         }
@@ -159,17 +158,17 @@ function onAPILoaded() {
     resultIndex %= results.length;
 
     if (results.length > 0) {
-      let result = results[resultIndex];
+      const result = results[resultIndex];
       if (!result.articleElt.classList.contains("active")) {
         clearActiveArticle();
         result.articleElt.classList.add("active");
         document.getElementById(`link-${result.articleElt.id.slice(4)}`).classList.add("active");
       }
 
-      let range = document.createRange();
+      const range = document.createRange();
       range.setStart(result.start.node, result.start.index);
       range.setEnd(result.end.node, result.end.index);
-      let selection = document.getSelection();
+      const selection = document.getSelection();
       selection.removeAllRanges();
       selection.addRange(range);
 
@@ -178,9 +177,9 @@ function onAPILoaded() {
       while (elementNode.nodeType !== elementNode.ELEMENT_NODE) {
         elementNode = (elementNode.nextSibling != null) ? elementNode.nextSibling : elementNode.parentElement;
       }
-      let element = elementNode as HTMLElement;
-      let elementRect = element.getBoundingClientRect();
-      let containerRect = mainElt.getBoundingClientRect();
+      const element = elementNode as HTMLElement;
+      const elementRect = element.getBoundingClientRect();
+      const containerRect = mainElt.getBoundingClientRect();
 
       if (elementRect.top < containerRect.top) element.scrollIntoView(true);
       else if (elementRect.bottom > containerRect.bottom) element.scrollIntoView(false);
@@ -201,8 +200,8 @@ function onAPILoaded() {
   });
 
   if (window.location.hash.length > 1) {
-    let hash = window.location.hash.substring(1);
-    let articleElt = document.getElementById(`doc-${hash}`);
+    const hash = window.location.hash.substring(1);
+    const articleElt = document.getElementById(`doc-${hash}`);
     if (articleElt != null) {
       articleElt.classList.add("active");
       document.getElementById(`link-${hash}`).classList.add("active");
@@ -215,7 +214,7 @@ function onAPILoaded() {
 }
 
 function clearActiveArticle() {
-  let activeItem = <HTMLAnchorElement>navListElt.querySelector("li a.active");
+  const activeItem = <HTMLAnchorElement>navListElt.querySelector("li a.active");
   if (activeItem != null) activeItem.classList.remove("active");
   (<HTMLElement>mainElt.querySelector("article.active")).classList.remove("active");
 }

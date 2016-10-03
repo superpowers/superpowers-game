@@ -106,7 +106,7 @@ export default class TextRendererUpdater {
 
     if (this.fontAsset.pub.isBitmap) {
       if (this.fontAsset.pub.texture != null) {
-        let image = this.fontAsset.pub.texture.image;
+        const image = this.fontAsset.pub.texture.image;
         if (image.complete) this.textRenderer.setFont(this.fontAsset.pub);
         else image.addEventListener("load", () => { this.textRenderer.setFont(this.fontAsset.pub); });
       }

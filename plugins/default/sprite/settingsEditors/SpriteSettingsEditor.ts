@@ -15,7 +15,7 @@ export default class SpriteSettingsEditor {
   constructor(container: HTMLDivElement, projectClient: SupClient.ProjectClient) {
     this.projectClient = projectClient;
 
-    let { tbody } = SupClient.table.createTable(container);
+    const { tbody } = SupClient.table.createTable(container);
 
     this.filteringRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("settingsEditors:Sprite.filtering"));
     this.fields["filtering"] = SupClient.table.appendSelectBox(this.filteringRow.valueCell, {
@@ -54,7 +54,7 @@ export default class SpriteSettingsEditor {
   onResourceReceived = (resourceId: string, resource: SpriteSettingsResource) => {
     this.resource = resource;
 
-    for (let setting in resource.pub) {
+    for (const setting in resource.pub) {
       this.fields[setting].value = resource.pub[setting];
     }
   };

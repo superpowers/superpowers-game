@@ -1,4 +1,4 @@
-let THREE = SupEngine.THREE;
+const THREE = SupEngine.THREE;
 
 import { CubicModelAssetPub } from "../data/cubicModelAsset";
 import { Node } from "../data/CubicModelNodes";
@@ -51,12 +51,12 @@ export default class CubicModelRenderer extends SupEngine.ActorComponent {
     this.threeRoot.scale.set(1 / asset.pixelsPerUnit, 1 / asset.pixelsPerUnit, 1 / asset.pixelsPerUnit);
     this.byNodeId = {};
 
-    let walkNode = (node: any, parentRendererNode: RendererNode, parentOffset: { x: number; y: number; z: number; }) => {
-      let rendererNode = this._makeNode(node, parentRendererNode, parentOffset);
-      for (let childNode of node.children) walkNode(childNode, rendererNode, node.shape.offset);
+    const walkNode = (node: any, parentRendererNode: RendererNode, parentOffset: { x: number; y: number; z: number; }) => {
+      const rendererNode = this._makeNode(node, parentRendererNode, parentOffset);
+      for (const childNode of node.children) walkNode(childNode, rendererNode, node.shape.offset);
     };
 
-    for (let rootNode of asset.nodes) walkNode(rootNode, null, { x: 0, y: 0, z: 0 });
+    for (const rootNode of asset.nodes) walkNode(rootNode, null, { x: 0, y: 0, z: 0 });
 
     this.actor.threeObject.add(this.threeRoot);
     this.threeRoot.updateMatrixWorld(false);
@@ -65,7 +65,7 @@ export default class CubicModelRenderer extends SupEngine.ActorComponent {
   _makeNode(node: Node, parentRendererNode: RendererNode, parentOffset: { x: number; y: number; z: number; }) {
     let pivot: THREE.Object3D;
 
-    let material = new THREE.MeshBasicMaterial({
+    const material = new THREE.MeshBasicMaterial({
       map: this.asset.textures["map"],
       side: THREE.DoubleSide,
       transparent: true
@@ -78,8 +78,8 @@ export default class CubicModelRenderer extends SupEngine.ActorComponent {
     let shape: THREE.Mesh;
 
     if (node.shape.type === "box") {
-      let size = node.shape.settings.size;
-      let boxGeometry = new THREE.BoxGeometry(size.x, size.y, size.z);
+      const size = node.shape.settings.size;
+      const boxGeometry = new THREE.BoxGeometry(size.x, size.y, size.z);
       this.updateBoxNodeUv(boxGeometry, node);
 
       shape = new THREE.Mesh(boxGeometry, material);
@@ -91,7 +91,7 @@ export default class CubicModelRenderer extends SupEngine.ActorComponent {
       pivot.add(shape);
     }
 
-    let rendererNode = { pivot, shape, nodeId: node.id, children: <RendererNode[]>[] };
+    const rendererNode = { pivot, shape, nodeId: node.id, children: <RendererNode[]>[] };
     this.byNodeId[node.id] = rendererNode;
     if (parentRendererNode != null) parentRendererNode.children.push(rendererNode);
 
@@ -108,15 +108,15 @@ export default class CubicModelRenderer extends SupEngine.ActorComponent {
   }
 
   updateBoxNodeUv(geometry: THREE.Geometry, node: Node) {
-    let width = this.asset.textureWidth;
-    let height = this.asset.textureHeight;
-    let size = node.shape.settings.size;
+    const width = this.asset.textureWidth;
+    const height = this.asset.textureHeight;
+    const size = node.shape.settings.size;
 
     let offset: { x: number; y: number; };
-    let bottomLeft =  new THREE.Vector2();
-    let bottomRight = new THREE.Vector2();
-    let topLeft =     new THREE.Vector2();
-    let topRight =    new THREE.Vector2();
+    const bottomLeft =  new THREE.Vector2();
+    const bottomRight = new THREE.Vector2();
+    const topLeft =     new THREE.Vector2();
+    const topRight =    new THREE.Vector2();
 
     // Left Face
     offset = node.shape.textureLayout["left"].offset;

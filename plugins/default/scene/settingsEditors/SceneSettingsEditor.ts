@@ -10,16 +10,16 @@ export default class SceneSettingsEditor {
   constructor(container: HTMLDivElement, projectClient: SupClient.ProjectClient) {
     this.projectClient = projectClient;
 
-    let { tbody } = SupClient.table.createTable(container);
+    const { tbody } = SupClient.table.createTable(container);
 
-    let defaultCameraModeRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("settingsEditors:Scene.defaultCameraMode"));
+    const defaultCameraModeRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("settingsEditors:Scene.defaultCameraMode"));
     this.fields["defaultCameraMode"] = SupClient.table.appendSelectBox(defaultCameraModeRow.valueCell, { "3D": "3D", "2D": "2D" });
 
     this.fields["defaultCameraMode"].addEventListener("change", (event: any) => {
       this.projectClient.editResource("sceneSettings", "setProperty", "defaultCameraMode", event.target.value);
     });
 
-    let defaultVerticalAxisRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("settingsEditors:Scene.defaultCameraVerticalAxis"));
+    const defaultVerticalAxisRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("settingsEditors:Scene.defaultCameraVerticalAxis"));
     this.fields["defaultVerticalAxis"] = SupClient.table.appendSelectBox(defaultVerticalAxisRow.valueCell, { "Y": "Y", "Z": "Z" });
 
     this.fields["defaultVerticalAxis"].addEventListener("change", (event: any) => {
@@ -32,7 +32,7 @@ export default class SceneSettingsEditor {
   onResourceReceived = (resourceId: string, resource: SceneSettingsResource) => {
     this.resource = resource;
 
-    for (let setting in resource.pub) {
+    for (const setting in resource.pub) {
       if (setting === "formatVersion") continue;
       this.fields[setting].value = resource.pub[setting];
     }

@@ -59,7 +59,7 @@ export default class GridRenderer extends ActorComponent {
   }
 
   _createMesh() {
-    let geometry = new THREE.Geometry();
+    const geometry = new THREE.Geometry();
 
     // Vertical lines
     let x = 0;
@@ -79,7 +79,7 @@ export default class GridRenderer extends ActorComponent {
 
     geometry.computeLineDistances();
 
-    let material = new THREE.LineDashedMaterial({
+    const material = new THREE.LineDashedMaterial({
       color: 0x000000, transparent: true, opacity: 0.4,
       dashSize: 5 / 1000, gapSize: 5 / 1000, scale: 1 / this.orthographicScale
     });

@@ -9,6 +9,6 @@
     "url": "https://github.com/superpowers/superpowers-game.git"
   },
   "dependencies": {
-    "three": "0.73.0"
+    "three": "0.80.1"
   }
 }

@@ -1,7 +1,7 @@
 import Light from "./Light";
 import { LightConfigPub } from "../componentConfigs/LightConfig";
 import LightSettingsResource from "../data/LightSettingsResource";
-let THREE = SupEngine.THREE;
+const THREE = SupEngine.THREE;
 
 export default class LightUpdater {
   lightSettings: LightSettingsResource;
@@ -17,7 +17,6 @@ export default class LightUpdater {
     this.light.castShadow = config.castShadow;
     this.light.shadow.mapSize.set(config.shadowMapSize.width, config.shadowMapSize.height);
     this.light.shadow.bias = config.shadowBias;
-    this.light.shadow.darkness = config.shadowDarkness;
     this.light.shadow.camera.near = config.shadowCameraNearPlane;
     this.light.shadow.camera.far = config.shadowCameraFarPlane;
     this.light.shadow.camera.fov = config.shadowCameraFov;
@@ -77,9 +76,6 @@ export default class LightUpdater {
       case "shadowBias":
         this.light.setShadowBias(value);
         break;
-      case "shadowDarkness":
-        this.light.setShadowDarkness(value);
-        break;
       case "shadowCameraNearPlane":
         this.light.setShadowCameraNearPlane(value);
         break;
@@ -117,7 +113,7 @@ export default class LightUpdater {
         break;
     }
     this.light.actor.gameInstance.threeScene.traverse((object: any) => {
-      let material: THREE.Material = object.material;
+      const material: THREE.Material = object.material;
       if (material != null) material.needsUpdate = true;
     });
   }

@@ -2,9 +2,9 @@ import { data } from "./network";
 import ui, { setupSelectedNode } from "./ui";
 import textureArea, { handleTextureArea } from "./textureArea";
 
-let THREE = SupEngine.THREE;
+const THREE = SupEngine.THREE;
 
-let engine: {
+const engine: {
   gameInstance: SupEngine.GameInstance;
 
   cameraActor: SupEngine.Actor;
@@ -16,27 +16,27 @@ let engine: {
 } = <any>{};
 export default engine;
 
-let canvasElt = document.querySelector("canvas") as HTMLCanvasElement;
+const canvasElt = document.querySelector("canvas") as HTMLCanvasElement;
 
 engine.gameInstance = new SupEngine.GameInstance(canvasElt);
 engine.cameraActor = new SupEngine.Actor(engine.gameInstance, "Camera");
 engine.cameraActor.setLocalPosition(new THREE.Vector3(0, 0, 10));
 
-let cameraComponent = new SupEngine.componentClasses["Camera"](engine.cameraActor);
+const cameraComponent = new SupEngine.componentClasses["Camera"](engine.cameraActor);
 cameraComponent.layers = [ 0, -1 ];
 new SupEngine.editorComponentClasses["Camera3DControls"](engine.cameraActor, cameraComponent);
 
-let markerActor = new SupEngine.Actor(engine.gameInstance, "Marker", null, { layer: -1 });
+const markerActor = new SupEngine.Actor(engine.gameInstance, "Marker", null, { layer: -1 });
 engine.transformMarkerComponent = new SupEngine.editorComponentClasses["TransformMarker"](markerActor);
 engine.transformMarkerComponent.hide();
 
-let selectionActor = new SupEngine.Actor(engine.gameInstance, "Selection Box", null, { layer: -1 });
+const selectionActor = new SupEngine.Actor(engine.gameInstance, "Selection Box", null, { layer: -1 });
 engine.selectionBoxComponent = new SupEngine.editorComponentClasses["SelectionBox"](selectionActor);
 
-let transformHandlesActor = new SupEngine.Actor(engine.gameInstance, "Transform Handles", null, { layer: -1 });
+const transformHandlesActor = new SupEngine.Actor(engine.gameInstance, "Transform Handles", null, { layer: -1 });
 engine.transformHandleComponent = new SupEngine.editorComponentClasses["TransformHandle"](transformHandlesActor, cameraComponent.unifiedThreeCamera);
 
-let gridActor = new SupEngine.Actor(engine.gameInstance, "Grid", null, { layer: 0 });
+const gridActor = new SupEngine.Actor(engine.gameInstance, "Grid", null, { layer: 0 });
 
 /*let light = new THREE.AmbientLight(0xcfcfcf);
 engine.gameInstance.threeScene.add(light);*/
@@ -111,12 +111,12 @@ function update() {
   }
 
   if (engine.gameInstance.input.keyboardButtons[(<any>window).KeyEvent.DOM_VK_L].wasJustPressed) {
-    let localElt = (<HTMLInputElement>document.getElementById(`transform-space`));
+    const localElt = (<HTMLInputElement>document.getElementById(`transform-space`));
     localElt.checked = !localElt.checked;
     engine.transformHandleComponent.setSpace(localElt.checked ? "local" : "world");
   }
 
-  let snap = engine.gameInstance.input.keyboardButtons[(<any>window).KeyEvent.DOM_VK_CONTROL].isDown;
+  const snap = engine.gameInstance.input.keyboardButtons[(<any>window).KeyEvent.DOM_VK_CONTROL].isDown;
 
   if (snap !== (engine.transformHandleComponent.control.translationSnap != null)) {
     engine.transformHandleComponent.control.setTranslationSnap(snap ? ui.gridStep : null);
@@ -125,8 +125,8 @@ function update() {
 }
 
 // Mouse picking
-let mousePosition = new THREE.Vector2;
-let raycaster = new THREE.Raycaster;
+const mousePosition = new THREE.Vector2;
+const raycaster = new THREE.Raycaster;
 
 let draggingControls = false;
 
@@ -150,9 +150,9 @@ function mouseUp() {
   let selectedNodeId: string = null;
   ui.nodesTreeView.clearSelection();
 
-  let intersects = raycaster.intersectObject(engine.gameInstance.threeScene, true);
+  const intersects = raycaster.intersectObject(engine.gameInstance.threeScene, true);
   if (intersects.length > 0) {
-    for (let intersect of intersects) {
+    for (const intersect of intersects) {
       let threeObject = intersect.object;
 
       while (threeObject != null) {
@@ -163,7 +163,7 @@ function mouseUp() {
       if (threeObject != null) {
         selectedNodeId = threeObject.userData.cubicNodeId;
 
-        let treeViewNode = ui.nodesTreeView.treeRoot.querySelector(`li[data-id='${selectedNodeId}']`) as HTMLLIElement;
+        const treeViewNode = ui.nodesTreeView.treeRoot.querySelector(`li[data-id='${selectedNodeId}']`) as HTMLLIElement;
         ui.nodesTreeView.addToSelection(treeViewNode);
 
         let treeViewParent = treeViewNode.parentElement;
@@ -183,15 +183,15 @@ function mouseUp() {
 }
 
 export function setupHelpers() {
-  let nodeElt = ui.nodesTreeView.selectedNodes[0];
+  const nodeElt = ui.nodesTreeView.selectedNodes[0];
   if (nodeElt != null && ui.nodesTreeView.selectedNodes.length === 1) {
-    let { pivot, shape } = data.cubicModelUpdater.cubicModelRenderer.byNodeId[nodeElt.dataset["id"]];
+    const { pivot, shape } = data.cubicModelUpdater.cubicModelRenderer.byNodeId[nodeElt.dataset["id"]];
 
     engine.transformMarkerComponent.move(pivot);
     engine.selectionBoxComponent.setTarget(shape);
 
-    let mode = engine.transformHandleComponent.mode;
-    let handleTarget = (mode === "rotate" || (mode === "translate" && ui.translateMode !== "shape")) ? pivot : shape;
+    const mode = engine.transformHandleComponent.mode;
+    const handleTarget = (mode === "rotate" || (mode === "translate" && ui.translateMode !== "shape")) ? pivot : shape;
     engine.transformHandleComponent.setTarget(handleTarget);
   } else {
     engine.transformMarkerComponent.hide();
@@ -201,14 +201,14 @@ export function setupHelpers() {
 }
 
 function onTransformChange() {
-  let nodeElt = ui.nodesTreeView.selectedNodes[0];
-  let nodeId = nodeElt.dataset["id"];
-  let { pivot, shape } = data.cubicModelUpdater.cubicModelRenderer.byNodeId[nodeElt.dataset["id"]];
+  const nodeElt = ui.nodesTreeView.selectedNodes[0];
+  const nodeId = nodeElt.dataset["id"];
+  const { pivot, shape } = data.cubicModelUpdater.cubicModelRenderer.byNodeId[nodeElt.dataset["id"]];
 
-  let transformMode = engine.transformHandleComponent.mode;
+  const transformMode = engine.transformHandleComponent.mode;
   let target = (transformMode === "rotate" || (transformMode === "translate" && ui.translateMode !== "shape")) ? pivot : shape;
 
-  let object = <THREE.Object3D>engine.transformHandleComponent.control.object;
+  const object = <THREE.Object3D>engine.transformHandleComponent.control.object;
   let transformType: string;
   let value: any;
 
@@ -220,9 +220,9 @@ function onTransformChange() {
         case "pivot": transformType = "pivotPosition"; break;
       }
 
-      let position = object.getWorldPosition();
-      let parent = target.parent;
-      let pixelsPerUnit = data.cubicModelUpdater.cubicModelAsset.pub.pixelsPerUnit;
+      const position = object.getWorldPosition();
+      const parent = target.parent;
+      const pixelsPerUnit = data.cubicModelUpdater.cubicModelAsset.pub.pixelsPerUnit;
 
       /*if (ui.translateMode === "all") {
         position.sub(target.getWorldPosition().sub(parent.getWorldPosition()));
@@ -230,12 +230,12 @@ function onTransformChange() {
       }*/
 
       if (parent.userData.cubicNodeId != null) {
-        let inverseParentMatrix = parent.matrixWorld.clone();
+        const inverseParentMatrix = parent.matrixWorld.clone();
         inverseParentMatrix.getInverse(inverseParentMatrix);
         position.applyMatrix4(inverseParentMatrix);
 
         if (ui.translateMode !== "shape") {
-          let parentOffset = data.cubicModelUpdater.cubicModelAsset.nodes.byId[parent.userData.cubicNodeId].shape.offset;
+          const parentOffset = data.cubicModelUpdater.cubicModelAsset.nodes.byId[parent.userData.cubicNodeId].shape.offset;
           position.x -= parentOffset.x;
           position.y -= parentOffset.y;
           position.z -= parentOffset.z;
@@ -252,9 +252,9 @@ function onTransformChange() {
 
       transformType = "orientation";
 
-      let orientation = object.getWorldQuaternion();
+      const orientation = object.getWorldQuaternion();
       if (target.parent != null) {
-        let q = target.parent.getWorldQuaternion().inverse();
+        const q = target.parent.getWorldQuaternion().inverse();
         orientation.multiply(q);
       }
       value = { x: orientation.x, y: orientation.y, z: orientation.z, w: orientation.w };

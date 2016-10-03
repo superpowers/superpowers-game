@@ -1,8 +1,8 @@
 import CannonBodyMarkerUpdater from "./CannonBodyMarkerUpdater";
 
-let THREE = SupEngine.THREE;
-let tmpVector3 = new THREE.Vector3();
-let tmpEulerAngles = new THREE.Euler();
+const THREE = SupEngine.THREE;
+const tmpVector3 = new THREE.Vector3();
+const tmpEulerAngles = new THREE.Euler();
 
 export default
 class CannonBodyMarker extends SupEngine.ActorComponent {
@@ -33,8 +33,8 @@ class CannonBodyMarker extends SupEngine.ActorComponent {
 
   setBox(orientationOffset: any, halfSize: any) {
     if (this.mesh != null) this._clearRenderer();
-    let geometry = new THREE.BoxGeometry(halfSize.x * 2, halfSize.y * 2, halfSize.z * 2);
-    let material = new THREE.MeshBasicMaterial({ wireframe: true, color: 0xf459e4, transparent: true, opacity: 0.2 });
+    const geometry = new THREE.BoxGeometry(halfSize.x * 2, halfSize.y * 2, halfSize.z * 2);
+    const material = new THREE.MeshBasicMaterial({ wireframe: true, color: 0xf459e4, transparent: true, opacity: 0.2 });
     this.mesh = new THREE.Mesh(geometry, material);
     this.mesh.quaternion.setFromEuler(new THREE.Euler(
       THREE.Math.degToRad(orientationOffset.x),
@@ -46,16 +46,16 @@ class CannonBodyMarker extends SupEngine.ActorComponent {
   }
   setSphere(radius: number) {
     if (this.mesh != null) this._clearRenderer();
-    let geometry = new THREE.SphereGeometry(radius);
-    let material = new THREE.MeshBasicMaterial({ wireframe: true, color: 0xf459e4, transparent: true, opacity: 0.2 });
+    const geometry = new THREE.SphereGeometry(radius);
+    const material = new THREE.MeshBasicMaterial({ wireframe: true, color: 0xf459e4, transparent: true, opacity: 0.2 });
     this.mesh = new THREE.Mesh(geometry, material);
     this.markerActor.threeObject.add(this.mesh);
     this.mesh.updateMatrixWorld(false);
   }
   setCylinder(orientationOffset: any, radius: number, height: number, segments: number) {
     if (this.mesh != null) this._clearRenderer();
-    let geometry = new THREE.CylinderGeometry(radius, radius, height, segments);
-    let material = new THREE.MeshBasicMaterial({ wireframe: true, color: 0xf459e4, transparent: true, opacity: 0.2 });
+    const geometry = new THREE.CylinderGeometry(radius, radius, height, segments);
+    const material = new THREE.MeshBasicMaterial({ wireframe: true, color: 0xf459e4, transparent: true, opacity: 0.2 });
     this.mesh = new THREE.Mesh(geometry, material);
     this.mesh.quaternion.setFromEuler(new THREE.Euler(
       THREE.Math.degToRad((orientationOffset.x + 90)),

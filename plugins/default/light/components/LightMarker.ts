@@ -1,4 +1,4 @@
-let THREE = SupEngine.THREE;
+const THREE = SupEngine.THREE;
 import Light from "./Light";
 
 export default class LightMarker extends Light {
@@ -22,7 +22,7 @@ export default class LightMarker extends Light {
         this.lightMarker = new THREE.PointLightHelper(this.light, 1);
         break;
       case "spot":
-        this.lightMarker = new THREE.SpotLightHelper(this.light, 1, 1);
+        this.lightMarker = new THREE.SpotLightHelper(this.light);
         // if (this.castShadow) this.cameraHelper = new THREE.CameraHelper((<THREE.SpotLight>this.light).shadowCamera);
         break;
       case "directional":

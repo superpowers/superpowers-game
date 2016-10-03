@@ -436,22 +436,22 @@ export default class ModelAsset extends SupCore.Data.Base.Asset {
   server_setModel(client: SupCore.RemoteClient, upAxisMatrix: number[], attributes: { [name: string]: any }, bones: any[], callback: SetModelCallback) {
     // Validate up matrix
     if (upAxisMatrix != null) {
-      let violation = SupCore.Data.Base.getRuleViolation(upAxisMatrix, ModelAsset.schema["upAxisMatrix"], true);
+      const violation = SupCore.Data.Base.getRuleViolation(upAxisMatrix, ModelAsset.schema["upAxisMatrix"], true);
       if (violation != null) { callback(`Invalid up axis matrix: ${SupCore.Data.Base.formatRuleViolation(violation)}`); return; }
     }
 
     // Validate attributes
     if (attributes == null || typeof attributes !== "object") { callback("Attributes must be an object"); return; }
 
-    for (let key in attributes) {
-      let value = attributes[key];
+    for (const key in attributes) {
+      const value = attributes[key];
       if ((ModelAsset.schema["attributes"].properties as any)[key] == null) { callback(`Unsupported attribute type: ${key}`); return; }
       if (value != null && !(value instanceof Buffer)) { callback(`Value for ${key} must be an ArrayBuffer or null`); return; }
     }
 
     // Validate bones
     if (bones != null) {
-      let violation = SupCore.Data.Base.getRuleViolation(bones, ModelAsset.schema["bones"], true);
+      const violation = SupCore.Data.Base.getRuleViolation(bones, ModelAsset.schema["bones"], true);
       if (violation != null) { callback(`Invalid bones: ${SupCore.Data.Base.formatRuleViolation(violation)}`); return; }
     }
 
@@ -473,20 +473,20 @@ export default class ModelAsset extends SupCore.Data.Base.Asset {
   server_setMaps(client: SupCore.RemoteClient, maps: any, callback: SetMapsCallback) {
     if (maps == null || typeof maps !== "object") { callback("Maps must be an object"); return; }
 
-    for (let mapName in maps) {
-      let value = maps[mapName];
+    for (const mapName in maps) {
+      const value = maps[mapName];
       if (this.pub.maps[mapName] == null) { callback(`The map ${mapName} doesn't exist`); return; }
       if (value != null && !(value instanceof Buffer)) { callback(`Value for ${mapName} must be an ArrayBuffer or null`); return; }
     }
 
-    for (let mapName in maps) this.pub.maps[mapName] = maps[mapName];
+    for (const mapName in maps) this.pub.maps[mapName] = maps[mapName];
 
     callback(null, null, maps);
     this.emit("change");
   }
 
   client_setMaps(maps: any) {
-    for (let mapName in maps) this.pub.maps[mapName] = maps[mapName];
+    for (const mapName in maps) this.pub.maps[mapName] = maps[mapName];
     this.loadTextures();
   }
 
@@ -513,8 +513,8 @@ export default class ModelAsset extends SupCore.Data.Base.Asset {
   }
 
   client_deleteMap(name: string) {
-    for (let slotName in this.pub.mapSlots) {
-      let map = this.pub.mapSlots[slotName];
+    for (const slotName in this.pub.mapSlots) {
+      const map = this.pub.mapSlots[slotName];
       if (map === name) this.pub.mapSlots[slotName] = null;
     }
 
@@ -536,8 +536,8 @@ export default class ModelAsset extends SupCore.Data.Base.Asset {
     this.pub.maps[newName] = this.pub.maps[oldName];
     this.pub.maps[oldName] = null;
 
-    for (let slotName in this.pub.mapSlots) {
-      let map = this.pub.mapSlots[slotName];
+    for (const slotName in this.pub.mapSlots) {
+      const map = this.pub.mapSlots[slotName];
       if (map === oldName) this.pub.mapSlots[slotName] = newName;
     }
   }
@@ -560,7 +560,7 @@ export default class ModelAsset extends SupCore.Data.Base.Asset {
   server_newAnimation(client: SupCore.RemoteClient, name: string, duration: number, keyFrames: any, callback: NewAnimationCallback) {
     if (duration == null) duration = 0;
     if (keyFrames == null) keyFrames = [];
-    let animation: Animation = { name, duration, keyFrames };
+    const animation: Animation = { name, duration, keyFrames };
 
     this.animations.add(animation, null, (err, actualIndex) => {
       if (err != null) { callback(err); return; }
@@ -631,7 +631,7 @@ export default class ModelAsset extends SupCore.Data.Base.Asset {
     violation = SupCore.Data.Base.getRuleViolation(keyFrames, ModelAnimations.schema["keyFrames"], true);
     if (violation != null) { callback(`Invalid duration: ${SupCore.Data.Base.formatRuleViolation(violation)}`); return; }
 
-    let animation = this.animations.byId[id];
+    const animation = this.animations.byId[id];
     if (animation == null) { callback(`Invalid animation id: ${id}`); return; }
 
     animation.duration = duration;
@@ -642,7 +642,7 @@ export default class ModelAsset extends SupCore.Data.Base.Asset {
   }
 
   client_setAnimation(id: string, duration: number, keyFrames: any) {
-    let animation = this.animations.byId[id];
+    const animation = this.animations.byId[id];
 
     animation.duration = duration;
     animation.keyFrames = keyFrames;

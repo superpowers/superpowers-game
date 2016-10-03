@@ -1,4 +1,4 @@
-let THREE = SupEngine.THREE;
+const THREE = SupEngine.THREE;
 
 export default class SelectionRenderer extends SupEngine.ActorComponent {
   meshes: THREE.Mesh[] = [];
@@ -8,22 +8,22 @@ export default class SelectionRenderer extends SupEngine.ActorComponent {
   }
 
   setIsLayerActive(active: boolean) {
-    for (let mesh of this.meshes) mesh.visible = active;
+    for (const mesh of this.meshes) mesh.visible = active;
   }
 
   setup(width: number, height: number, start: number, end: number, frameOrder: string, framesPerDirection: number) {
     this.clearMesh();
 
     for (let i = start; i <= end; i++) {
-      let geometry = new THREE.PlaneBufferGeometry(width, height);
-      let material = new THREE.MeshBasicMaterial({
+      const geometry = new THREE.PlaneBufferGeometry(width, height);
+      const material = new THREE.MeshBasicMaterial({
         color: 0x900090,
         alphaTest: 0.1,
         transparent: true,
         opacity: 0.5
       });
 
-      let mesh = new THREE.Mesh(geometry, material);
+      const mesh = new THREE.Mesh(geometry, material);
       this.meshes.push(mesh);
 
       let x: number, y: number;
@@ -42,7 +42,7 @@ export default class SelectionRenderer extends SupEngine.ActorComponent {
   }
 
   clearMesh() {
-    for (let mesh of this.meshes) {
+    for (const mesh of this.meshes) {
       mesh.geometry.dispose();
       mesh.material.dispose();
       this.actor.threeObject.remove(mesh);

@@ -38,7 +38,7 @@ export default class SpriteRendererConfig extends SupCore.Data.Base.ComponentCon
   };
 
   static create() {
-    let emptyConfig: SpriteRendererConfigPub = {
+    const emptyConfig: SpriteRendererConfigPub = {
       formatVersion: SpriteRendererConfig.currentFormatVersion,
 
       spriteAssetId: null, animationId: null,

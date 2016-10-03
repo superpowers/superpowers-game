@@ -33,7 +33,7 @@ export default class ModelRendererConfig extends SupCore.Data.Base.ComponentConf
   };
 
   static create() {
-    let emptyConfig: ModelRendererConfigPub = {
+    const emptyConfig: ModelRendererConfigPub = {
       formatVersion: ModelRendererConfig.currentFormatVersion,
 
       modelAssetId: null,

@@ -25,7 +25,7 @@ export default class TileMapRendererConfig extends SupCore.Data.Base.ComponentCo
   };
 
   static create() {
-    let newConfig: TileMapRendererConfigPub = {
+    const newConfig: TileMapRendererConfigPub = {
       formatVersion: TileMapRendererConfig.currentFormatVersion,
 
       tileMapAssetId: null, tileSetAssetId: null,

@@ -19,7 +19,7 @@ export default class TileMap extends EventEmitter {
   setTileAt(layer: number, x: number, y: number, value: (number|boolean)[]) {
     if (x < 0 || y < 0 || x >= this.data.width || y >= this.data.height) return;
 
-    let index = y * this.data.width + x;
+    const index = y * this.data.width + x;
     this.data.layers[layer].data[index] = (value != null) ? value : 0;
 
     this.emit("setTileAt", layer, x, y);
@@ -28,7 +28,7 @@ export default class TileMap extends EventEmitter {
   getTileAt(layer: number, x: number, y: number) {
     if (x < 0 || y < 0 || x >= this.data.width || y >= this.data.height) return 0;
 
-    let index = y * this.data.width + x;
+    const index = y * this.data.width + x;
     return this.data.layers[layer].data[index];
   }
 }

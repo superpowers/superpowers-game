@@ -4,10 +4,10 @@ export default function compileTypeScript(sourceFileNames: string[], sourceFiles
   if (compilerOptions.target == null) compilerOptions.target = ts.ScriptTarget.ES5;
 
   let script = "";
-  let files: Array<{name: string; text: string}> = [];
-  let sourceMaps: { [name: string]: any } = {};
+  const files: Array<{name: string; text: string}> = [];
+  const sourceMaps: { [name: string]: any } = {};
   // Create a compilerHost object to allow the compiler to read and write files
-  let compilerHost: ts.CompilerHost = {
+  const compilerHost: ts.CompilerHost = {
     getSourceFile: (filename: string, languageVersion: any) => {
       if (sourceFiles[filename] != null) return ts.createSourceFile(filename, sourceFiles[filename], compilerOptions.target);
       if (filename === "lib.d.ts") return ts.createSourceFile(filename, libSource, compilerOptions.target);
@@ -20,16 +20,16 @@ export default function compileTypeScript(sourceFileNames: string[], sourceFiles
     writeFile: (name: string, text: string, writeByteOrderMark: any) => {
       if (name.slice(name.length - 4) === ".map") {
         name = name.slice(0, name.length - 7);
-        let sourceMap = JSON.parse( text );
+        const sourceMap = JSON.parse( text );
         sourceMap.sourcesContent = [sourceFiles[`${name}.ts`]];
         sourceMaps[name] = sourceMap;
       }
       else {
-        let filePath = name.slice(0, name.length - 3);
-        let fileName = filePath.slice(filePath.lastIndexOf("/") + 1);
+        const filePath = name.slice(0, name.length - 3);
+        const fileName = filePath.slice(filePath.lastIndexOf("/") + 1);
 
-        let sourceMapText = `//# sourceMappingURL=${fileName}.js.map`;
-        let sourceMapEmpty = new Array(sourceMapText.length).join(" ");
+        const sourceMapText = `//# sourceMappingURL=${fileName}.js.map`;
+        const sourceMapEmpty = new Array(sourceMapText.length).join(" ");
         text = text.replace(sourceMapText, sourceMapEmpty);
 
         files.push({ name: filePath, text });
@@ -46,7 +46,7 @@ export default function compileTypeScript(sourceFileNames: string[], sourceFiles
   };
 
   // Create a program from inputs
-  let program = ts.createProgram(sourceFileNames, compilerOptions, compilerHost);
+  const program = ts.createProgram(sourceFileNames, compilerOptions, compilerHost);
   // Query for earyly errors
   let errors = ts.getPreEmitDiagnostics(program);
   if (errors.length > 0) {

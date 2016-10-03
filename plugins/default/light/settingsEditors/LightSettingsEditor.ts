@@ -10,9 +10,9 @@ export default class LightSettingsEditor {
   constructor(container: HTMLDivElement, projectClient: SupClient.ProjectClient) {
     this.projectClient = projectClient;
 
-    let { tbody } = SupClient.table.createTable(container);
+    const { tbody } = SupClient.table.createTable(container);
 
-    let shadowMapTypeRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("settingsEditors:Light.shadowMapType"));
+    const shadowMapTypeRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("settingsEditors:Light.shadowMapType"));
     this.fields["shadowMapType"] = SupClient.table.appendSelectBox(shadowMapTypeRow.valueCell, { "basic": "Basic", "pcf": "PCF", "pcfSoft": "PCF Soft" });
 
     this.fields["shadowMapType"].addEventListener("change", (event: any) => {
@@ -25,7 +25,7 @@ export default class LightSettingsEditor {
   onResourceReceived = (resourceId: string, resource: LightSettingsResource) => {
     this.resource = resource;
 
-    for (let setting in resource.pub) {
+    for (const setting in resource.pub) {
       this.fields[setting].value = resource.pub[setting];
     }
   };

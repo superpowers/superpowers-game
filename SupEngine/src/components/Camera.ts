@@ -38,7 +38,7 @@ export default class Camera extends ActorComponent {
   _destroy() {
     this.actor.gameInstance.removeListener("resize", this.computeAspectRatio);
 
-    let index = this.actor.gameInstance.renderComponents.indexOf(this);
+    const index = this.actor.gameInstance.renderComponents.indexOf(this);
     if (index !== -1) this.actor.gameInstance.renderComponents.splice(index, 1);
 
     this.threeCamera = null;
@@ -47,7 +47,7 @@ export default class Camera extends ActorComponent {
   }
 
   private computeAspectRatio = () => {
-    let canvas = this.actor.gameInstance.threeRenderer.domElement;
+    const canvas = this.actor.gameInstance.threeRenderer.domElement;
     this.cachedRatio = (canvas.clientWidth * this.viewport.width) / (canvas.clientHeight * this.viewport.height);
     this.projectionNeedsUpdate = true;
   };
@@ -117,7 +117,7 @@ export default class Camera extends ActorComponent {
       this.projectionNeedsUpdate = false;
 
       if (this.isOrthographic) {
-        let orthographicCamera = <THREE.OrthographicCamera>this.threeCamera;
+        const orthographicCamera = <THREE.OrthographicCamera>this.threeCamera;
         orthographicCamera.left = -this.orthographicScale * this.cachedRatio / 2;
         orthographicCamera.right = this.orthographicScale * this.cachedRatio / 2;
         orthographicCamera.top = this.orthographicScale / 2;
@@ -125,21 +125,21 @@ export default class Camera extends ActorComponent {
         orthographicCamera.updateProjectionMatrix();
       }
       else {
-        let perspectiveCamera = <THREE.PerspectiveCamera>this.threeCamera;
+        const perspectiveCamera = <THREE.PerspectiveCamera>this.threeCamera;
         perspectiveCamera.fov = this.fov;
         perspectiveCamera.aspect = this.cachedRatio;
         perspectiveCamera.updateProjectionMatrix();
       }
     }
 
-    let canvas = this.actor.gameInstance.threeRenderer.domElement;
+    const canvas = this.actor.gameInstance.threeRenderer.domElement;
     this.actor.gameInstance.threeRenderer.setViewport(
       this.viewport.x * canvas.width    , (1 - this.viewport.y - this.viewport.height) * canvas.height,
       this.viewport.width * canvas.width, this.viewport.height * canvas.height
     );
 
     if (this.layers.length > 0) {
-      for (let layer of this.layers) {
+      for (const layer of this.layers) {
         this.actor.gameInstance.setActiveLayer(layer);
         this.actor.gameInstance.threeRenderer.render(this.actor.gameInstance.threeScene, this.threeCamera);
       }

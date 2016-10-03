@@ -1,7 +1,7 @@
 import CubicModelAsset, { DuplicatedNode } from "../data/CubicModelAsset";
 import { Node } from "../data/CubicModelNodes";
 import CubicModelRenderer, { RendererNode } from "./CubicModelRenderer";
-let THREE = SupEngine.THREE;
+const THREE = SupEngine.THREE;
 
 export default class CubicModelRendererUpdater {
   client: SupClient.ProjectClient;
@@ -55,7 +55,7 @@ export default class CubicModelRendererUpdater {
     if (commandFunction != null) commandFunction.apply(this, args);
 
     if (this.editAssetCallbacks != null) {
-      let editCallback = this.editAssetCallbacks.cubicModel[command];
+      const editCallback = this.editAssetCallbacks.cubicModel[command];
       if (editCallback != null) editCallback.apply(null, args);
     }
   }
@@ -63,7 +63,7 @@ export default class CubicModelRendererUpdater {
   _onEditCommand_setProperty(path: string, value: any) {
     switch(path) {
       case "pixelsPerUnit":
-        let scale = 1 / value;
+        const scale = 1 / value;
         this.cubicModelRenderer.threeRoot.scale.set(scale, scale, scale);
         this.cubicModelRenderer.threeRoot.updateMatrixWorld(false);
         break;
@@ -75,25 +75,25 @@ export default class CubicModelRendererUpdater {
   }
 
   _createRendererNode(node: Node) {
-    let parentNode = this.cubicModelAsset.nodes.parentNodesById[node.id];
-    let parentRendererNode = (parentNode != null) ? this.cubicModelRenderer.byNodeId[parentNode.id] : null;
+    const parentNode = this.cubicModelAsset.nodes.parentNodesById[node.id];
+    const parentRendererNode = (parentNode != null) ? this.cubicModelRenderer.byNodeId[parentNode.id] : null;
 
-    let offset = (parentNode != null) ? parentNode.shape.offset : { x: 0, y: 0, z: 0 };
+    const offset = (parentNode != null) ? parentNode.shape.offset : { x: 0, y: 0, z: 0 };
     this.cubicModelRenderer._makeNode(node, parentRendererNode, offset);
   }
 
   _onEditCommand_moveNode(id: string, parentId: string, index: number) {
-    let rendererNode = this.cubicModelRenderer.byNodeId[id];
-    let pivot = rendererNode.pivot;
-    let matrix = pivot.matrixWorld.clone();
+    const rendererNode = this.cubicModelRenderer.byNodeId[id];
+    const pivot = rendererNode.pivot;
+    const matrix = pivot.matrixWorld.clone();
 
-    let previousParentId = pivot.parent.userData.cubicNodeId;
+    const previousParentId = pivot.parent.userData.cubicNodeId;
     if (previousParentId != null) {
-      let parentNode = this.cubicModelRenderer.byNodeId[previousParentId];
+      const parentNode = this.cubicModelRenderer.byNodeId[previousParentId];
       parentNode.children.splice(parentNode.children.indexOf(rendererNode), 1);
     }
 
-    let parent = (parentId != null) ? this.cubicModelRenderer.byNodeId[parentId].pivot : this.cubicModelRenderer.threeRoot;
+    const parent = (parentId != null) ? this.cubicModelRenderer.byNodeId[parentId].pivot : this.cubicModelRenderer.threeRoot;
     parent.add(pivot);
 
     matrix.multiplyMatrices(new THREE.Matrix4().getInverse(parent.matrixWorld), matrix);
@@ -102,29 +102,29 @@ export default class CubicModelRendererUpdater {
   };
 
   _onEditCommand_moveNodePivot(id: string, value: { x: number; y: number; z: number; }) {
-    let rendererNode = this.cubicModelRenderer.byNodeId[id];
-    let node = this.cubicModelAsset.nodes.byId[id];
+    const rendererNode = this.cubicModelRenderer.byNodeId[id];
+    const node = this.cubicModelAsset.nodes.byId[id];
 
-    let parentNode = this.cubicModelAsset.nodes.parentNodesById[id];
-    let parentOffset = (parentNode != null) ? parentNode.shape.offset : { x: 0, y: 0, z: 0 };
+    const parentNode = this.cubicModelAsset.nodes.parentNodesById[id];
+    const parentOffset = (parentNode != null) ? parentNode.shape.offset : { x: 0, y: 0, z: 0 };
     rendererNode.pivot.position.set(value.x + parentOffset.x, value.y + parentOffset.y, value.z + parentOffset.z);
     rendererNode.pivot.quaternion.set(node.orientation.x, node.orientation.y, node.orientation.z, node.orientation.w);
     rendererNode.shape.position.set(node.shape.offset.x, node.shape.offset.y, node.shape.offset.z);
 
-    let walk = (rendererNode: RendererNode, parentOffset: { x: number; y: number; z: number; }) => {
-      let node = this.cubicModelAsset.nodes.byId[rendererNode.nodeId];
+    const walk = (rendererNode: RendererNode, parentOffset: { x: number; y: number; z: number; }) => {
+      const node = this.cubicModelAsset.nodes.byId[rendererNode.nodeId];
       rendererNode.pivot.position.set(node.position.x + parentOffset.x, node.position.y + parentOffset.y, node.position.z + parentOffset.z);
 
-      for (let child of rendererNode.children) walk(child, node.shape.offset);
+      for (const child of rendererNode.children) walk(child, node.shape.offset);
     };
-    for (let child of rendererNode.children) walk(child, node.shape.offset);
+    for (const child of rendererNode.children) walk(child, node.shape.offset);
 
     rendererNode.pivot.updateMatrixWorld(false);
   };
 
   _onEditCommand_setNodeProperty(id: string, path: string, value: any) {
-    let rendererNode = this.cubicModelRenderer.byNodeId[id];
-    let node = this.cubicModelAsset.nodes.byId[id];
+    const rendererNode = this.cubicModelRenderer.byNodeId[id];
+    const node = this.cubicModelAsset.nodes.byId[id];
 
     switch (path) {
       case "name":
@@ -132,8 +132,8 @@ export default class CubicModelRendererUpdater {
         break;
 
       case "position":
-        let parentNode = this.cubicModelAsset.nodes.parentNodesById[id];
-        let parentOffset = (parentNode != null) ? parentNode.shape.offset : { x: 0, y: 0, z: 0 };
+        const parentNode = this.cubicModelAsset.nodes.parentNodesById[id];
+        const parentOffset = (parentNode != null) ? parentNode.shape.offset : { x: 0, y: 0, z: 0 };
         rendererNode.pivot.position.set(value.x + parentOffset.x, value.y + parentOffset.y, value.z + parentOffset.z);
         rendererNode.pivot.updateMatrixWorld(false);
         break;
@@ -146,13 +146,13 @@ export default class CubicModelRendererUpdater {
       case "shape.offset":
         rendererNode.shape.position.set(value.x, value.y, value.z);
 
-        let walk = (rendererNode: RendererNode, parentOffset: { x: number; y: number; z: number; }) => {
-          let node = this.cubicModelAsset.nodes.byId[rendererNode.nodeId];
+        const walk = (rendererNode: RendererNode, parentOffset: { x: number; y: number; z: number; }) => {
+          const node = this.cubicModelAsset.nodes.byId[rendererNode.nodeId];
           rendererNode.pivot.position.set(node.position.x + parentOffset.x, node.position.y + parentOffset.y, node.position.z + parentOffset.z);
 
-          for (let child of rendererNode.children) walk(child, node.shape.offset);
+          for (const child of rendererNode.children) walk(child, node.shape.offset);
         };
-        for (let child of rendererNode.children) walk(child, node.shape.offset);
+        for (const child of rendererNode.children) walk(child, node.shape.offset);
 
         rendererNode.pivot.updateMatrixWorld(false);
         break;
@@ -162,7 +162,7 @@ export default class CubicModelRendererUpdater {
           case "box":
             switch (path) {
               case "shape.settings.size":
-                let geometry = rendererNode.shape.geometry = new THREE.BoxGeometry(value.x, value.y, value.z);
+                const geometry = rendererNode.shape.geometry = new THREE.BoxGeometry(value.x, value.y, value.z);
                 this.cubicModelRenderer.updateBoxNodeUv(geometry, node);
                 break;
 
@@ -179,7 +179,7 @@ export default class CubicModelRendererUpdater {
   };
 
   _onEditCommand_duplicateNode(rootNode: Node, newNodes: DuplicatedNode[]) {
-    for (let newNode of newNodes) this._createRendererNode(newNode.node);
+    for (const newNode of newNodes) this._createRendererNode(newNode.node);
   };
 
   _onEditCommand_removeNode(id: string) {
@@ -187,13 +187,13 @@ export default class CubicModelRendererUpdater {
   };
 
   _recurseClearNode(nodeId: string) {
-    let rendererNode = this.cubicModelRenderer.byNodeId[nodeId];
-    for (let childNode of rendererNode.children) this._recurseClearNode(childNode.nodeId);
+    const rendererNode = this.cubicModelRenderer.byNodeId[nodeId];
+    for (const childNode of rendererNode.children) this._recurseClearNode(childNode.nodeId);
 
-    let parentPivot = rendererNode.pivot.parent;
-    let parentNodeId: string = parentPivot.userData.cubicNodeId;
+    const parentPivot = rendererNode.pivot.parent;
+    const parentNodeId = parentPivot.userData.cubicNodeId as string;
     if (parentNodeId != null) {
-      let parentRendererNode = this.cubicModelRenderer.byNodeId[parentNodeId];
+      const parentRendererNode = this.cubicModelRenderer.byNodeId[parentNodeId];
       parentRendererNode.children.splice(parentRendererNode.children.indexOf(rendererNode), 1);
     }
 
@@ -207,9 +207,9 @@ export default class CubicModelRendererUpdater {
   }
 
   _onEditCommand_moveNodeTextureOffset(nodeIds: string[], offset: { x: number; y: number }) {
-    for (let id of nodeIds) {
-      let node = this.cubicModelAsset.nodes.byId[id];
-      let geometry = this.cubicModelRenderer.byNodeId[id].shape.geometry as THREE.Geometry;
+    for (const id of nodeIds) {
+      const node = this.cubicModelAsset.nodes.byId[id];
+      const geometry = this.cubicModelRenderer.byNodeId[id].shape.geometry as THREE.Geometry;
       this.cubicModelRenderer.updateBoxNodeUv(geometry, node);
     }
   }
@@ -218,12 +218,12 @@ export default class CubicModelRendererUpdater {
   _onEditCommand_changeTextureHeight() { this._onChangeTextureSize(); };
 
   _onChangeTextureSize() {
-    for (let id in this.cubicModelAsset.nodes.byId) {
-      let node = this.cubicModelAsset.nodes.byId[id];
-      let shape = this.cubicModelRenderer.byNodeId[id].shape;
+    for (const id in this.cubicModelAsset.nodes.byId) {
+      const node = this.cubicModelAsset.nodes.byId[id];
+      const shape = this.cubicModelRenderer.byNodeId[id].shape;
       this.cubicModelRenderer.updateBoxNodeUv(shape.geometry as THREE.Geometry, node);
 
-      let material = shape.material as THREE.MeshBasicMaterial;
+      const material = shape.material as THREE.MeshBasicMaterial;
       material.map = this.cubicModelAsset.pub.textures["map"];
       material.needsUpdate = true;
     }

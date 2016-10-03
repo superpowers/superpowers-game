@@ -112,8 +112,8 @@ export default class TileMapRendererUpdater {
     },
 
     editMap: (layerId: string, edits: { x: number, y: number }[]) => {
-      let index = this.tileMapAsset.pub.layers.indexOf(this.tileMapAsset.layers.byId[layerId]);
-      for (let edit of edits) this.tileMapRenderer.refreshTileAt(index, edit.x, edit.y);
+      const index = this.tileMapAsset.pub.layers.indexOf(this.tileMapAsset.layers.byId[layerId]);
+      for (const edit of edits) this.tileMapRenderer.refreshTileAt(index, edit.x, edit.y);
     },
 
     newLayer: (layer: TileMapLayerPub, index: number) => { this.tileMapRenderer.addLayer(layer.id, index); },

@@ -24,12 +24,12 @@ export default class Uniforms extends SupCore.Data.Base.ListById {
       function checkArray(value: any, size: number) {
         if (!Array.isArray(value)) return false;
         if (value.length !== size) return false;
-        for (let item of value) if (typeof item !== "number") return false;
+        for (const item of value) if (typeof item !== "number") return false;
 
         return true;
       }
 
-      let item = this.byId[id];
+      const item = this.byId[id];
       switch(item.type) {
         case "f":
           if (typeof value !== "number") { callback("Invalid value", null); return; }
@@ -65,7 +65,7 @@ export default class Uniforms extends SupCore.Data.Base.ListById {
   }
 
   updateItemValue(id: string, value: any) {
-    let item = this.byId[id];
+    const item = this.byId[id];
     switch(value) {
       case "f": item.value = 0; break;
       case "c": item.value = [1, 1, 1]; break;

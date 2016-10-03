@@ -3,9 +3,9 @@ import ActorComponent from "../ActorComponent";
 import Actor from "../Actor";
 import Camera from "./Camera";
 
-let tmpMovement = new THREE.Vector3();
-let tmpQuaternion = new THREE.Quaternion();
-let forwardVector = new THREE.Vector3(0, 1, 0);
+const tmpMovement = new THREE.Vector3();
+const tmpQuaternion = new THREE.Quaternion();
+const forwardVector = new THREE.Vector3(0, 1, 0);
 
 export default class Camera3DControls extends ActorComponent {
   camera: Camera;
@@ -22,8 +22,8 @@ export default class Camera3DControls extends ActorComponent {
   setIsLayerActive(active: boolean) { /* Nothing to render */ }
 
   update() {
-    let keyButtons = this.actor.gameInstance.input.keyboardButtons;
-    let keyEvent = (<any>window).KeyEvent; // Workaround for unknown KeyEvent property on window object
+    const keyButtons = this.actor.gameInstance.input.keyboardButtons;
+    const keyEvent = (<any>window).KeyEvent; // Workaround for unknown KeyEvent property on window object
 
     if (!keyButtons[keyEvent.DOM_VK_CONTROL].isDown) {
       tmpMovement.setX(

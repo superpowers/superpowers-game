@@ -5,7 +5,7 @@ import Attributes, { AttributePub } from "../../data/Attributes";
 
 import * as ResizeHandle from "resize-handle";
 
-let ui: {
+const ui: {
   uniformsList?: HTMLTableElement;
   useLightUniformsCheckbox?: HTMLInputElement;
   attributesList?: HTMLTableElement;
@@ -24,12 +24,12 @@ export default ui;
 
 ui.uniformsList = <HTMLTableElement>document.querySelector(".uniforms tbody");
 export function setupUniform(uniform: UniformPub) {
-  let rowElt = document.createElement("tr");
+  const rowElt = document.createElement("tr");
   rowElt.dataset["id"] = uniform.id;
   ui.uniformsList.insertBefore(rowElt, ui.uniformsList.lastChild);
 
-  let nameElt = document.createElement("td");
-  let nameInputElt = document.createElement("input");
+  const nameElt = document.createElement("td");
+  const nameInputElt = document.createElement("input");
   nameInputElt.classList.add("name");
   nameInputElt.addEventListener("change", (event: any) => {
     if (event.target.value === "") data.projectClient.editAsset(SupClient.query.asset, "deleteUniform", rowElt.dataset["id"]);
@@ -39,10 +39,10 @@ export function setupUniform(uniform: UniformPub) {
   nameElt.appendChild(nameInputElt);
   rowElt.appendChild(nameElt);
 
-  let typeElt = document.createElement("td");
-  let selectTypeElt = document.createElement("select");
-  for (let type of Uniforms.schema["type"].items as string[]) {
-    let optionElt = document.createElement("option");
+  const typeElt = document.createElement("td");
+  const selectTypeElt = document.createElement("select");
+  for (const type of Uniforms.schema["type"].items as string[]) {
+    const optionElt = document.createElement("option");
     optionElt.textContent = type;
     selectTypeElt.appendChild(optionElt);
   }
@@ -54,23 +54,23 @@ export function setupUniform(uniform: UniformPub) {
   typeElt.appendChild(selectTypeElt);
   rowElt.appendChild(typeElt);
 
-  let valueElt = document.createElement("td");
+  const valueElt = document.createElement("td");
   rowElt.appendChild(valueElt);
-  let valueDivElt = document.createElement("div");
+  const valueDivElt = document.createElement("div");
   valueDivElt.classList.add("value");
   valueElt.appendChild(valueDivElt);
   setUniformValueInputs(uniform.id);
 }
 
 export function setUniformValueInputs(id: string) {
-  let uniform = data.shaderAsset.uniforms.byId[id];
-  let valueRowElt = <HTMLDivElement>ui.uniformsList.querySelector(`[data-id='${id}'] .value`);
+  const uniform = data.shaderAsset.uniforms.byId[id];
+  const valueRowElt = <HTMLDivElement>ui.uniformsList.querySelector(`[data-id='${id}'] .value`);
 
   while (valueRowElt.children.length > 0) valueRowElt.removeChild(valueRowElt.children[0]);
 
   switch(uniform.type) {
     case "f":
-      let floatInputElt = document.createElement("input");
+      const floatInputElt = document.createElement("input");
       floatInputElt.type = "number";
       floatInputElt.classList.add("float");
       floatInputElt.addEventListener("change", (event: any) => {
@@ -88,7 +88,7 @@ export function setUniformValueInputs(id: string) {
       break;
 
     case "t":
-      let textInputElt = document.createElement("input");
+      const textInputElt = document.createElement("input");
       textInputElt.classList.add("text");
       textInputElt.addEventListener("change", (event: any) => {
         data.projectClient.editAsset(SupClient.query.asset, "setUniformProperty", id, "value", event.target.value);
@@ -100,16 +100,16 @@ export function setUniformValueInputs(id: string) {
 }
 
 function setArrayUniformInputs(id: string, parentElt: HTMLDivElement, name: string) {
-  let uniform = data.shaderAsset.uniforms.byId[id];
+  const uniform = data.shaderAsset.uniforms.byId[id];
 
   for (let i = 0; i < uniform.value.length; i++) {
-    let inputElt = document.createElement("input");
+    const inputElt = document.createElement("input");
     inputElt.type = "number";
     inputElt.classList.add(`${name}_${i}`);
     inputElt.addEventListener("change", (event: any) => {
-      let values = <number[]>[];
+      const values = <number[]>[];
       for (let j = 0; j < uniform.value.length; j++) {
-        let elt = <HTMLInputElement>parentElt.querySelector(`.${name}_${j}`);
+        const elt = <HTMLInputElement>parentElt.querySelector(`.${name}_${j}`);
         values.push(parseFloat(elt.value));
       }
       data.projectClient.editAsset(SupClient.query.asset, "setUniformProperty", id, "value", values);
@@ -119,7 +119,7 @@ function setArrayUniformInputs(id: string, parentElt: HTMLDivElement, name: stri
   }
 }
 
-let newUniformInput = <HTMLInputElement>document.querySelector(".uniforms .new input");
+const newUniformInput = <HTMLInputElement>document.querySelector(".uniforms .new input");
 newUniformInput.addEventListener("keyup", (event: any) => {
   if (event.keyCode === 13) {
     data.projectClient.editAsset(SupClient.query.asset, "newUniform", event.target.value);
@@ -134,12 +134,12 @@ ui.useLightUniformsCheckbox.addEventListener("change", (event: any) => {
 
 ui.attributesList = <HTMLTableElement>document.querySelector(".attributes tbody");
 export function setupAttribute(attribute: AttributePub) {
-  let rowElt = document.createElement("tr");
+  const rowElt = document.createElement("tr");
   rowElt.dataset["id"] = attribute.id;
   ui.attributesList.insertBefore(rowElt, ui.attributesList.lastChild);
 
-  let nameElt = document.createElement("td");
-  let nameInputElt = document.createElement("input");
+  const nameElt = document.createElement("td");
+  const nameInputElt = document.createElement("input");
   nameInputElt.classList.add("name");
   nameInputElt.addEventListener("change", (event: any) => {
     if (event.target.value === "") data.projectClient.editAsset(SupClient.query.asset, "deleteAttribute", rowElt.dataset["id"]);
@@ -149,10 +149,10 @@ export function setupAttribute(attribute: AttributePub) {
   nameElt.appendChild(nameInputElt);
   rowElt.appendChild(nameElt);
 
-  let typeElt = document.createElement("td");
-  let selectTypeElt = document.createElement("select");
-  for (let type of Attributes.schema["type"].items as string[]) {
-    let optionElt = document.createElement("option");
+  const typeElt = document.createElement("td");
+  const selectTypeElt = document.createElement("select");
+  for (const type of Attributes.schema["type"].items as string[]) {
+    const optionElt = document.createElement("option");
     optionElt.textContent = type;
     selectTypeElt.appendChild(optionElt);
   }
@@ -162,12 +162,12 @@ export function setupAttribute(attribute: AttributePub) {
   typeElt.appendChild(selectTypeElt);
   rowElt.appendChild(typeElt);
 
-  let valueElt = document.createElement("td");
+  const valueElt = document.createElement("td");
   valueElt.textContent = "Random";
   rowElt.appendChild(valueElt);
 }
 
-let newAttributeInput = <HTMLInputElement>document.querySelector(".attributes .new input");
+const newAttributeInput = <HTMLInputElement>document.querySelector(".attributes .new input");
 newAttributeInput.addEventListener("keyup", (event: any) => {
   if (event.keyCode === 13) {
     data.projectClient.editAsset(SupClient.query.asset, "newAttribute", event.target.value);
@@ -175,8 +175,8 @@ newAttributeInput.addEventListener("keyup", (event: any) => {
   }
 });
 
-let shadersPane = document.querySelector(".shaders") as HTMLDivElement;
-let shaderPaneResizeHandle = new ResizeHandle(shadersPane, "bottom");
+const shadersPane = document.querySelector(".shaders") as HTMLDivElement;
+const shaderPaneResizeHandle = new ResizeHandle(shadersPane, "bottom");
 shaderPaneResizeHandle.on("drag", () => {
   ui.vertexEditor.codeMirrorInstance.refresh();
   ui.fragmentEditor.codeMirrorInstance.refresh();
@@ -190,8 +190,8 @@ function onSaveFragment() {
   if (!ui.fragmentHeader.classList.contains("has-errors")) data.projectClient.editAsset(SupClient.query.asset, "saveFragmentShader");
 }
 
-let fragmentShadersPane = shadersPane.querySelector(".fragment") as HTMLDivElement;
-let fragmentShaderPaneResizeHandle = new ResizeHandle(fragmentShadersPane, "right");
+const fragmentShadersPane = shadersPane.querySelector(".fragment") as HTMLDivElement;
+const fragmentShaderPaneResizeHandle = new ResizeHandle(fragmentShadersPane, "right");
 fragmentShaderPaneResizeHandle.on("drag", () => {
   ui.vertexEditor.codeMirrorInstance.refresh();
   ui.fragmentEditor.codeMirrorInstance.refresh();
@@ -205,7 +205,7 @@ ui.fragmentHeader = <HTMLDivElement>document.querySelector(".fragment .header");
 ui.fragmentSaveElt.addEventListener("click", onSaveFragment);
 
 export function setupEditors(clientId: string) {
-  let vertexTextArea = <HTMLTextAreaElement>document.querySelector(".vertex textarea");
+  const vertexTextArea = <HTMLTextAreaElement>document.querySelector(".vertex textarea");
   ui.vertexEditor = new TextEditorWidget(data.projectClient, clientId, vertexTextArea, {
     mode: "x-shader/x-vertex",
     extraKeys: {
@@ -217,7 +217,7 @@ export function setupEditors(clientId: string) {
     }
   });
 
-  let fragmentTextArea = <HTMLTextAreaElement>document.querySelector(".fragment textarea");
+  const fragmentTextArea = <HTMLTextAreaElement>document.querySelector(".fragment textarea");
   ui.fragmentEditor = new TextEditorWidget(data.projectClient, clientId, fragmentTextArea, {
     mode: "x-shader/x-fragment",
     extraKeys: {
@@ -230,7 +230,7 @@ export function setupEditors(clientId: string) {
   });
 }
 
-let previewPane = document.querySelector(".preview") as HTMLDivElement;
+const previewPane = document.querySelector(".preview") as HTMLDivElement;
 new ResizeHandle(previewPane, "right");
 ui.previewTypeSelect = <HTMLSelectElement>previewPane.querySelector("select");
 ui.previewTypeSelect.addEventListener("change", () => {
@@ -246,7 +246,7 @@ ui.previewAssetInput.addEventListener("input", (event: any) => {
     return;
   }
 
-  let entry = SupClient.findEntryByPath(data.projectClient.entries.pub, event.target.value);
+  const entry = SupClient.findEntryByPath(data.projectClient.entries.pub, event.target.value);
   if (entry == null || (entry.type !== "sprite" && entry.type !== "model")) return;
 
   ui.previewEntry = entry;

@@ -54,13 +54,13 @@ export default class BehaviorPropertiesResource extends SupCore.Data.Base.Resour
     this.behaviorNamesByScriptId = {};
     this.propertiesByNameByBehavior = {};
 
-    for (let behaviorName in this.pub.behaviors) {
-      let behavior = this.pub.behaviors[behaviorName];
+    for (const behaviorName in this.pub.behaviors) {
+      const behavior = this.pub.behaviors[behaviorName];
       if (this.behaviorNamesByScriptId[behavior.scriptId] == null) this.behaviorNamesByScriptId[behavior.scriptId] = [];
       this.behaviorNamesByScriptId[behavior.scriptId].push(behaviorName);
 
       this.propertiesByNameByBehavior[behaviorName] = {};
-      for (let property of behavior.properties) this.propertiesByNameByBehavior[behaviorName][property.name] = property;
+      for (const property of behavior.properties) this.propertiesByNameByBehavior[behaviorName][property.name] = property;
     }
   }
 
@@ -80,18 +80,18 @@ export default class BehaviorPropertiesResource extends SupCore.Data.Base.Resour
   }
 
   client_setScriptBehaviors(scriptId: string, behaviors: {[behaviorName: string]: { line: number; properties: BehaviorProperty[]; parentBehavior: string }}) {
-    let oldBehaviorNames = (this.behaviorNamesByScriptId[scriptId] != null) ? this.behaviorNamesByScriptId[scriptId] : [];
-    let newBehaviorNames: string[] = this.behaviorNamesByScriptId[scriptId] = [];
+    const oldBehaviorNames = (this.behaviorNamesByScriptId[scriptId] != null) ? this.behaviorNamesByScriptId[scriptId] : [];
+    const newBehaviorNames: string[] = this.behaviorNamesByScriptId[scriptId] = [];
 
-    for (let name in behaviors) {
-      let behavior = behaviors[name];
+    for (const name in behaviors) {
+      const behavior = behaviors[name];
       this.pub.behaviors[name] = { scriptId, line: behavior.line, parentBehavior: behavior.parentBehavior, properties: behavior.properties };
-      let propertiesByName: {[propertyName: string]: BehaviorProperty} = this.propertiesByNameByBehavior[name] = {};
-      for (let property of behavior.properties) propertiesByName[property.name] = property;
+      const propertiesByName: {[propertyName: string]: BehaviorProperty} = this.propertiesByNameByBehavior[name] = {};
+      for (const property of behavior.properties) propertiesByName[property.name] = property;
       newBehaviorNames.push(name);
     }
 
-    for (let oldBehaviorName of oldBehaviorNames) {
+    for (const oldBehaviorName of oldBehaviorNames) {
       if (newBehaviorNames.indexOf(oldBehaviorName) !== -1) continue;
       delete this.propertiesByNameByBehavior[oldBehaviorName];
       delete this.pub.behaviors[oldBehaviorName];

@@ -44,8 +44,8 @@ function onAssetReceived() {
   ui.unitRatioInput.value = pub.unitRatio.toString();
   setupOpacity(pub.opacity);
 
-  for (let mapName in pub.maps) if (pub.maps[mapName] != null) setupMap(mapName);
-  for (let slotName in pub.mapSlots) ui.mapSlotsInput[slotName].value = pub.mapSlots[slotName] != null ? pub.mapSlots[slotName] : "";
+  for (const mapName in pub.maps) if (pub.maps[mapName] != null) setupMap(mapName);
+  for (const slotName in pub.mapSlots) ui.mapSlotsInput[slotName].value = pub.mapSlots[slotName] != null ? pub.mapSlots[slotName] : "";
 }
 
 onEditCommands["setProperty"] = (path: string, value: any) => {
@@ -70,18 +70,18 @@ onEditCommands["newAnimation"] = (animation: any, index: number) => {
 };
 
 onEditCommands["deleteAnimation"] = (id: string) => {
-  let animationElt = ui.animationsTreeView.treeRoot.querySelector(`li[data-id="${id}"]`) as HTMLLIElement;
+  const animationElt = ui.animationsTreeView.treeRoot.querySelector(`li[data-id="${id}"]`) as HTMLLIElement;
   ui.animationsTreeView.remove(animationElt);
   if (ui.selectedAnimationId === id) updateSelectedAnimation();
 };
 
 onEditCommands["moveAnimation"] = (id: string, index: number) => {
-  let animationElt = ui.animationsTreeView.treeRoot.querySelector(`li[data-id="${id}"]`) as HTMLLIElement;
+  const animationElt = ui.animationsTreeView.treeRoot.querySelector(`li[data-id="${id}"]`) as HTMLLIElement;
   ui.animationsTreeView.insertAt(animationElt, "item", index);
 };
 
 onEditCommands["setAnimationProperty"] = (id: string, key: string, value: any) => {
-  let animationElt = ui.animationsTreeView.treeRoot.querySelector(`li[data-id="${id}"]`) as HTMLLIElement;
+  const animationElt = ui.animationsTreeView.treeRoot.querySelector(`li[data-id="${id}"]`) as HTMLLIElement;
 
   switch (key) {
     case "name": animationElt.querySelector(".name").textContent = value; break;
@@ -93,22 +93,22 @@ onEditCommands["newMap"] = (name: string) => {
 };
 
 onEditCommands["renameMap"] = (oldName: string, newName: string) => {
-  let pub = data.modelUpdater.modelAsset.pub;
+  const pub = data.modelUpdater.modelAsset.pub;
 
-  let textureElt = <HTMLLIElement>ui.texturesTreeView.treeRoot.querySelector(`[data-name="${oldName}"]`);
+  const textureElt = <HTMLLIElement>ui.texturesTreeView.treeRoot.querySelector(`[data-name="${oldName}"]`);
   textureElt.dataset["name"] = newName;
   textureElt.querySelector("span").textContent = newName;
 
-  for (let slotName in pub.mapSlots)
+  for (const slotName in pub.mapSlots)
     if (ui.mapSlotsInput[slotName].value === oldName) ui.mapSlotsInput[slotName].value = newName;
 };
 
 onEditCommands["deleteMap"] = (name: string) => {
-  let textureElt = ui.texturesTreeView.treeRoot.querySelector(`li[data-name="${name}"]`) as HTMLLIElement;
+  const textureElt = ui.texturesTreeView.treeRoot.querySelector(`li[data-name="${name}"]`) as HTMLLIElement;
   ui.texturesTreeView.remove(textureElt);
 
-  let pub = data.modelUpdater.modelAsset.pub;
-  for (let slotName in pub.mapSlots)
+  const pub = data.modelUpdater.modelAsset.pub;
+  for (const slotName in pub.mapSlots)
     if (ui.mapSlotsInput[slotName].value === name) ui.mapSlotsInput[slotName].value = "";
 };
 

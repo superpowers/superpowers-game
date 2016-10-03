@@ -2,8 +2,8 @@ import SceneAsset, { DuplicatedNode } from "../data/SceneAsset";
 import { Node } from "../data/SceneNodes";
 import { Component } from "../data/SceneComponents";
 
-let tmpVector3 = new SupEngine.THREE.Vector3();
-let tmpQuaternion = new SupEngine.THREE.Quaternion();
+const tmpVector3 = new SupEngine.THREE.Vector3();
+const tmpQuaternion = new SupEngine.THREE.Quaternion();
 
 interface SceneUpdaterConfig {
   sceneAssetId: string;
@@ -117,7 +117,7 @@ export default class SceneUpdater {
     },
 
     editComponent(nodeId: string, componentId: string, command: string, ...args: any[]) {
-      let componentUpdater = this.bySceneNodeId[nodeId].bySceneComponentId[componentId].componentUpdater;
+      const componentUpdater = this.bySceneNodeId[nodeId].bySceneComponentId[componentId].componentUpdater;
       if (componentUpdater[`config_${command}`] != null) componentUpdater[`config_${command}`].apply(componentUpdater, args);
     },
 
@@ -131,25 +131,25 @@ export default class SceneUpdater {
 
   private onUpdateMarkerRecursive(nodeId: string) {
     this.sceneAsset.nodes.walkNode(this.sceneAsset.nodes.byId[nodeId], null, (descendantNode) => {
-      let nodeEditorData = this.bySceneNodeId[descendantNode.id];
+      const nodeEditorData = this.bySceneNodeId[descendantNode.id];
       nodeEditorData.markerActor.setGlobalPosition(nodeEditorData.actor.getGlobalPosition(tmpVector3));
       nodeEditorData.markerActor.setGlobalOrientation(nodeEditorData.actor.getGlobalOrientation(tmpQuaternion));
     });
   }
 
   private recurseClearActor(nodeId: string) {
-    let nodeEditorData = this.bySceneNodeId[nodeId];
+    const nodeEditorData = this.bySceneNodeId[nodeId];
 
     if (nodeEditorData.prefabUpdater == null) {
-      for (let childActor of nodeEditorData.actor.children) {
-        let sceneNodeId = (<any>childActor).sceneNodeId;
+      for (const childActor of nodeEditorData.actor.children) {
+        const sceneNodeId = (<any>childActor).sceneNodeId;
         if (sceneNodeId != null) this.recurseClearActor(sceneNodeId);
       }
     } else {
       nodeEditorData.prefabUpdater.destroy();
     }
 
-    for (let componentId in nodeEditorData.bySceneComponentId) {
+    for (const componentId in nodeEditorData.bySceneComponentId) {
       nodeEditorData.bySceneComponentId[componentId].componentUpdater.destroy();
     }
 
@@ -179,13 +179,13 @@ export default class SceneUpdater {
   }
 
   private createNodeActor(node: Node) {
-    let parentNode = this.sceneAsset.nodes.parentNodesById[node.id];
+    const parentNode = this.sceneAsset.nodes.parentNodesById[node.id];
     let parentActor: SupEngine.Actor;
     if (parentNode != null) parentActor = this.bySceneNodeId[parentNode.id].actor;
     else parentActor = this.rootActor;
 
-    let nodeActor = new SupEngine.Actor(this.gameInstance, node.name, parentActor);
-    let nodeId = (this.rootActor == null) ? node.id : this.rootActor.threeObject.userData.nodeId;
+    const nodeActor = new SupEngine.Actor(this.gameInstance, node.name, parentActor);
+    const nodeId = (this.rootActor == null) ? node.id : this.rootActor.threeObject.userData.nodeId;
     nodeActor.threeObject.userData.nodeId = nodeId;
     nodeActor.threeObject.position.copy(<THREE.Vector3>node.position);
     nodeActor.threeObject.quaternion.copy(<THREE.Quaternion>node.orientation);
@@ -207,14 +207,14 @@ export default class SceneUpdater {
         { gameInstance: this.gameInstance, actor: nodeActor }, { sceneAssetId: node.prefab.sceneAssetId, isInPrefab: true });
     }
 
-    if (node.components != null) for (let component of node.components) this.createNodeActorComponent(node, component, nodeActor);
+    if (node.components != null) for (const component of node.components) this.createNodeActorComponent(node, component, nodeActor);
     return nodeActor;
   }
 
   private createNodeActorComponent(sceneNode: Node, sceneComponent: Component, nodeActor: SupEngine.Actor) {
     let componentClass = SupEngine.editorComponentClasses[`${sceneComponent.type}Marker`];
     if (componentClass == null) componentClass = SupEngine.componentClasses[sceneComponent.type];
-    let actorComponent = new componentClass(nodeActor);
+    const actorComponent = new componentClass(nodeActor);
 
     this.bySceneNodeId[sceneNode.id].bySceneComponentId[sceneComponent.id] = {
       component: actorComponent,
@@ -223,12 +223,12 @@ export default class SceneUpdater {
   }
 
   private clearScene() {
-    for (let sceneNodeId in this.bySceneNodeId) {
-      let sceneNode = this.bySceneNodeId[sceneNodeId];
+    for (const sceneNodeId in this.bySceneNodeId) {
+      const sceneNode = this.bySceneNodeId[sceneNodeId];
 
       if (!this.isInPrefab) this.gameInstance.destroyActor(sceneNode.markerActor);
 
-      for (let componentId in sceneNode.bySceneComponentId) sceneNode.bySceneComponentId[componentId].componentUpdater.destroy();
+      for (const componentId in sceneNode.bySceneComponentId) sceneNode.bySceneComponentId[componentId].componentUpdater.destroy();
       this.gameInstance.destroyActor(sceneNode.actor);
     }
     this.bySceneNodeId = {};

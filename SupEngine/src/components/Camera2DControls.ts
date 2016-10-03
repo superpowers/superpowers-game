@@ -3,7 +3,7 @@ import ActorComponent from "../ActorComponent";
 import Actor from "../Actor";
 import Camera from "./Camera";
 
-let tmpVector3 = new THREE.Vector3();
+const tmpVector3 = new THREE.Vector3();
 
 interface Options {
   zoomMin: number;
@@ -30,31 +30,31 @@ export default class Camera2DControls extends ActorComponent {
   setIsLayerActive(active: boolean) { /* Nothing to render */ }
 
   setMultiplier(newMultiplier: number) {
-    let newOrthographicScale = this.camera.orthographicScale * this.multiplier;
+    const newOrthographicScale = this.camera.orthographicScale * this.multiplier;
     this.multiplier = newMultiplier / 10;
 
     this.camera.actor.getLocalPosition(tmpVector3);
-    let screenPosition = this.getScreenPosition(tmpVector3.x, tmpVector3.y);
+    const screenPosition = this.getScreenPosition(tmpVector3.x, tmpVector3.y);
     this.changeOrthographicScale(newOrthographicScale, screenPosition[0], screenPosition[1]);
   }
 
   changeOrthographicScale(newOrthographicScale: number, x: number, y: number) {
-    let startPosition = this.getScenePosition(x, y);
+    const startPosition = this.getScenePosition(x, y);
     this.camera.setOrthographicScale(newOrthographicScale / this.multiplier);
-    let endPosition = this.getScenePosition(x, y);
+    const endPosition = this.getScenePosition(x, y);
 
     this.camera.actor.moveLocal(new THREE.Vector3(startPosition[0] - endPosition[0], endPosition[1] - startPosition[1], 0));
     if (this.zoomCallback != null) this.zoomCallback();
   }
 
   update() {
-    let input = this.actor.gameInstance.input;
-    let keys = (<any>window).KeyEvent;
+    const input = this.actor.gameInstance.input;
+    const keys = (<any>window).KeyEvent;
 
     // Move
     if (input.mouseButtons[1].isDown ||
     (input.mouseButtons[0].isDown && input.keyboardButtons[keys.DOM_VK_ALT].isDown)) {
-      let mouseDelta = input.mouseDelta;
+      const mouseDelta = input.mouseDelta;
       mouseDelta.x /= this.actor.gameInstance.threeRenderer.domElement.width;
       mouseDelta.x *= this.camera.orthographicScale * this.camera.cachedRatio;
 
@@ -66,7 +66,7 @@ export default class Camera2DControls extends ActorComponent {
 
     // Zoom
     else {
-      let mousePosition = input.mousePosition;
+      const mousePosition = input.mousePosition;
       let newOrthographicScale: number;
       if (input.mouseButtons[5].isDown || input.keyboardButtons[keys.DOM_VK_ADD].wasJustPressed) {
         newOrthographicScale = Math.max(this.options.zoomMin, this.camera.orthographicScale * this.multiplier / this.options.zoomSpeed);

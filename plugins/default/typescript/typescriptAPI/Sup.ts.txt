@@ -1,6 +1,6 @@
 namespace Sup {
   export function log(message, ...optionalParams) { console.log.apply(console, [ message ].concat(optionalParams)); }
-  
+
   export function setTimeout(delayMs, callback) { return window.setTimeout(callback, delayMs); }
   export function clearTimeout(id) { return window.clearTimeout(id); }
   export function setInterval(intervalMs, callback) { return window.setInterval(callback, intervalMs); }
@@ -9,9 +9,10 @@ namespace Sup {
   export function exit() {
     if (player.gameInstance.input.exited) return;
 
-    // Close window only if running release mode in NW.js
+    // Close window only if running release mode in Electron
     if (!player.gameInstance.debug && window.navigator.userAgent.indexOf("Electron") !== -1) {
-      require("remote").getCurrentWindow().close();
+      if (window["SupApp"] != null) window["SupApp"].getCurrentWindow().close();
+      else require("electron").remote.getCurrentWindow().close();
     } else {
       player.gameInstance.input.emit("exit");
       player.gameInstance.input.exited = true;

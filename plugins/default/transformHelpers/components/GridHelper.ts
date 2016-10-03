@@ -1,4 +1,4 @@
-let THREE = SupEngine.THREE;
+const THREE = SupEngine.THREE;
 
 export default class GridHelper extends SupEngine.ActorComponent {
   gridHelper: THREE.GridHelper;
@@ -19,11 +19,9 @@ export default class GridHelper extends SupEngine.ActorComponent {
       this.gridHelper.material.dispose();
     }
 
-    let actualSize = Math.ceil(size / step) * step;
+    const actualSize = Math.ceil(size / step) * step;
 
-    this.gridHelper = new THREE.GridHelper(actualSize, step);
-    this.gridHelper.color1.setRGB(1, 1, 1);
-    this.gridHelper.color2.setRGB(1, 1, 1);
+    this.gridHelper = new THREE.GridHelper(actualSize, actualSize / step * 2, new THREE.Color(1, 1, 1), new THREE.Color(1, 1, 1));
     this.gridHelper.material.transparent = true;
     this.gridHelper.material.opacity = 0.25;
     this.actor.threeObject.add(this.gridHelper);

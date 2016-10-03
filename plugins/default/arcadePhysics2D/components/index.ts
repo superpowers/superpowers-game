@@ -1,13 +1,13 @@
-let epsilon = 0.0001;
-let THREE = SupEngine.THREE;
+const epsilon = 0.0001;
+const THREE = SupEngine.THREE;
 import ArcadeBody2D from "./ArcadeBody2D";
 import ArcadeBody2DMarker from "./ArcadeBody2DMarker";
 
 namespace ArcadePhysics2D {
   "use strict";
 
-  export let allBodies: ArcadeBody2D[] = [];
-  export let gravity = new THREE.Vector3(0, 0, 0);
+  export const allBodies: ArcadeBody2D[] = [];
+  export const gravity = new THREE.Vector3(0, 0, 0);
 
   export function intersects(body1: ArcadeBody2D, body2: ArcadeBody2D) {
     if (body2.type === "tileMap") return checkTileMap(body1, body2, { moveBody: false });
@@ -49,15 +49,15 @@ namespace ArcadePhysics2D {
 
   function checkTileMap(body1: ArcadeBody2D, body2: ArcadeBody2D, options: { moveBody: boolean; }) {
     function checkX() {
-      let x = (body1.deltaX() < 0) ?
+      const x = (body1.deltaX() < 0) ?
         Math.floor((body1.position.x - body2.position.x - body1.width / 2) / body2.mapToSceneFactor.x) :
         Math.floor((body1.position.x - body2.position.x + body1.width / 2 - epsilon) / body2.mapToSceneFactor.x);
-      let y = body1.position.y - body2.position.y - body1.height / 2 + epsilon;
-      let testedHeight = body1.height - 3 * epsilon;
-      let totalPoints = Math.ceil(testedHeight / body2.mapToSceneFactor.y);
+      const y = body1.position.y - body2.position.y - body1.height / 2 + epsilon;
+      const testedHeight = body1.height - 3 * epsilon;
+      const totalPoints = Math.ceil(testedHeight / body2.mapToSceneFactor.y);
       for (let point = 0; point <= totalPoints; point++) {
-        for (let layer of body2.layersIndex) {
-          let tile = body2.tileMapAsset.getTileAt(layer, x, Math.floor((y + point * testedHeight / totalPoints) / body2.mapToSceneFactor.y));
+        for (const layer of body2.layersIndex) {
+          const tile = body2.tileMapAsset.getTileAt(layer, x, Math.floor((y + point * testedHeight / totalPoints) / body2.mapToSceneFactor.y));
 
           let collide = false;
           if (body2.tileSetPropertyName != null) collide = body2.tileSetAsset.getTileProperties(tile)[body2.tileSetPropertyName] != null;
@@ -79,15 +79,15 @@ namespace ArcadePhysics2D {
     }
 
     function checkY() {
-      let x = body1.position.x - body2.position.x - body1.width / 2 + epsilon;
-      let y = (body1.deltaY() < 0) ?
+      const x = body1.position.x - body2.position.x - body1.width / 2 + epsilon;
+      const y = (body1.deltaY() < 0) ?
         Math.floor((body1.position.y - body2.position.y - body1.height / 2) / body2.mapToSceneFactor.y) :
         Math.floor((body1.position.y - body2.position.y + body1.height / 2 - epsilon) / body2.mapToSceneFactor.y);
-      let testedWidth = body1.width - 3 * epsilon;
-      let totalPoints = Math.ceil(testedWidth / body2.mapToSceneFactor.x);
+      const testedWidth = body1.width - 3 * epsilon;
+      const totalPoints = Math.ceil(testedWidth / body2.mapToSceneFactor.x);
       for (let point = 0; point <= totalPoints; point++) {
-        for (let layer of body2.layersIndex) {
-          let tile = body2.tileMapAsset.getTileAt(layer, Math.floor((x + point * testedWidth / totalPoints) / body2.mapToSceneFactor.x), y);
+        for (const layer of body2.layersIndex) {
+          const tile = body2.tileMapAsset.getTileAt(layer, Math.floor((x + point * testedWidth / totalPoints) / body2.mapToSceneFactor.x), y);
 
           let collide = false;
           if (body2.tileSetPropertyName != null) collide = body2.tileSetAsset.getTileProperties(tile)[body2.tileSetPropertyName] != null;
@@ -108,7 +108,7 @@ namespace ArcadePhysics2D {
       return false;
     }
 
-    let x = body1.position.x;
+    const x = body1.position.x;
     body1.position.x = body1.previousPosition.x;
 
     let gotCollision = false;
@@ -130,7 +130,7 @@ namespace ArcadePhysics2D {
     if (!body1.enabled) return false;
 
     let gotCollision = false;
-    for (let body2 of bodies) {
+    for (const body2 of bodies) {
       if (body2 === body1 || !body2.enabled) continue;
 
       if (body2.type === "box") {
@@ -151,7 +151,7 @@ namespace ArcadePhysics2D {
 (<any>SupEngine).ArcadePhysics2D = ArcadePhysics2D;
 
 SupEngine.registerEarlyUpdateFunction("ArcadePhysics2D", () => {
-  for (let body of ArcadePhysics2D.allBodies) body.earlyUpdate();
+  for (const body of ArcadePhysics2D.allBodies) body.earlyUpdate();
 });
 
 SupEngine.registerComponentClass("ArcadeBody2D", ArcadeBody2D);

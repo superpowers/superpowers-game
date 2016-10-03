@@ -2,9 +2,9 @@ import ui, { selectBrushTool, selectFillTool } from "./ui";
 import { setupPattern } from "./mapArea";
 import { data } from "./network";
 
-let tmpVector3 = new SupEngine.THREE.Vector3();
+const tmpVector3 = new SupEngine.THREE.Vector3();
 
-let tileSetArea: {
+const tileSetArea: {
   gameInstance?: SupEngine.GameInstance;
 
   cameraComponent?: any;
@@ -18,7 +18,7 @@ let tileSetArea: {
 tileSetArea.gameInstance = new SupEngine.GameInstance(<HTMLCanvasElement>document.querySelector("canvas.tileSet"));
 tileSetArea.gameInstance.threeRenderer.setClearColor(0xbbbbbb);
 
-let cameraActor = new SupEngine.Actor(tileSetArea.gameInstance, "Camera");
+const cameraActor = new SupEngine.Actor(tileSetArea.gameInstance, "Camera");
 cameraActor.setLocalPosition(new SupEngine.THREE.Vector3(0, 0, 10));
 tileSetArea.cameraComponent = new SupEngine.componentClasses["Camera"](cameraActor);
 tileSetArea.cameraComponent.setOrthographicMode(true);
@@ -30,10 +30,10 @@ new SupEngine.editorComponentClasses["Camera2DControls"](
 export default tileSetArea;
 
 function getTileSetGridPosition(gameInstance: SupEngine.GameInstance, cameraComponent: any) {
-  let mousePosition = gameInstance.input.mousePosition;
-  let position = new SupEngine.THREE.Vector3(mousePosition.x, mousePosition.y, 0);
+  const mousePosition = gameInstance.input.mousePosition;
+  const position = new SupEngine.THREE.Vector3(mousePosition.x, mousePosition.y, 0);
   cameraComponent.actor.getLocalPosition(tmpVector3);
-  let ratio = data.tileMapUpdater.tileSetAsset.pub.grid.width / data.tileMapUpdater.tileSetAsset.pub.grid.height;
+  const ratio = data.tileMapUpdater.tileSetAsset.pub.grid.width / data.tileMapUpdater.tileSetAsset.pub.grid.height;
 
   let x = position.x / gameInstance.threeRenderer.domElement.width;
   x = x * 2 - 1;
@@ -57,10 +57,10 @@ export function handleTileSetArea() {
   if (data.tileMapUpdater.tileSetAsset == null) return;
   if (data.tileMapUpdater.tileSetAsset.pub.texture == null) return;
 
-  let tilesPerRow = data.tileMapUpdater.tileSetAsset.pub.texture.image.width / data.tileMapUpdater.tileSetAsset.pub.grid.width;
-  let tilesPerColumn = data.tileMapUpdater.tileSetAsset.pub.texture.image.height / data.tileMapUpdater.tileSetAsset.pub.grid.height;
+  const tilesPerRow = data.tileMapUpdater.tileSetAsset.pub.texture.image.width / data.tileMapUpdater.tileSetAsset.pub.grid.width;
+  const tilesPerColumn = data.tileMapUpdater.tileSetAsset.pub.texture.image.height / data.tileMapUpdater.tileSetAsset.pub.grid.height;
 
-  let [ mouseX, mouseY ] = getTileSetGridPosition(tileSetArea.gameInstance, tileSetArea.cameraComponent);
+  const [ mouseX, mouseY ] = getTileSetGridPosition(tileSetArea.gameInstance, tileSetArea.cameraComponent);
   if (tileSetArea.gameInstance.input.mouseButtons[0].wasJustPressed) {
 
     if (mouseX >= 0 && mouseX < tilesPerRow && mouseY >= 0 && mouseY < tilesPerColumn) {
@@ -74,14 +74,14 @@ export function handleTileSetArea() {
 
   } else if (tileSetArea.gameInstance.input.mouseButtons[0].wasJustReleased && tileSetArea.selectionStartPoint != null) {
     // Clamp mouse values
-    let x = Math.max(0, Math.min(tilesPerRow - 1, mouseX));
-    let y = Math.max(0, Math.min(tilesPerColumn - 1, mouseY));
+    const x = Math.max(0, Math.min(tilesPerRow - 1, mouseX));
+    const y = Math.max(0, Math.min(tilesPerColumn - 1, mouseY));
 
-    let startX = Math.min(tileSetArea.selectionStartPoint.x, x);
-    let startY = Math.min(tileSetArea.selectionStartPoint.y, y);
-    let width = Math.abs(x - tileSetArea.selectionStartPoint.x) + 1;
-    let height = Math.abs(y - tileSetArea.selectionStartPoint.y);
-    let layerData: (number|boolean)[][] = [];
+    const startX = Math.min(tileSetArea.selectionStartPoint.x, x);
+    const startY = Math.min(tileSetArea.selectionStartPoint.y, y);
+    const width = Math.abs(x - tileSetArea.selectionStartPoint.x) + 1;
+    const height = Math.abs(y - tileSetArea.selectionStartPoint.y);
+    const layerData: (number|boolean)[][] = [];
     for (let y = height; y >= 0; y--) {
       for (let x = 0; x < width; x++) {
         layerData.push([ startX + x, startY + y, false, false, 0 ]);

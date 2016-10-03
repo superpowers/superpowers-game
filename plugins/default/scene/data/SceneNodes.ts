@@ -90,7 +90,7 @@ export default class SceneNodes extends SupCore.Data.Base.TreeById {
       if (err != null) { callback(err, null); return; }
 
       if (node.components != null) {
-        let components = new SceneComponents(node.components, this.sceneAsset);
+        const components = new SceneComponents(node.components, this.sceneAsset);
         this.componentsByNodeId[node.id] = components;
         node.components = components.pub;
       }
@@ -105,7 +105,7 @@ export default class SceneNodes extends SupCore.Data.Base.TreeById {
   }
 
   remove(id: string, callback: (err: string) => any) {
-    let node = this.byId[id];
+    const node = this.byId[id];
     if (node == null) {
       // TODO: callback(new SupCore.LocalizedError("sceneEditor:errors.invalidActorId", { id }));
       // see https://github.com/superpowers/superpowers-core/issues/79
@@ -116,7 +116,7 @@ export default class SceneNodes extends SupCore.Data.Base.TreeById {
     if (node.prefab != null && node.prefab.sceneAssetId != null) this.emit("removeDependencies", [ node.prefab.sceneAssetId ], `${id}_${node.prefab.sceneAssetId}`);
 
     this.walkNode(node, null, (node) => {
-      for (let componentId in this.componentsByNodeId[node.id].configsById) {
+      for (const componentId in this.componentsByNodeId[node.id].configsById) {
         this.componentsByNodeId[node.id].configsById[componentId].destroy();
       }
       delete this.componentsByNodeId[node.id];
@@ -126,11 +126,11 @@ export default class SceneNodes extends SupCore.Data.Base.TreeById {
   }
 
   client_remove(id: string) {
-    let node = this.byId[id];
+    const node = this.byId[id];
 
     if (node.components != null) {
       this.walkNode(node, null, (node) => {
-        for (let componentId in this.componentsByNodeId[node.id].configsById) {
+        for (const componentId in this.componentsByNodeId[node.id].configsById) {
           this.componentsByNodeId[node.id].configsById[componentId].destroy();
         }
         delete this.componentsByNodeId[node.id];
@@ -141,7 +141,7 @@ export default class SceneNodes extends SupCore.Data.Base.TreeById {
   }
 
   addComponent(id: string, component: any, index: number, callback: (err: string, actualIndex: number) => any) {
-    let components = this.componentsByNodeId[id];
+    const components = this.componentsByNodeId[id];
     if (components == null) { callback(`Invalid node id: ${id}`, null); return; }
 
     components.add(component, index, callback);
@@ -154,7 +154,7 @@ export default class SceneNodes extends SupCore.Data.Base.TreeById {
   setProperty(id: string, key: string, value: any, callback: (err: string, value?: any) => any) {
     let oldDepId: string;
 
-    let finish = () => {
+    const finish = () => {
       super.setProperty(id, key, value, (err, actualValue) => {
         if (err != null) { callback(err); return; }
 
@@ -188,7 +188,7 @@ export default class SceneNodes extends SupCore.Data.Base.TreeById {
     let canUseScene = true;
     let acquiringScene = 0;
 
-    let checkScene = (sceneId: string) => {
+    const checkScene = (sceneId: string) => {
       acquiringScene++;
       this.sceneAsset.server.data.assets.acquire(sceneId, null, (error: Error, asset: SceneAsset) => {
         this.sceneAsset.server.data.assets.release(sceneId, null);
@@ -200,17 +200,17 @@ export default class SceneNodes extends SupCore.Data.Base.TreeById {
           return;
         }
 
-        let walk = (node: Node) => {
+        const walk = (node: Node) => {
           if (!canUseScene) return;
 
           if (node.prefab != null && node.prefab.sceneAssetId != null) {
             if (node.prefab.sceneAssetId === this.sceneAsset.id) canUseScene = false;
             else checkScene(node.prefab.sceneAssetId);
           }
-          for (let child of node.children) walk(child);
+          for (const child of node.children) walk(child);
         };
 
-        for (let rootNode of asset.pub.nodes) walk(rootNode);
+        for (const rootNode of asset.pub.nodes) walk(rootNode);
 
         acquiringScene--;
         if (acquiringScene === 0) {

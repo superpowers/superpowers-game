@@ -96,7 +96,7 @@ export default class TileMapAsset extends SupCore.Data.Base.Asset {
       if (typeof pub.tileSetId === "number") pub.tileSetId = pub.tileSetId.toString();
 
       // NOTE: Migration from Superpowers 0.13.1
-      for (let layer of pub.layers) {
+      for (const layer of pub.layers) {
         for (let index = 0; index < layer.data.length; index++) {
           if ((<any>layer).data[index][0] === -1) layer.data[index] = 0;
         }
@@ -133,7 +133,7 @@ export default class TileMapAsset extends SupCore.Data.Base.Asset {
     if (tileSetId != null) {
       if (typeof(tileSetId) !== "string") { callback("tileSetId must be a string or null"); return; }
 
-      let entry = this.server.data.entries.byId[tileSetId];
+      const entry = this.server.data.entries.byId[tileSetId];
       if (entry == null) { callback("Invalid tileSetId"); return; }
       if (entry.type !== "tileSet") { callback("Invalid asset type"); return; }
     }
@@ -165,7 +165,7 @@ export default class TileMapAsset extends SupCore.Data.Base.Asset {
   client_resizeMap(width: number, height: number) {
     if (width !== this.pub.width) {
       for (let row = this.pub.height; row > 0; row--) {
-        for (let layer of this.pub.layers) {
+        for (const layer of this.pub.layers) {
           if (width > this.pub.width) {
             for (let i = 0; i < width - this.pub.width; i++) layer.data.splice(row * this.pub.width, 0, 0);
           } else {
@@ -178,7 +178,7 @@ export default class TileMapAsset extends SupCore.Data.Base.Asset {
     }
 
     if (height !== this.pub.height) {
-      for (let layer of this.pub.layers) {
+      for (const layer of this.pub.layers) {
         if (height > this.pub.height) {
           for (let i = 0; i < (height - this.pub.height) * this.pub.width; i++) layer.data.splice(this.pub.height * this.pub.width, 0, 0);
         } else {
@@ -204,7 +204,7 @@ export default class TileMapAsset extends SupCore.Data.Base.Asset {
   client_moveMap(horizontalOffset: number, verticalOffset: number) {
     if (horizontalOffset !== 0) {
       for (let row = this.pub.height; row > 0; row--) {
-        for (let layer of this.pub.layers) {
+        for (const layer of this.pub.layers) {
           if (horizontalOffset > 0) {
             layer.data.splice(row * this.pub.width - horizontalOffset, horizontalOffset);
             for (let i = 0; i < horizontalOffset; i++)
@@ -219,7 +219,7 @@ export default class TileMapAsset extends SupCore.Data.Base.Asset {
     }
 
     if (verticalOffset !== 0) {
-      for (let layer of this.pub.layers) {
+      for (const layer of this.pub.layers) {
         if (verticalOffset > 0) {
           layer.data.splice((this.pub.height - verticalOffset) * this.pub.width - 1, verticalOffset * this.pub.width);
           for (let i = 0; i < verticalOffset * this.pub.width; i++)
@@ -237,10 +237,10 @@ export default class TileMapAsset extends SupCore.Data.Base.Asset {
     if (typeof layerId !== "string" || this.layers.byId[layerId] == null) { callback("no such layer"); return; }
     if (!Array.isArray(edits)) { callback("edits must be an array"); return; }
 
-    for (let edit of edits) {
-      let x = edit.x;
-      let y = edit.y;
-      let tileValue = edit.tileValue;
+    for (const edit of edits) {
+      const x = edit.x;
+      const y = edit.y;
+      const tileValue = edit.tileValue;
 
       if (x == null || typeof x !== "number" || x < 0 || x >= this.pub.width) { callback(`x must be an integer between 0 && ${this.pub.width - 1}`); return; }
       if (y == null || typeof y !== "number" || y < 0 || y >= this.pub.height) { callback(`y must be an integer between 0 && ${this.pub.height - 1}`); return; }
@@ -262,14 +262,14 @@ export default class TileMapAsset extends SupCore.Data.Base.Asset {
   }
 
   client_editMap(layerId: string, edits: {x: number, y: number, tileValue: (number|boolean)[]|number}[]) {
-    for (let edit of edits) {
-      let index = edit.y * this.pub.width + edit.x;
+    for (const edit of edits) {
+      const index = edit.y * this.pub.width + edit.x;
       this.layers.byId[layerId].data[index] = edit.tileValue;
     }
   }
 
   createEmptyLayer(layerName: string) {
-    let newLayer: TileMapLayerPub = {
+    const newLayer: TileMapLayerPub = {
       id: null,
       name: layerName,
       data: []
@@ -277,7 +277,7 @@ export default class TileMapAsset extends SupCore.Data.Base.Asset {
 
     for (let y = 0; y < this.pub.height; y++) {
       for (let x = 0; x < this.pub.width; x++) {
-        let index = y * this.pub.width + x;
+        const index = y * this.pub.width + x;
         newLayer.data[index] = 0;
       }
     }
@@ -286,7 +286,7 @@ export default class TileMapAsset extends SupCore.Data.Base.Asset {
   }
 
   server_newLayer(client: SupCore.RemoteClient, layerName: string, index: number, callback: NewLayerCallback) {
-    let newLayer = this.createEmptyLayer(layerName);
+    const newLayer = this.createEmptyLayer(layerName);
     this.layers.add(newLayer, index, (err, actualIndex) => {
       if (err != null) { callback(err); return; }
 

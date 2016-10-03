@@ -38,13 +38,13 @@ export default class TextRendererEditor {
     this.overrideOpacity = config.overrideOpacity;
     this.opacity = config.opacity;
 
-    let fontRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:TextRenderer.font"));
+    const fontRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:TextRenderer.font"));
     this.fontFieldSubscriber = SupClient.table.appendAssetField(fontRow.valueCell, this.fontAssetId, "font", projectClient);
     this.fontFieldSubscriber.on("select", (assetId: string) => {
       this.editConfig("setProperty", "fontAssetId", assetId);
     });
 
-    let textRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:TextRenderer.text"));
+    const textRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:TextRenderer.text"));
     this.fields["text"] = SupClient.table.appendTextAreaField(textRow.valueCell, config.text);
     this.fields["text"].addEventListener("input", (event: any) => {
       this.pendingModification += 1;
@@ -54,8 +54,8 @@ export default class TextRendererEditor {
       });
     });
 
-    let alignmentRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:TextRenderer.align.title"));
-    let alignmentOptions: { [key: string]: string } = {
+    const alignmentRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:TextRenderer.align.title"));
+    const alignmentOptions: { [key: string]: string } = {
       "left": SupClient.i18n.t("componentEditors:TextRenderer.align.left"),
       "center": SupClient.i18n.t("componentEditors:TextRenderer.align.center"),
       "right": SupClient.i18n.t("componentEditors:TextRenderer.align.right")
@@ -63,8 +63,8 @@ export default class TextRendererEditor {
     this.fields["alignment"] = SupClient.table.appendSelectBox(alignmentRow.valueCell, alignmentOptions, config.alignment);
     this.fields["alignment"].addEventListener("change", (event: any) => { this.editConfig("setProperty", "alignment", event.target.value); });
 
-    let verticalAlignmentRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:TextRenderer.verticalAlign.title"));
-    let verticalAlignmentOptions: { [key: string]: string } = {
+    const verticalAlignmentRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:TextRenderer.verticalAlign.title"));
+    const verticalAlignmentOptions: { [key: string]: string } = {
       "top": SupClient.i18n.t("componentEditors:TextRenderer.verticalAlign.top"),
       "center": SupClient.i18n.t("componentEditors:TextRenderer.verticalAlign.center"),
       "bottom": SupClient.i18n.t("componentEditors:TextRenderer.verticalAlign.bottom")
@@ -72,10 +72,10 @@ export default class TextRendererEditor {
     this.fields["verticalAlignment"] = SupClient.table.appendSelectBox(verticalAlignmentRow.valueCell, verticalAlignmentOptions, config.verticalAlignment);
     this.fields["verticalAlignment"].addEventListener("change", (event: any) => { this.editConfig("setProperty", "verticalAlignment", event.target.value); });
 
-    let colorRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:TextRenderer.color"), { checkbox: true });
+    const colorRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:TextRenderer.color"), { checkbox: true });
     this.colorCheckbox = colorRow.checkbox;
     this.colorCheckbox.addEventListener("change", (event) => {
-      let color = this.colorCheckbox.checked ? (this.fontAsset != null ? this.fontAsset.pub.color : "ffffff") : null;
+      const color = this.colorCheckbox.checked ? (this.fontAsset != null ? this.fontAsset.pub.color : "ffffff") : null;
       this.editConfig("setProperty", "color", color);
     });
 
@@ -85,11 +85,11 @@ export default class TextRendererEditor {
     });
     this.updateColorField();
 
-    let sizeRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:TextRenderer.size"), { checkbox: true });
+    const sizeRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:TextRenderer.size"), { checkbox: true });
     this.sizeRow = sizeRow.row;
     this.sizeCheckbox = sizeRow.checkbox;
     this.sizeCheckbox.addEventListener("change", (event) => {
-      let size = this.sizeCheckbox.checked ? (this.fontAsset != null ? this.fontAsset.pub.size : 16) : null;
+      const size = this.sizeCheckbox.checked ? (this.fontAsset != null ? this.fontAsset.pub.size : 16) : null;
       this.editConfig("setProperty", "size", size);
     });
 
@@ -100,17 +100,17 @@ export default class TextRendererEditor {
     });
     this.updateSizeField();
 
-    let opacityRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:TextRenderer.opacity"), { checkbox: true } );
+    const opacityRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:TextRenderer.opacity"), { checkbox: true } );
     this.overrideOpacityField = opacityRow.checkbox;
     this.overrideOpacityField.addEventListener("change", (event: any) => {
       this.editConfig("setProperty", "opacity", this.fontAsset != null ? this.fontAsset.pub.opacity : null);
       this.editConfig("setProperty", "overrideOpacity", event.target.checked);
     });
 
-    let opacityParent = document.createElement("div");
+    const opacityParent = document.createElement("div");
     opacityRow.valueCell.appendChild(opacityParent);
 
-    let transparentOptions: {[key: string]: string} = {
+    const transparentOptions: {[key: string]: string} = {
       empty: "",
       opaque: SupClient.i18n.t("componentEditors:TextRenderer.opaque"),
       transparent: SupClient.i18n.t("componentEditors:TextRenderer.transparent"),
@@ -118,7 +118,7 @@ export default class TextRendererEditor {
     this.transparentField = SupClient.table.appendSelectBox(opacityParent, transparentOptions);
     (this.transparentField.children[0] as HTMLOptionElement).hidden = true;
     this.transparentField.addEventListener("change", (event) => {
-      let opacity = this.transparentField.value === "transparent" ? 1 : null;
+      const opacity = this.transparentField.value === "transparent" ? 1 : null;
       this.editConfig("setProperty", "opacity", opacity);
     });
 
@@ -166,7 +166,7 @@ export default class TextRendererEditor {
   }
 
   private updateColorField() {
-    let color = this.color != null ? this.color : (this.fontAsset != null ? this.fontAsset.pub.color : null);
+    const color = this.color != null ? this.color : (this.fontAsset != null ? this.fontAsset.pub.color : null);
     this.fields["color"].setValue(color);
 
     this.colorCheckbox.checked = this.color != null;
@@ -179,7 +179,7 @@ export default class TextRendererEditor {
       return;
     } else this.sizeRow.hidden = false;
 
-    let size = this.size != null ? this.size : (this.fontAsset != null ? this.fontAsset.pub.size : "");
+    const size = this.size != null ? this.size : (this.fontAsset != null ? this.fontAsset.pub.size : "");
     this.fields["size"].value = size;
 
     this.sizeCheckbox.checked = this.size != null;
@@ -196,7 +196,7 @@ export default class TextRendererEditor {
       this.transparentField.value = "empty";
       this.opacityFields.numberField.parentElement.hidden = true;
     } else {
-      let opacity = this.overrideOpacity ? this.opacity : this.fontAsset.pub.opacity;
+      const opacity = this.overrideOpacity ? this.opacity : this.fontAsset.pub.opacity;
       if (opacity != null) {
         this.transparentField.value = "transparent";
         this.opacityFields.numberField.parentElement.hidden = false;

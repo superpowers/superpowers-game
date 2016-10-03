@@ -1,6 +1,15 @@
 import * as TreeView from "dnd-tree-view";
 
-let outputFolder: string;
+let savedSettings = {
+  outputFolder: ""
+};
+
+const settingsStorageKey = "superpowers.build.game";
+const settingsJSON = window.localStorage.getItem(settingsStorageKey);
+if (settingsJSON != null) {
+  const parsedSettings = JSON.parse(settingsJSON);
+  if (savedSettings != null && typeof savedSettings === "object") savedSettings = parsedSettings;
+}
 
 export default class GameBuildSettingsEditor implements SupClient.BuildSettingsEditor {
   private outputFolderTextfield: HTMLInputElement;
@@ -19,7 +28,7 @@ export default class GameBuildSettingsEditor implements SupClient.BuildSettingsE
     const outputFolderRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("buildSettingsEditors:game.outputFolder"));
     const inputs = SupClient.html("div", "inputs", { parent: outputFolderRow.valueCell });
 
-    const value = outputFolder != null ? outputFolder : "";
+    const value = savedSettings.outputFolder != null ? savedSettings.outputFolder : "";
     this.outputFolderTextfield = SupClient.html("input", { parent: inputs, type: "text", value, readOnly: true, style: { cursor: "pointer" } }) as HTMLInputElement;
     this.outputFolderButton = SupClient.html("button", { parent: inputs, textContent: SupClient.i18n.t("common:actions.select") }) as HTMLButtonElement;
 
@@ -38,7 +47,7 @@ export default class GameBuildSettingsEditor implements SupClient.BuildSettingsE
 
   getSettings(callback: (settings: GameBuildSettings) => void) {
     this.ensureOutputFolderValid((outputFolderValid) => {
-      callback(outputFolderValid ? { outputFolder } : null);
+      callback(outputFolderValid ? { outputFolder: savedSettings.outputFolder } : null);
     });
   }
 
@@ -46,19 +55,21 @@ export default class GameBuildSettingsEditor implements SupClient.BuildSettingsE
     SupApp.chooseFolder((folderPath) => {
       if (folderPath == null) return;
 
-      outputFolder = this.outputFolderTextfield.value = folderPath;
+      savedSettings.outputFolder = this.outputFolderTextfield.value = folderPath;
+      window.localStorage.setItem(settingsStorageKey, JSON.stringify(savedSettings));
+
       this.ensureOutputFolderValid();
     });
   }
 
   private ensureOutputFolderValid(callback?: (outputFolderValid: boolean) => void) {
-    if (outputFolder == null) {
+    if (savedSettings.outputFolder == null) {
       this.displayError(SupClient.i18n.t("buildSettingsEditors:game.errors.selectDestionationFolder"));
       if (callback != null) callback(false);
       return;
     }
 
-    SupApp.readDir(outputFolder, (err, files) => {
+    SupApp.readDir(savedSettings.outputFolder, (err, files) => {
       if (err != null) {
         this.displayError(SupClient.i18n.t("buildSettingsEditors:game.errors.emptyDirectoryCheckFail"));
         console.log(err);

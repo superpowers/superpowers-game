@@ -49,9 +49,9 @@ export default class Player {
   load(progressCallback: (progress: number, total: number) => any, callback: any) {
     let progress = 0;
 
-    let innerProgressCallback = () => {
+    const innerProgressCallback = () => {
       progress++;
-      let total = this.resourcesToLoad.length + this.assetsToLoad.length;
+      const total = this.resourcesToLoad.length + this.assetsToLoad.length;
       progressCallback(progress, total);
     };
     async.series([
@@ -74,21 +74,21 @@ export default class Player {
       this.resourcesToLoad = Object.keys(SupRuntime.resourcePlugins);
 
       this.assetsToLoad = [];
-      let walk = (asset: Entry, parent = "", storagePath = "") => {
+      const walk = (asset: Entry, parent = "", storagePath = "") => {
         let children: string[];
         if (asset.children != null) {
           children = [];
-          for (let child of asset.children) { children.push(child.name); }
+          for (const child of asset.children) { children.push(child.name); }
         }
-        let path = `${parent}${asset.name}`;
+        const path = `${parent}${asset.name}`;
         storagePath += `${asset.name} (${asset.id})`;
         this.assetsToLoad.push({ id: asset.id, name: asset.name, path, storagePath, type: asset.type, children });
         parent += `${asset.name}/`;
         storagePath += "/";
         if (asset.children == null) return;
-        for (let child of asset.children) { walk(child, parent, storagePath); }
+        for (const child of asset.children) { walk(child, parent, storagePath); }
       };
-      for (let asset of project.assets) { walk(asset); }
+      for (const asset of project.assets) { walk(asset); }
 
       callback();
     });
@@ -98,7 +98,7 @@ export default class Player {
     if (this.resourcesToLoad.length === 0) { callback(); return; }
     let resourcesLoaded = 0;
 
-    let onResourceLoaded = (err: any, resourceName: string, resource: any) => {
+    const onResourceLoaded = (err: any, resourceName: string, resource: any) => {
       if (err != null) { callback(new Error(`Failed to load resource ${resourceName}: ${err.message}`)); return; }
 
       this.resources[resourceName] = resource;
@@ -110,7 +110,7 @@ export default class Player {
 
     // NOTE: Have to use .forEach because of TS4091 (closure references block-scoped variable)
     this.resourcesToLoad.forEach((resourceName) => {
-      let plugin = SupRuntime.resourcePlugins[resourceName];
+      const plugin = SupRuntime.resourcePlugins[resourceName];
       if (plugin == null) {
         // This resource isn't meant to be loaded at runtime, skip
         onResourceLoaded(null, resourceName, null);
@@ -127,7 +127,7 @@ export default class Player {
     if (this.assetsToLoad.length === 0 ) { callback(); return; }
     let assetsLoaded = 0;
 
-    let onAssetLoaded = (err: any, entry: any, asset: any) => {
+    const onAssetLoaded = (err: any, entry: any, asset: any) => {
       if (err != null) { callback(new Error(`Failed to load asset ${entry.path}: ${err.message}`)); return; }
 
       this.entriesById[entry.id] = entry;
@@ -146,7 +146,7 @@ export default class Player {
         return;
       }
 
-      let plugin = SupRuntime.plugins[entry.type];
+      const plugin = SupRuntime.plugins[entry.type];
       if (plugin == null || plugin.loadAsset == null) {
         console.warn(`Don't know how to load assets of type "${entry.type}"`);
         onAssetLoaded(null, entry, {});
@@ -159,7 +159,7 @@ export default class Player {
 
   _initPlugins(callback: any) {
     async.each(Object.keys(SupRuntime.plugins), (name, cb) => {
-      let plugin = SupRuntime.plugins[name];
+      const plugin = SupRuntime.plugins[name];
       if (plugin.init != null) plugin.init(this, cb);
       else cb();
     }, callback);
@@ -167,7 +167,7 @@ export default class Player {
 
   _startPlugins(callback: any) {
     async.each(Object.keys(SupRuntime.plugins), (name, cb) => {
-      let plugin = SupRuntime.plugins[name];
+      const plugin = SupRuntime.plugins[name];
       if (plugin.start != null) plugin.start(this, cb);
       else cb();
     }, callback);
@@ -175,7 +175,7 @@ export default class Player {
 
   _lateStartPlugins(callback: any) {
     async.each(Object.keys(SupRuntime.plugins), (name, cb) => {
-      let plugin = SupRuntime.plugins[name];
+      const plugin = SupRuntime.plugins[name];
       if (plugin.lateStart != null) plugin.lateStart(this, cb);
       else cb();
     }, callback);
@@ -194,7 +194,7 @@ export default class Player {
     this.accumulatedTime += timestamp - this.lastTimestamp;
     this.lastTimestamp = timestamp;
 
-    let { updates, timeLeft } = this.gameInstance.tick(this.accumulatedTime);
+    const { updates, timeLeft } = this.gameInstance.tick(this.accumulatedTime);
     this.accumulatedTime = timeLeft;
     if (this.gameInstance.input.exited) { cancelAnimationFrame(this.tickAnimationFrameId); return; }
 
@@ -207,8 +207,8 @@ export default class Player {
 
   getOuterAsset(assetId: number) {
     let outerAsset = this.outerAssetsById[assetId];
-    let asset = this.assetsById[assetId];
-    let entry = this.entriesById[assetId];
+    const asset = this.assetsById[assetId];
+    const entry = this.entriesById[assetId];
 
     if (outerAsset == null && asset != null) {
       if (entry.type == null) {

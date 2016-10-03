@@ -32,15 +32,15 @@ let compileTypeScript:
 let globalDefs = "";
 
 if ((<any>global).window == null) {
-  let serverRequire = require;
+  const serverRequire = require;
   ts = serverRequire("typescript");
   compileTypeScript = serverRequire("../runtime/compileTypeScript").default;
 
   SupCore.system.requireForAllPlugins("typescriptAPI/index.js");
-  let plugins = SupCore.system.getPlugins<SupCore.TypeScriptAPIPlugin>("typescriptAPI");
-  let actorComponentAccessors: string[] = [];
-  for (let pluginName in plugins) {
-    let plugin = plugins[pluginName];
+  const plugins = SupCore.system.getPlugins<SupCore.TypeScriptAPIPlugin>("typescriptAPI");
+  const actorComponentAccessors: string[] = [];
+  for (const pluginName in plugins) {
+    const plugin = plugins[pluginName];
     if (plugin.defs != null) globalDefs += plugin.defs;
     if (plugin.exposeActorComponent != null) actorComponentAccessors.push(`${plugin.exposeActorComponent.propertyName}: ${plugin.exposeActorComponent.className};`);
   }
@@ -79,14 +79,14 @@ export default class ScriptAsset extends SupCore.Data.Base.Asset {
     behaviorName = behaviorName.slice(0, 1).toUpperCase() + behaviorName.slice(1);
 
     if (behaviorName === "Behavior" || behaviorName === "Behaviour") {
-      let parentEntry = this.server.data.entries.parentNodesById[this.id];
+      const parentEntry = this.server.data.entries.parentNodesById[this.id];
       if (parentEntry != null) {
         behaviorName = parentEntry.name.slice(0, 1).toUpperCase() + parentEntry.name.slice(1) + behaviorName;
       }
     }
 
     while (true) {
-      let index = behaviorName.indexOf(" ");
+      const index = behaviorName.indexOf(" ");
       if (index === -1) break;
 
       behaviorName =
@@ -105,7 +105,7 @@ export default class ScriptAsset extends SupCore.Data.Base.Asset {
         tab = "";
         for (let i = 0; i < textEditorSettings.pub.tabSize; i++) tab = tab + " ";
       } else tab = "\t";
-      let defaultContent =
+      const defaultContent =
 `class ${behaviorName} extends Sup.Behavior {
 ${tab}awake() {
 ${tab}${tab}
@@ -250,7 +250,7 @@ Sup.registerBehavior(${behaviorName});
   }
 
   client_editText(operationData: OperationData, revisionIndex: number) {
-    let operation = new OT.TextOperation();
+    const operation = new OT.TextOperation();
     operation.deserialize(operationData);
     this.document.apply(operation, revisionIndex);
     this.pub.draft = this.document.text;
@@ -258,14 +258,14 @@ Sup.registerBehavior(${behaviorName});
   }
 
   server_applyDraftChanges(client: SupCore.RemoteClient, options: { ignoreErrors: boolean }, callback: ApplyDraftChangesCallback) {
-    let text = this.pub.draft;
+    const text = this.pub.draft;
 
-    let scriptNames: string[] = [];
-    let scripts: { [name: string]: string } = {};
+    const scriptNames: string[] = [];
+    const scripts: { [name: string]: string } = {};
     let ownScriptName = "";
 
-    let finish = (errors: CompilationError[]) => {
-      let foundSelfErrors = (errors != null) && errors.some((x) => x.file === ownScriptName);
+    const finish = (errors: CompilationError[]) => {
+      const foundSelfErrors = (errors != null) && errors.some((x) => x.file === ownScriptName);
 
       if (foundSelfErrors && !options.ignoreErrors) {
         callback("foundSelfErrors");
@@ -283,15 +283,15 @@ Sup.registerBehavior(${behaviorName});
       this.emit("change");
     };
 
-    let compile = () => {
+    const compile = () => {
       let results: CompileTypeScriptResults;
       try { results = compileTypeScript(scriptNames, scripts, globalDefs, { sourceMap: false }); }
       catch (e) { finish(null); return; }
 
       if (results.errors.length > 0) { finish(results.errors); return; }
 
-      let libLocals = <ts.SymbolTable>(<any>results.program.getSourceFile("lib.d.ts")).locals;
-      let supTypeSymbols: { [fullName: string]: ts.Symbol } = {
+      const libLocals = <ts.SymbolTable>(<any>results.program.getSourceFile("lib.d.ts")).locals;
+      const supTypeSymbols: { [fullName: string]: ts.Symbol } = {
         "Sup.Actor": libLocals["Sup"].exports["Actor"],
         "Sup.Behavior": libLocals["Sup"].exports["Behavior"],
         "Sup.Math.Vector2": libLocals["Sup"].exports["Math"].exports["Vector2"],
@@ -299,22 +299,22 @@ Sup.registerBehavior(${behaviorName});
         "Sup.Asset": libLocals["Sup"].exports["Asset"],
       };
 
-      let supportedSupPropertyTypes: ts.Symbol[] = [
+      const supportedSupPropertyTypes: ts.Symbol[] = [
         supTypeSymbols["Sup.Math.Vector2"],
         supTypeSymbols["Sup.Math.Vector3"]
       ];
 
-      let behaviors: { [behaviorName: string]: { line: number, properties: Array<{ name: string, type: string }>; parentBehavior: string } } = {};
+      const behaviors: { [behaviorName: string]: { line: number, properties: Array<{ name: string, type: string }>; parentBehavior: string } } = {};
 
-      let file = results.program.getSourceFile(ownScriptName);
-      let ownLocals = <ts.SymbolTable>(<any>file).locals;
-      for (let symbolName in ownLocals) {
-        let symbol = ownLocals[symbolName];
+      const file = results.program.getSourceFile(ownScriptName);
+      const ownLocals = <ts.SymbolTable>(<any>file).locals;
+      for (const symbolName in ownLocals) {
+        const symbol = ownLocals[symbolName];
         if ((symbol.flags & ts.SymbolFlags.Class) !== ts.SymbolFlags.Class) continue;
 
-        let parentTypeNode = (<any>ts).getClassExtendsHeritageClauseElement(symbol.valueDeclaration);
+        const parentTypeNode = (<any>ts).getClassExtendsHeritageClauseElement(symbol.valueDeclaration);
         if (parentTypeNode == null) continue;
-        let parentTypeSymbol = results.typeChecker.getSymbolAtLocation(parentTypeNode.expression);
+        const parentTypeSymbol = results.typeChecker.getSymbolAtLocation(parentTypeNode.expression);
 
         let baseTypeNode = parentTypeNode;
         let baseTypeSymbol = parentTypeSymbol;
@@ -327,29 +327,29 @@ Sup.registerBehavior(${behaviorName});
 
         if (baseTypeSymbol !== supTypeSymbols["Sup.Behavior"]) continue;
 
-        let properties: Array<{ name: string, type: string }> = [];
+        const properties: Array<{ name: string, type: string }> = [];
 
         let parentBehavior: string = null;
         if (parentTypeSymbol !== supTypeSymbols["Sup.Behavior"])
           parentBehavior = results.typeChecker.getFullyQualifiedName(parentTypeSymbol);
-        let line = file.getLineAndCharacterOfPosition(symbol.valueDeclaration.name.pos).line;
+        const line = file.getLineAndCharacterOfPosition(symbol.valueDeclaration.name.pos).line;
         behaviors[symbolName] = { line, properties, parentBehavior };
 
-        for (let memberName in symbol.members) {
-          let member = symbol.members[memberName];
+        for (const memberName in symbol.members) {
+          const member = symbol.members[memberName];
 
           // Skip non-properties
           if ((member.flags & ts.SymbolFlags.Property) !== ts.SymbolFlags.Property) continue;
 
           // Skip static, private and protected members
-          let modifierFlags = (member.valueDeclaration.modifiers != null) ? member.valueDeclaration.modifiers.flags : null;
+          const modifierFlags = (member.valueDeclaration.modifiers != null) ? member.valueDeclaration.modifiers.flags : null;
           if (modifierFlags != null && (modifierFlags & (ts.NodeFlags.Private | ts.NodeFlags.Protected | ts.NodeFlags.Static)) !== 0) continue;
 
           // TODO: skip members annotated as "non-customizable"
 
-          let type = results.typeChecker.getTypeAtLocation(member.valueDeclaration);
+          const type = results.typeChecker.getTypeAtLocation(member.valueDeclaration);
           let typeName: any; // "unknown"
-          let typeSymbol = type.getSymbol();
+          const typeSymbol = type.getSymbol();
           if (supportedSupPropertyTypes.indexOf(typeSymbol) !== -1) {
             typeName = typeSymbol.getName();
             let parentSymbol = (<any>typeSymbol).parent;
@@ -379,7 +379,7 @@ Sup.registerBehavior(${behaviorName});
         return;
       }
 
-      let name = `${this.server.data.entries.getPathFromId(entry.id)}.ts`;
+      const name = `${this.server.data.entries.getPathFromId(entry.id)}.ts`;
       scriptNames.push(name);
 
       if (entry.id === this.id) {

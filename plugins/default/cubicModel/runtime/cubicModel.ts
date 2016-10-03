@@ -4,20 +4,20 @@ export function loadAsset(player: SupRuntime.Player, entry: any, callback: (err:
   player.getAssetData(`assets/${entry.storagePath}/cubicModel.json`, "json", (err, data) => {
     data.textures = {};
 
-    let mapsList = data.maps;
+    const mapsList = data.maps;
       data.textures = {};
       async.each<string>(mapsList, (key, cb) => {
-        let canvas = document.createElement("canvas");
+        const canvas = document.createElement("canvas");
         canvas.width = data.textureWidth;
         canvas.height = data.textureHeight;
-        let ctx = canvas.getContext("2d");
-        let texture = data.textures[key] = new SupEngine.THREE.Texture(canvas);
+        const ctx = canvas.getContext("2d");
+        const texture = data.textures[key] = new SupEngine.THREE.Texture(canvas);
         texture.needsUpdate = true;
         texture.magFilter = SupEngine.THREE.NearestFilter;
         texture.minFilter = SupEngine.THREE.NearestFilter;
 
         player.getAssetData(`assets/${entry.storagePath}/map-${key}.dat`, "arraybuffer", (err, map) => {
-          let imageData = new ImageData(new Uint8ClampedArray(map), data.textureWidth, data.textureHeight);
+          const imageData = new ImageData(new Uint8ClampedArray(map), data.textureWidth, data.textureHeight);
           ctx.putImageData(imageData, 0, 0);
           cb();
         });

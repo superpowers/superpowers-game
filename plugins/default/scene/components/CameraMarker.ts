@@ -1,4 +1,4 @@
-let THREE = SupEngine.THREE;
+const THREE = SupEngine.THREE;
 
 import CameraUpdater from "./CameraUpdater";
 
@@ -25,7 +25,7 @@ export default  class CameraMarker extends SupEngine.ActorComponent {
 
     this.projectionNeedsUpdate = true;
 
-    let geometry = new THREE.Geometry();
+    const geometry = new THREE.Geometry();
     for (let i = 0; i < 24; i++) geometry.vertices.push(new THREE.Vector3(0, 0, 0));
 
     this.line = new THREE.LineSegments(geometry, new THREE.LineBasicMaterial( { color: 0xffffff, opacity: 0.5, transparent: true } ));
@@ -86,8 +86,8 @@ export default  class CameraMarker extends SupEngine.ActorComponent {
   }
 
   _resetGeometry() {
-    let near = this.nearClippingPlane;
-    let far = this.farClippingPlane;
+    const near = this.nearClippingPlane;
+    const far = this.farClippingPlane;
 
     let farTopRight: THREE.Vector3;
     let nearTopRight: THREE.Vector3;
@@ -99,12 +99,12 @@ export default  class CameraMarker extends SupEngine.ActorComponent {
       nearTopRight = new THREE.Vector3(right, this.orthographicScale / 2, near);
     }
     else {
-      let tan = Math.tan(THREE.Math.degToRad(this.fov / 2));
+      const tan = Math.tan(THREE.Math.degToRad(this.fov / 2));
       farTopRight = new THREE.Vector3(far * tan, far * tan, far);
       nearTopRight = farTopRight.clone().normalize().multiplyScalar(near);
     }
 
-    let vertices = (<THREE.Geometry>this.line.geometry).vertices;
+    const vertices = (<THREE.Geometry>this.line.geometry).vertices;
     // Near plane
     vertices[0].set(-nearTopRight.x,  nearTopRight.y, -near);
     vertices[1].set( nearTopRight.x,  nearTopRight.y, -near);

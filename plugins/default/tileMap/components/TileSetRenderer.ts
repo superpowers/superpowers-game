@@ -1,4 +1,4 @@
-let THREE = SupEngine.THREE;
+const THREE = SupEngine.THREE;
 import TileSet from "./TileSet";
 import TileSetRendererUpdater from "./TileSetRendererUpdater";
 
@@ -17,7 +17,7 @@ export default class TileSetRenderer extends SupEngine.ActorComponent {
   constructor(actor: SupEngine.Actor, asset?: TileSet) {
     super(actor, "TileSetRenderer");
 
-    let gridActor = new SupEngine.Actor(this.actor.gameInstance, "Grid");
+    const gridActor = new SupEngine.Actor(this.actor.gameInstance, "Grid");
     gridActor.setLocalPosition(new THREE.Vector3(0, 0, 1));
     this.gridRenderer = new SupEngine.editorComponentClasses["GridRenderer"](gridActor, {
       width: 1, height: 1,
@@ -46,16 +46,16 @@ export default class TileSetRenderer extends SupEngine.ActorComponent {
   }
 
   select(x: number, y: number, width = 1, height = 1) {
-    let ratio = this.asset.data.grid.width / this.asset.data.grid.height;
+    const ratio = this.asset.data.grid.width / this.asset.data.grid.height;
     this.selectedTileActor.setLocalPosition(new THREE.Vector3(x, -y / ratio, 2));
     this.selectedTileActor.setLocalScale(new THREE.Vector3(width, -height / ratio, 1));
   }
 
   refreshScaleRatio() {
-    let scaleX = 1 / this.asset.data.grid.width;
-    let scaleY = 1 / this.asset.data.grid.height;
+    const scaleX = 1 / this.asset.data.grid.width;
+    const scaleY = 1 / this.asset.data.grid.height;
     this.mesh.scale.set(scaleX, scaleY, 1);
-    let material = <THREE.MeshBasicMaterial>this.mesh.material;
+    const material = <THREE.MeshBasicMaterial>this.mesh.material;
     this.mesh.position.setX(material.map.image.width / 2 * scaleX);
     this.mesh.position.setY(-material.map.image.height / 2 * scaleY);
     this.mesh.updateMatrixWorld(false);

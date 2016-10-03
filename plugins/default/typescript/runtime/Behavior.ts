@@ -1,10 +1,10 @@
 export function setupComponent(player: SupRuntime.Player, component: any, config: any) {
   if (config.propertyValues == null) return;
 
-  let behaviorInfo = player.resources.behaviorProperties.behaviors[config.behaviorName];
+  const behaviorInfo = player.resources.behaviorProperties.behaviors[config.behaviorName];
 
-  for (let name in config.propertyValues) {
-    let valueInfo = config.propertyValues[name];
+  for (const name in config.propertyValues) {
+    const valueInfo = config.propertyValues[name];
 
     let ancestorBehaviorInfo = behaviorInfo;
     let behaviorPropertyInfo: any;

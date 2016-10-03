@@ -14,8 +14,8 @@ export default class LightEditor {
     this.editConfig = editConfig;
     this.castShadow = config.castShadow;
 
-    let typeRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:Light.type"));
-    let typeOptions: { [key: string]: string } = {
+    const typeRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:Light.type"));
+    const typeOptions: { [key: string]: string } = {
       "ambient": SupClient.i18n.t("componentEditors:Light.typeOptions.ambient"),
       "point": SupClient.i18n.t("componentEditors:Light.typeOptions.point"),
       "spot": SupClient.i18n.t("componentEditors:Light.typeOptions.spot"),
@@ -26,32 +26,32 @@ export default class LightEditor {
       this.editConfig("setProperty", "type", event.target.value);
     });
 
-    let colorRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:Light.color"));
+    const colorRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:Light.color"));
     this.colorField = SupClient.table.appendColorField(colorRow.valueCell, config.color);
     this.colorField.addListener("change", (color: string) => {
       this.editConfig("setProperty", "color", color);
     });
 
-    let intensityRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:Light.intensity"));
+    const intensityRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:Light.intensity"));
     this.fields["intensity"] = SupClient.table.appendNumberField(intensityRow.valueCell, config.intensity, { min: 0 });
     this.fields["intensity"].addEventListener("change", (event: any) => {
       this.editConfig("setProperty", "intensity", parseFloat(event.target.value));
     });
 
-    let distanceRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:Light.distance"));
+    const distanceRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:Light.distance"));
     this.fields["distance"] = SupClient.table.appendNumberField(distanceRow.valueCell, config.distance, { min: 0 });
     this.fields["distance"].addEventListener("change", (event: any) => {
       this.editConfig("setProperty", "distance", parseFloat(event.target.value));
     });
 
-    let angleRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:Light.angle"));
+    const angleRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:Light.angle"));
     this.fields["angle"] = SupClient.table.appendNumberField(angleRow.valueCell, config.angle, { min: 0, max: 90 });
     this.fields["angle"].addEventListener("change", (event: any) => {
       this.editConfig("setProperty", "angle", parseFloat(event.target.value));
     });
 
-    let targetRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:Light.target"));
-    let targetFields = SupClient.table.appendNumberFields(targetRow.valueCell, [config.target.x, config.target.y, config.target.z]);
+    const targetRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:Light.target"));
+    const targetFields = SupClient.table.appendNumberFields(targetRow.valueCell, [config.target.x, config.target.y, config.target.z]);
     this.fields["target.x"] = targetFields[0];
     this.fields["target.x"].addEventListener("change", (event: any) => {
       this.editConfig("setProperty", "target.x", parseFloat(event.target.value));
@@ -65,17 +65,17 @@ export default class LightEditor {
       this.editConfig("setProperty", "target.z", parseFloat(event.target.value));
     });
 
-    let castShadowRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:Light.castShadow"));
+    const castShadowRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:Light.castShadow"));
     this.fields["castShadow"] = SupClient.table.appendBooleanField(castShadowRow.valueCell, config.castShadow);
     this.fields["castShadow"].addEventListener("change", (event: any) => {
       this.editConfig("setProperty", "castShadow", event.target.checked);
     });
 
-    let shadowHeaderRow = SupClient.table.appendHeader(tbody, SupClient.i18n.t("componentEditors:Light.shadowSettings.title"));
+    const shadowHeaderRow = SupClient.table.appendHeader(tbody, SupClient.i18n.t("componentEditors:Light.shadowSettings.title"));
     this.shadowRows.push(shadowHeaderRow);
 
-    let shadowMapSizeRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:Light.shadowSettings.mapSize"));
-    let shadowMapFields = SupClient.table.appendNumberFields(shadowMapSizeRow.valueCell, [config.shadowMapSize.width, config.shadowMapSize.height], 1);
+    const shadowMapSizeRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:Light.shadowSettings.mapSize"));
+    const shadowMapFields = SupClient.table.appendNumberFields(shadowMapSizeRow.valueCell, [config.shadowMapSize.width, config.shadowMapSize.height], 1);
     this.fields["shadowMapSize.width"] = shadowMapFields[0];
     this.fields["shadowMapSize.width"].addEventListener("change", (event: any) => {
       this.editConfig("setProperty", "shadowMapSize.width", parseFloat(event.target.value));
@@ -86,22 +86,15 @@ export default class LightEditor {
     });
     this.shadowRows.push(shadowMapSizeRow.row);
 
-    let shadowBiasRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:Light.shadowSettings.bias"));
+    const shadowBiasRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:Light.shadowSettings.bias"));
     this.fields["shadowBias"] = SupClient.table.appendNumberField(shadowBiasRow.valueCell, config.shadowBias);
     this.fields["shadowBias"].addEventListener("change", (event: any) => {
       this.editConfig("setProperty", "shadowBias", parseFloat(event.target.value));
     });
     this.shadowRows.push(shadowBiasRow.row);
 
-    let shadowDarknessRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:Light.shadowSettings.darkness"));
-    this.fields["shadowDarkness"] = SupClient.table.appendNumberField(shadowDarknessRow.valueCell, config.shadowDarkness, { min: 0, max: 1 });
-    this.fields["shadowDarkness"].addEventListener("change", (event: any) => {
-      this.editConfig("setProperty", "shadowDarkness", parseFloat(event.target.value));
-    });
-    this.shadowRows.push(shadowDarknessRow.row);
-
-    let shadowPlanesRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:Light.shadowSettings.near-far"));
-    let shadowPlanesFields = SupClient.table.appendNumberFields(shadowPlanesRow.valueCell, [config.shadowCameraNearPlane, config.shadowCameraFarPlane], { min: 0 });
+    const shadowPlanesRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:Light.shadowSettings.near-far"));
+    const shadowPlanesFields = SupClient.table.appendNumberFields(shadowPlanesRow.valueCell, [config.shadowCameraNearPlane, config.shadowCameraFarPlane], { min: 0 });
     this.fields["shadowCameraNearPlane"] = shadowPlanesFields[0];
     this.fields["shadowCameraNearPlane"].addEventListener("change", (event: any) => {
       this.editConfig("setProperty", "shadowCameraNearPlane", parseFloat(event.target.value));
@@ -112,15 +105,15 @@ export default class LightEditor {
     });
     this.shadowRows.push(shadowPlanesRow.row);
 
-    let shadowCameraFovRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:Light.shadowSettings.fov"));
+    const shadowCameraFovRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:Light.shadowSettings.fov"));
     this.fields["shadowCameraFov"] = SupClient.table.appendNumberField(shadowCameraFovRow.valueCell, config.shadowCameraFov);
     this.fields["shadowCameraFov"].addEventListener("change", (event: any) => {
       this.editConfig("setProperty", "shadowCameraFov", parseFloat(event.target.value));
     });
     this.shadowRows.push(shadowCameraFovRow.row);
 
-    let shadowCameraTopBottomRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:Light.shadowSettings.top-bottom"));
-    let shadowCameraTopBottomFields = SupClient.table.appendNumberFields(shadowCameraTopBottomRow.valueCell, [config.shadowCameraSize.top, config.shadowCameraSize.bottom]);
+    const shadowCameraTopBottomRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:Light.shadowSettings.top-bottom"));
+    const shadowCameraTopBottomFields = SupClient.table.appendNumberFields(shadowCameraTopBottomRow.valueCell, [config.shadowCameraSize.top, config.shadowCameraSize.bottom]);
     this.fields["shadowCameraSize.top"] = shadowCameraTopBottomFields[0];
     this.fields["shadowCameraSize.top"].addEventListener("change", (event: any) => {
       this.editConfig("setProperty", "shadowCameraSize.top", parseFloat(event.target.value));
@@ -131,8 +124,8 @@ export default class LightEditor {
     });
     this.shadowRows.push(shadowCameraTopBottomRow.row);
 
-    let shadowCameraLeftRightRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:Light.shadowSettings.left-right"));
-    let shadowCameraLeftRightFields = SupClient.table.appendNumberFields(shadowCameraLeftRightRow.valueCell, [config.shadowCameraSize.left, config.shadowCameraSize.right]);
+    const shadowCameraLeftRightRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:Light.shadowSettings.left-right"));
+    const shadowCameraLeftRightFields = SupClient.table.appendNumberFields(shadowCameraLeftRightRow.valueCell, [config.shadowCameraSize.left, config.shadowCameraSize.right]);
     this.fields["shadowCameraSize.left"] = shadowCameraLeftRightFields[0];
     this.fields["shadowCameraSize.left"].addEventListener("change", (event: any) => {
       this.editConfig("setProperty", "shadowCameraSize.left", parseFloat(event.target.value));
@@ -161,13 +154,13 @@ export default class LightEditor {
   }
 
   updateFields() {
-    let type = this.fields["type"].value;
+    const type = this.fields["type"].value;
 
-    let intensityRow = this.fields["intensity"].parentElement.parentElement;
-    let distanceRow = this.fields["distance"].parentElement.parentElement;
-    let angleRow = this.fields["angle"].parentElement.parentElement;
-    let targetRow = this.fields["target.x"].parentElement.parentElement.parentElement;
-    let castShadowRow = this.fields["castShadow"].parentElement.parentElement;
+    const intensityRow = this.fields["intensity"].parentElement.parentElement;
+    const distanceRow = this.fields["distance"].parentElement.parentElement;
+    const angleRow = this.fields["angle"].parentElement.parentElement;
+    const targetRow = this.fields["target.x"].parentElement.parentElement.parentElement;
+    const castShadowRow = this.fields["castShadow"].parentElement.parentElement;
 
     if (type === "ambient") {
       intensityRow.hidden = true;
@@ -175,7 +168,7 @@ export default class LightEditor {
       angleRow.hidden = true;
       targetRow.hidden = true;
       castShadowRow.hidden = true;
-      for (let shadowRow of this.shadowRows) shadowRow.hidden = true;
+      for (const shadowRow of this.shadowRows) shadowRow.hidden = true;
     }
     else {
       intensityRow.hidden = false;
@@ -187,7 +180,7 @@ export default class LightEditor {
         castShadowRow.hidden = false;
 
         if (this.castShadow) {
-          for (let shadowRow of this.shadowRows) shadowRow.hidden = false;
+          for (const shadowRow of this.shadowRows) shadowRow.hidden = false;
           if (type === "spot") {
             this.fields["shadowCameraSize.top"].parentElement.parentElement.parentElement.hidden = true;
             this.fields["shadowCameraSize.left"].parentElement.parentElement.parentElement.hidden = true;
@@ -195,13 +188,13 @@ export default class LightEditor {
             this.fields["shadowCameraFov"].parentElement.parentElement.hidden = true;
           }
         } else {
-          for (let shadowRow of this.shadowRows) shadowRow.hidden = true;
+          for (const shadowRow of this.shadowRows) shadowRow.hidden = true;
         }
 
       } else {
         targetRow.hidden = true;
         castShadowRow.hidden = true;
-        for (let shadowRow of this.shadowRows) shadowRow.hidden = true;
+        for (const shadowRow of this.shadowRows) shadowRow.hidden = true;
       }
     }
   }

@@ -24,7 +24,7 @@ export default class CubicModelRendererConfig extends SupCore.Data.Base.Componen
   };
 
   static create() {
-    let emptyConfig: CubicModelRendererConfigPub = {
+    const emptyConfig: CubicModelRendererConfigPub = {
       cubicModelAssetId: null // , animationId: null,
       // horizontalFlip: false, verticalFlip: false,
       // castShadow: false, receiveShadow: false,

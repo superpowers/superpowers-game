@@ -1,31 +1,16 @@
-let THREE = SupEngine.THREE;
+const THREE = SupEngine.THREE;
 import { ShaderAssetPub } from "../data/ShaderAsset";
 
 export function createShaderMaterial(asset: ShaderAssetPub, textures: { [name: string]: THREE.Texture }, geometry: THREE.BufferGeometry, options = { useDraft: false }) {
   if (asset == null) return null;
 
-  function replaceShaderChunk(shader: string) {
-    let keyword = "THREE_ShaderChunk(";
-    let index = shader.indexOf(keyword);
-    while (index !== -1) {
-      let end = shader.indexOf(")", index + 1);
-      let shaderChunk = shader.slice(index + keyword.length, end);
-      shaderChunk.trim();
-      shader = shader.slice(0, index) + THREE.ShaderChunk[shaderChunk] + shader.slice(end + 1);
-
-      index = shader.indexOf(keyword, index + 1);
-    }
-    return shader;
-  }
-
   let uniforms: { [name: string]: { type: string; value: any}} = {};
   if (asset.useLightUniforms) {
-    uniforms = THREE.UniformsUtils.merge([uniforms, THREE.UniformsUtils.clone(THREE.UniformsLib[ "lights" ])]);
-    uniforms = THREE.UniformsUtils.merge([uniforms, THREE.UniformsUtils.clone(THREE.UniformsLib[ "shadowmap" ])]);
+    uniforms = THREE.UniformsUtils.merge([uniforms, THREE.UniformsUtils.clone(THREE.UniformsLib.lights)]);
   }
   uniforms["time"] = { type: "f", value: 0.0 };
 
-  for (let uniform of asset.uniforms) {
+  for (const uniform of asset.uniforms) {
     let value: any;
     switch (uniform.type) {
       case "f":
@@ -55,8 +40,8 @@ export function createShaderMaterial(asset: ShaderAssetPub, textures: { [name: s
     uniforms[uniform.name] = { type: uniform.type, value };
   }
 
-  for (let attribute of asset.attributes) {
-    let values = <any[]>[];
+  for (const attribute of asset.attributes) {
+    const values = <any[]>[];
     let itemSize: number;
     switch (attribute.type) {
       case "f":
@@ -83,8 +68,8 @@ export function createShaderMaterial(asset: ShaderAssetPub, textures: { [name: s
     geometry.addAttribute(attribute.name, new THREE.BufferAttribute(new Float32Array(values), itemSize));
   }
 
-  let vertexShader = replaceShaderChunk(options.useDraft ? asset.vertexShader.draft : asset.vertexShader.text);
-  let fragmentShader = replaceShaderChunk(options.useDraft ? asset.fragmentShader.draft : asset.fragmentShader.text);
+  const vertexShader = options.useDraft ? asset.vertexShader.draft : asset.vertexShader.text;
+  const fragmentShader = options.useDraft ? asset.fragmentShader.draft : asset.fragmentShader.text;
 
   return new THREE.ShaderMaterial({
     uniforms,

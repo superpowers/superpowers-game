@@ -82,7 +82,7 @@ export default class ShaderAsset extends SupCore.Data.Base.Asset {
         for (let i = 0; i < textEditorSettings.pub.tabSize; i++) tab = tab + " ";
       } else tab = "\t";
 
-      let defaultVertexContent =
+      const defaultVertexContent =
 `varying vec2 vUv;
 
 void main() {
@@ -90,7 +90,7 @@ ${tab}vUv = uv;
 ${tab}gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);
 }
 `;
-      let defaultFragmentContent =
+      const defaultFragmentContent =
 `uniform sampler2D map;
 varying vec2 vUv;
 
@@ -129,7 +129,7 @@ ${tab}gl_FragColor = texture2D(map, vUv);
   load(assetPath: string) {
     let pub: ShaderAssetPub;
 
-    let loadShaders = () => {
+    const loadShaders = () => {
       // NOTE: Migration for Superpowers 0.10
       if (typeof pub.vertexShader === "string") {
         pub.vertexShader = {
@@ -296,7 +296,7 @@ ${tab}gl_FragColor = texture2D(map, vUv);
       }
     }
 
-    let uniform: UniformPub = { id: null, name, type: "f", value: "0.0" };
+    const uniform: UniformPub = { id: null, name, type: "f", value: "0.0" };
     this.uniforms.add(uniform, null, (err, actualIndex) => {
       if (err != null) { callback(err); return; }
 
@@ -354,7 +354,7 @@ ${tab}gl_FragColor = texture2D(map, vUv);
       }
     }
 
-    let attribute: AttributePub = { id: null, name, type: "f" };
+    const attribute: AttributePub = { id: null, name, type: "f" };
     this.attributes.add(attribute, null, (err, actualIndex) => {
       if (err != null) { callback(err); return; }
 
@@ -421,7 +421,7 @@ ${tab}gl_FragColor = texture2D(map, vUv);
   }
 
   client_editVertexShader(operationData: OperationData, revisionIndex: number) {
-    let operation = new OT.TextOperation();
+    const operation = new OT.TextOperation();
     operation.deserialize(operationData);
     this.vertexDocument.apply(operation, revisionIndex);
     this.pub.vertexShader.draft = this.vertexDocument.text;
@@ -455,7 +455,7 @@ ${tab}gl_FragColor = texture2D(map, vUv);
   }
 
   client_editFragmentShader(operationData: OperationData, revisionIndex: number) {
-    let operation = new OT.TextOperation();
+    const operation = new OT.TextOperation();
     operation.deserialize(operationData);
     this.fragmentDocument.apply(operation, revisionIndex);
     this.pub.fragmentShader.draft = this.fragmentDocument.text;

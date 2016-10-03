@@ -1,8 +1,8 @@
 import P2BodyMarkerUpdater from "./P2BodyMarkerUpdater";
 
-let THREE = SupEngine.THREE;
-let tmpVector3 = new THREE.Vector3();
-let tmpEulerAngles = new THREE.Euler();
+const THREE = SupEngine.THREE;
+const tmpVector3 = new THREE.Vector3();
+const tmpEulerAngles = new THREE.Euler();
 
 export default class P2BodyMarker extends SupEngine.ActorComponent {
   /* tslint:disable:variable-name */
@@ -39,7 +39,7 @@ export default class P2BodyMarker extends SupEngine.ActorComponent {
   setBox(width: number, height: number) {
     if (this.mesh != null) this._clearRenderer();
 
-    let geometry = new THREE.Geometry();
+    const geometry = new THREE.Geometry();
     geometry.vertices.push(
       new THREE.Vector3(-width / 2, -height / 2, 0),
       new THREE.Vector3( width / 2, -height / 2, 0),
@@ -47,19 +47,18 @@ export default class P2BodyMarker extends SupEngine.ActorComponent {
       new THREE.Vector3(-width / 2,  height / 2, 0),
       new THREE.Vector3(-width / 2, -height / 2, 0)
     );
-    let material = new THREE.LineBasicMaterial({ color: 0xf459e4 });
+    const material = new THREE.LineBasicMaterial({ color: 0xf459e4 });
     this.mesh = new THREE.Line(geometry, material);
     this.markerActor.threeObject.add(this.mesh);
     this.mesh.position.copy(this.offset);
-    this.mesh.rotation.z = this.angle;
     this.mesh.updateMatrixWorld(false);
   }
 
   setCircle(radius: number) {
     if (this.mesh != null) this._clearRenderer();
 
-    let geometry = new THREE.CircleGeometry(radius, 16);
-    let material = new THREE.MeshBasicMaterial({ color: 0xf459e4, wireframe: true });
+    const geometry = new THREE.CircleGeometry(radius, 16);
+    const material = new THREE.MeshBasicMaterial({ color: 0xf459e4, wireframe: true });
     this.mesh = new THREE.Mesh(geometry, material);
     this.markerActor.threeObject.add(this.mesh);
     this.mesh.position.copy(this.offset);
@@ -74,8 +73,6 @@ export default class P2BodyMarker extends SupEngine.ActorComponent {
 
   setAngle(angle: number) {
     this.angle = angle * (Math.PI / 180);
-    this.mesh.rotation.z = this.angle;
-    this.mesh.updateMatrixWorld(false);
   }
 
   _clearRenderer() {

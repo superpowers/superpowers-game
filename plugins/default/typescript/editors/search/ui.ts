@@ -1,6 +1,6 @@
 import { data } from "./network";
 
-let ui: {
+const ui: {
   textToSearch?: string;
   searchRegExp?: RegExp;
 
@@ -34,7 +34,7 @@ function escapeRegExp(text: string) { return text.replace(/[-[\]{}()*+?.,\\^$|#\
 
 function search() {
   while (ui.resultsPane.children.length !== 0) {
-    let child = <HTMLSpanElement>ui.resultsPane.children[0];
+    const child = <HTMLSpanElement>ui.resultsPane.children[0];
     child.parentElement.removeChild(child);
   }
 
@@ -45,14 +45,14 @@ function search() {
    ui.searchRegExp = new RegExp(escapeRegExp(ui.textToSearch), `g${ui.matchCaseCheckbox.checked ? "" : "i"}`);
   }
 
-  for (let assetId in data.assetsById) searchAsset(assetId);
+  for (const assetId in data.assetsById) searchAsset(assetId);
 }
 
 export function searchAsset(assetId: string) {
-  let asset = data.assetsById[assetId];
-  let name = data.projectClient.entries.getPathFromId(assetId);
+  const asset = data.assetsById[assetId];
+  const name = data.projectClient.entries.getPathFromId(assetId);
 
-  let results: number[] = [];
+  const results: number[] = [];
   if (ui.searchRegExp != null) {
     let match: any;
     while ((match = ui.searchRegExp.exec(asset.pub.draft)) != null) {
@@ -95,24 +95,24 @@ export function searchAsset(assetId: string) {
         target = target.parentElement;
       }
 
-      let id = target.dataset["id"];
-      let line = target.dataset["line"];
-      let ch = target.dataset["ch"];
+      const id = target.dataset["id"];
+      const line = target.dataset["line"];
+      const ch = target.dataset["ch"];
 
       if (window.parent != null) SupClient.openEntry(id, { line, ch });
     });
 
   } else {
     while (tableElt.children.length !== 0) {
-      let child = <HTMLTableRowElement>tableElt.children[0];
+      const child = <HTMLTableRowElement>tableElt.children[0];
       child.parentElement.removeChild(child);
     }
   }
 
-  let textParts = asset.pub.draft.split("\n");
+  const textParts = asset.pub.draft.split("\n");
   let previousLine = -1;
   let rankInLine: number;
-  for (let result of results) {
+  for (const result of results) {
     let position = 0;
     let line = 0;
     while (position + textParts[line].length <= result) {
@@ -127,31 +127,31 @@ export function searchAsset(assetId: string) {
       rankInLine = 0;
     }
 
-    let column = result - position;
+    const column = result - position;
 
-    let rowElt = document.createElement("tr");
+    const rowElt = document.createElement("tr");
     tableElt.appendChild(rowElt);
-    let dataset = <any>rowElt.dataset;
+    const dataset = <any>rowElt.dataset;
     dataset["id"] = assetId;
     dataset["line"] = line;
     dataset["ch"] = column;
 
-    let lineElt = document.createElement("td");
+    const lineElt = document.createElement("td");
     rowElt.appendChild(lineElt);
     lineElt.textContent = (line + 1).toString();
 
-    let textElt = document.createElement("td");
+    const textElt = document.createElement("td");
     rowElt.appendChild(textElt);
 
-    let startElt = document.createElement("span");
+    const startElt = document.createElement("span");
     startElt.textContent = textParts[line].slice(0, column);
     textElt.appendChild(startElt);
 
-    let wordElt = document.createElement("span");
+    const wordElt = document.createElement("span");
     wordElt.textContent = textParts[line].slice(column, column + ui.textToSearch.length);
     textElt.appendChild(wordElt);
 
-    let endElt = document.createElement("span");
+    const endElt = document.createElement("span");
     endElt.textContent = textParts[line].slice(column + ui.textToSearch.length);
     textElt.appendChild(endElt);
   }
@@ -169,13 +169,13 @@ function refreshGlobalStatus() {
 
   if (resultsCount === 0) ui.statusSpan.textContent = SupClient.i18n.t("searchEditor:noResults");
   else {
-    let results = SupClient.i18n.t(`searchEditor:${resultsCount === 1 ? "oneResult" : "severalResults"}`, { results: resultsCount.toString() });
-    let files = SupClient.i18n.t(`searchEditor:${filesCount === 1 ? "oneFile" : "severalFiles"}`, { files: filesCount.toString() });
+    const results = SupClient.i18n.t(`searchEditor:${resultsCount === 1 ? "oneResult" : "severalResults"}`, { results: resultsCount.toString() });
+    const files = SupClient.i18n.t(`searchEditor:${filesCount === 1 ? "oneFile" : "severalFiles"}`, { files: filesCount.toString() });
     ui.statusSpan.textContent = SupClient.i18n.t("searchEditor:resultInfo", { results, files });
   }
 }
 
 export function refreshFileStatus(fileName: string, nameElt: HTMLSpanElement, count: number) {
-  let results = SupClient.i18n.t(`searchEditor:${count === 1 ? "oneResult" : "severalResults"}`, { results: count.toString() });
+  const results = SupClient.i18n.t(`searchEditor:${count === 1 ? "oneResult" : "severalResults"}`, { results: count.toString() });
   nameElt.textContent = SupClient.i18n.t("searchEditor:fileInfo", { results, fileName });
 }

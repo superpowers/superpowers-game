@@ -2,7 +2,7 @@ import TileSet from "../components/TileSet";
 
 export function loadAsset(player: SupRuntime.Player, entry: any, callback: (err: Error, asset: any) => any) {
   player.getAssetData(`assets/${entry.storagePath}/tileset.json`, "json", (err, data) => {
-    let img = new Image();
+    const img = new Image();
 
     img.onload = () => {
       data.texture = new SupEngine.THREE.Texture(img);

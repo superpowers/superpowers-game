@@ -17,7 +17,7 @@ callback: (err: string, nodeId: string) => any) {
 
     let name = entry.name;
     if (name === "Prefab") {
-      let parentNode = projectClient.entries.parentNodesById[entry.id];
+      const parentNode = projectClient.entries.parentNodesById[entry.id];
       if (parentNode != null) name = parentNode.name;
     }
     options.prefab = true;
@@ -32,4 +32,4 @@ callback: (err: string, nodeId: string) => any) {
   projectClient.subAsset(entry.id, "scene", subscriber);
 }
 
-export let importComponent = null as any;
+export const importComponent = null as any;

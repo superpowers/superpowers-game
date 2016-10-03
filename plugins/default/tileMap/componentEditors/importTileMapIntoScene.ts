@@ -2,7 +2,7 @@ export function importActor(entry: SupCore.Data.EntryNode, projectClient: SupCli
 callback: (err: string, nodeId: string) => any) {
   let name = entry.name;
   if (name === "Tile Map") {
-    let parentNode = projectClient.entries.parentNodesById[entry.id];
+    const parentNode = projectClient.entries.parentNodesById[entry.id];
     if (parentNode != null) name = parentNode.name;
   }
 

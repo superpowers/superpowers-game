@@ -15,9 +15,9 @@ export function init(player: SupRuntime.Player, callback: Function) {
 }
 
 export function lateStart(player: SupRuntime.Player, callback: Function) {
-  let sceneId = player.resources.gameSettings.startupSceneId;
+  const sceneId = player.resources.gameSettings.startupSceneId;
   if (sceneId != null) {
-    let outerAsset = player.getOuterAsset(sceneId);
+    const outerAsset = player.getOuterAsset(sceneId);
     if (outerAsset != null && outerAsset.type === "scene") (<any>window).Sup.loadScene(outerAsset);
   }
   callback();
