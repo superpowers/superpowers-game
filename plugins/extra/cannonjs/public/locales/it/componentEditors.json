@@ -1,0 +1,22 @@
+{
+  "CannonBody": {
+    "label": "Cannon Body",
+    "mass": "Massa",
+    "fixedRotation": "Rotazione fissa",
+    "group": "Gruppo",
+    "mask": "Maschera",
+    "shape": "Forma",
+    "shapeType": "Tipo",
+    "shapeOptions": {
+      "box": "Cubo",
+      "sphere": "Sfera",
+      "cylinder": "Cilindro"
+    },
+    "positionOffset": "Offest posizione",
+    "orientationOffset": "Offset orientamento",
+    "halfSize": "Dimensione dimezzata",
+    "radius": "Raggio",
+    "height": "Altezza",
+    "segments": "Segmenti"
+  }
+}
