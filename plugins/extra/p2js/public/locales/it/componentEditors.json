@@ -7,7 +7,7 @@
     "angle": "Angolo",
     "shape": "Forma",
     "shapeOptions": {
-      "box": "Riquadro",
+      "box": "Rettangolo",
       "circle": "Cerchio"
     },
     "size": "Dimensioni",
