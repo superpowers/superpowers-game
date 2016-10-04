@@ -1,0 +1,13 @@
+{
+  "game": {
+    "label": "Default",
+    "description": "Export as HTML5",
+    
+    "outputFolder": "Output folder",
+    "errors": {
+      "selectDestionationFolder": "Select a destination folder.",
+      "emptyDirectoryCheckFail": "Failed to check if the selected folder is empty.",
+      "destinationFolderEmpty": "The destination folder must be empty."
+    }
+  }
+}
