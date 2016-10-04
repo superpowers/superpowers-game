@@ -1,0 +1,18 @@
+{
+  "uniforms": "Uniform",
+  "newUniform": "Nuovo uniform",
+  "attributes": "Attributi",
+  "newAttribute": "Nuovo attributo",
+  "name": "Nome",
+  "type": "Tipo",
+  "value": "Valore",
+  "useLights": "Utilizza luci",
+  "preview": "Anteprima",
+  "plane": "Piano",
+  "box" : "Cubo",
+  "sphere": "Sfera",
+  "asset": "Risorsa",
+  "assetPath": "Percorso Risorsa",
+  "vertexShader": "Vertex Shader",
+  "fragmentShader": "Fragment Shader"
+}
