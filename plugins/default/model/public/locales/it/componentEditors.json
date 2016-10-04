@@ -1,0 +1,17 @@
+{
+  "ModelRenderer": {
+    "label": "Modello Renderer",
+    "model": "Modello",
+    "searchModelPlaceholder": "Cerca modello",
+    "animation": "Animazione",
+    "shadow": {
+      "title": "Ombra",
+      "cast": "Proietta",
+      "receive": "Riceve"
+    },
+    "color": "Colore",
+    "opacity": "Opacità",
+    "material": "Materiale",
+    "shader": "Shader"
+  }
+}

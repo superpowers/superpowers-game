@@ -1,0 +1,59 @@
+{
+  "status": {
+    "noErrors": "NEssun errore",
+    "oneError": "1 errore",
+    "severalErrors": "${errors} errorq",
+
+    "line": "Riga",
+    "type": "Tipo",
+    "message": "Messaggio",
+    "file": "File"
+  },
+
+  "sidebar": {
+    "settings": {
+      "model": "Modello",
+      "texture": "Texture",
+      "filtering": {
+        "title": "Filtro",
+        "pixelated": "Pixelato",
+        "smooth": "Morbido"
+      },
+      "wrapping": {
+        "title": "Wrapping",
+        "clampToEdge": "Bordi fissi",
+        "repeat": "Ripeti",
+        "mirroredRepeat": "Ripeti a specchio"
+      },
+      "showSkeleton": "Mostra scheletro",
+      "unitRatio": "Proporzioni Unità",
+      "opacity": {
+        "title": "Opacità",
+        "opaque": "Opaca",
+        "transparent": "Transparente"
+        }
+    },
+    "animations": {
+      "title": "Animazioni",
+      "new": {
+        "prompt": "Inserisci un nome per l'animazione.",
+        "initialValue": "Animazione"
+      },
+      "renamePrompt": "Inserisci un nuovo nome per l'animazione.",
+      "deleteConfirm": "Sei sicuro di voler eliminare le animazioni selezionate?"
+    },
+    "advancedTextures": {
+      "title": "Texture Avanzate",
+      "map": "Mappa",
+      "lightMap": "Light map",
+      "specularMap": "Specular map",
+      "alphaMap": "Alpha map",
+      "normalMap": "Normal map (Phong)",
+      "newMapPrompt": "Inserisci un nuovo nome per la mappa.",
+      "renameMapPrompt": "Inserisci un nuovo nome per la texture.",
+      "deleteMapConfirm": "Sei sicuro di voler eliminare le texture selezionate?",
+      "downloadPrompt": "Inserisci un nome per l'immagine.",
+      "downloadInitialValue": "Immagine"
+    }
+  }
+}
