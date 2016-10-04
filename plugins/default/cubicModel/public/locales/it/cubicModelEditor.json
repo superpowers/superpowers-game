@@ -1,0 +1,77 @@
+{
+  "3dView": {
+    "settings": {
+      "title": "Impostazioni",
+      "linkShapeToPivot": "Collega forma a pivot"
+    },
+    "transform": {
+      "title": "Transform",
+      "movePivot": "Muovi pivot",
+      "moveShape": "Muovi forma",
+      "rotate": "Ruota",
+      "stretch": "Estendi",
+      "local": "Locale"
+    },
+    "grid": {
+      "title": "Griglia",
+      "size": "Dimensione",
+      "visible": "Visibile"
+    }
+  },
+  "textureView": {
+    "mode": {
+      "title": "Modalità",
+      "layout": "Layout",
+      "paint": "Pittura"
+    },
+    "layoutMode": {
+      "title": "Impostazioni",
+      "linkTextureToUV": "Collega texture a UV"
+    },
+    "paintMode": {
+      "tool": "Strumento",
+      "brush": "Pennello",
+      "eraser": "Gomma",
+      "fill": "Riempimento",
+      "color": "Colore"
+    }
+  },
+  "sidebar": {
+    "settings": {
+      "cubicModel": {
+        "title": "Modello Cubico",
+        "pixelsPerUnit": "Pixels per unità",
+        "texture": "Texture",
+        "download": {
+          "defaultName": "Texture",
+          "prompt": "Inserisci un nome per la texture."
+        },
+        "textureSize": "Dimensioni Texture (px)"
+      }
+    },
+    "nodes": {
+      "title": "Nodi",
+      "newNode": {
+        "title": "Nuovo nodo",
+        "prompt": "Inserisci un nome per il nodo."
+      },
+      "renamePrompt": "Inserisci un nuovo nome per il nodo.",
+      "duplicatePrompt": "Inserisci un nome per il nuovo nodo.",
+      "deleteConfirm": "Sei sicuro di voler eliminare i nodi selezionati?",
+      "hide": "Nascondi",
+      "show": "Mostra"
+    },
+    "inspector": {
+      "position": "Posizione",
+      "orientation": "Orientamento",
+      "shape": "Forma",
+      "shapeType": "Tipo",
+      "shapeOptions": {
+        "box": "Box"
+      },
+      "offset": "Offset",
+      "size": "Dimensione",
+      "stretch": "Estendi"
+    }
+  }
+}
