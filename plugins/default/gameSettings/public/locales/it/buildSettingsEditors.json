@@ -1,13 +1,13 @@
 {
   "game": {
-    "label": "Default",
-    "description": "Export as HTML5",
-    
-    "outputFolder": "Output folder",
+    "label": "Predefinito",
+    "description": "Esporta come HTML5",
+
+    "outputFolder": "Cartella di output",
     "errors": {
-      "selectDestionationFolder": "Select a destination folder.",
-      "emptyDirectoryCheckFail": "Failed to check if the selected folder is empty.",
-      "destinationFolderEmpty": "The destination folder must be empty."
+      "selectDestionationFolder": "Seleziona una cartella di destinazione.",
+      "emptyDirectoryCheckFail": "Impossibile controllare se la cartella selezionata è vuota.",
+      "destinationFolderEmpty": "La cartella selezionata deve essere vuota."
     }
   }
 }
