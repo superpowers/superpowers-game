@@ -1,19 +1,19 @@
 {
   "ArcadeBody2D": {
     "label": "Arcade Body 2D",
-    "type": "Type",
+    "type": "Tipo",
     "typeOptions": {
       "box": "Box",
       "tileMap": "Tile Map"
     },
 
-    "movable": "Movable",
-    "size": "Size",
+    "movable": "Movibile",
+    "size": "Dimensione",
     "offset": "Offset",
-    "bounce": "Bounce",
+    "bounce": "Rimbalzo",
 
     "tileMap": "Tile Map",
-    "tileSetProperty": "Tile Set Property",
-    "layers": "Layers"
+    "tileSetProperty": "Proprietà del Tile Set",
+    "layers": "Livelli"
   }
 }
