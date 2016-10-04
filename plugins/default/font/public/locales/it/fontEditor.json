@@ -1,0 +1,29 @@
+{
+  "type": "Font Type",
+  "typeOptions": {
+    "bitmap": "Bitmap",
+    "vector": "Vector Font"
+  },
+  "font": {
+    "title": "Font",
+    "download": {
+      "prompt": "Inserisci un nome per il font",
+      "defaultName": "Font"
+    }
+  },
+  "texture": "Texture",
+  "rendering": "Rendering",
+  "filtering": "Filtro",
+  "pixelated": "Pixelato",
+  "smooth": "Morbido",
+  "pixelsPerUnit": "Pixels / Unità",
+  "color": "Colore",
+  "opacity": "Opacità",
+  "opaque": "Opaca",
+  "transparent": "Transparente",
+  "settings": "Impostazioni",
+  "size": "Dimensioni (pixel)",
+  "gridSize": "Dimensioni Griglia",
+  "charset": "Charset",
+  "charsetOffset": "Offset del Charset"
+}
