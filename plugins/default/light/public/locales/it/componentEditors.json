@@ -1,0 +1,30 @@
+{
+  "Light": {
+    "label": "Luce",
+    "type": "Tipo",
+    "typeOptions": {
+      "ambient": "Ambiente",
+      "point": "Punto",
+      "spot": "Spot",
+      "directional": "Direzionale"
+    },
+
+    "color": "Colore",
+    "intensity": "Intensità",
+    "distance": "Distanza",
+    "angle": "Angolo",
+    "target": "Obiettivo",
+    "castShadow": "Proieta Ombra",
+
+    "shadowSettings": {
+      "title": "Impostazioni Ombra",
+      "mapSize": "Dimensioni Mappa",
+      "bias": "Bias",
+      "darkness": "Oscurità",
+      "near-far": "Vicino / Lontano",
+      "fov": "Fov",
+      "top-bottom": "Alto / Basso",
+      "left-right": "Sinistra / Destra"
+    }
+  }
+}
