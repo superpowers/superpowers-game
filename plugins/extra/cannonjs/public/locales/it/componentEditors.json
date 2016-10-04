@@ -8,7 +8,7 @@
     "shape": "Forma",
     "shapeType": "Tipo",
     "shapeOptions": {
-      "box": "Parallelepipedo",
+      "box": "Cubo",
       "sphere": "Sfera",
       "cylinder": "Cilindro"
     },
