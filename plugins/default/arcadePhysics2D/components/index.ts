@@ -12,10 +12,10 @@ namespace ArcadePhysics2D {
   export function intersects(body1: ArcadeBody2D, body2: ArcadeBody2D) {
     if (body2.type === "tileMap") return checkTileMap(body1, body2, { moveBody: false });
 
-    if (body1.right() <= body2.left()) return false;
-    if (body1.left() >= body2.right()) return false;
-    if (body1.bottom() >= body2.top()) return false;
-    if (body1.top() <= body2.bottom()) return false;
+    if (body1.right() < body2.left()) return false;
+    if (body1.left() > body2.right()) return false;
+    if (body1.bottom() > body2.top()) return false;
+    if (body1.top() < body2.bottom()) return false;
     return true;
   }
 
