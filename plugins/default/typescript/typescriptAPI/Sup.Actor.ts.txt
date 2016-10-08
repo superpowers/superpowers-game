@@ -11,9 +11,24 @@ namespace Sup {
     return foundActor;
   }
 
+  export function getAllActors() {
+    let list = [];
+    player.gameInstance.tree.walkTopDown((actor) => list.push(actor.__outer));
+    return list;
+  }
+
   export function destroyAllActors() {
     player.gameInstance.destroyAllActors();
     player.gameInstance.tree.walkTopDown((actor) => { actor.__outer.__inner = null; actor.__outer = null; return true; });
+  }
+
+  export function walkActorTree(startActor, callback) {
+    if (callback == null) {
+      callback = startActor;
+      player.gameInstance.tree.walkTopDown((actor) => callback(actor.__outer));
+    } else {
+      player.gameInstance.tree.walkDown(startActor.__inner, (actor) => callback(actor.__outer));
+    }
   }
 
   let tmpVector3 = new SupEngine.THREE.Vector3();
