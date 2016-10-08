@@ -1,6 +1,6 @@
 {
   "ModelRenderer": {
-    "label": "Modello Renderer",
+    "label": "Renderer Modello",
     "model": "Modello",
     "searchModelPlaceholder": "Cerca modello",
     "animation": "Animazione",
