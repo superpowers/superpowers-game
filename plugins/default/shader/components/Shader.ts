@@ -1,10 +1,11 @@
 const THREE = SupEngine.THREE;
 import { ShaderAssetPub } from "../data/ShaderAsset";
 
-export function createShaderMaterial(asset: ShaderAssetPub, textures: { [name: string]: THREE.Texture }, geometry: THREE.BufferGeometry, options = { useDraft: false }) {
+export function createShaderMaterial(asset: ShaderAssetPub, textures: { [name: string]: THREE.Texture }, geometry: THREE.BufferGeometry,
+options?: { useDraft?: boolean, defaultUniforms?: { [name: string]: { type: string; value: any } } }) {
   if (asset == null) return null;
 
-  let uniforms: { [name: string]: { type: string; value: any}} = {};
+  let uniforms: { [name: string]: { type: string; value: any }} = options != null && options.defaultUniforms != null ? options.defaultUniforms : {};
   if (asset.useLightUniforms) {
     uniforms = THREE.UniformsUtils.merge([uniforms, THREE.UniformsUtils.clone(THREE.UniformsLib.lights)]);
   }
@@ -68,8 +69,9 @@ export function createShaderMaterial(asset: ShaderAssetPub, textures: { [name: s
     geometry.addAttribute(attribute.name, new THREE.BufferAttribute(new Float32Array(values), itemSize));
   }
 
-  const vertexShader = options.useDraft ? asset.vertexShader.draft : asset.vertexShader.text;
-  const fragmentShader = options.useDraft ? asset.fragmentShader.draft : asset.fragmentShader.text;
+  const useDraft = options != null && options.useDraft === true;
+  const vertexShader = useDraft ? asset.vertexShader.draft : asset.vertexShader.text;
+  const fragmentShader = useDraft ? asset.fragmentShader.draft : asset.fragmentShader.text;
 
   return new THREE.ShaderMaterial({
     uniforms,

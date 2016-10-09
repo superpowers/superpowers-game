@@ -1,8 +1,11 @@
 const THREE = SupEngine.THREE;
+import * as fs from "fs";
+
 import TileMap from "./TileMap";
 import TileSet from "./TileSet";
 import TileLayerGeometry from "./TileLayerGeometry";
 import TileMapRendererUpdater from "./TileMapRendererUpdater";
+import { ShaderAssetPub } from "../../shader/data/ShaderAsset";
 
 export default class TileMapRenderer extends SupEngine.ActorComponent {
   /* tslint:disable:variable-name */
@@ -15,7 +18,7 @@ export default class TileMapRenderer extends SupEngine.ActorComponent {
   castShadow = false;
   receiveShadow = false;
   materialType = "basic";
-  customShader: any;
+  customShader: ShaderAssetPub;
 
   layerMeshes: THREE.Mesh[];
   layerMeshesById: { [id: string]: THREE.Mesh };
@@ -28,7 +31,7 @@ export default class TileMapRenderer extends SupEngine.ActorComponent {
     super(actor, "TileMapRenderer");
   }
 
-  setTileMap(asset: TileMap, materialType?: string, customShader?: any) {
+  setTileMap(asset: TileMap, materialType?: string, customShader?: ShaderAssetPub) {
     if (this.layerMeshes != null) this._clearLayerMeshes();
 
     this.tileMap = asset;
@@ -90,23 +93,51 @@ export default class TileMapRenderer extends SupEngine.ActorComponent {
     const height = this.tileMap.getHeight() * this.tileSet.data.grid.height;
     const geometry = new TileLayerGeometry(width, height, this.tileMap.getWidth(), this.tileMap.getHeight());
 
-    let material: THREE.MeshBasicMaterial|THREE.MeshPhongMaterial;
-    if (this.materialType === "shader") {
-      material = SupEngine.componentClasses["Shader"].createShaderMaterial(
-        this.customShader,
-        { map: this.tileSet.data.texture },
-        geometry
-      );
-      (<any>material).map = this.tileSet.data.texture;
+    let shaderData: ShaderAssetPub;
+    let defaultUniforms: THREE.IUniform;
 
-    } else {
-      if (this.materialType === "basic") material = new THREE.MeshBasicMaterial();
-      else if (this.materialType === "phong") material = new THREE.MeshPhongMaterial();
-      material.map = this.tileSet.data.texture;
-      material.alphaTest = 0.1;
-      material.side = THREE.DoubleSide;
-      material.transparent = true;
+    switch (this.materialType) {
+      case "basic":
+        shaderData = {
+          formatVersion: null,
+          vertexShader: { text: THREE.ShaderLib.basic.vertexShader, draft: null, revisionId: null },
+          fragmentShader: { text: fs.readFileSync(`${__dirname}/TileMapBasicFragmentShader.glsl`, { encoding: "utf8" }), draft: null, revisionId: null },
+          uniforms: [ { id: null, name: "map", type: "t", value: "map" }],
+          attributes: [],
+          useLightUniforms: false
+        };
+
+        defaultUniforms = THREE.ShaderLib.basic.uniforms;
+        break;
+
+      case "phong":
+        shaderData = {
+          formatVersion: null,
+          vertexShader: { text: THREE.ShaderLib.phong.vertexShader, draft: null, revisionId: null },
+          fragmentShader: { text: fs.readFileSync(`${__dirname}/TileMapPhongFragmentShader.glsl`, { encoding: "utf8" }), draft: null, revisionId: null },
+          uniforms: [ { id: null, name: "map", type: "t", value: "map" }],
+          attributes: [],
+          useLightUniforms: true
+        };
+
+        defaultUniforms = THREE.ShaderLib.phong.uniforms;
+        break;
+
+      case "shader":
+        shaderData = this.customShader;
+        break;
     }
+
+    const material = SupEngine.componentClasses["Shader"].createShaderMaterial(
+      shaderData,
+      { map: this.tileSet.data.texture },
+      geometry,
+      { defaultUniforms }
+    ) as THREE.ShaderMaterial;
+    (material as any).map = this.tileSet.data.texture;
+    material.alphaTest = 0.1;
+    material.side = THREE.DoubleSide;
+    material.transparent = true;
 
     const layerMesh = new THREE.Mesh(geometry, material);
     layerMesh.receiveShadow = this.receiveShadow;
@@ -201,19 +232,23 @@ export default class TileMapRenderer extends SupEngine.ActorComponent {
     let flipX = false; let flipY = false;
     let angle = 0;
 
-    const tileInfo = <(number|boolean)[]>this.tileMap.getTileAt(layerIndex, x, y);
-    if ((<any>tileInfo) !== 0) {
-      tileX = <number>tileInfo[0];
-      tileY = <number>tileInfo[1];
-      flipX = <boolean>tileInfo[2];
-      flipY = <boolean>tileInfo[3];
-      angle = <number>tileInfo[4];
+    const tileInfo = this.tileMap.getTileAt(layerIndex, x, y) as (number|boolean)[];
+    if ((tileInfo as any) !== 0) {
+      tileX = tileInfo[0] as number;
+      tileY = tileInfo[1] as number;
+      flipX = tileInfo[2] as boolean;
+      flipY = tileInfo[3] as boolean;
+      angle = tileInfo[4] as number;
     }
 
-    if (tileX === -1 || tileY === -1 || tileX >= this.tilesPerRow || tileY >= this.tilesPerColumn ||
-    (tileX === this.tilesPerRow - 1 && tileY === this.tilesPerColumn - 1)) {
-      tileX = this.tilesPerRow - 1;
-      tileY = this.tilesPerColumn - 1;
+    const quadIndex = (x + y * this.tileMap.getWidth());
+    const layerMesh = this.layerMeshes[layerIndex];
+    const uvs = (layerMesh.geometry as THREE.BufferGeometry).getAttribute("uv") as THREE.BufferAttribute;
+    uvs.needsUpdate = true;
+
+    if (tileX === -1 || tileY === -1 || tileX >= this.tilesPerRow || tileY >= this.tilesPerColumn) {
+      for (let i = 0; i < 8; i++) uvs.array[quadIndex * 8 + i] = -1;
+      return;
     }
 
     const image = this.tileSet.data.texture.image;
@@ -224,11 +259,6 @@ export default class TileMapRenderer extends SupEngine.ActorComponent {
 
     if (flipX) [right, left] = [left, right];
     if (flipY) [top, bottom] = [bottom, top];
-
-    const quadIndex = (x + y * this.tileMap.getWidth());
-    const layerMesh = this.layerMeshes[layerIndex];
-    const uvs = (<any>layerMesh.geometry).getAttribute("uv");
-    uvs.needsUpdate = true;
 
     switch (angle) {
       case 0:

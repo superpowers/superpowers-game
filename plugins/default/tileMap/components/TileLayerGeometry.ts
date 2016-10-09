@@ -9,13 +9,14 @@ export default class TileLayerGeometry extends THREE.BufferGeometry {
     const vertices = new Float32Array(widthSegments * heightSegments * 4 * 3);
     const normals  = new Float32Array(widthSegments * heightSegments * 4 * 3);
     const uvs      = new Float32Array(widthSegments * heightSegments * 4 * 2);
+    uvs.fill(-1);
+
     let indices: Uint32Array|Uint16Array;
     if (vertices.length / 3 > 65535) indices = new Uint32Array(widthSegments * heightSegments * 6);
     else indices = new Uint16Array(widthSegments * heightSegments * 6);
 
-    let offset = 0;
-    let offset2 = 0;
-    let offset3 = 0;
+    let verticesOffset = 0;
+    let indicesOffset = 0;
 
     for (let iy = 0; iy < heightSegments; iy++) {
       let y = iy * height / heightSegments;
@@ -24,47 +25,38 @@ export default class TileLayerGeometry extends THREE.BufferGeometry {
         let x = ix * width / widthSegments;
 
         // Left bottom
-        vertices[offset + 0]  = x;
-        vertices[offset + 1]  = y;
-        normals[offset + 2]  = 1;
-        uvs[offset2 + 0] = ix / widthSegments;
-        uvs[offset2 + 1] = iy / heightSegments;
+        vertices[verticesOffset + 0]  = x;
+        vertices[verticesOffset + 1]  = y;
+        normals[verticesOffset + 2]  = 1;
 
         // Right bottom
-        vertices[offset + 3]  = x + width / widthSegments;
-        vertices[offset + 4]  = y;
-        normals[offset + 5]  = 1;
-        uvs[offset2 + 2] = (ix + 1) / widthSegments;
-        uvs[offset2 + 3] = iy / heightSegments;
+        vertices[verticesOffset + 3]  = x + width / widthSegments;
+        vertices[verticesOffset + 4]  = y;
+        normals[verticesOffset + 5]  = 1;
 
         // Right top
-        vertices[offset + 6]  = x + width / widthSegments;
-        vertices[offset + 7]  = y + height / heightSegments;
-        normals[offset + 8]  = 1;
-        uvs[offset2 + 4] = (ix + 1) / widthSegments;
-        uvs[offset2 + 5] = (iy + 1) / heightSegments;
+        vertices[verticesOffset + 6]  = x + width / widthSegments;
+        vertices[verticesOffset + 7]  = y + height / heightSegments;
+        normals[verticesOffset + 8]  = 1;
 
         // Left Top
-        vertices[offset + 9]  = x;
-        vertices[offset + 10] = y + height / heightSegments;
-        normals[offset + 11] = 1;
-        uvs[offset2 + 6] = ix / widthSegments;
-        uvs[offset2 + 7] = (iy + 1) / heightSegments;
+        vertices[verticesOffset + 9]  = x;
+        vertices[verticesOffset + 10] = y + height / heightSegments;
+        normals[verticesOffset + 11] = 1;
 
         const ref = (ix + iy * widthSegments) * 4;
         // Bottom right corner
-        indices[offset3 + 0] = ref + 0;
-        indices[offset3 + 1] = ref + 1;
-        indices[offset3 + 2] = ref + 2;
+        indices[indicesOffset + 0] = ref + 0;
+        indices[indicesOffset + 1] = ref + 1;
+        indices[indicesOffset + 2] = ref + 2;
 
         // Top left corner
-        indices[offset3 + 3] = ref + 0;
-        indices[offset3 + 4] = ref + 2;
-        indices[offset3 + 5] = ref + 3;
+        indices[indicesOffset + 3] = ref + 0;
+        indices[indicesOffset + 4] = ref + 2;
+        indices[indicesOffset + 5] = ref + 3;
 
-        offset  += 4 * 3;
-        offset2 += 4 * 2;
-        offset3 += 6;
+        verticesOffset += 4 * 3;
+        indicesOffset += 6;
       }
     }
 
