@@ -85,6 +85,9 @@ const canvas = <HTMLCanvasElement>document.querySelector("canvas");
 // They might trigger scrolling for instance
 canvas.addEventListener("keypress", (event) => { event.preventDefault(); });
 
+// Make sure the focus is always on the game canvas wherever we click on the game window
+document.addEventListener("click", () => canvas.focus() );
+
 if (qs.debug != null && playerWindow != null) playerWindow.webContents.openDevTools();
 
 let player: Player;
