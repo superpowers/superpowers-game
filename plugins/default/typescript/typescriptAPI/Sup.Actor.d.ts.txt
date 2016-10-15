@@ -1,5 +1,6 @@
 declare namespace Sup {
   function getActor(name: string): Actor;
+  function getRootActors(): Actor[];
   // This is relatively expensive. If it's possible, use walkActorTree() instead.
   function getAllActors(): Actor[];
   function destroyAllActors(): void;

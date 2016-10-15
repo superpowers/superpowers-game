@@ -11,6 +11,12 @@ namespace Sup {
     return foundActor;
   }
 
+  export function getRootActors() {
+    let list = [];
+    for (const rootActor of player.gameInstance.tree.root) list.push(rootActor.__outer);
+    return list;
+  }
+
   export function getAllActors() {
     let list = [];
     player.gameInstance.tree.walkTopDown((actor) => list.push(actor.__outer));
