@@ -26,7 +26,6 @@ const ui: {
   mapDownloadButton: HTMLInputElement;
   texturesToogleButton: HTMLInputElement;
   texturesTreeView: TreeView;
-  selectedTextureName: string;
 
   mapSlotsInput: { [name: string]: HTMLInputElement };
 } = {} as any;
@@ -208,7 +207,12 @@ function onPrimaryMapFileSelectChange(event: Event) {
   ui.errorPaneStatus.classList.remove("has-errors");
 
   const reader = new FileReader;
-  reader.onload = (event) => { data.projectClient.editAsset(SupClient.query.asset, "setMaps", { map: reader.result }); };
+  const textureName = data.modelUpdater.modelAsset.pub.mapSlots["map"];
+  const maps = {} as any;
+  reader.onload = (event) => {
+    maps[textureName] = (event.target as any).result as ArrayBuffer;
+    data.projectClient.editAsset(SupClient.query.asset, "setMaps", maps);
+  };
 
   const element = <HTMLInputElement>event.target;
   reader.readAsArrayBuffer(element.files[0]);
@@ -379,6 +383,10 @@ function onNewMapClick() {
 }
 
 function onMapFileSelectChange(event: any) {
+  if (ui.texturesTreeView.selectedNodes.length !== 1) return;
+
+  const textureName = ui.texturesTreeView.selectedNodes[0].dataset["name"];
+
   ui.errorsTBody.innerHTML = "";
   ui.errorPaneInfo.textContent = "No errors";
   ui.errorPaneStatus.classList.remove("has-errors");
@@ -386,7 +394,7 @@ function onMapFileSelectChange(event: any) {
   const reader = new FileReader;
   const maps: any = {};
   reader.onload = (event) => {
-    maps[ui.selectedTextureName] = reader.result;
+    maps[textureName] = (event.target as any).result as ArrayBuffer;
     data.projectClient.editAsset(SupClient.query.asset, "setMaps", maps);
   };
 
@@ -399,8 +407,7 @@ function onMapFileSelectChange(event: any) {
 function onRenameMapClick() {
   if (ui.texturesTreeView.selectedNodes.length !== 1) return;
 
-  const selectedNode = ui.texturesTreeView.selectedNodes[0];
-  const textureName = selectedNode.dataset["name"];
+  const textureName = ui.texturesTreeView.selectedNodes[0].dataset["name"];
 
   const options = {
     initialValue: textureName,
@@ -428,14 +435,13 @@ function onDeleteMapClick() {
 }
 
 export function updateSelectedMap() {
-  const selectedMapElt = ui.texturesTreeView.selectedNodes[0];
-  if (selectedMapElt != null) ui.selectedTextureName = selectedMapElt.dataset["name"];
-  else ui.selectedTextureName = null;
-
   const buttons = document.querySelectorAll(".textures-buttons button");
   for (let i = 0; i < buttons.length; i++) {
-    const button = <HTMLButtonElement>buttons[i];
-    button.disabled = ui.selectedTextureName == null && button.className !== "new-map";
+    const button = buttons[i] as HTMLButtonElement;
+    if (button.className === "new-map") continue;
+
+    if (button.className === "delete-map") button.disabled = ui.texturesTreeView.selectedNodes.length === 0;
+    else button.disabled = ui.texturesTreeView.selectedNodes.length !== 1;
   }
 }
 
