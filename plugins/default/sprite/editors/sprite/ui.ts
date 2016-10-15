@@ -23,7 +23,6 @@ const ui: {
   texturesPane: HTMLDivElement;
   texturesToogleButton: HTMLInputElement;
   texturesTreeView: TreeView;
-  selectedTextureName: string;
 
   mapSlotsInput: { [name: string]: HTMLInputElement };
 } = {} as any;
@@ -34,7 +33,7 @@ new ResizeHandle(document.querySelector(".sidebar") as HTMLElement, "right");
 
 // Setup properties
 const fileSelect = <HTMLInputElement>document.querySelector("input.file-select");
-fileSelect.addEventListener("change", onFileSelectChange);
+fileSelect.addEventListener("change", onUploadMainMap);
 document.querySelector("button.upload").addEventListener("click", () => { fileSelect.click(); });
 
 document.querySelector("button.download").addEventListener("click", () => {
@@ -127,7 +126,7 @@ for (const slotName in SpriteAsset.schema["mapSlots"].properties) {
 
 document.querySelector("button.new-map").addEventListener("click", onNewMapClick);
 const mapFileSelect = <HTMLInputElement>document.querySelector(".upload-map.file-select");
-mapFileSelect.addEventListener("change", onMapFileSelectChange);
+mapFileSelect.addEventListener("change", onUploadMapClick);
 document.querySelector("button.upload-map").addEventListener("click", () => { mapFileSelect.click(); });
 document.querySelector("button.download-map").addEventListener("click", () => {
   if (ui.texturesTreeView.selectedNodes.length !== 1) return;
@@ -140,16 +139,20 @@ document.querySelector("button.download-map").addEventListener("click", () => {
 document.querySelector("button.rename-map").addEventListener("click", onRenameMapClick);
 document.querySelector("button.delete-map").addEventListener("click", onDeleteMapClick);
 
-function onFileSelectChange(event: Event) {
+function onUploadMainMap(event: Event) {
   const target = event.target as HTMLInputElement;
   if (target.files.length === 0) return;
 
+  const textureName = data.spriteUpdater.spriteAsset.pub.mapSlots["map"];
+  const willSetupGridSize = (data.spriteUpdater.spriteAsset.pub.maps[textureName] as any as ArrayBuffer).byteLength === 0;
+  const maps = {} as any;
+
   const reader = new FileReader();
   reader.onload = (event) => {
-    const buffer: ArrayBuffer = (event.target as any).result;
+    const buffer = (event.target as any).result as ArrayBuffer;
+    maps[textureName] = buffer;
 
-    const willSetupGridSize = (data.spriteUpdater.spriteAsset.pub.maps["map"] as any as ArrayBuffer).byteLength === 0;
-    data.projectClient.editAsset(SupClient.query.asset, "setMaps", { map: buffer }, () => {
+    data.projectClient.editAsset(SupClient.query.asset, "setMaps", maps, () => {
       if (!willSetupGridSize) return;
 
       const image = new Image();
@@ -487,11 +490,15 @@ function onNewMapClick() {
   });
 }
 
-function onMapFileSelectChange(event: any) {
+function onUploadMapClick(event: any) {
+  if (ui.texturesTreeView.selectedNodes.length !== 1) return;
+
   const reader = new FileReader;
+  const textureName = ui.texturesTreeView.selectedNodes[0].dataset["name"];
   const maps: any = {};
+
   reader.onload = (event) => {
-    maps[ui.selectedTextureName] = reader.result;
+    maps[textureName] = (event.target as any).result as ArrayBuffer;
     data.projectClient.editAsset(SupClient.query.asset, "setMaps", maps);
   };
 
@@ -504,18 +511,17 @@ function onMapFileSelectChange(event: any) {
 function onRenameMapClick() {
   if (ui.texturesTreeView.selectedNodes.length !== 1) return;
 
-  const selectedNode = ui.texturesTreeView.selectedNodes[0];
-  const textureName = selectedNode.dataset["name"];
+  const oldName = ui.texturesTreeView.selectedNodes[0].dataset["name"];
 
   const options = {
-    initialValue: textureName,
+    initialValue: oldName,
     validationLabel: SupClient.i18n.t("common:actions.rename")
   };
 
   new SupClient.Dialogs.PromptDialog(SupClient.i18n.t("spriteEditor:sidebar.advancedTextures.renameMapPrompt"), options, (newName) => {
     if (newName == null) return;
 
-    data.projectClient.editAsset(SupClient.query.asset, "renameMap", textureName, newName);
+    data.projectClient.editAsset(SupClient.query.asset, "renameMap", oldName, newName);
   });
 }
 
@@ -532,14 +538,13 @@ function onDeleteMapClick() {
 }
 
 export function updateSelectedMap() {
-  const selectedMapElt = ui.texturesTreeView.selectedNodes[0];
-  if (selectedMapElt != null) ui.selectedTextureName = selectedMapElt.dataset["name"];
-  else ui.selectedTextureName = null;
-
   const buttons = document.querySelectorAll(".textures-buttons button");
   for (let i = 0; i < buttons.length; i++) {
-    const button = <HTMLButtonElement>buttons[i];
-    button.disabled = ui.selectedTextureName == null && button.className !== "new-map";
+    const button = buttons[i] as HTMLButtonElement;
+    if (button.className === "new-map") continue;
+
+    if (button.className === "delete-map") button.disabled = ui.texturesTreeView.selectedNodes.length === 0;
+    else button.disabled = ui.texturesTreeView.selectedNodes.length !== 1;
   }
 }
 
