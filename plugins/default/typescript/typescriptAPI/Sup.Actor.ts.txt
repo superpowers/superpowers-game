@@ -31,7 +31,7 @@ namespace Sup {
     player.gameInstance.tree.walkTopDown((actor) => { actor.__outer.__inner = null; actor.__outer = null; return true; });
   }
 
-  export function walkActorTree(startActor, callback) {
+  export function traverseActors(startActor, callback) {
     if (callback == null) {
       callback = startActor;
       player.gameInstance.tree.walkTopDown((actor) => {

@@ -1,14 +1,16 @@
 declare namespace Sup {
   function getActor(name: string): Actor;
   function getRootActors(): Actor[];
-  // This is relatively expensive. If it's possible, use walkActorTree() instead.
+
+  // This is relatively expensive. If it's possible, use traverseActors() instead.
   function getAllActors(): Actor[];
+
   function destroyAllActors(): void;
 
   // The callback should return whether to keep traversing.
   // Return false to stop the loop to have better performance.
-  function walkActorTree(callback: (actor: Actor) => boolean): void;
-  function walkActorTree(startActor: Actor, callback: (actor: Actor) => boolean): void;
+  function traverseActors(callback: (actor: Actor) => boolean): void;
+  function traverseActors(startActor: Actor, callback: (actor: Actor) => boolean): void;
 
   class Actor {
     // INSERT_COMPONENT_ACCESSORS
