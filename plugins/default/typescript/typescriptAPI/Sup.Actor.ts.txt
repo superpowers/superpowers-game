@@ -13,13 +13,16 @@ namespace Sup {
 
   export function getRootActors() {
     let list = [];
-    for (const rootActor of player.gameInstance.tree.root) list.push(rootActor.__outer);
+    for (const rootActor of player.gameInstance.tree.root) if (!rootActor.pendingForDestruction) list.push(rootActor.__outer);
     return list;
   }
 
   export function getAllActors() {
     let list = [];
-    player.gameInstance.tree.walkTopDown((actor) => list.push(actor.__outer));
+    player.gameInstance.tree.walkTopDown((actor) => {
+      if (!actor.pendingForDestruction) list.push(actor.__outer);
+      return true;
+    });
     return list;
   }
 
@@ -31,9 +34,17 @@ namespace Sup {
   export function walkActorTree(startActor, callback) {
     if (callback == null) {
       callback = startActor;
-      player.gameInstance.tree.walkTopDown((actor) => callback(actor.__outer));
+      player.gameInstance.tree.walkTopDown((actor) => {
+        if (actor.pendingForDestruction) return true;
+        else return callback(actor.__outer)
+      });
     } else {
-      player.gameInstance.tree.walkDown(startActor.__inner, (actor) => callback(actor.__outer));
+      if (startActor.__inner.pendingForDestruction) return;
+
+      player.gameInstance.tree.walkDown(startActor.__inner, (actor) => {
+        if (actor.pendingForDestruction) return true;
+        else return callback(actor.__outer)
+      });
     }
   }
 
