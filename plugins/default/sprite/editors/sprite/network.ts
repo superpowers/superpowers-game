@@ -135,7 +135,10 @@ function updateSpritesheet() {
   asset.grid.height = texture.size.height;
   asset.pixelsPerUnit = pub.pixelsPerUnit;
   spritesheetArea.spriteRenderer.setSprite(asset);
-  spritesheetArea.gridRenderer.resize(texture.size.width / pub.grid.width, texture.size.height / pub.grid.height);
+
+  const width = Math.floor(texture.size.width / pub.grid.width);
+  const height = Math.floor(texture.size.height / pub.grid.height);
+  spritesheetArea.gridRenderer.resize(width, height);
 
   updateSelectedAnimation();
   ui.imageSize.value = `${texture.size.width} × ${texture.size.height}`;

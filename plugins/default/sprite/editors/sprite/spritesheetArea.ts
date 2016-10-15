@@ -61,9 +61,11 @@ export function updateSelection() {
   const animation = data.spriteUpdater.spriteAsset.animations.byId[ui.selectedAnimationId];
   const width = pub.grid.width / pub.pixelsPerUnit;
   const height = pub.grid.height / pub.pixelsPerUnit;
+
   let framesPerDirection: number;
-  if (pub.frameOrder === "rows") framesPerDirection = texture.size.width / pub.grid.width;
-  else framesPerDirection = texture.size.height / pub.grid.height;
+  if (pub.frameOrder === "rows") framesPerDirection = Math.floor(texture.size.width / pub.grid.width);
+  else framesPerDirection = Math.floor(texture.size.height / pub.grid.height);
+
   spritesheetArea.selectionRenderer.setup(
     width, height,
     animation.startFrameIndex, animation.endFrameIndex,
