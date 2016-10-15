@@ -1,0 +1,13 @@
+{
+  "game": {
+    "label": "Predefinito",
+    "description": "Esporta come HTML5",
+
+    "outputFolder": "Cartella di output",
+    "errors": {
+      "selectDestionationFolder": "Seleziona una cartella di destinazione.",
+      "emptyDirectoryCheckFail": "Impossibile controllare se la cartella selezionata è vuota.",
+      "destinationFolderEmpty": "La cartella selezionata deve essere vuota."
+    }
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "Scene": {
+    "label": "Scena",
+    "defaultCameraMode": "Modalità camera predefinita",
+    "defaultCameraVerticalAxis": "Asse verticale della camera predefinita"
+  }
+}

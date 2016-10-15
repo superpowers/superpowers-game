@@ -1,0 +1,30 @@
+{
+  "tileMap": "Tile Map",
+  "tileSet": "Tile Set",
+  "pixelsPerUnit": "Pixels / Unità",
+  "depthOffset": "Offset di profondità",
+
+  "size": "Dimensione",
+  "resize": "Ridimensiona",
+  "newWidthPrompt": "Inserisci una nuova larghezza per la mappa.",
+  "newHeightPrompt": "Inserisci una nuova altezza per la mappa.",
+  "move": "Sposta",
+  "applyOffset": "Applica offset",
+  "horizontalOffsetPrompt": "Inserisci l'offset orizzontale.",
+  "verticalOffsetPrompt": "Inserisci l'offset verticale.",
+
+  "tools": "Strumenti",
+  "grid": "Griglia",
+  "highlight": "Highlight",
+
+  "brush": "Pennello",
+  "fill": "Riempimento",
+  "selection": "Selezione",
+  "eraser": "Gomma",
+
+  "layers": "Livelli",
+  "newLayerPrompt": "Inserisci un nome per il livello.",
+  "newLayerInitialValue": "Livello",
+  "renameLayerPrompt": "Inserisci un nuovo nome per il livello.",
+  "deleteLayerConfirm": "Sei sicuro di voler eliminare il livello selezionato?"
+}

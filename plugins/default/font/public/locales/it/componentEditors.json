@@ -1,0 +1,25 @@
+{
+  "TextRenderer": {
+    "label": "Text Renderer",
+    "font": "Font",
+    "text": "Testo",
+    "align": {
+      "title": "Allineamento",
+      "left": "Sinistra",
+      "center": "Centro",
+      "right": "Destra"
+    },
+    "verticalAlign": {
+      "title": "Allineamento Verticale",
+      "top": "Alto",
+      "center": "Centro",
+      "bottom": "Basso"
+    },
+    "size": "Dimensione",
+    "color": "Colore",
+    "opacity": "Opacità",
+    "opaque": "Opaca",
+    "transparent": "Transparente"
+
+  }
+}

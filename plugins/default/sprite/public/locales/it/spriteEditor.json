@@ -1,0 +1,77 @@
+{
+  "preview": {
+    "playback": "Riproduzione",
+    "loop": "Ciclo"
+  },
+  "sidebar": {
+    "settings": {
+      "sprite": {
+        "title": "Sprite",
+        "texture": {
+          "title": "Texture",
+          "size": "Dimensione Texture (px)",
+          "download": {
+            "prompt": "Inserisci un nome per l'immagine.",
+            "defaultName": "Immagine"
+          }
+        },
+        "grid": {
+          "size": "Dimensioni griglia",
+          "setup": "Impostazione",
+          "widthPrompt": "Quanti frame per riga?",
+          "setWidth": "Imposta larghezza griglia",
+          "heightPrompt": "Quanti frame per colonna?",
+          "setHeight": "Imposta altezza griglia"
+        },
+        "origin": "Origine (%)"
+      },
+      "rendering": {
+        "title": "Rendering",
+        "pixelsPerUnit": "Pixels / unità",
+        "filtering": {
+          "title": "Filtro",
+          "pixelated": "Pixelato",
+          "smooth": "Morbido"
+        },
+        "wrapping": {
+          "title": "Wrapping",
+          "clampToEdge": "Bordi fissi",
+          "repeat": "Ripeti",
+          "mirroredRepeat": "Ripeti a specchio"
+        },
+        "opacity": {
+          "title": "Opacità",
+          "opaque": "Opaca",
+          "transparent": "Transparente"
+        },
+        "alphaTest": "Alpha test"
+      },
+      "animation": {
+         "title": "Animazione",
+         "framesPerSecond": "Frames / secondo",
+         "frameOrder": {
+           "title": "Ordine frame",
+           "rows": "Righe",
+           "columns": "Colonne"
+         }
+      }
+    },
+    "animations": {
+      "title": "Animazioni",
+      "newAnimationPrompt": "Inserisci un nome per l'animazione.",
+      "renameAnimationPrompt": "Inserisci un nuovo nome per l'animazione.",
+      "deleteAnimationPrompt": "Sei sicuro di voler eliminare l'animazione selezionata?"
+    },
+    "advancedTextures": {
+      "title": "Texture Avanzate",
+      "map": "Mappa",
+      "lightMap": "Light map",
+      "specularMap": "Specular map",
+      "alphaMap": "Alpha map",
+      "normalMap": "Normal map (Phong)",
+      "newMapPrompt": "Inserisci un nuovo nome per la mappa.",
+      "renameMapPrompt": "Inserisci un nuovo nome per la texture.",
+      "deleteMapPrompt": "Sei sicuro di voler eliminare le texture selezionate?"
+    }
+  }
+}

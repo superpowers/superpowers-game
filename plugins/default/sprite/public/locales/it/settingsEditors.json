@@ -1,0 +1,11 @@
+{
+  "Sprite": {
+    "label": "Sprite",
+    "filtering": "Filtro",
+    "pixelated": "Pixelato",
+    "smooth": "Morbido",
+    "framesPerSecond": "Frames per secondo",
+    "pixelsPerUnit": "Pixels per unità",
+    "alphaTesting": "Alpha testing"
+  }
+}

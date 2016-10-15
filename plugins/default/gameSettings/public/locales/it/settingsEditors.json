@@ -1,0 +1,12 @@
+{
+  "Game": {
+    "label": "Game",
+    "startupScene": "Scena Predefinita",
+    "framesPerSecond": "Frame per secondo",
+    "screenRatio": "Proporzioni schermo",
+    "width": "Larghezza",
+    "height": "Altezza",
+    "layers": "Livelli",
+    "newLayer": "Nuovo livello..."
+  }
+}

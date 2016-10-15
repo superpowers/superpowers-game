@@ -1,0 +1,12 @@
+{
+  "game": {
+    "title": "Esportazione HTML5",
+    "progress": "Esporto in ${path}... (${index}/${total})",
+    "doneWithErrors": "Sono stati trovati ${errors} errori mentre venivano esportati ${total} elementi in ${path}.",
+    "done": "Esportati ${total} elementi in ${path}.",
+
+    "errors": {
+      "exportFailed": "Impossibile esportare ${path}."
+    }
+  }
+}

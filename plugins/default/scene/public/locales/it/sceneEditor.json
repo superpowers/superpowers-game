@@ -1,0 +1,79 @@
+{
+  "controls": {
+    "camera": {
+      "title": "Camera",
+      "mode": "Modalità",
+      "verticalAxis": "Up Axis",
+      "speed": "Velocità"
+    },
+    "transform": {
+      "title": "Transform",
+      "move": "Move",
+      "rotate": "Rotate",
+      "scale": "Scale",
+      "local": "Local"
+    },
+    "grid": {
+      "title": "Griglia",
+      "size": "Dimensione",
+      "visible": "Visibile"
+    },
+    "light": {
+      "title": "Luce"
+    }
+  },
+  "treeView": {
+    "newActor": {
+      "title": "Nuovo actor",
+      "prompt": "Inserisci un nome per l'actor.",
+      "initialValue": "Actor"
+    },
+    "newPrefab": {
+      "title": "Nuovo prefab",
+      "prompt": "Inserisci un nome per il prefab",
+      "initialValue": "Prefab"
+    },
+    "renamePrompt": "Inserisci un nuovo nome per l'actor.",
+    "duplicatePrompt": "Inserisci un nome per il nuovo actor.",
+    "deleteConfirm": "Sei sicuro di voler eliminare gli actor selezionati?",
+    "visible": {
+      "show": "Mostra",
+      "hide": "NAscondi"
+    }
+  },
+  "inspector": {
+    "position": "Posizione",
+    "orientation": "Orientamento",
+    "scale": "Scala",
+    "visible": "Visibile",
+    "layer": "Livello",
+    "prefab": "Prefab",
+    "newComponent":{
+      "title": "Nuovo Component",
+      "select": "Seleziona il tipo di component da creare.",
+      "validate": "Crea"
+    },
+    "deleteComponent": {
+      "confirm": "Sei sicuro di voler eliminare questo component?",
+      "validate": "Elimina"
+    }
+  },
+  "dropActor": "Rilascia una risorsa qui per creare un actor",
+  "dropComponent": "Rilascia una risorsa qui per creare un component",
+  "failures": {
+    "newActor": "Non è stato possibile creare un nuovo actor: ${reason}",
+    "importIntoScene": "Non è stato possibile importare: ${reason}"
+  },
+  "errors": {
+    "invalidActorId": "Id actor non valido: ${id}.",
+    "cantImportAssetTypeIntoScene": "Questo tipo di risorsa non può essere importato nella scena.",
+    "prefab": {
+      "mustHaveSingleRootActor": "Una scena deve possedere un singolo attore root per essere utilizzabile come prefab.",
+      "cantUseSelf": "Una scena non può utilizzare se stessa come prefab.",
+      "cyclicalReference": "Utilizzando questa scena come prefab creerebbe un ciclo infinito."
+    },
+    "script": {
+      "noBehaviorsFound": "Non è stato trovato nessun behavior in questo script."
+    }
+  }
+}

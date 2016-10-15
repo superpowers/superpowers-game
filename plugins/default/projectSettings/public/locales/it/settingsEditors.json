@@ -1,0 +1,9 @@
+{
+  "Project": {
+    "label": "Progetto",
+    "deleteTrashedAssetsFromDisk": "Rimuovi dal disco gli elementi eliminati",
+    "noFoldersRemoved": "Non è stata nessuna cartella",
+    "oneFolderRemoved": "E' stata rimossa una cartella",
+    "severalFoldersRemoved": "Sono state rimosse ${folders} cartelle"
+  }
+}

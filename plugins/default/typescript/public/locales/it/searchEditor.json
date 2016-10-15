@@ -1,0 +1,13 @@
+{
+  "searchPlaceholder": "Trova nel progetto",
+  "matchCase": "Maiuscole/Minuscole",
+
+  "noResults": "Nessun risultato",
+  "resultInfo": "${results} in ${files}",
+  "fileInfo": "${results} in \"${fileName}\"",
+
+  "oneResult": "1 risultato",
+  "severalResults": "${results} risultati",
+  "oneFile": "1 file",
+  "severalFiles": "${files} files"
+}
