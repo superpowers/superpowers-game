@@ -66,8 +66,8 @@ export default class ModelRendererConfig extends SupCore.Data.Base.ComponentConf
       if (pub.materialType == null) pub.materialType = "basic";
 
       // NOTE: Legacy stuff from Superpowers 0.4
-      if (typeof pub.modelAssetId === "number") pub.modelAssetId = pub.modelAssetId.toString();
-      if (typeof pub.animationId === "number") pub.animationId = pub.animationId.toString();
+      if (typeof pub.modelAssetId === "number") pub.modelAssetId = (pub.modelAssetId as number).toString();
+      if (typeof pub.animationId === "number") pub.animationId = (pub.animationId as number).toString();
     }
 
     return true;

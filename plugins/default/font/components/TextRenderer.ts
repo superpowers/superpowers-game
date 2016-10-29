@@ -179,17 +179,18 @@ export default class TextRenderer extends SupEngine.ActorComponent {
         const bottom = 1 - ((tileY + 1) * this.font.gridHeight - 0.2) / this.font.texture.image.height;
         const top    = 1 - (tileY * this.font.gridHeight + 0.2) / this.font.texture.image.height;
 
-        uvs.array[x * 8 + 0] = left;
-        uvs.array[x * 8 + 1] = bottom;
+        const uvsArray = uvs.array as number[];
+        uvsArray[x * 8 + 0] = left;
+        uvsArray[x * 8 + 1] = bottom;
 
-        uvs.array[x * 8 + 2] = right;
-        uvs.array[x * 8 + 3] = bottom;
+        uvsArray[x * 8 + 2] = right;
+        uvsArray[x * 8 + 3] = bottom;
 
-        uvs.array[x * 8 + 4] = right;
-        uvs.array[x * 8 + 5] = top;
+        uvsArray[x * 8 + 4] = right;
+        uvsArray[x * 8 + 5] = top;
 
-        uvs.array[x * 8 + 6] = left;
-        uvs.array[x * 8 + 7] = top;
+        uvsArray[x * 8 + 6] = left;
+        uvsArray[x * 8 + 7] = top;
       }
     }
     this.setOpacity(this.opacity);

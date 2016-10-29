@@ -245,9 +245,10 @@ export default class TileMapRenderer extends SupEngine.ActorComponent {
     const layerMesh = this.layerMeshes[layerIndex];
     const uvs = (layerMesh.geometry as THREE.BufferGeometry).getAttribute("uv") as THREE.BufferAttribute;
     uvs.needsUpdate = true;
+    const uvsArray = uvs.array as number[];
 
     if (tileX === -1 || tileY === -1 || tileX >= this.tilesPerRow || tileY >= this.tilesPerColumn) {
-      for (let i = 0; i < 8; i++) uvs.array[quadIndex * 8 + i] = -1;
+      for (let i = 0; i < 8; i++) uvsArray[quadIndex * 8 + i] = -1;
       return;
     }
 
@@ -262,59 +263,59 @@ export default class TileMapRenderer extends SupEngine.ActorComponent {
 
     switch (angle) {
       case 0:
-        uvs.array[quadIndex * 8 + 0] = left;
-        uvs.array[quadIndex * 8 + 1] = bottom;
+        uvsArray[quadIndex * 8 + 0] = left;
+        uvsArray[quadIndex * 8 + 1] = bottom;
 
-        uvs.array[quadIndex * 8 + 2] = right;
-        uvs.array[quadIndex * 8 + 3] = bottom;
+        uvsArray[quadIndex * 8 + 2] = right;
+        uvsArray[quadIndex * 8 + 3] = bottom;
 
-        uvs.array[quadIndex * 8 + 4] = right;
-        uvs.array[quadIndex * 8 + 5] = top;
+        uvsArray[quadIndex * 8 + 4] = right;
+        uvsArray[quadIndex * 8 + 5] = top;
 
-        uvs.array[quadIndex * 8 + 6] = left;
-        uvs.array[quadIndex * 8 + 7] = top;
+        uvsArray[quadIndex * 8 + 6] = left;
+        uvsArray[quadIndex * 8 + 7] = top;
         break;
 
       case 90:
-        uvs.array[quadIndex * 8 + 0] = left;
-        uvs.array[quadIndex * 8 + 1] = top;
+        uvsArray[quadIndex * 8 + 0] = left;
+        uvsArray[quadIndex * 8 + 1] = top;
 
-        uvs.array[quadIndex * 8 + 2] = left;
-        uvs.array[quadIndex * 8 + 3] = bottom;
+        uvsArray[quadIndex * 8 + 2] = left;
+        uvsArray[quadIndex * 8 + 3] = bottom;
 
-        uvs.array[quadIndex * 8 + 4] = right;
-        uvs.array[quadIndex * 8 + 5] = bottom;
+        uvsArray[quadIndex * 8 + 4] = right;
+        uvsArray[quadIndex * 8 + 5] = bottom;
 
-        uvs.array[quadIndex * 8 + 6] = right;
-        uvs.array[quadIndex * 8 + 7] = top;
+        uvsArray[quadIndex * 8 + 6] = right;
+        uvsArray[quadIndex * 8 + 7] = top;
         break;
 
       case 180:
-        uvs.array[quadIndex * 8 + 0] = right;
-        uvs.array[quadIndex * 8 + 1] = top;
+        uvsArray[quadIndex * 8 + 0] = right;
+        uvsArray[quadIndex * 8 + 1] = top;
 
-        uvs.array[quadIndex * 8 + 2] = left;
-        uvs.array[quadIndex * 8 + 3] = top;
+        uvsArray[quadIndex * 8 + 2] = left;
+        uvsArray[quadIndex * 8 + 3] = top;
 
-        uvs.array[quadIndex * 8 + 4] = left;
-        uvs.array[quadIndex * 8 + 5] = bottom;
+        uvsArray[quadIndex * 8 + 4] = left;
+        uvsArray[quadIndex * 8 + 5] = bottom;
 
-        uvs.array[quadIndex * 8 + 6] = right;
-        uvs.array[quadIndex * 8 + 7] = bottom;
+        uvsArray[quadIndex * 8 + 6] = right;
+        uvsArray[quadIndex * 8 + 7] = bottom;
         break;
 
       case 270:
-        uvs.array[quadIndex * 8 + 0] = right;
-        uvs.array[quadIndex * 8 + 1] = bottom;
+        uvsArray[quadIndex * 8 + 0] = right;
+        uvsArray[quadIndex * 8 + 1] = bottom;
 
-        uvs.array[quadIndex * 8 + 2] = right;
-        uvs.array[quadIndex * 8 + 3] = top;
+        uvsArray[quadIndex * 8 + 2] = right;
+        uvsArray[quadIndex * 8 + 3] = top;
 
-        uvs.array[quadIndex * 8 + 4] = left;
-        uvs.array[quadIndex * 8 + 5] = top;
+        uvsArray[quadIndex * 8 + 4] = left;
+        uvsArray[quadIndex * 8 + 5] = top;
 
-        uvs.array[quadIndex * 8 + 6] = left;
-        uvs.array[quadIndex * 8 + 7] = bottom;
+        uvsArray[quadIndex * 8 + 6] = left;
+        uvsArray[quadIndex * 8 + 7] = bottom;
         break;
     }
   }

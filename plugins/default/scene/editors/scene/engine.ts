@@ -209,7 +209,7 @@ function mouseUp() {
 }
 
 export function focusActor(selectedNodeId: string) {
-  const position = new THREE.Box3().setFromObject(data.sceneUpdater.bySceneNodeId[selectedNodeId].actor.threeObject).center();
+  const position = new THREE.Box3().setFromObject(data.sceneUpdater.bySceneNodeId[selectedNodeId].actor.threeObject).getCenter();
   if (ui.cameraMode === "2D") position.z = engine.cameraActor.getLocalPosition(new THREE.Vector3()).z;
   engine.cameraActor.setLocalPosition(position);
   if (ui.cameraMode === "3D") engine.cameraActor.moveOriented(new THREE.Vector3(0, 0, 20));

@@ -70,8 +70,8 @@ export default class SpriteRendererConfig extends SupCore.Data.Base.ComponentCon
       if (pub.materialType == null) pub.materialType = "basic";
 
       // NOTE: Legacy stuff from Superpowers 0.4
-      if (typeof pub.spriteAssetId === "number") pub.spriteAssetId = pub.spriteAssetId.toString();
-      if (typeof pub.animationId === "number") pub.animationId = pub.animationId.toString();
+      if (typeof pub.spriteAssetId === "number") pub.spriteAssetId = (pub.spriteAssetId as number).toString();
+      if (typeof pub.animationId === "number") pub.animationId = (pub.animationId as number).toString();
     }
 
     return true;

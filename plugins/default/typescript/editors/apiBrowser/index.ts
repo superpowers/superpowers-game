@@ -55,7 +55,7 @@ function onAPILoaded() {
   const plugins = SupCore.system.getPlugins<SupCore.TypeScriptAPIPlugin>("typescriptAPI");
   for (const pluginName in plugins) {
     const plugin = plugins[pluginName];
-    name = pluginName;
+    let name = pluginName;
     if (name === "lib") name = "Built-ins";
 
     if (plugin.exposeActorComponent != null) {

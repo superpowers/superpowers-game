@@ -43,8 +43,8 @@ export default class TileMapRendererConfig extends SupCore.Data.Base.ComponentCo
       pub.formatVersion = 1;
 
       // NOTE: Legacy stuff from Superpowers 0.4
-      if (typeof pub.tileMapAssetId === "number") pub.tileMapAssetId = pub.tileMapAssetId.toString();
-      if (typeof pub.tileSetAssetId === "number") pub.tileSetAssetId = pub.tileSetAssetId.toString();
+      if (typeof pub.tileMapAssetId === "number") pub.tileMapAssetId = (pub.tileMapAssetId as number).toString();
+      if (typeof pub.tileSetAssetId === "number") pub.tileSetAssetId = (pub.tileSetAssetId as number).toString();
 
       // NOTE: Legacy stuff from Superpowers 0.11
       if (pub.castShadow == null) pub.castShadow = false;

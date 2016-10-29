@@ -93,7 +93,7 @@ export default class TileMapAsset extends SupCore.Data.Base.Asset {
 
     if (pub.formatVersion == null) {
       // NOTE: Legacy stuff from Superpowers 0.4
-      if (typeof pub.tileSetId === "number") pub.tileSetId = pub.tileSetId.toString();
+      if (typeof pub.tileSetId === "number") pub.tileSetId = (pub.tileSetId as number).toString();
 
       // NOTE: Migration from Superpowers 0.13.1
       for (const layer of pub.layers) {

@@ -210,10 +210,11 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
     const uvs = <THREE.BufferAttribute>this.geometry.getAttribute("uv");
     uvs.needsUpdate = true;
 
-    uvs.array[0] = left ; uvs.array[1] = top;
-    uvs.array[2] = right; uvs.array[3] = top;
-    uvs.array[4] = left ; uvs.array[5] = bottom;
-    uvs.array[6] = right; uvs.array[7] = bottom;
+    const uvsArray = uvs.array as number[];
+    uvsArray[0] = left ; uvsArray[1] = top;
+    uvsArray[2] = right; uvsArray[3] = top;
+    uvsArray[4] = left ; uvsArray[5] = bottom;
+    uvsArray[6] = right; uvsArray[7] = bottom;
   }
 
   setAnimation(newAnimationName: string, newAnimationLooping = true) {

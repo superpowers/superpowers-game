@@ -21,7 +21,7 @@ const ui: {
   deleteNodeButton: HTMLButtonElement;
 
   inspectorElt: HTMLDivElement;
-  inspectorTbodyElt: HTMLTableElement;
+  inspectorTbodyElt: HTMLTableSectionElement;
 
   transform: {
     positionElts: HTMLInputElement[];
@@ -165,7 +165,7 @@ ui.deleteNodeButton.addEventListener("click", onDeleteNodeClick);
 
 // Inspector
 ui.inspectorElt = document.querySelector(".inspector") as HTMLDivElement;
-ui.inspectorTbodyElt = ui.inspectorElt.querySelector("tbody") as HTMLTableElement;
+ui.inspectorTbodyElt = ui.inspectorElt.querySelector("tbody") as HTMLTableSectionElement;
 
 ui.transform = {
   positionElts: ui.inspectorElt.querySelectorAll(".transform .position input") as any,

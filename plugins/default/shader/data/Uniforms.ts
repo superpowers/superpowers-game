@@ -20,15 +20,15 @@ export default class Uniforms extends SupCore.Data.Base.ListById {
   }
 
   setProperty(id: string, key: string, value: any, callback: (err: string, value: any) => any) {
+    function checkArray(value: any, size: number) {
+      if (!Array.isArray(value)) return false;
+      if (value.length !== size) return false;
+      for (const item of value) if (typeof item !== "number") return false;
+
+      return true;
+    }
+
     if (key === "value") {
-      function checkArray(value: any, size: number) {
-        if (!Array.isArray(value)) return false;
-        if (value.length !== size) return false;
-        for (const item of value) if (typeof item !== "number") return false;
-
-        return true;
-      }
-
       const item = this.byId[id];
       switch(item.type) {
         case "f":
