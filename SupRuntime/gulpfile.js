@@ -12,7 +12,7 @@ gulp.task("stylus", function() { return gulp.src("./src/index.styl").pipe(stylus
 
 // TypeScript
 const ts = require("gulp-typescript");
-const tsProject = ts.createProject("src/tsconfig.json");
+const tsProject = ts.createProject("tsconfig.json");
 const tslint = require("gulp-tslint");
 
 gulp.task("typescript", function() {
