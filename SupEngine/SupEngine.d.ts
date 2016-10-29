@@ -1,6 +1,3 @@
-/// <reference path="../../../typings/tsd.d.ts" />
-/// <reference path="./typings/tsd.d.ts" />
-
 declare const __tmpTHREE: typeof THREE;
 
 declare namespace SupEngine {
@@ -118,6 +115,7 @@ declare namespace SupEngine {
     actor: Actor;
     typeName: string;
 
+    /* tslint:disable-next-line */
     static Updater: new(projectClient: any, component: any, config: any) => ActorComponentUpdater;
 
     constructor(actor: Actor, typeName: string);
@@ -253,5 +251,8 @@ declare namespace SupEngine {
     listeners(event: string): Function[];
     emit(event: string, ...args: any[]): boolean;
     listenerCount(type: string): number;
+    prependListener(event: string | symbol, listener: Function): this;
+    prependOnceListener(event: string | symbol, listener: Function): this;
+    eventNames(): (string | symbol)[];
   }
 }
