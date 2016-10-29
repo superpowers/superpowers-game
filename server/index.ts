@@ -1,3 +1,5 @@
+/// <reference path="../../../SupCore/SupCore.d.ts" />
+
 import * as fs from "fs";
 import * as async from "async";
 import * as mkdirp from "mkdirp";
