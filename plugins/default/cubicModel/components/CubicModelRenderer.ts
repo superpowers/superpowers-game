@@ -1,6 +1,6 @@
 const THREE = SupEngine.THREE;
 
-import { CubicModelAssetPub } from "../data/cubicModelAsset";
+import { CubicModelAssetPub } from "../data/CubicModelAsset";
 import { Node } from "../data/CubicModelNodes";
 import CubicModelRendererUpdater from "./CubicModelRendererUpdater";
 
