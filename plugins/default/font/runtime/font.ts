@@ -38,9 +38,9 @@ export function loadAsset(player: SupRuntime.Player, entry: any, callback: (err:
 }
 
 function fixedEncodeURIComponent(str: string) {
-  return encodeURIComponent(str).replace(/[!'()*]/g, function(c) {
-    return `%${c.charCodeAt(0).toString(16)}`;
-  });
+  return str.split("/").map((part) =>
+    encodeURIComponent(part).replace(/[!'()*]/g, (c) => `%${c.charCodeAt(0).toString(16)}`)
+  ).join("/");
 }
 
 export function createOuterAsset(player: SupRuntime.Player, asset: any) { return new (<any>window).Sup.Font(asset); }
