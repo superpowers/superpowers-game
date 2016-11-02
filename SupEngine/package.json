@@ -9,7 +9,7 @@
     "url": "https://github.com/superpowers/superpowers-game.git"
   },
   "dependencies": {
-    "three": "0.80.1"
+    "three": "0.81.2"
   },
   "devDependencies": {
     "@types/three": "0.0.24"
