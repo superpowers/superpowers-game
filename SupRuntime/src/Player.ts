@@ -1,5 +1,5 @@
 import * as async from "async";
-import supFetch from "../../../../SupClient/src/fetch";
+import supFetch from "../../../../SupClient/fetch";
 
 interface Project {
   name: string;
