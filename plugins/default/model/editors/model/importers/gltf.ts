@@ -245,7 +245,7 @@ export function importModel(files: File[], callback: ImportCallback) {
         buffers[name] = buffer;
         cb(null);
       });
-    }, (err) => {
+    }, (err: Error) => {
       if (err != null) { callback([ createLogError(err.message) ]); return; }
 
       const primitive = meshInfo.primitives[0];

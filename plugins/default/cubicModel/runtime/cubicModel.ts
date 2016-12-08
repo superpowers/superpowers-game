@@ -4,9 +4,9 @@ export function loadAsset(player: SupRuntime.Player, entry: any, callback: (err:
   player.getAssetData(`assets/${entry.storagePath}/cubicModel.json`, "json", (err, data) => {
     data.textures = {};
 
-    const mapsList = data.maps;
+    const mapsList = data.maps as string [];
       data.textures = {};
-      async.each<string>(mapsList, (key, cb) => {
+      async.each(mapsList, (key, cb) => {
         const canvas = document.createElement("canvas");
         canvas.width = data.textureWidth;
         canvas.height = data.textureHeight;
