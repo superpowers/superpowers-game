@@ -55,6 +55,7 @@ namespace ArcadePhysics2D {
       const y = body1.position.y - body2.position.y - body1.height / 2 + epsilon;
       const testedHeight = body1.height - 3 * epsilon;
       const totalPoints = Math.ceil(testedHeight / body2.mapToSceneFactor.y);
+
       for (let point = 0; point <= totalPoints; point++) {
         for (const layer of body2.layersIndex) {
           const tile = body2.tileMapAsset.getTileAt(layer, x, Math.floor((y + point * testedHeight / totalPoints) / body2.mapToSceneFactor.y));
@@ -62,16 +63,21 @@ namespace ArcadePhysics2D {
           let collide = false;
           if (body2.tileSetPropertyName != null) collide = body2.tileSetAsset.getTileProperties(tile)[body2.tileSetPropertyName] != null;
           else if (tile !== -1) collide = true;
+
           if (!collide) continue;
 
-          body1.velocity.x = -body1.velocity.x * body1.bounceX;
-          if (body1.deltaX() < 0) {
-            if (options.moveBody) body1.position.x = (x + 1) * body2.mapToSceneFactor.x + body2.position.x + body1.width / 2;
-            body1.touches.left = true;
-          } else {
-            if (options.moveBody) body1.position.x = (x) * body2.mapToSceneFactor.x + body2.position.x - body1.width / 2;
-            body1.touches.right = true;
+          if (options.moveBody) {
+            body1.velocity.x = -body1.velocity.x * body1.bounceX;
+
+            if (body1.deltaX() < 0) {
+              body1.position.x = (x + 1) * body2.mapToSceneFactor.x + body2.position.x + body1.width / 2;
+              body1.touches.left = true;
+            } else {
+              body1.position.x = (x) * body2.mapToSceneFactor.x + body2.position.x - body1.width / 2;
+              body1.touches.right = true;
+            }
           }
+
           return true;
         }
       }
@@ -85,6 +91,7 @@ namespace ArcadePhysics2D {
         Math.floor((body1.position.y - body2.position.y + body1.height / 2 - epsilon) / body2.mapToSceneFactor.y);
       const testedWidth = body1.width - 3 * epsilon;
       const totalPoints = Math.ceil(testedWidth / body2.mapToSceneFactor.x);
+
       for (let point = 0; point <= totalPoints; point++) {
         for (const layer of body2.layersIndex) {
           const tile = body2.tileMapAsset.getTileAt(layer, Math.floor((x + point * testedWidth / totalPoints) / body2.mapToSceneFactor.x), y);
@@ -92,16 +99,21 @@ namespace ArcadePhysics2D {
           let collide = false;
           if (body2.tileSetPropertyName != null) collide = body2.tileSetAsset.getTileProperties(tile)[body2.tileSetPropertyName] != null;
           else if (tile !== -1) collide = true;
+
           if (!collide) continue;
 
-          body1.velocity.y = -body1.velocity.y * body1.bounceY;
-          if (body1.deltaY() < 0) {
-            if (options.moveBody) body1.position.y = (y + 1) * body2.mapToSceneFactor.y + body2.position.y + body1.height / 2;
-            body1.touches.bottom = true;
-          } else {
-            if (options.moveBody) body1.position.y = (y) * body2.mapToSceneFactor.y + body2.position.y - body1.height / 2;
-            body1.touches.top = true;
+          if (options.moveBody) {
+            body1.velocity.y = -body1.velocity.y * body1.bounceY;
+
+            if (body1.deltaY() < 0) {
+              body1.position.y = (y + 1) * body2.mapToSceneFactor.y + body2.position.y + body1.height / 2;
+              body1.touches.bottom = true;
+            } else {
+              body1.position.y = (y) * body2.mapToSceneFactor.y + body2.position.y - body1.height / 2;
+              body1.touches.top = true;
+            }
           }
+
           return true;
         }
       }
