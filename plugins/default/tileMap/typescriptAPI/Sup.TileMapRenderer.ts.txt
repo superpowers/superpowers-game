@@ -28,7 +28,7 @@ namespace Sup {
       return this;
     }
 
-    getLayerOpacity(layer) { return this.__inner.layerMeshes[layer].material.opacity; }
-    setLayerOpacity(layer, opacity) { this.__inner.layerMeshes[layer].material.opacity = opacity; return this; }
+    getLayerOpacity(layer) { return this.__inner.layerMeshes[layer].material.uniforms["opacity"].value; }
+    setLayerOpacity(layer, opacity) { this.__inner.layerMeshes[layer].material.uniforms["opacity"].value = opacity; return this; }
   }
 }

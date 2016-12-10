@@ -256,11 +256,8 @@ function onChangeHighlight() {
   for (const id in data.tileMapUpdater.tileMapRenderer.layerMeshesById) {
     const layerMesh = data.tileMapUpdater.tileMapRenderer.layerMeshesById[id];
 
-    if (ui.highlightCheckbox.checked && id !== tileSetArea.selectedLayerId) {
-      layerMesh.material.opacity = parseFloat(ui.highlightSlider.value) / 100;
-    } else {
-      layerMesh.material.opacity = 1;
-    }
+    const opacity = ui.highlightCheckbox.checked && id !== tileSetArea.selectedLayerId ? parseFloat(ui.highlightSlider.value) / 100 : 1;
+    (layerMesh.material as THREE.ShaderMaterial).uniforms["opacity"].value = opacity;
   }
 }
 
