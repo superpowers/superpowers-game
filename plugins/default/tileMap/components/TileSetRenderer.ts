@@ -54,10 +54,12 @@ export default class TileSetRenderer extends SupEngine.ActorComponent {
   refreshScaleRatio() {
     const scaleX = 1 / this.asset.data.grid.width;
     const scaleY = 1 / this.asset.data.grid.height;
-    this.mesh.scale.set(scaleX, scaleY, 1);
+    const scale = Math.max(scaleX, scaleY);
+
+    this.mesh.scale.set(scale, scale, 1);
     const material = <THREE.MeshBasicMaterial>this.mesh.material;
-    this.mesh.position.setX(material.map.image.width / 2 * scaleX);
-    this.mesh.position.setY(-material.map.image.height / 2 * scaleY);
+    this.mesh.position.setX(material.map.image.width / 2 * scale);
+    this.mesh.position.setY(-material.map.image.height / 2 * scale);
     this.mesh.updateMatrixWorld(false);
 
     this.select(0, 0);
