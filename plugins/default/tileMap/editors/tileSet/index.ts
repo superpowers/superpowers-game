@@ -162,10 +162,7 @@ function selectTile(tile: { x: number; y: number; }) {
   const pub = data.tileSetUpdater.tileSetAsset.pub;
 
   const tilePerRow = (pub.texture != null) ? Math.floor(pub.texture.image.width / pub.grid.width) : 1;
-  const tilePerColumn = (pub.texture != null) ? Math.floor(pub.texture.image.height / pub.grid.height) : 1;
-
-  const tileIndex = (tile.x === tilePerRow - 1 && tile.y === tilePerColumn - 1) ? -1 : tile.x + tile.y * tilePerRow;
-  ui.selectedTileInput.value = tileIndex;
+  ui.selectedTileInput.value = tile.x + tile.y * tilePerRow;
 
   while (ui.propertiesTreeView.treeRoot.children.length !== 0) {
     ui.propertiesTreeView.remove(ui.propertiesTreeView.treeRoot.children[0]);
