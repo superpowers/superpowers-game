@@ -5,10 +5,14 @@ export function createShaderMaterial(asset: ShaderAssetPub, textures: { [name: s
 options?: { useDraft?: boolean, defaultUniforms?: { [name: string]: { type: string; value: any } } }) {
   if (asset == null) return null;
 
-  let uniforms: { [name: string]: { type: string; value: any }} = options != null && options.defaultUniforms != null ? options.defaultUniforms : {};
+  let uniforms: { [name: string]: { type: string; value: any }} =
+    options != null && options.defaultUniforms != null ? THREE.UniformsUtils.clone(options.defaultUniforms) :
+    {};
+
   if (asset.useLightUniforms) {
     uniforms = THREE.UniformsUtils.merge([uniforms, THREE.UniformsUtils.clone(THREE.UniformsLib.lights)]);
   }
+
   uniforms["time"] = { type: "f", value: 0.0 };
 
   for (const uniform of asset.uniforms) {
