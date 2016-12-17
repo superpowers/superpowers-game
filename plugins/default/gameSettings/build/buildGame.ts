@@ -58,7 +58,11 @@ function onEntriesReceived(theEntries: SupCore.Data.Entries) {
 
   // Assets
   entries.walk((entry) => {
-    if (entry.type != null) {
+    if (entry.type === "script")
+    {
+      // TODO: do something :D
+    }
+    else if (entry.type != null) {
       // Only subscribe to assets that can be exported
       if (SupCore.system.data.assetClasses[entry.type].prototype.clientExport != null) {
         const subscriber = { onAssetReceived };
@@ -144,7 +148,7 @@ function onEntriesReceived(theEntries: SupCore.Data.Entries) {
 function onManifestReceived(err: string, manifestPub: SupCore.Data.ProjectManifestPub) {
   projectClient.socket.emit("unsub", "manifest");
 
-  const exportedProject = { name: manifestPub.name, assets: entries.getForStorage() };
+  const exportedProject = { name: manifestPub.name, assets: entries.getForStorage(["script"]) };
   const json = JSON.stringify(exportedProject, null, 2);
 
   const projectPath = `${settings.outputFolder}/project.json`;

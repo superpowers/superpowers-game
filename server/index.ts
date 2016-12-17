@@ -4,18 +4,33 @@ import * as fs from "fs";
 import * as async from "async";
 import * as mkdirp from "mkdirp";
 
+import compileGame from "../plugins/default/typescript/compiler/compileGame";
+
+const scriptNames: string[] = [];
+const scripts: {[name: string]: string} = {};
+
 SupCore.system.serverBuild = (server: ProjectServer, buildPath: string, callback: (err: string) => void) => {
-  const exportedProject = { name: server.data.manifest.pub.name, assets: server.data.entries.getForStorage() };
-
-  fs.mkdirSync(`${buildPath}/assets`);
-
   const assetIdsToExport: string[] = [];
   server.data.entries.walk((entry: SupCore.Data.EntryNode, parent: SupCore.Data.EntryNode) => {
     if (entry.type != null) assetIdsToExport.push(entry.id);
   });
 
+  fs.mkdirSync(`${buildPath}/assets`);
+  scriptNames.length = 0;
+
   async.each(assetIdsToExport, (assetId, cb) => {
     server.data.assets.acquire(assetId, null, (err: Error, asset: SupCore.Data.Base.Asset) => {
+      const entry = server.data.entries.byId[assetId];
+      if (entry.type === "script") {
+        const scriptName = `${server.data.entries.getPathFromId(assetId)}.ts`;
+        scriptNames.push(scriptName);
+        scripts[scriptName] = `${asset.pub.text}\n`;
+
+        server.data.assets.release(assetId, null);
+        cb();
+        return;
+      }
+
       const folderPath = `${buildPath}/assets/${server.data.entries.getStoragePathFromId(assetId)}`;
       mkdirp(folderPath, (err) => {
         asset.save(folderPath, (err) => {
@@ -42,11 +57,20 @@ SupCore.system.serverBuild = (server: ProjectServer, buildPath: string, callback
     }, (err) => {
       if (err != null) { callback("Could not export all resources"); return; }
 
-      const json = JSON.stringify(exportedProject, null, 2);
+      const json = JSON.stringify({ name: server.data.manifest.pub.name, assets: server.data.entries.getForStorage(["script"]) }, null, 2);
       fs.writeFile(`${buildPath}/project.json`, json, { encoding: "utf8" }, (err) => {
         if (err != null) { callback("Could not save project.json"); return; }
 
-        callback(null);
+        // Pre-compile scripts
+        compileGame(server, scriptNames, scripts, (err, code) => {
+          if (err != null) { callback("Could not compile game"); return; }
+
+          fs.writeFile(`${buildPath}/script.js`, code, { encoding: "utf8" }, (err) => {
+            if (err != null) { callback("Could not save script.js"); return; }
+
+            callback(null);
+          });
+        });
       });
     });
   });

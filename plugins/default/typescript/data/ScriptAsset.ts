@@ -34,7 +34,7 @@ let globalDefs = "";
 if ((<any>global).window == null) {
   const serverRequire = require;
   ts = serverRequire("typescript");
-  compileTypeScript = serverRequire("../runtime/compileTypeScript").default;
+  compileTypeScript = serverRequire("../compiler/compileTypeScript").default;
 
   SupCore.system.requireForAllPlugins("typescriptAPI/index.js");
   const plugins = SupCore.system.getPlugins<SupCore.TypeScriptAPIPlugin>("typescriptAPI");
@@ -218,10 +218,6 @@ Sup.registerBehavior(${behaviorName});
         });
       }
     });
-  }
-
-  clientExport(outputPath: string, callback: (err: Error) => void) {
-    this.write(SupApp.writeFile, outputPath, callback);
   }
 
   private write(writeFile: Function, outputPath: string, callback: (err: Error) => void) {
