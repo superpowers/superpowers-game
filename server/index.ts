@@ -57,12 +57,13 @@ SupCore.system.serverBuild = (server: ProjectServer, buildPath: string, callback
     }, (err) => {
       if (err != null) { callback("Could not export all resources"); return; }
 
-      const json = JSON.stringify({ name: server.data.manifest.pub.name, assets: server.data.entries.getForStorage(["script"]) }, null, 2);
+      const gameName = server.data.manifest.pub.name;
+      const json = JSON.stringify({ name: gameName, assets: server.data.entries.getForStorage(["script"]) }, null, 2);
       fs.writeFile(`${buildPath}/project.json`, json, { encoding: "utf8" }, (err) => {
         if (err != null) { callback("Could not save project.json"); return; }
 
         // Pre-compile scripts
-        compileGame(server, scriptNames, scripts, (err, code) => {
+        compileGame(gameName, server.system, scriptNames, scripts, (err, code) => {
           if (err != null) { callback("Could not compile game"); return; }
 
           fs.writeFile(`${buildPath}/script.js`, code, { encoding: "utf8" }, (err) => {

@@ -7,14 +7,14 @@ import * as convert from "convert-source-map";
 /* tslint:disable-next-line */
 const combine: any = require("combine-source-map");
 
-export default function compileGame(server: ProjectServer, scriptNames: string[], scripts: { [name: string]: string }, callback: (err: string, code: string) => void) {
+export default function compileGame(gameName: string, system: SupCore.System, scriptNames: string[], scripts: { [name: string]: string }, callback: (err: string, code: string) => void) {
   const globalNames: string[] = [];
   const globals: {[name: string]: string} = {};
   const globalDefs: {[name: string]: string} = {};
 
   const actorComponentAccessors: string[] = [];
 
-  const plugins = server.system.getPlugins<SupCore.TypeScriptAPIPlugin>("typescriptAPI");
+  const plugins = system.getPlugins<SupCore.TypeScriptAPIPlugin>("typescriptAPI");
   for (const pluginName in plugins) {
     const plugin = plugins[pluginName];
     if (plugin.code != null) {
@@ -75,7 +75,7 @@ ${jsGlobals.script}
   const combinedSourceMap = combine.create("bundle.js");
   for (const file of results.files) {
     const comment = convert.fromObject(results.sourceMaps[file.name]).toComment();
-    combinedSourceMap.addFile({ sourceFile: `${server.data.manifest.pub.name}/${file.name}`, source: file.text + `\n${comment}` }, { line });
+    combinedSourceMap.addFile({ sourceFile: `${gameName}/${file.name}`, source: file.text + `\n${comment}` }, { line });
     line += getLineCounts(file.text);
   }
 

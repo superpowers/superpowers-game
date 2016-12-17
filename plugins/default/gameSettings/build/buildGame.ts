@@ -1,6 +1,8 @@
 import * as async from "async";
 import * as path from "path";
 
+import compileGame from "../../typescript/compiler/compileGame";
+
 let projectClient: SupClient.ProjectClient;
 const subscribersByAssetId: { [assetId: string]: SupClient.AssetSubscriber } = {};
 const subscribersByResourceId: { [resourceId: string] : SupClient.ResourceSubscriber } = {};
@@ -14,6 +16,10 @@ const progress = { index: 0, total: 0, errors: 0 };
 const statusElt = document.querySelector(".status");
 const progressElt = document.querySelector("progress") as HTMLProgressElement;
 const detailsListElt = document.querySelector(".details ol") as HTMLOListElement;
+
+let gameName: string;
+const scriptNames: string[] = [];
+const scripts: {[name: string]: string} = {};
 
 interface ClientExportableAsset extends SupCore.Data.Base.Asset {
   clientExport: (outputPath: string, callback: (err: Error) => void) => void;
@@ -30,7 +36,7 @@ function loadPlugins(callback: Function) {
     (cb) => {
       async.each(SupCore.system.pluginsInfo.list, (pluginName, cb) => {
         const pluginPath = `/systems/${SupCore.system.id}/plugins/${pluginName}`;
-        async.each([ "data", "componentConfigs" ], (name, cb) => {
+        async.each([ "data", "componentConfigs", "typescriptAPI" ], (name, cb) => {
           SupClient.loadScript(`${pluginPath}/bundles/${name}.js`, cb);
         }, cb);
       }, cb);
@@ -50,7 +56,6 @@ export default function build(socket: SocketIOClient.Socket, theSettings: GameBu
 
 function onEntriesReceived(theEntries: SupCore.Data.Entries) {
   entries = theEntries;
-  projectClient.unsubEntries(entriesSubscriber);
 
   // Manifest
   projectClient.socket.emit("sub", "manifest", null, onManifestReceived);
@@ -58,18 +63,14 @@ function onEntriesReceived(theEntries: SupCore.Data.Entries) {
 
   // Assets
   entries.walk((entry) => {
-    if (entry.type === "script")
-    {
-      // TODO: do something :D
-    }
-    else if (entry.type != null) {
-      // Only subscribe to assets that can be exported
-      if (SupCore.system.data.assetClasses[entry.type].prototype.clientExport != null) {
+    if (entry.type != null) {
+      // Only subscribe to assets that can be exported and scripts
+      if (SupCore.system.data.assetClasses[entry.type].prototype.clientExport != null || entry.type === "script") {
         const subscriber = { onAssetReceived };
         subscribersByAssetId[entry.id] = subscriber;
 
         projectClient.subAsset(entry.id, entry.type, subscriber);
-        progress.total++;
+        if (entry.type !== "script") progress.total++;
       }
     }
   });
@@ -148,7 +149,8 @@ function onEntriesReceived(theEntries: SupCore.Data.Entries) {
 function onManifestReceived(err: string, manifestPub: SupCore.Data.ProjectManifestPub) {
   projectClient.socket.emit("unsub", "manifest");
 
-  const exportedProject = { name: manifestPub.name, assets: entries.getForStorage(["script"]) };
+  gameName = manifestPub.name;
+  const exportedProject = { name: gameName, assets: entries.getForStorage(["script"]) };
   const json = JSON.stringify(exportedProject, null, 2);
 
   const projectPath = `${settings.outputFolder}/project.json`;
@@ -169,16 +171,46 @@ function updateProgress() {
 
   if (progress.index < progress.total) {
     statusElt.textContent = SupClient.i18n.t("builds:game.progress", { path: settings.outputFolder, index: progress.index, total: progress.total });
-  } else if (progress.errors > 0) {
-    statusElt.textContent = SupClient.i18n.t("builds:game.doneWithErrors", { path: settings.outputFolder, total: progress.total, errors: progress.errors });
   } else {
-    statusElt.textContent = SupClient.i18n.t("builds:game.done", { path: settings.outputFolder, total: progress.total });
+    projectClient.unsubEntries(entriesSubscriber);
+
+    statusElt.textContent = "Compiling scripts...";
+
+    compileGame(gameName, SupCore.system, scriptNames, scripts, (err, code) => {
+      if (err != null) {
+        progress.errors++;
+        SupClient.html("li", { parent: detailsListElt, textContent: "Compilation failed."});
+
+        statusElt.textContent = SupClient.i18n.t("builds:game.doneWithErrors", { path: settings.outputFolder, total: progress.total, errors: progress.errors });
+      } else {
+        const outputPath = `${settings.outputFolder}/script.js`;
+        SupApp.writeFile(outputPath, code, { encoding: "utf8" }, (err) => {
+          if (err != null) {
+            progress.errors++;
+            SupClient.html("li", { parent: detailsListElt, textContent: SupClient.i18n.t("builds:game.errors.exportFailed", { path: outputPath }) });
+          }
+
+          if (progress.errors > 0) {
+            statusElt.textContent = SupClient.i18n.t("builds:game.doneWithErrors", { path: settings.outputFolder, total: progress.total, errors: progress.errors });
+          } else {
+            statusElt.textContent = SupClient.i18n.t("builds:game.done", { path: settings.outputFolder, total: progress.total });
+          }
+        });
+      }
+    });
   }
 }
 
 function onAssetReceived(assetId: string, asset: ClientExportableAsset) {
   projectClient.unsubAsset(assetId, subscribersByAssetId[assetId]);
   delete subscribersByAssetId[assetId];
+
+  if (projectClient.entries.byId[assetId].type === "script") {
+    const scriptName = `${projectClient.entries.getPathFromId(assetId)}.ts`;
+    scriptNames.push(scriptName);
+    scripts[scriptName] = `${asset.pub.text}\n`;
+    return;
+  }
 
   const outputFolder = `${settings.outputFolder}/assets/${entries.getStoragePathFromId(assetId)}`;
 
