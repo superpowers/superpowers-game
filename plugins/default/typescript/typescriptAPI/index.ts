@@ -40,7 +40,7 @@ SupCore.system.registerPlugin<SupCore.TypeScriptAPIPlugin>("typescriptAPI", "Sup
 SupCore.system.registerPlugin<SupCore.TypeScriptAPIPlugin>("typescriptAPI", "Camera", {
   code: fs.readFileSync(`${__dirname}/Sup.Camera.ts.txt`, { encoding: "utf8" }),
   defs: fs.readFileSync(`${__dirname}/Sup.Camera.d.ts.txt`, { encoding: "utf8" }),
-  exposeActorComponent: { propertyName: "camera", className: "Sup.Camera" }
+  exposeActorComponent: "camera: Sup.Camera;"
 });
 
 SupCore.system.registerPlugin<SupCore.TypeScriptAPIPlugin>("typescriptAPI", "Sup.Color", {

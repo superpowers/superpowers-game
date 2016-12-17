@@ -1,3 +1,5 @@
+export const componentClassName = "Sup.TileMapRenderer";
+
 export function setupComponent(player: SupRuntime.Player, component: any, config: any) {
   if (config.tileMapAssetId == null) return;
 

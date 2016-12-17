@@ -10,5 +10,5 @@ SupCore.system.registerPlugin<SupCore.TypeScriptAPIPlugin>("typescriptAPI", "Sup
 SupCore.system.registerPlugin<SupCore.TypeScriptAPIPlugin>("typescriptAPI", "ArcadeBody2D", {
   code: fs.readFileSync(`${__dirname}/Sup.ArcadePhysics2D.Body.ts.txt`, { encoding: "utf8" }),
   defs: fs.readFileSync(`${__dirname}/Sup.ArcadePhysics2D.Body.d.ts.txt`, { encoding: "utf8" }),
-  exposeActorComponent: { propertyName: "arcadeBody2D", className: "Sup.ArcadePhysics2D.Body" },
+  exposeActorComponent: "arcadeBody2D: Sup.ArcadePhysics2D.Body;"
 });

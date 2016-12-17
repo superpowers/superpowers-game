@@ -9,8 +9,6 @@ export function init(player: any, callback: Function) {
     return new (<any>window).Sup.Actor(name, parentActor, options);
   };
 
-  const plugins = SupCore.system.getPlugins<SupCore.TypeScriptAPIPlugin>("typescriptAPI");
-
   player.createComponent = (type: string, actor: any, config: any) => {
     if (type === "Behavior") {
       const behaviorClass = player.behaviorClasses[config.behaviorName];
@@ -23,7 +21,7 @@ export function init(player: any, callback: Function) {
     } else {
       if (actorComponentTypesByName[type] == null) {
         actorComponentTypesByName[type] = window;
-        const parts = plugins[type].exposeActorComponent.className.split(".");
+        const parts = SupRuntime.plugins[type].componentClassName.split(".");
         for (const part of parts) actorComponentTypesByName[type] = actorComponentTypesByName[type][part];
       }
       return new actorComponentTypesByName[type](actor);

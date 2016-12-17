@@ -1,3 +1,5 @@
+export const componentClassName = "Sup.CubicModelRenderer";
+
 export function setupComponent(player: SupRuntime.Player, component: any, config: any) {
   // component.castShadow = config.castShadow;
   // component.receiveShadow = config.receiveShadow;

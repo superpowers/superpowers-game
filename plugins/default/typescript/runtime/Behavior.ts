@@ -1,3 +1,5 @@
+export const componentClassName = "Sup.Behavior";
+
 export function setupComponent(player: SupRuntime.Player, component: any, config: any) {
   if (config.propertyValues == null) return;
 

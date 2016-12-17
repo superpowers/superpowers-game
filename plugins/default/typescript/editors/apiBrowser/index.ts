@@ -59,8 +59,8 @@ function onAPILoaded() {
     if (name === "lib") name = "Built-ins";
 
     if (plugin.exposeActorComponent != null) {
-      name = plugin.exposeActorComponent.className;
-      actorComponentAccessors.push(`${plugin.exposeActorComponent.propertyName}: ${plugin.exposeActorComponent.className};`);
+      name = `Sup.${name}`;
+      actorComponentAccessors.push(plugin.exposeActorComponent);
     }
     if (plugin.defs != null) allDefs[name] = plugin.defs.replace(/\r\n/g, "\n");
   }

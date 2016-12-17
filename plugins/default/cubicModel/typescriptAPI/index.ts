@@ -10,5 +10,5 @@ SupCore.system.registerPlugin<SupCore.TypeScriptAPIPlugin>("typescriptAPI", "Sup
 SupCore.system.registerPlugin<SupCore.TypeScriptAPIPlugin>("typescriptAPI", "CubicModelRenderer", {
   code: fs.readFileSync(`${__dirname}/Sup.CubicModelRenderer.ts.txt`, { encoding: "utf8" }),
   defs: fs.readFileSync(`${__dirname}/Sup.CubicModelRenderer.d.ts.txt`, { encoding: "utf8" }),
-  exposeActorComponent: { propertyName: "cubicModelRenderer", className: "Sup.CubicModelRenderer" }
+  exposeActorComponent: "cubicModelRenderer: Sup.CubicModelRenderer;"
 });

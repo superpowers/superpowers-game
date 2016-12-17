@@ -10,5 +10,5 @@ SupCore.system.registerPlugin<SupCore.TypeScriptAPIPlugin>("typescriptAPI", "Sup
 SupCore.system.registerPlugin<SupCore.TypeScriptAPIPlugin>("typescriptAPI", "ModelRenderer", {
   code: fs.readFileSync(`${__dirname}/Sup.ModelRenderer.ts.txt`, { encoding: "utf8" }),
   defs: fs.readFileSync(`${__dirname}/Sup.ModelRenderer.d.ts.txt`, { encoding: "utf8" }),
-  exposeActorComponent: { propertyName: "modelRenderer", className: "Sup.ModelRenderer" }
+  exposeActorComponent: "modelRenderer: Sup.ModelRenderer;"
 });

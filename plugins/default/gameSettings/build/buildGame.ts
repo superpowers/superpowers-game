@@ -88,14 +88,13 @@ function onEntriesReceived(theEntries: SupCore.Data.Entries) {
   }
 
   // TODO: Extra build files
-  const systemBuildFiles = [ "/SupCore.js" ];
+  const systemBuildFiles = [];
   const pluginsInfo = SupCore.system.pluginsInfo;
   const systemPath = `/systems/${SupCore.system.id}`;
 
   for (const plugin of pluginsInfo.list) {
     systemBuildFiles.push(`${systemPath}/plugins/${plugin}/bundles/components.js`);
     systemBuildFiles.push(`${systemPath}/plugins/${plugin}/bundles/runtime.js`);
-    systemBuildFiles.push(`${systemPath}/plugins/${plugin}/bundles/typescriptAPI.js`);
   }
 
   systemBuildFiles.push(`${systemPath}/plugins.json`);

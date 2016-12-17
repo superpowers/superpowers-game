@@ -1,3 +1,5 @@
+export const componentClassName = "Sup.TextRenderer";
+
 export function setupComponent(player: SupRuntime.Player, component: any, config: any) {
   component.setText(config.text);
   component.setOptions({ alignment: config.alignment, verticalAlignment: config.verticalAlignment, size: config.size, color: config.color });

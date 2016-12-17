@@ -1,3 +1,5 @@
+export const componentClassName = "Sup.ArcadePhysics2D.Body";
+
 export function setupComponent(player: SupRuntime.Player, component: any, config: any) {
   if (config.type === "box") component.setupBox(config);
 

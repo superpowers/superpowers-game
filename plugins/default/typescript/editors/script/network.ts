@@ -364,7 +364,7 @@ function loadPlugins() {
       for (const pluginName in plugins) {
         const plugin = plugins[pluginName];
         if (plugin.defs != null) globalDefs += plugin.defs;
-        if (plugin.exposeActorComponent != null) actorComponentAccessors.push(`${plugin.exposeActorComponent.propertyName}: ${plugin.exposeActorComponent.className};`);
+        if (plugin.exposeActorComponent != null) actorComponentAccessors.push(plugin.exposeActorComponent);
       }
 
       globalDefs = globalDefs.replace("// INSERT_COMPONENT_ACCESSORS", actorComponentAccessors.join("\n    "));

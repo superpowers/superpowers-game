@@ -23,7 +23,7 @@ export default function compileGame(gameName: string, system: SupCore.System, sc
     }
 
     if (plugin.defs != null) globalDefs[`${pluginName}.d.ts`] = plugin.defs;
-    if (plugin.exposeActorComponent != null) actorComponentAccessors.push(`${plugin.exposeActorComponent.propertyName}: ${plugin.exposeActorComponent.className};`);
+    if (plugin.exposeActorComponent != null) actorComponentAccessors.push(plugin.exposeActorComponent);
   }
 
   // Plug component accessors exposed by plugins into Sup.Actor class

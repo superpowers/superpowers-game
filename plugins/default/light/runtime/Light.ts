@@ -16,6 +16,8 @@ export function init(player: any, callback: Function) {
   callback();
 }
 
+export const componentClassName = "Sup.Light";
+
 export function setupComponent(player: SupRuntime.Player, component: Light, config: any) {
   (<any>component).__outer.type = ["ambient", "point", "spot", "directional"].indexOf(config.type);
   component.color = parseInt(config.color, 16);

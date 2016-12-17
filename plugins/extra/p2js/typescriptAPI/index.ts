@@ -10,5 +10,5 @@ SupCore.system.registerPlugin<SupCore.TypeScriptAPIPlugin>("typescriptAPI", "p2"
 SupCore.system.registerPlugin<SupCore.TypeScriptAPIPlugin>("typescriptAPI", "P2Body", {
   code: fs.readFileSync(`${__dirname}/Sup.P2.ts.txt`, { encoding: "utf8" }),
   defs: fs.readFileSync(`${__dirname}/Sup.P2.d.ts.txt`, { encoding: "utf8" }),
-  exposeActorComponent: { propertyName: "p2Body", className: "Sup.P2.Body" }
+  exposeActorComponent: "p2Body: Sup.P2.Body;"
 });

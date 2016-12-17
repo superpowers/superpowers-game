@@ -1,3 +1,5 @@
+export const componentClassName = "Sup.Camera";
+
 export function setupComponent(player: SupRuntime.Player, component: any, config: any) {
   component.setOrthographicMode(config.mode === "orthographic");
   component.setFOV(config.fov);

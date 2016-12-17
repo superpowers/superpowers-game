@@ -10,5 +10,5 @@ SupCore.system.registerPlugin<SupCore.TypeScriptAPIPlugin>("typescriptAPI", "CAN
 SupCore.system.registerPlugin<SupCore.TypeScriptAPIPlugin>("typescriptAPI", "CannonBody", {
   code: fs.readFileSync(`${__dirname}/Sup.Cannon.Body.ts.txt`, { encoding: "utf8" }),
   defs: fs.readFileSync(`${__dirname}/Sup.Cannon.Body.d.ts.txt`, { encoding: "utf8" }),
-  exposeActorComponent: { propertyName: "cannonBody", className: "Sup.Cannon.Body" }
+  exposeActorComponent: "cannonBody: Sup.Cannon.Body"
 });

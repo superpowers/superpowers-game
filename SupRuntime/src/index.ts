@@ -32,8 +32,6 @@ export function registerResource(name: string, plugin: SupRuntime.RuntimeResourc
   resourcePlugins[name] = plugin;
 }
 
-SupCore.system = new SupCore.System("", "");
-
 // Setup SupApp
 if ((global as any).SupApp == null) {
   (global as any).SupApp = null;
@@ -123,7 +121,7 @@ const onLoaded = (err: Error) => {
 };
 
 // Load plugins
-const pluginBundleNames = [ "components", "runtime", "typescriptAPI" ];
+const pluginBundleNames = [ "components", "runtime" ];
 
 supFetch("plugins.json", "json", (err: Error, pluginsInfo: SupCore.PluginsInfo) => {
   if (err != null) {
