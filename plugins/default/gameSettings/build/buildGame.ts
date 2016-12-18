@@ -175,7 +175,7 @@ function updateProgress() {
 
     statusElt.textContent = "Compiling scripts...";
 
-    compileGame(gameName, SupCore.system, false, scriptNames, scripts, (err, code) => {
+    compileGame(gameName, SupCore.system, true, scriptNames, scripts, (err, code) => {
       if (err != null) {
         progress.errors++;
         SupClient.html("li", { parent: detailsListElt, textContent: "Compilation failed."});

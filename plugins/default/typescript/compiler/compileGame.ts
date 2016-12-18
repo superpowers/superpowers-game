@@ -1,13 +1,14 @@
 /// <reference path="../typescriptAPI/TypeScriptAPIPlugin.d.ts" />
 
 import compileTypescript from "./compileTypeScript";
+import * as uglify from "uglify-js";
 import * as convert from "convert-source-map";
 
 // No definition file for combine-source-map module
 /* tslint:disable-next-line */
 const combine: any = require("combine-source-map");
 
-export default function compileGame(gameName: string, system: SupCore.System, includeSourceMap: boolean,
+export default function compileGame(gameName: string, system: SupCore.System, minimizeSize: boolean,
 scriptNames: string[], scripts: { [name: string]: string }, callback: (err: string, code: string) => void) {
 
   const globalNames: string[] = [];
@@ -62,9 +63,11 @@ ${jsGlobals.script}
     return;
   }
 
-  let code = `${jsGlobals.script}${jsScripts.script}`;
+  let code: string;
 
-  if (includeSourceMap) {
+  if (minimizeSize) {
+    code = uglify.minify(`${jsGlobals.script}${jsScripts.script}`, { fromString: true, mangle: false }).code;
+  } else {
     // Prepare source maps
     const getLineCounts = (text: string) => {
       let count = 1, index = -1;
@@ -84,7 +87,7 @@ ${jsGlobals.script}
       line += getLineCounts(file.text);
     }
 
-    code += `//# sourceMappingURL=data:application/json;charset=utf-8;base64,${combinedSourceMap.base64()}`;
+    code = `${jsGlobals.script}${jsScripts.script}//# sourceMappingURL=data:application/json;charset=utf-8;base64,${combinedSourceMap.base64()}`;
   }
 
   callback(null, code);
