@@ -63,7 +63,7 @@ SupCore.system.serverBuild = (server: ProjectServer, buildPath: string, callback
         if (err != null) { callback("Could not save project.json"); return; }
 
         // Pre-compile scripts
-        compileGame(gameName, server.system, scriptNames, scripts, (err, code) => {
+        compileGame(gameName, server.system, true, scriptNames, scripts, (err, code) => {
           if (err != null) { callback("Could not compile game"); return; }
 
           fs.writeFile(`${buildPath}/script.js`, code, { encoding: "utf8" }, (err) => {

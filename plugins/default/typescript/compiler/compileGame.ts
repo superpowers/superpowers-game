@@ -7,7 +7,9 @@ import * as convert from "convert-source-map";
 /* tslint:disable-next-line */
 const combine: any = require("combine-source-map");
 
-export default function compileGame(gameName: string, system: SupCore.System, scriptNames: string[], scripts: { [name: string]: string }, callback: (err: string, code: string) => void) {
+export default function compileGame(gameName: string, system: SupCore.System, includeSourceMap: boolean,
+scriptNames: string[], scripts: { [name: string]: string }, callback: (err: string, code: string) => void) {
+
   const globalNames: string[] = [];
   const globals: {[name: string]: string} = {};
   const globalDefs: {[name: string]: string} = {};
@@ -44,41 +46,46 @@ export default function compileGame(gameName: string, system: SupCore.System, sc
     return;
   }
 
-  // Compile game scripts
-  let concatenatedGlobalDefs = "";
-  for (const name in globalDefs) concatenatedGlobalDefs += globalDefs[name];
-  const results = compileTypescript(scriptNames, scripts, concatenatedGlobalDefs, { sourceMap: true });
-  if (results.errors.length > 0) {
-    for (const error of results.errors) console.log(`${error.file}(${error.position.line}): ${error.message}`);
-    callback("Compilation failed. Check the devtools (F12) for errors.", null);
-    return;
-  }
-
-  // Prepare source maps
-  const getLineCounts = (text: string) => {
-    let count = 1, index = -1;
-    while (true) {
-      index = text.indexOf("\n", index + 1);
-      if (index === -1) break;
-      count++;
-    }
-    return count;
-  };
-
   jsGlobals.script = `(function() {
 var player = _player; _player = undefined;
 ${jsGlobals.script}
 })();
 `;
 
-  let line = getLineCounts(jsGlobals.script) + 2;
-  const combinedSourceMap = combine.create("bundle.js");
-  for (const file of results.files) {
-    const comment = convert.fromObject(results.sourceMaps[file.name]).toComment();
-    combinedSourceMap.addFile({ sourceFile: `${gameName}/${file.name}`, source: file.text + `\n${comment}` }, { line });
-    line += getLineCounts(file.text);
+  // Compile game scripts
+  let concatenatedGlobalDefs = "";
+  for (const name in globalDefs) concatenatedGlobalDefs += globalDefs[name];
+  const jsScripts = compileTypescript(scriptNames, scripts, concatenatedGlobalDefs, { sourceMap: true });
+  if (jsScripts.errors.length > 0) {
+    for (const error of jsScripts.errors) console.log(`${error.file}(${error.position.line}): ${error.message}`);
+    callback("Compilation failed. Check the devtools (F12) for errors.", null);
+    return;
   }
 
-  const code = `${jsGlobals.script}${results.script}//# sourceMappingURL=data:application/json;charset=utf-8;base64,${combinedSourceMap.base64()}`;
+  let code = `${jsGlobals.script}${jsScripts.script}`;
+
+  if (includeSourceMap) {
+    // Prepare source maps
+    const getLineCounts = (text: string) => {
+      let count = 1, index = -1;
+      while (true) {
+        index = text.indexOf("\n", index + 1);
+        if (index === -1) break;
+        count++;
+      }
+      return count;
+    };
+
+    let line = getLineCounts(jsGlobals.script) + 2;
+    const combinedSourceMap = combine.create("bundle.js");
+    for (const file of jsScripts.files) {
+      const comment = convert.fromObject(jsScripts.sourceMaps[file.name]).toComment();
+      combinedSourceMap.addFile({ sourceFile: `${gameName}/${file.name}`, source: file.text + `\n${comment}` }, { line });
+      line += getLineCounts(file.text);
+    }
+
+    code += `//# sourceMappingURL=data:application/json;charset=utf-8;base64,${combinedSourceMap.base64()}`;
+  }
+
   callback(null, code);
 }
