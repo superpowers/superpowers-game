@@ -20,11 +20,15 @@ gulp.task("typescript", function() {
 
 // Browserify
 const browserify = require("browserify");
+const uglify = require('gulp-uglify');
 const source = require("vinyl-source-stream");
+const buffer = require('vinyl-buffer');
 gulp.task("browserify", [ "typescript" ], () =>
   browserify("./src/index.js", { standalone: "SupEngine" })
     .bundle()
     .pipe(source("SupEngine.js"))
+    .pipe(buffer())
+    .pipe(uglify())
     .pipe(gulp.dest("../public"))
 );
 
