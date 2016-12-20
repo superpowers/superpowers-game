@@ -1,6 +1,6 @@
 /// <reference path="../../../common/textEditorWidget/operational-transform.d.ts" />
-/// <reference path="../node_modules/typescript/lib/typescriptServices.d.ts" />
-/// <reference path="../../typescript/typescriptAPI/TypeScriptAPIPlugin.d.ts" />
+/// <reference path="../../../../node_modules/typescript/lib/typescriptServices.d.ts" />
+/// <reference path="../typescriptAPI/TypeScriptAPIPlugin.d.ts" />
 
 import * as OT from "operational-transform";
 import * as fs from "fs";
@@ -34,7 +34,7 @@ let globalDefs = "";
 if ((<any>global).window == null) {
   const serverRequire = require;
   ts = serverRequire("typescript");
-  compileTypeScript = serverRequire("../compiler/compileTypeScript").default;
+  compileTypeScript = serverRequire("../../../../typescriptCompiler/compileTypescript").default;
 
   SupCore.system.requireForAllPlugins("typescriptAPI/index.js");
   const plugins = SupCore.system.getPlugins<SupCore.TypeScriptAPIPlugin>("typescriptAPI");

@@ -1,4 +1,5 @@
-/// <reference path="../typescriptAPI/TypeScriptAPIPlugin.d.ts" />
+/// <reference path="../../../SupCore/SupCore.d.ts" />
+/// <reference path="../plugins/default/typescript/typescriptAPI/TypeScriptAPIPlugin.d.ts" />
 
 import compileTypescript from "./compileTypeScript";
 import * as uglify from "uglify-js";

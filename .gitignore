@@ -1,4 +1,5 @@
 server/**/*.js
+typescriptCompiler/**/*.js
 SupEngine/**/*.js
 SupRuntime/**/*.js
 

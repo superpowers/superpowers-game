@@ -4,7 +4,7 @@ import * as fs from "fs";
 import * as async from "async";
 import * as mkdirp from "mkdirp";
 
-import compileGame from "../plugins/default/typescript/compiler/compileGame";
+import compileGame from "../typescriptCompiler/compileGame";
 
 const scriptNames: string[] = [];
 const scripts: {[name: string]: string} = {};

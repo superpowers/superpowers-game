@@ -1,7 +1,7 @@
 import * as async from "async";
 import * as path from "path";
 
-import compileGame from "../../typescript/compiler/compileGame";
+import compileGame from "../../../../typescriptCompiler/compileGame";
 
 let projectClient: SupClient.ProjectClient;
 const subscribersByAssetId: { [assetId: string]: SupClient.AssetSubscriber } = {};

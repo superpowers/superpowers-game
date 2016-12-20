@@ -11,15 +11,7 @@
     "build": "gulp --gulpfile=../../../../../scripts/pluginGulpfile.js --cwd=. --silent && gulp --gulpfile=workerGulpfile.js"
   },
   "dependencies": {
-    "combine-source-map": "^0.7.1",
-    "convert-source-map": "^1.1.1",
     "highlight.js": "^9.0.0",
-    "operational-transform": "^0.2.3",
-    "typescript": "~1.8.2",
-    "uglify-js": "2.7.5"
-  },
-  "devDependencies": {
-    "@types/convert-source-map": "0.0.30",
-    "@types/uglify-js": "^2.6.28"
+    "operational-transform": "^0.2.3"
   }
 }
