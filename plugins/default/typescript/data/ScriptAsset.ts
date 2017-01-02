@@ -34,7 +34,7 @@ let globalDefs = "";
 if ((<any>global).window == null) {
   const serverRequire = require;
   ts = serverRequire("typescript");
-  compileTypeScript = serverRequire("../../../../typescriptCompiler/compileTypescript").default;
+  compileTypeScript = serverRequire("../../../../typescriptCompiler/compileTypeScript").default;
 
   SupCore.system.requireForAllPlugins("typescriptAPI/index.js");
   const plugins = SupCore.system.getPlugins<SupCore.TypeScriptAPIPlugin>("typescriptAPI");
