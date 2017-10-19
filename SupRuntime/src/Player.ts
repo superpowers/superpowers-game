@@ -201,7 +201,7 @@ export default class Player {
     if (updates > 0) this.gameInstance.draw();
   };
 
-  getAssetData(path: string, responseType: string, callback: (err: Error, data?: any) => any) {
+  getAssetData(path: string, responseType: XMLHttpRequestResponseType, callback: (err: Error, data?: any) => any) {
     supFetch(`${this.dataURL}${path}`, responseType, callback);
   }
 

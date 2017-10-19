@@ -51,7 +51,7 @@ export default class P2BodyEditor {
     // Box
     this.sizeRow = SupClient.table.appendRow(this.tbody, SupClient.i18n.t("componentEditors:P2Body.size"));
 
-    const sizeFields = SupClient.table.appendNumberFields(this.sizeRow.valueCell, [config.width, config.height], 0);
+    const sizeFields = SupClient.table.appendNumberFields(this.sizeRow.valueCell, [config.width, config.height], { min: 0 });
     this.fields["width"] = sizeFields[0];
     this.fields["width"].addEventListener("change", (event: any) => {
       this.editConfig("setProperty", "width", parseFloat(event.target.value));

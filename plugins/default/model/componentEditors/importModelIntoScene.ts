@@ -11,7 +11,7 @@ callback: (err: string, nodeId: string) => any) {
   });
 }
 
-export function importComponent(entry: SupCore.Data.EntryNode, projectClient: SupClient.ProjectClient, nodeId: string, callback: (err: string) => any) {
+export function importComponent(entry: SupCore.Data.EntryNode, projectClient: SupClient.ProjectClient, nodeId: string, callback: (err: string, nodeId: string) => any) {
   projectClient.editAsset(SupClient.query.asset, "addComponent", nodeId, "ModelRenderer", null, (componentId: string) => {
     projectClient.editAsset(SupClient.query.asset, "editComponent", nodeId, componentId, "setProperty", "modelAssetId", entry.id, callback);
   });

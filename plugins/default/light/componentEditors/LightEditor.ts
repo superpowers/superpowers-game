@@ -75,7 +75,7 @@ export default class LightEditor {
     this.shadowRows.push(shadowHeaderRow);
 
     const shadowMapSizeRow = SupClient.table.appendRow(tbody, SupClient.i18n.t("componentEditors:Light.shadowSettings.mapSize"));
-    const shadowMapFields = SupClient.table.appendNumberFields(shadowMapSizeRow.valueCell, [config.shadowMapSize.width, config.shadowMapSize.height], 1);
+    const shadowMapFields = SupClient.table.appendNumberFields(shadowMapSizeRow.valueCell, [config.shadowMapSize.width, config.shadowMapSize.height], { min: 1 });
     this.fields["shadowMapSize.width"] = shadowMapFields[0];
     this.fields["shadowMapSize.width"].addEventListener("change", (event: any) => {
       this.editConfig("setProperty", "shadowMapSize.width", parseFloat(event.target.value));

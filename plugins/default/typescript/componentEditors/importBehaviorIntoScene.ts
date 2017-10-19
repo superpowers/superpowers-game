@@ -17,9 +17,9 @@ callback: (err: string, nodeId: string) => any) {
   });
 }
 
-export function importComponent(entry: SupCore.Data.EntryNode, projectClient: SupClient.ProjectClient, nodeId: string, callback: (err: string) => any) {
+export function importComponent(entry: SupCore.Data.EntryNode, projectClient: SupClient.ProjectClient, nodeId: string, callback: (err: string, nodeId: string) => any) {
   getBehaviorName(projectClient, entry.id, (err, behaviorName) => {
-    if (err != null) { callback(err); return; }
+    if (err != null) { callback(err, null); return; }
 
     projectClient.editAsset(SupClient.query.asset, "addComponent", nodeId, "Behavior", null, (componentId: string) => {
       projectClient.editAsset(SupClient.query.asset, "editComponent", nodeId, componentId, "setProperty", "behaviorName", behaviorName, callback);
