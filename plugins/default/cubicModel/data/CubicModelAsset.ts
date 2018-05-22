@@ -153,8 +153,7 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
 
       // Clean up old maps from disk
       async.each(Object.keys(this.pub.maps), (mapName, cb) => {
-        const map = new Buffer(new Uint8ClampedArray(this.pub.maps[mapName]));
-        if (map != null) { cb(); return; }
+        if (this.pub.maps[mapName] != null) { cb(); return; }
 
         fs.unlink(path.join(outputPath, `map-${mapName}.dat`), (err) => {
           if (err != null && err.code !== "ENOENT") { cb(err); return; }

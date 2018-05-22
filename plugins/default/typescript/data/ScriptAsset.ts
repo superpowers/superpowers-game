@@ -181,7 +181,7 @@ Sup.registerBehavior(${behaviorName});
             finishLoading();
 
             if (draft != null) {
-              if (draft !== text) fs.writeFile(path.join(assetPath, "draft.ts"), draft, { encoding: "utf8" });
+              if (draft !== text) fs.writeFile(path.join(assetPath, "draft.ts"), draft, { encoding: "utf8" }, (err) => { /* Ignore */ });
               fs.unlink(path.join(assetPath, "draft.txt"), (err) => { /* Ignore */ });
             }
 
@@ -198,7 +198,7 @@ Sup.registerBehavior(${behaviorName});
       if (err != null && err.code === "ENOENT") {
         fs.readFile(path.join(assetPath, "script.txt"), { encoding: "utf8" }, (err, text) => {
           readDraft(text);
-          fs.writeFile(path.join(assetPath, "script.ts"), text, { encoding: "utf8" });
+          fs.writeFileSync(path.join(assetPath, "script.ts"), text, { encoding: "utf8" });
           fs.unlink(path.join(assetPath, "script.txt"), (err) => { /* Ignore */ });
         });
       } else readDraft(text);

@@ -168,8 +168,8 @@ export default class SpriteAsset extends SupCore.Data.Base.Asset {
                   fs.readFile(path.join(assetPath, "image.dat"), (err, buffer) => {
                     pub.maps[key] = buffer;
 
-                    fs.writeFile(path.join(assetPath, `map-${key}.dat`), buffer);
-                    fs.unlink(path.join(assetPath, "image.dat"));
+                    fs.writeFile(path.join(assetPath, `map-${key}.dat`), buffer, (err) => { /* Ignore */ });
+                    fs.unlink(path.join(assetPath, "image.dat"), (err) => { /* Ignore */ });
                     cb();
                   });
                 } else cb();

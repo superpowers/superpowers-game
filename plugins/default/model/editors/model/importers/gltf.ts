@@ -84,7 +84,7 @@ interface GLTFNode {
   jointName?: string;
 }
 
-function convertAxisAngleToQuaternionArray(rotations: Uint8Array, count: number) {
+function convertAxisAngleToQuaternionArray(rotations: Float32Array, count: number) {
   const q = new THREE.Quaternion;
   const axis = new THREE.Vector3;
 
