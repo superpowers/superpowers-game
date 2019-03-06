@@ -199,7 +199,7 @@ export default class Player {
     if (this.gameInstance.input.exited) { cancelAnimationFrame(this.tickAnimationFrameId); return; }
 
     if (updates > 0) this.gameInstance.draw();
-  };
+  }
 
   getAssetData(path: string, responseType: XMLHttpRequestResponseType, callback: (err: Error, data?: any) => any) {
     supFetch(`${this.dataURL}${path}`, responseType, callback);

@@ -30,7 +30,7 @@ export default class Uniforms extends SupCore.Data.Base.ListById {
 
     if (key === "value") {
       const item = this.byId[id];
-      switch(item.type) {
+      switch (item.type) {
         case "f":
           if (typeof value !== "number") { callback("Invalid value", null); return; }
           break;
@@ -66,7 +66,7 @@ export default class Uniforms extends SupCore.Data.Base.ListById {
 
   updateItemValue(id: string, value: any) {
     const item = this.byId[id];
-    switch(value) {
+    switch (value) {
       case "f": item.value = 0; break;
       case "c": item.value = [1, 1, 1]; break;
       case "v2": item.value = [0, 0]; break;

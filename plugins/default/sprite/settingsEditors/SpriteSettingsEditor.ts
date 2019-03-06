@@ -57,9 +57,9 @@ export default class SpriteSettingsEditor {
     for (const setting in resource.pub) {
       this.fields[setting].value = resource.pub[setting];
     }
-  };
+  }
 
   onResourceEdited = (resourceId: string, command: string, propertyName: string) => {
     this.fields[propertyName].value = this.resource.pub[propertyName];
-  };
+  }
 }

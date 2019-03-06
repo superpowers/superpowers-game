@@ -45,7 +45,7 @@ export default class CameraConfig extends SupCore.Data.Base.ComponentConfig {
       farClippingPlane: 1000
     };
     return emptyConfig;
-  };
+  }
 
   static currentFormatVersion = 1;
   static migrate(pub: CameraConfigPub) {

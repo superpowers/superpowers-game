@@ -27,7 +27,7 @@ export function getShapeTextureSize(shape: Shape) {
   let width = 0;
   let height = 0;
 
-  switch(shape.type) {
+  switch (shape.type) {
     case "box":
       width = shape.settings.size.x * 2 + shape.settings.size.z * 2;
       height = shape.settings.size.z + shape.settings.size.y;
@@ -41,7 +41,7 @@ export function getShapeTextureFaceSize(shape: Shape, faceName: string) {
   let width = 0;
   let height = 0;
 
-  switch(shape.type) {
+  switch (shape.type) {
     case "box":
       switch (faceName) {
         case "front":

@@ -1,12 +1,12 @@
 "use strict";
 
 const gulp = require("gulp");
-const tasks = [ "copy" ];
 
 // Copy
 gulp.task("copy", () => gulp.src("node_modules/highlight.js/styles/railscasts.css").pipe(gulp.dest("./public/editors/apiBrowser/")));
 
 // Browserify
+const browserifyTasks = [];
 const browserify = require("browserify");
 const source = require("vinyl-source-stream");
 function makeBrowserify(src, dest, output) {
@@ -16,10 +16,10 @@ function makeBrowserify(src, dest, output) {
 			.pipe(source(`${output}.js`))
 			.pipe(gulp.dest(dest))
   );
-  tasks.push(`${output}-browserify`);
+  browserifyTasks.push(`${output}-browserify`);
 }
 
 makeBrowserify("./editors/script/typescriptWorker.js", "./public/editors", "script/typescriptWorker");
 
 // All
-gulp.task("default", tasks);
+gulp.task("default", gulp.series("copy", gulp.parallel(browserifyTasks)));

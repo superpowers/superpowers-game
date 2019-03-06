@@ -78,7 +78,7 @@ export default class TileMapRendererUpdater {
 
     const subscriber = this.externalSubscribers.tileMap;
     if (subscriber.onAssetReceived != null) subscriber.onAssetReceived(assetId, asset);
-  };
+  }
 
   private onTileMapAssetEdited = (assetId: string, command: string, ...args: any[]) => {
     if (this.tileSetAsset != null || command === "changeTileSet") {
@@ -88,7 +88,7 @@ export default class TileMapRendererUpdater {
 
     const subscriber = this.externalSubscribers.tileMap;
     if (subscriber.onAssetEdited) subscriber.onAssetEdited(assetId, command, ...args);
-  };
+  }
 
   private onEditCommands: { [command: string]: Function; } = {
     changeTileSet: () => {
@@ -126,7 +126,7 @@ export default class TileMapRendererUpdater {
 
     const subscriber = this.externalSubscribers.tileMap;
     if (subscriber.onAssetTrashed != null) subscriber.onAssetTrashed(assetId);
-  };
+  }
 
   private onTileSetAssetReceived = (assetId: string, asset: TileSetAsset) => {
     this.prepareTexture(asset.pub.texture, () => {
@@ -137,7 +137,7 @@ export default class TileMapRendererUpdater {
       const subscriber = this.externalSubscribers.tileSet;
       if (subscriber.onAssetReceived != null) subscriber.onAssetReceived(assetId, asset);
     });
-  };
+  }
 
   private prepareTexture(texture: THREE.Texture, callback: Function) {
     if (texture == null) {
@@ -155,7 +155,7 @@ export default class TileMapRendererUpdater {
 
     const subscriber = this.externalSubscribers.tileSet;
     if (subscriber.onAssetEdited) subscriber.onAssetEdited(assetId, command, ...args);
-  };
+  }
 
   private onTileSetEditCommands: { [command: string]: Function; } = {
     upload() {
@@ -174,21 +174,21 @@ export default class TileMapRendererUpdater {
 
     const subscriber = this.externalSubscribers.tileSet;
     if (subscriber.onAssetTrashed) subscriber.onAssetTrashed(assetId);
-  };
+  }
 
   private onShaderAssetReceived = (assetId: string, asset: { pub: any} ) => {
     this.shaderPub = asset.pub;
     this.setTileMap();
-  };
+  }
 
   private onShaderAssetEdited = (id: string, command: string, ...args: any[]) => {
     if (command !== "editVertexShader" && command !== "editFragmentShader") this.setTileMap();
-  };
+  }
 
   private onShaderAssetTrashed = () => {
     this.shaderPub = null;
     this.setTileMap();
-  };
+  }
 
   config_setProperty(path: string, value: any) {
     switch (path) {

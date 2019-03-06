@@ -36,7 +36,7 @@ export function registerEditorComponentClass(name: string, componentClass: new(.
   }
 
   editorComponentClasses[name] = componentClass;
-};
+}
 
 export const componentClasses: { [name: string]: new(...args: any[]) => ActorComponent } = {
   /* Built-ins */ Camera
@@ -49,7 +49,7 @@ export function registerComponentClass(name: string, plugin: new(...args: any[])
   }
 
   componentClasses[name] = plugin;
-};
+}
 
 export const earlyUpdateFunctions: {[name: string]: (gameInstance: GameInstance) => void } = {};
 export function registerEarlyUpdateFunction(name: string, callback: (gameInstance: GameInstance) => void) {
@@ -59,4 +59,4 @@ export function registerEarlyUpdateFunction(name: string, callback: (gameInstanc
   }
 
   earlyUpdateFunctions[name] = callback;
-};
+}

@@ -1,5 +1,5 @@
 var gulp = require("gulp");
-var tasks = [];
+var browserifyTasks = [];
 
 // Browserify
 var browserify = require("browserify");
@@ -11,10 +11,10 @@ function makeBrowserify(source, destination, output) {
     function bundle() { return bundler.bundle().pipe(vinylSourceStream(output + ".js")).pipe(gulp.dest(destination)); };
     return bundle();
   });
-  tasks.push(output + "-browserify");
+  browserifyTasks.push(output + "-browserify");
 }
 
 makeBrowserify("./componentConfigs/BaseComponentConfig.js", "./public", "BaseComponentConfig");
 
 // All
-gulp.task("default", tasks);
+gulp.task("default", gulp.parallel(browserifyTasks));

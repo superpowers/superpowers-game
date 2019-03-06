@@ -7,11 +7,12 @@ const ts = require("gulp-typescript");
 const tsProject = ts.createProject("tsconfig.json");
 const tslint = require("gulp-tslint");
 
-gulp.task("typescript", function() {
+gulp.task("typescript", () => {
   let failed = false;
   const tsResult = tsProject.src()
-    .pipe(tslint({ tslint: require("tslint") }))
-    .pipe(tslint.report("prose", { emitError: false }))
+    .pipe(tslint({ formatter: "prose" }))
+    .pipe(tslint.report({ emitError: true }))
+    .on("error", (err) => { throw err; })
     .pipe(tsProject())
     .on("error", () => { failed = true; })
     .on("end", () => { if (failed) throw new Error("There were TypeScript errors."); });
@@ -21,7 +22,7 @@ gulp.task("typescript", function() {
 // Browserify
 const browserify = require("browserify");
 const source = require("vinyl-source-stream");
-gulp.task("browserify", [ "typescript" ], () =>
+gulp.task("browserify", () =>
   browserify("./src/index.js", { standalone: "SupEngine" })
     .bundle()
     .pipe(source("SupEngine.js"))
@@ -29,4 +30,4 @@ gulp.task("browserify", [ "typescript" ], () =>
 );
 
 // All
-gulp.task("default", [ "typescript", "browserify" ]);
+gulp.task("default", gulp.series("typescript", "browserify"));

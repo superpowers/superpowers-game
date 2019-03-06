@@ -120,5 +120,5 @@ export default class TileMapRendererEditor {
       const entry = SupClient.findEntryByPath(this.projectClient.entries.pub, event.target.value);
       if (entry != null && entry.type === "tileSet") this.editConfig("setProperty", "tileSetAssetId", entry.id);
     }
-  };
+  }
 }

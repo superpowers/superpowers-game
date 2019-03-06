@@ -116,7 +116,7 @@ ${jsGlobals.script}
   }
 
   const code = `${jsGlobals.script}${results.script}
-//# sourceMappingURL=data:application/json;charset=utf-8;base64,${combinedSourceMap.base64()}`;
+//` + `# sourceMappingURL=data:application/json;charset=utf-8;base64,${combinedSourceMap.base64()}`;
 
   // Execute the generated code
   const scriptFunction = new Function("_player", code);

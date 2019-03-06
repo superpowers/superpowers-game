@@ -2,9 +2,9 @@
 
 const gulp = require("gulp");
 
-// Jade
-const jade = require("gulp-jade");
-gulp.task("jade", function() { return gulp.src("./src/index.jade").pipe(jade()).pipe(gulp.dest("../public")); });
+// Pug
+const pug = require("gulp-pug");
+gulp.task("pug", function() { return gulp.src("./src/index.pug").pipe(pug()).pipe(gulp.dest("../public")); });
 
 // Stylus
 const stylus = require("gulp-stylus");
@@ -15,11 +15,12 @@ const ts = require("gulp-typescript");
 const tsProject = ts.createProject("tsconfig.json");
 const tslint = require("gulp-tslint");
 
-gulp.task("typescript", function() {
+gulp.task("typescript", () => {
   let failed = false;
   const tsResult = tsProject.src()
-    .pipe(tslint({ tslint: require("tslint") }))
-    .pipe(tslint.report("prose", { emitError: false }))
+    .pipe(tslint({ formatter: "prose" }))
+    .pipe(tslint.report({ emitError: true }))
+    .on("error", (err) => { throw err; })
     .pipe(tsProject())
     .on("error", () => { failed = true; })
     .on("end", () => { if (failed) throw new Error("There were TypeScript errors."); });
@@ -29,7 +30,7 @@ gulp.task("typescript", function() {
 // Browserify
 const browserify = require("browserify");
 const source = require("vinyl-source-stream");
-gulp.task("browserify", [ "typescript" ], () =>
+gulp.task("browserify", () =>
   browserify("./src/index.js", { standalone: "SupRuntime" })
     .bundle()
     .pipe(source("SupRuntime.js"))
@@ -37,4 +38,4 @@ gulp.task("browserify", [ "typescript" ], () =>
 );
 
 // All
-gulp.task("default", [ "jade", "stylus", "typescript", "browserify" ]);
+gulp.task("default", gulp.parallel("pug", "stylus", gulp.series("typescript", "browserify")));

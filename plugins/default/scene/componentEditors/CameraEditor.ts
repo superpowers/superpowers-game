@@ -72,7 +72,7 @@ export default class CameraEditor {
   destroy() { /* Nothing to do */ }
 
   config_setProperty(path: string, value: any) {
-    switch(path) {
+    switch (path) {
       case "mode": {
         this.modeSelectBox.value = value;
         this.orthographicScaleRowParts.row.style.display = (value === "perspective") ? "none" : "";

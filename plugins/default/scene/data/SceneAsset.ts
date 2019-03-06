@@ -406,7 +406,7 @@ export default class SceneAsset extends SupCore.Data.Base.Asset {
     }
 
     if (removedDepIds.length > 0) this.emit("removeDependencies", removedDepIds);
-  };
+  }
 
   server_addComponent(client: SupCore.RemoteClient, nodeId: string, componentType: string, index: number, callback: AddComponentCallback) {
 

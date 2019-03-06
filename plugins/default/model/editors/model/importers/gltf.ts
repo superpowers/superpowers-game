@@ -6,7 +6,7 @@ const THREE = SupEngine.THREE;
 enum GLTFConst {
   UNSIGNED_SHORT = 5123,
   FLOAT = 5126
-};
+}
 
 interface GLTFFile {
   accessors: { [name: string]: GLTFAccessor; };
@@ -130,7 +130,7 @@ export function importModel(files: File[], callback: ImportCallback) {
     const filename = file.name;
     const extension = filename.substring(filename.lastIndexOf(".") + 1).toLowerCase();
 
-    switch(extension) {
+    switch (extension) {
       case "gltf":
         if (gltfFile != null) { callback([ createLogError(`Cannot import multiple GLTF files at once, already found ${gltfFile.name}`, filename) ]); return; }
         gltfFile = file;
@@ -214,7 +214,7 @@ export function importModel(files: File[], callback: ImportCallback) {
 
     if (meshName == null && meshNames.length > 0) {
       // For some reason, sometimes the mesh won't be attached to a node,
-      // So let's just pick it up from gltf.meshes 
+      // So let's just pick it up from gltf.meshes
       meshName = meshNames[0];
 
       // And look for a skin, too

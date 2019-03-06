@@ -95,7 +95,7 @@ export default class TextRenderer extends SupEngine.ActorComponent {
     ctx.font = `${fontSize}px ${this.font.name}`;
     ctx.textBaseline = "middle";
 
-    ctx.textAlign = this.options.alignment;
+    ctx.textAlign = this.options.alignment as CanvasTextAlign;
     let x = width / 2;
     switch (this.options.alignment) {
       case "left" : x = 0; break;

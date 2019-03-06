@@ -28,7 +28,7 @@ export default function compileTypeScript(sourceFileNames: string[], sourceFiles
         const filePath = name.slice(0, name.length - 3);
         const fileName = filePath.slice(filePath.lastIndexOf("/") + 1);
 
-        const sourceMapText = `//# sourceMappingURL=${fileName}.js.map`;
+        const sourceMapText = "//" + `# sourceMappingURL=${fileName}.js.map`;
         const sourceMapEmpty = new Array(sourceMapText.length).join(" ");
         text = text.replace(sourceMapText, sourceMapEmpty);
 

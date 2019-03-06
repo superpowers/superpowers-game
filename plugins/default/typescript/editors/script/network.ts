@@ -228,7 +228,7 @@ let activeCompletion: CompletionRequest;
 let nextCompletion: CompletionRequest;
 
 data.typescriptWorker.onmessage = (event: MessageEvent) => {
-  switch(event.data.type) {
+  switch (event.data.type) {
     case "errors":
       refreshErrors(event.data.errors);
       isCheckingForErrors = false;

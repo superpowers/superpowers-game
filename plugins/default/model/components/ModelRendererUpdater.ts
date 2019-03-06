@@ -68,7 +68,7 @@ export default class ModelRendererUpdater {
       this.setModel();
       if (this.externalSubscriber.onAssetReceived != null) this.externalSubscriber.onAssetReceived(assetId, asset);
     });
-  };
+  }
 
   private prepareMaps(textures: { [name: string]: THREE.Texture }, callback: () => any) {
     const textureNames = Object.keys(textures);
@@ -111,7 +111,7 @@ export default class ModelRendererUpdater {
     if (commandFunction != null) commandFunction.apply(this, args);
 
     if (this.externalSubscriber.onAssetEdited != null) this.externalSubscriber.onAssetEdited(assetId, command, ...args);
-  };
+  }
 
   private onEditCommands: { [command: string]: Function; } = {
     setModel: () => {
@@ -145,7 +145,7 @@ export default class ModelRendererUpdater {
     deleteMap: (name: string) => { this.setModel(); },
 
     setProperty: (path: string, value: any) => {
-      switch(path) {
+      switch (path) {
         case "unitRatio":
           this.modelRenderer.setUnitRatio(value);
           break;
@@ -159,24 +159,24 @@ export default class ModelRendererUpdater {
   private onModelAssetTrashed = () => {
     this.modelAsset = null;
     this.modelRenderer.setModel(null);
-  };
+  }
 
   private onShaderAssetReceived = (assetId: string, asset: { pub: any} ) => {
     this.shaderPub = asset.pub;
     this.setModel();
-  };
+  }
 
   private onShaderAssetEdited = (id: string, command: string, ...args: any[]) => {
     if (command !== "editVertexShader" && command !== "editFragmentShader") this.setModel();
-  };
+  }
 
   private onShaderAssetTrashed = () => {
     this.shaderPub = null;
     this.setModel();
-  };
+  }
 
   config_setProperty(path: string, value: any) {
-    switch(path) {
+    switch (path) {
       case "modelAssetId":
         if (this.modelAssetId != null) this.client.unsubAsset(this.modelAssetId, this.modelSubscriber);
         this.modelAssetId = value;

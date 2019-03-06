@@ -92,14 +92,14 @@ export default class TextRendererUpdater {
     this.setupFont();
 
     if (this.externalSubscriber.onAssetReceived) this.externalSubscriber.onAssetReceived(assetId, asset);
-  };
+  }
 
   private onFontAssetEdited = (assetId: string, command: string, ...args: any[]) => {
     const commandFunction = this.onEditCommands[command];
     if (commandFunction != null) commandFunction.apply(this, args);
 
     if (this.externalSubscriber.onAssetEdited) this.externalSubscriber.onAssetEdited(assetId, command, ...args);
-  };
+  }
 
   private setupFont() {
     this.textRenderer.clearMesh();
@@ -125,7 +125,7 @@ export default class TextRendererUpdater {
     upload: () => { this.setupFont(); },
 
     setProperty: (path: string, value: any) => {
-      switch(path) {
+      switch (path) {
         case "isBitmap": this.setupFont(); break;
         case "opacity": if (!this.overrideOpacity) this.textRenderer.setOpacity(value); break;
         default: this.textRenderer.setFont(this.fontAsset.pub);
@@ -136,5 +136,5 @@ export default class TextRendererUpdater {
   private onFontAssetTrashed = (assetId: string) => {
     this.textRenderer.clearMesh();
     if (this.externalSubscriber.onAssetTrashed != null) this.externalSubscriber.onAssetTrashed(assetId);
-  };
+  }
 }

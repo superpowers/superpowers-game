@@ -263,7 +263,7 @@ export default class CubicModelAsset extends SupCore.Data.Base.Asset {
               }
               if (pushed) break;
             }
-          } while(pushed);
+          } while (pushed);
 
           if (i < this.pub.textureWidth && i + size.width < this.pub.textureWidth) {
             origin.x = i;

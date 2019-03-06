@@ -50,7 +50,7 @@ export default class Camera extends ActorComponent {
     const canvas = this.actor.gameInstance.threeRenderer.domElement;
     this.cachedRatio = (canvas.clientWidth * this.viewport.width) / (canvas.clientHeight * this.viewport.height);
     this.projectionNeedsUpdate = true;
-  };
+  }
 
   setIsLayerActive(active: boolean) { /* Nothing to render */ }
 

@@ -83,7 +83,7 @@ export default class GameSettingsEditor {
       if (setting === "startupSceneId") this._setStartupScene(resource.pub.startupSceneId);
       else this.fields[setting].value = resource.pub[setting];
     }
-  };
+  }
 
   _setupCustomLayers() {
     this.customLayers = this.resource.pub.customLayers.slice(0);
@@ -109,7 +109,7 @@ export default class GameSettingsEditor {
     if (propertyName === "customLayers") this._setupCustomLayers();
     else if (propertyName === "startupSceneId") this._setStartupScene(this.resource.pub.startupSceneId);
     else this.fields[propertyName].value = this.resource.pub[propertyName];
-  };
+  }
 
   onCustomLayerFieldChange = (event: any) => {
     const index = parseInt(event.target.dataset["customLayerIndex"], 10);
@@ -134,5 +134,5 @@ export default class GameSettingsEditor {
     }
 
     this.projectClient.editResource("gameSettings", "setProperty", "customLayers", this.customLayers);
-  };
+  }
 }

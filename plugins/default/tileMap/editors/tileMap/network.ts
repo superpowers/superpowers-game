@@ -159,7 +159,7 @@ function onTileSetAssetReceived() {
     if (ui.brushToolButton.checked) selectBrushTool(0, 0);
   }
   mapArea.patternBackgroundRenderer.setup(0x900090, 1 / tileMapPub.pixelsPerUnit, tileSetPub.grid.width);
-};
+}
 
 onTileSetEditCommands["upload"] = () => {
   mapArea.patternRenderer.setTileSet(new TileSet(data.tileMapUpdater.tileSetAsset.pub));

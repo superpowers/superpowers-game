@@ -10,7 +10,7 @@ namespace P2 {
 
   export const world = new p2.World();
   export const autoUpdate = true;
-};
+}
 (<any>SupEngine).P2 = P2;
 
 SupEngine.registerEarlyUpdateFunction("P2js", (gameInstance) => {

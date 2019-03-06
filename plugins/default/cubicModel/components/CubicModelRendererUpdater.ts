@@ -61,7 +61,7 @@ export default class CubicModelRendererUpdater {
   }
 
   _onEditCommand_setProperty(path: string, value: any) {
-    switch(path) {
+    switch (path) {
       case "pixelsPerUnit":
         const scale = 1 / value;
         this.cubicModelRenderer.threeRoot.scale.set(scale, scale, scale);
@@ -99,7 +99,7 @@ export default class CubicModelRendererUpdater {
     matrix.multiplyMatrices(new THREE.Matrix4().getInverse(parent.matrixWorld), matrix);
     matrix.decompose(pivot.position, pivot.quaternion, pivot.scale);
     pivot.updateMatrixWorld(false);
-  };
+  }
 
   _onEditCommand_moveNodePivot(id: string, value: { x: number; y: number; z: number; }) {
     const rendererNode = this.cubicModelRenderer.byNodeId[id];
@@ -120,7 +120,7 @@ export default class CubicModelRendererUpdater {
     for (const child of rendererNode.children) walk(child, node.shape.offset);
 
     rendererNode.pivot.updateMatrixWorld(false);
-  };
+  }
 
   _onEditCommand_setNodeProperty(id: string, path: string, value: any) {
     const rendererNode = this.cubicModelRenderer.byNodeId[id];
@@ -176,15 +176,15 @@ export default class CubicModelRendererUpdater {
         break;
       }
     }
-  };
+  }
 
   _onEditCommand_duplicateNode(rootNode: Node, newNodes: DuplicatedNode[]) {
     for (const newNode of newNodes) this._createRendererNode(newNode.node);
-  };
+  }
 
   _onEditCommand_removeNode(id: string) {
     this._recurseClearNode(id);
-  };
+  }
 
   _recurseClearNode(nodeId: string) {
     const rendererNode = this.cubicModelRenderer.byNodeId[nodeId];
@@ -214,8 +214,8 @@ export default class CubicModelRendererUpdater {
     }
   }
 
-  _onEditCommand_changeTextureWidth() { this._onChangeTextureSize(); };
-  _onEditCommand_changeTextureHeight() { this._onChangeTextureSize(); };
+  _onEditCommand_changeTextureWidth() { this._onChangeTextureSize(); }
+  _onEditCommand_changeTextureHeight() { this._onChangeTextureSize(); }
 
   _onChangeTextureSize() {
     for (const id in this.cubicModelAsset.nodes.byId) {
@@ -237,7 +237,7 @@ export default class CubicModelRendererUpdater {
   }
 
   config_setProperty(path: string, value: any) {
-    switch(path) {
+    switch (path) {
       case "cubicModelAssetId":
         if (this.cubicModelAssetId != null) this.client.unsubAsset(this.cubicModelAssetId, this.cubicModelSubscriber);
         this.cubicModelAssetId = value;

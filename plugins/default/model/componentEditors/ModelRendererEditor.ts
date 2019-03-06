@@ -140,7 +140,7 @@ export default class ModelRendererEditor {
   config_setProperty(path: string, value: any) {
     if (this.projectClient.entries == null) return;
 
-    switch(path) {
+    switch (path) {
       case "modelAssetId":
         if (this.modelAssetId != null) {
           this.projectClient.unsubAsset(this.modelAssetId, this);

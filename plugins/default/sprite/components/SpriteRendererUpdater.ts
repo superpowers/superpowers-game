@@ -70,7 +70,7 @@ export default class SpriteRendererUpdater {
 
       if (this.externalSubscriber.onAssetReceived != null) this.externalSubscriber.onAssetReceived(assetId, asset);
     });
-  };
+  }
 
   private prepareMaps(textures: { [name: string]: THREE.Texture }, callback: () => any) {
     const textureNames = Object.keys(textures);
@@ -118,7 +118,7 @@ export default class SpriteRendererUpdater {
     if (callEditCallback && this.externalSubscriber.onAssetEdited != null) {
       this.externalSubscriber.onAssetEdited(assetId, command, ...args);
     }
-  };
+  }
 
   private onEditCommands: { [command: string]: Function; } = {
     setMaps: (maps: any) => {
@@ -137,7 +137,7 @@ export default class SpriteRendererUpdater {
     deleteMap: (name: string) => { this.setSprite(); },
 
     setProperty: (path: string, value: any) => {
-      switch(path) {
+      switch (path) {
         case "filtering":
           break;
 
@@ -181,21 +181,21 @@ export default class SpriteRendererUpdater {
     this.spriteRenderer.setSprite(null);
 
     if (this.externalSubscriber.onAssetTrashed != null) this.externalSubscriber.onAssetTrashed(assetId);
-  };
+  }
 
   private onShaderAssetReceived = (assetId: string, asset: { pub: any} ) => {
     this.shaderPub = asset.pub;
     this.setSprite();
-  };
+  }
 
   private onShaderAssetEdited = (id: string, command: string, ...args: any[]) => {
     if (command !== "editVertexShader" && command !== "editFragmentShader") this.setSprite();
-  };
+  }
 
   private onShaderAssetTrashed = () => {
     this.shaderPub = null;
     this.setSprite();
-  };
+  }
 
   config_setProperty(path: string, value: any) {
     switch (path) {

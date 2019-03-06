@@ -56,9 +56,9 @@ export default class TileMapSettingsEditor {
         this.fields["grid.height"].value = resource.pub.grid.height.toString();
       } else this.fields[setting].value = (<any>resource.pub)[setting];
     }
-  };
+  }
 
   onResourceEdited = (resourceId: string, command: string, propertyName: string, value: any) => {
     this.fields[propertyName].value = value;
-  };
+  }
 }

@@ -154,7 +154,7 @@ export default class SpriteRenderer extends SupEngine.ActorComponent {
 
   updateAnimationsByName() {
     this.animationsByName = {};
-    for(const animation of this.asset.animations) {
+    for (const animation of this.asset.animations) {
       this.animationsByName[animation.name] = animation;
     }
   }

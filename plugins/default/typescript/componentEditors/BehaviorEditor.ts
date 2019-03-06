@@ -57,11 +57,11 @@ export default class BehaviorEditor {
   onResourceReceived = (resourceId: string, resource: BehaviorPropertiesResource) => {
     this.behaviorPropertiesResource = resource;
     this._buildBehaviorPropertiesUI();
-  };
+  }
 
   onResourceEdited = (resourceId: string, command: string, ...args: any[]) => {
     if (command === "setScriptBehaviors" || command === "clearScriptBehaviors") this._buildBehaviorPropertiesUI();
-  };
+  }
 
   onEntriesReceived = () => { /* Ignore */ };
   onEntryAdded = () => { /* Ignore */ };
@@ -71,14 +71,14 @@ export default class BehaviorEditor {
     this.behaviorPropertiesResource.behaviorNamesByScriptId[id] != null) {
       this._buildBehaviorPropertiesUI();
     }
-  };
+  }
   onSetEntryProperty = (id: string, key: string) => {
     if (key === "name" &&
     this.behaviorPropertiesResource != null &&
     this.behaviorPropertiesResource.behaviorNamesByScriptId[id] != null) {
       this._buildBehaviorPropertiesUI();
     }
-  };
+  }
 
   _buildBehaviorPropertiesUI() {
     // Setup behavior list
@@ -323,12 +323,12 @@ export default class BehaviorEditor {
   private onOpenBehavior = () => {
     const behavior = this.behaviorPropertiesResource.pub.behaviors[this.config.behaviorName];
     if (behavior != null) SupClient.openEntry(behavior.scriptId, { line: behavior.line != null ? behavior.line : 0, ch: 0 });
-  };
+  }
   // private onChangePropertySet = (event: any) => {}
 
   private onChangePropertyValue = (event: Event) => {
     this.applyPropertyValueChange(event.target as HTMLInputElement);
-  };
+  }
 
   private applyPropertyValueChange(target: HTMLInputElement) {
     const propertyName = target.dataset["behaviorPropertyName"];
@@ -358,7 +358,7 @@ export default class BehaviorEditor {
         return;
       }
     });
-  };
+  }
 
   private onDropPropertyValue = (event: DragEvent) => {
     // When the drop event is called, the value won't have been updated yet since it can be cancelled
@@ -366,5 +366,5 @@ export default class BehaviorEditor {
     setTimeout(() => {
       this.applyPropertyValueChange(event.target as HTMLInputElement);
     }, 0);
-  };
+  }
 }

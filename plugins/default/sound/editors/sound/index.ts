@@ -107,7 +107,7 @@ function setupSound() {
 }
 
 function setupProperty(path: string, value: any) {
-  switch(path) {
+  switch (path) {
     case "streaming": ui.streamingSelect.value = value; break;
   }
 }

@@ -68,7 +68,7 @@ export function setUniformValueInputs(id: string) {
 
   while (valueRowElt.children.length > 0) valueRowElt.removeChild(valueRowElt.children[0]);
 
-  switch(uniform.type) {
+  switch (uniform.type) {
     case "f":
       const floatInputElt = document.createElement("input");
       floatInputElt.type = "number";

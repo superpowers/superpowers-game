@@ -212,7 +212,7 @@ function onTransformChange() {
   let transformType: string;
   let value: any;
 
-  switch(engine.transformHandleComponent.mode) {
+  switch (engine.transformHandleComponent.mode) {
     case "translate":
       switch (ui.translateMode) {
         case "all": transformType = "position"; break;

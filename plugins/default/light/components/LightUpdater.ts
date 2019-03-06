@@ -39,7 +39,7 @@ export default class LightUpdater {
   }
 
   config_setProperty(path: string, value: any) {
-    switch(path) {
+    switch (path) {
       case "type":
         this.light.setType(value);
         break;

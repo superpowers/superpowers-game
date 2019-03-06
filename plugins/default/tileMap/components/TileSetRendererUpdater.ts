@@ -59,7 +59,7 @@ export default class TileSetRendererUpdater {
 
       if (this.externalSubscriber.onAssetReceived != null) this.externalSubscriber.onAssetReceived(assetId, asset);
     });
-  };
+  }
 
   private prepareTexture(texture: THREE.Texture, callback: Function) {
     if (texture == null) {
@@ -79,7 +79,7 @@ export default class TileSetRendererUpdater {
     if (callEditCallback && this.externalSubscriber.onAssetEdited != null) {
       this.externalSubscriber.onAssetEdited(assetId, command, ...args);
     }
-  };
+  }
 
   private onEditCommands: { [command: string]: Function; } = {
     upload: () => {
@@ -119,5 +119,5 @@ export default class TileSetRendererUpdater {
     this.tileSetRenderer.setTileSet(null);
 
     if (this.externalSubscriber.onAssetTrashed != null) this.externalSubscriber.onAssetTrashed(assetId);
-  };
+  }
 }

@@ -107,7 +107,7 @@ export default class TileMapRenderer extends SupEngine.ActorComponent {
           useLightUniforms: false
         };
 
-        defaultUniforms = THREE.ShaderLib.basic.uniforms;
+        defaultUniforms = THREE.ShaderLib.basic.uniforms as any;
         break;
 
       case "phong":
@@ -120,7 +120,7 @@ export default class TileMapRenderer extends SupEngine.ActorComponent {
           useLightUniforms: true
         };
 
-        defaultUniforms = THREE.ShaderLib.phong.uniforms;
+        defaultUniforms = THREE.ShaderLib.phong.uniforms as any;
         break;
 
       case "shader":

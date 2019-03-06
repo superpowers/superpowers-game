@@ -63,7 +63,7 @@ onEditCommands["setUniformProperty"] = (id: string, key: string, value: any) => 
   const rowElt = <HTMLDivElement>ui.uniformsList.querySelector(`[data-id='${id}']`);
   if (key === "value") {
     const type = data.shaderAsset.uniforms.byId[id].type;
-    switch(type) {
+    switch (type) {
       case "f":
         const floatInputElt = <HTMLInputElement>rowElt.querySelector(".float");
         floatInputElt.value = value;

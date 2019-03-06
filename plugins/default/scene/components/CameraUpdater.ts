@@ -37,9 +37,9 @@ export default class CameraUpdater {
   onResourceReceived = (resourceId: string, resource: any) => {
     this.resource = resource;
     this.updateRatio();
-  };
+  }
 
   onResourceEdited = (resourceId: string, command: string, propertyName: string) => {
     this.updateRatio();
-  };
+  }
 }

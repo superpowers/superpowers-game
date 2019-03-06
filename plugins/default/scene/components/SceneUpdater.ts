@@ -61,14 +61,14 @@ export default class SceneUpdater {
     for (const node of asset.nodes.pub) walk(node);
 
     if (this.externalSubscriber.onAssetReceived != null) this.externalSubscriber.onAssetReceived(assetId, asset);
-  };
+  }
 
   private onSceneAssetEdited = (assetId: string, command: string, ...args: any[]) => {
     const commandFunction = this.onEditCommands[command];
     if (commandFunction != null) commandFunction.apply(this, args);
 
     if (this.externalSubscriber.onAssetEdited != null) this.externalSubscriber.onAssetEdited(assetId, command, ...args);
-  };
+  }
 
   private onEditCommands: { [command: string]: Function; } = {
     addNode: (node: Node, parentId: string, index: number) => {
@@ -162,7 +162,7 @@ export default class SceneUpdater {
     this.clearScene();
 
     if (this.sceneSubscriber.onAssetTrashed != null) this.sceneSubscriber.onAssetTrashed(assetId);
-  };
+  }
 
   config_setProperty(path: string, value: any) {
     switch (path) {
