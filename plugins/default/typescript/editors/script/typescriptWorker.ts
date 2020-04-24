@@ -1,4 +1,4 @@
-/// <reference path="../../../../../../../SupClient/typings/fuzzy.d.ts" />
+/// <reference path="fuzzy.d.ts" />
 
 import * as ts from "typescript";
 import * as fuzzy from "fuzzy";
